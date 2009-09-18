@@ -1,0 +1,33 @@
+HKCR
+{
+	FireBreathWin.FBControl.1 = s 'FBControl Class'
+	{
+		CLSID = s '{47B5B4C0-35DA-49D8-8047-29C335EC9809}'
+	}
+	FireBreathWin.FBControl = s 'FBControl Class'
+	{
+		CLSID = s '{47B5B4C0-35DA-49D8-8047-29C335EC9809}'
+		CurVer = s 'FireBreathWin.FBControl.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {47B5B4C0-35DA-49D8-8047-29C335EC9809} = s 'FBControl Class'
+		{
+			ProgID = s 'FireBreathWin.FBControl.1'
+			VersionIndependentProgID = s 'FireBreathWin.FBControl'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+			}
+			val AppID = s '%APPID%'
+			ForceRemove 'Control'
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 102'
+			'MiscStatus' = s '0'
+			{
+			    '1' = s '%OLEMISC%'
+			}
+			'TypeLib' = s '{94C9767F-1529-4903-B92F-86B0F32E5DFA}'
+			'Version' = s '1.0'
+		}
+	}
+}

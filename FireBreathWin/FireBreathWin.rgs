@@ -1,0 +1,11 @@
+HKCR
+{
+	NoRemove AppID
+	{
+		'%APPID%' = s 'FireBreathWin'
+		'FireBreathWin.DLL'
+		{
+			val AppID = s '%APPID%'
+		}
+	}
+}
