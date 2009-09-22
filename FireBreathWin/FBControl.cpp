@@ -1,5 +1,5 @@
 // FBControl.cpp : Implementation of CFBControl
-#include "stdafx.h"
+#include "win_common.h"
 #include "FBControl.h"
 
 

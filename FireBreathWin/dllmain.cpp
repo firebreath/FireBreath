@@ -1,6 +1,6 @@
 // dllmain.cpp : Implementation of DllMain.
 
-#include "stdafx.h"
+#include "win_common.h"
 #include "resource.h"
 #include "FireBreathWin_i.h"
 #include "dllmain.h"

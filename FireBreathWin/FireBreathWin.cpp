@@ -1,7 +1,7 @@
 // FireBreathWin.cpp : Implementation of DLL Exports.
 
 
-#include "stdafx.h"
+#include "win_common.h"
 #include "resource.h"
 #include "FireBreathWin_i.h"
 #include "dllmain.h"
