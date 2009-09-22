@@ -1,6 +1,6 @@
 #include <npapi.h>
 
-/* napapi.h definitions */
+/* npapi.h definitions */
 void NPN_Version(int* plugin_major, int* plugin_minor, int* netscape_major, int* netscape_minor)
 {
 	//Looks like some deriving from NPNetscapeFuncs.version is needed.

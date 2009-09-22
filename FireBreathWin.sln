@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FireBreathWin", "FireBreathWin\FireBreathWin.vcproj", "{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCore", "ScriptingCore\ScriptingCore.vcproj", "{30C586C0-3B6B-4108-9405-58673BC8D7E2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCoreTest", "ScriptingCoreTest\ScriptingCoreTest.vcproj", "{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +17,14 @@ Global
 		{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}.Debug|Win32.Build.0 = Debug|Win32
 		{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}.Release|Win32.ActiveCfg = Release|Win32
 		{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}.Release|Win32.Build.0 = Release|Win32
+		{30C586C0-3B6B-4108-9405-58673BC8D7E2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{30C586C0-3B6B-4108-9405-58673BC8D7E2}.Debug|Win32.Build.0 = Debug|Win32
+		{30C586C0-3B6B-4108-9405-58673BC8D7E2}.Release|Win32.ActiveCfg = Release|Win32
+		{30C586C0-3B6B-4108-9405-58673BC8D7E2}.Release|Win32.Build.0 = Release|Win32
+		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Debug|Win32.ActiveCfg = Debug|Win32
+		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Debug|Win32.Build.0 = Debug|Win32
+		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Release|Win32.ActiveCfg = Release|Win32
+		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
