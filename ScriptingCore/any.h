@@ -20,6 +20,10 @@
 #include <sstream>
 #include <string>
 
+#ifdef _WIN32
+#pragma warning( disable : 4800 )
+#endif
+
 #define BEGIN_CONVERT_MAP(_type_) \
     const type_info *type = &get_type(); \
     if (*type == typeid(_type_)) { \
@@ -361,7 +365,7 @@ namespace cdiggins
     // automatic casting operator
     template<typename T>
     operator T() const {
-      return cast<T>();
+      return convert_cast<T>();
     }
   #endif // implicit casting
 
