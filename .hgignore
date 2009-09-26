@@ -1,6 +1,8 @@
 syntax: glob
-*/Debug/
-*/Release/
+*/Debug/*
+Debug/*
+*/Release/*
+Release/*
 *.suo
 *.ncb
 *.user

@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCore", "ScriptingC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCoreTest", "ScriptingCoreTest\ScriptingCoreTest.vcproj", "{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest++", "unittest-cpp\UnitTest++\UnitTest++.vsnet2005.vcproj", "{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -25,6 +27,10 @@ Global
 		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Debug|Win32.Build.0 = Debug|Win32
 		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Release|Win32.ActiveCfg = Release|Win32
 		{971550E3-DCCE-4A41-B4B8-56B214B3EC21}.Release|Win32.Build.0 = Release|Win32
+		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Debug|Win32.Build.0 = Debug|Win32
+		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Release|Win32.ActiveCfg = Release|Win32
+		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

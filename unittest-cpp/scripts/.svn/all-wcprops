@@ -1,0 +1,17 @@
+K 25
+svn:wc:ra_dav:version-url
+V 42
+/svnroot/unittest-cpp/!svn/ver/120/scripts
+END
+cruisecontrol.ksh
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svnroot/unittest-cpp/!svn/ver/120/scripts/cruisecontrol.ksh
+END
+release.sh
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svnroot/unittest-cpp/!svn/ver/119/scripts/release.sh
+END
