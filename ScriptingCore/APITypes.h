@@ -22,7 +22,7 @@ namespace FB
     typedef std::map<std::string, MethodInfo> MethodMap;
 
     typedef bool (*GetPropPtr)(variant &retVal);
-    typedef bool (*SetPropPtr)(variant &value);
+    typedef bool (*SetPropPtr)(const variant &value);
     struct PropertyInfo {
         PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }

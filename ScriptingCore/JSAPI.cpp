@@ -5,6 +5,9 @@ using namespace FB;
 
 JSAPI::JSAPI(void)
 {
+    registerMethod( "toString", (CallMethodPtr)JSAPI::callToString );
+    
+    registerProperty( "valid", (GetPropPtr)JSAPI::getValid, NULL );
 }
 
 JSAPI::~JSAPI(void)
@@ -38,13 +41,13 @@ void JSAPI::FireEvent(std::string eventName, variant *args, int argCount)
 }
 
 // Example function call and read-only property; override these if desired in derived classes
-bool callToString(variant args[], int argCount, variant &retVal)
+bool JSAPI::callToString(variant args[], int argCount, variant &retVal)
 {
     retVal = "JSAPI Javascript Object";
     return true;
 }
 
-bool getValid(variant &retVal)
+bool JSAPI::getValid(variant &retVal)
 {
     retVal = true;
     return true;
