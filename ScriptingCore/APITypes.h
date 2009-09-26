@@ -10,7 +10,8 @@ namespace FB
     // Variant datatype used
     typedef cdiggins::any variant;
 
-    typedef bool (*CallMethodPtr)(variant *args, int argCount, variant &retVal);
+    class JSAPI;
+    typedef bool (JSAPI::*CallMethodPtr)(variant *args, int argCount, variant &retVal);
     struct MethodInfo {
         MethodInfo() : callFunc(NULL) { }
         MethodInfo(CallMethodPtr callFunc) : callFunc(callFunc) { }
@@ -21,8 +22,8 @@ namespace FB
 
     typedef std::map<std::string, MethodInfo> MethodMap;
 
-    typedef bool (*GetPropPtr)(variant &retVal);
-    typedef bool (*SetPropPtr)(const variant &value);
+    typedef bool (JSAPI::*GetPropPtr)(variant &retVal);
+    typedef bool (JSAPI::*SetPropPtr)(const variant &value);
     struct PropertyInfo {
         PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }

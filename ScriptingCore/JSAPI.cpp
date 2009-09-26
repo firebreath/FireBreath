@@ -5,9 +5,9 @@ using namespace FB;
 
 JSAPI::JSAPI(void)
 {
-    registerMethod( "toString", (CallMethodPtr)JSAPI::callToString );
+    registerMethod( "toString", (CallMethodPtr)&JSAPI::callToString );
     
-    registerProperty( "valid", (GetPropPtr)JSAPI::getValid, NULL );
+    registerProperty( "valid", (GetPropPtr)&JSAPI::getValid, NULL );
 }
 
 JSAPI::~JSAPI(void)
@@ -110,7 +110,7 @@ bool JSAPI::GetProperty(std::string propertyName, variant &retVal)
 {
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end() && fnd->second.getFunc != NULL) {
-        return fnd->second.getFunc(retVal);
+        return (this->*fnd->second.getFunc)(retVal);
     } else {
         return false;
     }
@@ -120,7 +120,7 @@ bool JSAPI::SetProperty(std::string propertyName, variant &value)
 {
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd->second.setFunc != NULL) {
-        return fnd->second.setFunc(value);
+        return (this->*fnd->second.setFunc)(value);
     } else {
         return false;
     }
@@ -154,7 +154,7 @@ bool JSAPI::Invoke(std::string methodName, variant args[], int argCount, variant
 {
     MethodMap::iterator fnd = m_methodMap.find(methodName);
     if (fnd != m_methodMap.end() && fnd->second.callFunc != NULL) {
-        return fnd->second.callFunc(args, argCount, retVal);
+        return (this->*fnd->second.callFunc)(args, argCount, retVal);
     } else {
         return false;
     }    
