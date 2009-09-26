@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="ScriptingCoreTest"
 	ProjectGUID="{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 	RootNamespace="ScriptingCoreTest"
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="F:\code\firebreath\ScriptingCore"
+				AdditionalIncludeDirectories="..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"

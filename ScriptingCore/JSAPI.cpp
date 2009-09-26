@@ -1,4 +1,5 @@
 #include "JSAPI.h"
+#include "BrowserHostWrapper.h"
 
 using namespace FB;
 
@@ -8,6 +9,32 @@ JSAPI::JSAPI(void)
 
 JSAPI::~JSAPI(void)
 {
+}
+
+// Methods for managing event sinks (BrowserHostWrapper objects)
+void JSAPI::attachEventSink(void *context, BrowserHostWrapper *sink)
+{
+    m_sinkMap[context] = sink;
+}
+
+void JSAPI::detachEventSink(void *context)
+{
+    EventSinkMap::iterator fnd = m_sinkMap.find(context);
+    if (fnd != m_sinkMap.end()) {
+        m_sinkMap.erase(fnd);
+    }
+}
+
+void JSAPI::FireEvent(std::string eventName, variant *args, int argCount)
+{
+    std::pair<EventMap::iterator, EventMap::iterator> range = m_eventMap.equal_range(eventName);
+
+    for (EventMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
+        for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
+            if (eventIt->second.context == sinkIt->first)
+                sinkIt->second->FireEvent(eventName, eventIt->second.func, args, argCount);
+        }
+    }
 }
 
 // Example function call and read-only property; override these if desired in derived classes
