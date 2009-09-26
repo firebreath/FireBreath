@@ -40,14 +40,14 @@ STDAPI DllRegisterServer(void)
         return hr;
     hr = PrxDllRegisterServer();
 #endif
-	return hr;
+    return hr;
 }
 
 
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
-	HRESULT hr = _AtlModule.DllUnregisterServer();
+    HRESULT hr = _AtlModule.DllUnregisterServer();
 #ifdef _MERGE_PROXYSTUB
     if (FAILED(hr))
         return hr;
@@ -56,7 +56,7 @@ STDAPI DllUnregisterServer(void)
         return hr;
     hr = PrxDllUnregisterServer();
 #endif
-	return hr;
+    return hr;
 }
 
 // DllInstall - Adds/Removes entries to the system registry per user
@@ -68,23 +68,23 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 
     if (pszCmdLine != NULL)
     {
-    	if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
-    	{
-    		AtlSetPerUserRegistration(true);
-    	}
+        if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
+        {
+            AtlSetPerUserRegistration(true);
+        }
     }
 
     if (bInstall)
     {	
-    	hr = DllRegisterServer();
-    	if (FAILED(hr))
-    	{	
-    		DllUnregisterServer();
-    	}
+        hr = DllRegisterServer();
+        if (FAILED(hr))
+        {	
+            DllUnregisterServer();
+        }
     }
     else
     {
-    	hr = DllUnregisterServer();
+        hr = DllUnregisterServer();
     }
 
     return hr;

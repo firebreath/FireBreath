@@ -5,15 +5,15 @@
 
 namespace FB
 {
-	class BrowserHostWrapper
-	{
-	public:
-		BrowserHostWrapper() { }
-		virtual ~BrowserHostWrapper() { }
+    class BrowserHostWrapper
+    {
+    public:
+        BrowserHostWrapper() { }
+        virtual ~BrowserHostWrapper() { }
 
-	public:
+    public:
         virtual bool FireEvent(std::string name, variant &target, variant *args, int argCount) = 0;
-	};
+    };
 }
 
 #endif

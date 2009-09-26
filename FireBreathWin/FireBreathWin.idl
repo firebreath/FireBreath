@@ -10,31 +10,31 @@ import "oaidl.idl";
 import "ocidl.idl";
 
 [
-	object,
-	uuid(IFBControl_GUID),
-	dual,
-	nonextensible,
-	helpstring(IFBControl_DESC),
-	pointer_default(unique)
+    object,
+    uuid(IFBControl_GUID),
+    dual,
+    nonextensible,
+    helpstring(IFBControl_DESC),
+    pointer_default(unique)
 ]
 interface IFBControl : IDispatch{
 };
 
 [
-	uuid(FBTYPELIB_GUID),
-	version(1.0),
-	helpstring(FBTYPELIB_DESC)
+    uuid(FBTYPELIB_GUID),
+    version(1.0),
+    helpstring(FBTYPELIB_DESC)
 ]
 library FBTYPELIB_NAME
 {
-	importlib("stdole2.tlb");
-	[
-		uuid(FBControl_GUID),
-		control,
-		helpstring(FBControl_DESC)
-	]
-	coclass FBControl
-	{
-		[default] interface IFBControl;
-	};
+    importlib("stdole2.tlb");
+    [
+        uuid(FBControl_GUID),
+        control,
+        helpstring(FBControl_DESC)
+    ]
+    coclass FBControl
+    {
+        [default] interface IFBControl;
+    };
 };

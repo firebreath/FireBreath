@@ -74,65 +74,65 @@ namespace cdiggins
       void (*move)(void* const*,void**);
     };
 
-	  // static functions for small value-types 
-	  template<bool is_small>
-	  struct fxns
-	  {
-		  template<typename T>
-		  struct type {
-		    static const std::type_info& get_type() { 
-		      return typeid(T); 
-		    }
-		    static void static_delete(void** x) { 
-		      reinterpret_cast<T*>(x)->~T(); 
-		    }
-		    static void clone(void* const* src, void** dest) { 
-		      new(dest) T(*reinterpret_cast<T const*>(src)); 
-		    }
-		    static void move(void* const* src, void** dest) { 
-		      reinterpret_cast<T*>(dest)->~T(); 
-		      *reinterpret_cast<T*>(dest) = *reinterpret_cast<T const*>(src); 
-		     }
-		  };
-	  };
+      // static functions for small value-types 
+      template<bool is_small>
+      struct fxns
+      {
+          template<typename T>
+          struct type {
+            static const std::type_info& get_type() { 
+              return typeid(T); 
+            }
+            static void static_delete(void** x) { 
+              reinterpret_cast<T*>(x)->~T(); 
+            }
+            static void clone(void* const* src, void** dest) { 
+              new(dest) T(*reinterpret_cast<T const*>(src)); 
+            }
+            static void move(void* const* src, void** dest) { 
+              reinterpret_cast<T*>(dest)->~T(); 
+              *reinterpret_cast<T*>(dest) = *reinterpret_cast<T const*>(src); 
+             }
+          };
+      };
 
     // static functions for big value-types (bigger than a void*)
     template<>
-	  struct fxns<false>
-	  {
-		  template<typename T>
-		  struct type {
-		    static const std::type_info& get_type() { 
-		      return typeid(T); 
-		    }
-		    static void static_delete(void** x) { 
-		      delete(*reinterpret_cast<T**>(x)); 
-		    }
-		    static void clone(void* const* src, void** dest) { 
-		      *dest = new T(**reinterpret_cast<T* const*>(src)); 
-		    }
-		    static void move(void* const* src, void** dest) { 
-		      (*reinterpret_cast<T**>(dest))->~T(); 
-		      **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); 
-		    }
-		  };
-	  };
+      struct fxns<false>
+      {
+          template<typename T>
+          struct type {
+            static const std::type_info& get_type() { 
+              return typeid(T); 
+            }
+            static void static_delete(void** x) { 
+              delete(*reinterpret_cast<T**>(x)); 
+            }
+            static void clone(void* const* src, void** dest) { 
+              *dest = new T(**reinterpret_cast<T* const*>(src)); 
+            }
+            static void move(void* const* src, void** dest) { 
+              (*reinterpret_cast<T**>(dest))->~T(); 
+              **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); 
+            }
+          };
+      };
 
     template<typename T>
     struct get_table 
     {
       static const bool is_small = sizeof(T) <= sizeof(void*);
       
-	    static fxn_ptr_table* get()
-	    {
-		    static fxn_ptr_table static_table = {
-			    fxns<is_small>::template type<T>::get_type
-			  , fxns<is_small>::template type<T>::static_delete
-			  , fxns<is_small>::template type<T>::clone
-			  , fxns<is_small>::template type<T>::move
-		    };
-		    return &static_table;
-	    }
+        static fxn_ptr_table* get()
+        {
+            static fxn_ptr_table static_table = {
+                fxns<is_small>::template type<T>::get_type
+              , fxns<is_small>::template type<T>::static_delete
+              , fxns<is_small>::template type<T>::clone
+              , fxns<is_small>::template type<T>::move
+            };
+            return &static_table;
+        }
     };
     
     struct empty {
@@ -144,7 +144,7 @@ namespace cdiggins
     // structors
     template <typename T>
     any(const T& x) {
-  	  table = any_detail::get_table<T>::get();
+      table = any_detail::get_table<T>::get();
       if (sizeof(T) <= sizeof(void*)) {
         new(&object) T(x);
       }
@@ -158,12 +158,12 @@ namespace cdiggins
     }
 
     any() {
-	    table = any_detail::get_table<any_detail::empty>::get();
+        table = any_detail::get_table<any_detail::empty>::get();
       object = NULL;
     }
 
     any(const any& x) {
-	    table = any_detail::get_table<any_detail::empty>::get();
+        table = any_detail::get_table<any_detail::empty>::get();
       assign(x);
     }
     
@@ -194,7 +194,7 @@ namespace cdiggins
     any& assign(const T& x)
     {
       // are we copying between the same type?
-		  any_detail::fxn_ptr_table* x_table = any_detail::get_table<T>::get();
+          any_detail::fxn_ptr_table* x_table = any_detail::get_table<T>::get();
       if (table == x_table) {
         // if so, we can avoid deallocating and resuse memory 
         if (sizeof(T) <= sizeof(void*)) {
@@ -207,7 +207,7 @@ namespace cdiggins
         }
       }
       else {        
-      	reset();
+        reset();
         if (sizeof(T) <= sizeof(void*)) {
           // create copy on-top of object pointer itself
           new(&object) T(x);
@@ -218,15 +218,15 @@ namespace cdiggins
           object = new T(x);          
           table = x_table;
         }
-	    }
+        }
       return *this;
     }
 
     // assignment operator 
-	  template<typename T>
-	  any& operator=(T const& x) {
-		  return assign(x);
-	  }
+      template<typename T>
+      any& operator=(T const& x) {
+          return assign(x);
+      }
 
     // utility functions
     any& swap(any& x) {
@@ -240,15 +240,15 @@ namespace cdiggins
 
     template<typename T>
     const T& cast() const {
-	    if (get_type() != typeid(T)) {
-  		  throw bad_any_cast(get_type(), typeid(T));
-	    }
-	    if (sizeof(T) <= sizeof(void*)) {
+        if (get_type() != typeid(T)) {
+          throw bad_any_cast(get_type(), typeid(T));
+        }
+        if (sizeof(T) <= sizeof(void*)) {
         return *reinterpret_cast<T const*>(&object);
-	    }
-	    else {
+        }
+        else {
         return *reinterpret_cast<T const*>(object);
-	    }
+        }
     }
 
     template<typename T>
@@ -374,41 +374,41 @@ namespace cdiggins
       return table == any_detail::get_table<any_detail::empty>::get();
     }
 
-  	void reset()
-	  {
-	    if (empty()) return; 
+    void reset()
+      {
+        if (empty()) return; 
       table->static_delete(&object);
-	    table = any_detail::get_table<any_detail::empty>::get();
+        table = any_detail::get_table<any_detail::empty>::get();
       object = NULL;
-	  }
+      }
 
     // fields
-	  any_detail::fxn_ptr_table* table;	  
+      any_detail::fxn_ptr_table* table;	  
     void* object;
   };
 
   // boost::any-like casting
-	template<typename T>
-	T* any_cast(any* this_) {
+    template<typename T>
+    T* any_cast(any* this_) {
     if (this_->get_type() != typeid(T)) {
       throw bad_any_cast(this_->get_type(), typeid(T));
     }
-	  if (sizeof(T) <= sizeof(void*)) {
+      if (sizeof(T) <= sizeof(void*)) {
       return reinterpret_cast<T*>(&this_->object);
-	  }
-	  else {
+      }
+      else {
       return reinterpret_cast<T*>(this_->object);
-	  }
-	}
+      }
+    }
 
-	template<typename T>
-	T const* any_cast(any const* this_) {
+    template<typename T>
+    T const* any_cast(any const* this_) {
     return any_cast<T>(const_cast<any*>(this_));
-	}
+    }
 
   template<typename T>
   T const& any_cast(any const& this_){
-		return *any_cast<T>(const_cast<any*>(&this_));
+        return *any_cast<T>(const_cast<any*>(&this_));
   }
 }
 

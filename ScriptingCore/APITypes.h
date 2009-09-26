@@ -43,8 +43,8 @@ namespace FB
     typedef std::pair<std::string, EventInfo> EventPair;
     typedef std::multimap<std::string, EventInfo> EventMap;
 
-	class BrowserHostWrapper;
-	typedef std::map<void *, BrowserHostWrapper *> EventSinkMap;
+    class BrowserHostWrapper;
+    typedef std::map<void *, BrowserHostWrapper *> EventSinkMap;
 }
 
 #endif
