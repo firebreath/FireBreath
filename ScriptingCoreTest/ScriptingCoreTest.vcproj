@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="ScriptingCoreTest"
 	ProjectGUID="{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 	RootNamespace="ScriptingCoreTest"
@@ -182,6 +182,10 @@
 			Filter="h;hpp;hxx;hm;inl;inc;xsd"
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
+			<File
+				RelativePath=".\autoptr_test.h"
+				>
+			</File>
 			<File
 				RelativePath=".\variant_test.h"
 				>

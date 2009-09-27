@@ -4,6 +4,7 @@
 #include "UnitTest++.h"
 
 #include "variant_test.h"
+#include "autoptr_test.h"
 
 using namespace std;
 using namespace cdiggins;

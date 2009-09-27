@@ -6,7 +6,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0500 */
-/* at Fri Sep 25 18:43:15 2009
+/* at Sat Sep 26 19:36:23 2009
  */
 /* Compiler settings for .\FireBreathWin.idl:
     Oicf, W1, Zp8, env=Win32 (32b run)
