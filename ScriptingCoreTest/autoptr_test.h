@@ -7,14 +7,14 @@ class TestObject
 
 		TestObject() : refCount(0) {}
 		void addRef() { refCount++; }
-		void release() { refCount--; }
+		int release() { refCount--; return refCount; }
 		bool AccessMe() { return true; }
 };
 
 TEST (AutoPtrTest)
 {
-	AutoPtr<TestObject> ptr;
-	AutoPtr<TestObject> ptr2;
+  FB::AutoPtr<TestObject> ptr;
+	FB::AutoPtr<TestObject> ptr2;
 	ptr = new TestObject;
 
 	CHECK (ptr->refCount == 1);
