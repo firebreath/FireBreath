@@ -1,3 +1,13 @@
+/**********************************************************\ 
+Original Author: Don Jordan (kc7zax)
+
+Created:    Sept 19, 2009
+License:    Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+
+Copyright 2009 Don Jordan, Firebreath development team
+\**********************************************************/
+
 #include <npapi.h>
 
 /* npapi.h definitions */

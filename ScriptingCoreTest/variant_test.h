@@ -1,3 +1,13 @@
+/**********************************************************\ 
+Original Author: Richard Bateman (taxilian)
+
+Created:    Sept 21, 2009
+License:    Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+
+Copyright 2009 Richard Bateman, Firebreath development team
+\**********************************************************/
+
 
 #include "APITypes.h"
 
@@ -5,6 +15,8 @@ using namespace FB;
 
 TEST(VariantTest)
 {
+    PRINT_TESTNAME;
+
     variant a = 23.23;
     
     CHECK(a.convert_cast<int>() == 23);

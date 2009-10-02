@@ -1,4 +1,15 @@
-#pragma once
+/**********************************************************\ 
+Original Author: Don Jordan (kc7zax)
+
+Created:    Sept 26, 2009
+License:    Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+
+Copyright 2009 Don Jordan, Firebreath development team
+\**********************************************************/
+
+#ifndef H_FB_AUTOPTR
+#define H_FB_AUTOPTR
 
 namespace FB
 {
@@ -72,3 +83,5 @@ namespace FB
         object = obj;
     }
 }
+
+#endif
