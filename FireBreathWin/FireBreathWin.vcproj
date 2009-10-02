@@ -380,6 +380,10 @@
 			DeploymentContent="true"
 			>
 		</File>
+		<File
+			RelativePath="..\LICENSE.html"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-JSAPI::JSAPI(void)
+JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
 {
     registerMethod( "toString", (CallMethodPtr)&JSAPI::callToString );
     
@@ -22,6 +22,26 @@ JSAPI::JSAPI(void)
 
 JSAPI::~JSAPI(void)
 {
+}
+
+void JSAPI::addRef()
+{
+    ++m_refCount;
+}
+
+unsigned int JSAPI::release()
+{
+    if (--m_refCount == 0) {
+        delete this;
+        return 0;
+    } else {
+        return m_refCount;
+    }
+}
+
+void JSAPI::invalidate()
+{
+    m_valid = false;
 }
 
 // Methods for managing event sinks (BrowserHostWrapper objects)
@@ -38,20 +58,23 @@ void JSAPI::detachEventSink(void *context)
     }
 }
 
-void JSAPI::FireEvent(std::string eventName, variant *args, int argCount)
+void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
 {
+    if (!m_valid)   // When invalidated, do nothing more
+        return;
+
     std::pair<EventMap::iterator, EventMap::iterator> range = m_eventMap.equal_range(eventName);
 
     for (EventMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
         for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
             if (eventIt->second.context == sinkIt->first)
-                sinkIt->second->FireEvent(eventName, eventIt->second.func, args, argCount);
+                sinkIt->second->FireEvent(eventName, eventIt->second.func, args);
         }
     }
 }
 
 // Example function call and read-only property; override these if desired in derived classes
-bool JSAPI::callToString(variant args[], int argCount, variant &retVal)
+bool JSAPI::callToString(std::vector<FB::variant>& args, variant &retVal)
 {
     retVal = "JSAPI Javascript Object";
     return true;
@@ -59,7 +82,7 @@ bool JSAPI::callToString(variant args[], int argCount, variant &retVal)
 
 bool JSAPI::getValid(variant &retVal)
 {
-    retVal = true;
+    retVal = m_valid;
     return true;
 }
 
@@ -85,6 +108,9 @@ void JSAPI::registerEvent(std::string name)
 // Methods to query existance of members on the API
 bool JSAPI::HasMethod(std::string methodName)
 {
+    if (!m_valid)
+        return false;
+
     MethodMap::iterator fnd = m_methodMap.find(methodName);
     if (fnd != m_methodMap.end()) {
         return true;
@@ -95,6 +121,9 @@ bool JSAPI::HasMethod(std::string methodName)
 
 bool JSAPI::HasProperty(std::string propertyName)
 {
+    if (!m_valid)
+        return false;
+
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end()) {
         return true;
@@ -118,6 +147,9 @@ bool JSAPI::HasEvent(std::string eventName)
 // Methods to manage properties on the API
 bool JSAPI::GetProperty(std::string propertyName, variant &retVal)
 {
+    if (!m_valid)
+        return false;
+
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end() && fnd->second.getFunc != NULL) {
         return (this->*fnd->second.getFunc)(retVal);
@@ -128,6 +160,9 @@ bool JSAPI::GetProperty(std::string propertyName, variant &retVal)
 
 bool JSAPI::SetProperty(std::string propertyName, variant &value)
 {
+    if (!m_valid)
+        return false;
+
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd->second.setFunc != NULL) {
         return (this->*fnd->second.setFunc)(value);
@@ -139,6 +174,9 @@ bool JSAPI::SetProperty(std::string propertyName, variant &value)
 
 bool JSAPI::HasPropertyIndex(int idx)
 {
+    if (!m_valid)
+        return false;
+
     // By default do not support indexing
     // To use array style access, override this method in your API object
     return false;
@@ -146,6 +184,9 @@ bool JSAPI::HasPropertyIndex(int idx)
 
 bool JSAPI::GetProperty(int idx, variant &retVal)
 {
+    if (!m_valid)
+        return false;
+
     // By default do not support indexing
     // To use array style access, override this method in your API object
     return false;
@@ -153,6 +194,9 @@ bool JSAPI::GetProperty(int idx, variant &retVal)
 
 bool JSAPI::SetProperty(int idx, variant &value)
 {
+    if (!m_valid)
+        return false;
+
     // By default do not support indexing
     // To use array style access, override this method in your API object
     return false;
@@ -160,11 +204,14 @@ bool JSAPI::SetProperty(int idx, variant &value)
 
 
 // Methods to manage methods on the API
-bool JSAPI::Invoke(std::string methodName, variant args[], int argCount, variant &retVal)
+bool JSAPI::Invoke(std::string methodName, std::vector<FB::variant>& args, variant &retVal)
 {
+    if (!m_valid)
+        return false;
+
     MethodMap::iterator fnd = m_methodMap.find(methodName);
     if (fnd != m_methodMap.end() && fnd->second.callFunc != NULL) {
-        return (this->*fnd->second.callFunc)(args, argCount, retVal);
+        return (this->*fnd->second.callFunc)(args, retVal);
     } else {
         return false;
     }    

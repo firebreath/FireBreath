@@ -12,6 +12,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_METHODINFO
 
 #include <string>
+#include <vector>
 #include <map>
 #include "any.h"
 
@@ -21,7 +22,7 @@ namespace FB
     typedef cdiggins::any variant;
 
     class JSAPI;
-    typedef bool (JSAPI::*CallMethodPtr)(variant *args, int argCount, variant &retVal);
+    typedef bool (JSAPI::*CallMethodPtr)(std::vector<variant>&, variant &retVal);
     struct MethodInfo {
         MethodInfo() : callFunc(NULL) { }
         MethodInfo(CallMethodPtr callFunc) : callFunc(callFunc) { }

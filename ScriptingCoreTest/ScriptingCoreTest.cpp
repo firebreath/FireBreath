@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "variant_test.h"
 #include "autoptr_test.h"
+#include "jsapi_test.h"
 
 using namespace std;
 using namespace cdiggins;

@@ -7,6 +7,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCore", "ScriptingC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ScriptingCoreTest", "ScriptingCoreTest\ScriptingCoreTest.vcproj", "{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 	ProjectSection(ProjectDependencies) = postProject
+		{30C586C0-3B6B-4108-9405-58673BC8D7E2} = {30C586C0-3B6B-4108-9405-58673BC8D7E2}
 		{64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6} = {64A4FEFE-0461-4E95-8CC1-91EF5F57DBC6}
 	EndProjectSection
 EndProject

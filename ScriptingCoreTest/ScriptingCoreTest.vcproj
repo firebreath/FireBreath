@@ -187,6 +187,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\jsapi_test.h"
+				>
+			</File>
+			<File
 				RelativePath=".\variant_test.h"
 				>
 			</File>
@@ -196,6 +200,14 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
+		</Filter>
+		<Filter
+			Name="MockObjects"
+			>
+			<File
+				RelativePath="..\ScriptingCore\TestJSAPI.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

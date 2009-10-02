@@ -25,6 +25,11 @@ namespace FB
         public:
             //Default Constructor
             AutoPtr() : object(NULL) {}
+            // Constructor with pointer
+            AutoPtr(T *obj) : object(NULL)
+            {
+                Assign(obj);
+            }
             //Copy Constructor
             AutoPtr(const AutoPtr<T>& copy)
             {

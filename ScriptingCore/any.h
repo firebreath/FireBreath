@@ -154,21 +154,23 @@ namespace cdiggins
     }
 
     any(const char *x) {
-        object = new std::string(x);
+        table = any_detail::get_table<any_detail::empty>::get();
+        object = NULL;
+        assign(x);
     }
 
     any() {
         table = any_detail::get_table<any_detail::empty>::get();
-      object = NULL;
+        object = NULL;
     }
 
     any(const any& x) {
         table = any_detail::get_table<any_detail::empty>::get();
-      assign(x);
+        assign(x);
     }
     
     ~any() {
-      table->static_delete(&object);
+        table->static_delete(&object);
     }
 
     // assignment

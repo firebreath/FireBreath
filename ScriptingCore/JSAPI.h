@@ -12,6 +12,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_JSAPI
 
 #include "APITypes.h"
+#include "AutoPtr.h"
 
 namespace FB
 {
@@ -21,9 +22,19 @@ namespace FB
         JSAPI(void);
         virtual ~JSAPI(void);
 
+    // Support Reference counting
+    protected:
+        unsigned int m_refCount;
+
+    public:
+        void addRef();
+        unsigned int release();
+
+        void invalidate();
+
     protected:
         // Used to fire an event to the listeners attached to this JSAPI
-        virtual void FireEvent(std::string eventName, variant *args, int argCount);
+        virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
         // Methods for managing event sinks (BrowserHostWrapper objects)
@@ -48,11 +59,11 @@ namespace FB
         virtual bool SetProperty(int idx, variant &value);
 
         // Methods to manage methods on the API
-        virtual bool Invoke(std::string methodName, variant *args, int argCount, variant &retVal);
+        virtual bool Invoke(std::string methodName, std::vector<variant>&, variant &retVal);
 
     public:
         // Example function call and read-only property; override these if desired in derived classes
-        virtual bool callToString(variant *args, int argCount, variant &retVal);
+        virtual bool callToString(std::vector<variant>&, variant &retVal);
         virtual bool getValid(variant &retVal);
 
     protected:
@@ -60,7 +71,9 @@ namespace FB
         PropertyMap m_propertyMap;
         EventMap m_eventMap;
         EventSinkMap m_sinkMap;
+        
+        bool m_valid;
     };
 
-}
+};
 #endif
