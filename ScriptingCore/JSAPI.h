@@ -87,9 +87,9 @@ namespace FB
 
         // Methods to manage properties on the API
         virtual variant GetProperty(std::string propertyName);
-        virtual void SetProperty(std::string propertyName, variant &value);
+        virtual void SetProperty(std::string propertyName, const variant value);
         virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, variant &value);
+        virtual void SetProperty(int idx, const variant value);
 
         // Methods to manage methods on the API
         virtual variant Invoke(std::string methodName, std::vector<variant>& args);

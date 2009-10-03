@@ -156,7 +156,7 @@ variant JSAPI::GetProperty(std::string propertyName)
     }
 }
 
-void JSAPI::SetProperty(std::string propertyName, variant &value)
+void JSAPI::SetProperty(std::string propertyName, variant value)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -189,7 +189,7 @@ variant JSAPI::GetProperty(int idx)
     throw invalid_member("Array index: " + variant(idx).convert_cast<std::string>());
 }
 
-void JSAPI::SetProperty(int idx, variant &value)
+void JSAPI::SetProperty(int idx, variant value)
 {
     if (!m_valid)
         throw object_invalidated();

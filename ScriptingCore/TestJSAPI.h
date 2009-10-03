@@ -22,6 +22,10 @@ public:
     {
         registerMethod("setValue", (FB::CallMethodPtr)&TestObjectJSAPI::callSetValue);
         registerMethod("getValue", (FB::CallMethodPtr)&TestObjectJSAPI::callGetValue);
+        registerMethod("invalidate", (FB::CallMethodPtr)&TestObjectJSAPI::callInvalidate);
+
+        registerProperty("value", (FB::GetPropPtr)&TestObjectJSAPI::getValue, 
+                                  (FB::SetPropPtr)&TestObjectJSAPI::setValue);
     }
 
     virtual ~TestObjectJSAPI()
@@ -67,9 +71,20 @@ public:
         throw invalid_arguments();
     }
 
-    bool callInvalidate(std::vector<FB::variant>& args, FB::variant &retVal)
+    FB::variant callInvalidate(std::vector<FB::variant>& args)
     {
         invalidate();
+        return variant();
+    }
+
+    FB::variant getValue()
+    {
+        return propValue;
+    }
+
+    void setValue(const FB::variant value)
+    {
+        propValue = value;
     }
 
     int getRefCount()
@@ -79,6 +94,7 @@ public:
 
 protected:
     FB::variant m_accessList[TESTOBJECTJSAPI_ACCESSLISTLENGTH];
+    FB::variant propValue;
 };
 
 #endif

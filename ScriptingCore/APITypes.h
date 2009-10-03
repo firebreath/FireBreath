@@ -34,7 +34,7 @@ namespace FB
     typedef std::map<std::string, MethodInfo> MethodMap;
 
     typedef variant (JSAPI::*GetPropPtr)();
-    typedef void (JSAPI::*SetPropPtr)(const variant &value);
+    typedef void (JSAPI::*SetPropPtr)(const variant value);
     struct PropertyInfo {
         PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }
