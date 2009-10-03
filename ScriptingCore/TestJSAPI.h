@@ -29,10 +29,10 @@ public:
     }
 
 public:
-    bool callSetValue(std::vector<FB::variant>& args, FB::variant &retVal)
+    FB::variant callSetValue(std::vector<FB::variant>& args)
     {
         if (args.size() != 2)
-            return false;
+            throw invalid_arguments();
 
         try {
             if (args[0].convert_cast<int>() >= 0
@@ -40,6 +40,7 @@ public:
             {
                 int i = args[0].convert_cast<int>();
                 m_accessList[i] = args[1];
+                std::string tmp = args[1].convert_cast<std::string>();
             }
             return true;
         } catch (...) {
@@ -47,22 +48,23 @@ public:
         }
     }
 
-    bool callGetValue(std::vector<FB::variant>& args, FB::variant &retVal)
+    FB::variant callGetValue(std::vector<FB::variant>& args)
     {
         if (args.size() != 1)
-            return false;
+            throw invalid_arguments();
 
         try {
             if (args[0].convert_cast<int>() >= 0
                 || args[0].convert_cast<int>() < TESTOBJECTJSAPI_ACCESSLISTLENGTH)
             {
                 int i = args[0].convert_cast<int>();
-                retVal = m_accessList[i];
+                return m_accessList[i];
             }
-            return true;
         } catch (...) {
-            return false;
+            throw script_error("Could not convert parameter");
         }
+
+        throw invalid_arguments();
     }
 
     bool callInvalidate(std::vector<FB::variant>& args, FB::variant &retVal)

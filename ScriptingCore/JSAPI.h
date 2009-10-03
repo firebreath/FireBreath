@@ -13,9 +13,42 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "AutoPtr.h"
+#include <stdexcept>
 
 namespace FB
 {
+    struct script_error : std::exception
+    {
+        script_error(std::string error)
+            : m_error(error)
+        { }
+        virtual const char* what() { 
+            return m_error.c_str(); 
+        }
+        std::string m_error;
+    };
+
+    struct invalid_arguments : script_error
+    {
+        invalid_arguments()
+            : script_error("Invalid Arguments")
+        { }
+    };
+
+    struct object_invalidated : script_error
+    {
+        object_invalidated()
+            : script_error("This object is no longer valid")
+        { }
+    };
+    
+    struct invalid_member : script_error
+    {
+        invalid_member(std::string memberName)
+            : script_error("The specified member does not exist: " + memberName)
+        { }
+    };
+
     class JSAPI
     {
     public:
@@ -53,18 +86,18 @@ namespace FB
         virtual bool HasEvent(std::string eventName);
 
         // Methods to manage properties on the API
-        virtual bool GetProperty(std::string propertyName, variant &retVal);
-        virtual bool SetProperty(std::string propertyName, variant &value);
-        virtual bool GetProperty(int idx, variant &retVal);
-        virtual bool SetProperty(int idx, variant &value);
+        virtual variant GetProperty(std::string propertyName);
+        virtual void SetProperty(std::string propertyName, variant &value);
+        virtual variant GetProperty(int idx);
+        virtual void SetProperty(int idx, variant &value);
 
         // Methods to manage methods on the API
-        virtual bool Invoke(std::string methodName, std::vector<variant>&, variant &retVal);
+        virtual variant Invoke(std::string methodName, std::vector<variant>& args);
 
     public:
         // Example function call and read-only property; override these if desired in derived classes
-        virtual bool callToString(std::vector<variant>&, variant &retVal);
-        virtual bool getValid(variant &retVal);
+        virtual variant callToString(std::vector<variant>&args);
+        virtual variant getValid();
 
     protected:
         MethodMap m_methodMap;

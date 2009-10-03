@@ -164,9 +164,9 @@ namespace cdiggins
         object = NULL;
     }
 
+    // Utilize the assignment operator
     any(const any& x) {
-        table = any_detail::get_table<any_detail::empty>::get();
-        assign(x);
+        *this = x;
     }
     
     ~any() {
@@ -228,6 +228,11 @@ namespace cdiggins
       template<typename T>
       any& operator=(T const& x) {
           return assign(x);
+      }
+
+      any& operator=(any const& rh) {
+        table = any_detail::get_table<any_detail::empty>::get();
+        return assign(rh);
       }
 
     // utility functions

@@ -19,10 +19,12 @@ TEST(JSAPI_Methods)
 
     FB::AutoPtr<TestObjectJSAPI> test1 = new TestObjectJSAPI();
 
-    test1->Invoke("setValue", vector_list<FB::variant>(0, "This is a test"), FB::variant());
+    test1->Invoke("setValue", vector_list<FB::variant>(0, "This is a test"));
 
-    FB::variant retVal;
-    test1->Invoke("getValue", vector_list<FB::variant>(0), retVal);
-
-    CHECK(retVal.convert_cast<std::string>() == "This is a test");
+    try {
+        FB::variant retVal = test1->Invoke("getValue", vector_list<FB::variant>(0));
+        CHECK(retVal.convert_cast<std::string>() == "This is a test");
+    } catch (...) {
+        CHECK(false);
+    }
 }

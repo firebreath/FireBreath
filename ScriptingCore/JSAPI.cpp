@@ -74,16 +74,14 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
 }
 
 // Example function call and read-only property; override these if desired in derived classes
-bool JSAPI::callToString(std::vector<FB::variant>& args, variant &retVal)
+variant JSAPI::callToString(std::vector<FB::variant>& args)
 {
-    retVal = "JSAPI Javascript Object";
-    return true;
+    return "JSAPI Javascript Object";
 }
 
-bool JSAPI::getValid(variant &retVal)
+variant JSAPI::getValid()
 {
-    retVal = m_valid;
-    return true;
+    return m_valid;
 }
 
 // Methods for registering properties and functions to the auto-table
@@ -145,75 +143,73 @@ bool JSAPI::HasEvent(std::string eventName)
 
 
 // Methods to manage properties on the API
-bool JSAPI::GetProperty(std::string propertyName, variant &retVal)
+variant JSAPI::GetProperty(std::string propertyName)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end() && fnd->second.getFunc != NULL) {
-        return (this->*fnd->second.getFunc)(retVal);
+        return (this->*fnd->second.getFunc)();
     } else {
-        return false;
+        throw invalid_member(propertyName);
     }
 }
 
-bool JSAPI::SetProperty(std::string propertyName, variant &value)
+void JSAPI::SetProperty(std::string propertyName, variant &value)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
     if (fnd->second.setFunc != NULL) {
-        return (this->*fnd->second.setFunc)(value);
+        (this->*fnd->second.setFunc)(value);
     } else {
-        return false;
+        throw invalid_member(propertyName);
     }
-    return false;
 }
 
 bool JSAPI::HasPropertyIndex(int idx)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     // By default do not support indexing
     // To use array style access, override this method in your API object
     return false;
 }
 
-bool JSAPI::GetProperty(int idx, variant &retVal)
+variant JSAPI::GetProperty(int idx)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     // By default do not support indexing
     // To use array style access, override this method in your API object
-    return false;
+    throw invalid_member("Array index: " + variant(idx).convert_cast<std::string>());
 }
 
-bool JSAPI::SetProperty(int idx, variant &value)
+void JSAPI::SetProperty(int idx, variant &value)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     // By default do not support indexing
     // To use array style access, override this method in your API object
-    return false;
+    throw invalid_member("Array index: " + variant(idx).convert_cast<std::string>());
 }
 
 
 // Methods to manage methods on the API
-bool JSAPI::Invoke(std::string methodName, std::vector<FB::variant>& args, variant &retVal)
+variant JSAPI::Invoke(std::string methodName, std::vector<FB::variant>& args)
 {
     if (!m_valid)
-        return false;
+        throw object_invalidated();
 
     MethodMap::iterator fnd = m_methodMap.find(methodName);
     if (fnd != m_methodMap.end() && fnd->second.callFunc != NULL) {
-        return (this->*fnd->second.callFunc)(args, retVal);
+        return (this->*fnd->second.callFunc)(args);
     } else {
-        return false;
+        throw invalid_member(methodName);
     }    
-    return false;
 }
