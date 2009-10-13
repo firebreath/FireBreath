@@ -22,7 +22,8 @@ namespace FB
         virtual ~BrowserHostWrapper() { }
 
     public:
-        virtual bool FireEvent(std::string name, variant &target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(variant &target, std::vector<FB::variant>& args) = 0;
+		virtual bool FireMethod(std::string name, variant &target, std::vector<FB::variant>& args) = 0;
     };
 }
 

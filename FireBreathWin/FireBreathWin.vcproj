@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="FireBreathWin"
 	ProjectGUID="{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}"
 	RootNamespace="FireBreathWin"
