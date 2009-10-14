@@ -68,7 +68,7 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
     for (EventMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
         for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
             if (eventIt->second.context == sinkIt->first)
-                sinkIt->second->FireEvent(eventName, eventIt->second.func, args);
+                sinkIt->second->FireMethod(eventName, eventIt->second.func, args);
         }
     }
 }

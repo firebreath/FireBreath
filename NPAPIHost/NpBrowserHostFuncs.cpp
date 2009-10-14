@@ -112,3 +112,14 @@ bool NP_LOADDS NpapiHost_PopPopupsEnabledState(NPP npp)
 void NP_LOADDS NpapiHost_PluginThreadAsyncCall(NPP instance, void (*func)(void *), void *userData)
 {
 }
+
+/* NPN_Evaluate */
+bool NP_LOADDS NpapiHost_Evaluate(NPP npp, NPObject *obj, NPString *script, NPVariant *result)
+{
+}
+
+/* NPN_SetException */
+void NP_LOADDS NpapiHost_SetException(NPObject *obj, const NPUTF8 *message)
+{
+	
+}
