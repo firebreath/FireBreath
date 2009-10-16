@@ -25,3 +25,5 @@ Release/*
 *.scc
 .bzr
 .bzr/*
+.git
+.git/*
