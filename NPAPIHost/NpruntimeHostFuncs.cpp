@@ -1,9 +1,20 @@
+/**********************************************************\ 
+Original Author: Richard Bateman (taxilian)
+
+Created:    Oct 15, 2009
+License:    Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+
+Copyright 2009 Richard Bateman, Firebreath development team
+\**********************************************************/
 
 #include "npupp.h"
-#include "npruntime.h"
+#include "NpapiHost.h"
+
+using namespace FB::Npapi;
 
 /* NPN_Invoke */
-bool NP_LOADDS NpapiHost_Invoke(NPP npp, NPObject* obj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool NP_LOADDS NpapiHost::NH_Invoke(NPP npp, NPObject* obj, NPIdentifier methodName, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
 	if (obj->_class->invoke) {
 		return obj->_class->invoke(obj, methodName, args, argCount, result);
@@ -13,7 +24,7 @@ bool NP_LOADDS NpapiHost_Invoke(NPP npp, NPObject* obj, NPIdentifier methodName,
 }
 
 /* NPN_InvokeDefault */
-bool NP_LOADDS NpapiHost_InvokeDefault(NPP npp, NPObject* obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool NP_LOADDS NpapiHost::NH_InvokeDefault(NPP npp, NPObject* obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
 	if (obj->_class->invokeDefault) {
 		return obj->_class->invokeDefault(obj, args, argCount, result);
@@ -23,7 +34,7 @@ bool NP_LOADDS NpapiHost_InvokeDefault(NPP npp, NPObject* obj, const NPVariant *
 }
 
 /* NPN_GetProperty */
-bool NP_LOADDS NpapiHost_GetProperty(NPP npp, NPObject *obj, NPIdentifier propertyName, NPVariant *result)
+bool NP_LOADDS NpapiHost::NH_GetProperty(NPP npp, NPObject *obj, NPIdentifier propertyName, NPVariant *result)
 {
 	if (obj->_class->getProperty) {
 		return obj->_class->getProperty(obj, propertyName, result);
@@ -33,7 +44,7 @@ bool NP_LOADDS NpapiHost_GetProperty(NPP npp, NPObject *obj, NPIdentifier proper
 }
 
 /* NPN_SetProperty */
-bool NP_LOADDS NpapiHost_SetProperty(NPP npp, NPObject *obj, NPIdentifier propertyName, const NPVariant *value)
+bool NP_LOADDS NpapiHost::NH_SetProperty(NPP npp, NPObject *obj, NPIdentifier propertyName, const NPVariant *value)
 {
 	if (obj->_class->setProperty) {
 		return obj->_class->setProperty(obj, propertyName, value);
@@ -43,7 +54,7 @@ bool NP_LOADDS NpapiHost_SetProperty(NPP npp, NPObject *obj, NPIdentifier proper
 }
 
 /* NPN_RemoveProperty */
-bool NP_LOADDS NpapiHost_RemoveProperty(NPP npp, NPObject *obj, NPIdentifier propertyName)
+bool NP_LOADDS NpapiHost::NH_RemoveProperty(NPP npp, NPObject *obj, NPIdentifier propertyName)
 {
 	if (obj->_class->removeProperty) {
 		return obj->_class->removeProperty(obj, propertyName);
@@ -53,7 +64,7 @@ bool NP_LOADDS NpapiHost_RemoveProperty(NPP npp, NPObject *obj, NPIdentifier pro
 }
 
 /* NPN_HasProperty */
-bool NP_LOADDS NpapiHost_HasProperty(NPP npp, NPObject *obj, NPIdentifier propertyName)
+bool NP_LOADDS NpapiHost::NH_HasProperty(NPP npp, NPObject *obj, NPIdentifier propertyName)
 {
 	if (obj->_class->hasProperty) {
 		return obj->_class->hasProperty(obj, propertyName);
@@ -63,7 +74,7 @@ bool NP_LOADDS NpapiHost_HasProperty(NPP npp, NPObject *obj, NPIdentifier proper
 }
 
 /* NPN_HasMethod */
-bool NP_LOADDS NpapiHost_HasMethod(NPP npp, NPObject *obj, NPIdentifier propertyName)
+bool NP_LOADDS NpapiHost::NH_HasMethod(NPP npp, NPObject *obj, NPIdentifier propertyName)
 {
 	if (obj->_class->hasMethod) {
 		return obj->_class->hasMethod(obj, propertyName);
@@ -73,7 +84,7 @@ bool NP_LOADDS NpapiHost_HasMethod(NPP npp, NPObject *obj, NPIdentifier property
 }
 
 /* NPN_Enumerate */
-bool NP_LOADDS NpapiHost_Enumerate(NPP npp, NPObject *obj, NPIdentifier **identifier, uint32_t *count)
+bool NP_LOADDS NpapiHost::NH_Enumerate(NPP npp, NPObject *obj, NPIdentifier **identifier, uint32_t *count)
 {
 	if (obj->_class->enumerate) {
 		return obj->_class->enumerate(obj, identifier, count);
@@ -83,7 +94,7 @@ bool NP_LOADDS NpapiHost_Enumerate(NPP npp, NPObject *obj, NPIdentifier **identi
 }
 
 /* NPN_Construct */
-bool NP_LOADDS NpapiHost_Construct(NPP npp, NPObject* obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
+bool NP_LOADDS NpapiHost::NH_Construct(NPP npp, NPObject* obj, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
 	if (obj->_class->construct) {
 		return obj->_class->construct(obj, args, argCount, result);

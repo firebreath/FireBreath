@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="NPAPIHost"
-	ProjectGUID="{20B7643F-01C4-43A1-971C-0879F41FE69C}"
-	RootNamespace="NPAPIHost"
+	Name="NpapiPlugin"
+	ProjectGUID="{CC7DAD52-9FB4-46B0-80B8-BA17C0BCC802}"
+	RootNamespace="NpapiPlugin"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;"
+				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -150,19 +150,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\NpapiHost.cpp"
+				RelativePath=".\NpapiBrowserHost.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\NpBrowserHostFuncs.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NpResourceHostFuncs.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\NpruntimeHostFuncs.cpp"
+				RelativePath=".\NpapiPluginModule.cpp"
 				>
 			</File>
 		</Filter>
@@ -172,14 +164,24 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\NpapiHost.h"
+				RelativePath=".\NpapiBrowserHost.h"
 				>
 			</File>
 			<File
-				RelativePath=".\NpapiTypes.h"
+				RelativePath=".\NpapiPluginModule.h"
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
+		</Filter>
+		<File
+			RelativePath=".\ReadMe.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

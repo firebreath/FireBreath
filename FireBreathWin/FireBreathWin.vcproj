@@ -53,6 +53,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_MERGE_PROXYSTUB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -374,6 +375,14 @@
 					</File>
 				</Filter>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="Npapi"
+			>
+			<File
+				RelativePath=".\np_winmain.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\FBControl.htm"
