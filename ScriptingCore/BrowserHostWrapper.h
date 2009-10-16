@@ -18,12 +18,25 @@ namespace FB
     class BrowserHostWrapper
     {
     public:
-        BrowserHostWrapper() { }
+        BrowserHostWrapper() : refCount(0) { }
         virtual ~BrowserHostWrapper() { }
 
     public:
-        virtual bool FireMethod(variant &target, std::vector<FB::variant>& args) = 0;
-		virtual bool FireMethod(std::string name, variant &target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(FB::variant &target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(std::string name, FB::variant &target, std::vector<FB::variant>& args) = 0;
+
+    protected:
+        unsigned int refCount;
+    public:
+        void AddRef() { refCount++; }
+        unsigned int Release()
+        {
+            if (--refCount == 0) {
+                delete this;
+                return 0;
+            }
+            return refCount;
+        }
     };
 }
 

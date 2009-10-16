@@ -9,13 +9,24 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <memory.h>
+#include "NpapiTypes.h"
+#include "APITypes.h"
+#include "NpapiPluginModule.h"
+#include "NPObjectAPI.h"
 
 #include "NpapiBrowserHost.h"
 
 using namespace FB::Npapi;
 
-NpapiBrowserHost::NpapiBrowserHost(void)
+struct MethodCallReq
 {
+    //FB::variant
+};
+
+NpapiBrowserHost::NpapiBrowserHost(NpapiPluginModule *module, NPP npp)
+    : module(module), m_npp(m_npp)
+{
+    assert(module != NULL);
     // Initialize NPNFuncs to NULL values
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
@@ -24,94 +35,128 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 {
 }
 
+bool NpapiBrowserHost::FireMethod(FB::variant &target, std::vector<FB::variant>& args)
+{
+    return false;
+}
+
+bool NpapiBrowserHost::FireMethod(std::string name, FB::variant &target, std::vector<FB::variant>& args)
+{
+    return false;
+}
+
+FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
+{
+    FB::variant retVal;
+    switch(npVar->type) {
+        case NPVariantType_Null:
+            retVal = NpapiNull();
+            break;
+
+        case NPVariantType_Bool:
+            retVal = npVar->value.boolValue;
+            break;
+
+        case NPVariantType_Int32:
+            retVal = npVar->value.intValue;
+            break;
+
+        case NPVariantType_Double:
+            retVal = npVar->value.doubleValue;
+            break;
+
+        case NPVariantType_String:
+            retVal = std::string(npVar->value.stringValue.utf8characters, npVar->value.stringValue.utf8length);
+            break;
+
+        case NPVariantType_Object:
+            retVal = AutoPtr<NPObjectAPI>(new NPObjectAPI(npVar->value.objectValue, this));
+            break;
+
+        case NPVariantType_Void:
+        default:
+            // Do nothing; it's already void =]
+            break;
+    }
+
+    return retVal;
+}
+
+void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
+{
+    if (var.get_type() == typeid(FB::Npapi::NpapiNull)) {
+        dst->type = NPVariantType_Null;
+
+    } else if (var.get_type() == typeid(int)
+        || var.get_type() == typeid(long)
+        || var.get_type() == typeid(short)
+        || var.get_type() == typeid(char)
+        || var.get_type() == typeid(unsigned int)
+        || var.get_type() == typeid(unsigned short)
+        || var.get_type() == typeid(unsigned char)) {
+        // Integer type
+        dst->type = NPVariantType_Int32;
+        dst->value.intValue = var.convert_cast<long>();
+
+    } else if (var.get_type() == typeid(double)
+        || var.get_type() == typeid(float)) {
+        dst->type = NPVariantType_Double;
+        dst->value.doubleValue = var.convert_cast<double>();
+
+    } else if (var.get_type() == typeid(bool)) {
+        dst->type = NPVariantType_Bool;
+        dst->value.boolValue = var.convert_cast<bool>();
+
+    } else if (var.get_type() == typeid(std::string)) {
+        std::string str = var.convert_cast<std::string>();
+        char *outStr = (char*)this->MemAlloc(str.size() + 1);
+        memcpy(outStr, str.c_str(), str.size() + 1);
+        dst->type = NPVariantType_String;
+        dst->value.stringValue.utf8characters = outStr;
+        dst->value.stringValue.utf8length = str.size();
+
+    }
+    // TODO: implement object types
+}
+
 void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 {
-    NPNFuncs.size = pFuncs->size;
-    NPNFuncs.version = pFuncs->version;
-    NPNFuncs.geturl = pFuncs->geturl;
-    NPNFuncs.posturl = pFuncs->posturl;
-    NPNFuncs.requestread = pFuncs->requestread;
-    NPNFuncs.newstream = pFuncs->newstream;
-    NPNFuncs.write = pFuncs->write;
-    NPNFuncs.destroystream = pFuncs->destroystream;
-    NPNFuncs.status = pFuncs->status;
-    NPNFuncs.uagent = pFuncs->uagent;
-    NPNFuncs.memalloc = pFuncs->memalloc;
-    NPNFuncs.memfree = pFuncs->memfree;
-    NPNFuncs.memflush = pFuncs->memflush;
-    NPNFuncs.reloadplugins = pFuncs->reloadplugins;
-    NPNFuncs.geturlnotify = pFuncs->geturlnotify;
-    NPNFuncs.posturlnotify = pFuncs->posturlnotify;
-    NPNFuncs.getvalue = pFuncs->getvalue;
-    NPNFuncs.setvalue = pFuncs->setvalue;
-    NPNFuncs.invalidaterect = pFuncs->invalidaterect;
-    NPNFuncs.invalidateregion = pFuncs->invalidateregion;
-    NPNFuncs.forceredraw = pFuncs->forceredraw;
-    NPNFuncs.getstringidentifier = pFuncs->getstringidentifier;
-    NPNFuncs.getstringidentifiers = pFuncs->getstringidentifiers;
-    NPNFuncs.getintidentifier = pFuncs->getintidentifier;
-    NPNFuncs.identifierisstring = pFuncs->identifierisstring;
-    NPNFuncs.utf8fromidentifier = pFuncs->utf8fromidentifier;
-    NPNFuncs.intfromidentifier = pFuncs->intfromidentifier;
-    NPNFuncs.createobject = pFuncs->createobject;
-    NPNFuncs.retainobject = pFuncs->retainobject;
-    NPNFuncs.releaseobject = pFuncs->releaseobject;
-    NPNFuncs.invoke = pFuncs->invoke;
-    NPNFuncs.invokeDefault = pFuncs->invokeDefault;
-    NPNFuncs.evaluate = pFuncs->evaluate;
-    NPNFuncs.getproperty = pFuncs->getproperty;
-    NPNFuncs.setproperty = pFuncs->setproperty;
-    NPNFuncs.removeproperty = pFuncs->removeproperty;
-    NPNFuncs.hasproperty = pFuncs->hasproperty;
-    NPNFuncs.hasmethod = pFuncs->hasmethod;
-    NPNFuncs.releasevariantvalue = pFuncs->releasevariantvalue;
-    NPNFuncs.setexception = pFuncs->setexception;
-    NPNFuncs.pushpopupsenabledstate = pFuncs->pushpopupsenabledstate;
-    NPNFuncs.poppopupsenabledstate = pFuncs->poppopupsenabledstate;
-    NPNFuncs.enumerate = pFuncs->enumerate;
-    NPNFuncs.pluginthreadasynccall = pFuncs->pluginthreadasynccall;
-    NPNFuncs.construct = pFuncs->construct;
+    copyNPBrowserFuncs(&NPNFuncs, pFuncs);
 }
 
-/* npapi.h definitions */
-void NpapiBrowserHost::Version(int* plugin_major, int* plugin_minor, int* netscape_major, int* netscape_minor)
-{
-    //Looks like some deriving from NPNetscapeFuncs.version is needed.
-}
-
-NPError NpapiBrowserHost::GetURLNotify(NPP instance, const char* url, const char* target, void* notifyData)
+NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData)
 {
     if (NPNFuncs.geturlnotify != NULL) {
-        return NPNFuncs.geturlnotify(instance, url, target, notifyData);
+        return NPNFuncs.geturlnotify(m_npp, url, target, notifyData);
     } else {
         return NPERR_GENERIC_ERROR;
     }
 }
 
-NPError NpapiBrowserHost::GetURL(NPP instance, const char* url, const char* target)
+NPError NpapiBrowserHost::GetURL(const char* url, const char* target)
 {
     if (NPNFuncs.geturl != NULL) {
-        return NPNFuncs.geturl(instance, url, target);
+        return NPNFuncs.geturl(m_npp, url, target);
     } else {
         return NPERR_GENERIC_ERROR;
     }
 }
 
-NPError NpapiBrowserHost::PostURLNotify(NPP instance, const char* url, const char* target, uint32 len,
+NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uint32 len,
                                         const char* buf, NPBool file, void* notifyData)
 {
     if (NPNFuncs.posturlnotify != NULL) {
-        return NPNFuncs.posturlnotify(instance, url, target, len, buf, file, notifyData);
+        return NPNFuncs.posturlnotify(m_npp, url, target, len, buf, file, notifyData);
     } else {
         return NPERR_GENERIC_ERROR;
     }
 }
 
-NPError NpapiBrowserHost::PostURL(NPP instance, const char* url, const char* target, uint32 len,
+NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32 len,
                                   const char* buf, NPBool file)
 {
     if (NPNFuncs.posturl != NULL) {
-        return NPNFuncs.posturl(instance, url, target, len, buf, file);
+        return NPNFuncs.posturl(m_npp, url, target, len, buf, file);
     } else {
         return NPERR_GENERIC_ERROR;
     }
@@ -126,318 +171,263 @@ NPError NpapiBrowserHost::RequestRead(NPStream* stream, NPByteRange* rangeList)
     }
 }
 
-NPError NpapiBrowserHost::NewStream(NPP instance, NPMIMEType type, const char* target, NPStream** stream)
+NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStream** stream)
 {
     if (NPNFuncs.newstream != NULL) {
-        return NPNFuncs.newstream(instance, type, target, stream);
+        return NPNFuncs.newstream(m_npp, type, target, stream);
     } else {
         return NPERR_GENERIC_ERROR;
     }
 }
 
-int32 NpapiBrowserHost::Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+int32 NpapiBrowserHost::Write(NPStream* stream, int32 len, void* buffer)
 {
     if (NPNFuncs.write != NULL) {
-        return NPNFuncs.write(instance, stream, len, buffer);
+        return NPNFuncs.write(m_npp, stream, len, buffer);
     } else {
         return 0;
     }
 }
 
-NPError NpapiBrowserHost::DestroyStream(NPP instance, NPStream* stream, NPReason reason)
+NPError NpapiBrowserHost::DestroyStream(NPStream* stream, NPReason reason)
 {
     if (NPNFuncs.destroystream != NULL) {
-        return NPNFuncs.destroystream(instance, stream, reason);
+        return NPNFuncs.destroystream(m_npp, stream, reason);
     } else {
         return NPERR_GENERIC_ERROR;
-    }
-}
-
-void NpapiBrowserHost::Status(NPP instance, const char* message)
-{
-    if (NPNFuncs.status != NULL) {
-        NPNFuncs.status(instance, message);
-    }
-}
-
-const char* NpapiBrowserHost::UserAgent(NPP instance)
-{
-    if (NPNFuncs.uagent != NULL) {
-        return NPNFuncs.uagent(instance);
-    } else {
-        return NULL;
     }
 }
 
 void* NpapiBrowserHost::MemAlloc(uint32 size)
 {
-    if (NPNFuncs.memalloc != NULL) {
-        return NPNFuncs.memalloc(size);
-    } else {
-        return NULL;
-    }
+    return module->MemAlloc(size);
 }
-
 void NpapiBrowserHost::MemFree(void* ptr)
 {
-    if (NPNFuncs.memfree != NULL) {
-        NPNFuncs.memfree(ptr);
-    }
+    module->MemFree(ptr);
 }
-
 uint32 NpapiBrowserHost::MemFlush(uint32 size)
 {
-    if (NPNFuncs.memflush != NULL) {
-        return NPNFuncs.memflush(size);
-    } else {
-        return 0;
-    }
-}
-
-void NpapiBrowserHost::ReloadPlugins(NPBool reloadPages)
-{
-    if (NPNFuncs.reloadplugins != NULL) {
-        NPNFuncs.reloadplugins(reloadPages);
-    }
-}
-
-NPError NpapiBrowserHost::GetValue(NPP instance, NPNVariable variable, void *value)
-{
-    if (NPNFuncs.getvalue != NULL) {
-        return NPNFuncs.getvalue(instance, variable, value);
-    } else {
-        return NPERR_GENERIC_ERROR;
-    }
-}
-
-NPError NpapiBrowserHost::SetValue(NPP instance, NPPVariable variable, void *value)
-{
-    if (NPNFuncs.setvalue != NULL) {
-        return NPNFuncs.setvalue(instance, variable, value);
-    } else {
-        return NPERR_GENERIC_ERROR;
-    }
-}
-
-void NpapiBrowserHost::InvalidateRect(NPP instance, NPRect *invalidRect)
-{
-    if (NPNFuncs.invalidaterect != NULL) {
-        NPNFuncs.invalidaterect(instance, invalidRect);
-    }
-}
-
-void NpapiBrowserHost::InvalidateRegion(NPP instance, NPRegion invalidRegion)
-{
-    if (NPNFuncs.invalidateregion != NULL) {
-        NPNFuncs.invalidateregion(instance, invalidRegion);
-    }
-}
-
-void NpapiBrowserHost::ForceRedraw(NPP instance)
-{
-    if (NPNFuncs.forceredraw != NULL) {
-        NPNFuncs.forceredraw(instance);
-    }
-}
-
-void NpapiBrowserHost::PushPopupsEnabledState(NPP instance, NPBool enabled)
-{
-    if (NPNFuncs.pushpopupsenabledstate != NULL) {
-        NPNFuncs.pushpopupsenabledstate(instance, enabled);
-    }
-}
-
-void NpapiBrowserHost::PopPopupsEnabledState(NPP instance)
-{
-    if (NPNFuncs.poppopupsenabledstate != NULL) {
-        NPNFuncs.poppopupsenabledstate(instance);
-    }
-}
-
-void NpapiBrowserHost::PluginThreadAsyncCall(NPP instance, void (*func) (void *), void *userData)
-{
-    if (NPNFuncs.pluginthreadasynccall != NULL) {
-        NPNFuncs.pluginthreadasynccall(instance, func, userData);
-    }
-}
-
-/* npruntime.h definitions */
-void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant)
-{
-    if (NPNFuncs.releasevariantvalue != NULL) {
-        NPNFuncs.releasevariantvalue(variant);
-    }
-}
-
-NPIdentifier NpapiBrowserHost::GetStringIdentifier(const NPUTF8 *name)
-{
-    if (NPNFuncs.getstringidentifier != NULL) {
-        return NPNFuncs.getstringidentifier(name);
-    } else {
-        return NULL;
-    }
-}
-
-void NpapiBrowserHost::GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
-{
-    if (NPNFuncs.getstringidentifiers != NULL) {
-        NPNFuncs.getstringidentifiers(names, nameCount, identifiers);
-    }
-}
-
-NPIdentifier NpapiBrowserHost::GetIntIdentifier(int32_t intid)
-{
-    if (NPNFuncs.getintidentifier != NULL) {
-        return NPNFuncs.getintidentifier(intid);
-    } else {
-        return NULL;
-    }
-}
-
-bool NpapiBrowserHost::IdentifierIsString(NPIdentifier identifier)
-{
-    if (NPNFuncs.identifierisstring != NULL) {
-        return NPNFuncs.identifierisstring(identifier);
-    } else {
-        return NPERR_GENERIC_ERROR;
-    }
-}
-
-NPUTF8 *NpapiBrowserHost::UTF8FromIdentifier(NPIdentifier identifier)
-{
-    if (NPNFuncs.utf8fromidentifier != NULL) {
-        return NPNFuncs.utf8fromidentifier(identifier);
-    } else {
-        return NULL;
-    }
-}
-
-int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier)
-{
-    if (NPNFuncs.intfromidentifier != NULL) {
-        return NPNFuncs.intfromidentifier(identifier);
-    } else {
-        return NPERR_GENERIC_ERROR;
-    }
-}
-
-NPObject *NpapiBrowserHost::CreateObject(NPP npp, NPClass *aClass)
-{
-    if (NPNFuncs.createobject != NULL) {
-        return NPNFuncs.createobject(npp, aClass);
-    } else {
-        return NULL;
-    }
+    return module->MemFlush(size);
 }
 
 NPObject *NpapiBrowserHost::RetainObject(NPObject *npobj)
 {
-    if (NPNFuncs.retainobject != NULL) {
-        return NPNFuncs.retainobject(npobj);
-    } else {
-        return npobj;
-    }
+    return module->RetainObject(npobj);
 }
-
 void NpapiBrowserHost::ReleaseObject(NPObject *npobj)
 {
-    if (NPNFuncs.releaseobject != NULL) {
-        NPNFuncs.releaseobject(npobj);
+    return module->ReleaseObject(npobj);
+}
+void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant)
+{
+    return module->ReleaseVariantValue(variant);
+}
+
+NPIdentifier NpapiBrowserHost::GetStringIdentifier(const NPUTF8 *name)
+{
+    return module->GetStringIdentifier(name);
+}
+void NpapiBrowserHost::GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
+{
+    return module->GetStringIdentifiers(names, nameCount, identifiers);
+}
+NPIdentifier NpapiBrowserHost::GetIntIdentifier(int32_t intid)
+{
+    return module->GetIntIdentifier(intid);
+}
+bool NpapiBrowserHost::IdentifierIsString(NPIdentifier identifier)
+{
+    return module->IdentifierIsString(identifier);
+}
+NPUTF8 *NpapiBrowserHost::UTF8FromIdentifier(NPIdentifier identifier)
+{
+    return module->UTF8FromIdentifier(identifier);
+}
+int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier)
+{
+    return module->IntFromIdentifier(identifier);
+}
+
+
+void NpapiBrowserHost::Status(const char* message)
+{
+    if (NPNFuncs.status != NULL) {
+        NPNFuncs.status(m_npp, message);
     }
 }
 
-bool NpapiBrowserHost::Invoke(NPP npp, NPObject *npobj, NPIdentifier methodName, const NPVariant *args, 
+const char* NpapiBrowserHost::UserAgent()
+{
+    if (NPNFuncs.uagent != NULL) {
+        return NPNFuncs.uagent(m_npp);
+    } else {
+        return NULL;
+    }
+}
+
+NPError NpapiBrowserHost::GetValue(NPNVariable variable, void *value)
+{
+    if (NPNFuncs.getvalue != NULL) {
+        return NPNFuncs.getvalue(m_npp, variable, value);
+    } else {
+        return NPERR_GENERIC_ERROR;
+    }
+}
+
+NPError NpapiBrowserHost::SetValue(NPPVariable variable, void *value)
+{
+    if (NPNFuncs.setvalue != NULL) {
+        return NPNFuncs.setvalue(m_npp, variable, value);
+    } else {
+        return NPERR_GENERIC_ERROR;
+    }
+}
+
+void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect)
+{
+    if (NPNFuncs.invalidaterect != NULL) {
+        NPNFuncs.invalidaterect(m_npp, invalidRect);
+    }
+}
+
+void NpapiBrowserHost::InvalidateRegion(NPRegion invalidRegion)
+{
+    if (NPNFuncs.invalidateregion != NULL) {
+        NPNFuncs.invalidateregion(m_npp, invalidRegion);
+    }
+}
+
+void NpapiBrowserHost::ForceRedraw()
+{
+    if (NPNFuncs.forceredraw != NULL) {
+        NPNFuncs.forceredraw(m_npp);
+    }
+}
+
+void NpapiBrowserHost::PushPopupsEnabledState(NPBool enabled)
+{
+    if (NPNFuncs.pushpopupsenabledstate != NULL) {
+        NPNFuncs.pushpopupsenabledstate(m_npp, enabled);
+    }
+}
+
+void NpapiBrowserHost::PopPopupsEnabledState()
+{
+    if (NPNFuncs.poppopupsenabledstate != NULL) {
+        NPNFuncs.poppopupsenabledstate(m_npp);
+    }
+}
+
+void NpapiBrowserHost::PluginThreadAsyncCall(void (*func) (void *), void *userData)
+{
+    if (NPNFuncs.pluginthreadasynccall != NULL) {
+        NPNFuncs.pluginthreadasynccall(m_npp, func, userData);
+    }
+}
+
+/* npruntime.h definitions */
+NPObject *NpapiBrowserHost::CreateObject(NPClass *aClass)
+{
+    if (NPNFuncs.createobject != NULL) {
+        return NPNFuncs.createobject(m_npp, aClass);
+    } else {
+        return NULL;
+    }
+}
+
+bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args, 
                               uint32_t argCount, NPVariant *result)
 {
     if (NPNFuncs.invoke != NULL) {
-        return NPNFuncs.invoke(npp, npobj, methodName, args, argCount, result);
+        return NPNFuncs.invoke(m_npp, npobj, methodName, args, argCount, result);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::InvokeDefault(NPP npp, NPObject *npobj, const NPVariant *args,
+bool NpapiBrowserHost::InvokeDefault(NPObject *npobj, const NPVariant *args,
                                      uint32_t argCount, NPVariant *result)
 {
     if (NPNFuncs.invokeDefault != NULL) {
-        return NPNFuncs.invokeDefault(npp, npobj, args, argCount, result);
+        return NPNFuncs.invokeDefault(m_npp, npobj, args, argCount, result);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::Evaluate(NPP npp, NPObject *npobj, NPString *script,
+bool NpapiBrowserHost::Evaluate(NPObject *npobj, NPString *script,
                                 NPVariant *result)
 {
     if (NPNFuncs.evaluate != NULL) {
-        return NPNFuncs.evaluate(npp, npobj, script, result);
+        return NPNFuncs.evaluate(m_npp, npobj, script, result);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::GetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName,
+bool NpapiBrowserHost::GetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    NPVariant *result)
 {
     if (NPNFuncs.getproperty != NULL) {
-        return NPNFuncs.getproperty(npp, npobj, propertyName, result);
+        return NPNFuncs.getproperty(m_npp, npobj, propertyName, result);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::SetProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName,
+bool NpapiBrowserHost::SetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    const NPVariant *value)
 {
     if (NPNFuncs.setproperty != NULL) {
-        return NPNFuncs.setproperty(npp, npobj, propertyName, value);
+        return NPNFuncs.setproperty(m_npp, npobj, propertyName, value);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::RemoveProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
+bool NpapiBrowserHost::RemoveProperty(NPObject *npobj, NPIdentifier propertyName)
 {
     if (NPNFuncs.removeproperty != NULL) {
-        return NPNFuncs.removeproperty(npp, npobj, propertyName);
+        return NPNFuncs.removeproperty(m_npp, npobj, propertyName);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::HasProperty(NPP npp, NPObject *npobj, NPIdentifier propertyName)
+bool NpapiBrowserHost::HasProperty(NPObject *npobj, NPIdentifier propertyName)
 {
     if (NPNFuncs.hasproperty != NULL) {
-        return NPNFuncs.hasproperty(npp, npobj, propertyName);
+        return NPNFuncs.hasproperty(m_npp, npobj, propertyName);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::HasMethod(NPP npp, NPObject *npobj, NPIdentifier methodName)
+bool NpapiBrowserHost::HasMethod(NPObject *npobj, NPIdentifier methodName)
 {
     if (NPNFuncs.hasmethod != NULL) {
-        return NPNFuncs.hasmethod(npp, npobj, methodName);
+        return NPNFuncs.hasmethod(m_npp, npobj, methodName);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::Enumerate(NPP npp, NPObject *npobj, NPIdentifier **identifier,
+bool NpapiBrowserHost::Enumerate(NPObject *npobj, NPIdentifier **identifier,
                                  uint32_t *count)
 {
     if (NPNFuncs.enumerate != NULL) {
-        return NPNFuncs.enumerate(npp, npobj, identifier, count);
+        return NPNFuncs.enumerate(m_npp, npobj, identifier, count);
     } else {
         return false;
     }
 }
 
-bool NpapiBrowserHost::Construct(NPP npp, NPObject *npobj, const NPVariant *args,
+bool NpapiBrowserHost::Construct(NPObject *npobj, const NPVariant *args,
                                  uint32_t argCount, NPVariant *result)
 {
     if (NPNFuncs.construct != NULL) {
-        return NPNFuncs.construct(npp, npobj, args, argCount, result);
+        return NPNFuncs.construct(m_npp, npobj, args, argCount, result);
     } else {
         return false;
     }

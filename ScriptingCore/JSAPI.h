@@ -60,8 +60,8 @@ namespace FB
         unsigned int m_refCount;
 
     public:
-        void addRef();
-        unsigned int release();
+        void AddRef();
+        unsigned int Release();
 
         void invalidate();
 
@@ -82,7 +82,7 @@ namespace FB
         // Methods to query existance of members on the API
         virtual bool HasMethod(std::string methodName);
         virtual bool HasProperty(std::string propertyName);
-        virtual bool HasPropertyIndex(int idx);
+        virtual bool HasProperty(int idx);
         virtual bool HasEvent(std::string eventName);
 
         // Methods to manage properties on the API

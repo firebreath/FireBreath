@@ -157,6 +157,14 @@
 				RelativePath=".\NpapiPluginModule.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\NpapiTypes.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NPObjectAPI.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -169,6 +177,14 @@
 			</File>
 			<File
 				RelativePath=".\NpapiPluginModule.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NpapiTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NPObjectAPI.h"
 				>
 			</File>
 		</Filter>

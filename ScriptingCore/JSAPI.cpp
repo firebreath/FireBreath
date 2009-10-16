@@ -24,12 +24,12 @@ JSAPI::~JSAPI(void)
 {
 }
 
-void JSAPI::addRef()
+void JSAPI::AddRef()
 {
     ++m_refCount;
 }
 
-unsigned int JSAPI::release()
+unsigned int JSAPI::Release()
 {
     if (--m_refCount == 0) {
         delete this;
@@ -169,7 +169,7 @@ void JSAPI::SetProperty(std::string propertyName, variant value)
     }
 }
 
-bool JSAPI::HasPropertyIndex(int idx)
+bool JSAPI::HasProperty(int idx)
 {
     if (!m_valid)
         throw object_invalidated();

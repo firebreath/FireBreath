@@ -82,9 +82,9 @@ namespace FB
     void AutoPtr<T>::Assign(T *obj)
     {
         if (obj)
-            obj->addRef();
+            obj->AddRef();
         if (object)
-            object->release();
+            object->Release();
         object = obj;
     }
 }

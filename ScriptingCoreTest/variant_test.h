@@ -59,4 +59,7 @@ TEST(VariantTest)
     variant c = b;
     variant d = c;
     CHECK(d.convert_cast<std::string>() == "This is a test");
+
+    a = NULL;
+    CHECK(a.get_type() == typeid(int));
 }

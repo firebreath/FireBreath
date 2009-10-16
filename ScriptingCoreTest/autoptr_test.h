@@ -12,12 +12,12 @@ Copyright 2009 Don Jordan, Firebreath development team
 
 class TestObject
 {
-    public:
-        int refCount;
+public:
+    int refCount;
 
-        TestObject() : refCount(0) {}
-        void addRef() { refCount++; }
-        int release()
+    TestObject() : refCount(0) {}
+    void AddRef() { refCount++; }
+    int Release()
     {
         refCount--;
         if (refCount == 0)
@@ -28,7 +28,7 @@ class TestObject
 
         return refCount;
     }
-        bool AccessMe() { return true; }
+    bool AccessMe() { return true; }
 };
 
 TEST (AutoPtrTest)

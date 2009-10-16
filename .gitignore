@@ -3,3 +3,10 @@
 *.user
 *.suo
 *.ncb
+Debug/
+Release/
+*~
+*.swp
+*_i.*
+*_p.*
+*.orig

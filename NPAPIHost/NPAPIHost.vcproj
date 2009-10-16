@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;"
+				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\NpapiPlugin"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -173,10 +173,6 @@
 			>
 			<File
 				RelativePath=".\NpapiHost.h"
-				>
-			</File>
-			<File
-				RelativePath=".\NpapiTypes.h"
 				>
 			</File>
 		</Filter>
