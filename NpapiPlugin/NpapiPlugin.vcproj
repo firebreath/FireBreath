@@ -162,6 +162,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NPJavascriptObject.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NPObjectAPI.cpp"
 				>
 			</File>
@@ -181,6 +185,10 @@
 			</File>
 			<File
 				RelativePath=".\NpapiTypes.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NPJavascriptObject.h"
 				>
 			</File>
 			<File

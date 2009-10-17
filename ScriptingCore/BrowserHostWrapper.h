@@ -22,8 +22,9 @@ namespace FB
         virtual ~BrowserHostWrapper() { }
 
     public:
-        virtual bool FireMethod(FB::variant &target, std::vector<FB::variant>& args) = 0;
-        virtual bool FireMethod(std::string name, FB::variant &target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(FB::EventHandlerObject *target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(std::string name, FB::EventHandlerObject *target, std::vector<FB::variant>& args) = 0;
+        virtual void *getContextID() = 0;
 
     protected:
         unsigned int refCount;

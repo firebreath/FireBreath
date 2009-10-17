@@ -8,16 +8,19 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_METHODINFO
-#define H_FB_METHODINFO
+#ifndef H_FB_APITYPES
+#define H_FB_APITYPES
 
 #include <string>
 #include <vector>
 #include <map>
 #include "any.h"
+#include "AutoPtr.h"
 
 namespace FB
 {
+    class EventHandlerObject;
+    class BrowserHostWrapper;
     // Variant datatype used
     typedef cdiggins::any variant;
 
@@ -45,18 +48,12 @@ namespace FB
 
     typedef std::map<std::string, PropertyInfo> PropertyMap;
 
-    struct EventInfo {
-        EventInfo() : context(NULL) { }
-        EventInfo(variant func, void *context) : func(func), context(context) { }
-        EventInfo(const EventInfo &rh) : func(rh.func), context(rh.context) { }
-        variant func;
-        void *context;
-    };
-    typedef std::pair<std::string, EventInfo> EventPair;
-    typedef std::multimap<std::string, EventInfo> EventMap;
+    typedef std::pair<std::string, FB::AutoPtr<EventHandlerObject>> EventPair;
+    typedef std::multimap<std::string, FB::AutoPtr<EventHandlerObject>> EventMultiMap;
+    typedef std::map<std::string, FB::AutoPtr<EventHandlerObject>> EventSingleMap;
 
     class BrowserHostWrapper;
-    typedef std::map<void *, BrowserHostWrapper *> EventSinkMap;
+    typedef std::map<void *, FB::AutoPtr<BrowserHostWrapper>> EventSinkMap;
 }
 
 #endif

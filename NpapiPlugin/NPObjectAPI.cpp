@@ -16,12 +16,16 @@ using namespace FB::Npapi;
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHost *h)
     : browser(h), obj(o)
 {
-    browser->RetainObject(obj);
+    if (h != NULL && o != NULL) {
+        browser->RetainObject(obj);
+    }
 }
 
 NPObjectAPI::~NPObjectAPI(void)
 {
-    browser->ReleaseObject(obj);
+    if (browser.ptr() != NULL && obj != NULL) {
+        browser->ReleaseObject(obj);
+    }
 }
 
 bool NPObjectAPI::HasMethod(std::string methodName)

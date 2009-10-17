@@ -17,6 +17,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
+    class EventHandlerObject;
+    class BrowserHostWrapper;
     struct script_error : std::exception
     {
         script_error(std::string error)
@@ -71,13 +73,17 @@ namespace FB
 
     public:
         // Methods for managing event sinks (BrowserHostWrapper objects)
-        virtual void attachEventSink(void *context, BrowserHostWrapper *sink);
-        virtual void detachEventSink(void *context);
+        virtual void attachEventSink(BrowserHostWrapper *sink);
+        virtual void detachEventSink(BrowserHostWrapper *sink);
 
         // Methods for registering properties and functions to the auto-table
         virtual void registerMethod(std::string name, CallMethodPtr func);
         virtual void registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc);
-        virtual void registerEvent(std::string name);
+
+        virtual void registerEventMethod(std::string name, EventHandlerObject *event);
+        virtual void unregisterEventMethod(std::string name, EventHandlerObject *event);
+        virtual EventHandlerObject *getDefaultEventMethod(std::string name);
+        virtual void setDefaultEventMethod(std::string name, EventHandlerObject *event);
 
         // Methods to query existance of members on the API
         virtual bool HasMethod(std::string methodName);
@@ -102,7 +108,8 @@ namespace FB
     protected:
         MethodMap m_methodMap;
         PropertyMap m_propertyMap;
-        EventMap m_eventMap;
+        EventMultiMap m_eventMap;
+        EventSingleMap m_defEventMap;
         EventSinkMap m_sinkMap;
         
         bool m_valid;

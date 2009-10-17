@@ -45,6 +45,7 @@ namespace FB { namespace Npapi {
         NPIdentifier GetIntIdentifier(int32_t intid);
         bool IdentifierIsString(NPIdentifier identifier);
         NPUTF8 *UTF8FromIdentifier(NPIdentifier identifier);
+        std::string StringFromIdentifier(NPIdentifier identifier);
         int32_t IntFromIdentifier(NPIdentifier identifier);
         NPObject *RetainObject(NPObject *npobj);
         void ReleaseObject(NPObject *npobj);

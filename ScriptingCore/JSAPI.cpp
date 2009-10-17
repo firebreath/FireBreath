@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 24, 2009
@@ -10,6 +10,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI.h"
 #include "BrowserHostWrapper.h"
+#include "EventHandlerObject.h"
 
 using namespace FB;
 
@@ -45,14 +46,14 @@ void JSAPI::invalidate()
 }
 
 // Methods for managing event sinks (BrowserHostWrapper objects)
-void JSAPI::attachEventSink(void *context, BrowserHostWrapper *sink)
+void JSAPI::attachEventSink(BrowserHostWrapper *sink)
 {
-    m_sinkMap[context] = sink;
+    m_sinkMap[sink->getContextID()] = sink;
 }
 
-void JSAPI::detachEventSink(void *context)
+void JSAPI::detachEventSink(BrowserHostWrapper *sink)
 {
-    EventSinkMap::iterator fnd = m_sinkMap.find(context);
+    EventSinkMap::iterator fnd = m_sinkMap.find(sink->getContextID());
     if (fnd != m_sinkMap.end()) {
         m_sinkMap.erase(fnd);
     }
@@ -63,12 +64,20 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
-    std::pair<EventMap::iterator, EventMap::iterator> range = m_eventMap.equal_range(eventName);
+    std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(eventName);
 
-    for (EventMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
+    for (EventMultiMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
         for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
-            if (eventIt->second.context == sinkIt->first)
-                sinkIt->second->FireMethod(eventName, eventIt->second.func, args);
+            if (eventIt->second->getEventContext() == sinkIt->first)
+                if (sinkIt->second->FireMethod(eventName, eventIt->second, args))
+                    break;
+        }
+    }
+    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
+    if (fnd != m_defEventMap.end() && fnd->second->getEventId() != NULL) {
+        for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
+            if (sinkIt->second->FireMethod(eventName, fnd->second, args))
+                break;
         }
     }
 }
@@ -96,12 +105,40 @@ void JSAPI::registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr se
     m_propertyMap[name].setFunc = setFunc;
 }
 
-void JSAPI::registerEvent(std::string name)
+void JSAPI::registerEventMethod(std::string name, EventHandlerObject *event)
 {
-    // Add a blank entry to indicate that the event exists on this interface
-    m_eventMap.insert(EventPair(name, EventInfo()));
+    std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
+
+    for (EventMultiMap::iterator it = range.first; it != range.second; it++) {
+        if (it->second->getEventId() == event->getEventId()) {
+            return; // Already registered
+        }
+    }
+    m_eventMap.insert(EventPair(name, event));
 }
 
+void JSAPI::unregisterEventMethod(std::string name, EventHandlerObject *event)
+{
+    std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
+
+    for (EventMultiMap::iterator it = range.first; it != range.second; it++) {
+        if (it->second->getEventId() == event->getEventId()) {
+            m_eventMap.erase(it);
+            return;
+        }
+    }
+}
+
+EventHandlerObject *JSAPI::getDefaultEventMethod(std::string name)
+{
+    EventSingleMap::iterator fnd = m_defEventMap.find(name);
+    return fnd->second.ptr();
+}
+
+void JSAPI::setDefaultEventMethod(std::string name, EventHandlerObject *event)
+{
+    m_defEventMap[name] = event;
+}
 
 // Methods to query existance of members on the API
 bool JSAPI::HasMethod(std::string methodName)
@@ -133,8 +170,8 @@ bool JSAPI::HasProperty(std::string propertyName)
 
 bool JSAPI::HasEvent(std::string eventName)
 {
-    EventMap::iterator fnd = m_eventMap.find(eventName);
-    if (fnd != m_eventMap.end()) {
+    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
+    if (fnd != m_defEventMap.end()) {
         return true;
     } else {
         return false;

@@ -15,36 +15,39 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "npruntime.h"
 #include "JSAPI.h"
 #include "AutoPtr.h"
+#include "EventHandlerObject.h"
 #include "NpapiBrowserHost.h"
 
 namespace FB { namespace Npapi {
 
     class NPObjectAPI :
-        public FB::JSAPI
+        public FB::EventHandlerObject
     {
     public:
         NPObjectAPI(NPObject *, NpapiBrowserHost *);
         virtual ~NPObjectAPI(void);
 
+        void *getEventId() { return (void*)obj; }
+        void *getEventContext() { return browser->getContextID(); };
     protected:
         FB::AutoPtr<NpapiBrowserHost> browser;
         NPObject *obj;
 
     public:
         // Methods to query existance of members on the API
-        virtual bool HasMethod(std::string methodName);
-        virtual bool HasProperty(std::string propertyName);
-        virtual bool HasProperty(int idx);
-        virtual bool HasEvent(std::string eventName);
+        bool HasMethod(std::string methodName);
+        bool HasProperty(std::string propertyName);
+        bool HasProperty(int idx);
+        bool HasEvent(std::string eventName);
 
         // Methods to manage properties on the API
-        virtual variant GetProperty(std::string propertyName);
-        virtual void SetProperty(std::string propertyName, const variant value);
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant value);
+        variant GetProperty(std::string propertyName);
+        void SetProperty(std::string propertyName, const variant value);
+        variant GetProperty(int idx);
+        void SetProperty(int idx, const variant value);
 
         // Methods to manage methods on the API
-        virtual variant Invoke(std::string methodName, std::vector<variant>& args);
+        variant Invoke(std::string methodName, std::vector<variant>& args);
     };
 
 }; };

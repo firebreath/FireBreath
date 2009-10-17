@@ -76,6 +76,22 @@ namespace FB
             {
                 return (object == p.object);
             }
+            inline bool operator !=(const T* obj) const
+            {
+                return (object != p.object);
+            }
+            inline bool operator !=(const AutoPtr<T>& p) const
+            {
+                return (object != p.object);
+            }
+            inline T* ptr() const
+            {
+                return object;
+            }
+            inline operator T*() const
+            {
+                return ptr();
+            }
     };
 
     template <class T>

@@ -120,6 +120,16 @@ NPUTF8 *NpapiPluginModule::UTF8FromIdentifier(NPIdentifier identifier)
     }
 }
 
+// This is the preferred method to get strings from NPIdentifiers, since you
+// don't have to worry about cleaning it up =]
+std::string NpapiPluginModule::StringFromIdentifier(NPIdentifier identifier)
+{
+    NPUTF8* idStr = UTF8FromIdentifier(identifier);
+    std::string str(idStr);
+    MemFree(idStr);
+    return str;
+}
+
 int32_t NpapiPluginModule::IntFromIdentifier(NPIdentifier identifier)
 {
     if (NPNFuncs.intfromidentifier != NULL) {

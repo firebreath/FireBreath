@@ -35,12 +35,12 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 {
 }
 
-bool NpapiBrowserHost::FireMethod(FB::variant &target, std::vector<FB::variant>& args)
+bool NpapiBrowserHost::FireMethod(FB::EventHandlerObject *target, std::vector<FB::variant>& args)
 {
     return false;
 }
 
-bool NpapiBrowserHost::FireMethod(std::string name, FB::variant &target, std::vector<FB::variant>& args)
+bool NpapiBrowserHost::FireMethod(std::string name, FB::EventHandlerObject *target, std::vector<FB::variant>& args)
 {
     return false;
 }
@@ -243,6 +243,10 @@ bool NpapiBrowserHost::IdentifierIsString(NPIdentifier identifier)
 NPUTF8 *NpapiBrowserHost::UTF8FromIdentifier(NPIdentifier identifier)
 {
     return module->UTF8FromIdentifier(identifier);
+}
+std::string NpapiBrowserHost::StringFromIdentifier(NPIdentifier identifier)
+{
+    return module->StringFromIdentifier(identifier);
 }
 int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier)
 {
