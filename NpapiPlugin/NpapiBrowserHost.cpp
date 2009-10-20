@@ -24,7 +24,7 @@ struct MethodCallReq
 };
 
 NpapiBrowserHost::NpapiBrowserHost(NpapiPluginModule *module, NPP npp)
-    : module(module), m_npp(m_npp)
+    : module(module), m_npp(npp)
 {
     assert(module != NULL);
     // Initialize NPNFuncs to NULL values

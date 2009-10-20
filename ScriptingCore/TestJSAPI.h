@@ -36,7 +36,7 @@ public:
     FB::variant callSetValue(std::vector<FB::variant>& args)
     {
         if (args.size() != 2)
-            throw invalid_arguments();
+            throw FB::invalid_arguments();
 
         try {
             if (args[0].convert_cast<int>() >= 0
@@ -55,7 +55,7 @@ public:
     FB::variant callGetValue(std::vector<FB::variant>& args)
     {
         if (args.size() != 1)
-            throw invalid_arguments();
+            throw FB::invalid_arguments();
 
         try {
             if (args[0].convert_cast<int>() >= 0
@@ -65,16 +65,16 @@ public:
                 return m_accessList[i];
             }
         } catch (...) {
-            throw script_error("Could not convert parameter");
+            throw FB::script_error("Could not convert parameter");
         }
 
-        throw invalid_arguments();
+        throw FB::invalid_arguments();
     }
 
     FB::variant callInvalidate(std::vector<FB::variant>& args)
     {
         invalidate();
-        return variant();
+        return FB::variant();
     }
 
     FB::variant getValue()

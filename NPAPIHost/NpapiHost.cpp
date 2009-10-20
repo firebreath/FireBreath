@@ -16,6 +16,11 @@ using namespace FB::Npapi;
 NpapiHost::NpapiHost(NPInitFuncPtr initPtr, NPShutdownFuncPtr shutdownPtr, NPGetEntryPointsFuncPtr getepPtr)
     : init(initPtr), shutdown(shutdownPtr), getEntryPoints(getepPtr)
 {
+    memset(&m_funcs, 0, sizeof(NPNetscapeFuncs));
+    memset(&m_instance, 0, sizeof(NPP_t));
+
+    m_funcs.size = sizeof(NPNetscapeFuncs);
+    m_funcs.version = 1;    // TODO: Set this to the firefox 3 version value
     m_funcs.geturl = &NpapiHost::NH_GetURL;
     m_funcs.posturl = &NpapiHost::NH_PostURL;
     m_funcs.requestread = &NpapiHost::NH_RequestRead;
@@ -63,7 +68,16 @@ NpapiHost::NpapiHost(NPInitFuncPtr initPtr, NPShutdownFuncPtr shutdownPtr, NPGet
     m_instance.ndata = this;
 }
 
+NpapiHost::~NpapiHost()
+{
+}
+
 NPNetscapeFuncs *NpapiHost::getBrowserFuncs()
 {
     return &m_funcs;
+}
+
+NPP NpapiHost::getPluginInstance()
+{
+    return &m_instance;
 }

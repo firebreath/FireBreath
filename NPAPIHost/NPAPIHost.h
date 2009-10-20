@@ -37,6 +37,7 @@ namespace FB
 
     public:
     NPNetscapeFuncs *getBrowserFuncs();
+    NPP getPluginInstance();
 
     protected:
     NPP_t m_instance;

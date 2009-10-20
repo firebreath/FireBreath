@@ -30,8 +30,10 @@ namespace Npapi
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual bool FireMethod(FB::EventHandlerObject *target, std::vector<FB::variant>& args) = 0;
-        virtual bool FireMethod(std::string name, FB::EventHandlerObject *target, std::vector<FB::variant>& args) = 0;
+        virtual bool FireMethod(FB::EventHandlerObject *target,
+            std::vector<FB::variant>& args);
+        virtual bool FireMethod(std::string name, FB::EventHandlerObject *target,
+            std::vector<FB::variant>& args);
         virtual void *getContextID() { return (void *)m_npp; }
 
     public:

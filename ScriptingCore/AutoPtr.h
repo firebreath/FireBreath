@@ -31,7 +31,7 @@ namespace FB
                 Assign(obj);
             }
             //Copy Constructor
-            AutoPtr(const AutoPtr<T>& copy)
+            AutoPtr(const AutoPtr<T>& copy) : object(NULL)
             {
                 Assign(copy.object);
             }
