@@ -25,6 +25,7 @@ void initPluginModule()
 NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
     initPluginModule();
+    module->getPluginFuncs(pFuncs);
     return NPERR_NO_ERROR;
 }
 

@@ -18,3 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #define FBControl_GUID 94C9767F-1529-4903-B92F-86B0F32E5DFA
 #define FBControl_DESC "FBControl Class"
+
+
+#define FBPlugin_Name "FireBreath Demo Plugin"
+#define FBPlugin_Desc "Plugin demonstrating the use of the Firebreath plugin framework"

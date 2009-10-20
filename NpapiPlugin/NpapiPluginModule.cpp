@@ -28,6 +28,23 @@ void NpapiPluginModule::setNetscapeFuncs(NPNetscapeFuncs *npnFuncs)
     copyNPBrowserFuncs(&NPNFuncs, npnFuncs);
 }
 
+void NpapiPluginModule::getPluginFuncs(NPPluginFuncs* pFuncs)
+{
+    pFuncs->newp = &NpapiPluginModule::NPP_New;
+    pFuncs->destroy = &NpapiPluginModule::NPP_Destroy;
+    pFuncs->setwindow = &NpapiPluginModule::NPP_SetWindow;
+    pFuncs->newstream = &NpapiPluginModule::NPP_NewStream;
+    pFuncs->destroystream = &NpapiPluginModule::NPP_DestroyStream;
+    pFuncs->asfile = &NpapiPluginModule::NPP_StreamAsFile;
+    pFuncs->writeready = &NpapiPluginModule::NPP_WriteReady;
+    pFuncs->write = &NpapiPluginModule::NPP_Write;
+    pFuncs->print = &NpapiPluginModule::NPP_Print;
+    pFuncs->event = &NpapiPluginModule::NPP_HandleEvent;
+    pFuncs->urlnotify = &NpapiPluginModule::NPP_URLNotify;
+    pFuncs->getvalue = &NpapiPluginModule::NPP_GetValue;
+    pFuncs->setvalue = &NpapiPluginModule::NPP_SetValue;
+}
+
 /* npapi.h definitions */
 void NpapiPluginModule::Version(int* plugin_major, int* plugin_minor, int* netscape_major, int* netscape_minor)
 {

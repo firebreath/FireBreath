@@ -154,6 +154,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\BrowserPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandlerObject.cpp"
 				>
 			</File>
@@ -184,7 +188,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\BrowserPlugin.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandlerObject.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FactoryDefinitions.h"
 				>
 			</File>
 			<File

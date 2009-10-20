@@ -154,7 +154,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\NpapiPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\NpapiPluginModule.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NpapiPluginModule_NPP.cpp"
 				>
 			</File>
 			<File
@@ -177,6 +185,10 @@
 			>
 			<File
 				RelativePath=".\NpapiBrowserHost.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NpapiPlugin.h"
 				>
 			</File>
 			<File

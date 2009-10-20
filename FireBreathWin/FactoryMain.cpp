@@ -8,24 +8,12 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "UnitTest++.h"
+#include "FactoryDefinitions.h"
+#include "JSAPI.h"
+#include "config.h"
 
-#define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), m_details.testName); \
-    fflush(stdout)
-
-#include "NPJavascriptObjectTest.h"
-
-using namespace std;
-
-int main()
-{
-    return UnitTest::RunAllTests();
-
-    return 0;
-}
-
-static const char *pluginName = "UnitTestMockPlugin";
-static const char *pluginDesc = "It's a mock plugin for a unit test";
+static const char *pluginName = FBPlugin_Name;
+static const char *pluginDesc = FBPlugin_Desc;
 
 const char *_getPluginName()
 {
