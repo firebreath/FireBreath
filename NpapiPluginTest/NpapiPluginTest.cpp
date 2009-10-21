@@ -10,10 +10,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "UnitTest++.h"
 
-#define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), m_details.testName); \
-    fflush(stdout)
+#define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), \
+    m_details.testName); fflush(stdout)
 
 #include "NPJavascriptObjectTest.h"
+#include "NpapiPlugin.h"
 
 using namespace std;
 
@@ -40,4 +41,9 @@ const char *_getPluginDesc()
 FB::JSAPI *_getRootJSAPI()
 {
     return new FB::JSAPI();
+}
+
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(NpapiBrowserHost *host)
+{
+    return new FB::Npapi::NpapiPlugin(host);
 }

@@ -20,5 +20,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define FBControl_DESC "FBControl Class"
 
 
-#define FBPlugin_Name "FireBreath Demo Plugin"
-#define FBPlugin_Desc "Plugin demonstrating the use of the Firebreath plugin framework"
+#define FBSTRING_CompanyName "No particular company"
+#define FBSTRING_FileDescription "Plugin demonstrating the use of the Firebreath plugin framework"
+#define FBSTRING_PLUGIN_VERSION "1.0.0"
+#define FBSTRING_LegalCopyright "Copyright 2009 Firebreath development team"
+#define FBSTRING_PluginFileName "npFireBreath.dll"
+#define FBSTRING_ProductName "FireBreath Demo Plugin"
+#define FBSTRING_FileExtents ""
+#define FBSTRING_PluginName "FireBreath Demo Plugin"
+#define FBSTRING_MIMEType "application/x-vnd.FirebreathPlugin"

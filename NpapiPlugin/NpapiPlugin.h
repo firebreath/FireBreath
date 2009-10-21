@@ -13,6 +13,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserPlugin.h"
 #include "NpapiTypes.h"
+#include "NpapiBrowserHost.h"
+#include "NPJavascriptObject.h"
 
 namespace FB { namespace Npapi {
 
@@ -20,10 +22,16 @@ namespace FB { namespace Npapi {
         public FB::BrowserPlugin
     {
     public:
-        NpapiPlugin(void);
+        NpapiPlugin(NpapiBrowserHost *host);
         virtual ~NpapiPlugin(void);
 
         virtual void shutdown();
+
+    protected:
+        NPJavascriptObject *m_obj;
+        AutoPtr<NpapiBrowserHost> m_npHost;
+        NPObject *getScriptableObject();
+
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the

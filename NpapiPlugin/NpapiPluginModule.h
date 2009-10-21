@@ -21,6 +21,7 @@ namespace FB { namespace Npapi {
     class NpapiPluginModule
     {
     public:
+        static NpapiPluginModule *Default;
         NpapiPluginModule();
         virtual ~NpapiPluginModule(void);
 

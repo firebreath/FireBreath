@@ -13,12 +13,24 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiPlugin::NpapiPlugin(void)
+NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host) : m_obj(NULL), m_npHost(host)
 {
 }
 
 NpapiPlugin::~NpapiPlugin(void)
 {
+    if (m_obj != NULL) {
+        m_npHost->ReleaseObject(m_obj);
+    }
+}
+
+NPObject *NpapiPlugin::getScriptableObject()
+{
+    if (m_obj == NULL) {
+        m_obj = NPJavascriptObject::NewObject(m_npHost, m_api);
+    }
+    m_npHost->RetainObject(m_obj);
+    return m_obj;
 }
 
 void NpapiPlugin::shutdown(void)
@@ -50,7 +62,7 @@ NPError NpapiPlugin::GetValue(NPPVariable variable, void *value)
         *((const char **)value) = _getPluginDesc();
         break;
     case NPPVpluginScriptableNPObject:
-        //*(NPObject **)value = ;
+        *(NPObject **)value = getScriptableObject();
         break;
     default:
         return NPERR_GENERIC_ERROR;

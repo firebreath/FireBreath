@@ -10,8 +10,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
+#include "FactoryDefinitions.h"
 
 using namespace FB::Npapi;
+
+NpapiPluginModule *NpapiPluginModule::Default = NULL;
 
 inline NpapiPlugin *getPlugin(NPP instance)
 {
@@ -33,7 +36,9 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16 m
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = new NpapiPlugin();
+    FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
+    host->setBrowserFuncs(&(NpapiPluginModule::Default->NPNFuncs));
+    NpapiPlugin *plugin = _getNpapiPlugin(host);
     if (plugin == NULL)
         return NPERR_OUT_OF_MEMORY_ERROR;
 

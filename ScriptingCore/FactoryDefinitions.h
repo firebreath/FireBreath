@@ -13,6 +13,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
     class JSAPI;
+    namespace Npapi {
+        class NpapiPlugin;
+        class NpapiBrowserHost;
+    };
 }
 // These global functions *must* be defined in your main plugin project -- that's the one that
 // actually builds into a DLL that everything links to.  These are used to determine what 
@@ -23,5 +27,6 @@ const char *_getPluginName();
 const char *_getPluginDesc();
 
 FB::JSAPI *_getRootJSAPI();
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host);
 
 #endif

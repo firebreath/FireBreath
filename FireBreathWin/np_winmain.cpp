@@ -18,8 +18,10 @@ FB::Npapi::NpapiPluginModule *module = NULL;
 
 void initPluginModule()
 {
-    if (module == NULL)
+    if (module == NULL) {
         module = new NpapiPluginModule();
+        NpapiPluginModule::Default = module;
+    }
 }
 
 NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)

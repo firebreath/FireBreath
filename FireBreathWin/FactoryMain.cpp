@@ -8,12 +8,16 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "windows.h"
+
 #include "FactoryDefinitions.h"
 #include "JSAPI.h"
 #include "config.h"
+#include "NpapiPlugin.h"
+#include "NpapiBrowserHost.h"
 
-static const char *pluginName = FBPlugin_Name;
-static const char *pluginDesc = FBPlugin_Desc;
+static const char *pluginName = FBSTRING_PluginName;
+static const char *pluginDesc = FBSTRING_FileDescription;
 
 const char *_getPluginName()
 {
@@ -28,4 +32,9 @@ const char *_getPluginDesc()
 FB::JSAPI *_getRootJSAPI()
 {
     return new FB::JSAPI();
+}
+
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+{
+    return new FB::Npapi::NpapiPlugin(host);
 }

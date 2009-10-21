@@ -78,6 +78,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				IgnoreImportLibrary="true"
+				OutputFile="$(OutDir)\npFireBreath.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile=".\FireBreathWin.def"
 				GenerateDebugInformation="true"
@@ -305,6 +306,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FireBreathWin.def"
+				>
+			</File>
+			<File
 				RelativePath=".\FireBreathWin.rc"
 				>
 			</File>
@@ -333,10 +338,6 @@
 				</File>
 				<File
 					RelativePath=".\FireBreathWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FireBreathWin.def"
 					>
 				</File>
 				<File

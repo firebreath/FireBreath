@@ -11,6 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
+#include "config.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -85,14 +86,17 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "TODO: <Company name>"
-            VALUE "FileDescription", "TODO: <File description>"
-            VALUE "FileVersion", "1.0.0.1"
-            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
-            VALUE "InternalName", "FireBreathWin.dll"
-            VALUE "OriginalFilename", "FireBreathWin.dll"
-            VALUE "ProductName", "TODO: <Product name>"
-            VALUE "ProductVersion", "1.0.0.1"
+            VALUE "CompanyName", FBSTRING_CompanyName
+            VALUE "FileDescription", FBSTRING_FileDescription
+            VALUE "FileVersion", FBSTRING_PLUGIN_VERSION
+            VALUE "LegalCopyright", FBSTRING_LegalCopyright
+            VALUE "InternalName", FBSTRING_PluginFileName
+            VALUE "OriginalFilename", FBSTRING_PluginFileName
+            VALUE "ProductName", FBSTRING_ProductName
+            VALUE "ProductVersion", FBSTRING_PLUGIN_VERSION
+            VALUE "FileExtents", FBSTRING_FileExtents
+            VALUE "FileOpenName", FBSTRING_PluginName
+            VALUE "MIMEType", FBSTRING_MIMEType
         END
     END
     BLOCK "VarFileInfo"
