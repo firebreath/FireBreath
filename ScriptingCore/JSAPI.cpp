@@ -17,6 +17,7 @@ using namespace FB;
 JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
 {
     registerMethod( "toString", (CallMethodPtr)&JSAPI::callToString );
+    registerMethod( "fireEvent", (CallMethodPtr)&JSAPI::callFireEvent );
     
     registerProperty( "valid", (GetPropPtr)&JSAPI::getValid, NULL );
 }
@@ -45,20 +46,6 @@ void JSAPI::invalidate()
     m_valid = false;
 }
 
-// Methods for managing event sinks (BrowserHostWrapper objects)
-void JSAPI::attachEventSink(BrowserHostWrapper *sink)
-{
-    m_sinkMap[sink->getContextID()] = sink;
-}
-
-void JSAPI::detachEventSink(BrowserHostWrapper *sink)
-{
-    EventSinkMap::iterator fnd = m_sinkMap.find(sink->getContextID());
-    if (fnd != m_sinkMap.end()) {
-        m_sinkMap.erase(fnd);
-    }
-}
-
 void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
 {
     if (!m_valid)   // When invalidated, do nothing more
@@ -67,18 +54,23 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(eventName);
 
     for (EventMultiMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
-        for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
-            if (eventIt->second->getEventContext() == sinkIt->first)
-                if (sinkIt->second->FireMethod(eventName, eventIt->second, args))
-                    break;
-        }
+        eventIt->second->InvokeAsync("", args);
     }
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
     if (fnd != m_defEventMap.end() && fnd->second->getEventId() != NULL) {
-        for (EventSinkMap::iterator sinkIt = m_sinkMap.begin(); sinkIt != m_sinkMap.end(); sinkIt++) {
-            if (sinkIt->second->FireMethod(eventName, fnd->second, args))
-                break;
-        }
+        fnd->second->InvokeAsync("", args);
+    }
+}
+
+variant JSAPI::callFireEvent(std::vector<FB::variant>& args)
+{
+    try {
+        std::string event = args[0].convert_cast<std::string>();
+        args.erase(args.begin());
+        this->FireEvent(event, args);
+        return event;
+    } catch (...) {
+        throw invalid_arguments();
     }
 }
 

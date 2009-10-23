@@ -30,6 +30,7 @@ namespace Npapi
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
+        virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
         virtual bool FireMethod(FB::EventHandlerObject *target,
             std::vector<FB::variant>& args);
         virtual bool FireMethod(std::string name, FB::EventHandlerObject *target,

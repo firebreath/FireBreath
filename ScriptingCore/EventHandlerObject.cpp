@@ -9,13 +9,20 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "EventHandlerObject.h"
+#include "AsyncBrowserCall.h"
 
 using namespace FB;
 
-EventHandlerObject::EventHandlerObject(void)
+EventHandlerObject::EventHandlerObject(BrowserHostWrapper *h) :
+    host(h)
 {
 }
 
 EventHandlerObject::~EventHandlerObject(void)
 {
+}
+
+void EventHandlerObject::InvokeAsync(std::string methodName, std::vector<variant>& args)
+{
+    FB::AsyncBrowserCall::CallMethod(this, methodName, args);
 }

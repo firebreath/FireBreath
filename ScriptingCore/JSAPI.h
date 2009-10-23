@@ -72,10 +72,6 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-        // Methods for managing event sinks (BrowserHostWrapper objects)
-        virtual void attachEventSink(BrowserHostWrapper *sink);
-        virtual void detachEventSink(BrowserHostWrapper *sink);
-
         // Methods for registering properties and functions to the auto-table
         virtual void registerMethod(std::string name, CallMethodPtr func);
         virtual void registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc);
@@ -102,6 +98,7 @@ namespace FB
 
     public:
         // Example function call and read-only property; override these if desired in derived classes
+        virtual variant callFireEvent(std::vector<variant>&args);
         virtual variant callToString(std::vector<variant>&args);
         virtual variant getValid();
 
@@ -110,7 +107,6 @@ namespace FB
         PropertyMap m_propertyMap;
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
-        EventSinkMap m_sinkMap;
         
         bool m_valid;
     };

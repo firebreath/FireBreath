@@ -9,6 +9,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "NPJavascriptObject.h"
+#include "EventHandlerObject.h"
 
 using namespace FB::Npapi;
 
@@ -27,15 +28,12 @@ NPJavascriptObject::NPJavascriptObject(NPP npp)
 
 NPJavascriptObject::~NPJavascriptObject(void)
 {
-    m_api->detachEventSink(m_browser.ptr());
 }
 
 void NPJavascriptObject::setAPI(FB::JSAPI *api, NpapiBrowserHost *host)
 {
     m_api = api;
     m_browser = host;
-    
-    m_api->attachEventSink(m_browser.ptr());
 }
 
 void NPJavascriptObject::Invalidate()
@@ -46,20 +44,64 @@ void NPJavascriptObject::Invalidate()
 
 bool NPJavascriptObject::HasMethod(NPIdentifier name)
 {
-    return m_api->HasMethod(m_browser->StringFromIdentifier(name));
+    std::string mName = m_browser->StringFromIdentifier(name);
+
+    if (mName == "addEventListener" || mName == "removeEventListener") {
+        return true;
+    } else {
+        return m_api->HasMethod(mName);
+    }
+}
+
+bool NPJavascriptObject::callAddEventListener(std::vector<FB::variant> &args)
+{
+    if (args.size() < 2 || args.size() > 3
+         || args[0].get_type() != typeid(std::string)
+         || args[1].get_type() != typeid(AutoPtr<EventHandlerObject>)) {
+        throw invalid_arguments();
+    }
+
+    m_api->registerEventMethod(args[0].convert_cast<std::string>(),
+        args[1].convert_cast<AutoPtr<EventHandlerObject>>());
+
+    return true;
+}
+
+bool NPJavascriptObject::callRemoveEventListener(std::vector<FB::variant> &args)
+{
+    if (args.size() < 2 || args.size() > 3
+         || args[0].get_type() != typeid(std::string)
+         || args[1].get_type() != typeid(AutoPtr<EventHandlerObject>)) {
+        throw invalid_arguments();
+    }
+
+    m_api->unregisterEventMethod(args[0].convert_cast<std::string>(),
+        args[1].convert_cast<AutoPtr<EventHandlerObject>>());
+
+    return true;
 }
 
 bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
+    VOID_TO_NPVARIANT(*result);
     try {
+        std::string mName = m_browser->StringFromIdentifier(name);
         std::vector<FB::variant> vArgs;
         for (unsigned int i = 0; i < argCount; i++) {
             vArgs.push_back(m_browser->getVariant(&args[i]));
         }
 
-        FB::variant ret = m_api->Invoke(m_browser->StringFromIdentifier(name), vArgs);
-        m_browser->getNPVariant(result, ret);
-        return true;
+        // Event Handling
+        if (mName == "addEventListener") {
+            return callAddEventListener(vArgs);
+        } else if (mName == "removeEventListener") {
+            return callRemoveEventListener(vArgs);
+        } else {
+            // Default method call
+            FB::variant ret = m_api->Invoke(mName, vArgs);
+            m_browser->getNPVariant(result, ret);
+            return true;
+        }
     } catch (script_error e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -150,7 +192,7 @@ NPObject *NPJavascriptObject::Allocate(NPP npp, NPClass *aClass)
 
 void NPJavascriptObject::_Deallocate(NPObject *npobj)
 {
-    delete npobj;
+    delete static_cast<NPJavascriptObject *>(npobj);
 }
 
 void NPJavascriptObject::_Invalidate(NPObject *npobj)

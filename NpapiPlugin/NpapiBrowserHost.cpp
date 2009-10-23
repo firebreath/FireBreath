@@ -35,6 +35,11 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 {
 }
 
+void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
+{
+    PluginThreadAsyncCall(func, userData);
+}
+
 bool NpapiBrowserHost::FireMethod(FB::EventHandlerObject *target, std::vector<FB::variant>& args)
 {
     return false;
@@ -70,7 +75,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = AutoPtr<NPObjectAPI>(new NPObjectAPI(npVar->value.objectValue, this));
+            retVal = AutoPtr<EventHandlerObject>(new NPObjectAPI(npVar->value.objectValue, this));
             break;
 
         case NPVariantType_Void:

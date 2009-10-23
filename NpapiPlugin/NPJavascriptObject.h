@@ -31,7 +31,11 @@ namespace FB { namespace Npapi {
         static NPJavascriptObject *NewObject(NpapiBrowserHost *host, FB::JSAPI *api);
         void setAPI(FB::JSAPI *api, NpapiBrowserHost *host);
         NPJavascriptObject(NPP npp);
-        ~NPJavascriptObject(void);
+        virtual ~NPJavascriptObject(void);
+
+    protected:
+        virtual bool callAddEventListener(std::vector<variant> &args);
+        virtual bool callRemoveEventListener(std::vector<variant> &args);
 
     protected:
         void Invalidate();

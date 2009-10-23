@@ -12,17 +12,24 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_EVENTHANDLEROBJECT
 
 #include "JSAPI.h"
+#include "BrowserHostWrapper.h"
+#include "AutoPtr.h"
 
 namespace FB
 {
     class EventHandlerObject : public FB::JSAPI
     {
     public:
-        EventHandlerObject();
+        EventHandlerObject(BrowserHostWrapper *h);
         virtual ~EventHandlerObject();
 
         virtual void *getEventId() { return NULL; }
         virtual void *getEventContext() { return NULL; }
+
+        virtual void InvokeAsync(std::string methodName, std::vector<variant>& args);
+
+    public:
+        AutoPtr<BrowserHostWrapper> host;
     };
 };
 #endif

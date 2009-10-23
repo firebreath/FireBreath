@@ -1,12 +1,16 @@
-<HTML>
-<HEAD>
-<TITLE>ATL 8.0 test page for object FBControl</TITLE>
-</HEAD>
-<BODY>
+<html>
+<head>
+<title>atl 8.0 test page for object fbcontrol</title>
+</head>
+<body>
 
 
-<OBJECT ID="FBControl" CLASSID="CLSID:47B5B4C0-35DA-49D8-8047-29C335EC9809"></OBJECT>
-<object id="plugin" type="application/x-vnd.FirebreathPlugin"></object>
+<object id="fbcontrol" classid="clsid:47b5b4c0-35da-49d8-8047-29c335ec9809"></object>
+<object id="plugin" type="application/x-vnd.firebreathplugin"></object>
 
-</BODY>
-</HTML>
+<a href="javascript:plugin.addEventListener('onload', function(test) { alert(test); })">set onload</a> <br />
+
+<a href="#" onclick="plugin.fireEvent('onload', 'test stuff'); return false;">Fire onload</a> <br />
+
+</body>
+</html>
