@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+	<Product Id="af44e6f3-5815-4775-896f-1859a4d4b50b" Name="FireBreath" Language="1033" Version="1.0.0.0" Manufacturer="FireBreath" UpgradeCode="677563fc-b09b-4f38-8864-495802cbba46">
+		<Package InstallerVersion="200" Compressed="yes" />
+		<Media Id="1" Cabinet="FireBreath.cab" EmbedCab="yes" />
+
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="AppDataFolder">
+        <Component Id="FireBreathWin" Guid="47B5B4C0-35DA-49D8-8047-29C335EC9809">
+          <RegistryValue Root="HKCU" Key="SOFTWARE\FireBreath" Type="string" Value="FireBreathWin.dll" KeyPath="yes" />
+          <File Id="FireBreathWin.dll" Name="FireBreathWin.dll" Source="$(var.FireBreathWinDLL)"  SelfRegCost="1"/>
+        </Component>
+      </Directory>
+    </Directory>
+
+		<Feature Id="Framework" Title="FireBreath Framework" Level="1">
+      <ComponentRef Id="FireBreathWin"/>
+		</Feature>
+	</Product>
+</Wix>
