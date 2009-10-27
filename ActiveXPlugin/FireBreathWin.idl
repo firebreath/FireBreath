@@ -14,7 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // This file will be processed by the MIDL tool to
 // produce the type library (FireBreathWin.tlb) and marshalling code.
 
-#include "config.h"
+#include "COM_config.h"
 #include "olectl.h"
 import "oaidl.idl";
 import "ocidl.idl";

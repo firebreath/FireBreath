@@ -111,15 +111,14 @@ END
 // REGISTRY
 //
 
-IDR_FIREBREATHWIN       REGISTRY                "FireBreathWin.rgs"
-IDR_FBCONTROL           REGISTRY                "FBControl.rgs"
+IDR_FIREBREATHWIN       REGISTRY                "../ActiveXPlugin/FireBreathWin.rgs"
+IDR_FBCONTROL           REGISTRY                "../ActiveXPlugin/FBControl.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
 // Bitmap
 //
 
-IDB_FBCONTROL           BITMAP                  "FBControl.bmp"
 
 /////////////////////////////////////////////////////////////////////////////
 //

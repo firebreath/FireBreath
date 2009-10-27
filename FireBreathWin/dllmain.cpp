@@ -12,11 +12,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "win_common.h"
 #include "resource.h"
-#include "FireBreathWin_i.h"
-#include "dllmain.h"
-#include "dlldatax.h"
-
-CFireBreathWinModule _AtlModule;
+#include "axmain.h"
 
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)

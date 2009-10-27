@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #include "resource.h"
 #include "FireBreathWin_i.h"
-#include "dllmain.h"
+#include "axmain.h"
 #include "dlldatax.h"
 
 // Used to determine whether the DLL can be unloaded by OLE

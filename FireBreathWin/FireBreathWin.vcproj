@@ -53,8 +53,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_MERGE_PROXYSTUB"
+				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_NOMERGE_PROXYSTUB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -209,26 +209,6 @@
 				RelativePath=".\FactoryMain.cpp"
 				>
 			</File>
-			<File
-				RelativePath=".\NPNWrapper.cpp"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					ExcludedFromBuild="true"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -249,32 +229,6 @@
 		<Filter
 			Name="Windows"
 			>
-			<File
-				RelativePath=".\dlldatax.c"
-				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						UsePrecompiledHeader="0"
-						CompileAsManaged="0"
-					/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\dlldatax.h"
-				>
-			</File>
 			<File
 				RelativePath=".\dllmain.cpp"
 				>
@@ -321,65 +275,6 @@
 				RelativePath=".\targetver.h"
 				>
 			</File>
-			<Filter
-				Name="ActiveX"
-				>
-				<File
-					RelativePath=".\FBControl.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FBControl.h"
-					>
-				</File>
-				<File
-					RelativePath=".\FBControl.rgs"
-					>
-				</File>
-				<File
-					RelativePath=".\FireBreathWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath=".\FireBreathWin.idl"
-					>
-				</File>
-				<File
-					RelativePath=".\FireBreathWin.rgs"
-					>
-				</File>
-				<Filter
-					Name="Generated Files"
-					SourceControlFiles="false"
-					>
-					<File
-						RelativePath=".\FireBreathWin_i.c"
-						>
-						<FileConfiguration
-							Name="Debug|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								CompileAsManaged="0"
-							/>
-						</FileConfiguration>
-						<FileConfiguration
-							Name="Release|Win32"
-							>
-							<Tool
-								Name="VCCLCompilerTool"
-								UsePrecompiledHeader="0"
-								CompileAsManaged="0"
-							/>
-						</FileConfiguration>
-					</File>
-					<File
-						RelativePath=".\FireBreathWin_i.h"
-						>
-					</File>
-				</Filter>
-			</Filter>
 		</Filter>
 		<Filter
 			Name="Npapi"
