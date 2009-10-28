@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 {
+  AtlSetPerUserRegistration(true);
 #ifdef _MERGE_PROXYSTUB
     if (!PrxDllMain(hInstance, dwReason, lpReserved))
         return FALSE;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="FireBreathWin"
 	ProjectGUID="{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}"
 	RootNamespace="FireBreathWin"
@@ -18,7 +18,7 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfATL="2"
@@ -167,6 +167,7 @@
 				Name="VCLinkerTool"
 				RegisterOutput="false"
 				IgnoreImportLibrary="true"
+				OutputFile="$(OutDir)\npFireBreath.dll"
 				LinkIncremental="1"
 				ModuleDefinitionFile=".\FireBreathWin.def"
 				GenerateDebugInformation="true"
