@@ -202,6 +202,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TypeIDMap.h"
+				>
+			</File>
+			<File
 				RelativePath=".\vector_list.h"
 				>
 			</File>

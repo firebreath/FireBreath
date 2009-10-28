@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\TypeIDMap_test.h"
+				>
+			</File>
+			<File
 				RelativePath=".\variant_test.h"
 				>
 			</File>
