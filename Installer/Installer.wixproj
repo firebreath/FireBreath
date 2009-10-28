@@ -11,14 +11,14 @@
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.0\Wix.targets</WixTargetsPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>$(SolutionDir)$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>Debug;FireBreathWinDLL=..\FireBreathWin\Debug\FireBreathWin.dll</DefineConstants>
+    <DefineConstants>Debug;FireBreathWinDLL=..\Debug\npFireBreath.dll</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\FireBreathWin\bin\$(Configuration)\</OutputPath>
+    <OutputPath>$(SolutionDir)$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <DefineConstants>SourceFile=$(TargetDir)Release</DefineConstants>
+    <DefineConstants>FireBreathWinDLL=..\Release\npFireBreath.dll</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Product.wxs" />
