@@ -140,7 +140,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "FireBreathWin.tlb"
+//1 TYPELIB "FireBreathWin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

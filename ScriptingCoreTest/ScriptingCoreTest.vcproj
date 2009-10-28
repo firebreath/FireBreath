@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="ScriptingCoreTest"
 	ProjectGUID="{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 	RootNamespace="ScriptingCoreTest"
@@ -116,6 +116,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

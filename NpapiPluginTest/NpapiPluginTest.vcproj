@@ -116,6 +116,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ScriptingCore;..\NpapiPlugin;..\NpapiHost;..\ScriptingCoreTest"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

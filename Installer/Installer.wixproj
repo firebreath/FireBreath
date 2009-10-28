@@ -16,7 +16,7 @@
     <DefineConstants>Debug;FireBreathWinDLL=..\FireBreathWin\Debug\FireBreathWin.dll</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>bin\$(Configuration)\</OutputPath>
+    <OutputPath>..\FireBreathWin\bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>SourceFile=$(TargetDir)Release</DefineConstants>
   </PropertyGroup>

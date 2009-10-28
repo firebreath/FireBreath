@@ -109,7 +109,7 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(ConfigurationName)"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfATL="2"
@@ -144,9 +144,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;_MERGE_PROXYSTUB"
+				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;_NOMERGE_PROXYSTUB"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -164,7 +165,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
+				RegisterOutput="false"
 				IgnoreImportLibrary="true"
 				LinkIncremental="1"
 				ModuleDefinitionFile=".\FireBreathWin.def"

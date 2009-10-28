@@ -190,6 +190,14 @@
 						HeaderFileName="$(InputName)_i.h"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCMIDLTool"
+						HeaderFileName="$(InputName)_i.h"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\FireBreathWin.rgs"
