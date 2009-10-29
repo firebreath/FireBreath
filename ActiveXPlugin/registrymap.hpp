@@ -13,12 +13,21 @@
 struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 {
 	_ATL_REGMAP_ENTRYKeeper(){ szKey=NULL; szData=NULL;}
+    _ATL_REGMAP_ENTRYKeeper(LPCOLESTR key, LPCSTR cstrData)
+    {
+        USES_CONVERSION;
+        CA2W data(cstrData);
+        szKey=key;
+		LPOLESTR newData;
+		szData = LPCOLESTR(newData =  new wchar_t[wcslen(data)+1]);
+		wcscpy_s(newData,wcslen(data) + 1,data);
+    }
 	_ATL_REGMAP_ENTRYKeeper(LPCOLESTR key, LPCOLESTR data) 
 	{
 		szKey=key;
 		LPOLESTR newData;
 		szData = LPCOLESTR(newData =  new wchar_t[wcslen(data)+1]);
-		wcscpy(newData,data);
+		wcscpy_s(newData,wcslen(data)+1,data);
 	}
 	_ATL_REGMAP_ENTRYKeeper(LPCOLESTR key, UINT resid)
 	{
@@ -34,7 +43,7 @@ struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 		int	length = wcslen(Data);
 
 		szData = new wchar_t[length];
-		wcscpy(const_cast<wchar_t *>(szData),Data);
+		wcscpy_s(const_cast<wchar_t *>(szData), length, Data);
 	}
 
 	_ATL_REGMAP_ENTRYKeeper(LPCOLESTR key, REFGUID guid) 
@@ -60,7 +69,7 @@ struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 	static struct _ATL_REGMAP_ENTRY *_GetRegistryMap()\
 	{\
 		static const _ATL_REGMAP_ENTRYKeeper map[] = {
-#define REGMAP_ENTRY(x,y) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x),OLESTR(##y)),
+#define REGMAP_ENTRY(x,y) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x), y),
 
 #define REGMAP_RESOURCE(x,resid) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x),), 
 
@@ -69,9 +78,16 @@ struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 #define END_REGISTRY_MAP() _ATL_REGMAP_ENTRYKeeper() }; return (_ATL_REGMAP_ENTRY *)map;}
 
 #define DECLARE_REGISTRY_RESOURCEID_EX(x)\
-	static HRESULT WINAPI UpdateRegistry(BOOL bRegister)\
+	static HRESULT WINAPI UpdateRegistry(BOOL bRegister) throw()\
 	{\
-		return _Module.UpdateRegistryFromResource((UINT)x, bRegister, _GetRegistryMap() );\
+		__if_exists(_Module) \
+		{ \
+			return _Module.UpdateRegistryFromResource((UINT)x, bRegister, _GetRegistryMap() ); \
+		} \
+		__if_not_exists(_Module) \
+		{ \
+			return ATL::_pAtlModule->UpdateRegistryFromResource((UINT)x, bRegister, _GetRegistryMap() ); \
+		} \
 	}
 
 

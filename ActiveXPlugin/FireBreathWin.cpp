@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FireBreathWin_i.h"
 #include "axmain.h"
 #include "dlldatax.h"
+#include "FBControl.h"
 
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
@@ -42,8 +43,13 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 // DllRegisterServer - Adds entries to the system registry
 STDAPI DllRegisterServer(void)
 {
+    //Sleep(10000);
     // registers object, typelib and all interfaces in typelib
+    AtlSetPerUserRegistration(true);
     HRESULT hr = _AtlModule.DllRegisterServer();
+
+    if (!SUCCEEDED(hr))
+        hr = CFBControl::UpdateRegistry(true);
 #ifdef _MERGE_PROXYSTUB
     if (FAILED(hr))
         return hr;
@@ -57,6 +63,8 @@ STDAPI DllRegisterServer(void)
 STDAPI DllUnregisterServer(void)
 {
     HRESULT hr = _AtlModule.DllUnregisterServer();
+    if (!SUCCEEDED(hr))
+        hr = CFBControl::UpdateRegistry(false);
 #ifdef _MERGE_PROXYSTUB
     if (FAILED(hr))
         return hr;

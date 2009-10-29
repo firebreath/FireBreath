@@ -40,16 +40,6 @@ void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
     PluginThreadAsyncCall(func, userData);
 }
 
-bool NpapiBrowserHost::FireMethod(FB::EventHandlerObject *target, std::vector<FB::variant>& args)
-{
-    return false;
-}
-
-bool NpapiBrowserHost::FireMethod(std::string name, FB::EventHandlerObject *target, std::vector<FB::variant>& args)
-{
-    return false;
-}
-
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 {
     FB::variant retVal;

@@ -57,7 +57,7 @@ END
 
 3 TEXTINCLUDE 
 BEGIN
-    "1 TYPELIB ""FireBreathWin.tlb""\r\n"
+    "1 TYPELIB ""ActiveXControl.tlb""\r\n"
     "\0"
 END
 
@@ -127,7 +127,7 @@ IDR_FBCONTROL           REGISTRY                "../ActiveXPlugin/FBControl.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDS_PROJNAME            "FireBreathWin"
+    IDS_PROJNAME            "npFireBreath"
 END
 
 #endif    // English (U.S.) resources
@@ -140,7 +140,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-//1 TYPELIB "FireBreathWin.tlb"
+1 TYPELIB "ActiveXPlugin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

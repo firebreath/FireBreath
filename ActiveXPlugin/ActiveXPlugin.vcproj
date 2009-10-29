@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\FireBreathWin"
+				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\FireBreathWin"
+				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -151,6 +151,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\ActiveXBrowserHost.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\axmain.cpp"
 				>
 			</File>
@@ -160,10 +164,6 @@
 			</File>
 			<File
 				RelativePath=".\FBControl.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\FBControl.h"
 				>
 			</File>
 			<File
@@ -187,6 +187,7 @@
 					>
 					<Tool
 						Name="VCMIDLTool"
+						TypeLibraryName="$(SolutionDir)/FireBreathWin/$(ConfigurationName)/$(ProjectName).tlb"
 						HeaderFileName="$(InputName)_i.h"
 					/>
 				</FileConfiguration>
@@ -214,6 +215,10 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath=".\ActiveXBrowserHost.h"
+				>
+			</File>
+			<File
 				RelativePath=".\axmain.h"
 				>
 			</File>
@@ -223,6 +228,14 @@
 			</File>
 			<File
 				RelativePath=".\dlldatax.h"
+				>
+			</File>
+			<File
+				RelativePath=".\FBControl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JSAPI_IDispatchEx.h"
 				>
 			</File>
 			<File

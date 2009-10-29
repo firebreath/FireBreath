@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\NpapiPlugin"
+				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\NpapiPlugin;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\NpapiPlugin"
+				AdditionalIncludeDirectories="&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\NpapiPlugin;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"

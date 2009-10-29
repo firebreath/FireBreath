@@ -68,7 +68,7 @@ namespace FB {
             IdVariantMap::iterator it = m_idVariant.find(id);
 
             if (it != m_idVariant.end()) {
-                return it->second.get_type() == typeof(T);
+                return it->second.get_type() == typeid(T);
             } else {
                 return false;
             }

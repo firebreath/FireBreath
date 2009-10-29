@@ -1,11 +1,17 @@
-HKCR
+HKCU
 {
-    NoRemove AppID
+    NoRemove Software
     {
-        '%APPID%' = s 'FireBreathWin'
-        'FireBreathWin.DLL'
+        NoRemove ClassesB
         {
-            val AppID = s '%APPID%'
+            NoRemove AppID
+            {
+                '%APPID%' = s 'FireBreathWin'
+                'npFireBreath.dll'
+                {
+                    val AppID = s '%APPID%'
+                }
+            }
         }
     }
 }

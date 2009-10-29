@@ -13,6 +13,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
+FB::TypeIDMap<NPIdentifier> NpapiHost::m_idMapper((NPIdentifier)100);
+
 NpapiHost::NpapiHost(NPInitFuncPtr initPtr, NPShutdownFuncPtr shutdownPtr, NPGetEntryPointsFuncPtr getepPtr)
     : init(initPtr), shutdown(shutdownPtr), getEntryPoints(getepPtr)
 {

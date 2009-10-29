@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "olectl.h"
 import "oaidl.idl";
 import "ocidl.idl";
+import "dispex.idl";
 
 [
     object,
@@ -27,7 +28,17 @@ import "ocidl.idl";
     helpstring(IFBControl_DESC),
     pointer_default(unique)
 ]
-interface IFBControl : IDispatch{
+interface IFBControl : IDispatchEx {
+};
+[
+    object,
+    uuid(IFBComJavascriptObject_GUID),
+    dual,
+    nonextensible,
+    helpstring(IFBComJavascriptObject_DESC),
+    pointer_default(unique)
+]
+interface IFBComJavascriptObject : IDispatchEx {
 };
 
 [
@@ -39,6 +50,16 @@ library FBTYPELIB_NAME
 {
     importlib("stdole2.tlb");
     [
+        uuid(IFBComEventSource_GUID),
+        helpstring(IFBComEventSource_DESC)
+    ]
+    dispinterface IFBComEventSource
+    {
+        properties:
+        methods:
+    };
+
+    [
         uuid(FBControl_GUID),
         control,
         helpstring(FBControl_DESC)
@@ -46,5 +67,17 @@ library FBTYPELIB_NAME
     coclass FBControl
     {
         [default] interface IFBControl;
+        [default, source] dispinterface IFBComEventSource;
     };
+    [
+        uuid(FBComJavascriptObject_GUID),
+        control,
+        helpstring(FBComJavascriptObject_DESC)
+    ]
+    coclass FBComJavascriptObject
+    {
+        [default] interface IFBComJavascriptObject;
+        [default, source] dispinterface IFBComEventSource;
+    }
+
 };

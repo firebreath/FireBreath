@@ -24,10 +24,6 @@ namespace FB
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
-        virtual bool FireMethod(FB::EventHandlerObject *target,
-            std::vector<FB::variant>& args) = 0;
-        virtual bool FireMethod(std::string name, FB::EventHandlerObject *target,
-            std::vector<FB::variant>& args) = 0;
         virtual void *getContextID() = 0;
 
     protected:

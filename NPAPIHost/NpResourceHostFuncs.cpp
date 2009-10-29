@@ -16,18 +16,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <string>
 
+#include "TypeIDMap.h"
+
 #include "NpapiHost.h"
-
-typedef std::map<void*, std::string> NpIdStringMap;
-typedef std::map<std::string, void*> NpStringIdMap;
-typedef std::map<void*, int32_t> NpIdIntMap;
-typedef std::map<int32_t, void*> NpIntIdMap;
-
-static unsigned long nextId = 1;
-static NpIdStringMap _idStringMap;
-static NpStringIdMap _stringIdMap;
-static NpIdIntMap _idIntMap;
-static NpIntIdMap _intIdMap;
 
 using namespace FB::Npapi;
 
@@ -99,16 +90,7 @@ void NP_LOADDS NpapiHost::NH_ReleaseVariantValue(NPVariant *variant)
 NPIdentifier NP_LOADDS NpapiHost::NH_GetStringIdentifier(const NPUTF8* name)
 {
     std::string sName(name);
-    NpStringIdMap::iterator it = _stringIdMap.find(sName);
-
-    if (it != _stringIdMap.end()) {
-        return it->second;
-    } else {
-        void *newId = (void*)nextId++;
-        _stringIdMap[sName] = newId;
-        _idStringMap[newId] = sName;
-        return newId;
-    }
+    return m_idMapper.getIdForValue(sName);
 }
 
 /* NPN_GetStringIdentifiers */
@@ -122,48 +104,34 @@ void NP_LOADDS NpapiHost::NH_GetStringIdentifiers(const NPUTF8** names, int32_t 
 /* NPN_GetIntIdentifier */
 NPIdentifier NP_LOADDS NpapiHost::NH_GetIntIdentifier(int32_t intid)
 {
-    NpIntIdMap::iterator it = _intIdMap.find(intid);
-
-    if (it != _intIdMap.end()) {
-        return it->second;
-    } else {
-        void *newId = (void*)nextId++;
-        _idIntMap[newId] = intid;
-        _intIdMap[intid] = newId;
-        return newId;
-    }
+    return m_idMapper.getIdForValue(intid);;
 }
 
 /* NPN_IdentifierIsString */
 bool NP_LOADDS NpapiHost::NH_IdentifierIsString(NPIdentifier identifier)
 {
-	return _idStringMap.find(identifier) != _idStringMap.end();
+    return m_idMapper.idIsType<std::string>(identifier);
 }
 
 /* NPN_UTF8FromIdentifier */
 NPUTF8* NP_LOADDS NpapiHost::NH_UTF8FromIdentifier(NPIdentifier identifier)
 {
-	NpIdStringMap::iterator it = _idStringMap.find(identifier);
-
-	if (it == _idStringMap.end()) {
-		return NULL;
-	} else {
-		std::string str = it->second;
-
-		NPUTF8* outStr = (NPUTF8*)NH_MemAlloc(str.size() + 1);
-		memcpy(outStr, str.c_str(), str.size() + 1);
-		return outStr;
-	}
+    try {
+        std::string str = m_idMapper.getValueForId<std::string>(identifier);
+        NPUTF8 *outStr = (NPUTF8*)NH_MemAlloc(str.size() + 1);
+        memcpy(outStr, str.c_str(), str.size() + 1);
+        return outStr;
+    } catch (...) {
+        return NULL;
+    }
 }
 
 /* NPN_IntFromIdentifier */
 int32_t NP_LOADDS NpapiHost::NH_IntFromIdentifier(NPIdentifier identifier)
 {
-	NpIdIntMap::iterator it = _idIntMap.find(identifier);
-
-	if (it == _idIntMap.end()) {
-		return 0;
-	} else {
-		return it->second;
-	}
+    try {
+        return m_idMapper.getValueForId<int32_t>(identifier);
+    } catch (...) {
+        return 0;
+    }
 }
