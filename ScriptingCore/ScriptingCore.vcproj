@@ -159,6 +159,10 @@
 				RelativePath=".\JSAPI.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\JSAPISimple.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -199,6 +203,10 @@
 			</File>
 			<File
 				RelativePath=".\JSAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JSAPISimple.h"
 				>
 			</File>
 			<File

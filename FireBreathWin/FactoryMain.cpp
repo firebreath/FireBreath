@@ -11,7 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "windows.h"
 
 #include "FactoryDefinitions.h"
-#include "JSAPI.h"
+#include "JSAPISimple.h"
 #include "config.h"
 #include "NpapiPlugin.h"
 #include "NpapiBrowserHost.h"
@@ -31,7 +31,7 @@ const char *_getPluginDesc()
 
 FB::JSAPI *_getRootJSAPI()
 {
-    return new FB::JSAPI();
+    return new FB::JSAPISimple();
 }
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)

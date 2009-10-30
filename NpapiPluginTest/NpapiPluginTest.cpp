@@ -40,7 +40,7 @@ const char *_getPluginDesc()
 
 FB::JSAPI *_getRootJSAPI()
 {
-    return new FB::JSAPI();
+    return new FB::JSAPISimple();
 }
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(NpapiBrowserHost *host)

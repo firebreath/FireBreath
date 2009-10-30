@@ -11,11 +11,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_TESTOBJECTJSAPI
 #define H_TESTOBJECTJSAPI
 
-#include "JSAPI.h"
+#include "JSAPISimple.h"
 
 #define TESTOBJECTJSAPI_ACCESSLISTLENGTH 15
 
-class TestObjectJSAPI : public FB::JSAPI
+class TestObjectJSAPI : public FB::JSAPISimple
 {
 public:
     TestObjectJSAPI()

@@ -72,39 +72,27 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-        // Methods for registering properties and functions to the auto-table
-        virtual void registerMethod(std::string name, CallMethodPtr func);
-        virtual void registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc);
-
         virtual void registerEventMethod(std::string name, EventHandlerObject *event);
         virtual void unregisterEventMethod(std::string name, EventHandlerObject *event);
         virtual EventHandlerObject *getDefaultEventMethod(std::string name);
         virtual void setDefaultEventMethod(std::string name, EventHandlerObject *event);
 
         // Methods to query existance of members on the API
-        virtual bool HasMethod(std::string methodName);
-        virtual bool HasProperty(std::string propertyName);
-        virtual bool HasProperty(int idx);
-        virtual bool HasEvent(std::string eventName);
+        virtual bool HasMethod(std::string methodName) = 0;
+        virtual bool HasProperty(std::string propertyName) = 0;
+        virtual bool HasProperty(int idx) = 0;
+        virtual bool HasEvent(std::string eventName) = 0;
 
         // Methods to manage properties on the API
-        virtual variant GetProperty(std::string propertyName);
-        virtual void SetProperty(std::string propertyName, const variant value);
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant value);
+        virtual variant GetProperty(std::string propertyName) = 0;
+        virtual void SetProperty(std::string propertyName, const variant value) = 0;
+        virtual variant GetProperty(int idx) = 0;
+        virtual void SetProperty(int idx, const variant value) = 0;
 
         // Methods to manage methods on the API
-        virtual variant Invoke(std::string methodName, std::vector<variant>& args);
-
-    public:
-        // Example function call and read-only property; override these if desired in derived classes
-        virtual variant callFireEvent(std::vector<variant>&args);
-        virtual variant callToString(std::vector<variant>&args);
-        virtual variant getValid();
+        virtual variant Invoke(std::string methodName, std::vector<variant>& args) = 0;
 
     protected:
-        MethodMap m_methodMap;
-        PropertyMap m_propertyMap;
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
         
