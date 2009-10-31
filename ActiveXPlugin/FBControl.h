@@ -9,7 +9,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 // FBControl.h : Declaration of the CFBControl
-#pragma once
+#ifndef H_FBCONTROL
+#define H_FBCONTROL
+
 #include "resource.h"       // main symbols
 #include "COM_config.h"
 #include <atlctl.h>
@@ -162,3 +164,5 @@ END_MSG_MAP()
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(FBControl), CFBControl)
+
+#endif

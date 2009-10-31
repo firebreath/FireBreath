@@ -22,7 +22,9 @@ TEST(TypeIDMapTest_voidptr)
     void *tmp = idMap.getIdForValue("This is a test");
     void *tmp2 = idMap.getIdForValue(17);
     CHECK(tmp == (void *)0x1);
+    CHECK(idMap.idIsType<std::string>(tmp));
     CHECK(tmp2 == (void *)0x2);
+    CHECK(idMap.idIsType<int>(tmp2));
 
     std::string val = idMap.getValueForId<std::string>(tmp);
     int val2 = idMap.getValueForId<int>(tmp2);
@@ -40,7 +42,9 @@ TEST(TypeIDMapTest_int)
     int tmp = idMap.getIdForValue("This is a test");
     int tmp2 = idMap.getIdForValue(17);
     CHECK(tmp == 1);
+    CHECK(idMap.idIsType<std::string>(tmp));
     CHECK(tmp2 == 2);
+    CHECK(idMap.idIsType<int>(tmp2));
 
     std::string val = idMap.getValueForId<std::string>(tmp);
     int val2 = idMap.getValueForId<int>(tmp2);

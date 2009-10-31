@@ -62,6 +62,22 @@ namespace FB {
             }
         }
 
+        std::type_info& idGetType(IDTYPE id)
+        {
+            IdVariantMap::iterator it = m_idVariant.find(id);
+
+            if (it != m_idVariant.end()) {
+                return it->second.get_type();
+            } else {
+                throw typeid(void);
+            }
+        }
+
+        bool idExists(IDTYPE id)
+        {
+            return m_idVariant.find(id) != m_idVariant.end();
+        }
+
         template <class T>
         bool idIsType(IDTYPE id)
         {

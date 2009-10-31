@@ -29,6 +29,7 @@ namespace FB { namespace Npapi {
 
         void *getEventId() { return (void*)obj; }
         void *getEventContext() { return browser->getContextID(); };
+        NPObject *getNPObject() { return obj; }
     protected:
         FB::AutoPtr<NpapiBrowserHost> browser;
         NPObject *obj;

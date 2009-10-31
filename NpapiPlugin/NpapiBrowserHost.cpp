@@ -11,7 +11,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <memory.h>
 #include "NpapiTypes.h"
 #include "APITypes.h"
+#include "AutoPtr.h"
 #include "NpapiPluginModule.h"
+#include "NPJavascriptObject.h"
 #include "NPObjectAPI.h"
 
 #include "NpapiBrowserHost.h"
@@ -110,6 +112,36 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         dst->value.stringValue.utf8characters = outStr;
         dst->value.stringValue.utf8length = str.size();
 
+    } else if (var.get_type() == typeid(AutoPtr<JSAPI>)) {
+        NPObject *outObj = NULL;
+        FB::AutoPtr<FB::JSAPI> obj = var.cast<AutoPtr<JSAPI>>();
+        NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
+
+        if (tmpObj == NULL) {
+            outObj = NPJavascriptObject::NewObject(this, obj);
+        }
+
+        if (tmpObj != NULL) {
+            outObj = tmpObj->getNPObject();
+            this->RetainObject(outObj);
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = outObj;
+        }
+    } else if (var.get_type() == typeid(AutoPtr<EventHandlerObject>)) {
+        NPObject *outObj = NULL;
+        FB::AutoPtr<EventHandlerObject> obj = var.cast<AutoPtr<EventHandlerObject>>();
+        NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
+
+        if (tmpObj == NULL) {
+            outObj = NPJavascriptObject::NewObject(this, obj);
+        }
+
+        if (tmpObj != NULL) {
+            outObj = tmpObj->getNPObject();
+            this->RetainObject(outObj);
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = outObj;
+        }
     }
     // TODO: implement object types
 }
