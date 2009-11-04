@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axmain.h"
 #include "dlldatax.h"
 #include "FBControl.h"
+#include "axutil.h"
 
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
@@ -45,7 +46,7 @@ STDAPI DllRegisterServer(void)
 {
     //Sleep(10000);
     // registers object, typelib and all interfaces in typelib
-    AtlSetPerUserRegistration(true);
+    FbPerUserRegistration perUser(true);
     HRESULT hr = _AtlModule.DllRegisterServer();
 
     if (!SUCCEEDED(hr))
@@ -82,14 +83,17 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 {
     HRESULT hr = E_FAIL;
     static const wchar_t szUserSwitch[] = _T("user");
+	bool doPerUserRegistration = false;
 
     if (pszCmdLine != NULL)
     {
         if (_wcsnicmp(pszCmdLine, szUserSwitch, _countof(szUserSwitch)) == 0)
         {
-            AtlSetPerUserRegistration(true);
+            doPerUserRegistration = true;
         }
     }
+
+	FbPerUserRegistration perUser(doPerUserRegistration);
 
     if (bInstall)
     {	

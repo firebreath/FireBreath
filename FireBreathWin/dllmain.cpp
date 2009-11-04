@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #include "resource.h"
 #include "axmain.h"
+#include "axutil.h"
 
 STDAPI DllRegisterServer(void);
 
@@ -21,7 +22,8 @@ STDAPI DllRegisterServer(void);
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 {
     //Sleep(10000);
-    AtlSetPerUserRegistration(true);
+    //AtlSetPerUserRegistration(true);
+	FbPerUserRegistration perUser(true);
 #ifdef _MERGE_PROXYSTUB
     if (!PrxDllMain(hInstance, dwReason, lpReserved))
         return FALSE;
