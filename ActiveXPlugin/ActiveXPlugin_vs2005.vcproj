@@ -158,6 +158,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\axutil.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dlldatax.c"
 				>
 			</File>
@@ -219,6 +223,10 @@
 			</File>
 			<File
 				RelativePath=".\axmain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\axutil.h"
 				>
 			</File>
 			<File
