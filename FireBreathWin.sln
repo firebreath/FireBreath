@@ -40,6 +40,8 @@ Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "Installer", "Installer\Inst
 		{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212} = {ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "boost", "3rdParty\boost\boost.vcproj", "{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -137,6 +139,16 @@ Global
 		{37383648-5477-4EEB-9367-FA042A8F175F}.Release|Win32.ActiveCfg = Release|x86
 		{37383648-5477-4EEB-9367-FA042A8F175F}.Release|x86.ActiveCfg = Release|x86
 		{37383648-5477-4EEB-9367-FA042A8F175F}.Release|x86.Build.0 = Release|x86
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Debug|Win32.Build.0 = Debug|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Debug|x86.ActiveCfg = Debug|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Release|Win32.ActiveCfg = Release|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Release|Win32.Build.0 = Release|Win32
+		{E1332E13-8B0D-4F71-8DBC-E67EAAA75FBF}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
