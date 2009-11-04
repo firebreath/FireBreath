@@ -14,9 +14,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "resource.h"       // main symbols
 #include "COM_config.h"
+#include "config.h"
 #include <atlctl.h>
 #include "FireBreathWin_i.h"
 #include "registrymap.hpp"
+#include "BrowserPlugin.h"
 #include "JSAPI_IDispatchEx.h"
 
 // CFBControl
@@ -32,13 +34,20 @@ class ATL_NO_VTABLE CFBControl :
     public CComCoClass<CFBControl, &CLSID_FBControl>,
     public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &LIBID_FireBreathWinLib>,
     public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
-    public CComControl<CFBControl>
+    public CComControl<CFBControl>,
+    public FB::BrowserPlugin
 {
 public:
 
     CFBControl()
     {
         m_bWindowOnly = TRUE;
+
+        this->setAPI(FB::BrowserPlugin::m_api, new ActiveXBrowserHost());
+    }
+
+    void shutdown()
+    {
     }
 
 DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
@@ -71,7 +80,9 @@ DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
             _ATL_REGMAP_ENTRYKeeper(OLESTR("MOZILLA_PLUGINID"), MOZILLA_PLUGINID),
             _ATL_REGMAP_ENTRYKeeper(OLESTR("CLSID"), CLSID_FBControl),
             _ATL_REGMAP_ENTRYKeeper(OLESTR("LIBID"), LIBID_FireBreathWinLib),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("THREADING"), OLESTR("Single"))
+            _ATL_REGMAP_ENTRYKeeper(OLESTR("THREADING"), OLESTR("Single")),
+            _ATL_REGMAP_ENTRYKeeper(OLESTR("MIMETYPE"), FBSTRING_MIMEType),
+            _ATL_REGMAP_ENTRYKeeper(OLESTR("EXTENSION"), FBSTRING_FileExtents)
         };
         return (_ATL_REGMAP_ENTRY *)map;
     }

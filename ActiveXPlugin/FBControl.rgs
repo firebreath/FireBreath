@@ -41,6 +41,20 @@ HKCU
                     'Version' = s '%VERSION%'
                 }
             }
+	        NoRemove MIME
+	        {
+	            NoRemove Database
+	            {
+	                NoRemove 'Content Type'
+	                {
+	                    '%MIMETYPE%' = s '%DESCRIPTION%'
+	                    {
+	                        val Extension = s '%EXTENSION%'
+	                        val CLSID = s '%CLSID%'
+	                    }
+	                }
+	            }
+	        }            
         }
     }
 }

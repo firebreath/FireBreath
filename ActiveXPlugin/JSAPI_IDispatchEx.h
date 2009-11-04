@@ -26,6 +26,11 @@ class JSAPI_IDispatchEx :
 public:
     JSAPI_IDispatchEx(void) : m_idMap(100) { };
     virtual ~JSAPI_IDispatchEx(void) { };
+    void setAPI(FB::JSAPI *api, ActiveXBrowserHost *host)
+    {
+        m_api = api;
+        m_host = host;
+    }
 
 protected:
     FB::AutoPtr<FB::JSAPI> m_api;
@@ -182,6 +187,14 @@ HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetMemberProperties(DISPID id, D
 template <class T>
 HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetMemberName(DISPID id, BSTR *pbstrName)
 {
+    try {
+        CComBSTR outStr(m_idMap.getValueForId<std::string>(id).c_str());
+
+        *pbstrName = outStr.Detach();
+        return S_OK;
+    } catch (...) {
+        return DISP_E_UNKNOWNNAME;
+    }
     return E_NOTIMPL;
 }
 
