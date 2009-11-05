@@ -31,7 +31,6 @@ namespace FB {
         virtual bool HasMethod(std::string methodName);
         virtual bool HasProperty(std::string propertyName);
         virtual bool HasProperty(int idx);
-        virtual bool HasEvent(std::string eventName);
 
         // Methods to manage properties on the API
         virtual variant GetProperty(std::string propertyName);

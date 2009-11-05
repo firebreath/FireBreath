@@ -16,6 +16,7 @@ using namespace FB;
 
 JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
 {
+    setDefaultEventMethod("onload", NULL);
 }
 
 JSAPI::~JSAPI(void)
@@ -53,8 +54,18 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
         eventIt->second->InvokeAsync("", args);
     }
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end() && fnd->second->getEventId() != NULL) {
+    if (fnd != m_defEventMap.end() && fnd->second.ptr() != NULL && fnd->second->getEventId() != NULL) {
         fnd->second->InvokeAsync("", args);
+    }
+}
+
+bool JSAPI::HasEvent(std::string eventName)
+{
+    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
+    if (fnd != m_defEventMap.end()) {
+        return true;
+    } else {
+        return false;
     }
 }
 

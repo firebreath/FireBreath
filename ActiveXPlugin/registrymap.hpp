@@ -65,20 +65,15 @@ struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 	}
 };
 
-#define BEGIN_REGISTRY_MAP(x) \
-	static struct _ATL_REGMAP_ENTRY *_GetRegistryMap()\
-	{\
-		static const _ATL_REGMAP_ENTRYKeeper map[] = {
-#define REGMAP_ENTRY(x,y) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x), y),
+#define BEGIN_REGMAP(x) static struct _ATL_REGMAP_ENTRY *_GetRegistryMap() { static const _ATL_REGMAP_ENTRYKeeper map[] = {
 
-#define REGMAP_RESOURCE(x,resid) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x),), 
+#define REGMAP_ENTRY(x,y) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x),y),
 
 #define REGMAP_UUID(x,clsid) _ATL_REGMAP_ENTRYKeeper(OLESTR(##x),clsid),
 
-#define END_REGISTRY_MAP() _ATL_REGMAP_ENTRYKeeper() }; return (_ATL_REGMAP_ENTRY *)map;}
+#define END_REGMAP() _ATL_REGMAP_ENTRYKeeper() }; return (_ATL_REGMAP_ENTRY *)map;}
 
-#define DECLARE_REGISTRY_RESOURCEID_EX(x)\
-	static HRESULT WINAPI UpdateRegistry(BOOL bRegister) throw()\
+#define DECLARE_REGISTRY_RESOURCEID_EX(x) static HRESULT WINAPI UpdateRegistry(BOOL bRegister) throw()\
 	{\
 		__if_exists(_Module) \
 		{ \

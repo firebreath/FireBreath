@@ -3,7 +3,7 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 30, 2009
 License:    Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+http://www.eclipse.org/legal/epl-v10.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
@@ -17,12 +17,20 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "TypeIDMap.h"
 #include "COM_config.h"
 
+#include "IDispatchAPI.h"
 #include "dispex.h"
+#include <map>
 
-template <class T>
+template <class T, class IDISP, const IID* piid>
 class JSAPI_IDispatchEx :
-    public T
+    public IDISP,
+    public IConnectionPointContainer,
+    public IConnectionPoint
 {
+    typedef CComEnum<IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*,
+        _CopyInterface<IConnectionPoint> > CComEnumConnectionPoints;
+    typedef std::map<DWORD, FB::AutoPtr<IDispatchAPI>> ConnectionPointMap;
+
 public:
     JSAPI_IDispatchEx(void) : m_idMap(100) { };
     virtual ~JSAPI_IDispatchEx(void) { };
@@ -36,48 +44,153 @@ protected:
     FB::AutoPtr<FB::JSAPI> m_api;
     FB::AutoPtr<ActiveXBrowserHost> m_host;
     FB::TypeIDMap<DISPID> m_idMap;
+    ConnectionPointMap m_connPtMap;
     bool m_valid;
 
 public:
+    /* IConnectionPointContainer members */
+    HRESULT STDMETHODCALLTYPE EnumConnectionPoints(IEnumConnectionPoints **ppEnum);
+    HRESULT STDMETHODCALLTYPE FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP);
+
+    /* IConnectionPoint members */
+    HRESULT STDMETHODCALLTYPE GetConnectionInterface(IID *pIID);
+    HRESULT STDMETHODCALLTYPE GetConnectionPointContainer(IConnectionPointContainer **ppCPC);
+    HRESULT STDMETHODCALLTYPE Advise(IUnknown *pUnkSink, DWORD *pdwCookie);
+    HRESULT STDMETHODCALLTYPE Unadvise(DWORD dwCookie);
+    HRESULT STDMETHODCALLTYPE EnumConnections(IEnumConnections **ppEnum);
+
     /* IDispatch members */
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT *pctinfo);
-    virtual HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo **ppTInfo);
-    virtual HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID riid, LPOLESTR *rgszNames, UINT cNames,
-        LCID lcid, DISPID *rgDispId);
-    virtual HRESULT STDMETHODCALLTYPE Invoke(DISPID dispIdMember, REFIID riid,
-        LCID lcid, WORD wFlags, DISPPARAMS *pDispParams, VARIANT *pVarResult,
-        EXCEPINFO *pExcepInfo, UINT *puArgErr);
+    HRESULT STDMETHODCALLTYPE GetTypeInfoCount(UINT *pctinfo);
+    HRESULT STDMETHODCALLTYPE GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo **ppTInfo);
+    HRESULT STDMETHODCALLTYPE GetIDsOfNames(REFIID riid, LPOLESTR *rgszNames, UINT cNames, LCID lcid,
+        DISPID *rgDispId);
+    HRESULT STDMETHODCALLTYPE Invoke(DISPID dispIdMember, REFIID riid, LCID lcid, WORD wFlags, 
+        DISPPARAMS *pDispParams, VARIANT *pVarResult, EXCEPINFO *pExcepInfo, UINT *puArgErr);
 
     /* IDispatchEx members */
-    virtual HRESULT STDMETHODCALLTYPE GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid);
-    virtual HRESULT STDMETHODCALLTYPE InvokeEx(DISPID id, LCID lcid, WORD wFlags,
+    HRESULT STDMETHODCALLTYPE GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid);
+    HRESULT STDMETHODCALLTYPE InvokeEx(DISPID id, LCID lcid, WORD wFlags,
         DISPPARAMS *pdp, VARIANT *pvarRes, EXCEPINFO *pei, IServiceProvider *pspCaller);
-    virtual HRESULT STDMETHODCALLTYPE DeleteMemberByName(BSTR bstrName, DWORD grfdex);
-    virtual HRESULT STDMETHODCALLTYPE DeleteMemberByDispID(DISPID id);
-    virtual HRESULT STDMETHODCALLTYPE GetMemberProperties(DISPID id, DWORD grfdexFetch,
+    HRESULT STDMETHODCALLTYPE DeleteMemberByName(BSTR bstrName, DWORD grfdex);
+    HRESULT STDMETHODCALLTYPE DeleteMemberByDispID(DISPID id);
+    HRESULT STDMETHODCALLTYPE GetMemberProperties(DISPID id, DWORD grfdexFetch,
         DWORD *pgrfdex);
-    virtual HRESULT STDMETHODCALLTYPE GetMemberName(DISPID id, BSTR *pbstrName);
-    virtual HRESULT STDMETHODCALLTYPE GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid);
-    virtual HRESULT STDMETHODCALLTYPE GetNameSpaceParent(IUnknown **ppunk);
+    HRESULT STDMETHODCALLTYPE GetMemberName(DISPID id, BSTR *pbstrName);
+    HRESULT STDMETHODCALLTYPE GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid);
+    HRESULT STDMETHODCALLTYPE GetNameSpaceParent(IUnknown **ppunk);
 };
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetTypeInfoCount(UINT *pctinfo)
+/* IConnectionPointContainer methods */
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::EnumConnectionPoints(IEnumConnectionPoints **ppEnum)
+{
+    if (ppEnum == NULL)
+        return E_POINTER;
+    *ppEnum = NULL;
+    CComEnumConnectionPoints* pEnum = NULL;
+
+    pEnum = new CComObject<CComEnumConnectionPoints>;
+    if (pEnum == NULL)
+        return E_OUTOFMEMORY;
+
+    IConnectionPoint *connectionPoint[1] = { NULL };
+    static_cast<T*>(this)->QueryInterface(IID_IConnectionPoint, (void **)connectionPoint);
+
+    HRESULT hRes = pEnum->Init(connectionPoint, &connectionPoint[1],
+        reinterpret_cast<IConnectionPointContainer*>(this), AtlFlagCopy);
+
+    if (FAILED(hRes))
+    {
+        delete pEnum;
+        return hRes;
+    }
+    hRes = pEnum->QueryInterface(__uuidof(IEnumConnectionPoints), (void**)ppEnum);
+    if (FAILED(hRes))
+        delete pEnum;
+    return hRes;
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP)
+{
+    if (ppCP == NULL)
+        return E_POINTER;
+    *ppCP = NULL;
+    HRESULT hRes = CONNECT_E_NOCONNECTION;
+
+    if (InlineIsEqualGUID(*piid, riid)) {
+        hRes = static_cast<T*>(this)->QueryInterface(__uuidof(IConnectionPoint), (void**)ppCP);
+    }
+
+    return hRes;
+}
+
+/* IConnectionPoint methods */
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetConnectionInterface(IID *pIID)
+{
+    *pIID = *piid;
+    return S_OK;
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetConnectionPointContainer(IConnectionPointContainer **ppCPC)
+{
+    if (ppCPC == NULL)
+        return E_POINTER;
+
+    return static_cast<T*>(this)->QueryInterface(__uuidof(IConnectionPointContainer), (void**)ppCPC);
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCookie)
+{
+    IDispatch *idisp(NULL);
+    if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
+        FB::AutoPtr<IDispatchAPI> obj(new IDispatchAPI(idisp, m_host));
+        m_connPtMap[(DWORD)obj.ptr()] = obj;
+        *pdwCookie = (DWORD)obj.ptr();
+        return S_OK;
+    } else {
+        return CONNECT_E_CANNOTCONNECT;
+    }
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Unadvise(DWORD dwCookie)
+{
+    ConnectionPointMap::iterator fnd = m_connPtMap.find(dwCookie);
+    if (fnd == m_connPtMap.end()) {
+        return E_UNEXPECTED;
+    } else {
+        m_connPtMap.erase(fnd);
+        return S_OK;
+    }
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::EnumConnections(IEnumConnections **ppEnum)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetTypeInfo(UINT iTInfo, LCID lcid, 
-                                                            ITypeInfo **ppTInfo)
+/* IDispatch methods */
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetTypeInfoCount(UINT *pctinfo)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetIDsOfNames(REFIID riid, LPOLESTR *rgszNames, 
-                                                              UINT cNames, LCID lcid, 
-                                                              DISPID *rgDispId)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetTypeInfo(UINT iTInfo, LCID lcid, ITypeInfo **ppTInfo)
+{
+    return E_NOTIMPL;
+}
+
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetIDsOfNames(REFIID riid, LPOLESTR *rgszNames, 
+                                                  UINT cNames, LCID lcid, 
+                                                  DISPID *rgDispId)
 {
     HRESULT rv = S_OK;
     for (UINT i = 0; i < cNames; i++) {
@@ -90,23 +203,23 @@ HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetIDsOfNames(REFIID riid, LPOLE
     return rv;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
-                                                       WORD wFlags, DISPPARAMS *pDispParams, 
-                                                       VARIANT *pVarResult, EXCEPINFO *pExcepInfo,
-                                                       UINT *puArgErr)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Invoke(DISPID dispIdMember, REFIID riid, LCID lcid,
+                                           WORD wFlags, DISPPARAMS *pDispParams, 
+                                           VARIANT *pVarResult, EXCEPINFO *pExcepInfo,
+                                           UINT *puArgErr)
 {
     return InvokeEx(dispIdMember, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, NULL);
 }
 
 
 /* IDispatchEx members */
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid)
 {
     std::string sName(CW2A(bstrName).m_psz);
-    
-    if (m_api->HasProperty(sName) || m_api->HasMethod(sName)) {
+
+    if (m_api->HasProperty(sName) || m_api->HasMethod(sName) || m_api->HasEvent(sName)) {
         *pid = m_idMap.getIdForValue(sName);
     } else {
         *pid = -1;
@@ -114,11 +227,11 @@ HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetDispID(BSTR bstrName, DWORD g
     return S_OK;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::InvokeEx(DISPID id, LCID lcid, WORD wFlags,
-                                                         DISPPARAMS *pdp, VARIANT *pvarRes, 
-                                                         EXCEPINFO *pei, 
-                                                         IServiceProvider *pspCaller)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFlags,
+                                             DISPPARAMS *pdp, VARIANT *pvarRes, 
+                                             EXCEPINFO *pei, 
+                                             IServiceProvider *pspCaller)
 {
     if (!m_idMap.idExists(id)) {
         return E_NOTIMPL;
@@ -165,27 +278,27 @@ HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::InvokeEx(DISPID id, LCID lcid, W
     return S_OK;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::DeleteMemberByName(BSTR bstrName, DWORD grfdex)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::DeleteMemberByName(BSTR bstrName, DWORD grfdex)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::DeleteMemberByDispID(DISPID id)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::DeleteMemberByDispID(DISPID id)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetMemberProperties(DISPID id, DWORD grfdexFetch,
-                                                                    DWORD *pgrfdex)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetMemberProperties(DISPID id, DWORD grfdexFetch,
+                                                        DWORD *pgrfdex)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetMemberName(DISPID id, BSTR *pbstrName)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetMemberName(DISPID id, BSTR *pbstrName)
 {
     try {
         CComBSTR outStr(m_idMap.getValueForId<std::string>(id).c_str());
@@ -198,14 +311,14 @@ HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetMemberName(DISPID id, BSTR *p
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid)
 {
     return E_NOTIMPL;
 }
 
-template <class T>
-HRESULT STDMETHODCALLTYPE JSAPI_IDispatchEx<T>::GetNameSpaceParent(IUnknown **ppunk)
+template <class T, class IDISP, const IID* piid>
+HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNameSpaceParent(IUnknown **ppunk)
 {
     return E_NOTIMPL;
 }

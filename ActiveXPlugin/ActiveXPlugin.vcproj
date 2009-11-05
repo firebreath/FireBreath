@@ -159,6 +159,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\axutil.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\dlldatax.c"
 				>
 			</File>
@@ -208,6 +212,10 @@
 				RelativePath=".\FireBreathWin_i.c"
 				>
 			</File>
+			<File
+				RelativePath=".\IDispatchAPI.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -223,6 +231,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\axutil.h"
+				>
+			</File>
+			<File
 				RelativePath=".\COM_config.h"
 				>
 			</File>
@@ -232,6 +244,10 @@
 			</File>
 			<File
 				RelativePath=".\FBControl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDispatchAPI.h"
 				>
 			</File>
 			<File

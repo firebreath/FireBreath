@@ -17,24 +17,32 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "config.h"
 #include <atlctl.h>
 #include "FireBreathWin_i.h"
-#include "registrymap.hpp"
 #include "BrowserPlugin.h"
 #include "JSAPI_IDispatchEx.h"
+
+#include "registrymap.hpp"
 
 // CFBControl
 class ATL_NO_VTABLE CFBControl :
     public CComObjectRootEx<CComSingleThreadModel>,
-    public JSAPI_IDispatchEx<IFBControl>,
+    public CComCoClass<CFBControl, &CLSID_FBControl>,
+    public CComControl<CFBControl>,
+
+    public JSAPI_IDispatchEx<CFBControl, IFBControl, &DIID_IFBComEventSource>,
+    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
+
+    // Required for standard events
+    public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &LIBID_FireBreathWinLib>,
+
+    // Provides methods for getting <params>
+    //public IPersistPropertyBag,
+
     public IPersistStreamInitImpl<CFBControl>,
     public IOleControlImpl<CFBControl>,
     public IOleObjectImpl<CFBControl>,
     public IOleInPlaceActiveObjectImpl<CFBControl>,
     public IViewObjectExImpl<CFBControl>,
     public IOleInPlaceObjectWindowlessImpl<CFBControl>,
-    public CComCoClass<CFBControl, &CLSID_FBControl>,
-    public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &LIBID_FireBreathWinLib>,
-    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
-    public CComControl<CFBControl>,
     public FB::BrowserPlugin
 {
 public:
@@ -57,44 +65,19 @@ DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
     OLEMISC_SETCLIENTSITEFIRST
 )
 
-//DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
+DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
 
-    static HRESULT WINAPI UpdateRegistry(BOOL bRegister) throw()
-	{
-		__if_exists(_Module)
-		{
-			return _Module.UpdateRegistryFromResource((UINT)IDR_FBCONTROL, bRegister, _GetRegistryMap() );
-		}
-		__if_not_exists(_Module)
-		{
-			return ATL::_pAtlModule->UpdateRegistryFromResource((UINT)IDR_FBCONTROL, bRegister, _GetRegistryMap() );
-		}
-	}
-
-    static struct _ATL_REGMAP_ENTRY *_GetRegistryMap()
-	{
-        static const _ATL_REGMAP_ENTRYKeeper map[] = {
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("PROGID"), ACTIVEX_PROGID),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("VERSION"), VERSION_NUM),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("DESCRIPTION"), FBControl_DESC),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("MOZILLA_PLUGINID"), MOZILLA_PLUGINID),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("CLSID"), CLSID_FBControl),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("LIBID"), LIBID_FireBreathWinLib),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("THREADING"), OLESTR("Single")),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("MIMETYPE"), FBSTRING_MIMEType),
-            _ATL_REGMAP_ENTRYKeeper(OLESTR("EXTENSION"), FBSTRING_FileExtents)
-        };
-        return (_ATL_REGMAP_ENTRY *)map;
-    }
-//BEGIN_REGISTRY_MAP(CFBControl)
-//    REGMAP_ENTRY("PROGID",              ACTIVEX_PROGID)
-//    REGMAP_ENTRY("VERSION",             VERSION_NUM)
-//    REGMAP_ENTRY("DESCRIPTION",         FBControl_DESC)
-//    REGMAP_ENTRY("MOZILLA_PLUGINID",    MOZILLA_PLUGINID )
-//    REGMAP_UUID ("CLSID",               CLSID_FBControl)
-//    REGMAP_UUID ("LIBID",               LIBID_FireBreathWinLib )
-//    REGMAP_ENTRY("THREADING",           "Single")
-//END_REGISTRY_MAP()
+BEGIN_REGMAP(CFBControl)
+    REGMAP_ENTRY("PROGID", ACTIVEX_PROGID)
+    REGMAP_ENTRY("VERSION", VERSION_NUM)
+    REGMAP_ENTRY("DESCRIPTION", FBControl_DESC)
+    REGMAP_ENTRY("MOZILLA_PLUGINID", MOZILLA_PLUGINID)
+    REGMAP_UUID("CLSID", CLSID_FBControl)
+    REGMAP_UUID("LIBID", LIBID_FireBreathWinLib)
+    REGMAP_ENTRY("THREADING", "Single")
+    REGMAP_ENTRY("MIMETYPE", FBSTRING_MIMEType)
+    REGMAP_ENTRY("EXTENSION", FBSTRING_FileExtents)
+END_REGMAP()
 
 DECLARE_NOT_AGGREGATABLE(CFBControl)
 
@@ -113,11 +96,18 @@ BEGIN_COM_MAP(CFBControl)
     COM_INTERFACE_ENTRY(IOleControl)
     COM_INTERFACE_ENTRY(IOleObject)
     COM_INTERFACE_ENTRY(IPersistStreamInit)
+    COM_INTERFACE_ENTRY(IConnectionPointContainer)
+    COM_INTERFACE_ENTRY(IConnectionPoint)
+    //COM_INTERFACE_ENTRY(IPersistPropertyBag)
     COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
     COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
     COM_INTERFACE_ENTRY(IProvideClassInfo)
     COM_INTERFACE_ENTRY(IProvideClassInfo2)
 END_COM_MAP()
+
+//BEGIN_CONNECTION_POINT_MAP(CFBControl)
+//    CONNECTION_POINT_ENTRY(DIID_IFBComEventSource)
+//END_CONNECTION_POINT_MAP()
 
 BEGIN_PROP_MAP(CFBControl)
     PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)

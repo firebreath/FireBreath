@@ -124,12 +124,24 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
 bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
 {
     try {
-        std::string sName(m_browser->StringFromIdentifier(name));
-        FB::variant res = m_api->GetProperty(sName);
+        FB::variant res;
+        if (m_browser->IdentifierIsString(name)) {
+            std::string sName(m_browser->StringFromIdentifier(name));
+            if (m_api->HasEvent(sName)) {
+                FB::AutoPtr<EventHandlerObject> tmp(m_api->getDefaultEventMethod(sName));
+                if (tmp.ptr() != NULL)
+                    res = tmp;
+            } else {
+                res = m_api->GetProperty(sName);
+            }
+        } else {
+            res = m_api->GetProperty(m_browser->IntFromIdentifier(name));
+        }
 
         m_browser->getNPVariant(result, res);
         return true;
     } catch (script_error e) {
+        m_browser->SetException(this, e.what());
         return false;
     }
 }
@@ -138,8 +150,21 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
 {
     try {
         FB::variant arg = m_browser->getVariant(value);
-
-        m_api->SetProperty(m_browser->StringFromIdentifier(name), arg);
+        if (m_browser->IdentifierIsString(name)) {
+            std::string sName(m_browser->StringFromIdentifier(name));
+            if (m_api->HasEvent(sName)) {
+                if (arg.get_type() != typeid(FB::AutoPtr<EventHandlerObject>)) {
+                    throw script_error("Invalid event handler function");
+                } else {
+                    FB::AutoPtr<EventHandlerObject> tmp(arg.cast<FB::AutoPtr<EventHandlerObject>>());
+                    m_api->setDefaultEventMethod(sName, tmp.ptr());
+                }
+            } else {
+                m_api->SetProperty(sName, arg);
+            }
+        } else {
+            m_api->SetProperty(m_browser->IntFromIdentifier(name), arg);
+        }
         return true;
     } catch (script_error e) {
         m_browser->SetException(this, e.what());
@@ -149,7 +174,12 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
 bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
 {
     try {
-        // TODO: add support for removing properties
+        if (m_browser->IdentifierIsString(name)) {
+            std::string sName(m_browser->StringFromIdentifier(name));
+            if (m_api->HasEvent(sName)) {
+                m_api->setDefaultEventMethod(sName, NULL);
+            }
+        }
         return false;
     } catch (script_error e) {
         m_browser->SetException(this, e.what());

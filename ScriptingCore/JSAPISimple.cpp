@@ -17,6 +17,8 @@ JSAPISimple::JSAPISimple(void)
     registerMethod( "fireEvent", (CallMethodPtr)&JSAPISimple::callFireEvent );
     
     registerProperty( "valid", (GetPropPtr)&JSAPISimple::getValid, NULL );
+
+    
 }
 
 JSAPISimple::~JSAPISimple(void)
@@ -86,16 +88,6 @@ bool JSAPISimple::HasProperty(std::string propertyName)
         return false;
     }
     return false;
-}
-
-bool JSAPISimple::HasEvent(std::string eventName)
-{
-    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end()) {
-        return true;
-    } else {
-        return false;
-    }
 }
 
 
