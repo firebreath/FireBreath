@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="ActiveXPlugin"
 	ProjectGUID="{85ABB24D-674B-4B69-8AF6-1C9B43C5F751}"
 	RootNamespace="ActiveXPlugin"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -40,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore;..\3rdParty\boost"
+				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -211,6 +212,10 @@
 				RelativePath=".\FireBreathWin_i.c"
 				>
 			</File>
+			<File
+				RelativePath=".\IDispatchAPI.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -239,6 +244,10 @@
 			</File>
 			<File
 				RelativePath=".\FBControl.h"
+				>
+			</File>
+			<File
+				RelativePath=".\IDispatchAPI.h"
 				>
 			</File>
 			<File
