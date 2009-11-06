@@ -95,7 +95,10 @@ namespace cdiggins
                     *reinterpret_cast<T*>(dest) = *reinterpret_cast<T const*>(src); 
                 }
                 static bool lessthan(void* const* left, void* const* right) {
-                    return reinterpret_cast<T const*>(left) < reinterpret_cast<T const*>(right);
+                    T l(*reinterpret_cast<T const*>(left));
+                    T r(*reinterpret_cast<T const*>(right));
+
+                    return l < r;
                 }
             };
         };
@@ -144,6 +147,15 @@ namespace cdiggins
         };
 
         struct empty {
+            bool operator<(const empty& rh) const
+            {
+                return false;
+            }
+            template <typename T>
+            bool operator<(const T& rh) const
+            {
+                return true;
+            }
         };
     } // namespace any_detail
 

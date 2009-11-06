@@ -57,6 +57,11 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
     if (fnd != m_defEventMap.end() && fnd->second.ptr() != NULL && fnd->second->getEventId() != NULL) {
         fnd->second->InvokeAsync("", args);
     }
+
+    // Some events are registered as a jsapi object with a method of the same name as the event
+    for (EventIFaceMap::iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
+        ifaceIt->second->InvokeAsync(eventName, args);
+    }
 }
 
 bool JSAPI::HasEvent(std::string eventName)
@@ -91,6 +96,17 @@ void JSAPI::unregisterEventMethod(std::string name, EventHandlerObject *event)
             return;
         }
     }
+}
+
+void JSAPI::registerEventInterface(EventHandlerObject *event)
+{
+    m_evtIfaces[static_cast<void*>(event)] = event;
+}
+
+void JSAPI::unregisterEventInterface(EventHandlerObject *event)
+{
+    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event));
+    m_evtIfaces.erase(fnd);
 }
 
 EventHandlerObject *JSAPI::getDefaultEventMethod(std::string name)

@@ -211,6 +211,10 @@
 				RelativePath=".\FactoryMain.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WindowsEventHandler.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -219,6 +223,10 @@
 			>
 			<File
 				RelativePath=".\config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WindowsEventHandler.h"
 				>
 			</File>
 		</Filter>

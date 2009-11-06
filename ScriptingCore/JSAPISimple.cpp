@@ -14,7 +14,7 @@ using namespace FB;
 JSAPISimple::JSAPISimple(void)
 {
     registerMethod( "toString", (CallMethodPtr)&JSAPISimple::callToString );
-    registerMethod( "fireEvent", (CallMethodPtr)&JSAPISimple::callFireEvent );
+    registerMethod( "testEvent", (CallMethodPtr)&JSAPISimple::callFireEvent );
     
     registerProperty( "valid", (GetPropPtr)&JSAPISimple::getValid, NULL );
 

@@ -37,10 +37,12 @@ class ATL_NO_VTABLE CFBControl :
     // Provides methods for getting <params>
     //public IPersistPropertyBag,
 
-    public IPersistStreamInitImpl<CFBControl>,
+    //public IPersistStreamInitImpl<CFBControl>,
+    public IObjectWithSiteImpl<CFBControl>,
     public IOleControlImpl<CFBControl>,
     public IOleObjectImpl<CFBControl>,
     public IOleInPlaceActiveObjectImpl<CFBControl>,
+    public IQuickActivateImpl<CFBControl>,
     public IViewObjectExImpl<CFBControl>,
     public IOleInPlaceObjectWindowlessImpl<CFBControl>,
     public FB::BrowserPlugin
@@ -50,12 +52,18 @@ public:
     CFBControl()
     {
         m_bWindowOnly = TRUE;
-
-        this->setAPI(FB::BrowserPlugin::m_api, new ActiveXBrowserHost());
+        this->setAPI(FB::BrowserPlugin::m_api, new ActiveXBrowserHost(NULL));
     }
 
     void shutdown()
     {
+    }
+
+
+    LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
+    {
+        m_host->setWindow(m_hWnd);
+        return S_OK;
     }
 
 DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
@@ -95,62 +103,36 @@ BEGIN_COM_MAP(CFBControl)
     COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
     COM_INTERFACE_ENTRY(IOleControl)
     COM_INTERFACE_ENTRY(IOleObject)
-    COM_INTERFACE_ENTRY(IPersistStreamInit)
     COM_INTERFACE_ENTRY(IConnectionPointContainer)
     COM_INTERFACE_ENTRY(IConnectionPoint)
+    COM_INTERFACE_ENTRY(IQuickActivate)
+    //COM_INTERFACE_ENTRY(IPersistStreamInit)
     //COM_INTERFACE_ENTRY(IPersistPropertyBag)
-    COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
+    //COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
     COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
     COM_INTERFACE_ENTRY(IProvideClassInfo)
     COM_INTERFACE_ENTRY(IProvideClassInfo2)
 END_COM_MAP()
 
-//BEGIN_CONNECTION_POINT_MAP(CFBControl)
-//    CONNECTION_POINT_ENTRY(DIID_IFBComEventSource)
-//END_CONNECTION_POINT_MAP()
-
-BEGIN_PROP_MAP(CFBControl)
-    PROP_DATA_ENTRY("_cx", m_sizeExtent.cx, VT_UI4)
-    PROP_DATA_ENTRY("_cy", m_sizeExtent.cy, VT_UI4)
-    // Example entries
-    // PROP_ENTRY_TYPE("Property Name", dispid, clsid, vtType)
-    // PROP_PAGE(CLSID_StockColorPage)
-END_PROP_MAP()
-
-
-BEGIN_MSG_MAP(CFBControl)
-    MESSAGE_HANDLER(WM_CREATE, OnCreate)
-    CHAIN_MSG_MAP(CComControl<CFBControl>)
-    DEFAULT_REFLECTION_HANDLER()
-END_MSG_MAP()
-// Handler prototypes:
-//  LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-//  LRESULT CommandHandler(WORD wNotifyCode, WORD wID, HWND hWndCtl, BOOL& bHandled);
-//  LRESULT NotifyHandler(int idCtrl, LPNMHDR pnmh, BOOL& bHandled);
+    BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult,
+                              DWORD dwMsgMapID = 0);
 
 // IViewObjectEx
     DECLARE_VIEW_STATUS(VIEWSTATUS_SOLIDBKGND | VIEWSTATUS_OPAQUE)
 
 // IFBControl
-
-    LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-    {
-        return S_OK;
-    }
-
     STDMETHOD(TranslateAccelerator)(LPMSG pMsg)
     {
-        CComPtr<IOleInPlaceActiveObject> spIOleInPlaceActiveObject;
+        //CComPtr<IOleInPlaceActiveObject> spIOleInPlaceActiveObject;
 
-        HRESULT hr = m_spBrowser->QueryInterface(&spIOleInPlaceActiveObject);
-        if (SUCCEEDED(hr))
-            hr = spIOleInPlaceActiveObject->TranslateAccelerator(pMsg);
-        if (hr != S_OK)
-            hr = IOleInPlaceActiveObjectImpl<CFBControl>::TranslateAccelerator(pMsg);
+        //HRESULT hr = m_spBrowser->QueryInterface(&spIOleInPlaceActiveObject);
+        //if (SUCCEEDED(hr))
+        //    hr = spIOleInPlaceActiveObject->TranslateAccelerator(pMsg);
+        //if (hr != S_OK)
+        //    hr = IOleInPlaceActiveObjectImpl<CFBControl>::TranslateAccelerator(pMsg);
 
-        return hr;
+        return S_OK; //hr;
     }
-    CComPtr<IWebBrowser2> m_spBrowser;
 
     DECLARE_PROTECT_FINAL_CONSTRUCT()
 

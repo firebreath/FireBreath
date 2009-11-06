@@ -11,15 +11,21 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // dllmain.h : Declaration of module class.
 
 #include "FireBreathWin_i.h"
+#include "TypeIDMap.h"
+
+#ifndef H_AXMAIN
+#define H_AXMAIN
 
 class CFireBreathWinModule : public CAtlDllModuleT< CFireBreathWinModule >
 {
 public :
-    CFireBreathWinModule()
-    {
-    }
+    CFireBreathWinModule();
     DECLARE_LIBID(LIBID_FireBreathWinLib)
     DECLARE_REGISTRY_APPID_RESOURCEID(IDR_FIREBREATHWIN, "{B415CD14-B45D-4BCA-B552-B06175C38606}")
 };
 
 extern class CFireBreathWinModule _AtlModule;
+
+extern FB::TypeIDMap<DISPID> AxIdMap;
+
+#endif H_AXMAIN

@@ -48,6 +48,16 @@ namespace FB {
         TypeIDMap(IDTYPE startValue) : nextId((unsigned long)startValue) { }
         virtual ~TypeIDMap() { }
 
+        void setIdForValue(IDTYPE id, variant val)
+        {
+            if (m_idVariant.find(id) != m_idVariant.end()
+                || m_variantId.find(val) != m_variantId.end()) {
+                throw std::exception("ID or value already defined");
+            }
+            m_variantId[val] = id;
+            m_idVariant[id] = val;
+        }
+
         IDTYPE getIdForValue(variant val)
         {
             VariantIdMap::iterator it = m_variantId.find(val);

@@ -52,3 +52,39 @@ TEST(TypeIDMapTest_int)
     CHECK(val == "This is a test");
     CHECK(val2 == 17);
 }
+
+TEST(TypeIDMapTest_setid)
+{
+    PRINT_TESTNAME;
+
+    TypeIDMap<int> idMap(1);
+
+    std::string val1("This is a string");
+    std::string val2("This is also a string");
+    int val3(42);
+    double val4(34.55);
+
+    idMap.setIdForValue(-55, val1);
+    idMap.setIdForValue(-54, val2);
+    idMap.setIdForValue(-53, val3);
+    idMap.setIdForValue(-52, val4);
+    
+    CHECK(idMap.getIdForValue(val1) == -55);
+    CHECK(idMap.getIdForValue(val2) == -54);
+    CHECK(idMap.getIdForValue(val3) == -53);
+    CHECK(idMap.getIdForValue(val4) == -52);
+}
+
+TEST(TypeIDMapTest_testlong)
+{
+    TypeIDMap<long> idMap(100);
+    idMap.setIdForValue(0, "value");
+    idMap.setIdForValue(-3, "propertyput");
+    idMap.setIdForValue(-4, "newenum");
+    idMap.setIdForValue(-5, "evaluate");
+    idMap.setIdForValue(-6, "constructor");
+    idMap.setIdForValue(-7, "destructor");
+    idMap.setIdForValue(-8, "collect");
+    idMap.setIdForValue(-500, "autosize");
+    idMap.setIdForValue(-501, "backcolor");
+}

@@ -9,6 +9,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "IDispatchAPI.h"
+#include "axmain.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) : 
     m_obj(obj), m_browser(host), FB::EventHandlerObject(host)
@@ -28,6 +29,8 @@ DISPID IDispatchAPI::getIDForName(std::string name)
     HRESULT hr = m_obj->GetIDsOfNames(IID_NULL, &oleStr, 1, LOCALE_SYSTEM_DEFAULT, &dispId);
     if (SUCCEEDED(hr)) {
         return dispId;
+    } else if (hr == E_NOTIMPL) {
+        return AxIdMap.getIdForValue(name); // Makes events possible
     } else {
         return -1;
     }
@@ -121,7 +124,7 @@ FB::variant IDispatchAPI::Invoke(std::string methodName, std::vector<FB::variant
     params.rgvarg = comArgs;
 
     VARIANT res;
-    for (size_t i = args.size() - 1; i > 0; --i) {
+    for (int i = args.size() - 1; i >= 0; i--) {
         m_browser->getComVariant(&comArgs[i], args[i]);
     }
 

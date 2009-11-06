@@ -74,6 +74,8 @@ namespace FB
     public:
         virtual void registerEventMethod(std::string name, EventHandlerObject *event);
         virtual void unregisterEventMethod(std::string name, EventHandlerObject *event);
+        virtual void registerEventInterface(EventHandlerObject *event);
+        virtual void unregisterEventInterface(EventHandlerObject *event);
         virtual EventHandlerObject *getDefaultEventMethod(std::string name);
         virtual void setDefaultEventMethod(std::string name, EventHandlerObject *event);
 
@@ -95,6 +97,7 @@ namespace FB
     protected:
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
+        EventIFaceMap m_evtIfaces;
         
         bool m_valid;
     };

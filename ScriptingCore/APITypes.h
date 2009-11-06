@@ -50,6 +50,7 @@ namespace FB
 
     typedef std::pair<std::string, FB::AutoPtr<EventHandlerObject>> EventPair;
     typedef std::multimap<std::string, FB::AutoPtr<EventHandlerObject>> EventMultiMap;
+    typedef std::map<void*, FB::AutoPtr<EventHandlerObject>> EventIFaceMap;
     typedef std::map<std::string, FB::AutoPtr<EventHandlerObject>> EventSingleMap;
 }
 

@@ -10,7 +10,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "ActiveXBrowserHost.h"
 
-ActiveXBrowserHost::ActiveXBrowserHost(void)
+#include "WindowsEventHandler.h"
+
+ActiveXBrowserHost::ActiveXBrowserHost(HWND wnd) : m_hWnd(wnd)
 {
 }
 
@@ -19,11 +21,19 @@ ActiveXBrowserHost::~ActiveXBrowserHost(void)
 }
 void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
+    if (m_hWnd != NULL) 
+        ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
+            (LPARAM)new WINDOWS_ASYNC_EVENT(func, userData));
 }
 
 void *ActiveXBrowserHost::getContextID()
 {
     return (void*)this;
+}
+
+void ActiveXBrowserHost::setWindow(HWND wnd)
+{
+    m_hWnd = wnd;
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
@@ -89,9 +99,10 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
 {
     CComVariant outVar;
+    VariantInit(dest);
     if (var.empty()) {
         // Already empty
-
+        return;
     } else if (var.get_type() == typeid(int)
         || var.get_type() == typeid(long)
         || var.get_type() == typeid(short)

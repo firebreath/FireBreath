@@ -153,23 +153,23 @@
 				Name="Thread"
 				>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\Thread\src\win32\exceptions.cpp"
+					RelativePath="libs\Thread\src\win32\exceptions.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\Thread\src\win32\thread.cpp"
+					RelativePath="libs\Thread\src\win32\thread.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\Thread\src\win32\timeconv.inl"
+					RelativePath="libs\Thread\src\win32\timeconv.inl"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\Thread\src\win32\tss_dll.cpp"
+					RelativePath="libs\Thread\src\win32\tss_dll.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\Thread\src\win32\tss_pe.cpp"
+					RelativePath="libs\Thread\src\win32\tss_pe.cpp"
 					>
 				</File>
 			</Filter>
@@ -177,11 +177,11 @@
 				Name="smart_ptr"
 				>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\smart_ptr\src\sp_collector.cpp"
+					RelativePath="libs\smart_ptr\src\sp_collector.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\smart_ptr\src\sp_debug_hooks.cpp"
+					RelativePath="libs\smart_ptr\src\sp_debug_hooks.cpp"
 					>
 				</File>
 			</Filter>
@@ -189,19 +189,19 @@
 				Name="date_time"
 				>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\date_time\src\gregorian\date_generators.cpp"
+					RelativePath="libs\date_time\src\gregorian\date_generators.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\date_time\src\gregorian\greg_month.cpp"
+					RelativePath="libs\date_time\src\gregorian\greg_month.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\date_time\src\gregorian\greg_names.hpp"
+					RelativePath="libs\date_time\src\gregorian\greg_names.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\libs\date_time\src\gregorian\greg_weekday.cpp"
+					RelativePath="libs\date_time\src\gregorian\greg_weekday.cpp"
 					>
 				</File>
 			</Filter>
@@ -215,55 +215,55 @@
 				Name="Thread"
 				>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\barrier.hpp"
+					RelativePath="boost\thread\barrier.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\condition.hpp"
+					RelativePath="boost\thread\condition.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\condition_variable.hpp"
+					RelativePath="boost\thread\condition_variable.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\exceptions.hpp"
+					RelativePath="boost\thread\exceptions.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\locks.hpp"
+					RelativePath="boost\thread\locks.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\mutex.hpp"
+					RelativePath="boost\thread\mutex.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\once.hpp"
+					RelativePath="boost\thread\once.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\recursive_mutex.hpp"
+					RelativePath="boost\thread\recursive_mutex.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\shared_mutex.hpp"
+					RelativePath="boost\thread\shared_mutex.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\thread.hpp"
+					RelativePath="boost\thread\thread.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\thread_time.hpp"
+					RelativePath="boost\thread\thread_time.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\tss.hpp"
+					RelativePath="boost\thread\tss.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\thread\xtime.hpp"
+					RelativePath="boost\thread\xtime.hpp"
 					>
 				</File>
 			</Filter>
@@ -271,63 +271,63 @@
 				Name="Function"
 				>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function0.hpp"
+					RelativePath="boost\function\function0.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function1.hpp"
+					RelativePath="boost\function\function1.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function10.hpp"
+					RelativePath="boost\function\function10.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function2.hpp"
+					RelativePath="boost\function\function2.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function3.hpp"
+					RelativePath="boost\function\function3.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function4.hpp"
+					RelativePath="boost\function\function4.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function5.hpp"
+					RelativePath="boost\function\function5.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function6.hpp"
+					RelativePath="boost\function\function6.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function7.hpp"
+					RelativePath="boost\function\function7.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function8.hpp"
+					RelativePath="boost\function\function8.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function9.hpp"
+					RelativePath="boost\function\function9.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function_base.hpp"
+					RelativePath="boost\function\function_base.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function_fwd.hpp"
+					RelativePath="boost\function\function_fwd.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function_template.hpp"
+					RelativePath="boost\function\function_template.hpp"
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\..\home\richard\code\firebreath\3rdParty\boost\boost\function\function_typeof.hpp"
+					RelativePath="boost\function\function_typeof.hpp"
 					>
 				</File>
 			</Filter>

@@ -7,9 +7,13 @@
 
 <object id="plugin" type="application/x-vnd.firebreathplugin"></object>
 
-<a href="javascript:plugin.addEventListener('onload', function(test) { alert(test); })">set onload</a> <br />
+<a href="javascript:plugin.addEventListener('load', function(test) { alert(test); })">set onload (ff)</a> <br />
+<a href="#" onclick="plugin.attachEvent('onload', function(test) { alert(test); }); return false;">set onload (ie)</a> <br />
 
-<a href="#" onclick="plugin.fireEvent('onload', 'test stuff'); return false;">Fire onload</a> <br />
+<a href="#" onclick="plugin.testEvent('onload', 'test stuff'); return false;">Fire onload</a> <br />
+
+<a href="javascript:alert(plugin.valid)">alert plugin valid</a> <br />
+
 
 </body>
 </html>
