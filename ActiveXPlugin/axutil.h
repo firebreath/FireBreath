@@ -8,7 +8,7 @@ public:
 	~FbPerUserRegistration();
 
 private:
-#if MSC_VER < 9
+#if _MSC_VER < 1500
 	HKEY m_hkey;
 #endif
 };

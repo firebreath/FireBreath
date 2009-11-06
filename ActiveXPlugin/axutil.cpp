@@ -3,11 +3,13 @@
 #include "atlstr.h"
 
 FbPerUserRegistration::FbPerUserRegistration(bool perUser) 
+#if _MSC_VER < 1500
   : m_hkey(0)
+#endif
 {
-#if MSC_VER > 8
+#if _MSC_VER > 1400
 	AtlSetPerUserRegistration(perUser);
-#else // MSC_VER < 9
+#else // _MSC_VER < 1500
 	HRESULT hr;
 	HKEY key;
 
@@ -30,7 +32,7 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
 
 FbPerUserRegistration::~FbPerUserRegistration()
 {
-#if MSC_VER < 9
+#if _MSC_VER < 1500
 	if(m_hkey)
 		::RegCloseKey(m_hkey);
 #endif
