@@ -9,6 +9,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "JSAPI.h"
+#include <boost/bind.hpp>
 #include "BrowserHostWrapper.h"
 #include "EventHandlerObject.h"
 
@@ -118,4 +119,68 @@ EventHandlerObject *JSAPI::getDefaultEventMethod(std::string name)
 void JSAPI::setDefaultEventMethod(std::string name, EventHandlerObject *event)
 {
     m_defEventMap[name] = event;
+}
+
+void JSAPI::registerMethod(const std::string& name, CallMethodFunctor func)
+{
+	m_methodFunctorMap[name] = func;
+}
+
+void JSAPI::registerProperty(const std::string& name, GetPropFunctor getFunc, SetPropFunctor setFunc)
+{
+	m_propertyFunctorsMap[name] = PropertyFunctors(getFunc, setFunc);
+}
+
+bool JSAPI::HasMethod(std::string methodName)
+{
+	return (m_methodFunctorMap.find(methodName) != m_methodFunctorMap.end());
+}
+
+bool JSAPI::HasProperty(std::string propertyName)
+{
+	return (m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end());
+}
+
+bool JSAPI::HasProperty(int idx)
+{
+	// TODO: what is this method supposed to do?
+	return false;
+}
+
+FB::variant JSAPI::GetProperty(std::string propertyName)
+{
+	PropertyFunctorsMap::const_iterator it = m_propertyFunctorsMap.find(propertyName);
+	if(it == m_propertyFunctorsMap.end())
+		return FB::variant();
+	
+	return it->second.get();
+}
+
+void JSAPI::SetProperty(std::string propertyName, const variant value)
+{
+	PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.find(propertyName);
+	if(it == m_propertyFunctorsMap.end())
+		return;
+	
+	it->second.set(value);
+}
+
+FB::variant JSAPI::GetProperty(int idx)
+{
+	// TODO: what is this method supposed to do?
+	return FB::variant();
+}
+
+void JSAPI::SetProperty(int idx, const variant value)
+{
+	// TODO: what is this method supposed to do?
+}
+
+FB::variant JSAPI::Invoke(std::string methodName, std::vector<variant> &args)
+{
+	MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
+	if(it == m_methodFunctorMap.end())
+		return FB::variant();
+
+	return it->second(args);
 }
