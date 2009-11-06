@@ -20,7 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
-			UseOfATL="2"
+			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
 			CharacterSet="1"
 			>
@@ -216,6 +216,10 @@
 				RelativePath=".\FactoryMain.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\WindowsEventHandler.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -224,6 +228,10 @@
 			>
 			<File
 				RelativePath=".\config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\WindowsEventHandler.h"
 				>
 			</File>
 		</Filter>
