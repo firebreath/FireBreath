@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="ScriptingCore"
 	ProjectGUID="{30C586C0-3B6B-4108-9405-58673BC8D7E2}"
 	RootNamespace="ScriptingCore"
@@ -160,6 +160,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\JSAPIAuto.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\JSAPISimple.cpp"
 				>
 			</File>
@@ -206,11 +210,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\JSAPIAuto.h"
+				>
+			</File>
+			<File
 				RelativePath=".\JSAPISimple.h"
 				>
 			</File>
 			<File
 				RelativePath=".\MethodConverter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PropertyConverter.h"
 				>
 			</File>
 			<File

@@ -1,3 +1,12 @@
+/**********************************************************\
+Original Author: Georg Fritzsche
+Generated on: 2009-11-07
+License:      Eclipse Public License - Version 1.0
+              http://www.eclipse.org/legal/epl-v10.html
+
+Copyright 2009 Georg Fritzsche, Firebreath development team
+\**********************************************************/
+
 
 #if !defined(METHOD_CONVERTER_H)
 #define METHOD_CONVERTER_H
@@ -8,8 +17,6 @@
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
-
-// Generated: 2009-11-06
 
 namespace FB
 {

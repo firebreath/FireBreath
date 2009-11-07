@@ -12,7 +12,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_JSAPI
 
 #include "APITypes.h"
-#include "MethodConverter.h"
 #include "AutoPtr.h"
 #include <stdexcept>
 
@@ -73,21 +72,7 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-		// Method handling
-		virtual void registerMethod(const std::string& name, CallMethodFunctor func);
-		virtual bool HasMethod(std::string methodName);
-
-		// Property handling
-		virtual void registerProperty(const std::string& name, GetPropFunctor getFunc, SetPropFunctor setFunc);
-		virtual bool HasProperty(std::string propertyName);
-        virtual bool HasProperty(int idx);
-		virtual variant GetProperty(std::string propertyName);
-        virtual void SetProperty(std::string propertyName, const variant value);
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant value);
-
-		// Event handling
-        virtual void registerEventMethod(std::string name, EventHandlerObject *event);
+		virtual void registerEventMethod(std::string name, EventHandlerObject *event);
         virtual void unregisterEventMethod(std::string name, EventHandlerObject *event);
         virtual void registerEventInterface(EventHandlerObject *event);
         virtual void unregisterEventInterface(EventHandlerObject *event);
@@ -95,18 +80,25 @@ namespace FB
         virtual void setDefaultEventMethod(std::string name, EventHandlerObject *event);
 
         // Methods to query existance of members on the API
+        virtual bool HasMethod(std::string methodName) = 0;
+        virtual bool HasProperty(std::string propertyName) = 0;
+        virtual bool HasProperty(int idx) = 0;
         virtual bool HasEvent(std::string eventName);
 
+        // Methods to manage properties on the API
+        virtual variant GetProperty(std::string propertyName) = 0;
+        virtual void SetProperty(std::string propertyName, const variant value) = 0;
+        virtual variant GetProperty(int idx) = 0;
+        virtual void SetProperty(int idx, const variant value) = 0;
+
         // Methods to manage methods on the API
-        virtual variant Invoke(std::string methodName, std::vector<variant>& args);
+        virtual variant Invoke(std::string methodName, std::vector<variant>& args) = 0;
 
     protected:
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
         EventIFaceMap m_evtIfaces;
-		MethodFunctorMap m_methodFunctorMap;
-		PropertyFunctorsMap m_propertyFunctorsMap;
-        
+		        
         bool m_valid;
     };
 

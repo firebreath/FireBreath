@@ -1,3 +1,13 @@
+# ############################################################
+# Original Author: Georg Fritzsche
+#
+# Created:    November 6, 2009
+# License:    Eclipse Public License - Version 1.0
+#            http://www.eclipse.org/legal/epl-v10.html
+#
+# Copyright 2009 Georg Fritzsche, Firebreath development team
+# ############################################################
+
 #!/usr/bin/python
 
 import time
@@ -36,6 +46,18 @@ f = open(headerFileName, "w")
 def wl(s):
 	f.write(ind()+s+endl)
 
+# legal
+
+wl("/**********************************************************\\")
+wl("Original Author: Georg Fritzsche")
+wl("Generated on: " + date.today().isoformat())
+wl("License:      Eclipse Public License - Version 1.0")
+wl("              http://www.eclipse.org/legal/epl-v10.html")
+wl("")
+wl("Copyright 2009 Georg Fritzsche, Firebreath development team")
+wl("\\**********************************************************/")
+wl("")
+	
 # start
 	
 wl("")
@@ -55,8 +77,6 @@ wl("")
 
 # prologue
 
-wl("// Generated: " + date.today().isoformat())
-wl("")
 wl("namespace FB")
 wl("{")
 ind_in()
