@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1251"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="NPAPIHost"
 	ProjectGUID="{20B7643F-01C4-43A1-971C-0879F41FE69C}"
 	RootNamespace="NPAPIHost"
@@ -44,7 +44,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"

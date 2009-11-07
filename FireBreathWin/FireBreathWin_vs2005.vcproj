@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8.00"
+	Version="8,00"
 	Name="FireBreathWin"
 	ProjectGUID="{ACEEC3E6-8C52-4CBE-A19C-8B9ED50E0212}"
 	RootNamespace="FireBreathWin"
@@ -56,7 +56,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_NOMERGE_PROXYSTUB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"

@@ -9,6 +9,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "ActiveXBrowserHost.h"
+#include "COMJavascriptObject.h"
 
 #include "WindowsEventHandler.h"
 
@@ -77,7 +78,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 		break;
 
 	case VT_DISPATCH:
-        // TODO: save IDispatch value
+        //retVal = AutoPtr<EventHandlerObject>(new IDispatchAPI(cVar.
 		break;
 
 	case VT_ERROR:
@@ -124,6 +125,8 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         std::string str = var.convert_cast<std::string>();
         CComBSTR bStr(str.c_str());
         outVar = bStr;
+	} else if (var.get_type() == typeid(FB::AutoPtr<FB::EventHandlerObject>)) {
+	} else if (var.get_type() == typeid(FB::AutoPtr<FB::JSAPI>)) {
     }
 
     outVar.Detach(dest);

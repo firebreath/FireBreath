@@ -239,6 +239,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\COMJavascriptObject.h"
+				>
+			</File>
+			<File
 				RelativePath=".\dlldatax.h"
 				>
 			</File>

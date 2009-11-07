@@ -6,7 +6,6 @@
 	ProjectGUID="{971550E3-DCCE-4A41-B4B8-56B214B3EC21}"
 	RootNamespace="ScriptingCoreTest"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -41,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;..\ScriptingCore"
+				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;..\ScriptingCore;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -85,6 +84,9 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
+				Name="VCWebDeploymentTool"
+			/>
+			<Tool
 				Name="VCPostBuildEventTool"
 				CommandLine="$(OutDir)\$(ProjectName).exe"
 			/>
@@ -116,7 +118,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;..\ScriptingCore"
+				AdditionalIncludeDirectories="&quot;..\unittest-cpp\UnitTest++\src&quot;;..\ScriptingCore;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -159,6 +161,9 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"

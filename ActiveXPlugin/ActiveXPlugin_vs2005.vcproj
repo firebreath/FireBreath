@@ -6,7 +6,6 @@
 	ProjectGUID="{85ABB24D-674B-4B69-8AF6-1C9B43C5F751}"
 	RootNamespace="ActiveXPlugin"
 	Keyword="Win32Proj"
-	TargetFrameworkVersion="196613"
 	>
 	<Platforms>
 		<Platform
@@ -21,6 +20,7 @@
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="4"
+			UseOfATL="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,11 +41,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore"
+				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -105,7 +105,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore"
+				AdditionalIncludeDirectories="..\FireBreathWin;..\ScriptingCore;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -236,6 +236,10 @@
 			</File>
 			<File
 				RelativePath=".\COM_config.h"
+				>
+			</File>
+			<File
+				RelativePath=".\COMJavascriptObject.h"
 				>
 			</File>
 			<File
