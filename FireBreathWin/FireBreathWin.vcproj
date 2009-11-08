@@ -53,11 +53,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin"
+				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;_NOMERGE_PROXYSTUB"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -144,7 +144,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin"
+				AdditionalIncludeDirectories="..\ScriptingCore;..\NpapiPlugin;&quot;..\3rdParty\gecko-sdk\win\includes&quot;;..\ActiveXPlugin;..\3rdParty\boost"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;_NOMERGE_PROXYSTUB"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="0"

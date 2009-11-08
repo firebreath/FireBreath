@@ -40,9 +40,10 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="..\3rdParty\boost"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -57,6 +58,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -101,6 +103,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="..\3rdParty\boost"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				WarningLevel="3"
@@ -160,6 +163,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\JSAPIAuto.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\JSAPISimple.cpp"
 				>
 			</File>
@@ -203,6 +210,10 @@
 			</File>
 			<File
 				RelativePath=".\JSAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\JSAPIAuto.h"
 				>
 			</File>
 			<File

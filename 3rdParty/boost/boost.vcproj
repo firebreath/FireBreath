@@ -45,7 +45,7 @@
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB;BOOST_THREAD_BUILD_LIB;BOOST_DATE_TIME_STATIC_LINK"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="1"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
 				DebugInformationFormat="4"
@@ -61,6 +61,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -123,6 +124,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				IgnoreAllDefaultLibraries="true"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -271,63 +273,7 @@
 				Name="Function"
 				>
 				<File
-					RelativePath="boost\function\function0.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function1.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function10.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function2.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function3.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function4.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function5.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function6.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function7.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function8.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function9.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function_base.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function_fwd.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function_template.hpp"
-					>
-				</File>
-				<File
-					RelativePath="boost\function\function_typeof.hpp"
+					RelativePath=".\boost\function.hpp"
 					>
 				</File>
 			</Filter>

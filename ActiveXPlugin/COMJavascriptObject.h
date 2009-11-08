@@ -34,7 +34,7 @@ public:
     {
     }
 
-    IDispatchEx *NewObject(ActiveXBrowserHost *host, FB::JSAPI *api)
+    static IDispatchEx *NewObject(ActiveXBrowserHost *host, FB::JSAPI *api)
     {
         CComObject<COMJavascriptObject> *obj;
 		HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
