@@ -1,8 +1,8 @@
 /**********************************************************\
 Original Author: Georg Fritzsche
-Generated on: 2009-11-07
-License:      Eclipse Public License - Version 1.0
-              http://www.eclipse.org/legal/epl-v10.html
+Created: 2009-11-07
+License: Eclipse Public License - Version 1.0
+         http://www.eclipse.org/legal/epl-v10.html
 
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
@@ -38,7 +38,6 @@ namespace FB
 			(instance->*setter)(v.convert_cast<Ty>());
 		}
 
-		template<typename T>
 		inline FB::variant dummySetter(const FB::variant&) 
 		{
 			return FB::variant();
@@ -73,7 +72,7 @@ namespace FB
 
 		return PropertyFunctors(
 			boost::bind(FB::detail::properties::getter<C, T>, instance, getter),
-			boost::bind(FB::detail::properties::dummySetter<_T>, _1));
+			boost::bind(FB::detail::properties::dummySetter, _1));
 	}
 }
 
