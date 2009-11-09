@@ -198,6 +198,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\ConverterUtils.h"
+				>
+			</File>
+			<File
 				RelativePath=".\EventHandlerObject.h"
 				>
 			</File>
