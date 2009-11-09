@@ -38,9 +38,9 @@ namespace FB
 			(instance->*setter)(v.convert_cast<Ty>());
 		}
 
-		inline FB::variant dummySetter(const FB::variant&) 
+		inline void dummySetter(const FB::variant&) 
 		{
-			return FB::variant();
+			
 		}
 	} }
 
