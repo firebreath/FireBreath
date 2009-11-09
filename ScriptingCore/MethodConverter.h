@@ -1,6 +1,6 @@
 /**********************************************************\
 Original Author: Georg Fritzsche
-Generated on: 2009-11-07
+Generated on: 2009-11-09
 License:      Eclipse Public License - Version 1.0
               http://www.eclipse.org/legal/epl-v10.html
 
@@ -17,28 +17,12 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
+#include "ConverterUtils.h"
 
 namespace FB
 {
 	namespace detail
 	{
-		template<class T>
-		struct strip_const {
-			typedef T type;
-		};
-		template<class T>
-		struct strip_const<const T> {
-			typedef T type;
-		};
-		template<class T>
-		struct strip_ref {
-			typedef T type;
-		};
-		template<class T>
-		struct strip_ref<T&> {
-			typedef T type;
-		};
-		
 		template<class C, typename F>
 		struct method_wrapper0 {
 			typedef FB::variant result_type;
@@ -58,7 +42,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 1) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename F>
@@ -69,7 +53,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 2) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename F>
@@ -80,7 +64,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 3) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename F>
@@ -91,7 +75,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 4) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename F>
@@ -102,7 +86,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 5) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename F>
@@ -113,7 +97,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 6) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>(), in[5].convert_cast<strip_const<strip_ref<T5>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename F>
@@ -124,7 +108,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 7) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>(), in[5].convert_cast<strip_const<strip_ref<T5>::type>::type>(), in[6].convert_cast<strip_const<strip_ref<T6>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>(), in[6].convert_cast<typename FB::detail::plain_type<T6>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename F>
@@ -135,7 +119,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 8) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>(), in[5].convert_cast<strip_const<strip_ref<T5>::type>::type>(), in[6].convert_cast<strip_const<strip_ref<T6>::type>::type>(), in[7].convert_cast<strip_const<strip_ref<T7>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>(), in[6].convert_cast<typename FB::detail::plain_type<T6>::type>(), in[7].convert_cast<typename FB::detail::plain_type<T7>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename F>
@@ -146,7 +130,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 9) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>(), in[5].convert_cast<strip_const<strip_ref<T5>::type>::type>(), in[6].convert_cast<strip_const<strip_ref<T6>::type>::type>(), in[7].convert_cast<strip_const<strip_ref<T7>::type>::type>(), in[8].convert_cast<strip_const<strip_ref<T8>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>(), in[6].convert_cast<typename FB::detail::plain_type<T6>::type>(), in[7].convert_cast<typename FB::detail::plain_type<T7>::type>(), in[8].convert_cast<typename FB::detail::plain_type<T8>::type>());
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename F>
@@ -157,7 +141,7 @@ namespace FB
 			FB::variant operator()(C* instance, std::vector<FB::variant>& in)
 			{
 				if(in.size() != 10) throw FB::invalid_arguments();
-				return (instance->*f)(in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>(), in[1].convert_cast<strip_const<strip_ref<T1>::type>::type>(), in[2].convert_cast<strip_const<strip_ref<T2>::type>::type>(), in[3].convert_cast<strip_const<strip_ref<T3>::type>::type>(), in[4].convert_cast<strip_const<strip_ref<T4>::type>::type>(), in[5].convert_cast<strip_const<strip_ref<T5>::type>::type>(), in[6].convert_cast<strip_const<strip_ref<T6>::type>::type>(), in[7].convert_cast<strip_const<strip_ref<T7>::type>::type>(), in[8].convert_cast<strip_const<strip_ref<T8>::type>::type>(), in[9].convert_cast<strip_const<strip_ref<T9>::type>::type>());
+				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>(), in[6].convert_cast<typename FB::detail::plain_type<T6>::type>(), in[7].convert_cast<typename FB::detail::plain_type<T7>::type>(), in[8].convert_cast<typename FB::detail::plain_type<T8>::type>(), in[9].convert_cast<typename FB::detail::plain_type<T9>::type>());
 			}
 		};
 	} // namespace detail

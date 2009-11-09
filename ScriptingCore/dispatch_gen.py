@@ -73,6 +73,7 @@ wl("")
 
 wl("#include <boost/function.hpp>")
 wl("#include <boost/bind.hpp>")
+wl("#include \"ConverterUtils.h\"")
 wl("")
 
 # prologue
@@ -86,32 +87,6 @@ ind_in()
 wl("namespace detail")
 wl("{")
 ind_in()
-
-wl("template<class T>")
-wl("struct strip_const {")
-ind_in()
-wl("typedef T type;")
-ind_out()
-wl("};")
-wl("template<class T>")
-wl("struct strip_const<const T> {")
-ind_in()
-wl("typedef T type;")
-ind_out()
-wl("};")
-wl("template<class T>")
-wl("struct strip_ref {")
-ind_in()
-wl("typedef T type;")
-ind_out()
-wl("};")
-wl("template<class T>")
-wl("struct strip_ref<T&> {")
-ind_in()
-wl("typedef T type;")
-ind_out()
-wl("};")
-wl("")
 
 for i in range(max_args+1):
 	s = "template<class C"
@@ -129,9 +104,9 @@ for i in range(max_args+1):
 	wl("if(in.size() != "+str(i)+") throw FB::invalid_arguments();")
 	s = "return (instance->*f)(";
 	if i>0:
-		s+="in[0].convert_cast<strip_const<strip_ref<T0>::type>::type>()"
+		s+="in[0].convert_cast<typename FB::detail::plain_type<T0>::type>()"
 	for i2 in range(1,i):
-		s+= ", in["+str(i2)+"].convert_cast<strip_const<strip_ref<T"+str(i2)+">::type>::type>()"
+		s+= ", in["+str(i2)+"].convert_cast<typename FB::detail::plain_type<T"+str(i2)+">::type>()"
 	wl(s + ");")
 	ind_out()
 	wl("}")
