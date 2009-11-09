@@ -27,9 +27,9 @@ void FB::JSAPIAuto::registerMethod(const std::string& name, CallMethodFunctor fu
 	m_methodFunctorMap[name] = func;
 }
 
-void FB::JSAPIAuto::registerProperty(const std::string& name, GetPropFunctor getFunc, SetPropFunctor setFunc)
+void FB::JSAPIAuto::registerProperty(const std::string& name, PropertyFunctors propFuncs)
 {
-	m_propertyFunctorsMap[name] = PropertyFunctors(getFunc, setFunc);
+	m_propertyFunctorsMap[name] = propFuncs;
 }
 
 bool FB::JSAPIAuto::HasMethod(std::string methodName)

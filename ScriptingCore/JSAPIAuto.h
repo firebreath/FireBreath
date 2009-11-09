@@ -36,7 +36,7 @@ namespace FB {
 		virtual bool HasProperty(int idx);
 
 		// Manage properties
-		virtual void registerProperty(const std::string& name, GetPropFunctor getFunc, SetPropFunctor setFunc);
+		virtual void registerProperty(const std::string& name, PropertyFunctors propFuncs);
 		virtual variant GetProperty(std::string propertyName);
 		virtual void SetProperty(std::string propertyName, const variant value);
 		virtual variant GetProperty(int idx);
