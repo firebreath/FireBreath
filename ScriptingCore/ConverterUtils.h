@@ -19,11 +19,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/type_traits/remove_const.hpp>
 
 namespace FB { namespace detail {
-	namespace b = boost;
-
 	template<typename T>
 	struct plain_type {
-		typedef typename boost::remove_const<typename b::remove_reference<T>::type>::type type;
+		typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
 	};
 } } // FB::detail
 

@@ -21,7 +21,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB
 {
-	namespace detail
+	namespace detail { namespace methods
 	{
 		template<class C, typename F>
 		struct method_wrapper0 {
@@ -144,83 +144,83 @@ namespace FB
 				return (instance->*f)(in[0].convert_cast<typename FB::detail::plain_type<T0>::type>(), in[1].convert_cast<typename FB::detail::plain_type<T1>::type>(), in[2].convert_cast<typename FB::detail::plain_type<T2>::type>(), in[3].convert_cast<typename FB::detail::plain_type<T3>::type>(), in[4].convert_cast<typename FB::detail::plain_type<T4>::type>(), in[5].convert_cast<typename FB::detail::plain_type<T5>::type>(), in[6].convert_cast<typename FB::detail::plain_type<T6>::type>(), in[7].convert_cast<typename FB::detail::plain_type<T7>::type>(), in[8].convert_cast<typename FB::detail::plain_type<T8>::type>(), in[9].convert_cast<typename FB::detail::plain_type<T9>::type>());
 			}
 		};
-	} // namespace detail
+	} } // namespace detail::methods
 	
 	template<class C, typename R>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)())
 	{
-		return boost::bind(FB::detail::method_wrapper0<C, R (C::*)()>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper0<C, R (C::*)()>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0))
 	{
-		return boost::bind(FB::detail::method_wrapper1<C, T0, R (C::*)(T0)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper1<C, T0, R (C::*)(T0)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1))
 	{
-		return boost::bind(FB::detail::method_wrapper2<C, T0, T1, R (C::*)(T0, T1)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper2<C, T0, T1, R (C::*)(T0, T1)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2))
 	{
-		return boost::bind(FB::detail::method_wrapper3<C, T0, T1, T2, R (C::*)(T0, T1, T2)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper3<C, T0, T1, T2, R (C::*)(T0, T1, T2)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3))
 	{
-		return boost::bind(FB::detail::method_wrapper4<C, T0, T1, T2, T3, R (C::*)(T0, T1, T2, T3)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper4<C, T0, T1, T2, T3, R (C::*)(T0, T1, T2, T3)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4))
 	{
-		return boost::bind(FB::detail::method_wrapper5<C, T0, T1, T2, T3, T4, R (C::*)(T0, T1, T2, T3, T4)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper5<C, T0, T1, T2, T3, T4, R (C::*)(T0, T1, T2, T3, T4)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5))
 	{
-		return boost::bind(FB::detail::method_wrapper6<C, T0, T1, T2, T3, T4, T5, R (C::*)(T0, T1, T2, T3, T4, T5)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper6<C, T0, T1, T2, T3, T4, T5, R (C::*)(T0, T1, T2, T3, T4, T5)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6))
 	{
-		return boost::bind(FB::detail::method_wrapper7<C, T0, T1, T2, T3, T4, T5, T6, R (C::*)(T0, T1, T2, T3, T4, T5, T6)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper7<C, T0, T1, T2, T3, T4, T5, T6, R (C::*)(T0, T1, T2, T3, T4, T5, T6)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7))
 	{
-		return boost::bind(FB::detail::method_wrapper8<C, T0, T1, T2, T3, T4, T5, T6, T7, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper8<C, T0, T1, T2, T3, T4, T5, T6, T7, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8))
 	{
-		return boost::bind(FB::detail::method_wrapper9<C, T0, T1, T2, T3, T4, T5, T6, T7, T8, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper9<C, T0, T1, T2, T3, T4, T5, T6, T7, T8, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8)>(function), instance, _1);
 	}
 	
 	template<class C, typename R, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9>
 	inline FB::CallMethodFunctor
 	make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9))
 	{
-		return boost::bind(FB::detail::method_wrapper10<C, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)>(function), instance, _1);
+		return boost::bind(FB::detail::methods::method_wrapper10<C, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9)>(function), instance, _1);
 	}
 	
 } // namespace FB

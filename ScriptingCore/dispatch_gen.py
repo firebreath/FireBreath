@@ -84,7 +84,7 @@ ind_in()
 
 # wrapper
 
-wl("namespace detail")
+wl("namespace detail { namespace methods")
 wl("{")
 ind_in()
 
@@ -114,7 +114,7 @@ for i in range(max_args+1):
 	wl("};")
 	
 ind_out()
-wl("} // namespace detail")
+wl("} } // namespace detail::methods")
 wl("")
 	
 # make_wrapper
@@ -143,7 +143,7 @@ for i in range(max_args+1):
 	wl(makeWrapperFunctionName+"(C* instance, R (C::*function)("+types+"))")
 	wl("{")
 	ind_in()
-	wl("return boost::bind(FB::detail::"+methodWrapStructName+str(i)+"<C"+types_app+", R (C::*)("+types+")>(function), instance, _1);")
+	wl("return boost::bind(FB::detail::methods::"+methodWrapStructName+str(i)+"<C"+types_app+", R (C::*)("+types+")>(function), instance, _1);")
 	ind_out()
 	wl("}")
 	wl("")

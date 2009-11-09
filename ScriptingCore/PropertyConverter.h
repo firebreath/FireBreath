@@ -23,32 +23,32 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB
 {
-	namespace detail
+	namespace detail { namespace properties 
 	{
 		template<class C, typename T>
-		FB::variant getter(C* instance, T (C::*getter)())
+		inline FB::variant getter(C* instance, T (C::*getter)())
 		{
 			return (instance->*getter)();
 		}
 
 		template<class C, typename T>
-		void setter(C* instance, void (C::*setter)(T), const FB::variant& v)
+		inline void setter(C* instance, void (C::*setter)(T), const FB::variant& v)
 		{
 			typedef typename FB::detail::plain_type<T>::type Ty;
 			(instance->*setter)(v.convert_cast<Ty>());
 		}
 
 		template<typename T>
-		FB::variant dummySetter(const FB::variant&) 
+		inline FB::variant dummySetter(const FB::variant&) 
 		{
 			return FB::variant();
 		}
-	}
+	} }
 
 	// make read/write property functor
 
 	template<class C, typename T1, typename T2>
-	PropertyFunctors 
+	inline PropertyFunctors 
 	make_property(C* instance, T1 (C::*getter)(), void (C::*setter)(T2))
 	{
 		typedef typename FB::detail::plain_type<T1>::type _T1;
@@ -59,21 +59,21 @@ namespace FB
 							 (_T1, _T2));
 
 		return PropertyFunctors(
-			boost::bind(FB::detail::getter<C, T1>, instance, getter),
-			boost::bind(FB::detail::setter<C, T2>, instance, setter, _1));
+			boost::bind(FB::detail::properties::getter<C, T1>, instance, getter),
+			boost::bind(FB::detail::properties::setter<C, T2>, instance, setter, _1));
 	}
 
 	// make read-only property
 
 	template<class C, typename T>
-	PropertyFunctors
+	inline PropertyFunctors
 	make_property(C* instance, T (C::*getter)())
 	{
 		typedef typename FB::detail::plain_type<T>::type _T;
 
 		return PropertyFunctors(
-			boost::bind(FB::detail::getter<C, T>, instance, getter),
-			boost::bind(FB::detail::dummySetter<_T>, _1));
+			boost::bind(FB::detail::properties::getter<C, T>, instance, getter),
+			boost::bind(FB::detail::properties::dummySetter<_T>, _1));
 	}
 }
 
