@@ -18,11 +18,20 @@ public:
 	virtual ~TestObjectJSAPIAuto() {}
 
 	TestObjectJSAPIAuto()
+	  : m_readOnlyMessage("read only message")
 	{
 		registerMethod("returnString",	make_method(this, &TestObjectJSAPIAuto::returnString));
 		registerMethod("intToString",	make_method(this, &TestObjectJSAPIAuto::intToString));
 		registerMethod("sumOf",			make_method(this, &TestObjectJSAPIAuto::sumOf));
 		registerMethod("concatenate",	make_method(this, &TestObjectJSAPIAuto::concatenate));
+
+		registerProperty("message",
+						 make_property(this, 
+							&TestObjectJSAPIAuto::get_Message,
+							&TestObjectJSAPIAuto::set_Message));
+		registerProperty("readOnlyMessage", 
+						 make_property(this,
+							&TestObjectJSAPIAuto::get_ReadOnlyMessage));
 	}
 
 	std::string returnString(const std::string& s)
@@ -46,4 +55,23 @@ public:
 	{
 		return a+b;
 	}
+
+	void set_Message(const std::string& s)
+	{
+		m_message = s;
+	}
+
+	std::string get_Message()
+	{
+		return m_message;
+	}
+
+	std::string get_ReadOnlyMessage()
+	{
+		return m_readOnlyMessage;
+	}
+
+private:
+	std::string m_message;
+	const std::string m_readOnlyMessage;
 };
