@@ -39,6 +39,7 @@ public:
         CComObject<COMJavascriptObject> *obj;
 		HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
         
+        obj->setAPI(api, host);
         IDispatchEx *retval;
 		hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
 

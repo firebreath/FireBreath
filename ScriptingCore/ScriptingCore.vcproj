@@ -177,10 +177,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\any.h"
-				>
-			</File>
-			<File
 				RelativePath=".\APITypes.h"
 				>
 			</File>
@@ -222,6 +218,10 @@
 			</File>
 			<File
 				RelativePath=".\TypeIDMap.h"
+				>
+			</File>
+			<File
+				RelativePath=".\variant.h"
 				>
 			</File>
 			<File

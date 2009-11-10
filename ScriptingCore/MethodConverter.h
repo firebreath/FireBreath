@@ -8,12 +8,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 
-#if !defined(METHOD_CONVERTER_H)
+#ifndef METHOD_CONVERTER_H
 #define METHOD_CONVERTER_H
-
-#if defined(_MSC_VER)
-#  pragma once
-#endif
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -226,4 +222,3 @@ namespace FB
 } // namespace FB
 
 #endif //METHOD_CONVERTER_H
-

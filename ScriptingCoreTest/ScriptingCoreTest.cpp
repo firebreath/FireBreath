@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "TypeIDMap_test.h"
 
 using namespace std;
-using namespace cdiggins;
+using namespace FB;
 
 int main()
 {

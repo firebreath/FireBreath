@@ -39,16 +39,16 @@ public:
             throw FB::invalid_arguments();
 
         try {
-            if (args[0].convert_cast<int>() >= 0
-                || args[0].convert_cast<int>() < TESTOBJECTJSAPI_ACCESSLISTLENGTH)
+            if (args[0].convert_cast<long>() >= 0
+                || args[0].convert_cast<long>() < TESTOBJECTJSAPI_ACCESSLISTLENGTH)
             {
-                int i = args[0].convert_cast<int>();
+                int i = args[0].convert_cast<long>();
                 m_accessList[i] = args[1];
                 std::string tmp = args[1].convert_cast<std::string>();
             }
             return true;
         } catch (...) {
-            return false;
+            throw FB::script_error("Could not convert parameter");
         }
     }
 
@@ -58,10 +58,10 @@ public:
             throw FB::invalid_arguments();
 
         try {
-            if (args[0].convert_cast<int>() >= 0
-                || args[0].convert_cast<int>() < TESTOBJECTJSAPI_ACCESSLISTLENGTH)
+            if (args[0].convert_cast<long>() >= 0
+                || args[0].convert_cast<long>() < TESTOBJECTJSAPI_ACCESSLISTLENGTH)
             {
-                int i = args[0].convert_cast<int>();
+                int i = args[0].convert_cast<long>();
                 return m_accessList[i];
             }
         } catch (...) {

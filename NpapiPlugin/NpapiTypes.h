@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "npupp.h"
 #include "npruntime.h"
-#include "any.h"
+#include "variant.h"
 
 namespace FB { namespace Npapi {
 
@@ -29,7 +29,7 @@ namespace FB { namespace Npapi {
 
     void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs);
 
-    typedef cdiggins::any_detail::empty NpapiNull;
+    typedef FB::variant_detail::empty NpapiNull;
 
 }; };
 

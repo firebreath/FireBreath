@@ -53,7 +53,8 @@ bool FB::JSAPIAuto::HasProperty(int idx)
 	if(!m_valid)
 		return false;
 
-	// TODO: what is this method supposed to do?
+	// By default, we don't have any indexed properties; so return false.  To add indexed
+    // properties, override this method
 	return false;
 }
 
@@ -64,7 +65,7 @@ FB::variant FB::JSAPIAuto::GetProperty(std::string propertyName)
 
 	PropertyFunctorsMap::const_iterator it = m_propertyFunctorsMap.find(propertyName);
 	if(it == m_propertyFunctorsMap.end())
-		return FB::variant();
+		throw invalid_member(propertyName);
 	
 	return it->second.get();
 }
@@ -76,7 +77,7 @@ void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant value)
 
 	PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.find(propertyName);
 	if(it == m_propertyFunctorsMap.end())
-		return;
+		throw invalid_member(propertyName);
 	
 	it->second.set(value);
 }
@@ -86,13 +87,17 @@ FB::variant FB::JSAPIAuto::GetProperty(int idx)
 	if(!m_valid)
         throw object_invalidated();
 
-	// TODO: what is this method supposed to do?
-	return FB::variant();
+	// This method should be overridden to access properties in an array style from javascript,
+    // i.e. var value = pluginObj[45]; would call GetProperty(45)
+    // Default is to throw "invalid member"
+    // Incidently, this isn't a very efficient way to convert this to a string; but, it shouldn't
+    // get called much, and I'm lazy (taxilian)
+    throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
 void FB::JSAPIAuto::SetProperty(int idx, const variant value)
 {
-	// TODO: what is this method supposed to do?
+	throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
 FB::variant FB::JSAPIAuto::Invoke(std::string methodName, std::vector<variant> &args)
@@ -102,7 +107,7 @@ FB::variant FB::JSAPIAuto::Invoke(std::string methodName, std::vector<variant> &
 
 	MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
 	if(it == m_methodFunctorMap.end())
-		return FB::variant();
+		throw invalid_member(methodName);
 
 	return it->second(args);
 }

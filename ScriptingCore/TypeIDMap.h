@@ -25,7 +25,7 @@ namespace FB {
     protected:
         class compare_variants { // simple comparison function
            public:
-               bool operator()(const cdiggins::any &x, const cdiggins::any &y)
+               bool operator()(const FB::variant &x, const FB::variant &y)
                {
                    return x.lessthan(y);
                }
@@ -41,8 +41,8 @@ namespace FB {
                 }
         };
 
-        typedef std::map<IDTYPE, cdiggins::any, compare_numerics> IdVariantMap;
-        typedef std::map<cdiggins::any, IDTYPE, compare_variants> VariantIdMap;
+        typedef std::map<IDTYPE, FB::variant, compare_numerics> IdVariantMap;
+        typedef std::map<FB::variant, IDTYPE, compare_variants> VariantIdMap;
 
     public:
         TypeIDMap(IDTYPE startValue) : nextId((unsigned long)startValue) { }
@@ -108,7 +108,7 @@ namespace FB {
             if (it != m_idVariant.end()) {
                 return it->second.cast<T>();
             } else {
-                throw cdiggins::bad_any_cast(typeid(void), typeid(T));
+                throw FB::bad_variant_cast(typeid(void), typeid(T));
             }
         }
 

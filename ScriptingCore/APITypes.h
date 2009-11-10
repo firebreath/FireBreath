@@ -15,15 +15,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <map>
 #include <boost/function.hpp>
-#include "any.h"
+#include "variant.h"
 #include "AutoPtr.h"
 
 namespace FB
 {
     class EventHandlerObject;
     class BrowserHostWrapper;
-    // Variant datatype used
-    typedef cdiggins::any variant;
 
 	// JSAPI methods
 

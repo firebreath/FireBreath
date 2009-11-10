@@ -24,6 +24,7 @@ public:
 		registerMethod("intToString",	make_method(this, &TestObjectJSAPIAuto::intToString));
 		registerMethod("sumOf",			make_method(this, &TestObjectJSAPIAuto::sumOf));
 		registerMethod("concatenate",	make_method(this, &TestObjectJSAPIAuto::concatenate));
+		registerMethod("getType",	make_method(this, &TestObjectJSAPIAuto::getType));
 
 		registerProperty("message",
 						 make_property(this, 
@@ -70,6 +71,11 @@ public:
 	{
 		return m_readOnlyMessage;
 	}
+
+    std::string getType(const FB::variant a)
+    {
+        return a.get_type().name();
+    }
 
 private:
 	std::string m_message;

@@ -8,12 +8,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 
-#if !defined(PROPERTY_CONVERTER_H)
+#ifndef PROPERTY_CONVERTER_H
 #define PROPERTY_CONVERTER_H
-
-#if defined(_MSC_VER)
-#  pragma once
-#endif
 
 #include <boost/function.hpp>
 #include <boost/bind.hpp>
@@ -76,4 +72,4 @@ namespace FB
 	}
 }
 
-#endif // #if !defined(PROPERTY_CONVERTER_H)
+#endif // PROPERTY_CONVERTER_H

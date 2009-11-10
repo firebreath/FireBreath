@@ -8,12 +8,8 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#if !defined(JSAPIAUTO_H)
+#ifndef JSAPIAUTO_H
 #define JSAPIAUTO_H
-
-#if defined(_MSC_VER)
-#  pragma once
-#endif
 
 #include "JSAPI.h"
 #include "MethodConverter.h"
@@ -48,4 +44,4 @@ namespace FB {
 	};
 };
 
-#endif // #if !defined(JSAPIAUTO_H)
+#endif // JSAPIAUTO_H

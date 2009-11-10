@@ -37,7 +37,7 @@ TEST(JSAPIAuto_Methods)
 		const std::string value("foo");
 		std::vector<FB::variant> args = list_of(value);		
 		FB::variant ret = test->Invoke(method, args);		
-		CHECK(ret.convert_cast<std::string>() == "foo");
+		CHECK(ret.cast<std::string>() == "foo");
 	}
 
 	{
@@ -46,7 +46,7 @@ TEST(JSAPIAuto_Methods)
 		const int value = 23;
 		std::vector<FB::variant> args = list_of(value);		
 		FB::variant ret = test->Invoke(method, args);		
-		CHECK(ret.convert_cast<std::string>() == helper::toString(value));
+		CHECK(ret.cast<std::string>() == helper::toString(value));
 	}
 
 	{
@@ -57,7 +57,7 @@ TEST(JSAPIAuto_Methods)
 		{
 			std::vector<FB::variant> args(values, values + sizeof(values)/sizeof(int));
 			FB::variant ret = test->Invoke(method, args);		
-			CHECK(ret.convert_cast<int>() == (values[0]+values[1]));
+			CHECK(ret.cast<int>() == (values[0]+values[1]));
 		}
 	}
 
@@ -67,7 +67,7 @@ TEST(JSAPIAuto_Methods)
 		const std::string a("push "), b("me");
 		std::vector<FB::variant> args = list_of(a)(b);
 		FB::variant ret = test->Invoke(method, args);
-		CHECK(ret.convert_cast<std::string>() == (a+b));
+		CHECK(ret.cast<std::string>() == (a+b));
 	}
 
 	{
@@ -76,7 +76,7 @@ TEST(JSAPIAuto_Methods)
 		const std::string value("hi there");
 		test->SetProperty(prop, value);
 		FB::variant ret = test->GetProperty(prop);
-		CHECK(ret.convert_cast<std::string>() == value);
+		CHECK(ret.cast<std::string>() == value);
 	}
 
 	{
@@ -85,6 +85,24 @@ TEST(JSAPIAuto_Methods)
 		const FB::variant ret1 = test->GetProperty(prop);
 		test->SetProperty(prop, ret1.convert_cast<std::string>()+"foo");
 		const FB::variant ret2 = test->GetProperty(prop);
-		CHECK(ret1.convert_cast<std::string>() == ret2.convert_cast<std::string>());
+		CHECK(ret1.cast<std::string>() == ret2.convert_cast<std::string>());
 	}
+
+    {
+        // Test variant parameter type
+        const std::string method("getType");
+        CHECK(test->HasMethod(method));
+        
+        FB::variant ret = test->Invoke(method, std::vector<FB::variant>(list_of((long)12)));
+        CHECK(ret.cast<std::string>() == "long");
+
+        ret = test->Invoke(method, std::vector<FB::variant>(list_of((double)12.4)));
+        CHECK(ret.cast<std::string>() == "double");
+
+        ret = test->Invoke(method, std::vector<FB::variant>(list_of((bool)true)));
+        CHECK(ret.cast<std::string>() == "bool");
+
+        ret = test->Invoke(method, std::vector<FB::variant>(list_of((void *)0x12)));
+        CHECK(ret.cast<std::string>() == "void *");
+    }
 }

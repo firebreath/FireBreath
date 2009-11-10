@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), \
     m_details.testName); fflush(stdout)
 
-#include "IDispatchObjectTest.h"
+#include "COMJavascriptObjectTest.h"
 
 using namespace std;
 

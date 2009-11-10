@@ -197,10 +197,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TestJSAPIAuto.h"
-				>
-			</File>
-			<File
 				RelativePath=".\TypeIDMap_test.h"
 				>
 			</File>
@@ -220,6 +216,10 @@
 			>
 			<File
 				RelativePath="..\ScriptingCore\TestJSAPI.h"
+				>
+			</File>
+			<File
+				RelativePath=".\TestJSAPIAuto.h"
 				>
 			</File>
 		</Filter>

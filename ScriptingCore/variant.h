@@ -6,6 +6,10 @@
 * Distributed under the Boost Software License, Version 1.0. (See
 * accompanying file LICENSE_1_0.txt or copy at
 * http://www.boost.org/LICENSE_1_0.txt)  
+*
+* This file was originally written by Christopher Diggins, and then was modified in 2008
+* by Richard Bateman for the FireBreath open source project; it was renamed to FB::variant at that
+* time.
 */
 
 #ifndef CDIGGINS_ANY_HPP
@@ -30,7 +34,7 @@
     return cast<_type_>(); \
     } else
 
-#define END_CONVERT_MAP(_type_) { throw bad_any_cast(get_type(), typeid(_type_)); }
+#define END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
 
 #define CONVERT_ENTRY_SIMPLE(_type_, _srctype_)             \
     if ( *type == typeid( _srctype_ ) ) {              \
@@ -51,10 +55,10 @@
     return sstr.str();                                \
     CONVERT_ENTRY_COMPLEX_END()
 
-namespace cdiggins
+namespace FB
 {
-    struct bad_any_cast : std::bad_cast {
-        bad_any_cast(const std::type_info& src, const std::type_info& dest)
+    struct bad_variant_cast : std::bad_cast {
+        bad_variant_cast(const std::type_info& src, const std::type_info& dest)
             : from(src.name()), to(dest.name())
         { }
         virtual const char* what() { 
@@ -64,7 +68,7 @@ namespace cdiggins
         const char* to;
     };
 
-    namespace any_detail
+    namespace variant_detail
     {
         // function pointer table
         struct fxn_ptr_table {
@@ -157,14 +161,14 @@ namespace cdiggins
                 return true;
             }
         };
-    } // namespace any_detail
+    } // namespace variant_detail
 
-    struct any
+    struct variant
     {
         // structors
         template <typename T>
-        any(const T& x) {
-            table = any_detail::get_table<T>::get();
+        variant(const T& x) {
+            table = variant_detail::get_table<T>::get();
             if (sizeof(T) <= sizeof(void*)) {
                 new(&object) T(x);
             }
@@ -173,28 +177,28 @@ namespace cdiggins
             }
         }
 
-        any(const char *x) {
-            table = any_detail::get_table<any_detail::empty>::get();
+        variant(const char *x) {
+            table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
             assign(x);
         }
 
-        any() {
-            table = any_detail::get_table<any_detail::empty>::get();
+        variant() {
+            table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
         }
 
         // Utilize the assignment operator
-        any(const any& x) {
+        variant(const variant& x) {
             *this = x;
         }
 
-        ~any() {
+        ~variant() {
             table->static_delete(&object);
         }
 
         // assignment
-        any& assign(const any& x) {
+        variant& assign(const variant& x) {
             // are we copying between the same type?
             if (table == x.table) {
                 // if so, we can avoid reallocation
@@ -208,15 +212,15 @@ namespace cdiggins
             return *this;
         }
 
-        any& assign(const char *x) {
+        variant& assign(const char *x) {
             return assign(std::string(x));
         }
 
         template <typename T>
-        any& assign(const T& x)
+        variant& assign(const T& x)
         {
             // are we copying between the same type?
-            any_detail::fxn_ptr_table* x_table = any_detail::get_table<T>::get();
+            variant_detail::fxn_ptr_table* x_table = variant_detail::get_table<T>::get();
             if (table == x_table) {
                 // if so, we can avoid deallocating and resuse memory 
                 if (sizeof(T) <= sizeof(void*)) {
@@ -246,23 +250,23 @@ namespace cdiggins
 
         // assignment operator 
         template<typename T>
-        any& operator=(T const& x) {
+        variant& operator=(T const& x) {
             return assign(x);
         }
 
-        any& operator=(any const& rh) {
-            table = any_detail::get_table<any_detail::empty>::get();
+        variant& operator=(variant const& rh) {
+            table = variant_detail::get_table<variant_detail::empty>::get();
             return assign(rh);
         }
 
         // utility functions
-        any& swap(any& x) {
+        variant& swap(variant& x) {
             std::swap(table, x.table);
             std::swap(object, x.object);
         }
 
         // comparison function
-        bool lessthan(const any& rh) const {
+        bool lessthan(const variant& rh) const {
             if (get_type() == rh.get_type()) {
                 return table->less(&object, &rh.object);
             } else {
@@ -279,7 +283,7 @@ namespace cdiggins
         template<typename T>
         const T& cast() const {
             if (get_type() != typeid(T)) {
-                throw bad_any_cast(get_type(), typeid(T));
+                throw bad_variant_cast(get_type(), typeid(T));
             }
             if (sizeof(T) <= sizeof(void*)) {
                 return *reinterpret_cast<T const*>(&object);
@@ -292,6 +296,10 @@ namespace cdiggins
         template<typename T>
         const T convert_cast() const {
             return cast<T>();
+        }
+        
+        template<> const variant convert_cast<variant>() const {
+            return *this;
         }
 
         template<> const int convert_cast<int>() const {
@@ -409,27 +417,27 @@ namespace cdiggins
 
         bool empty() const {
             //return object == NULL;
-            return table == any_detail::get_table<any_detail::empty>::get();
+            return table == variant_detail::get_table<variant_detail::empty>::get();
         }
 
         void reset()
         {
             if (empty()) return; 
             table->static_delete(&object);
-            table = any_detail::get_table<any_detail::empty>::get();
+            table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
         }
 
         // fields
-        any_detail::fxn_ptr_table* table;	  
+        variant_detail::fxn_ptr_table* table;	  
         void* object;
     };
 
     // boost::any-like casting
     template<typename T>
-    T* any_cast(any* this_) {
+    T* variant_cast(variant* this_) {
         if (this_->get_type() != typeid(T)) {
-            throw bad_any_cast(this_->get_type(), typeid(T));
+            throw bad_variant_cast(this_->get_type(), typeid(T));
         }
         if (sizeof(T) <= sizeof(void*)) {
             return reinterpret_cast<T*>(&this_->object);
@@ -440,13 +448,13 @@ namespace cdiggins
     }
 
     template<typename T>
-    T const* any_cast(any const* this_) {
-        return any_cast<T>(const_cast<any*>(this_));
+    T const* variant_cast(variant const* this_) {
+        return variant_cast<T>(const_cast<variant*>(this_));
     }
 
     template<typename T>
-    T const& any_cast(any const& this_){
-        return *any_cast<T>(const_cast<any*>(&this_));
+    T const& variant_cast(variant const& this_){
+        return *variant_cast<T>(const_cast<variant*>(&this_));
     }
 }
 
