@@ -10,7 +10,7 @@
 
 ; FireBreathWin.def : Declares the module parameters.
 
-LIBRARY      "FireBreathWin.DLL"
+LIBRARY      "npFireBreathDemo.dll"
 
 EXPORTS
 ; Needed for ActiveX

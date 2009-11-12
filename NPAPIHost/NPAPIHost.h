@@ -21,7 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPAPIHOST
 #define H_NPAPIHOST
 
-#include "npapi.h"
+#include "NpapiTypes.h"
 #include "npruntime.h"
 #include "NpapiTypes.h"
 #include "TypeIDMap.h"

@@ -8,7 +8,6 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "npupp.h"
 #include "NpapiHost.h"
 
 using namespace FB::Npapi;

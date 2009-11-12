@@ -9,9 +9,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 
-#include "npupp.h"
-#include "npruntime.h"
-
 #include <map>
 #include <vector>
 #include <string>

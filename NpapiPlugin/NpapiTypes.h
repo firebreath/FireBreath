@@ -11,6 +11,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPAPITYPES
 #define H_NPAPITYPES
 
+#ifdef _WINDOWS
+#include "windows.h"
+#endif
+
 #include "npupp.h"
 #include "npruntime.h"
 #include "variant.h"

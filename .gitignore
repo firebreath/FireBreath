@@ -11,3 +11,4 @@ Release/
 *_p.*
 *.orig
 *.aps
+build/

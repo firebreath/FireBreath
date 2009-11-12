@@ -11,7 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPOBJECTAPI
 #define H_NPOBJECTAPI
 
-#include "npapi.h"
+#include "NpapiTypes.h"
 #include "npruntime.h"
 #include "JSAPI.h"
 #include "AutoPtr.h"

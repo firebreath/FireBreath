@@ -27,3 +27,4 @@ Release/*
 .bzr/*
 .git
 .git/*
+build/
