@@ -28,3 +28,4 @@ Release/*
 .git
 .git/*
 build/
+build/*
