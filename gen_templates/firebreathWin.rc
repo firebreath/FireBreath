@@ -18,9 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#ifndef APSTUDIO_INVOKED
-#include "targetver.h"
-#endif
 #include "winres.h"
 
 /////////////////////////////////////////////////////////////////////////////
@@ -34,35 +31,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
 #endif //_WIN32
-
-#ifdef APSTUDIO_INVOKED
-/////////////////////////////////////////////////////////////////////////////
-//
-// TEXTINCLUDE
-//
-
-1 TEXTINCLUDE 
-BEGIN
-    "resource.h\0"
-END
-
-2 TEXTINCLUDE 
-BEGIN
-    "#ifndef APSTUDIO_INVOKED\r\n"
-    "#include ""targetver.h""\r\n"
-    "#endif\r\n"
-    "#include ""winres.h""\r\n"
-    "\0"
-END
-
-3 TEXTINCLUDE 
-BEGIN
-    "1 TYPELIB ""ActiveXControl.tlb""\r\n"
-    "\0"
-END
-
-#endif    // APSTUDIO_INVOKED
-
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -111,8 +79,8 @@ END
 // REGISTRY
 //
 
-IDR_FIREBREATHWIN       REGISTRY                "../ActiveXPlugin/FireBreathWin.rgs"
-IDR_FBCONTROL           REGISTRY                "../ActiveXPlugin/FBControl.rgs"
+IDR_FIREBREATHWIN       REGISTRY                "${GEN_DIR}/gen/FireBreathWin.rgs"
+IDR_FBCONTROL           REGISTRY                "${GEN_DIR}/gen/FBControl.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -127,7 +95,7 @@ IDR_FBCONTROL           REGISTRY                "../ActiveXPlugin/FBControl.rgs"
 
 STRINGTABLE 
 BEGIN
-    IDS_PROJNAME            "npFireBreath"
+    IDS_PROJNAME            "np${PLUGIN_NAME}"
 END
 
 #endif    // English (U.S.) resources
@@ -140,7 +108,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "ActiveXPlugin.tlb"
+1 TYPELIB "${GEN_DIR}/gen/FireBreathWin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

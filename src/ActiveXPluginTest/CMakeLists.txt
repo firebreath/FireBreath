@@ -6,17 +6,26 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/paths.cmake)
 
-Project (UnitTest_ActiveXPlugin)
-message ("Generating project ${PROJECT_NAME}")
+include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
+
+set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_ActiveXPlugin)
+Project (${PROJNAME})
+message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${ACTIVEXPLUGIN_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
-    ${FIREBREATH_CONFIG_DIR}
+    ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${BOOST_SOURCE_DIR}
     )
+
+add_definitions(
+    /D "UNICODE"
+    /D "_UNICODE"
+    /D "_ATL_STATIC_REGISTRY"
+)
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./*.h
@@ -27,21 +36,23 @@ set (SOURCES
     ${GENERAL}
     )
 
-add_executable(UnitTest_ActiveXPlugin ${SOURCES})
+add_executable(${PROJNAME} ${SOURCES})
 
-add_dependencies(UnitTest_ActiveXPlugin
-    ActiveXPlugin
+add_dependencies(${PROJNAME}
+    ${PLUGIN_PREFIX}_ActiveXPlugin
+    ${PLUGIN_PREFIX}_ScriptingCore
     UnitTest++
     )
 
-target_link_libraries (UnitTest_ActiveXPlugin
-    ActiveXPlugin
+target_link_libraries (${PROJNAME}
+    ${PLUGIN_PREFIX}_ActiveXPlugin
+    ${PLUGIN_PREFIX}_ScriptingCore
     UnitTest++
     )
 
-set_target_properties(UnitTest_ActiveXPlugin PROPERTIES
+set_target_properties(${PROJNAME} PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
 )
 
-add_custom_command(TARGET UnitTest_ActiveXPlugin POST_BUILD
-    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/UnitTest_ActiveXPlugin")
+add_custom_command(TARGET ${PROJNAME} POST_BUILD
+    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJNAME}")

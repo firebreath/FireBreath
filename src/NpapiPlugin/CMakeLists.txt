@@ -5,13 +5,16 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/paths.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
-Project (NpapiPlugin)
-message ("Generating project ${PROJECT_NAME}")
+set (PROJNAME ${PLUGIN_PREFIX}_NpapiPlugin)
+Project (${PROJNAME})
+message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
 	${CMAKE_CURRENT_SOURCE_DIR}
+    ${GEN_DIR}/gen
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
     ${BOOST_SOURCE_DIR}
@@ -38,4 +41,4 @@ set (SOURCES
     ${PLUGIN}
     )
 
-add_library(NpapiPlugin STATIC ${SOURCES})
+add_library(${PROJNAME} STATIC ${SOURCES})

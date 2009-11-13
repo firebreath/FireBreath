@@ -5,14 +5,17 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/paths.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
-Project (UnitTest_ScriptingCore)
-message ("Generating project ${PROJECT_NAME}")
+set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_ScriptingCore)
+Project (${PROJNAME})
+message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
+    ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${BOOST_SOURCE_DIR}
     )
@@ -26,21 +29,21 @@ set (SOURCES
     ${GENERAL}
     )
 
-add_executable(UnitTest_ScriptingCore ${SOURCES})
+add_executable(${PROJNAME} ${SOURCES})
 
-add_dependencies(UnitTest_ScriptingCore
-    ScriptingCore
+add_dependencies(${PROJNAME}
+    ${PLUGIN_PREFIX}_ScriptingCore
     UnitTest++
     )
 
-target_link_libraries (UnitTest_ScriptingCore
-    ScriptingCore
+target_link_libraries (${PROJNAME}
+    ${PLUGIN_PREFIX}_ScriptingCore
     UnitTest++
     )
 
-set_target_properties(UnitTest_ScriptingCore PROPERTIES
+set_target_properties(${PROJNAME} PROPERTIES
 	RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
 )
 
-add_custom_command(TARGET UnitTest_ScriptingCore POST_BUILD
-    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/UnitTest_ScriptingCore")
+add_custom_command(TARGET ${PROJNAME} POST_BUILD
+    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJNAME}")

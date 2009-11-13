@@ -4,9 +4,11 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/paths.cmake)
+include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
-Project (ScriptingCore)
-message ("Generating project ${PROJECT_NAME}")
+set (PROJNAME ${PLUGIN_PREFIX}_ScriptingCore)
+Project (${PROJNAME})
+message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -34,6 +36,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Converter*
     Factory*
     Test*
+    BrowserPlugin*
     *.py
     )
 
@@ -47,4 +50,4 @@ set (SOURCES
     ${GENERAL}
     )
 
-add_library(ScriptingCore STATIC ${SOURCES})
+add_library(${PROJNAME} STATIC ${SOURCES})
