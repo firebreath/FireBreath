@@ -1,3 +1,3 @@
 @echo off
 
-cmake -P cmake\genproject.cmake
+cmake -D GEN="Visual Studio 9 2008" -P cmake\genproject.cmake

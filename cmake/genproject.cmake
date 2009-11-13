@@ -8,7 +8,7 @@ get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 include (${CMAKE_DIR}/paths.cmake)
 
 if (GEN)
-    set(GEN_ARG "-G '${GEN}'")
+    set(GEN_ARG -G "${GEN}")
 endif()
 
 execute_process(COMMAND "${CMAKE_COMMAND}"
