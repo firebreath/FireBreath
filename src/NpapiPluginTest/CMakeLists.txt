@@ -4,7 +4,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/paths.cmake)
+include(${CMAKE_DIR}/common.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
 set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_NpapiPlugin)
@@ -35,11 +35,13 @@ add_library(${PROJNAME} STATIC ${SOURCES})
 
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
+    NPAPIHost
     UnitTest++
     )
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
+    NPAPIHost
     UnitTest++
 
 add_custom_command(TARGET ${PROJNAME} POST_BUILD

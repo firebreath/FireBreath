@@ -4,11 +4,9 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/paths.cmake)
+include(${CMAKE_DIR}/common.cmake)
 
-include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
-
-set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_ActiveXPlugin)
+set (PROJNAME UnitTest_ActiveXPlugin)
 Project (${PROJNAME})
 message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
@@ -16,6 +14,7 @@ include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
 	${ACTIVEXPLUGIN_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
+    ${WINDOWSCOMMON_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${BOOST_SOURCE_DIR}
@@ -40,13 +39,13 @@ add_executable(${PROJNAME} ${SOURCES})
 
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
-    ${PLUGIN_PREFIX}_ScriptingCore
+    ScriptingCore
     UnitTest++
     )
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
-    ${PLUGIN_PREFIX}_ScriptingCore
+    ScriptingCore
     UnitTest++
     )
 

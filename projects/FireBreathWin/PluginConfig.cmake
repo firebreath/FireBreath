@@ -40,23 +40,3 @@ set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "FireBreath Demo Plugin")
 set(FBSTRING_MIMEType "application/x-vnd.FirebreathPlugin")
 
-if (NOT EXISTS ${GEN_DIR}/PluginConfig.cmake)
-    get_filename_component(TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
-    get_filename_component(TEMPLATE_DEST_DIR "${GEN_DIR}/gen" ABSOLUTE)
-    message("Generating plugin configuration files in ${TEMPLATE_DEST_DIR}")
-
-    configure_file(PluginConfig.cmake ${GEN_DIR}/PluginConfig.cmake COPYONLY)
-
-    configure_file(${TEMPLATE_DIR}/COM_config.h ${TEMPLATE_DEST_DIR}/COM_config.h)
-    configure_file(${TEMPLATE_DIR}/win_common.h ${TEMPLATE_DEST_DIR}/win_common.h)
-    configure_file(${TEMPLATE_DIR}/config.h ${TEMPLATE_DEST_DIR}/config.h)
-    configure_file(${TEMPLATE_DIR}/targetver.h ${TEMPLATE_DEST_DIR}/targetver.h)
-    configure_file(${TEMPLATE_DIR}/resource.h ${TEMPLATE_DEST_DIR}/resource.h)
-    configure_file(${TEMPLATE_DIR}/FBControl.htm ${TEMPLATE_DEST_DIR}/FBControl.htm)
-    configure_file(${TEMPLATE_DIR}/FBControl.rgs ${TEMPLATE_DEST_DIR}/FBControl.rgs)
-    configure_file(${TEMPLATE_DIR}/FireBreathWin.rgs ${TEMPLATE_DEST_DIR}/FireBreathWin.rgs)
-    configure_file(${TEMPLATE_DIR}/FireBreathWin.idl ${TEMPLATE_DEST_DIR}/FireBreathWin.idl)
-    configure_file(${TEMPLATE_DIR}/FireBreathWin.def ${TEMPLATE_DEST_DIR}/FireBreathWin.def)
-    configure_file(${TEMPLATE_DIR}/firebreathWin.rc ${TEMPLATE_DEST_DIR}/firebreathWin.rc)
-endif()
-

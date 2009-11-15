@@ -1,18 +1,13 @@
 
-
 # Written to work with cmake 2.6
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/paths.cmake)
-get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}" ABSOLUTE)
-file(REMOVE ${GEN_DIR}/PluginConfig.cmake)
-
-include(PluginConfig.cmake)
+include(${CMAKE_DIR}/common.cmake)
 
 set (PROJNAME ${PLUGIN_NAME})
-Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+
+browserplugin_project(${PROJNAME})
 
 add_definitions(
     /D "UNICODE"
@@ -21,13 +16,12 @@ add_definitions(
 )
 
 # include the other requisite projects
-include(${FB_ROOT_DIR}/pluginProjects.cmake)
-
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GECKOSDK_SOURCE_DIR}
     ${ACTIVEXPLUGIN_SOURCE_DIR}
     ${NPAPIPLUGIN_SOURCE_DIR}
+    ${WINDOWSCOMMON_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${BOOST_SOURCE_DIR}
@@ -72,9 +66,16 @@ set_target_properties (${PROJNAME} PROPERTIES
     LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}"
     )
 
+target_link_libraries(${PROJNAME}
+    ${PLUGIN_PREFIX}_ActiveXPlugin
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ScriptingCore
+    WindowsCommon
+    )
+
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ${PLUGIN_PREFIX}_NpapiPlugin
-    ${PLUGIN_PREFIX}_ScriptingCore
-    ${PLUGIN_PREFIX}_WindowsCommon
+    ScriptingCore
+    WindowsCommon
     )

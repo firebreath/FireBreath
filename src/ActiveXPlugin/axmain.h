@@ -12,6 +12,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "FireBreathWin_i.h"
 #include "TypeIDMap.h"
+#include "resource.h"
 
 #ifndef H_AXMAIN
 #define H_AXMAIN

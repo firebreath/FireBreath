@@ -5,7 +5,7 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-include (${CMAKE_DIR}/paths.cmake)
+include (${CMAKE_DIR}/common.cmake)
 
 if (GEN)
     set(GEN_ARG -G "${GEN}")

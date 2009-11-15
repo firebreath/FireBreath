@@ -8,6 +8,7 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "win_common.h"
 #include "UnitTest++.h"
 
 #define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), \

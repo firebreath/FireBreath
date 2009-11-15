@@ -3,10 +3,9 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/paths.cmake)
-include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
+include(${CMAKE_DIR}/common.cmake)
 
-set (PROJNAME ${PLUGIN_PREFIX}_ScriptingCore)
+set (PROJNAME ScriptingCore)
 Project (${PROJNAME})
 message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
