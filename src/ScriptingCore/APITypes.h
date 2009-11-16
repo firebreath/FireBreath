@@ -23,6 +23,10 @@ namespace FB
     class EventHandlerObject;
     class BrowserHostWrapper;
 
+	// Variant list
+
+	typedef std::vector<variant> VariantList;
+
 	// JSAPI methods
 
     class JSAPI;

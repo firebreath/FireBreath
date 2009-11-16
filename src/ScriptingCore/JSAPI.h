@@ -35,6 +35,10 @@ namespace FB
         invalid_arguments()
             : script_error("Invalid Arguments")
         { }
+
+		invalid_arguments(const std::string& error)
+			: script_error(error)
+		{ }
     };
 
     struct object_invalidated : script_error
