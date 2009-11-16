@@ -23,6 +23,11 @@ namespace FB
 {
 	namespace detail { namespace methods
 	{
+		using FB::detail::plain_type;
+		using FB::detail::methods::checkArgumentCount;
+		using FB::detail::methods::convertLastArgument;
+		using FB::convertArgument;
+		
 		template<class C, typename F>
 		struct method_wrapper0 {
 			typedef FB::variant result_type;
@@ -32,7 +37,6 @@ namespace FB
 			{
 				if(in.size() != 0)
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)();
 			}
 		};
@@ -43,11 +47,11 @@ namespace FB
 			method_wrapper1(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T0>::type>(in, 1))
+				typedef typename plain_type<T0>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 1))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T0>::type>(in, 1));
+					convertLastArgument<TLast>(in, 1));
 			}
 		};
 		template<class C, typename T0, typename T1, typename F>
@@ -57,12 +61,12 @@ namespace FB
 			method_wrapper2(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T1>::type>(in, 2))
+				typedef typename plain_type<T1>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 2))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T1>::type>(in, 2));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertLastArgument<TLast>(in, 2));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename F>
@@ -72,13 +76,13 @@ namespace FB
 			method_wrapper3(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T2>::type>(in, 3))
+				typedef typename plain_type<T2>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 3))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T2>::type>(in, 3));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertLastArgument<TLast>(in, 3));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename F>
@@ -88,14 +92,14 @@ namespace FB
 			method_wrapper4(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T3>::type>(in, 4))
+				typedef typename plain_type<T3>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 4))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T3>::type>(in, 4));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertLastArgument<TLast>(in, 4));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename F>
@@ -105,15 +109,15 @@ namespace FB
 			method_wrapper5(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T4>::type>(in, 5))
+				typedef typename plain_type<T4>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 5))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T4>::type>(in, 5));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertLastArgument<TLast>(in, 5));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename F>
@@ -123,16 +127,16 @@ namespace FB
 			method_wrapper6(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T5>::type>(in, 6))
+				typedef typename plain_type<T5>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 6))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::convertArgument<typename FB::detail::plain_type<T4>::type>(in[4], 5),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T5>::type>(in, 6));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertArgument<typename plain_type<T4>::type>(in[4], 5),
+					convertLastArgument<TLast>(in, 6));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename F>
@@ -142,17 +146,17 @@ namespace FB
 			method_wrapper7(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T6>::type>(in, 7))
+				typedef typename plain_type<T6>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 7))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::convertArgument<typename FB::detail::plain_type<T4>::type>(in[4], 5),
-					FB::convertArgument<typename FB::detail::plain_type<T5>::type>(in[5], 6),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T6>::type>(in, 7));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertArgument<typename plain_type<T4>::type>(in[4], 5),
+					convertArgument<typename plain_type<T5>::type>(in[5], 6),
+					convertLastArgument<TLast>(in, 7));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename F>
@@ -162,18 +166,18 @@ namespace FB
 			method_wrapper8(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T7>::type>(in, 8))
+				typedef typename plain_type<T7>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 8))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::convertArgument<typename FB::detail::plain_type<T4>::type>(in[4], 5),
-					FB::convertArgument<typename FB::detail::plain_type<T5>::type>(in[5], 6),
-					FB::convertArgument<typename FB::detail::plain_type<T6>::type>(in[6], 7),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T7>::type>(in, 8));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertArgument<typename plain_type<T4>::type>(in[4], 5),
+					convertArgument<typename plain_type<T5>::type>(in[5], 6),
+					convertArgument<typename plain_type<T6>::type>(in[6], 7),
+					convertLastArgument<TLast>(in, 8));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename F>
@@ -183,19 +187,19 @@ namespace FB
 			method_wrapper9(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T8>::type>(in, 9))
+				typedef typename plain_type<T8>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 9))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::convertArgument<typename FB::detail::plain_type<T4>::type>(in[4], 5),
-					FB::convertArgument<typename FB::detail::plain_type<T5>::type>(in[5], 6),
-					FB::convertArgument<typename FB::detail::plain_type<T6>::type>(in[6], 7),
-					FB::convertArgument<typename FB::detail::plain_type<T7>::type>(in[7], 8),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T8>::type>(in, 9));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertArgument<typename plain_type<T4>::type>(in[4], 5),
+					convertArgument<typename plain_type<T5>::type>(in[5], 6),
+					convertArgument<typename plain_type<T6>::type>(in[6], 7),
+					convertArgument<typename plain_type<T7>::type>(in[7], 8),
+					convertLastArgument<TLast>(in, 9));
 			}
 		};
 		template<class C, typename T0, typename T1, typename T2, typename T3, typename T4, typename T5, typename T6, typename T7, typename T8, typename T9, typename F>
@@ -205,20 +209,20 @@ namespace FB
 			method_wrapper10(F f) : f(f) {}
 			FB::variant operator()(C* instance, const FB::VariantList& in)
 			{
-				if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T9>::type>(in, 10))
+				typedef typename plain_type<T9>::type TLast;
+				if(!checkArgumentCount<TLast>(in, 10))
 					throw FB::invalid_arguments("Invalid Argument Count");
-				FB::VariantList::const_iterator it = in.begin();
 				return (instance->*f)(
-					FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1),
-					FB::convertArgument<typename FB::detail::plain_type<T1>::type>(in[1], 2),
-					FB::convertArgument<typename FB::detail::plain_type<T2>::type>(in[2], 3),
-					FB::convertArgument<typename FB::detail::plain_type<T3>::type>(in[3], 4),
-					FB::convertArgument<typename FB::detail::plain_type<T4>::type>(in[4], 5),
-					FB::convertArgument<typename FB::detail::plain_type<T5>::type>(in[5], 6),
-					FB::convertArgument<typename FB::detail::plain_type<T6>::type>(in[6], 7),
-					FB::convertArgument<typename FB::detail::plain_type<T7>::type>(in[7], 8),
-					FB::convertArgument<typename FB::detail::plain_type<T8>::type>(in[8], 9),
-					FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T9>::type>(in, 10));
+					convertArgument<typename plain_type<T0>::type>(in[0], 1),
+					convertArgument<typename plain_type<T1>::type>(in[1], 2),
+					convertArgument<typename plain_type<T2>::type>(in[2], 3),
+					convertArgument<typename plain_type<T3>::type>(in[3], 4),
+					convertArgument<typename plain_type<T4>::type>(in[4], 5),
+					convertArgument<typename plain_type<T5>::type>(in[5], 6),
+					convertArgument<typename plain_type<T6>::type>(in[6], 7),
+					convertArgument<typename plain_type<T7>::type>(in[7], 8),
+					convertArgument<typename plain_type<T8>::type>(in[8], 9),
+					convertLastArgument<TLast>(in, 10));
 			}
 		};
 	} } // namespace detail::methods

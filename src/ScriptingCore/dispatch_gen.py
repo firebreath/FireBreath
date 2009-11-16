@@ -88,6 +88,12 @@ wl("namespace detail { namespace methods")
 wl("{")
 ind_in()
 
+wl("using FB::detail::plain_type;")
+wl("using FB::detail::methods::checkArgumentCount;")
+wl("using FB::detail::methods::convertLastArgument;")
+wl("using FB::convertArgument;")
+wl("")
+
 for i in range(max_args+1):
 	s = "template<class C"
 	for i2 in range(i): 
@@ -104,9 +110,9 @@ for i in range(max_args+1):
 	if i<1:
 		wl("if(in.size() != 0)")
 	else:
-		wl("if(!FB::detail::methods::checkArgumentCount<typename FB::detail::plain_type<T"+str(i-1)+">::type>(in, "+str(i)+"))") 
+		wl("typedef typename plain_type<T"+str(i-1)+">::type TLast;")
+		wl("if(!checkArgumentCount<TLast>(in, "+str(i)+"))") 
 	wl(tab+"throw FB::invalid_arguments(\"Invalid Argument Count\");")
-	wl("FB::VariantList::const_iterator it = in.begin();")
 	s = "return (instance->*f)(";
 #	if i>0:
 #		s+="in[0].convert_cast<typename FB::detail::plain_type<T0>::type>()"
@@ -117,13 +123,13 @@ for i in range(max_args+1):
 	else:
 		wl(s)
 		ind_in()
-		s = "FB::convertArgument<typename FB::detail::plain_type<T0>::type>(in[0], 1)"
+		s = "convertArgument<typename plain_type<T0>::type>(in[0], 1)"
 		if i>1:
 			for i2 in range(1,i-1):
 				wl(s+",")
-				s = "FB::convertArgument<typename FB::detail::plain_type<T"+str(i2)+">::type>(in["+str(i2)+"], "+str(i2+1)+")"
+				s = "convertArgument<typename plain_type<T"+str(i2)+">::type>(in["+str(i2)+"], "+str(i2+1)+")"
 			wl(s+",")
-		wl("FB::detail::methods::convertLastArgument<typename FB::detail::plain_type<T"+str(i-1)+">::type>(in, "+str(i)+"));")
+		wl("convertLastArgument<TLast>(in, "+str(i)+"));")
 		ind_out()
 	ind_out()
 	wl("}")
