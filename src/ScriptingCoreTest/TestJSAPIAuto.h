@@ -24,7 +24,8 @@ public:
 		registerMethod("intToString",	make_method(this, &TestObjectJSAPIAuto::intToString));
 		registerMethod("sumOf",			make_method(this, &TestObjectJSAPIAuto::sumOf));
 		registerMethod("concatenate",	make_method(this, &TestObjectJSAPIAuto::concatenate));
-		registerMethod("getType",	make_method(this, &TestObjectJSAPIAuto::getType));
+		registerMethod("concatenate2",	make_method(this, &TestObjectJSAPIAuto::concatenate2));
+		registerMethod("getType",		make_method(this, &TestObjectJSAPIAuto::getType));
 
 		registerProperty("message",
 						 make_property(this, 
@@ -52,9 +53,20 @@ public:
 		return a+b;
 	}
 
-	std::string concatenate(const std::string& a, const std::string& b)
+	std::string concatenate(const std::string& a, const std::string& b, const std::string& c)
 	{
-		return a+b;
+		return a+b+c;
+	}
+
+	std::string concatenate2(const std::string& a, const FB::VariantList& list)
+	{
+		FB::VariantList::const_iterator it(list.begin());
+		std::string s(a);
+
+		for( ; it != list.end(); ++it)
+			s += it->convert_cast<std::string>();
+
+		return s;
 	}
 
 	void set_Message(const std::string& s)
