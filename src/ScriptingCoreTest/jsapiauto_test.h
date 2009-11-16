@@ -35,7 +35,7 @@ TEST(JSAPIAuto_Methods)
 		const std::string method("returnString");
 		CHECK(test->HasMethod(method));
 		const std::string value("foo");
-		std::vector<FB::variant> args = list_of(value);		
+		FB::VariantList args = list_of(value);		
 		FB::variant ret = test->Invoke(method, args);		
 		CHECK(ret.cast<std::string>() == "foo");
 	}
@@ -44,7 +44,7 @@ TEST(JSAPIAuto_Methods)
 		const std::string method("intToString");
 		CHECK(test->HasMethod(method));
 		const int value = 23;
-		std::vector<FB::variant> args = list_of(value);		
+		FB::VariantList args = list_of(value);		
 		FB::variant ret = test->Invoke(method, args);		
 		CHECK(ret.cast<std::string>() == helper::toString(value));
 	}
@@ -55,7 +55,7 @@ TEST(JSAPIAuto_Methods)
 		int values[2] = {0, 42};
 		for(int i=0; i<5; ++i, ++values[0], --values[1])
 		{
-			std::vector<FB::variant> args(values, values + sizeof(values)/sizeof(int));
+			FB::VariantList args(values, values + sizeof(values)/sizeof(int));
 			FB::variant ret = test->Invoke(method, args);		
 			CHECK(ret.cast<int>() == (values[0]+values[1]));
 		}
@@ -65,14 +65,14 @@ TEST(JSAPIAuto_Methods)
 		const std::string method("concatenate");
 		CHECK(test->HasMethod(method));
 		const std::string a("push "), b("me "), c("please");
-		std::vector<FB::variant> args = list_of(a)(b)(c);
+		FB::VariantList args = list_of(a)(b)(c);
 		FB::variant ret = test->Invoke(method, args);
 		CHECK(ret.cast<std::string>() == (a+b+c));
 	}
 
 	{
-		const std::string method("concatenate2");
-		CHECK(test->HasMethod("concatenate2"));
+		const std::string method("concatMany");
+		CHECK(test->HasMethod("concatMany"));
 		const std::string a("a"), b("b"), c("c"), d("d");
 		FB::VariantList args = list_of(a)(b)(c)(d);
 		FB::variant ret = test->Invoke(method, args);
@@ -102,16 +102,16 @@ TEST(JSAPIAuto_Methods)
 		const std::string method("getType");
 		CHECK(test->HasMethod(method));
         
-		FB::variant ret = test->Invoke(method, std::vector<FB::variant>(list_of((long)12)));
+		FB::variant ret = test->Invoke(method, FB::VariantList(list_of((long)12)));
 		CHECK(ret.cast<std::string>() == "long");
 
-		ret = test->Invoke(method, std::vector<FB::variant>(list_of((double)12.4)));
+		ret = test->Invoke(method, FB::VariantList(list_of((double)12.4)));
 		CHECK(ret.cast<std::string>() == "double");
 
-		ret = test->Invoke(method, std::vector<FB::variant>(list_of((bool)true)));
+		ret = test->Invoke(method, FB::VariantList(list_of((bool)true)));
 		CHECK(ret.cast<std::string>() == "bool");
 
-		ret = test->Invoke(method, std::vector<FB::variant>(list_of((void *)0x12)));
+		ret = test->Invoke(method, FB::VariantList(list_of((void *)0x12)));
 		CHECK(ret.cast<std::string>() == "void *");
 	}
 }

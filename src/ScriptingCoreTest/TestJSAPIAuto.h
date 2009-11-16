@@ -20,12 +20,12 @@ public:
 	TestObjectJSAPIAuto()
 	  : m_readOnlyMessage("read only message")
 	{
-		registerMethod("returnString",	make_method(this, &TestObjectJSAPIAuto::returnString));
-		registerMethod("intToString",	make_method(this, &TestObjectJSAPIAuto::intToString));
-		registerMethod("sumOf",			make_method(this, &TestObjectJSAPIAuto::sumOf));
-		registerMethod("concatenate",	make_method(this, &TestObjectJSAPIAuto::concatenate));
-		registerMethod("concatenate2",	make_method(this, &TestObjectJSAPIAuto::concatenate2));
-		registerMethod("getType",		make_method(this, &TestObjectJSAPIAuto::getType));
+		registerMethod("returnString",  make_method(this, &TestObjectJSAPIAuto::returnString));
+		registerMethod("intToString",   make_method(this, &TestObjectJSAPIAuto::intToString));
+		registerMethod("sumOf",         make_method(this, &TestObjectJSAPIAuto::sumOf));
+		registerMethod("concatenate",   make_method(this, &TestObjectJSAPIAuto::concatenate));
+		registerMethod("concatMany",    make_method(this, &TestObjectJSAPIAuto::concatenate2));
+		registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
 
 		registerProperty("message",
 						 make_property(this, 
