@@ -11,7 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ActiveXBrowserHost.h"
 #include "COMJavascriptObject.h"
 
-#include "WindowsEventHandler.h"
+#include "Win/WindowsEventHandler.h"
 
 ActiveXBrowserHost::ActiveXBrowserHost(HWND wnd) : m_hWnd(wnd)
 {
