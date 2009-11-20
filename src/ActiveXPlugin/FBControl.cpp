@@ -9,10 +9,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 // FBControl.cpp : Implementation of CFBControl
-#include "win_common.h"
 #include "FBControl.h"
 
-#include "WindowsEventHandler.h"
+#include "Win/WindowsEventHandler.h"
 
 // CFBControl
 BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)

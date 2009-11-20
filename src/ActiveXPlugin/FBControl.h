@@ -13,12 +13,17 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FBCONTROL
 
 #include "resource.h"       // main symbols
+#include "Win/win_common.h"
 #include "COM_config.h"
 #include "config.h"
 #include <atlctl.h>
 #include "FireBreathWin_i.h"
 #include "BrowserPlugin.h"
 #include "JSAPI_IDispatchEx.h"
+#include "FactoryDefinitions.h"
+
+#include "PluginCore.h"
+#include "PluginWindow.h"
 
 #include "registrymap.hpp"
 
@@ -48,11 +53,15 @@ class ATL_NO_VTABLE CFBControl :
     public FB::BrowserPlugin
 {
 public:
+    FB::PluginCore *pluginMain;
+    FB::PluginWindow *pluginWin;
 
-    CFBControl()
+    CFBControl() : pluginMain(NULL)
     {
-        m_bWindowOnly = TRUE;
-        this->setAPI(FB::BrowserPlugin::m_api, new ActiveXBrowserHost(NULL));
+        pluginMain = _getMainPlugin(); // Factory function, defined by the plugin
+        m_bWindowOnly = pluginMain->IsWindowless() ? TRUE : FALSE;
+
+        this->setAPI(pluginMain->getRootJSAPI(), new ActiveXBrowserHost(NULL));
     }
 
     void shutdown()

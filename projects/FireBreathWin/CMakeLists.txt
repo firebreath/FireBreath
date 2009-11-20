@@ -67,15 +67,9 @@ set_target_properties (${PROJNAME} PROPERTIES
     )
 
 target_link_libraries(${PROJNAME}
-    ${PLUGIN_PREFIX}_ActiveXPlugin
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ScriptingCore
-    WindowsCommon
+    ${PLUGIN_INTERNAL_DEPS}
     )
 
 add_dependencies(${PROJNAME}
-    ${PLUGIN_PREFIX}_ActiveXPlugin
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ScriptingCore
-    WindowsCommon
+    ${PLUGIN_INTERNAL_DEPS}
     )

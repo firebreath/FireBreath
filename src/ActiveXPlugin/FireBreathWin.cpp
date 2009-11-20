@@ -10,7 +10,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 // FireBreathWin.cpp : Implementation of DLL Exports.
 
-#include "win_common.h"
+#include "Win/win_common.h"
 #include "resource.h"
 #include "FireBreathWin_i.h"
 #include "axmain.h"
