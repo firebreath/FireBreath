@@ -16,3 +16,9 @@ foreach(TemplateFile ${TEMPLATELIST})
     configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
+set(PLUGIN_INTERNAL_DEPS
+    ${PLUGIN_PREFIX}_ActiveXPlugin
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ScriptingCore
+    PluginCore
+    )

@@ -11,7 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef  H_WINDOWSEVENTHANDLER
 #define  H_WINDOWSEVENTHANDLER
 
-#include "win_common.h"
+#include "Win/win_common.h"
 
 #define WM_ASYNCTHREADINVOKE    WM_USER + 1
 

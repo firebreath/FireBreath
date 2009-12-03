@@ -11,7 +11,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // dllmain.cpp : Implementation of DllMain.
 
 
-#include "win_common.h"
+#include "Win/win_common.h"
 #include "resource.h"
 #include "axmain.h"
 #include "axutil.h"
