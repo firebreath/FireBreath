@@ -18,7 +18,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "FactoryDefinitions.h"
 #include "JSAPISimple.h"
 #include "config.h"
-#include "NpapiPlugin.h"
+#include "Win/NpapiPluginWin.h"
 #include "NpapiBrowserHost.h"
 #include "TemplatePlugin.h"
 
@@ -37,7 +37,7 @@ const char *_getPluginDesc()
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 {
-    return new FB::Npapi::NpapiPlugin(host);
+    return new FB::Npapi::NpapiPluginWin(host);
 }
 
 FB::PluginCore *_getMainPlugin()

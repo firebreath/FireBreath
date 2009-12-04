@@ -41,5 +41,6 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
 
 NPError OSCALL NP_Shutdown()
 {
+    delete module;
     return NPERR_NO_ERROR;
 }

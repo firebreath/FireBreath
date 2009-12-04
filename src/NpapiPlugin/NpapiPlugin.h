@@ -39,17 +39,17 @@ namespace FB { namespace Npapi {
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
-        NPError SetWindow(NPWindow* window);
-        NPError NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
-        NPError DestroyStream(NPStream* stream, NPReason reason);
-        int32 WriteReady(NPStream* stream);
-        int32 Write(NPStream* stream, int32 offset, int32 len, void* buffer);
-        void StreamAsFile(NPStream* stream, const char* fname);
-        void Print(NPPrint* platformPrint);
-        int16 HandleEvent(void* event);
-        void URLNotify(const char* url, NPReason reason, void* notifyData);
-        NPError GetValue(NPPVariable variable, void *);
-        NPError SetValue(NPNVariable variable, void *);
+        virtual NPError SetWindow(NPWindow* window);
+        virtual NPError NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
+        virtual NPError DestroyStream(NPStream* stream, NPReason reason);
+        virtual int32 WriteReady(NPStream* stream);
+        virtual int32 Write(NPStream* stream, int32 offset, int32 len, void* buffer);
+        virtual void StreamAsFile(NPStream* stream, const char* fname);
+        virtual void Print(NPPrint* platformPrint);
+        virtual int16 HandleEvent(void* event);
+        virtual void URLNotify(const char* url, NPReason reason, void* notifyData);
+        virtual NPError GetValue(NPPVariable variable, void *);
+        virtual NPError SetValue(NPNVariable variable, void *);
     };
 
 }; }; // FB::Npapi

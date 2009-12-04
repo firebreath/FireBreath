@@ -14,6 +14,7 @@ namespace FB {
         virtual ~PluginWindowWin();
         static LRESULT CALLBACK _WinProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                                                           LPARAM lParam);
+        HWND getHWND() { return m_hWnd; }
 
     protected:
         bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT lRes);

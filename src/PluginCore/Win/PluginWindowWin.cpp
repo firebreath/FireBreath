@@ -1,4 +1,5 @@
 
+#include "PluginEvents/WindowsEvent.h"
 #include "PluginWindowWin.h"
     
 #include "windows.h"
@@ -9,22 +10,23 @@ using namespace FB;
 PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd)
 {
     // subclass window so we can intercept window messages 
-    lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);
+    //lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);
 
     // associate window with this object so that we can route events properly
-    SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
+    //SetWindowLong(m_hWnd, GWL_USERDATA, (LONG)this);
 }
 
 PluginWindowWin::~PluginWindowWin()
 {
     // Unsubclass the window so that everything is as it was before we got it
-	SubclassWindow(m_hWnd, lpOldWinProc);
+	//SubclassWindow(m_hWnd, lpOldWinProc);
 }
 
-bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT lRes)
+bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT lRes)
 {
 
-    return false;
+    WindowsEvent evt(hWnd, uMsg, wParam, lParam);
+    return this->SendEvent(&evt);
 }
 
 LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

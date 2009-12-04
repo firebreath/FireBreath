@@ -13,6 +13,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
+#include "NpapiTypes.h"
+#include "atlbase.h"
 #include "MathAPI.h"
 
 #include "TemplatePlugin.h"
@@ -45,6 +47,9 @@ FB::JSAPI* TemplatePlugin::createJSAPI()
 
 bool TemplatePlugin::HandleEvent(FB::PluginEvent *evt)
 {
+    USES_CONVERSION;
+    CA2W longname(typeid(*evt).name());
+    OutputDebugString(longname);
     return false;
 }
 

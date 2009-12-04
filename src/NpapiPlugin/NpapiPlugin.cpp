@@ -41,6 +41,7 @@ NPObject *NpapiPlugin::getScriptableObject()
 
 void NpapiPlugin::shutdown(void)
 {
+    pluginMain->ClearWindow();
     delete pluginMain; pluginMain = NULL;
 }
 
