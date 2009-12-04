@@ -28,15 +28,17 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cmake
     )
 
-file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${GEN_DIR}/gen/*
+file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}
+    ${GEN_DIR}/gen/*.rgs
+    ${GEN_DIR}/gen/*.def
+    ${GEN_DIR}/gen/*.htm
+    ${GEN_DIR}/gen/*.rc
     )
 
 SET_SOURCE_FILES_PROPERTIES(
     ${GENERATED}
     PROPERTIES
         GENERATED 1
-        HEADER_FILE_ONLY 1
     )
 
 SOURCE_GROUP(Generated FILES
