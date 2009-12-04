@@ -3,6 +3,7 @@
 #define H_FB_PLUGINCORE
 
 #include "PluginEventSink.h"
+#include "AutoPtr.h"
 #include <string>
 
 namespace FB {
@@ -26,13 +27,6 @@ namespace FB {
     public:
         static void setPlatform(std::string os, std::string browser);
 
-    protected:
-        // These are pseudo-static.  They aren't really static, but it isn't
-        // safe to assume that the instance that Initialize is called on will
-        // be the same as the instance that Deinitialize is called on
-        virtual void StaticInitialize() = 0;
-        virtual void StaticDeinitialize() = 0;
-
     public:
         PluginCore();
         virtual ~PluginCore();
@@ -40,13 +34,17 @@ namespace FB {
         void SetWindow(PluginWindow *);
         void ClearWindow();
 
+    protected:
+        virtual JSAPI* createJSAPI() = 0;
+
     public:
-        virtual JSAPI* getRootJSAPI() = 0;
+        virtual JSAPI* getRootJSAPI();
         virtual bool IsWindowless() = 0;
         virtual bool HandleEvent(PluginEvent *) = 0;
 
     protected:
         PluginWindow *m_Window;
+        AutoPtr<JSAPI> m_api;
     };
 };
 

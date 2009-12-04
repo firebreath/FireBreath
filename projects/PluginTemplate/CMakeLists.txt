@@ -12,32 +12,40 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-# Written to work with cmake 2.8
-cmake_minimum_required (VERSION 2.8)
-set (CMAKE_BACKWARDS_COMPATIBILITY 2.8)
+# Written to work with cmake 2.6
+cmake_minimum_required (VERSION 2.6)
+set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/common.cmake)
 
-set (PROJNAME NPAPIHost)
-Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+set (PROJNAME ${PLUGIN_NAME})
 
-include_directories(
-	${CMAKE_CURRENT_SOURCE_DIR}
-    ${FIREBREATH_CONFIG_DIR}
-    ${BOOST_SOURCE_DIR}
-    ${SCRIPTINGCORE_SOURCE_DIR}
-    ${NPAPIPLUGIN_SOURCE_DIR}
-    ${GECKOSDK_SOURCE_DIR}
-    )
+browserplugin_project(${PROJNAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     *.h
+    *.cmake
     )
 
-set (SOURCES
+file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    ${GEN_DIR}/gen/*
+    )
+
+SET_SOURCE_FILES_PROPERTIES(
+    ${GENERATED}
+    PROPERTIES
+        GENERATED 1
+        HEADER_FILE_ONLY 1
+    )
+
+SOURCE_GROUP(Generated FILES
+    ${GENERATED}
+    )
+
+SET( SOURCES
     ${GENERAL}
+    ${GENERATED}
     )
 
-add_library(${PROJNAME} STATIC ${SOURCES})
+include_platform()

@@ -33,4 +33,8 @@ const char *_getPluginDesc();
 FB::JSAPI *_getRootJSAPI();
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host);
 
+
+void GlobalPluginInitialize();
+void GlobalPluginDeinitialize();
+
 #endif

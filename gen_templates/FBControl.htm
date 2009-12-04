@@ -5,7 +5,7 @@
 <body>
 
 
-<object id="plugin" type="application/x-vnd.firebreathplugin"></object>
+<object id="plugin" type="${FBSTRING_MIMEType}"></object>
 
 <a href="javascript:plugin.addEventListener('load', function(test) { alert(test); })">set onload (ff)</a> <br />
 <a href="#" onclick="plugin.attachEvent('onload', function(test) { alert(test); }); return false;">set onload (ie)</a> <br />

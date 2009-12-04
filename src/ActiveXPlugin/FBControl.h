@@ -18,12 +18,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "config.h"
 #include <atlctl.h>
 #include "FireBreathWin_i.h"
-#include "BrowserPlugin.h"
 #include "JSAPI_IDispatchEx.h"
-#include "FactoryDefinitions.h"
+#include "Win/FactoryDefinitionsWin.h"
 
+#include "BrowserPlugin.h"
 #include "PluginCore.h"
-#include "PluginWindow.h"
+#include "Win/PluginWindowWin.h"
 
 #include "registrymap.hpp"
 
@@ -53,12 +53,10 @@ class ATL_NO_VTABLE CFBControl :
     public FB::BrowserPlugin
 {
 public:
-    FB::PluginCore *pluginMain;
-    FB::PluginWindow *pluginWin;
+    FB::PluginWindowWin *pluginWin;
 
-    CFBControl() : pluginMain(NULL)
+    CFBControl() : pluginWin(NULL)
     {
-        pluginMain = _getMainPlugin(); // Factory function, defined by the plugin
         m_bWindowOnly = pluginMain->IsWindowless() ? TRUE : FALSE;
 
         this->setAPI(pluginMain->getRootJSAPI(), new ActiveXBrowserHost(NULL));
@@ -66,12 +64,14 @@ public:
 
     void shutdown()
     {
+        delete pluginWin; pluginWin = NULL;
     }
 
 
     LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
     {
         m_host->setWindow(m_hWnd);
+        pluginWin = _createPluginWindow(m_hWnd);
         return S_OK;
     }
 

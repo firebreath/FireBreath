@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "config.h"
 #include "NpapiPlugin.h"
 #include "NpapiBrowserHost.h"
+#include "TemplatePlugin.h"
 
 static const char *pluginName = FBSTRING_PluginName;
 static const char *pluginDesc = FBSTRING_FileDescription;
@@ -29,12 +30,22 @@ const char *_getPluginDesc()
     return pluginDesc;
 }
 
-FB::JSAPI *_getRootJSAPI()
-{
-    return new FB::JSAPISimple();
-}
-
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 {
     return new FB::Npapi::NpapiPlugin(host);
+}
+
+FB::PluginCore *_getMainPlugin()
+{
+    return new TemplatePlugin();
+}
+
+void GlobalPluginInitialize()
+{
+    TemplatePlugin::StaticInitialize();
+}
+
+void GlobalPluginDeinitialize()
+{
+    TemplatePlugin::StaticDeinitialize();
 }

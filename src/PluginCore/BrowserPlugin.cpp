@@ -10,15 +10,16 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserPlugin.h"
 #include "FactoryDefinitions.h"
+#include "PluginCore.h"
 
 using namespace FB;
 
 BrowserPlugin::BrowserPlugin() :
-    m_api(NULL)
+    pluginMain(_getMainPlugin())
 {
-    m_api = _getRootJSAPI();
 }
 
 BrowserPlugin::~BrowserPlugin()
 {
+    delete pluginMain; pluginMain = NULL;
 }

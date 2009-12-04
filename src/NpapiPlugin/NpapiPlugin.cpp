@@ -10,10 +10,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiPlugin.h"
 #include "FactoryDefinitions.h"
+#include "PluginCore.h"
 
 using namespace FB::Npapi;
 
-NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host) : m_obj(NULL), m_npHost(host)
+NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host)
+    : m_obj(NULL), m_npHost(host)
 {
 }
 
@@ -27,7 +29,7 @@ NpapiPlugin::~NpapiPlugin(void)
 NPObject *NpapiPlugin::getScriptableObject()
 {
     if (m_obj == NULL) {
-        m_obj = NPJavascriptObject::NewObject(m_npHost, m_api);
+        m_obj = NPJavascriptObject::NewObject(m_npHost, pluginMain->getRootJSAPI());
     }
     m_npHost->RetainObject(m_obj);
     return m_obj;
@@ -35,6 +37,7 @@ NPObject *NpapiPlugin::getScriptableObject()
 
 void NpapiPlugin::shutdown(void)
 {
+    delete pluginMain; pluginMain = NULL;
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)

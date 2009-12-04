@@ -1,5 +1,7 @@
 
 #include "PluginWindow.h"
+#include "JSAPI.h"
+#include "FactoryDefinitions.h"
 
 #include "PluginCore.h"
 
@@ -29,20 +31,27 @@ PluginCore::PluginCore() : m_Window(NULL)
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
         // Only on the first initialization
-        StaticInitialize();
+        GlobalPluginInitialize();
     }
 }
 
 PluginCore::~PluginCore()
 {
-
-
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
     if (--PluginCore::ActivePluginCount == 0) {
         // Only on the destruction of the final plugin instance
-        StaticDeinitialize();
+        GlobalPluginDeinitialize();
     }
+}
+
+JSAPI* PluginCore::getRootJSAPI()
+{
+    if (m_api.ptr() == NULL) {
+        m_api = createJSAPI();
+    }
+
+    return m_api.ptr();
 }
 
 void PluginCore::SetWindow(PluginWindow *wind)

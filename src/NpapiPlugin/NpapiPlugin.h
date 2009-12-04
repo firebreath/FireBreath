@@ -11,15 +11,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_NPAPI_NPAPIPLUGIN
 #define H_FB_NPAPI_NPAPIPLUGIN
 
-#include "BrowserPlugin.h"
 #include "NpapiTypes.h"
 #include "NpapiBrowserHost.h"
 #include "NPJavascriptObject.h"
+#include "BrowserPlugin.h"
 
 namespace FB { namespace Npapi {
 
-    class NpapiPlugin :
-        public FB::BrowserPlugin
+    class NpapiPlugin : public FB::BrowserPlugin
     {
     public:
         NpapiPlugin(NpapiBrowserHost *host);

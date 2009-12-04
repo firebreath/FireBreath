@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
+    class PluginCore;
     // This class represents an instance of a browser plugin
     // (an individual object tag, for example)
     class BrowserPlugin
@@ -28,7 +29,7 @@ namespace FB {
         virtual void shutdown() = 0;
 
     protected:
-        AutoPtr<JSAPI> m_api;
+        FB::PluginCore *pluginMain;
     };
 
 };
