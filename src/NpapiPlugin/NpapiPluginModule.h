@@ -3,8 +3,12 @@ Original Authors: Richard Bateman (taxilian)
 Don Jordan (kc7zax)
 
 Created:    Oct 15, 2009
-License:    Eclipse Public License - Version 1.0
-http://www.eclipse.org/legal/epl-v10.html
+License:    Dual license model; choose one of two:
+            Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
