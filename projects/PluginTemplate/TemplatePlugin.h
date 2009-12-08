@@ -15,6 +15,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #ifndef H_TEMPLATEPLUGIN
 #define H_TEMPLATEPLUGIN
 
+#include "PluginEvents/MouseEvents.h"
+
 #include "PluginCore.h"
 
 class TemplatePlugin : public FB::PluginCore
@@ -30,7 +32,16 @@ public:
 public:
     virtual FB::JSAPI* createJSAPI();
     virtual bool IsWindowless() { return false; }
-    virtual bool HandleEvent(FB::PluginEvent *evt);
+
+    BEGIN_PLUGIN_EVENT_MAP()
+        EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown)
+        EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp)
+        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove)
+    END_PLUGIN_EVENT_MAP()
+
+    virtual bool onMouseDown(FB::MouseDownEvent *evt);
+    virtual bool onMouseUp(FB::MouseUpEvent *evt);
+    virtual bool onMouseMove(FB::MouseMoveEvent *evt);
 };
 
 #endif

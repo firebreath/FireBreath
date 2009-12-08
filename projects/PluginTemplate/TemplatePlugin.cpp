@@ -45,11 +45,20 @@ FB::JSAPI* TemplatePlugin::createJSAPI()
     return new MathAPI();
 }
 
-bool TemplatePlugin::HandleEvent(FB::PluginEvent *evt)
+bool TemplatePlugin::onMouseDown(FB::MouseDownEvent *evt)
 {
-    USES_CONVERSION;
-    CA2W longname(typeid(*evt).name());
-    OutputDebugString(longname);
+    //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
+bool TemplatePlugin::onMouseUp(FB::MouseUpEvent *evt)
+{
+    //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
+    return false;
+}
+
+bool TemplatePlugin::onMouseMove(FB::MouseMoveEvent *evt)
+{
+    //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
+    return false;
+}

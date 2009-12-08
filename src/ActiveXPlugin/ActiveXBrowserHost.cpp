@@ -15,9 +15,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ActiveXBrowserHost.h"
 #include "COMJavascriptObject.h"
 
-#include "Win/WindowsEventHandler.h"
+#include "Win/PluginWindowWin.h"
 
-ActiveXBrowserHost::ActiveXBrowserHost(HWND wnd) : m_hWnd(wnd)
+ActiveXBrowserHost::ActiveXBrowserHost(IHTMLDocument2 *doc)
+    : m_hWnd(NULL), m_htmlDoc(doc), m_propNotify(doc)
 {
 }
 
@@ -28,7 +29,7 @@ void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
     if (m_hWnd != NULL) 
         ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
-            (LPARAM)new WINDOWS_ASYNC_EVENT(func, userData));
+            (LPARAM)new FB::WINDOWS_ASYNC_EVENT(func, userData));
 }
 
 void *ActiveXBrowserHost::getContextID()

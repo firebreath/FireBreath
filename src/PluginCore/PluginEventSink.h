@@ -36,4 +36,12 @@ namespace FB {
     };
 };
 
+#define BEGIN_PLUGIN_EVENT_MAP() virtual bool HandleEvent(FB::PluginEvent *evt) { \
+                                          if (0) { }
+
+#define EVENTTYPE_CASE(eventType, methodName) else if (evt->validType<eventType>()) { \
+                                                return methodName(evt->get<eventType>()); }
+
+#define END_PLUGIN_EVENT_MAP() return false; }
+
 #endif

@@ -37,7 +37,7 @@ class JSAPI_IDispatchEx :
     typedef std::map<DWORD, FB::AutoPtr<IDispatchAPI>> ConnectionPointMap;
 
 public:
-    JSAPI_IDispatchEx(void) { };
+    JSAPI_IDispatchEx(void) : m_readyState(READYSTATE_LOADING) { };
     virtual ~JSAPI_IDispatchEx(void) { };
     void setAPI(FB::JSAPI *api, ActiveXBrowserHost *host)
     {
@@ -45,10 +45,20 @@ public:
         m_host = host;
     }
 
+    void setReadyState(READYSTATE newState)
+    {
+        m_readyState = newState;
+        if (m_propNotify.p != NULL)
+            m_propNotify->OnChanged(DISPID_READYSTATE);
+    }
+
 protected:
     FB::AutoPtr<FB::JSAPI> m_api;
     FB::AutoPtr<ActiveXBrowserHost> m_host;
     ConnectionPointMap m_connPtMap;
+
+    READYSTATE m_readyState;
+    CComQIPtr<IPropertyNotifySink, &IID_IPropertyNotifySink> m_propNotify;
     
     bool m_valid;
 
@@ -150,6 +160,8 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetConnectionPointContainer(IConnection
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCookie)
 {
+    if (m_api.ptr() == NULL) return CONNECT_E_CANNOTCONNECT;
+
     IDispatch *idisp(NULL);
     if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
         FB::AutoPtr<IDispatchAPI> obj(new IDispatchAPI(idisp, m_host));
@@ -224,6 +236,8 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Invoke(DISPID dispIdMember, REFIID riid
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid)
 {
+    if (m_api.ptr() == NULL) return DISP_E_UNKNOWNNAME;
+
     if (m_api.ptr() == NULL)
         return E_NOTIMPL;
 
@@ -248,6 +262,17 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
     }
     try {
         std::string sName = AxIdMap.getValueForId<std::string>(id);
+
+        if (wFlags & DISPATCH_PROPERTYGET) {
+            switch(id) {
+                case DISPID_READYSTATE:
+                    CComVariant(this->m_readyState).Detach(pvarRes);
+                    return S_OK;
+                case DISPID_ENABLED:
+                    CComVariant(true).Detach(pvarRes);
+                    return S_OK;
+            }
+        }
 
         if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(sName)) {
 

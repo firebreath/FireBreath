@@ -25,7 +25,7 @@ class ActiveXBrowserHost :
     public FB::BrowserHostWrapper
 {
 public:
-    ActiveXBrowserHost(HWND wnd);
+    ActiveXBrowserHost(IHTMLDocument2 *doc);
     virtual ~ActiveXBrowserHost(void);
     virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
 
@@ -35,6 +35,8 @@ public:
 
 protected:
     HWND m_hWnd;
+    CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
+    CComQIPtr<IPropertyNotifySink, &IID_IPropertyNotifySink> m_propNotify;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);

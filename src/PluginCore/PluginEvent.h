@@ -38,16 +38,17 @@ namespace FB {
         template<class T>
         T* get()
         {
-            T* out(dynamic_cast<T>(this));
+            T* out(dynamic_cast<T*>(this));
             if (out == NULL) {
                 throw std::invalid_argument("Invalid message type");
             }
+            return out;
         }
 
         template<class T>
         bool validType()
         {
-            T* out(dynamic_cast<T>(this));
+            T* out(dynamic_cast<T*>(this));
             return out != NULL;
         }
     };

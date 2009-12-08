@@ -33,7 +33,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 // CFBControl
 class ATL_NO_VTABLE CFBControl :
-    public CComObjectRootEx<CComSingleThreadModel>,
+    public CComObjectRootEx<CComMultiThreadModel>,
     public CComCoClass<CFBControl, &CLSID_FBControl>,
     public CComControl<CFBControl>,
 
@@ -43,27 +43,28 @@ class ATL_NO_VTABLE CFBControl :
     // Required for standard events
     public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &LIBID_FireBreathWinLib>,
 
-    // Provides methods for getting <params>
-    //public IPersistPropertyBag,
-
     //public IPersistStreamInitImpl<CFBControl>,
-    public IObjectWithSiteImpl<CFBControl>,
     public IOleControlImpl<CFBControl>,
     public IOleObjectImpl<CFBControl>,
     public IOleInPlaceActiveObjectImpl<CFBControl>,
     public IQuickActivateImpl<CFBControl>,
     public IViewObjectExImpl<CFBControl>,
     public IOleInPlaceObjectWindowlessImpl<CFBControl>,
+
+    public IObjectWithSiteImpl<CFBControl>,
+
+    // Provides methods for getting <params>
+    public IPersistPropertyBag,
+
     public FB::BrowserPlugin
 {
 public:
     FB::PluginWindowWin *pluginWin;
+    CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
 
     CFBControl() : pluginWin(NULL)
     {
-        m_bWindowOnly = pluginMain->IsWindowless() ? TRUE : FALSE;
-
-        this->setAPI(pluginMain->getRootJSAPI(), new ActiveXBrowserHost(NULL));
+        m_bWindowOnly = TRUE;
     }
 
     void shutdown()
@@ -79,6 +80,56 @@ public:
         return S_OK;
     }
 
+    STDMETHOD(SetClientSite)(IOleClientSite *pClientSite)
+	{
+        HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
+    	if (!pClientSite)
+            return hr;
+        	
+        CComPtr<IOleContainer> container;
+
+        if (m_spClientSite.p)
+            m_spClientSite->GetContainer(&container);
+        if (container.p) {
+            m_htmlDoc = container;
+            m_propNotify = m_spClientSite;
+        }
+        
+        this->setAPI(pluginMain->getRootJSAPI(), new ActiveXBrowserHost(m_htmlDoc));
+        setReadyState(READYSTATE_COMPLETE);
+        InPlaceActivate(OLEIVERB_UIACTIVATE);
+        //this->FireOnChanged(DISPID_READYSTATE);
+
+        return S_OK;
+	}
+
+    /* IPersistPropertyBag calls */
+    // This will be called once when the browser initializes the property bag (PARAM tags)
+    STDMETHOD(InitNew)()
+    {
+        return S_OK;
+    }
+
+    STDMETHOD(Load)(IPropertyBag *pPropBag, IErrorLog *pErrorLog)
+    {
+        
+        return S_OK;
+    }
+
+    STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties)
+    {
+        return S_OK;
+    }
+
+    STDMETHOD(GetClassID)(CLSID *pClassID)
+    {
+        if (pClassID == NULL)
+            return E_POINTER;
+        *pClassID = GetObjectCLSID();
+        return S_OK;
+    }
+
+public:
 DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
     OLEMISC_CANTLINKINSIDE |
     OLEMISC_INSIDEOUT |
@@ -106,7 +157,6 @@ BEGIN_COM_MAP(CFBControl)
     COM_INTERFACE_ENTRY(IFBControl)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(IDispatchEx)
-    COM_INTERFACE_ENTRY(IObjectSafety)
     COM_INTERFACE_ENTRY(IViewObjectEx)
     COM_INTERFACE_ENTRY(IViewObject2)
     COM_INTERFACE_ENTRY(IViewObject)
@@ -118,11 +168,13 @@ BEGIN_COM_MAP(CFBControl)
     COM_INTERFACE_ENTRY(IOleObject)
     COM_INTERFACE_ENTRY(IConnectionPointContainer)
     COM_INTERFACE_ENTRY(IConnectionPoint)
-    COM_INTERFACE_ENTRY(IQuickActivate)
+    //COM_INTERFACE_ENTRY(IQuickActivate)
+    COM_INTERFACE_ENTRY(IObjectWithSite)
+    COM_INTERFACE_ENTRY(IObjectSafety)
+
     //COM_INTERFACE_ENTRY(IPersistStreamInit)
-    //COM_INTERFACE_ENTRY(IPersistPropertyBag)
+    COM_INTERFACE_ENTRY(IPersistPropertyBag)
     //COM_INTERFACE_ENTRY2(IPersist, IPersistStreamInit)
-    COM_INTERFACE_ENTRY_IID(IID_IObjectSafety, IObjectSafety)
     COM_INTERFACE_ENTRY(IProvideClassInfo)
     COM_INTERFACE_ENTRY(IProvideClassInfo2)
 END_COM_MAP()
@@ -134,19 +186,6 @@ END_COM_MAP()
     DECLARE_VIEW_STATUS(VIEWSTATUS_SOLIDBKGND | VIEWSTATUS_OPAQUE)
 
 // IFBControl
-    STDMETHOD(TranslateAccelerator)(LPMSG pMsg)
-    {
-        //CComPtr<IOleInPlaceActiveObject> spIOleInPlaceActiveObject;
-
-        //HRESULT hr = m_spBrowser->QueryInterface(&spIOleInPlaceActiveObject);
-        //if (SUCCEEDED(hr))
-        //    hr = spIOleInPlaceActiveObject->TranslateAccelerator(pMsg);
-        //if (hr != S_OK)
-        //    hr = IOleInPlaceActiveObjectImpl<CFBControl>::TranslateAccelerator(pMsg);
-
-        return S_OK; //hr;
-    }
-
     DECLARE_PROTECT_FINAL_CONSTRUCT()
 
     HRESULT FinalConstruct()
