@@ -34,8 +34,8 @@ public:
     void setWindow(HWND wnd);
 
 public:
-    FB::AutoPtr<FB::BrowserObjectAPI> getDOMDocument();
-    FB::AutoPtr<FB::BrowserObjectAPI> getDOMWindow();
+    FB::JSAPI_DOMDocument getDOMDocument();
+    FB::JSAPI_DOMWindow getDOMWindow();
 
 protected:
     HWND m_hWnd;

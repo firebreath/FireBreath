@@ -19,6 +19,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPluginModule.h"
 #include "NPJavascriptObject.h"
 #include "NPObjectAPI.h"
+#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/JSAPI_DOMWindow.h"
 
 #include "NpapiBrowserHost.h"
 
@@ -58,20 +60,20 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
         .cast<FB::AutoPtr<BrowserObjectAPI>>().ptr());
 }
 
-FB::AutoPtr<FB::BrowserObjectAPI> NpapiBrowserHost::getDOMDocument()
+FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 {
     if (m_htmlDoc.ptr() == NULL)
         throw std::exception("Cannot find HTML document");
 
-    return m_htmlDoc.ptr();
+    return FB::JSAPI_DOMDocument(m_htmlDoc);
 }
 
-FB::AutoPtr<FB::BrowserObjectAPI> NpapiBrowserHost::getDOMWindow()
+FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 {
     if (m_htmlWin.ptr() == NULL)
         throw std::exception("Cannot find HTML window");
 
-    return m_htmlWin.ptr();
+    return FB::JSAPI_DOMWindow(m_htmlWin);
 }
 
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)

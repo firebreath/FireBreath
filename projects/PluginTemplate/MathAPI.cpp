@@ -16,6 +16,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "MathAPI.h"
 #include "BrowserObjectAPI.h"
 #include <boost/assign.hpp>
+#include "DOM/JSAPI_DOMDocument.h"
 
 using boost::assign::list_of;
 
@@ -44,13 +45,11 @@ MathAPI::~MathAPI()
 
 std::string MathAPI::getElementHTML(const std::string& elemId)
 {
-    FB::AutoPtr<FB::BrowserObjectAPI> doc = m_host->getDOMDocument();
+    FB::JSAPI_DOMDocument doc = m_host->getDOMDocument();
 
-    FB::AutoPtr<FB::BrowserObjectAPI> elem = doc->Invoke("getElementById",
-        FB::VariantList( list_of(elemId) ) )
-        .cast<FB::AutoPtr<FB::BrowserObjectAPI>>();
+    FB::JSAPI_DOMElement elem = doc.getElementById(elemId);
 
-    return elem->GetProperty("innerHTML").cast<std::string>();
+    return elem.getInnerHTML();
 }
 
 std::string MathAPI::returnString(const std::string& s)

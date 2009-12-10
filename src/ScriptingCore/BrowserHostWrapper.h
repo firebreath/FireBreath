@@ -21,6 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB
 {
     class BrowserObjectAPI;
+    class JSAPI_DOMDocument;
+    class JSAPI_DOMWindow;
 
     class BrowserHostWrapper
     {
@@ -35,8 +37,8 @@ namespace FB
 
         // Methods for accessing the DOM
     public:
-        virtual AutoPtr<BrowserObjectAPI> getDOMDocument() = 0;
-        virtual AutoPtr<BrowserObjectAPI> getDOMWindow() = 0;
+        virtual JSAPI_DOMDocument getDOMDocument() = 0;
+        virtual JSAPI_DOMWindow getDOMWindow() = 0;
 
     protected:
         unsigned int refCount;

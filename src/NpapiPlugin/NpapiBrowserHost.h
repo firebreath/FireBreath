@@ -37,8 +37,8 @@ namespace FB { namespace Npapi {
         virtual void *getContextID() { return (void *)m_npp; }
 
     public:
-        FB::AutoPtr<FB::BrowserObjectAPI> getDOMDocument();
-        FB::AutoPtr<FB::BrowserObjectAPI> getDOMWindow();
+        FB::JSAPI_DOMDocument getDOMDocument();
+        FB::JSAPI_DOMWindow getDOMWindow();
 
     public:
         FB::variant getVariant(const NPVariant *npVar);

@@ -28,6 +28,12 @@ include_directories(
     ${BOOST_SOURCE_DIR}
     )
 
+file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    DOM/*
+)
+
+SOURCE_GROUP(DOM FILES ${DOMTYPES})
+
 file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     APITypes.*
     AutoPtr.*
@@ -57,6 +63,7 @@ SOURCE_GROUP(Types FILES ${TYPES})
 
 set (SOURCES
     ${TYPES}
+    ${DOMTYPES}
     ${JSAPI_OBJECTS}
     ${GENERAL}
     )

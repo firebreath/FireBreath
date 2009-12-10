@@ -24,6 +24,7 @@ namespace FB {
     class PluginWindow;
     class PluginEvent;
     class JSAPI;
+    class BrowserHostWrapper;
     /** 
      * PluginCore
      *

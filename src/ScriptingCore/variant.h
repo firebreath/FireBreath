@@ -297,6 +297,10 @@ namespace FB
         const T convert_cast() const {
             return cast<T>();
         }
+
+        template<> const void convert_cast<void>() const {
+            return;
+        }
         
         template<> const variant convert_cast<variant>() const {
             return *this;

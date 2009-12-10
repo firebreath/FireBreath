@@ -14,6 +14,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "ActiveXBrowserHost.h"
 #include "COMJavascriptObject.h"
+#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/JSAPI_DOMWindow.h"
 
 #include "Win/PluginWindowWin.h"
 
@@ -47,16 +49,16 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
-FB::AutoPtr<FB::BrowserObjectAPI> ActiveXBrowserHost::getDOMDocument()
+FB::JSAPI_DOMDocument ActiveXBrowserHost::getDOMDocument()
 {
     FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlDocDisp.p, this));
-    return retObj;
+    return FB::JSAPI_DOMDocument(retObj);
 }
 
-FB::AutoPtr<FB::BrowserObjectAPI> ActiveXBrowserHost::getDOMWindow()
+FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
 {
     FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlWin.p, this));
-    return retObj;
+    return FB::JSAPI_DOMWindow(retObj);
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
