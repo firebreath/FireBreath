@@ -39,7 +39,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./JSAPI*
     BrowserHostWr*
-    EventHandlerObject.*
+    BrowserObjectAPI.*
     AsyncBrowser*
     *Converter.*
     )

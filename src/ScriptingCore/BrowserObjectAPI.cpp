@@ -12,21 +12,21 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 #include "AsyncBrowserCall.h"
 
 using namespace FB;
 
-EventHandlerObject::EventHandlerObject(BrowserHostWrapper *h) :
+BrowserObjectAPI::BrowserObjectAPI(BrowserHostWrapper *h) :
     host(h)
 {
 }
 
-EventHandlerObject::~EventHandlerObject(void)
+BrowserObjectAPI::~BrowserObjectAPI(void)
 {
 }
 
-void EventHandlerObject::InvokeAsync(std::string methodName, std::vector<variant>& args)
+void BrowserObjectAPI::InvokeAsync(std::string methodName, std::vector<variant>& args)
 {
     FB::AsyncBrowserCall::CallMethod(this, methodName, args);
 }

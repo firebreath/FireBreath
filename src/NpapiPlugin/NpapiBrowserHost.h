@@ -18,11 +18,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "npupp.h"
 #include "BrowserHostWrapper.h"
 
-namespace FB
-{
-namespace Npapi
-{
+namespace FB { namespace Npapi {
+
     class NpapiPluginModule;
+    class NPObjectAPI;
 
     class NpapiBrowserHost :
         public FB::BrowserHostWrapper
@@ -38,6 +37,10 @@ namespace Npapi
         virtual void *getContextID() { return (void *)m_npp; }
 
     public:
+        FB::AutoPtr<FB::BrowserObjectAPI> getDOMDocument();
+        FB::AutoPtr<FB::BrowserObjectAPI> getDOMWindow();
+
+    public:
         FB::variant getVariant(const NPVariant *npVar);
         void getNPVariant(NPVariant *dst, const FB::variant &var);
 
@@ -46,6 +49,9 @@ namespace Npapi
         NPNetscapeFuncs NPNFuncs;   // Function pointers
         NpapiPluginModule *module;
         NPP m_npp;
+        FB::AutoPtr<NPObjectAPI> m_htmlDoc;
+        FB::AutoPtr<NPObjectAPI> m_htmlWin;
+
     public:
         /* These are proxied to the module */
         void* MemAlloc(uint32 size);
@@ -104,7 +110,6 @@ namespace Npapi
                                         uint32_t argCount, NPVariant *result);
         void SetException(NPObject *npobj, const NPUTF8 *message);
     };
-};
-};
+}; };
 
 #endif

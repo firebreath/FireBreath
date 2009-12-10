@@ -19,13 +19,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "npruntime.h"
 #include "JSAPI.h"
 #include "AutoPtr.h"
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 #include "NpapiBrowserHost.h"
 
 namespace FB { namespace Npapi {
 
     class NPObjectAPI :
-        public FB::EventHandlerObject
+        public FB::BrowserObjectAPI
     {
     public:
         NPObjectAPI(NPObject *, NpapiBrowserHost *);

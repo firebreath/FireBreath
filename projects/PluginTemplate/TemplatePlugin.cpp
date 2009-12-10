@@ -42,7 +42,8 @@ TemplatePlugin::~TemplatePlugin()
 
 FB::JSAPI* TemplatePlugin::createJSAPI()
 {
-    return new MathAPI();
+    // m_host is the BrowserHostWrapper
+    return new MathAPI(m_host);
 }
 
 bool TemplatePlugin::onMouseDown(FB::MouseDownEvent *evt)

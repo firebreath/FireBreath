@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHost *h)
-    : EventHandlerObject(h), browser(h), obj(o)
+    : BrowserObjectAPI(h), browser(h), obj(o)
 {
     if (h != NULL && o != NULL) {
         browser->RetainObject(obj);

@@ -22,14 +22,14 @@ void AsyncBrowserCall::asyncCallback(void *userData)
     call->m_obj->Invoke(call->m_methodName, call->m_params);
 }
 
-void AsyncBrowserCall::CallMethod(EventHandlerObject *obj, std::string method,
+void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, std::string method,
             std::vector<variant> &inParams)
 {
     AsyncBrowserCall *call = new AsyncBrowserCall(obj, method, inParams);
     obj->host->ScheduleAsyncCall(&AsyncBrowserCall::asyncCallback, call);
 }
 
-AsyncBrowserCall::AsyncBrowserCall(EventHandlerObject *obj, std::string method,
+AsyncBrowserCall::AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
                                    std::vector<variant> &inParams) :
     m_obj(obj), m_methodName(method), m_params(inParams)
 {

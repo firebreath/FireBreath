@@ -46,6 +46,34 @@ void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
     PluginThreadAsyncCall(func, userData);
 }
 
+void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
+{
+    copyNPBrowserFuncs(&NPNFuncs, pFuncs);
+
+    NPObject *window(NULL);
+    GetValue(NPNVWindowNPObject, (void**)&window);
+    
+    m_htmlWin = new FB::Npapi::NPObjectAPI(window, this);
+    m_htmlDoc = dynamic_cast<NPObjectAPI*>(m_htmlWin->GetProperty("document")
+        .cast<FB::AutoPtr<BrowserObjectAPI>>().ptr());
+}
+
+FB::AutoPtr<FB::BrowserObjectAPI> NpapiBrowserHost::getDOMDocument()
+{
+    if (m_htmlDoc.ptr() == NULL)
+        throw std::exception("Cannot find HTML document");
+
+    return m_htmlDoc.ptr();
+}
+
+FB::AutoPtr<FB::BrowserObjectAPI> NpapiBrowserHost::getDOMWindow()
+{
+    if (m_htmlWin.ptr() == NULL)
+        throw std::exception("Cannot find HTML window");
+
+    return m_htmlWin.ptr();
+}
+
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 {
     FB::variant retVal;
@@ -71,7 +99,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = AutoPtr<EventHandlerObject>(new NPObjectAPI(npVar->value.objectValue, this));
+            retVal = AutoPtr<BrowserObjectAPI>(new NPObjectAPI(npVar->value.objectValue, this));
             break;
 
         case NPVariantType_Void:
@@ -131,9 +159,9 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
             dst->type = NPVariantType_Object;
             dst->value.objectValue = outObj;
         }
-    } else if (var.get_type() == typeid(AutoPtr<EventHandlerObject>)) {
+    } else if (var.get_type() == typeid(AutoPtr<BrowserObjectAPI>)) {
         NPObject *outObj = NULL;
-        FB::AutoPtr<EventHandlerObject> obj = var.cast<AutoPtr<EventHandlerObject>>();
+        FB::AutoPtr<BrowserObjectAPI> obj = var.cast<AutoPtr<BrowserObjectAPI>>();
         NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
 
         if (tmpObj == NULL) {
@@ -148,11 +176,6 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         }
     }
     // TODO: implement object types
-}
-
-void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
-{
-    copyNPBrowserFuncs(&NPNFuncs, pFuncs);
 }
 
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData)

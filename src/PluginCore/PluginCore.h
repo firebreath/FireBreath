@@ -44,6 +44,7 @@ namespace FB {
         PluginCore();
         virtual ~PluginCore();
 
+        void SetHost(BrowserHostWrapper *);
         void SetWindow(PluginWindow *);
         void ClearWindow();
 
@@ -58,6 +59,7 @@ namespace FB {
     protected:
         PluginWindow *m_Window;
         AutoPtr<JSAPI> m_api;
+        AutoPtr<BrowserHostWrapper> m_host;
     };
 };
 

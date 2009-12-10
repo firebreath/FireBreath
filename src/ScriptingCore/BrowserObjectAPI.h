@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_EVENTHANDLEROBJECT
-#define H_FB_EVENTHANDLEROBJECT
+#ifndef H_FB_BrowserObjectAPI
+#define H_FB_BrowserObjectAPI
 
 #include "JSAPI.h"
 #include "BrowserHostWrapper.h"
@@ -21,11 +21,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class EventHandlerObject : public FB::JSAPI
+    class BrowserObjectAPI : public FB::JSAPI
     {
     public:
-        EventHandlerObject(BrowserHostWrapper *h);
-        virtual ~EventHandlerObject();
+        BrowserObjectAPI(BrowserHostWrapper *h);
+        virtual ~BrowserObjectAPI();
 
         virtual void *getEventId() { return NULL; }
         virtual void *getEventContext() { return NULL; }

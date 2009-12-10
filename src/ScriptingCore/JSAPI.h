@@ -21,7 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class EventHandlerObject;
+    class BrowserObjectAPI;
     class BrowserHostWrapper;
     struct script_error : std::exception
     {
@@ -80,12 +80,12 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-		virtual void registerEventMethod(std::string name, EventHandlerObject *event);
-        virtual void unregisterEventMethod(std::string name, EventHandlerObject *event);
-        virtual void registerEventInterface(EventHandlerObject *event);
-        virtual void unregisterEventInterface(EventHandlerObject *event);
-        virtual EventHandlerObject *getDefaultEventMethod(std::string name);
-        virtual void setDefaultEventMethod(std::string name, EventHandlerObject *event);
+		virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
+        virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
+        virtual void registerEventInterface(BrowserObjectAPI *event);
+        virtual void unregisterEventInterface(BrowserObjectAPI *event);
+        virtual BrowserObjectAPI *getDefaultEventMethod(std::string name);
+        virtual void setDefaultEventMethod(std::string name, BrowserObjectAPI *event);
 
         // Methods to query existance of members on the API
         virtual bool HasMethod(std::string methodName) = 0;

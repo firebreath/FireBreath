@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI.h"
 #include <boost/bind.hpp>
 #include "BrowserHostWrapper.h"
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 
 using namespace FB;
 
@@ -79,7 +79,7 @@ bool JSAPI::HasEvent(std::string eventName)
     }
 }
 
-void JSAPI::registerEventMethod(std::string name, EventHandlerObject *event)
+void JSAPI::registerEventMethod(std::string name, BrowserObjectAPI *event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -91,7 +91,7 @@ void JSAPI::registerEventMethod(std::string name, EventHandlerObject *event)
     m_eventMap.insert(EventPair(name, event));
 }
 
-void JSAPI::unregisterEventMethod(std::string name, EventHandlerObject *event)
+void JSAPI::unregisterEventMethod(std::string name, BrowserObjectAPI *event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -103,24 +103,24 @@ void JSAPI::unregisterEventMethod(std::string name, EventHandlerObject *event)
     }
 }
 
-void JSAPI::registerEventInterface(EventHandlerObject *event)
+void JSAPI::registerEventInterface(BrowserObjectAPI *event)
 {
     m_evtIfaces[static_cast<void*>(event)] = event;
 }
 
-void JSAPI::unregisterEventInterface(EventHandlerObject *event)
+void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
 {
     EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event));
     m_evtIfaces.erase(fnd);
 }
 
-EventHandlerObject *JSAPI::getDefaultEventMethod(std::string name)
+BrowserObjectAPI *JSAPI::getDefaultEventMethod(std::string name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
     return fnd->second.ptr();
 }
 
-void JSAPI::setDefaultEventMethod(std::string name, EventHandlerObject *event)
+void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *event)
 {
     m_defEventMap[name] = event;
 }

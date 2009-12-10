@@ -16,9 +16,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
+#include "AutoPtr.h"
 
 namespace FB
 {
+    class BrowserObjectAPI;
+
     class BrowserHostWrapper
     {
     public:
@@ -29,6 +32,11 @@ namespace FB
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
         virtual void *getContextID() = 0;
+
+        // Methods for accessing the DOM
+    public:
+        virtual AutoPtr<BrowserObjectAPI> getDOMDocument() = 0;
+        virtual AutoPtr<BrowserObjectAPI> getDOMWindow() = 0;
 
     protected:
         unsigned int refCount;

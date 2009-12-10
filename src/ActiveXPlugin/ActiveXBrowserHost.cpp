@@ -18,13 +18,18 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "Win/PluginWindowWin.h"
 
 ActiveXBrowserHost::ActiveXBrowserHost(IHTMLDocument2 *doc)
-    : m_hWnd(NULL), m_htmlDoc(doc), m_propNotify(doc)
+    : m_hWnd(NULL), m_htmlDoc(doc), m_htmlDocDisp(doc)
 {
+    if (m_htmlDoc.p != NULL) {
+        m_htmlDoc->get_parentWindow(&m_htmlWin);
+        m_htmlWinDisp = m_htmlWin;
+    }
 }
 
 ActiveXBrowserHost::~ActiveXBrowserHost(void)
 {
 }
+
 void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
     if (m_hWnd != NULL) 
@@ -40,6 +45,18 @@ void *ActiveXBrowserHost::getContextID()
 void ActiveXBrowserHost::setWindow(HWND wnd)
 {
     m_hWnd = wnd;
+}
+
+FB::AutoPtr<FB::BrowserObjectAPI> ActiveXBrowserHost::getDOMDocument()
+{
+    FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlDocDisp.p, this));
+    return retObj;
+}
+
+FB::AutoPtr<FB::BrowserObjectAPI> ActiveXBrowserHost::getDOMWindow()
+{
+    FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlWin.p, this));
+    return retObj;
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
@@ -83,7 +100,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 		break;
 
 	case VT_DISPATCH:
-        //retVal = AutoPtr<EventHandlerObject>(new IDispatchAPI(cVar.
+        retVal = FB::AutoPtr<FB::BrowserObjectAPI>(new IDispatchAPI(cVar->pdispVal, this)); 
 		break;
 
 	case VT_ERROR:
@@ -130,8 +147,20 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         std::string str = var.convert_cast<std::string>();
         CComBSTR bStr(str.c_str());
         outVar = bStr;
-	} else if (var.get_type() == typeid(FB::AutoPtr<FB::EventHandlerObject>)) {
+	} else if (var.get_type() == typeid(FB::AutoPtr<FB::BrowserObjectAPI>)) {
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.convert_cast<FB::AutoPtr<FB::BrowserObjectAPI>>().ptr());
+        if (api.ptr() != NULL) {
+            outVar = api->getIDispatch();
+        } else {
+            outVar = COMJavascriptObject::NewObject(this, var.convert_cast<FB::AutoPtr<FB::BrowserObjectAPI>>().ptr());
+        }
 	} else if (var.get_type() == typeid(FB::AutoPtr<FB::JSAPI>)) {
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.convert_cast<FB::AutoPtr<FB::JSAPI>>().ptr());
+        if (api.ptr() != NULL) {
+            outVar = api->getIDispatch();
+        } else {
+            outVar = COMJavascriptObject::NewObject(this, var.convert_cast<FB::AutoPtr<FB::JSAPI>>().ptr());
+        }
     }
 
     outVar.Detach(dest);

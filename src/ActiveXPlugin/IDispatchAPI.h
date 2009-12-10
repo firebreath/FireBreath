@@ -17,12 +17,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI.h"
 #include "AutoPtr.h"
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 #include "ActiveXBrowserHost.h"
 #include <atlctl.h>
 
 class IDispatchAPI :
-    public FB::EventHandlerObject
+    public FB::BrowserObjectAPI
 {
 public:
     IDispatchAPI(IDispatch *, ActiveXBrowserHost *);

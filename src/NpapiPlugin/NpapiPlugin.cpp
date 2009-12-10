@@ -15,12 +15,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPlugin.h"
 #include "FactoryDefinitions.h"
 #include "PluginCore.h"
+#include "BrowserHostWrapper.h"
 
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host)
     : m_obj(NULL), m_npHost(host)
 {
+    pluginMain->SetHost(host);
 }
 
 NpapiPlugin::~NpapiPlugin(void)

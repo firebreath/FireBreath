@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <string>
 #include "APITypes.h"
 #include "AutoPtr.h"
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 
 namespace FB {
 
@@ -27,16 +27,16 @@ namespace FB {
     {
     public:
         virtual ~AsyncBrowserCall(void);
-        static void CallMethod(EventHandlerObject *obj, std::string method,
+        static void CallMethod(BrowserObjectAPI *obj, std::string method,
             std::vector<variant> &inParams);
 
     protected:
-        AsyncBrowserCall(EventHandlerObject *obj, std::string method,
+        AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
             std::vector<variant> &inParams);
 
         static void AsyncBrowserCall::asyncCallback(void *userData);
 
-        AutoPtr<EventHandlerObject> m_obj;
+        AutoPtr<BrowserObjectAPI> m_obj;
         std::vector<variant> m_params;
         std::string m_methodName;
     };

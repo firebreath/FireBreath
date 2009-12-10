@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class EventHandlerObject;
+    class BrowserObjectAPI;
     class BrowserHostWrapper;
 
     // Variant list
@@ -87,10 +87,10 @@ namespace FB
 
     // JSAPI event handlers
 
-    typedef std::pair<std::string, FB::AutoPtr<EventHandlerObject>> EventPair;
-    typedef std::multimap<std::string, FB::AutoPtr<EventHandlerObject>> EventMultiMap;
-    typedef std::map<void*, FB::AutoPtr<EventHandlerObject>> EventIFaceMap;
-    typedef std::map<std::string, FB::AutoPtr<EventHandlerObject>> EventSingleMap;
+    typedef std::pair<std::string, FB::AutoPtr<BrowserObjectAPI>> EventPair;
+    typedef std::multimap<std::string, FB::AutoPtr<BrowserObjectAPI>> EventMultiMap;
+    typedef std::map<void*, FB::AutoPtr<BrowserObjectAPI>> EventIFaceMap;
+    typedef std::map<std::string, FB::AutoPtr<BrowserObjectAPI>> EventSingleMap;
 }
 
 #endif

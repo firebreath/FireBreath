@@ -14,8 +14,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "MathAPI.h"
+#include "BrowserObjectAPI.h"
+#include <boost/assign.hpp>
 
-MathAPI::MathAPI()
+using boost::assign::list_of;
+
+MathAPI::MathAPI(FB::BrowserHostWrapper *host) : m_host(host)
 {
     registerMethod("returnString",  make_method(this, &MathAPI::returnString));
     registerMethod("intToString",   make_method(this, &MathAPI::intToString));
@@ -23,6 +27,7 @@ MathAPI::MathAPI()
     registerMethod("concatenate",   make_method(this, &MathAPI::concatenate));
     registerMethod("concatMany",    make_method(this, &MathAPI::concatenate2));
     registerMethod("getType",       make_method(this, &MathAPI::getType));
+    registerMethod("getElementHTML",make_method(this, &MathAPI::getElementHTML));
 
     registerProperty("message",
                      make_property(this, 
@@ -35,6 +40,17 @@ MathAPI::MathAPI()
 
 MathAPI::~MathAPI()
 {
+}
+
+std::string MathAPI::getElementHTML(const std::string& elemId)
+{
+    FB::AutoPtr<FB::BrowserObjectAPI> doc = m_host->getDOMDocument();
+
+    FB::AutoPtr<FB::BrowserObjectAPI> elem = doc->Invoke("getElementById",
+        FB::VariantList( list_of(elemId) ) )
+        .cast<FB::AutoPtr<FB::BrowserObjectAPI>>();
+
+    return elem->GetProperty("innerHTML").cast<std::string>();
 }
 
 std::string MathAPI::returnString(const std::string& s)

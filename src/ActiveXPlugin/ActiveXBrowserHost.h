@@ -33,10 +33,16 @@ public:
 
     void setWindow(HWND wnd);
 
+public:
+    FB::AutoPtr<FB::BrowserObjectAPI> getDOMDocument();
+    FB::AutoPtr<FB::BrowserObjectAPI> getDOMWindow();
+
 protected:
     HWND m_hWnd;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
-    CComQIPtr<IPropertyNotifySink, &IID_IPropertyNotifySink> m_propNotify;
+    CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
+    CComPtr<IHTMLWindow2> m_htmlWin;
+    CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);

@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "NPJavascriptObject.h"
-#include "EventHandlerObject.h"
+#include "BrowserObjectAPI.h"
 
 using namespace FB::Npapi;
 
@@ -61,12 +61,12 @@ bool NPJavascriptObject::callAddEventListener(std::vector<FB::variant> &args)
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(AutoPtr<EventHandlerObject>)) {
+         || args[1].get_type() != typeid(AutoPtr<BrowserObjectAPI>)) {
         throw invalid_arguments();
     }
 
     m_api->registerEventMethod(args[0].convert_cast<std::string>(),
-        args[1].convert_cast<AutoPtr<EventHandlerObject>>());
+        args[1].convert_cast<AutoPtr<BrowserObjectAPI>>());
 
     return true;
 }
@@ -75,12 +75,12 @@ bool NPJavascriptObject::callRemoveEventListener(std::vector<FB::variant> &args)
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(AutoPtr<EventHandlerObject>)) {
+         || args[1].get_type() != typeid(AutoPtr<BrowserObjectAPI>)) {
         throw invalid_arguments();
     }
 
     m_api->unregisterEventMethod(args[0].convert_cast<std::string>(),
-        args[1].convert_cast<AutoPtr<EventHandlerObject>>());
+        args[1].convert_cast<AutoPtr<BrowserObjectAPI>>());
 
     return true;
 }
@@ -132,7 +132,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-                FB::AutoPtr<EventHandlerObject> tmp(m_api->getDefaultEventMethod(sName));
+                FB::AutoPtr<BrowserObjectAPI> tmp(m_api->getDefaultEventMethod(sName));
                 if (tmp.ptr() != NULL)
                     res = tmp;
             } else {
@@ -157,10 +157,10 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-                if (arg.get_type() != typeid(FB::AutoPtr<EventHandlerObject>)) {
+                if (arg.get_type() != typeid(FB::AutoPtr<BrowserObjectAPI>)) {
                     throw script_error("Invalid event handler function");
                 } else {
-                    FB::AutoPtr<EventHandlerObject> tmp(arg.cast<FB::AutoPtr<EventHandlerObject>>());
+                    FB::AutoPtr<BrowserObjectAPI> tmp(arg.cast<FB::AutoPtr<BrowserObjectAPI>>());
                     m_api->setDefaultEventMethod(sName, tmp.ptr());
                 }
             } else {

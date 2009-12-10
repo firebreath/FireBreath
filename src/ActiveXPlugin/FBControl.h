@@ -61,6 +61,9 @@ class ATL_NO_VTABLE CFBControl :
 public:
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
+    CComQIPtr<IDispatch, &IID_IDispatchEx> m_htmlDocIDisp;
+
+    FB::AutoPtr<ActiveXBrowserHost> m_host;
 
     CFBControl() : pluginWin(NULL)
     {
@@ -93,9 +96,12 @@ public:
         if (container.p) {
             m_htmlDoc = container;
             m_propNotify = m_spClientSite;
+            m_htmlDocIDisp = container;
         }
         
-        this->setAPI(pluginMain->getRootJSAPI(), new ActiveXBrowserHost(m_htmlDoc));
+        m_host = new ActiveXBrowserHost(m_htmlDoc);
+        pluginMain->SetHost(m_host.ptr());
+        this->setAPI(pluginMain->getRootJSAPI(), m_host);
         setReadyState(READYSTATE_COMPLETE);
         InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);

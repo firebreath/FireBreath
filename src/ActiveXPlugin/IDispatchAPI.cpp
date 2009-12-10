@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axmain.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) : 
-    m_obj(obj), m_browser(host), FB::EventHandlerObject(host)
+    m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
 {
 }
 

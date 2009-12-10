@@ -16,13 +16,14 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
+#include "BrowserHostWrapper.h"
 
 class MathAPI : public FB::JSAPIAuto
 {
 public:
     virtual ~MathAPI();
 
-    MathAPI();
+    MathAPI(FB::BrowserHostWrapper *host);
 
     std::string returnString(const std::string& s);
 
@@ -42,7 +43,10 @@ public:
 
     std::string getType(const FB::variant a);
 
+    std::string getElementHTML(const std::string& elemId);
+
 private:
+    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
     std::string m_message;
     const std::string m_readOnlyMessage;
 };

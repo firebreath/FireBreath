@@ -15,6 +15,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginWindow.h"
 #include "JSAPI.h"
 #include "FactoryDefinitions.h"
+#include "BrowserHostWrapper.h"
 
 #include "PluginCore.h"
 
@@ -56,6 +57,11 @@ PluginCore::~PluginCore()
         // Only on the destruction of the final plugin instance
         GlobalPluginDeinitialize();
     }
+}
+
+void PluginCore::SetHost(BrowserHostWrapper *host)
+{
+    m_host = host;
 }
 
 JSAPI* PluginCore::getRootJSAPI()
