@@ -29,3 +29,5 @@ Release/*
 .git/*
 build/
 build/*
+buildex/
+buildex/*

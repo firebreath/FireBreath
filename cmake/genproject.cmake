@@ -24,9 +24,14 @@ if (GEN)
     set(GEN_ARG -G "${GEN}")
 endif()
 
+if (BUILD_EXAMPLES)
+    set (EXAMPLES -D BUILD_EXAMPLES="YES")
+endif()
+
 execute_process(COMMAND "${CMAKE_COMMAND}"
     ${GEN_ARG}
     -D "CMAKE_DIR:PATH=${CMAKE_DIR}"
+    ${EXAMPLES}
 
     ${CMAKE_CURRENT_SOURCE_DIR}
     WORKING_DIRECTORY ${BUILD_DIR}

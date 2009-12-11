@@ -103,7 +103,7 @@ public:
         pluginMain->SetHost(m_host.ptr());
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         setReadyState(READYSTATE_COMPLETE);
-        InPlaceActivate(OLEIVERB_UIACTIVATE);
+        //InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);
 
         return S_OK;

@@ -19,6 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
+    // This class is deprecated!
     class JSAPISimple :
         public FB::JSAPI
     {

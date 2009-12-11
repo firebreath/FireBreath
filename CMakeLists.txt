@@ -16,9 +16,9 @@
 cmake_minimum_required (VERSION 2.8)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.8)
 
+Project (FireBreath)
 include(${CMAKE_DIR}/common.cmake)
 
-Project (FireBreath)
 message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
 
 # Common projects -- projects that don't have any plugin specific code
@@ -29,13 +29,19 @@ add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Scr
 add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
 
 file (GLOB PLUGIN_PROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    projects/*
+    ${PROJECT_SRC_DIR}/*
     )
 
+message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
+    set (FOUND_PROJECTS 1)
     get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
     configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
 
     message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
     add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
 endforeach()
+
+if (NOT FOUND_PROJECTS)
+    MESSAGE(FATAL_ERROR "No projects found in ${PROJECT_SRC_DIR}/")
+endif()

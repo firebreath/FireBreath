@@ -258,7 +258,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
                                              IServiceProvider *pspCaller)
 {
     if (m_api.ptr() == NULL || !AxIdMap.idExists(id)) {
-        return E_NOTIMPL;
+        return DISP_E_MEMBERNOTFOUND;
     }
     try {
         std::string sName = AxIdMap.getValueForId<std::string>(id);
@@ -300,7 +300,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             throw FB::invalid_member("Invalid method or property name");
         }
     } catch (FB::invalid_member) {
-        return E_NOTIMPL;
+        return DISP_E_MEMBERNOTFOUND;
     } catch (FB::script_error se) {
         if (pei != NULL) {
             pei->bstrSource = CComBSTR(ACTIVEX_PROGID);
