@@ -18,12 +18,25 @@ FB::JSAPIAuto::JSAPIAuto()
   : m_methodFunctorMap(),
     m_propertyFunctorsMap()
 {
-
+    registerMethod("ToString",  make_method(this, &JSAPIAuto::ToString));
+    
+    registerProperty("value", make_property(this, &JSAPIAuto::ToString));
+    registerProperty("valid", make_property(this, &JSAPIAuto::get_valid));
 }
 
 FB::JSAPIAuto::~JSAPIAuto()
 {
 
+}
+
+std::string FB::JSAPIAuto::ToString()
+{
+    return "<JSAPI-Auto driven Javascript Object>";
+}
+
+bool FB::JSAPIAuto::get_valid()
+{
+    return true;
 }
 
 void FB::JSAPIAuto::registerMethod(const std::string& name, CallMethodFunctor func)

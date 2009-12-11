@@ -42,6 +42,9 @@ namespace FB {
         virtual variant GetProperty(int idx);
         virtual void SetProperty(int idx, const variant value);
 
+        // Default properties and methods for all JS objects
+        virtual std::string ToString();
+        virtual bool get_valid();
     private:
         MethodFunctorMap m_methodFunctorMap;
         PropertyFunctorsMap m_propertyFunctorsMap;
