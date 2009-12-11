@@ -47,3 +47,10 @@ set(PLUGIN_INTERNAL_DEPS
     ScriptingCore
     PluginCore
     )
+
+file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}
+    ${GEN_DIR}/gen/*.rgs
+    ${GEN_DIR}/gen/*.def
+    ${GEN_DIR}/gen/*.rc
+    )
+

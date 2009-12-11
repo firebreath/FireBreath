@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FactoryDefinitions.h"
 #include "PluginCore.h"
 #include "BrowserHostWrapper.h"
+#include "config.h"
 
 using namespace FB::Npapi;
 
@@ -66,10 +67,10 @@ NPError NpapiPlugin::GetValue(NPPVariable variable, void *value)
 {
     switch (variable) {
     case NPPVpluginNameString:
-        *((const char **)value) = _getPluginName();
+        *((const char **)value) = FBSTRING_PluginName;
         break;
     case NPPVpluginDescriptionString:
-        *((const char **)value) = _getPluginDesc();
+        *((const char **)value) = FBSTRING_FileDescription;
         break;
     case NPPVpluginScriptableNPObject:
         *(NPObject **)value = getScriptableObject();

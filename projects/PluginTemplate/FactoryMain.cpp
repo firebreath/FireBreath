@@ -25,21 +25,6 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 static const char *pluginName = FBSTRING_PluginName;
 static const char *pluginDesc = FBSTRING_FileDescription;
 
-const char *_getPluginName()
-{
-    return pluginName;
-}
-
-const char *_getPluginDesc()
-{
-    return pluginDesc;
-}
-
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
-{
-    return new FB::Npapi::NpapiPluginWin(host);
-}
-
 FB::PluginCore *_getMainPlugin()
 {
     return new TemplatePlugin();

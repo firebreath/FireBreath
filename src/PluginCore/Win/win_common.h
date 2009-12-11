@@ -19,6 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #endif
 
 #include "targetver.h"
+#include "windows.h"
 
 #define _ATL_APARTMENT_THREADED
 #define _ATL_NO_AUTOMATIC_NAMESPACE

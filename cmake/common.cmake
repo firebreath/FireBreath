@@ -34,6 +34,10 @@ if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
 endif()
 
+if (NOT GEN_DIR)
+    get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/../gen" ABSOLUTE)
+endif()
+
 function (browserplugin_project PLUGIN_NAME)
 
     Project (${PLUGIN_NAME})
