@@ -31,3 +31,4 @@ build/
 build/*
 buildex/
 buildex/*
+projects/*

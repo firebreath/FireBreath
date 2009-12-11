@@ -13,3 +13,4 @@ Release/
 *.aps
 build/
 buildex/
+projects/*
