@@ -43,5 +43,6 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
 endforeach()
 
 if (NOT FOUND_PROJECTS)
-    MESSAGE(FATAL_ERROR "No projects found in ${PROJECT_SRC_DIR}/")
+    MESSAGE("No projects found in ${PROJECT_SRC_DIR}/.")
+    MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
 endif()
