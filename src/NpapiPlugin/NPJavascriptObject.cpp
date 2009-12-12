@@ -106,7 +106,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
             m_browser->getNPVariant(result, ret);
             return true;
         }
-    } catch (script_error e) {
+    } catch (script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
@@ -144,7 +144,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
 
         m_browser->getNPVariant(result, res);
         return true;
-    } catch (script_error e) {
+    } catch (script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
@@ -170,10 +170,11 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
             m_api->SetProperty(m_browser->IntFromIdentifier(name), arg);
         }
         return true;
-    } catch (script_error e) {
+    } catch(script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
-    }}
+    }
+}
 
 bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
 {
@@ -185,7 +186,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
             }
         }
         return false;
-    } catch (script_error e) {
+    } catch(script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
@@ -196,7 +197,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
     try {
         // TODO: add support for enumerating members
         return false;
-    } catch (script_error e) {
+    } catch (script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
@@ -207,7 +208,7 @@ bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPV
     try {
         // TODO: add support for constructing
         return false;
-    } catch (script_error e) {
+    } catch (script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
