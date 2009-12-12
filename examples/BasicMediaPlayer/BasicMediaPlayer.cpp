@@ -16,6 +16,9 @@ Copyright 2009 Georg Fritzsche,
 #include <boost/assign.hpp>
 #include "BasicMediaPlayer.h"
 #include "MediaPlayer.h"
+#include "DOM/JSAPI_DOMWindow.h"
+
+#include <windows.h>
 
 BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host) 
   : m_host(host)
@@ -74,7 +77,39 @@ FB::JSAPI* BasicMediaPlayer::Playlist()
 	return 0;
 }
 
-void BasicMediaPlayer::SetPlaylist(FB::AutoPtr<FB::BrowserObjectAPI>)
+void BasicMediaPlayer::SetPlaylist(FB::AutoPtr<FB::BrowserObjectAPI> obj)
 {
+	if(!obj->HasProperty("length"))
+		throw FB::invalid_arguments("expected array parameter");
+	
+	FB::variant res = obj->GetProperty("length");
+	long length = 0;
+	try {
+		length = res.convert_cast<long>();
+	} catch(FB::bad_variant_cast&) {
+		throw FB::script_error("length returned unexpected type");
+	}
 
+	std::vector<std::string> entries;
+
+	try 
+	{
+		for(long i=0; i<length; ++i) 
+		{
+			res = obj->GetProperty(i);
+			entries.push_back(res.convert_cast<std::string>());
+		}
+	}
+	catch(FB::bad_variant_cast&)
+	{
+		throw FB::script_error("could not convert entry in playlist to string");
+	}
+
+	std::string s;
+	for(std::vector<std::string>::iterator it = entries.begin(); it != entries.end(); ++it)
+	{
+		s += *it + "\n";
+	}
+	
+	m_host->getDOMWindow().alert(s);
 }
