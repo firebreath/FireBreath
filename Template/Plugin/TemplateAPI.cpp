@@ -18,39 +18,39 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "DOM/JSAPI_DOMDocument.h"
 using boost::assign::list_of;
 
-#include "{{API_NAME}}API.h"
+#include "${API.ident}API.h"
 
-{{API_NAME}}API::{{API_NAME}}API(FB::BrowserHostWrapper *host) : m_host(host)
+${API.ident}API::${API.ident}API(FB::BrowserHostWrapper *host) : m_host(host)
 {
-    registerMethod("{{METHOD_NAME}}",  make_method(this, &{{API_NAME}}API::{{METHOD_NAME}}));
+    registerMethod("${METHOD.ident}",  make_method(this, &${API.ident}API::${METHOD.ident}));
 
     // Read-write property
-    registerProperty("{{PROPERTY_NAME}",
+    registerProperty("${PLUGIN.prefix}PROPERTY_NAME}",
                      make_property(this, 
-                        &{{API_NAME}}API::get_{{PROPERTY_NAME}},
-                        &{{API_NAME}}API::set_{{PROPERTY_NAME}}));
+                        &${API.ident}API::get_${PROPERTY.ident},
+                        &${API.ident}API::set_${PROPERTY.ident}));
 
     // Read-only property
-    registerProperty("{{PROPERTY_NAME}}", 
+    registerProperty("${PROPERTY.ident}", 
                      make_property(this,
-                        &{{API_NAME}}API::get_{{PROPERTY_NAME}}));
+                        &${API.ident}API::get_${PROPERTY.ident}));
 }
 
-{{API_NAME}}API::~{{API_NAME}}API()
+${API.ident}API::~${API.ident}API()
 {
 }
 
-// Read/Write property {{PROPERTY_NAME}}
-{{PROPERTY_TYPE}} {{API_NAME}}API::get_{{PROPERTY_NAME}}()
+// Read/Write property ${PROPERTY.ident}
+${PROPERTY.type} ${API.ident}API::get_${PROPERTY.ident}()
 {
-    return m_{{PROPERTY_NAME}};
+    return m_${PROPERTY.ident};
 }
-void {{API_NAME}}API::set_{{PROPERTY_NAME}}({{PROPERTY_TYPE}} val)
+void ${API.ident}API::set_${PROPERTY.ident}(${PROPERTY.type} val)
 {
-    m_{{PROPERTY_NAME}} = val;
+    m_${PROPERTY.ident} = val;
 }
 
-// Read-only property {{PROPERTY_NAME}}
-{{PROPERTY_TYPE}} {{API_NAME}}API::get_{{PROPERTY_NAME}}()
+// Read-only property ${PROPERTY.ident}
+${PROPERTY.type} ${API.ident}API::get_${PROPERTY.ident}()
 {
 }

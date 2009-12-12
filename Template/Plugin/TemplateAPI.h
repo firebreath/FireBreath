@@ -18,27 +18,27 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
 
-class {{API_NAME}}API : public FB::JSAPIAuto
+class ${API.ident}API : public FB::JSAPIAuto
 {
 public:
-    {{API_NAME}}API(FB::BrowserHostWrapper *host);
-    virtual ~{{API_NAME}}API();
+    ${API.ident}API(FB::BrowserHostWrapper *host);
+    virtual ~${API.ident}API();
 
-    // Read/Write property {{PROPERTY_NAME}}
-    {{PROPERTY_TYPE}} get_{{PROPERTY_NAME}}();
-    void set_{{PROPERTY_NAME}}({{PROPERTY_TYPE}} val);
+    // Read/Write property ${PROPERTY.ident}
+    ${PROPERTY.type} get_${PROPERTY.ident}();
+    void set_${PROPERTY.ident}(${PROPERTY.type} val);
 
-    // Read-only property {{PROPERTY_NAME}}
-    {{PROPERTY_TYPE}} get_{{PROPERTY_NAME}}();
+    // Read-only property ${PROPERTY.ident}
+    ${PROPERTY.type} get_${PROPERTY.ident}();
 
-    // Method {{METHOD_NAME}}
-    {{RETURN_TYPE}} {{METHOD_NAME}}(
-            {{PARAM_TYPE}} a
-            , {{PARAM_TYPE}} b
+    // Method ${METHOD.ident}
+    ${PLUGIN.prefix}{{RETURN_TYPE}} ${METHOD.ident}(
+            ${PLUGIN.prefix}{{PARAM_TYPE}} a
+            , ${PLUGIN.prefix}{{PARAM_TYPE}} b
             );
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
 
-    {{PROPERTY_TYPE}} m_{{PROPERTY_NAME}};
+    ${PROPERTY.type} m_${PROPERTY.ident};
 };
