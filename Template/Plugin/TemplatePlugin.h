@@ -1,9 +1,9 @@
 /**********************************************************\ 
 
-  Auto-generated {{PLUGIN_ID}}.cpp
+  Auto-generated ${PLUGIN.ident}.cpp
 
   This file contains the auto-generated main plugin object 
-  implementation for the {{PLUGIN_NAME}} project
+  implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
 #ifndef H_TEMPLATEPLUGIN
@@ -13,15 +13,15 @@
 
 #include "PluginCore.h"
 
-class {{PLUGIN_ID}} : public FB::PluginCore
+class ${PLUGIN.ident} : public FB::PluginCore
 {
 public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
 public:
-    {{PLUGIN_ID}}();
-    virtual ~{{PLUGIN_ID}}();
+    ${PLUGIN.ident}();
+    virtual ~${PLUGIN.ident}();
 
 public:
     virtual FB::JSAPI* createJSAPI();

@@ -3,26 +3,26 @@
   Auto-generated FactoryMain.cpp
 
   This file contains the auto-generated factory methods 
-  for the {{PLUGIN_NAME}} project
+  for the ${PLUGIN.name} project
 
 \**********************************************************/
 
 #include "windows.h"
 
 #include "FactoryDefinitions.h"
-#include "{{PLUGIN_ID}}.h"
+#include "${PLUGIN.ident}.h"
 
 FB::PluginCore *_getMainPlugin()
 {
-    return new {{PLUGIN_ID}}();
+    return new ${PLUGIN.ident}();
 }
 
 void GlobalPluginInitialize()
 {
-    {{PLUGIN_ID}}::StaticInitialize();
+    ${PLUGIN.ident}::StaticInitialize();
 }
 
 void GlobalPluginDeinitialize()
 {
-    {{PLUGIN_ID}}::StaticDeinitialize();
+    ${PLUGIN.ident}::StaticDeinitialize();
 }
