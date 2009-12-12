@@ -35,7 +35,7 @@ namespace FB
         inline void setter(C* instance, void (C::*setter)(T), const FB::variant& v)
         {
             typedef typename FB::detail::plain_type<T>::type Ty;
-            (instance->*setter)(v.convert_cast<Ty>());
+            (instance->*setter)(FB::convertArgument<Ty>(v));
         }
 
         inline void dummySetter(const FB::variant&) 

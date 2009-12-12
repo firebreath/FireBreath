@@ -70,7 +70,15 @@ namespace FB { namespace detail
     {
         static inline To convert(const FB::variant& from)
         {
-            return from.convert_cast<To>();
+			try {
+				return from.convert_cast<To>();
+			} catch(FB::bad_variant_cast& e) {
+                std::stringstream ss;
+                ss << "Invalid argument conversion "
+                   << "from " << e.from 
+                   << " to "  << e.to;
+                throw FB::invalid_arguments(ss.str());
+            }
         }
 
         static inline To convert(const FB::variant& from, size_t index)
