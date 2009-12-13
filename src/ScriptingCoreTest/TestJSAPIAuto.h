@@ -78,7 +78,7 @@ public:
         m_message = s;
     }
 
-    std::string get_Message()
+    std::string get_Message() const
     {
         return m_message;
     }
