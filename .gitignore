@@ -11,6 +11,7 @@ Release/
 *_p.*
 *.orig
 *.aps
+*.pyc
 build/
 buildex/
 projects/*

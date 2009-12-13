@@ -23,6 +23,7 @@ Release/*
 *.idb
 *.sbr
 *.scc
+*.pyc
 .bzr
 .bzr/*
 .git
