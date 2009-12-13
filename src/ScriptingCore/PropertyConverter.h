@@ -38,7 +38,7 @@ namespace FB
 				static inline 
 				FB::GetPropFunctor f(C* instance, T (C::*getter)())
 				{ 
-					return boost::bind(getter, instance);
+					return boost::bind(boost::mem_fn(getter), instance);
 				}
 			};
 
@@ -48,7 +48,7 @@ namespace FB
 				static inline 
 				FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
 				{ 
-					return boost::bind(getter, instance);
+					return boost::bind(boost::mem_fn(getter), instance);
 				}
 			};
 
