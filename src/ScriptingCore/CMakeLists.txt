@@ -38,7 +38,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     APITypes.*
     AutoPtr.*
     variant.*
-    vector_list.*
+    variant_list.*
     TypeIDMap.*
 )
 
