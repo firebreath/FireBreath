@@ -59,5 +59,9 @@ TEST(VariantListTest)
         }
 
         CHECK(sl == convert_variant_list< std::vector<std::string> >(vl));
+
+        std::vector<std::string> sl2;
+        convert_variant_list(vl, sl2);
+        CHECK(sl == sl2);
     }
 }

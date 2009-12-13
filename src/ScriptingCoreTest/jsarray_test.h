@@ -24,43 +24,42 @@ TEST(JSArrayTest)
 {
     PRINT_TESTNAME;
 
-	using boost::assign::list_of;
-	using FB::variant_list_of;
+    using boost::assign::list_of;
+    using FB::variant_list_of;
 
-	{
-		// test C++ acess 
+    {
+        // test C++ acess 
 
-		FB::VariantList values = variant_list_of(1)("3")(2.3);
-		FB::AutoPtr<FB::JSArray> test = new FB::JSArray(values);
-		
-		std::vector<FB::VariantList> copies = boost::assign::list_of
-			(test->CopyValues())
-			(FB::VariantList())
-			(test->ToVectorOf<FB::variant>())
-			(test->ToContainer<FB::VariantList>());
-		test->ToContainer(copies[1]);
+        FB::VariantList values = variant_list_of(1)("3")(2.3);
+        FB::AutoPtr<FB::JSArray> test = new FB::JSArray(values);
+        
+        std::vector<FB::VariantList> copies = boost::assign::list_of
+            (test->Values())
+            (FB::VariantList())
+            (convert_variant_list< std::vector<FB::variant> >(test->Values()));
+        convert_variant_list(test->Values(), copies[1]);
 
-		for(size_t i=0; i<values.size(); ++i) 
-		{
-			std::vector<FB::variant> to_test = variant_list_of((*test)[i])(test->Values()[i]);			
-			for(size_t c=0; c<copies.size(); ++c) 
-				to_test.push_back(copies[c][i]);
+        for(size_t i=0; i<values.size(); ++i) 
+        {
+            std::vector<FB::variant> to_test = variant_list_of((*test)[i])(test->Values()[i]);            
+            for(size_t c=0; c<copies.size(); ++c) 
+                to_test.push_back(copies[c][i]);
 
-			for(size_t t=0; t<to_test.size(); ++t) 
-			{
-				CHECK(values[i].get_type() == to_test[t].get_type());
-				CHECK(values[i].convert_cast<std::string>() == to_test[t].convert_cast<std::string>());
-			}
-		}
+            for(size_t t=0; t<to_test.size(); ++t) 
+            {
+                CHECK(values[i].get_type() == to_test[t].get_type());
+                CHECK(values[i].convert_cast<std::string>() == to_test[t].convert_cast<std::string>());
+            }
+        }
 
-		// test scripting acess
+        // test scripting acess
 
-		CHECK(values.size() == test->GetProperty("length").convert_cast<size_t>());
+        CHECK(values.size() == test->GetProperty("length").convert_cast<size_t>());
 
-		for(size_t i=0; i<values.size(); ++i)
-		{
-			CHECK(values[i].get_type() == test->GetProperty(i).get_type());
-			CHECK(values[i].convert_cast<std::string>() == test->GetProperty(i).convert_cast<std::string>());
-		}
-	}
+        for(size_t i=0; i<values.size(); ++i)
+        {
+            CHECK(values[i].get_type() == test->GetProperty(i).get_type());
+            CHECK(values[i].convert_cast<std::string>() == test->GetProperty(i).convert_cast<std::string>());
+        }
+    }
 }

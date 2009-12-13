@@ -37,61 +37,12 @@ namespace FB
         FB::VariantList& Values();
         const FB::VariantList& Values() const;
 
-        FB::VariantList CopyValues() const;
-
-        // convencience conversion to a vector
-
-        template<class Cont>
-        void ToContainer(Cont& vec) const;
-
-        template<class Cont>
-        Cont ToContainer() const;
-
-        template<typename T>
-        std::vector<T> ToVectorOf() const;
-
     private:
         void RegisterMethods();
+        void ExtractList(FB::AutoPtr<FB::BrowserObjectAPI>);
 
         FB::VariantList m_values;
     };
-}
-
-namespace FB
-{
-    template<class Cont>
-    void JSArray::ToContainer(Cont &cont) const
-    {
-        typedef Cont::value_type T;
-        std::back_insert_iterator<Cont> inserter(cont);
-
-        try
-        {
-            FB::VariantList::const_iterator it(m_values.begin());
-            for( ; it != m_values.end(); ++it)
-                inserter = it->convert_cast<T>();
-        } 
-        catch(FB::bad_variant_cast& e) 
-        {
-            throw e;
-        }
-    }
-
-    template<typename T>
-    std::vector<T> JSArray::ToVectorOf() const
-    {
-        std::vector<T> c;
-        ToContainer(c);
-        return c;
-    }
-
-    template<class Cont>
-    Cont JSArray::ToContainer() const
-    {
-        Cont c;
-        ToContainer(c);
-        return c;
-    }
 }
 
 #endif

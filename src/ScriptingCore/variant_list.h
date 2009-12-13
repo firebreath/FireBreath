@@ -37,6 +37,8 @@ namespace FB
     // convert variant list to STL-style container (i.e. supports value_type and back-insert-iterators)
     template<class Cont>
     Cont convert_variant_list(const FB::VariantList& v);
+    template<class Cont>
+    void convert_variant_list(const FB::VariantList& from, Cont& to);
 
     // convenience creation of variant list similar to boost::assign but passable as a temporary
     FB::detail::VariantListInserter variant_list_of(FB::variant v);
@@ -96,17 +98,21 @@ namespace FB
     }
 
     template<class Cont>
-    Cont convert_variant_list(const FB::VariantList& v)
+    Cont convert_variant_list(const FB::VariantList& from)
     {
-        typedef typename Cont::value_type T;
-        Cont c;
-        std::back_insert_iterator<Cont> inserter(c);
+        Cont to;
+        convert_variant_list(from, to);
+        return to;
+    }
 
-        for(FB::VariantList::const_iterator it = v.begin() ; it<v.end(); ++it) {
-            inserter = it->convert_cast<T>();
+    template<class Cont>
+    void convert_variant_list(const FB::VariantList& from, Cont& to)
+    {
+        std::back_insert_iterator<Cont> inserter(to);
+
+        for(FB::VariantList::const_iterator it = from.begin() ; it<from.end(); ++it) {
+            inserter = it->convert_cast<Cont::value_type>();
         }
-
-        return c;
     }
 }
 

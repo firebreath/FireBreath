@@ -26,6 +26,23 @@ FB::JSArray::JSArray(FB::AutoPtr<FB::BrowserObjectAPI> obj)
     if(!obj->HasProperty("length"))
         throw FB::script_error("object does not have property length");
 
+    ExtractList(obj);
+    RegisterMethods();
+}
+
+FB::JSArray::JSArray(const FB::VariantList& values)
+{
+    m_values = values;
+    RegisterMethods();
+}
+
+void FB::JSArray::RegisterMethods()
+{
+    registerProperty("length", make_property(this, &JSArray::GetLength));
+}
+
+void FB::JSArray::ExtractList(FB::AutoPtr<FB::BrowserObjectAPI> obj)
+{
     try
     {
         int length = obj->GetProperty("length").convert_cast<int>();
@@ -39,19 +56,6 @@ FB::JSArray::JSArray(FB::AutoPtr<FB::BrowserObjectAPI> obj)
     {
         throw e;
     }
-
-    RegisterMethods();
-}
-
-FB::JSArray::JSArray(const FB::VariantList& values)
-{
-    m_values = values;
-    RegisterMethods();
-}
-
-void FB::JSArray::RegisterMethods()
-{
-    registerProperty("length", make_property(this, &JSArray::GetLength));
 }
 
 size_t FB::JSArray::GetLength() const
@@ -80,11 +84,6 @@ FB::VariantList& FB::JSArray::Values()
 }
 
 const FB::VariantList& FB::JSArray::Values() const
-{
-    return m_values;
-}
-
-FB::VariantList FB::JSArray::CopyValues() const
 {
     return m_values;
 }
