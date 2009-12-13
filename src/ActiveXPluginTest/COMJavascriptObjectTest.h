@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "AutoPtr.h"
-#include "vector_list.h"
+#include "variant_list.h"
 #include "COMJavascriptObject.h"
 #include "ActiveXBrowserHost.h"
 #include "TestJSAPI.h"
