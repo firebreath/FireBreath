@@ -20,78 +20,78 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB
 {
-	class JSArray : public JSAPIAuto
-	{
-	public:
-		JSArray();
-		explicit JSArray(FB::AutoPtr<FB::BrowserObjectAPI> obj);
-		explicit JSArray(const FB::VariantList& values);
+    class JSArray : public JSAPIAuto
+    {
+    public:
+        JSArray();
+        explicit JSArray(FB::AutoPtr<FB::BrowserObjectAPI> obj);
+        explicit JSArray(const FB::VariantList& values);
 
-		FB::variant GetProperty(int index);
-		using FB::JSAPIAuto::GetProperty; // unhide GetProperty(std::string)
-		size_t GetLength() const;
+        FB::variant GetProperty(int index);
+        using FB::JSAPIAuto::GetProperty; // unhide GetProperty(std::string)
+        size_t GetLength() const;
 
-		FB::variant& operator[](size_t index);
-		const FB::variant& operator[](size_t index) const;
+        FB::variant& operator[](size_t index);
+        const FB::variant& operator[](size_t index) const;
 
-		FB::VariantList& Values();
-		const FB::VariantList& Values() const;
+        FB::VariantList& Values();
+        const FB::VariantList& Values() const;
 
-		FB::VariantList CopyValues() const;
+        FB::VariantList CopyValues() const;
 
-		// convencience conversion to a vector
+        // convencience conversion to a vector
 
-		template<class Cont>
-		void ToContainer(Cont& vec) const;
+        template<class Cont>
+        void ToContainer(Cont& vec) const;
 
-		template<class Cont>
-		Cont ToContainer() const;
+        template<class Cont>
+        Cont ToContainer() const;
 
-		template<typename T>
-		std::vector<T> ToVectorOf() const;
+        template<typename T>
+        std::vector<T> ToVectorOf() const;
 
-	private:
-		void RegisterMethods();
+    private:
+        void RegisterMethods();
 
-		FB::VariantList m_values;
-	};
+        FB::VariantList m_values;
+    };
 }
 
 namespace FB
 {
-	template<class Cont>
-	void JSArray::ToContainer(Cont &cont) const
-	{
-		typedef Cont::value_type T;
-		std::back_insert_iterator<Cont> inserter(cont);
+    template<class Cont>
+    void JSArray::ToContainer(Cont &cont) const
+    {
+        typedef Cont::value_type T;
+        std::back_insert_iterator<Cont> inserter(cont);
 
-		try
-		{
-			FB::VariantList::const_iterator it(m_values.begin());
-			for( ; it != m_values.end(); ++it)
-				inserter = it->convert_cast<T>();
-		} 
-		catch(FB::bad_variant_cast& e) 
-		{
-			throw e;
-		}
-	}
+        try
+        {
+            FB::VariantList::const_iterator it(m_values.begin());
+            for( ; it != m_values.end(); ++it)
+                inserter = it->convert_cast<T>();
+        } 
+        catch(FB::bad_variant_cast& e) 
+        {
+            throw e;
+        }
+    }
 
-	template<typename T>
-	std::vector<T> JSArray::ToVectorOf() const
-	{
-		std::vector<T> c;
-		ToContainer(c);
-		return c;
-	}
+    template<typename T>
+    std::vector<T> JSArray::ToVectorOf() const
+    {
+        std::vector<T> c;
+        ToContainer(c);
+        return c;
+    }
 
-	template<class Cont>
-	Cont JSArray::ToContainer() const
-	{
-		Cont c;
-		ToContainer(c);
-		return c;
-	}
+    template<class Cont>
+    Cont JSArray::ToContainer() const
+    {
+        Cont c;
+        ToContainer(c);
+        return c;
+    }
 }
 
 #endif
