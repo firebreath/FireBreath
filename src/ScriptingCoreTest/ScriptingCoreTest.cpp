@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
     fflush(stdout)
 
 #include "variant_test.h"
+#include "variant_list_test.h"
 #include "autoptr_test.h"
 #include "jsapi_test.h"
 #include "jsapiauto_test.h"
