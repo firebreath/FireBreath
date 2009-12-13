@@ -69,7 +69,10 @@ namespace FB
 				FB::SetPropFunctor f(C* instance, void (C::*setter)(T))
 				{ 
 					typedef typename FB::detail::plain_type<T>::type Ty;
-					return boost::bind(setter, instance, boost::bind(&FB::detail::converter<Ty, FB::variant>::convert, _1)); 
+					typedef FB::detail::converter<Ty, FB::variant> converter;
+					return 
+						boost::bind(setter, instance, 
+							        boost::bind(&converter::convert, _1)); 
 				}
 			};
 
@@ -80,26 +83,19 @@ namespace FB
 				void f(C* instance, void (C::*setter)(T) const, const FB::variant& v)
 				{ 
 					typedef typename FB::detail::plain_type<T>::type Ty;
-					return boost::bind(setter, instance, boost::bind(&FB::detail::converter<Ty, FB::variant>::convert, _1)); 
+					typedef FB::detail::converter<Ty, FB::variant> converter;
+					return 
+						boost::bind(setter, instance, 
+							        boost::bind(&converter::convert, _1)); 
 				}
 			};
 
 			enum { const_qualified =
 				boost::function_types::is_member_function_pointer
 				<F, boost::function_types::const_qualified>::value };
-			typedef typename boost::function_types::parameter_types<F> parameters;
-			typedef typename boost::mpl::front<parameters>::type param_type;
+
 		    typedef helper<const_qualified> result;
 		};
-
-#if 0
-        template<class C, typename T>
-        inline void setter(C* instance, void (C::*setter)(T), const FB::variant& v)
-        {
-            typedef typename FB::detail::plain_type<T>::type Ty;
-            (instance->*setter)(FB::convertArgument<Ty>(v));
-        }
-#endif
 
         inline void dummySetter(const FB::variant&) 
         {
@@ -108,40 +104,6 @@ namespace FB
     } }
 
     // make read/write property functor
-
-#if 0
-    template<class C, typename T1, typename T2>
-    inline PropertyFunctors 
-    make_property(C* instance, T1 (C::*getter)(), void (C::*setter)(T2))
-    {
-        typedef typename FB::detail::plain_type<T1>::type _T1;
-        typedef typename FB::detail::plain_type<T2>::type _T2;
-        enum { equal_types = boost::mpl::equal<_T1, _T2>::type::value };
-        BOOST_MPL_ASSERT_MSG(equal_types,
-                             PROPERTY_SETTER_AND_GETTER_TYPES_HAVE_TO_BE_EQUAL,
-                             (_T1, _T2));
-
-        return PropertyFunctors(
-            boost::bind(FB::detail::properties::getter<C, T1>, instance, getter),
-            boost::bind(FB::detail::properties::setter<C, T2>, instance, setter, _1));
-    }
-
-	template<class C, typename T1, typename T2>
-    inline PropertyFunctors 
-    make_property(C* instance, T1 (C::*getter)() const, void (C::*setter)(T2))
-    {
-        typedef typename FB::detail::plain_type<T1>::type _T1;
-        typedef typename FB::detail::plain_type<T2>::type _T2;
-        enum { equal_types = boost::mpl::equal<_T1, _T2>::type::value };
-        BOOST_MPL_ASSERT_MSG(equal_types,
-                             PROPERTY_SETTER_AND_GETTER_TYPES_HAVE_TO_BE_EQUAL,
-                             (_T1, _T2));
-
-        return PropertyFunctors(
-            boost::bind(FB::detail::properties::getter<C, T1>, instance, getter),
-            boost::bind(FB::detail::properties::setter<C, T2>, instance, setter, _1));
-    }
-#endif
 
 	template<class C, typename F1, typename F2>
     inline PropertyFunctors 
@@ -153,19 +115,6 @@ namespace FB
     }
 
     // make read-only property
-
-#if 0
-    template<class C, typename T>
-    inline PropertyFunctors
-    make_property(C* instance, T (C::*getter)())
-    {
-        typedef typename FB::detail::plain_type<T>::type _T;
-
-        return PropertyFunctors(
-            boost::bind(FB::detail::properties::getter<C, T>, instance, getter),
-            boost::bind(FB::detail::properties::dummySetter, _1));
-    }
-#endif
 
 	template<class C, typename F>
     inline PropertyFunctors
