@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "autoptr_test.h"
 #include "jsapi_test.h"
 #include "jsapiauto_test.h"
+#include "jsarray_test.h"
 #include "TypeIDMap_test.h"
 
 using namespace std;
