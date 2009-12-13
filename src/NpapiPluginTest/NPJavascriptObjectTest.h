@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "AutoPtr.h"
-#include "vector_list.h"
+#include "variant_list.h"
 #include "NPJavascriptObject.h"
 #include "NpapiHost.h"
 #include "NpapiPluginModule.h"
@@ -67,6 +67,8 @@ TEST(NPJavascriptObject_Methods)
 {
     PRINT_TESTNAME;
 
+	using FB::variant_list_of;
+
     NpapiPluginModule module;
     NpapiHost testHost(NULL, NULL, NULL);
     module.setNetscapeFuncs(testHost.getBrowserFuncs());
@@ -79,7 +81,7 @@ TEST(NPJavascriptObject_Methods)
     FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
     NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
-    NPVariant *params = getNPVariantParams(host, vector_list<FB::variant>(0, "This is a test"));
+    NPVariant *params = getNPVariantParams(host, variant_list_of(0)("This is a test"));
     // Test setting and then getting a string value
     CHECK(host->Invoke(obj, STRID(host, "setValue"), params, 2, &res));
     freeNPVariantParams(host, params, 2);
@@ -94,7 +96,7 @@ TEST(NPJavascriptObject_Methods)
 
     // Test setting and then getting integer values
     for (int i = 0; i < TESTOBJECTJSAPI_ACCESSLISTLENGTH; i++) {
-        params = getNPVariantParams(host, vector_list<FB::variant>(i, i));
+        params = getNPVariantParams(host, variant_list_of(i)(i));
         CHECK(host->Invoke(obj, STRID(host, "setValue"), params, 2, &res));
         freeNPVariantParams(host, params, 2);
 
@@ -105,7 +107,7 @@ TEST(NPJavascriptObject_Methods)
 
     // Test setting and then getting double values
     for (int i = 0; i < TESTOBJECTJSAPI_ACCESSLISTLENGTH; i++) {
-        params = getNPVariantParams(host, vector_list<FB::variant>(i, (double)(i * 1.5)));
+        params = getNPVariantParams(host, variant_list_of(i)((double)(i * 1.5)));
         CHECK(host->Invoke(obj, STRID(host, "setValue"), params, 2, &res));
         freeNPVariantParams(host, params, 2);
 
