@@ -66,8 +66,8 @@ namespace FB
 
     // new style JSAPI properties
 
-    typedef boost::function<variant ()> GetPropFunctor;
-    typedef boost::function<void (const variant)> SetPropFunctor;
+	typedef boost::function<FB::variant ()> GetPropFunctor;
+	typedef boost::function<void (const FB::variant&)> SetPropFunctor;
     struct PropertyFunctors
     {
         GetPropFunctor get;
