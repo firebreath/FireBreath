@@ -12,6 +12,9 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#ifndef H_FAKE_JS_ARRAY
+#define H_FAKE_JS_ARRAY
+
 #include "BrowserObjectAPI.h"
 
 class FakeJsArray : public FB::BrowserObjectAPI
@@ -57,3 +60,5 @@ public:
 private:
     FB::VariantList m_values;
 };
+
+#endif

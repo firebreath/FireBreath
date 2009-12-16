@@ -18,6 +18,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
 #include "TestJSAPIAuto.h"
+#include "fake_jsarray.h"
 
 namespace helper
 {
@@ -134,5 +135,16 @@ TEST(JSAPIAuto_Methods)
 
         ret = test->Invoke(method, FB::VariantList(list_of((void *)0x12)));
         CHECK(ret.cast<std::string>() == "void *");
+    }
+
+    {
+        // test array conversions
+        const std::string method("accumulate");
+        std::vector<int> values(list_of(1)(2)(3)(42));
+        FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(values)));
+        FB::variant varJsArr = FB::AutoPtr<BrowserObjectAPI>(jsarr);
+
+        FB::variant ret = test->Invoke(method, variant_list_of(varJsArr));
+        CHECK(ret.cast<long>() == std::accumulate(values.begin(), values.end(), 0));
     }
 }

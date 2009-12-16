@@ -14,6 +14,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include "JSAPIAuto.h"
 
 class TestObjectJSAPIAuto : public JSAPIAuto
@@ -30,6 +31,7 @@ public:
         registerMethod("concatenate",   make_method(this, &TestObjectJSAPIAuto::concatenate));
         registerMethod("concatMany",    make_method(this, &TestObjectJSAPIAuto::concatenate2));
         registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
+        registerMethod("accumulate",    make_method(this, &TestObjectJSAPIAuto::accumulate));
 
         registerProperty("message",
                          make_property(this, 
@@ -91,6 +93,11 @@ public:
     std::string getType(const FB::variant a)
     {
         return a.get_type().name();
+    }
+
+    long int accumulate(std::vector<int>& values)
+    {
+        return std::accumulate(values.begin(), values.end(), 0);
     }
 
 private:
