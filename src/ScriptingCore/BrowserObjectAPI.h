@@ -32,8 +32,34 @@ namespace FB
 
         virtual void InvokeAsync(std::string methodName, std::vector<variant>& args);
 
+        // TODO: Find a better place for this conversion method.
+        //       Gotcha to watch out for: has to be included after variant.h
+        //       and everywhere where variant::convert_cast<SomeContainer>()
+        //       is used.
+        template<class Cont>
+        static void GetArrayValues(FB::AutoPtr<FB::BrowserObjectAPI> src, Cont& dst);
+
     public:
         AutoPtr<BrowserHostWrapper> host;
     };
+
+    template<class Cont>
+    void BrowserObjectAPI::GetArrayValues(FB::AutoPtr<FB::BrowserObjectAPI> src, Cont& dst)
+    {
+        try
+        {
+            int length = src->GetProperty("length").convert_cast<int>();
+            std::back_insert_iterator<Cont> inserter(dst);
+
+            for(int i=0; i<length; ++i) {
+                *inserter++ = src->GetProperty(i).convert_cast<Cont::value_type>();
+            }
+        }
+        catch(FB::script_error& e) 
+        {
+            throw e;
+        }
+    }
 };
+
 #endif

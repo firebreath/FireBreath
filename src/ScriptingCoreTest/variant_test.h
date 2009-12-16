@@ -14,6 +14,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 
 #include "APITypes.h"
+#include "variant_list.h"
+#include "fake_jsarray.h"
 
 using namespace FB;
 
@@ -66,4 +68,16 @@ TEST(VariantTest)
 
     a = NULL;
     CHECK(a.get_type() == typeid(int));
+
+    {
+        typedef std::vector<std::string> StringVec;
+        FB::VariantList values = variant_list_of("1")(2)(3.0);
+        FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(values));
+        
+        variant varJsArr = FB::AutoPtr<BrowserObjectAPI>(jsarr);
+        StringVec vs1 = varJsArr.convert_cast<StringVec>();
+        StringVec vs2 = FB::convert_variant_list<StringVec>(values);
+        
+        CHECK(vs1 == vs2);
+    }
 }

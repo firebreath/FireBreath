@@ -24,6 +24,17 @@
 #include <sstream>
 #include <string>
 
+#include <boost/mpl/vector.hpp>
+#include <boost/mpl/contains.hpp>
+#include <boost/utility/enable_if.hpp>
+#include <boost/type_traits/remove_const.hpp>
+#include <boost/type_traits/remove_reference.hpp>
+
+#include "AutoPtr.h"
+//#include "BrowserObjectAPI.h"
+
+
+
 #ifdef _WIN32
 #pragma warning( disable : 4800 )
 #endif
@@ -161,6 +172,22 @@ namespace FB
                 return true;
             }
         };
+
+        typedef boost::mpl::vector
+        <
+            std::string, 
+            std::wstring
+        > non_container_types;
+
+        template<typename T>
+        struct plain_type {
+            typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
+        };
+
+        template<class T>
+        struct is_non_container 
+          : boost::mpl::bool_<boost::mpl::contains<non_container_types, typename plain_type<T>::type>::value>::type
+        {};
     } // namespace variant_detail
 
     struct variant
@@ -206,7 +233,7 @@ namespace FB
             }
             else {
                 reset();
-                x.table->clone(&x.object, &object);				          
+                x.table->clone(&x.object, &object);                          
                 table = x.table;
             }
             return *this;
@@ -294,19 +321,39 @@ namespace FB
         }
 
         template<typename T>
-        const T convert_cast() const {
+        const T convert_cast(...) const {
+            return convert_cast_impl<T>();
+        }
+
+        template<typename T>
+        const T convert_cast_impl() const {
             return cast<T>();
         }
 
-        template<> const void convert_cast<void>() const {
+        template<class Container>
+        typename boost::disable_if< variant_detail::is_non_container<Container>, const Container >::type
+        convert_cast(typename Container::iterator = Container().begin(),
+                     typename Container::iterator = Container().end()) const
+        {
+            typedef FB::AutoPtr<FB::BrowserObjectAPI> JsObject;
+
+            if(!(get_type() == typeid(JsObject)))
+                throw bad_variant_cast(get_type(), typeid(JsObject));
+
+            Container cont;
+            FB::BrowserObjectAPI::GetArrayValues(convert_cast<JsObject>(), cont);
+            return cont;
+        }
+
+        template<> const void convert_cast_impl<void>() const {
             return;
         }
         
-        template<> const variant convert_cast<variant>() const {
+        template<> const variant convert_cast_impl<variant>() const {
             return *this;
         }
 
-        template<> const int convert_cast<int>() const {
+        template<> const int convert_cast_impl<int>() const {
             BEGIN_CONVERT_MAP(int)
                 CONVERT_ENTRY_SIMPLE(int, double)
                 CONVERT_ENTRY_SIMPLE(int, float)
@@ -320,7 +367,7 @@ namespace FB
             END_CONVERT_MAP(int)
         }
 
-        template<> const double convert_cast<double>() const {
+        template<> const double convert_cast_impl<double>() const {
             BEGIN_CONVERT_MAP(double);
             CONVERT_ENTRY_SIMPLE(double, float);
             CONVERT_ENTRY_SIMPLE(double, char);
@@ -337,7 +384,7 @@ namespace FB
             END_CONVERT_MAP(double);
         }
 
-        template<> const float convert_cast<float>() const {
+        template<> const float convert_cast_impl<float>() const {
             BEGIN_CONVERT_MAP(float);
             CONVERT_ENTRY_SIMPLE(float, char);
             CONVERT_ENTRY_SIMPLE(float, unsigned char);
@@ -351,7 +398,7 @@ namespace FB
             END_CONVERT_MAP(double);
         }
 
-        template<> const long convert_cast<long>() const {
+        template<> const long convert_cast_impl<long>() const {
             BEGIN_CONVERT_MAP(long);
             CONVERT_ENTRY_SIMPLE(long, double);
             CONVERT_ENTRY_SIMPLE(long, float);
@@ -367,7 +414,7 @@ namespace FB
             END_CONVERT_MAP(long);
         }
 
-        template<> const short convert_cast<short>() const {
+        template<> const short convert_cast_impl<short>() const {
             BEGIN_CONVERT_MAP(short);
             CONVERT_ENTRY_SIMPLE(short, double);
             CONVERT_ENTRY_SIMPLE(short, float);
@@ -379,7 +426,7 @@ namespace FB
             END_CONVERT_MAP(short);
         }
 
-        template<> const std::string convert_cast<std::string>() const {
+        template<> const std::string convert_cast_impl<std::string>() const {
             BEGIN_CONVERT_MAP(std::string);
             CONVERT_ENTRY_TOSTRING(double);
             CONVERT_ENTRY_TOSTRING(float);
@@ -397,7 +444,7 @@ namespace FB
             END_CONVERT_MAP(std::string);
         }
 
-        template<> const bool convert_cast<bool>() const {
+        template<> const bool convert_cast_impl<bool>() const {
             BEGIN_CONVERT_MAP(bool);
             CONVERT_ENTRY_SIMPLE(bool, double);
             CONVERT_ENTRY_SIMPLE(bool, float);
@@ -433,7 +480,7 @@ namespace FB
         }
 
         // fields
-        variant_detail::fxn_ptr_table* table;	  
+        variant_detail::fxn_ptr_table* table;      
         void* object;
     };
 
