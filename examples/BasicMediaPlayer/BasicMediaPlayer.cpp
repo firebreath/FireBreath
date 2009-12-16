@@ -24,7 +24,6 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
   : m_host(host)
   , m_player()
   , m_valid(false)
-  , m_version("")
 {
     using FB::make_method;
     using FB::make_property;
@@ -77,16 +76,12 @@ FB::JSAPI* BasicMediaPlayer::Playlist()
     return 0;
 }
 
-void BasicMediaPlayer::SetPlaylist(FB::AutoPtr<FB::BrowserObjectAPI> obj)
+void BasicMediaPlayer::SetPlaylist(PlayList& list)
 {
-    typedef std::vector<std::string> StringVec;
-    StringVec entries = FB::convert_variant_list<StringVec>(FB::JSArray(obj).Values());
+    m_playlist = list;
 
-    std::string s;
-    for(std::vector<std::string>::iterator it = entries.begin(); it != entries.end(); ++it)
-    {
-        s += "'" + *it + "'\n";
-    }
-    
+    std::string s("playlist:\n");
+    for(PlayList::iterator it = list.begin(); it != list.end(); ++it)
+        s += " * '" + *it + "'\n";
     m_host->getDOMWindow().alert(s);
 }

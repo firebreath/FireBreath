@@ -22,29 +22,30 @@ class MediaPlayer;
 
 class BasicMediaPlayer : public FB::JSAPIAuto
 {
+    typedef std::vector<std::string> PlayList;
 public:
     virtual ~BasicMediaPlayer();
     BasicMediaPlayer(FB::BrowserHostWrapper *host);
 
-	// methods exposed to script
+    // methods exposed to script
 
-	bool Play();
-	bool Stop();
+    bool Play();
+    bool Stop();
 
-	// properties exposed to script
+    // properties exposed to script
 
-	std::string Version();
-	std::string Type();
+    std::string Version();
+    std::string Type();
 
-	JSAPI* Playlist();
-	void SetPlaylist(FB::AutoPtr<FB::BrowserObjectAPI>);
+    JSAPI* Playlist();
+    void SetPlaylist(PlayList&);
 
 private:
-	typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
+    typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
 
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-	MediaPlayerPtr m_player;
+    MediaPlayerPtr m_player;
+    bool m_valid;
 
-	bool m_valid;
-	std::string m_version;
+    PlayList m_playlist;
 };
