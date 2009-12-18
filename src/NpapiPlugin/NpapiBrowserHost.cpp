@@ -153,14 +153,13 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 
         if (tmpObj == NULL) {
             outObj = NPJavascriptObject::NewObject(this, obj);
-        }
-
-        if (tmpObj != NULL) {
+        } else {
             outObj = tmpObj->getNPObject();
             this->RetainObject(outObj);
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = outObj;
         }
+        
+        dst->type = NPVariantType_Object;
+        dst->value.objectValue = outObj;
     } else if (var.get_type() == typeid(AutoPtr<BrowserObjectAPI>)) {
         NPObject *outObj = NULL;
         FB::AutoPtr<BrowserObjectAPI> obj = var.cast<AutoPtr<BrowserObjectAPI>>();
@@ -168,13 +167,11 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 
         if (tmpObj == NULL) {
             outObj = NPJavascriptObject::NewObject(this, obj);
-        }
-
-        if (tmpObj != NULL) {
+        } else {
             outObj = tmpObj->getNPObject();
+            this->RetainObject(outObj);
         }
         
-        this->RetainObject(outObj);
         dst->type = NPVariantType_Object;
         dst->value.objectValue = outObj;
     }
