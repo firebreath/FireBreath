@@ -172,10 +172,11 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 
         if (tmpObj != NULL) {
             outObj = tmpObj->getNPObject();
-            this->RetainObject(outObj);
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = outObj;
         }
+        
+        this->RetainObject(outObj);
+        dst->type = NPVariantType_Object;
+        dst->value.objectValue = outObj;
     }
     // TODO: implement object types
 }
