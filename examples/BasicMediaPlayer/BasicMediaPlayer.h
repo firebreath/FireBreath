@@ -29,16 +29,18 @@ public:
 
     // methods exposed to script
 
-    bool Play();
-    bool Stop();
+    bool play();
+    bool stop();
+
+    bool addItem(const FB::variant&);
 
     // properties exposed to script
 
-    std::string Version();
-    std::string Type();
+    std::string version() const;
+    std::string type() const;
 
-    JSAPI* Playlist();
-    void SetPlaylist(PlayList&);
+    FB::AutoPtr<FB::BrowserObjectAPI> playlist() const;
+    void setPlaylist(PlayList&);
 
 private:
     typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;

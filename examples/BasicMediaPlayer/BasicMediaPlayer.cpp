@@ -19,6 +19,7 @@ Copyright 2009 Georg Fritzsche,
 #include "DOM/JSAPI_DOMWindow.h"
 #include "Util/JSArray.h"
 #include "variant_list.h"
+#include "util.h"
 
 BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host) 
   : m_host(host)
@@ -28,12 +29,14 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     using FB::make_method;
     using FB::make_property;
 
-    registerMethod  ("play",     make_method  (this, &BasicMediaPlayer::Play));
-    registerMethod  ("stop",     make_method  (this, &BasicMediaPlayer::Stop));
-    registerProperty("version",  make_property(this, &BasicMediaPlayer::Version));
-    registerProperty("type",     make_property(this, &BasicMediaPlayer::Type));
-    registerProperty("playlist", make_property(this, &BasicMediaPlayer::Playlist,
-                                                     &BasicMediaPlayer::SetPlaylist));
+    registerMethod  ("play",     make_method  (this, &BasicMediaPlayer::play));
+    registerMethod  ("stop",     make_method  (this, &BasicMediaPlayer::stop));
+    registerMethod  ("addItem",  make_method  (this, &BasicMediaPlayer::addItem));
+
+    registerProperty("version",  make_property(this, &BasicMediaPlayer::version));
+    registerProperty("type",     make_property(this, &BasicMediaPlayer::type));
+    registerProperty("playlist", make_property(this, &BasicMediaPlayer::playlist,
+                                                     &BasicMediaPlayer::setPlaylist));
 
     try 
     {
@@ -51,37 +54,40 @@ BasicMediaPlayer::~BasicMediaPlayer()
     m_player.reset();
 }
 
-bool BasicMediaPlayer::Play()
+bool BasicMediaPlayer::play()
 {
     return false;
 }
 
-bool BasicMediaPlayer::Stop()
+bool BasicMediaPlayer::stop()
 {
     return false;
 }
 
-std::string BasicMediaPlayer::Version()
+bool BasicMediaPlayer::addItem(const FB::variant& v)
+{
+    m_playlist.push_back(v.convert_cast<std::string>());
+    //return FB::variant();
+    return true;
+}
+
+std::string BasicMediaPlayer::version() const
 {
     return m_player->Version();
 }
 
-std::string BasicMediaPlayer::Type()
+std::string BasicMediaPlayer::type() const
 {
     return m_player->Type();
 }
 
-FB::JSAPI* BasicMediaPlayer::Playlist()
+FB::AutoPtr<FB::BrowserObjectAPI> BasicMediaPlayer::playlist() const
 {
-    return 0;
+    FB::AutoPtr<FB::BrowserObjectAPI> arr = new ArrayHelper(FB::make_variant_list(m_playlist), m_host);
+    return arr;
 }
 
-void BasicMediaPlayer::SetPlaylist(PlayList& list)
+void BasicMediaPlayer::setPlaylist(PlayList& list)
 {
     m_playlist = list;
-
-    std::string s("playlist:\n");
-    for(PlayList::iterator it = list.begin(); it != list.end(); ++it)
-        s += " * '" + *it + "'\n";
-    m_host->getDOMWindow().alert(s);
 }
