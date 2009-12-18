@@ -36,6 +36,7 @@ HKCU
                     ForceRemove 'Control'
                     'MiscStatus' = s '0'
                     {
+                        '1' = s '131473'
                     }
                     'TypeLib' = s '%LIBID%'
                     'Version' = s '%VERSION%'

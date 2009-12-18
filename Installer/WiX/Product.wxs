@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="${INSTALL_PRODUCT_GUID}" Name="FireBreath" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="${INSTALL_UPGRADE_GUID}">
+        <Package InstallerVersion="200" Compressed="yes" />
+        <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="AppDataFolder">
+                <Component Id="${PLUGIN_NAME}" Guid="47B5B4C0-35DA-49D8-8047-29C335EC9809">
+                    <File Id="np${PLUGIN_NAME}.dll" Name="np${PLUGIN_NAME}_${FBSTRING_PLUGIN_VERSION}.dll" Source="${BIN_DIR}/${PLUGIN_NAME}/np${PLUGIN_NAME}.dll"  SelfRegCost="1"/>
+                    <RegistryKey Root="HKCU" Key="Software\MozillaPlugins\${MOZILLA_PLUGINID}" Action="createAndRemoveOnUninstall">
+                        <RegistryValue Name="Path" Type="string" Value="[AppDataFolder]${PLUGIN_NAME}\np${PLUGIN_NAME}_${FBSTRING_PLUGIN_VERSION}.dll" KeyPath="yes" />
+                        <RegistryValue Name="ProductName" Type="string" Value="${FBSTRING_ProductName}" />
+                        <RegistryValue Name="Version" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" />
+                        <RegistryKey Key="MimeTypes" Action="createAndRemoveOnUninstall">
+                            <RegistryKey Key="${FBSTRING_MIMEType}" Action="createAndRemoveOnUninstall"/>
+                        </RegistryKey>
+                    </RegistryKey>
+                </Component>
+            </Directory>
+        </Directory>
+
+        <Feature Id="Framework" Title="${FBSTRING_ProductName}" Level="1">
+            <ComponentRef Id="${PLUGIN_NAME}"/>
+        </Feature>
+    </Product>
+</Wix>

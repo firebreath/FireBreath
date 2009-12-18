@@ -33,13 +33,29 @@ include_directories(
     ${BOOST_SOURCE_DIR}
     )
 
+# configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/*)
-
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     #    message("Configuring ${CURFILE}")
     configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
+
+# configure project-specific generated files
+file(GLOB TEMPLATELIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/*)
+foreach(TemplateFile ${TEMPLATELIST})
+    get_filename_component(CURFILE ${TemplateFile} NAME)
+    message("Configuring ${CURFILE}")
+    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+endforeach()
+
+if (WIN32)
+    configure_file(${FB_ROOT_DIR}/Installer/WiX/Installer.wixproj ${BIN_DIR}/${PLUGIN_NAME}/WiX/${PLUGIN_PREFIX}_WiXInstaller.wixproj)
+    configure_file(${FB_ROOT_DIR}/Installer/WiX/Product.wxs ${BIN_DIR}/${PLUGIN_NAME}/WiX/Product.wxs)
+    message("Including WiX project ${PLUGIN_PREFIX}_WiXInstaller")
+    include_external_msproject(${PLUGIN_PREFIX}_WiXInstaller ${BIN_DIR}/${PLUGIN_NAME}/WiX/${PLUGIN_PREFIX}_WiXInstaller.wixproj)
+endif(WIN32)
+
 
 set(PLUGIN_INTERNAL_DEPS
     ${PLUGIN_PREFIX}_ActiveXPlugin
