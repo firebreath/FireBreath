@@ -28,6 +28,7 @@ public:
     AxIdMapInit()
     {
         AxIdMap.setIdForValue(0, "value");
+        AxIdMap.setIdForValue(-1, "toString");
         AxIdMap.setIdForValue(-3, "propertyput");
         AxIdMap.setIdForValue(-4, "newenum");
         AxIdMap.setIdForValue(-5, "evaluate");

@@ -17,6 +17,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <boost/assign.hpp>
 #include "DOM/JSAPI_DOMDocument.h"
 using boost::assign::list_of;
+#include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
 
@@ -30,10 +31,15 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHostWrapper *host) : m_host(host)
                         &FBTestPluginAPI::get_testString,
                         &FBTestPluginAPI::set_testString));
 
+    registerProperty("simpleMath",
+                     make_property(this,
+                        &FBTestPluginAPI::get_simpleMath));
     // Read-only property
     registerProperty("someInt", 
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
+
+    m_simpleMath = new SimpleMathAPI(m_host);
 }
 
 FBTestPluginAPI::~FBTestPluginAPI()
@@ -51,13 +57,18 @@ void FBTestPluginAPI::set_testString(std::string val)
 }
 
 // Read-only property someInt
-int FBTestPluginAPI::get_someInt()
+long FBTestPluginAPI::get_someInt()
 {
     return 12;
 }
 
 // add Method
-int FBTestPluginAPI::add(int a, int b)
+long FBTestPluginAPI::add(long a, long b)
 {
     return a+b;
+}
+
+FB::AutoPtr<FB::JSAPI> FBTestPluginAPI::get_simpleMath()
+{
+    return m_simpleMath;
 }

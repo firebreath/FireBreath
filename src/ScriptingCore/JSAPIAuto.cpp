@@ -18,7 +18,7 @@ FB::JSAPIAuto::JSAPIAuto()
   : m_methodFunctorMap(),
     m_propertyFunctorsMap()
 {
-    registerMethod("ToString",  make_method(this, &JSAPIAuto::ToString));
+    registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
     
     registerProperty("value", make_property(this, &JSAPIAuto::ToString));
     registerProperty("valid", make_property(this, &JSAPIAuto::get_valid));

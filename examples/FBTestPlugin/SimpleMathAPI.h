@@ -1,5 +1,5 @@
-/**********************************************************\ 
-Original Author: Richard Bateman and Georg Fritzsche 
+/**********************************************************\
+Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
 License:    Dual license model; choose one of two:
@@ -18,27 +18,27 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
 
-class FBTestPluginAPI : public FB::JSAPIAuto
+class SimpleMathAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(FB::BrowserHostWrapper *host);
-    virtual ~FBTestPluginAPI();
+    SimpleMathAPI(FB::BrowserHostWrapper *host);
+    virtual ~SimpleMathAPI();
 
     // Read/Write property testString
     std::string get_testString();
     void set_testString(std::string val);
 
     // Read-only property someInt
-    long get_someInt();
-
-    FB::AutoPtr<JSAPI> get_simpleMath();
+    int get_someInt();
 
     // Method add
     long add(long a, long b);
+    long sub(long a, long b);
+    long mult(long a, long b);
+    long div(long a, long b);
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-    FB::AutoPtr<JSAPI> m_simpleMath;
 
     std::string m_testString;
 };
