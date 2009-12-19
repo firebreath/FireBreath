@@ -37,18 +37,18 @@ namespace FB
         //       and everywhere where variant::convert_cast<SomeContainer>()
         //       is used.
         template<class Cont>
-        static void GetArrayValues(FB::AutoPtr<FB::BrowserObjectAPI> src, Cont& dst);
+        static void GetArrayValues(FB::JSObject src, Cont& dst);
 
     public:
         AutoPtr<BrowserHostWrapper> host;
     };
 
     template<class Cont>
-    void BrowserObjectAPI::GetArrayValues(FB::AutoPtr<FB::BrowserObjectAPI> src, Cont& dst)
+    void BrowserObjectAPI::GetArrayValues(FB::JSObject src, Cont& dst)
     {
         try
         {
-            int length = src->GetProperty("length").convert_cast<int>();
+            long length = src->GetProperty("length").convert_cast<long>();
             std::back_insert_iterator<Cont> inserter(dst);
 
             for(int i=0; i<length; ++i) {

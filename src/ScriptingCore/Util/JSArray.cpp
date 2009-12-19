@@ -20,7 +20,7 @@ FB::JSArray::JSArray()
     RegisterMethods();
 }
 
-FB::JSArray::JSArray(FB::AutoPtr<FB::BrowserObjectAPI> obj)
+FB::JSArray::JSArray(FB::JSObject obj)
   : m_values()
 {
     if(!obj->HasProperty("length"))
@@ -41,7 +41,7 @@ void FB::JSArray::RegisterMethods()
     registerProperty("length", make_property(this, &JSArray::GetLength));
 }
 
-void FB::JSArray::ExtractList(FB::AutoPtr<FB::BrowserObjectAPI> obj)
+void FB::JSArray::ExtractList(FB::JSObject obj)
 {
     try
     {

@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(FB::BrowserHostWrapper *host);
+    FBTestPluginAPI(FB::BrowserHost host);
     virtual ~FBTestPluginAPI();
 
     // Read/Write property testString
@@ -31,14 +31,23 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    FB::AutoPtr<JSAPI> get_simpleMath();
+    FB::JSOutObject get_simpleMath();
+    FB::variant echo(FB::variant a);
+
+    std::string asString(FB::variant a);
+    bool asBool(FB::variant a);
+    long asInt(FB::variant a);
+    double asDouble(FB::variant a);
+
+    std::string listArray(std::vector<std::string>);
+    FB::JSOutArray reverseArray(std::vector<std::string> arr);
 
     // Method add
     long add(long a, long b);
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-    FB::AutoPtr<JSAPI> m_simpleMath;
+    FB::BrowserHost m_host;
+    FB::JSOutObject m_simpleMath;
 
     std::string m_testString;
 };

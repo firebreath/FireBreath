@@ -36,7 +36,7 @@ namespace FB {
 
         static void AsyncBrowserCall::asyncCallback(void *userData);
 
-        AutoPtr<BrowserObjectAPI> m_obj;
+        JSObject m_obj;
         std::vector<variant> m_params;
         std::string m_methodName;
     };

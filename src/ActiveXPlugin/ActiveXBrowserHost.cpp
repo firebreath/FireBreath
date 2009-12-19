@@ -16,8 +16,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "COMJavascriptObject.h"
 #include "DOM/JSAPI_DOMDocument.h"
 #include "DOM/JSAPI_DOMWindow.h"
+#include <boost/assign.hpp>
+using boost::assign::list_of;
 
 #include "Win/PluginWindowWin.h"
+
+using namespace FB;
 
 ActiveXBrowserHost::ActiveXBrowserHost(IHTMLDocument2 *doc)
     : m_hWnd(NULL), m_htmlDoc(doc), m_htmlDocDisp(doc)
@@ -51,13 +55,13 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
 
 FB::JSAPI_DOMDocument ActiveXBrowserHost::getDOMDocument()
 {
-    FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlDocDisp.p, this));
+    FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, this));
     return FB::JSAPI_DOMDocument(retObj);
 }
 
 FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
 {
-    FB::AutoPtr<FB::BrowserObjectAPI> retObj(new IDispatchAPI(m_htmlWin.p, this));
+    FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, this));
     return FB::JSAPI_DOMWindow(retObj);
 }
 
@@ -102,7 +106,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 		break;
 
 	case VT_DISPATCH:
-        retVal = FB::AutoPtr<FB::BrowserObjectAPI>(new IDispatchAPI(cVar->pdispVal, this)); 
+        retVal = FB::JSObject(new IDispatchAPI(cVar->pdispVal, this)); 
 		break;
 
 	case VT_ERROR:
@@ -137,7 +141,6 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         || var.get_type() == typeid(unsigned char)) {
         // Integer type
         outVar = var.convert_cast<long>();
-
     } else if (var.get_type() == typeid(double)
         || var.get_type() == typeid(float)) {
         outVar = var.convert_cast<double>();
@@ -149,19 +152,29 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         std::string str = var.convert_cast<std::string>();
         CComBSTR bStr(str.c_str());
         outVar = bStr;
-	} else if (var.get_type() == typeid(FB::AutoPtr<FB::BrowserObjectAPI>)) {
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.convert_cast<FB::AutoPtr<FB::BrowserObjectAPI>>().ptr());
-        if (api.ptr() != NULL) {
-            outVar = api->getIDispatch();
-        } else {
-            outVar = COMJavascriptObject::NewObject(this, var.convert_cast<FB::AutoPtr<FB::BrowserObjectAPI>>().ptr());
+    } else if (var.get_type() == typeid(FB::JSOutArray)) {
+        JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
+        FB::JSOutArray inArr = var.cast<FB::JSOutArray>();
+        for (FB::JSOutArray::iterator it = inArr.begin(); it != inArr.end(); it++) {
+            outArr.callMethod<void>("push", FB::VariantList(list_of(*it)));
         }
-	} else if (var.get_type() == typeid(FB::AutoPtr<FB::JSAPI>)) {
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.convert_cast<FB::AutoPtr<FB::JSAPI>>().ptr());
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(outArr.getJSObject().ptr());
+        if (api.ptr() != NULL) {
+            outVar = api->getIDispatch();
+        }
+	} else if (var.get_type() == typeid(FB::JSObject)) {
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<FB::JSObject>().ptr());
         if (api.ptr() != NULL) {
             outVar = api->getIDispatch();
         } else {
-            outVar = COMJavascriptObject::NewObject(this, var.convert_cast<FB::AutoPtr<FB::JSAPI>>().ptr());
+            outVar = COMJavascriptObject::NewObject(this, var.cast<FB::JSObject>().ptr());
+        }
+	} else if (var.get_type() == typeid(JSOutObject)) {
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<JSOutObject>().ptr());
+        if (api.ptr() != NULL) {
+            outVar = api->getIDispatch();
+        } else {
+            outVar = COMJavascriptObject::NewObject(this, var.cast<JSOutObject>().ptr());
         }
     }
 

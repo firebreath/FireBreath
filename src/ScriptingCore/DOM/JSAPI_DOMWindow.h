@@ -31,13 +31,14 @@ namespace FB {
     class JSAPI_DOMWindow : public JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMWindow(BrowserObjectAPI *element);
+        JSAPI_DOMWindow(JSObject element);
         JSAPI_DOMWindow(JSAPI_DOMWindow &rhs);
         virtual ~JSAPI_DOMWindow();
 
     public:
         JSAPI_DOMElement getDocument();
         void alert(std::string str);
+        JSAPI_DOMNode createArray();
     };
 
 };

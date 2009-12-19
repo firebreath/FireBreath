@@ -83,8 +83,9 @@ FB::variant FB::JSAPIAuto::GetProperty(std::string propertyName)
     PropertyFunctorsMap::const_iterator it = m_propertyFunctorsMap.find(propertyName);
     if(it == m_propertyFunctorsMap.end())
         throw invalid_member(propertyName);
-    
+
     return it->second.get();
+
 }
 
 void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant value)
@@ -96,8 +97,15 @@ void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant value)
     if(it == m_propertyFunctorsMap.end())
         throw invalid_member(propertyName);
     
-    it->second.set(value);
-}
+    try {
+        it->second.set(value);
+    } catch (FB::bad_variant_cast ex) {
+        std::string errorMsg("Could not convert from ");
+        errorMsg += ex.from;
+        errorMsg += " to ";
+        errorMsg += ex.to;
+        throw FB::invalid_arguments(errorMsg);
+    }}
 
 FB::variant FB::JSAPIAuto::GetProperty(int idx)
 {
@@ -122,9 +130,17 @@ FB::variant FB::JSAPIAuto::Invoke(std::string methodName, std::vector<variant> &
     if(!m_valid)
         throw object_invalidated();
 
-    MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
-    if(it == m_methodFunctorMap.end())
-        throw invalid_member(methodName);
+    try {
+        MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
+        if(it == m_methodFunctorMap.end())
+            throw invalid_member(methodName);
 
-    return it->second(args);
+        return it->second(args);
+    } catch (FB::bad_variant_cast ex) {
+        std::string errorMsg("Could not convert from ");
+        errorMsg += ex.from;
+        errorMsg += " to ";
+        errorMsg += ex.to;
+        throw FB::invalid_arguments(errorMsg);
+    }
 }

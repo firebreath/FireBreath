@@ -14,16 +14,23 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "BrowserObjectAPI.h"
-#include <boost/assign.hpp>
 #include "DOM/JSAPI_DOMDocument.h"
+#include <boost/assign.hpp>
 using boost::assign::list_of;
 #include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHostWrapper *host) : m_host(host)
+FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
+    registerMethod("echo",  make_method(this, &FBTestPluginAPI::echo));
+    registerMethod("asString",  make_method(this, &FBTestPluginAPI::asString));
+    registerMethod("asBool",  make_method(this, &FBTestPluginAPI::asBool));
+    registerMethod("asInt",  make_method(this, &FBTestPluginAPI::asInt));
+    registerMethod("asDouble",  make_method(this, &FBTestPluginAPI::asDouble));
+    registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
+    registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
 
     // Read-write property
     registerProperty("testString",
@@ -68,7 +75,58 @@ long FBTestPluginAPI::add(long a, long b)
     return a+b;
 }
 
-FB::AutoPtr<FB::JSAPI> FBTestPluginAPI::get_simpleMath()
+FB::variant FBTestPluginAPI::echo(FB::variant a)
+{
+    return a;
+}
+
+std::string FBTestPluginAPI::asString(FB::variant a)
+{
+    return a.convert_cast<std::string>();
+}
+
+bool FBTestPluginAPI::asBool(FB::variant a)
+{
+    return a.convert_cast<bool>();
+}
+
+long FBTestPluginAPI::asInt(FB::variant a)
+{
+    return a.convert_cast<long>();
+}
+
+double FBTestPluginAPI::asDouble(FB::variant a)
+{
+    return a.convert_cast<double>();
+}
+
+FB::JSOutArray FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
+{
+    FB::JSOutArray outArr;
+    bool start(true);
+    for (std::vector<std::string>::reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
+    {
+        outArr.push_back(*it);
+    }
+    return outArr;
+}
+
+std::string FBTestPluginAPI::listArray(std::vector<std::string> arr)
+{
+    std::string outStr;
+    bool start(true);
+    for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
+    {
+        if (!start) {
+            outStr += ", ";
+        }
+        start = false;
+        outStr += *it;
+    }
+    return outStr;
+}
+
+FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }

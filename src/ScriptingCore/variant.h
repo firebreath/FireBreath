@@ -293,6 +293,11 @@ namespace FB
         }
 
         // comparison function
+        bool operator<(const variant& rh) const
+        {
+            return lessthan(rh);
+        }
+
         bool lessthan(const variant& rh) const {
             if (get_type() == rh.get_type()) {
                 return table->less(&object, &rh.object);
@@ -335,7 +340,7 @@ namespace FB
         convert_cast(typename Container::iterator = Container().begin(),
                      typename Container::iterator = Container().end()) const
         {
-            typedef FB::AutoPtr<FB::BrowserObjectAPI> JsObject;
+            typedef FB::JSObject JsObject;
 
             if(!(get_type() == typeid(JsObject)))
                 throw bad_variant_cast(get_type(), typeid(JsObject));

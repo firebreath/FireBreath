@@ -29,7 +29,7 @@ namespace FB {
     class JSAPI_DOMElement : public JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMElement(BrowserObjectAPI *element);
+        JSAPI_DOMElement(JSObject element);
         JSAPI_DOMElement(JSAPI_DOMElement &rhs);
         virtual ~JSAPI_DOMElement();
 
@@ -48,13 +48,13 @@ namespace FB {
 
         JSAPI_DOMElement getElement(std::string name)
         {
-            AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>(name);
+            JSObject api = getProperty<JSObject>(name);
             return JSAPI_DOMElement(api.ptr());
         }
 
         JSAPI_DOMElement getElement(int idx)
         {
-            AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>(idx);
+            JSObject api = getProperty<JSObject>(idx);
             return JSAPI_DOMElement(api.ptr());
         }
     };

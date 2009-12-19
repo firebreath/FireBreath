@@ -21,7 +21,7 @@ using boost::assign::list_of;
 
 using namespace FB;
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(BrowserObjectAPI *element) : JSAPI_DOMNode(element)
+JSAPI_DOMWindow::JSAPI_DOMWindow(JSObject element) : JSAPI_DOMNode(element)
 {
 }
 
@@ -35,11 +35,17 @@ JSAPI_DOMWindow::~JSAPI_DOMWindow()
 
 JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
 {
-    AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>("document");
+    JSObject api = getProperty<JSObject>("document");
     return JSAPI_DOMDocument(api.ptr());
 }
 
 void JSAPI_DOMWindow::alert(std::string str)
 {
     callMethod<void>("alert", VariantList(list_of(str)));
+}
+
+JSAPI_DOMNode JSAPI_DOMWindow::createArray()
+{
+    JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
+    return JSAPI_DOMNode(arr);
 }

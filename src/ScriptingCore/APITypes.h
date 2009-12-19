@@ -26,10 +26,16 @@ namespace FB
 {
     class BrowserObjectAPI;
     class BrowserHostWrapper;
+    class JSAPI;
+    class BrowserObjectAPI;
 
     // Variant list
 
     typedef std::vector<variant> VariantList;
+    typedef std::vector<variant> JSOutArray;
+    typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
+    typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
+    typedef FB::AutoPtr<FB::BrowserHostWrapper> BrowserHost;
 
     // JSAPI methods
 
@@ -87,10 +93,10 @@ namespace FB
 
     // JSAPI event handlers
 
-    typedef std::pair<std::string, FB::AutoPtr<BrowserObjectAPI>> EventPair;
-    typedef std::multimap<std::string, FB::AutoPtr<BrowserObjectAPI>> EventMultiMap;
-    typedef std::map<void*, FB::AutoPtr<BrowserObjectAPI>> EventIFaceMap;
-    typedef std::map<std::string, FB::AutoPtr<BrowserObjectAPI>> EventSingleMap;
+    typedef std::pair<std::string, FB::JSObject> EventPair;
+    typedef std::multimap<std::string, FB::JSObject> EventMultiMap;
+    typedef std::map<void*, FB::JSObject> EventIFaceMap;
+    typedef std::map<std::string, FB::JSObject> EventSingleMap;
 }
 
 #endif

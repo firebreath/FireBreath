@@ -28,11 +28,11 @@ namespace FB {
     class JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMNode(BrowserObjectAPI *element) : m_element(element) { }
+        JSAPI_DOMNode(JSObject element) : m_element(element) { }
         JSAPI_DOMNode(JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
         virtual ~JSAPI_DOMNode() { }
 
-        BrowserObjectAPI *getJSAPI() { return m_element; }
+        JSObject getJSObject() { return m_element; }
 
     public:
         template <class T>
@@ -55,13 +55,13 @@ namespace FB {
 
         JSAPI_DOMNode getNode(std::string name)
         {
-            AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>(name);
+            JSObject api = getProperty<JSObject>(name);
             return JSAPI_DOMNode(api.ptr());
         }
         
         JSAPI_DOMNode getNode(int idx)
         {
-            AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>(idx);
+            JSObject api = getProperty<JSObject>(idx);
             return JSAPI_DOMNode(api.ptr());
         }
         
@@ -76,7 +76,7 @@ namespace FB {
         }
 
     protected:
-        AutoPtr<BrowserObjectAPI> m_element;
+        JSObject m_element;
     };
 
 };

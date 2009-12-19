@@ -30,7 +30,7 @@ namespace FB {
     class JSAPI_DOMDocument : public JSAPI_DOMElement
     {
     public:
-        JSAPI_DOMDocument(BrowserObjectAPI *element);
+        JSAPI_DOMDocument(JSObject element);
         JSAPI_DOMDocument(JSAPI_DOMDocument &rhs);
         JSAPI_DOMDocument(JSAPI_DOMNode &rhs);
         virtual ~JSAPI_DOMDocument();

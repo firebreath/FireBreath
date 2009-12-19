@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
-JSAPI_DOMElement::JSAPI_DOMElement(BrowserObjectAPI *element) : JSAPI_DOMNode(element)
+JSAPI_DOMElement::JSAPI_DOMElement(JSObject element) : JSAPI_DOMNode(element)
 {
 }
 

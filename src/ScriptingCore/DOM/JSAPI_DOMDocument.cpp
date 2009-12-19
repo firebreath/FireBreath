@@ -21,7 +21,7 @@ using boost::assign::list_of;
 
 using namespace FB;
 
-JSAPI_DOMDocument::JSAPI_DOMDocument(BrowserObjectAPI *element) : JSAPI_DOMElement(element)
+JSAPI_DOMDocument::JSAPI_DOMDocument(JSObject element) : JSAPI_DOMElement(element)
 {
 }
 
@@ -35,13 +35,13 @@ JSAPI_DOMDocument::~JSAPI_DOMDocument()
 
 JSAPI_DOMWindow JSAPI_DOMDocument::getWindow()
 {
-    AutoPtr<BrowserObjectAPI> api = getProperty<AutoPtr<BrowserObjectAPI>>("window");
+    JSObject api = getProperty<JSObject>("window");
     return JSAPI_DOMWindow(api);
 }
 
 JSAPI_DOMElement JSAPI_DOMDocument::getElementById(std::string id)
 {
-    AutoPtr<BrowserObjectAPI> api =
-        callMethod<AutoPtr<BrowserObjectAPI>>("getElementById", FB::VariantList(list_of(id)));
+    JSObject api =
+        callMethod<JSObject>("getElementById", FB::VariantList(list_of(id)));
     return JSAPI_DOMElement(api);
 }

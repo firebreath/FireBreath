@@ -21,6 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NPObjectAPI.h"
 #include "DOM/JSAPI_DOMDocument.h"
 #include "DOM/JSAPI_DOMWindow.h"
+#include <boost/assign.hpp>
+using boost::assign::list_of;
 
 #include "NpapiBrowserHost.h"
 
@@ -57,7 +59,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     
     m_htmlWin = new FB::Npapi::NPObjectAPI(window, this);
     m_htmlDoc = dynamic_cast<NPObjectAPI*>(m_htmlWin->GetProperty("document")
-        .cast<FB::AutoPtr<BrowserObjectAPI>>().ptr());
+        .cast<FB::JSObject>().ptr());
 }
 
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
@@ -65,7 +67,7 @@ FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
     if (m_htmlDoc.ptr() == NULL)
         throw std::exception("Cannot find HTML document");
 
-    return FB::JSAPI_DOMDocument(m_htmlDoc);
+    return FB::JSAPI_DOMDocument(m_htmlDoc.ptr());
 }
 
 FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
@@ -73,7 +75,7 @@ FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
     if (m_htmlWin.ptr() == NULL)
         throw std::exception("Cannot find HTML window");
 
-    return FB::JSAPI_DOMWindow(m_htmlWin);
+    return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
 }
 
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
@@ -101,7 +103,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = AutoPtr<BrowserObjectAPI>(new NPObjectAPI(npVar->value.objectValue, this));
+            retVal = JSObject(new NPObjectAPI(npVar->value.objectValue, this));
             break;
 
         case NPVariantType_Void:
@@ -146,9 +148,22 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         dst->value.stringValue.utf8characters = outStr;
         dst->value.stringValue.utf8length = str.size();
 
-    } else if (var.get_type() == typeid(AutoPtr<JSAPI>)) {
+    } else if (var.get_type() == typeid(FB::JSOutArray)) {
+        JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
+        FB::JSOutArray inArr = var.cast<FB::JSOutArray>();
+        for (FB::JSOutArray::iterator it = inArr.begin(); it != inArr.end(); it++) {
+            outArr.callMethod<void>("push", FB::VariantList(list_of(*it)));
+        }
+        FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(outArr.getJSObject().ptr());
+        if (api.ptr() != NULL) {
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = api->getNPObject();
+            this->RetainObject(dst->value.objectValue);
+        }
+
+    } else if (var.get_type() == typeid(FB::JSOutObject)) {
         NPObject *outObj = NULL;
-        FB::AutoPtr<FB::JSAPI> obj = var.cast<AutoPtr<JSAPI>>();
+        FB::JSOutObject obj = var.cast<FB::JSOutObject>();
         NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
 
         if (tmpObj == NULL) {
@@ -160,9 +175,10 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         
         dst->type = NPVariantType_Object;
         dst->value.objectValue = outObj;
-    } else if (var.get_type() == typeid(AutoPtr<BrowserObjectAPI>)) {
+
+    } else if (var.get_type() == typeid(FB::JSObject)) {
         NPObject *outObj = NULL;
-        FB::AutoPtr<BrowserObjectAPI> obj = var.cast<AutoPtr<BrowserObjectAPI>>();
+        FB::JSObject obj = var.cast<JSObject>();
         NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
 
         if (tmpObj == NULL) {

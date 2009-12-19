@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class SimpleMathAPI : public FB::JSAPIAuto
 {
 public:
-    SimpleMathAPI(FB::BrowserHostWrapper *host);
+    SimpleMathAPI(FB::BrowserHost host);
     virtual ~SimpleMathAPI();
 
     // Read/Write property testString
@@ -38,7 +38,7 @@ public:
     long div(long a, long b);
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
 
     std::string m_testString;
 };
