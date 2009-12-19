@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import os, re, sys, uuid
-from optparse import OptionParser
 
 class AttrDictSimple(dict):
     def __getattr__(self, attr): return self[attr]
@@ -8,10 +7,6 @@ class AttrDictSimple(dict):
     def __delattr__(self, attr): del self[attr]
 
 class Base(object):
-    class AttrDictSimple(dict):
-        def __getattr__(self, attr): return self[attr]
-        def __setattr__(self, attr, value): self[attr] = value
-        def __delattr__(self, attr): del self[attr]
     def __getitem__(self, item): return getattr(self, item)
     def __init__(self, **kwargs):
         for k, v in kwargs.items():
@@ -169,84 +164,3 @@ class GUID(Base):
     def generate(self, string):
         return uuid.uuid5(self.master, string)
 
-# API
-#     id
-#
-# PROPERTY
-#     id
-#
-# METHOD
-#     id
-#     type (int, bool, double, std::string, FB::variant or FB::AutoPtr<JSAPI>)
-#
-# UUID
-#     generate(string)
-#
-
-def Main():
-    # Make sure Cheetah is available
-    try:
-        from Cheetah.Template import Template
-    except:
-        print "This utility requires a working install of the Cheetah template system (http://www.cheetahtemplate.org)"
-        sys.exit(1)
-
-    # Define the command-line interface via OptionParser
-    usage = "usage: %prog [options]"
-    parser = OptionParser(usage)
-    parser.add_option("-p", "--plugin-name", dest = "pluginName")
-    parser.add_option("-i", "--plugin-identifier", dest = "pluginIdent",
-        help = "3 or more alphanumeric characters (underscores allowed after first position)")
-    parser.add_option("-c", "--company-name", dest = "companyName")
-    parser.add_option("-d", "--company-domain", dest = "companyDomain")
-    parser.add_option("-4", "--uuid-version-4", dest = "uuidVersion4", action = "store_true", default = False,
-        help = "Specifying this option will generate a Version 4 UUID, which avoids using your MAC address and current time but does not guarantee true uniqueness.")
-    options, args = parser.parse_args()
-
-    # Instantiate the appropriate classes
-    plugin = Plugin(name = options.pluginName, id = options.pluginIdent)
-    company = Company(name = options.companyName)
-    guid = GUID(useVersion4 = options.uuidVersion4)
-
-    # Make sure we can get into the projects directory
-    basePath = os.path.abspath(os.path.join(__file__, "../../../projects"))
-    if not os.path.isdir(basePath):
-        try:
-            os.mkdir(basePath)
-        except:
-            print "Unable to create directory", basePath
-            sys.exit(1)
-
-    # Try to create a directory for this project
-    projPath = os.path.abspath(os.path.join(basePath, "%s" % plugin.ident))
-    if os.path.isdir(projPath):
-        overwrite = raw_input("\nDirectory already exists. Continue anyway? [y/N] ")
-        if overwrite[0] not in ("Y", "y"):
-            print "\nAborting"
-            sys.exit(1)
-    else:
-        try:
-            os.mkdir(projPath)
-        except:
-            print "Failed to create project directory", projPath
-            sys.exit(1)
-
-    print "\nProcessing templates"
-    templateFiles = ["CMakeLists.txt", "PluginConfig.cmake", "Win/projectDef.cmake"]
-    for tpl in templateFiles:
-        try:
-            filename = os.path.join(projPath, tpl)
-            if not os.path.isdir(os.path.dirname(filename)):
-                os.mkdir(os.path.dirname(filename))
-
-            template = Template(file = tpl, searchList = [{"PLUGIN" : plugin, "COMPANY" : company, "GUID" : guid}])
-            f = open(filename, "wb")
-            f.write("%s" % template)
-            print "  Processed", tpl
-        except:
-            print "  Error processing", tpl
-            raise
-    print "Done. Files placed in", projPath
-
-if __name__ == "__main__":
-    Main()

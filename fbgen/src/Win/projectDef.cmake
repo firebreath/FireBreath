@@ -1,6 +1,3 @@
-#compiler-settings
-cheetahVarStartToken = @
-#end compiler-settings
 #/**********************************************************\ 
 # 
 # Auto-generated Windows project definition file for the

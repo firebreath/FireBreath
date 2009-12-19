@@ -1,6 +1,3 @@
-#compiler-settings
-cheetahVarStartToken = @
-#end compiler-settings
 #/**********************************************************\ 
 #
 # Auto-Generated Plugin Configuration file
@@ -39,7 +36,7 @@ set(MOZILLA_PLUGINID "@{COMPANY.domain}/@{PLUGIN.ident}")
 set(FBSTRING_CompanyName "@{COMPANY.name}")
 set(FBSTRING_FileDescription "@{PLUGIN.desc}")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
-#import time     (Cheetah directive)
+<##import time ##>   
 set(FBSTRING_LegalCopyright "Copyright @{time.strftime("%Y")} @{COMPANY.name}")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "@{PLUGIN.name}")
