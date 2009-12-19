@@ -41,6 +41,7 @@ public:
 
     std::string listArray(std::vector<std::string>);
     FB::JSOutArray reverseArray(std::vector<std::string> arr);
+    FB::JSOutMap getUserData();
 
     // Method add
     long add(long a, long b);

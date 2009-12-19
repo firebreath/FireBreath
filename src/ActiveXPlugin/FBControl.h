@@ -61,7 +61,7 @@ class ATL_NO_VTABLE CFBControl :
 public:
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
-    CComQIPtr<IDispatch, &IID_IDispatchEx> m_htmlDocIDisp;
+    CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
 
     FB::AutoPtr<ActiveXBrowserHost> m_host;
 

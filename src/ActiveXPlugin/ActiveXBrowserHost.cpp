@@ -132,6 +132,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     if (var.empty()) {
         // Already empty
         return;
+
     } else if (var.get_type() == typeid(int)
         || var.get_type() == typeid(long)
         || var.get_type() == typeid(short)
@@ -141,6 +142,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         || var.get_type() == typeid(unsigned char)) {
         // Integer type
         outVar = var.convert_cast<long>();
+
     } else if (var.get_type() == typeid(double)
         || var.get_type() == typeid(float)) {
         outVar = var.convert_cast<double>();
@@ -152,6 +154,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         std::string str = var.convert_cast<std::string>();
         CComBSTR bStr(str.c_str());
         outVar = bStr;
+
     } else if (var.get_type() == typeid(FB::JSOutArray)) {
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::JSOutArray inArr = var.cast<FB::JSOutArray>();
@@ -162,6 +165,18 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         if (api.ptr() != NULL) {
             outVar = api->getIDispatch();
         }
+
+    } else if (var.get_type() == typeid(FB::JSOutMap)) {
+        JSAPI_DOMNode out = this->getDOMWindow().createMap();
+        FB::JSOutMap inMap = var.cast<FB::JSOutMap>();
+        for (FB::JSOutMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
+            out.setProperty(it->first, it->second);
+        }
+        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(out.getJSObject().ptr());
+        if (api.ptr() != NULL) {
+            outVar = api->getIDispatch();
+        }
+
 	} else if (var.get_type() == typeid(FB::JSObject)) {
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<FB::JSObject>().ptr());
         if (api.ptr() != NULL) {
@@ -169,6 +184,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         } else {
             outVar = COMJavascriptObject::NewObject(this, var.cast<FB::JSObject>().ptr());
         }
+
 	} else if (var.get_type() == typeid(JSOutObject)) {
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<JSOutObject>().ptr());
         if (api.ptr() != NULL) {

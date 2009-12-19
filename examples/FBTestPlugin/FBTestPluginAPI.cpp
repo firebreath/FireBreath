@@ -31,6 +31,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("asDouble",  make_method(this, &FBTestPluginAPI::asDouble));
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
+    registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
 
     // Read-write property
     registerProperty("testString",
@@ -124,6 +125,21 @@ std::string FBTestPluginAPI::listArray(std::vector<std::string> arr)
         outStr += *it;
     }
     return outStr;
+}
+
+FB::JSOutMap FBTestPluginAPI::getUserData()
+{
+    FB::JSOutMap map;
+    map["Name"] = "Richard Bateman";
+    map["Location"] = "Somewhere in Utah";
+    map["EyeColor"] = "Hazel";
+    map["HairColor"] = "Brown";
+    FB::JSOutArray kids;
+    kids.push_back("Caleb");
+    kids.push_back("Unknown");
+    kids.push_back("Ok, I only have one, but I'm filling space");
+    map["Kids"] = kids;
+    return map;
 }
 
 FB::JSOutObject FBTestPluginAPI::get_simpleMath()

@@ -161,6 +161,19 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
             this->RetainObject(dst->value.objectValue);
         }
 
+    } else if (var.get_type() == typeid(FB::JSOutMap)) {
+        JSAPI_DOMNode out = this->getDOMWindow().createMap();
+        FB::JSOutMap inMap = var.cast<FB::JSOutMap>();
+        for (FB::JSOutMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
+            out.setProperty(it->first, it->second);
+        }
+        FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(out.getJSObject().ptr());
+        if (api.ptr() != NULL) {
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = api->getNPObject();
+            this->RetainObject(dst->value.objectValue);
+        }
+
     } else if (var.get_type() == typeid(FB::JSOutObject)) {
         NPObject *outObj = NULL;
         FB::JSOutObject obj = var.cast<FB::JSOutObject>();

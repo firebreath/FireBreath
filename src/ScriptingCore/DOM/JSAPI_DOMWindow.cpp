@@ -49,3 +49,9 @@ JSAPI_DOMNode JSAPI_DOMWindow::createArray()
     JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
     return JSAPI_DOMNode(arr);
 }
+
+JSAPI_DOMNode JSAPI_DOMWindow::createMap()
+{
+    JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
+    return JSAPI_DOMNode(arr);
+}

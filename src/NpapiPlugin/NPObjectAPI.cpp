@@ -70,7 +70,7 @@ void NPObjectAPI::SetProperty(std::string propertyName, const FB::variant value)
 {
     NPVariant val;
     browser->getNPVariant(&val, value);
-    if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val)) {
+    if (!browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val)) {
         throw script_error(propertyName.c_str());
     }
 }

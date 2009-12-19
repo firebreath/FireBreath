@@ -39,6 +39,7 @@ namespace FB {
         JSAPI_DOMElement getDocument();
         void alert(std::string str);
         JSAPI_DOMNode createArray();
+        JSAPI_DOMNode createMap();
     };
 
 };

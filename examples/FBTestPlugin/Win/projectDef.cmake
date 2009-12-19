@@ -30,8 +30,8 @@ add_library(${PROJNAME} SHARED ${SOURCES})
 set_target_properties (${PROJNAME} PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
     PROJECT_LABEL ${PROJNAME}
-    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
-    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     )
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!

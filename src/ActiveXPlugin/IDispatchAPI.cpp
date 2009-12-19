@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "IDispatchAPI.h"
 #include "axmain.h"
+#include <dispex.h>
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) : 
     m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
@@ -30,7 +31,15 @@ DISPID IDispatchAPI::getIDForName(std::string name)
     CA2W wStr(name.c_str());
     OLECHAR *oleStr = wStr;
     DISPID dispId(-1);
-    HRESULT hr = m_obj->GetIDsOfNames(IID_NULL, &oleStr, 1, LOCALE_SYSTEM_DEFAULT, &dispId);
+
+    HRESULT hr = E_NOTIMPL;
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    if (dispex.p != NULL) {
+        hr = dispex->GetDispID(CComBSTR(name.c_str()),
+            fdexNameEnsure | fdexNameCaseSensitive | 0x10000000, &dispId);
+    } else {
+        hr = m_obj->GetIDsOfNames(IID_NULL, &oleStr, 1, LOCALE_SYSTEM_DEFAULT, &dispId);
+    }
     if (SUCCEEDED(hr)) {
         return dispId;
     } else if (hr == E_NOTIMPL) {
@@ -76,9 +85,17 @@ FB::variant IDispatchAPI::GetProperty(std::string propertyName)
     params.cNamedArgs = 0;
 
     VARIANT res;
+    EXCEPINFO eInfo;
 
-    HRESULT hr = m_obj->Invoke(getIDForName(propertyName), IID_NULL, LOCALE_USER_DEFAULT,
-        DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
+    HRESULT hr = E_NOTIMPL;
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    if (dispex.p) {
+        hr = dispex->InvokeEx(getIDForName(propertyName), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
+            &res, &eInfo, NULL);
+    } else {
+        hr = m_obj->Invoke(getIDForName(propertyName), IID_NULL, LOCALE_USER_DEFAULT,
+            DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
+    }
 
     if (SUCCEEDED(hr)) {
         return m_browser->getVariant(&res);
@@ -90,15 +107,29 @@ FB::variant IDispatchAPI::GetProperty(std::string propertyName)
 void IDispatchAPI::SetProperty(std::string propertyName, const FB::variant value)
 {
     CComVariant arg[1];
+    DISPID namedArg[1];
     DISPPARAMS params;
     params.cArgs = 1;
-    params.cNamedArgs = 0;
+    params.cNamedArgs = 1;
+    params.rgdispidNamedArgs = namedArg;
     params.rgvarg = arg;
 
+    EXCEPINFO eInfo;
+    VARIANT res;
+    VariantInit(&res);
     m_browser->getComVariant(&arg[0], value);
+    namedArg[0] = DISPID_PROPERTYPUT;
 
-    HRESULT hr = m_obj->Invoke(getIDForName(propertyName), IID_NULL, LOCALE_USER_DEFAULT,
-        DISPATCH_PROPERTYPUT, &params, NULL, NULL, NULL);
+    HRESULT hr = E_NOTIMPL;
+    DISPID id(getIDForName(propertyName));
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    if (dispex.p) {
+        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
+            &res, &eInfo, NULL);
+    } else {
+        hr = m_obj->Invoke(id, IID_NULL, LOCALE_USER_DEFAULT,
+            DISPATCH_PROPERTYPUT, &params, &res, NULL, NULL);
+    }
 
     if (!SUCCEEDED(hr)) {
         throw FB::script_error("Could not set property");

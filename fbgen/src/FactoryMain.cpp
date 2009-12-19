@@ -1,8 +1,8 @@
-/**********************************************************\ 
+/**********************************************************\
 
   Auto-generated FactoryMain.cpp
 
-  This file contains the auto-generated factory methods 
+  This file contains the auto-generated factory methods
   for the @{PLUGIN.name} project
 
 \**********************************************************/
@@ -10,19 +10,19 @@
 #include "windows.h"
 
 #include "FactoryDefinitions.h"
-#include "@{PLUGIN.ident}Plugin.h"
+#include "@{PLUGIN.ident}.h"
 
 FB::PluginCore *_getMainPlugin()
 {
-    return new @{PLUGIN.ident}Plugin();
+    return new @{PLUGIN.ident}();
 }
 
 void GlobalPluginInitialize()
 {
-    @{PLUGIN.ident}Plugin::StaticInitialize();
+    @{PLUGIN.ident}::StaticInitialize();
 }
 
 void GlobalPluginDeinitialize()
 {
-    @{PLUGIN.ident}Plugin::StaticDeinitialize();
+    @{PLUGIN.ident}::StaticDeinitialize();
 }
