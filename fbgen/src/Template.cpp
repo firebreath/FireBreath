@@ -11,48 +11,48 @@
 #include "atlbase.h"
 #include "@{PLUGIN.ident}API.h"
 
-#include "@{PLUGIN.ident}Plugin.h"
+#include "@{PLUGIN.ident}.h"
 
-void @{PLUGIN.ident}Plugin::StaticInitialize()
+void @{PLUGIN.ident}::StaticInitialize()
 {
     // Place one-time initialization stuff here; note that there isn't an absolute guarantee that
     // this will only execute once per process, just a guarantee that it won't execute again until
     // after StaticDeinitialize is called
 }
 
-void @{PLUGIN.ident}Plugin::StaticDeinitialize()
+void @{PLUGIN.ident}::StaticDeinitialize()
 {
     // Place one-time deinitialization stuff here
 }
 
 
-@{PLUGIN.ident}Plugin::@{PLUGIN.ident}Plugin()
+@{PLUGIN.ident}::@{PLUGIN.ident}()
 {
 }
 
-@{PLUGIN.ident}Plugin::~@{PLUGIN.ident}Plugin()
+@{PLUGIN.ident}::~@{PLUGIN.ident}()
 {
 }
 
-FB::JSAPI* @{PLUGIN.ident}Plugin::createJSAPI()
+FB::JSAPI* @{PLUGIN.ident}::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
     return new @{PLUGIN.ident}API(m_host);
 }
 
-bool @{PLUGIN.ident}Plugin::onMouseDown(FB::MouseDownEvent *evt)
+bool @{PLUGIN.ident}::onMouseDown(FB::MouseDownEvent *evt)
 {
     //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool @{PLUGIN.ident}Plugin::onMouseUp(FB::MouseUpEvent *evt)
+bool @{PLUGIN.ident}::onMouseUp(FB::MouseUpEvent *evt)
 {
     //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool @{PLUGIN.ident}Plugin::onMouseMove(FB::MouseMoveEvent *evt)
+bool @{PLUGIN.ident}::onMouseMove(FB::MouseMoveEvent *evt)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;

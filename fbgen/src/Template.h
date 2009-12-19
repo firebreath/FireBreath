@@ -1,8 +1,8 @@
-/**********************************************************\ 
+/**********************************************************\
 
   Auto-generated @{PLUGIN.ident}.cpp
 
-  This file contains the auto-generated main plugin object 
+  This file contains the auto-generated main plugin object
   implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
@@ -13,15 +13,15 @@
 
 #include "PluginCore.h"
 
-class @{PLUGIN.ident}Plugin : public FB::PluginCore
+class @{PLUGIN.ident} : public FB::PluginCore
 {
 public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
 public:
-    @{PLUGIN.ident}Plugin();
-    virtual ~@{PLUGIN.ident}Plugin();
+    @{PLUGIN.ident}();
+    virtual ~@{PLUGIN.ident}();
 
 public:
     virtual FB::JSAPI* createJSAPI();
