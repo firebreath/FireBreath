@@ -1,6 +1,3 @@
-#compiler-settings
-cheetahVarStartToken = @
-#end compiler-settings
 #/**********************************************************\ 
 # 
 # Auto-generated CMakeLists.txt for the @{PLUGIN.name} project

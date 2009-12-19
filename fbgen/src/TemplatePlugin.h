@@ -1,6 +1,6 @@
 /**********************************************************\ 
 
-  Auto-generated ${PLUGIN.ident}.cpp
+  Auto-generated @{PLUGIN.ident}.cpp
 
   This file contains the auto-generated main plugin object 
   implementation for the ${PLUGIN.name} project
@@ -13,15 +13,15 @@
 
 #include "PluginCore.h"
 
-class ${PLUGIN.ident} : public FB::PluginCore
+class @{PLUGIN.ident}Plugin : public FB::PluginCore
 {
 public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
 public:
-    ${PLUGIN.ident}();
-    virtual ~${PLUGIN.ident}();
+    @{PLUGIN.ident}Plugin();
+    virtual ~@{PLUGIN.ident}Plugin();
 
 public:
     virtual FB::JSAPI* createJSAPI();
