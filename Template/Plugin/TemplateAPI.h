@@ -1,5 +1,5 @@
-/**********************************************************\ 
-Original Author: Richard Bateman and Georg Fritzsche 
+/**********************************************************\
+Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
 License:    Dual license model; choose one of two:
@@ -32,9 +32,9 @@ public:
     ${PROPERTY.type} get_${PROPERTY.ident}();
 
     // Method ${METHOD.ident}
-    ${PLUGIN.prefix}{{RETURN_TYPE}} ${METHOD.ident}(
-            ${PLUGIN.prefix}{{PARAM_TYPE}} a
-            , ${PLUGIN.prefix}{{PARAM_TYPE}} b
+    ${METHOD.type} ${METHOD.ident}(
+            ${METHOD.params.0} a
+            , ${METHOD.params.1} b
             );
 
 private:

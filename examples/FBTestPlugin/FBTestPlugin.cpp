@@ -1,58 +1,58 @@
-/**********************************************************\
+/**********************************************************\ 
 
-  Auto-generated ${PLUGIN.ident}.cpp
+  Auto-generated FBTestPlugin.cpp
 
-  This file contains the auto-generated main plugin object
+  This file contains the auto-generated main plugin object 
   implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
 
 #include "NpapiTypes.h"
 #include "atlbase.h"
-#include "${PLUGIN.ident}API.h"
+#include "FBTestPluginAPI.h"
 
-#include "${PLUGIN.ident}.h"
+#include "FBTestPlugin.h"
 
-void ${PLUGIN.ident}::StaticInitialize()
+void FBTestPlugin::StaticInitialize()
 {
     // Place one-time initialization stuff here; note that there isn't an absolute guarantee that
     // this will only execute once per process, just a guarantee that it won't execute again until
     // after StaticDeinitialize is called
 }
 
-void ${PLUGIN.ident}::StaticDeinitialize()
+void FBTestPlugin::StaticDeinitialize()
 {
     // Place one-time deinitialization stuff here
 }
 
 
-${PLUGIN.ident}::${PLUGIN.ident}()
+FBTestPlugin::FBTestPlugin()
 {
 }
 
-${PLUGIN.ident}::~${PLUGIN.ident}()
+FBTestPlugin::~FBTestPlugin()
 {
 }
 
-FB::JSAPI* ${PLUGIN.ident}::createJSAPI()
+FB::JSAPI* FBTestPlugin::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    return new ${API.ident}API(m_host);
+    return new FBTestPluginAPI(m_host);
 }
 
-bool ${PLUGIN.ident}::onMouseDown(FB::MouseDownEvent *evt)
+bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt)
 {
     //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool ${PLUGIN.ident}::onMouseUp(FB::MouseUpEvent *evt)
+bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt)
 {
     //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool ${PLUGIN.ident}::onMouseMove(FB::MouseMoveEvent *evt)
+bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;

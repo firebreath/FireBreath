@@ -28,7 +28,7 @@ class ATL_NO_VTABLE COMJavascriptObject :
     public IObjectSafetyImpl<COMJavascriptObject, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
 
     // Required for standard events
-    public IProvideClassInfo2Impl<&CLSID_FBComJavascriptObject, NULL, &LIBID_FireBreathWinLib>
+    public IProvideClassInfo2Impl<&CLSID_FBComJavascriptObject, NULL, &FB_LIBID>
 {
 public:
     COMJavascriptObject(void)

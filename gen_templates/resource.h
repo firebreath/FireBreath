@@ -32,3 +32,5 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define _APS_NEXT_SYMED_VALUE           105
 #endif
 #endif
+
+#define FB_LIBID LIBID_${FBTYPELIB_NAME}

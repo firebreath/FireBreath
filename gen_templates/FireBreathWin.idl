@@ -50,7 +50,7 @@ interface IFBComJavascriptObject : IDispatchEx {
     version(1.0),
     helpstring(FBTYPELIB_DESC)
 ]
-library FBTYPELIB_NAME
+library ${FBTYPELIB_NAME}
 {
     importlib("stdole2.tlb");
     [

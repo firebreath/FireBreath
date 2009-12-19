@@ -28,6 +28,8 @@ set(FBControl_GUID @{GUID.generate("CONTROL")})
 set(IFBComJavascriptObject_GUID @{GUID.generate("JSIF")})
 set(FBComJavascriptObject_GUID @{GUID.generate("JSOBJ")})
 set(IFBComEventSource_GUID @{GUID.generate("EVTSRC")})
+set(INSTALL_PRODUCT_GUID @{GUID.generate("INSTPROD")})
+set(INSTALL_UPGRADE_GUID @{GUID.generate("INSTUPGR")})
 
 # these are the pieces that are relevant to using it from Javascript
 set(ACTIVEX_PROGID "@{COMPANY.ident}.@{PLUGIN.ident}")
@@ -37,7 +39,7 @@ set(MOZILLA_PLUGINID "@{COMPANY.domain}/@{PLUGIN.ident}")
 set(FBSTRING_CompanyName "@{COMPANY.name}")
 set(FBSTRING_FileDescription "@{PLUGIN.desc}")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
-#import time     # Cheetah directive
+#import time     (Cheetah directive)
 set(FBSTRING_LegalCopyright "Copyright @{time.strftime("%Y")} @{COMPANY.name}")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "@{PLUGIN.name}")

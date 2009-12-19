@@ -1,11 +1,8 @@
 /**********************************************************\ 
-Original Author: Richard Bateman (taxilian)
+  Default auto-generated dllmain.cpp
 
-Created:    Sept 17, 2009
-License:    Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
-
-Copyright 2009 Richard Bateman, Firebreath development team
+  This file contains DLLMain; don't change this unless you
+  know what you're doing!
 \**********************************************************/
 
 // dllmain.cpp : Implementation of DllMain.

@@ -18,35 +18,24 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
 
-class MathAPI : public FB::JSAPIAuto
+class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    virtual ~MathAPI();
+    FBTestPluginAPI(FB::BrowserHostWrapper *host);
+    virtual ~FBTestPluginAPI();
 
-    MathAPI(FB::BrowserHostWrapper *host);
+    // Read/Write property testString
+    std::string get_testString();
+    void set_testString(std::string val);
 
-    std::string returnString(const std::string& s);
+    // Read-only property someInt
+    int get_someInt();
 
-    std::string intToString(int i);
-
-    int sumOf(int a, int b);
-
-    std::string concatenate(const std::string& a, const std::string& b, const std::string& c);
-
-    std::string concatenate2(const std::string& a, const FB::VariantList& list);
-
-    void set_Message(const std::string& s);
-
-    std::string get_Message();
-
-    std::string get_ReadOnlyMessage();
-
-    std::string getType(const FB::variant a);
-
-    std::string getElementHTML(const std::string& elemId);
+    // Method add
+    int add(int a, int b);
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
-    std::string m_message;
-    const std::string m_readOnlyMessage;
+
+    std::string m_testString;
 };

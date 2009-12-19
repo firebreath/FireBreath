@@ -41,7 +41,7 @@ class ATL_NO_VTABLE CFBControl :
     public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
 
     // Required for standard events
-    public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &LIBID_FireBreathWinLib>,
+    public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &FB_LIBID>,
 
     //public IPersistStreamInitImpl<CFBControl>,
     public IOleControlImpl<CFBControl>,
@@ -151,7 +151,7 @@ BEGIN_REGMAP(CFBControl)
     REGMAP_ENTRY("DESCRIPTION", FBControl_DESC)
     REGMAP_ENTRY("MOZILLA_PLUGINID", MOZILLA_PLUGINID)
     REGMAP_UUID("CLSID", CLSID_FBControl)
-    REGMAP_UUID("LIBID", LIBID_FireBreathWinLib)
+    REGMAP_UUID("LIBID", FB_LIBID)
     REGMAP_ENTRY("THREADING", "Single")
     REGMAP_ENTRY("MIMETYPE", FBSTRING_MIMEType)
     REGMAP_ENTRY("EXTENSION", FBSTRING_FileExtents)
