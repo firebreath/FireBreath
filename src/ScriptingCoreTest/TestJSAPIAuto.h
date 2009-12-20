@@ -29,7 +29,8 @@ public:
         registerMethod("intToString",   make_method(this, &TestObjectJSAPIAuto::intToString));
         registerMethod("sumOf",         make_method(this, &TestObjectJSAPIAuto::sumOf));
         registerMethod("concatenate",   make_method(this, &TestObjectJSAPIAuto::concatenate));
-        registerMethod("concatMany",    make_method(this, &TestObjectJSAPIAuto::concatenate2));
+        registerMethod("concatMany",    make_method(this, &TestObjectJSAPIAuto::concatMany));
+		registerMethod("concatMany2",   make_method(this, &TestObjectJSAPIAuto::concatMany2));
         registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
         registerMethod("accumulate",    make_method(this, &TestObjectJSAPIAuto::accumulate));
 
@@ -64,16 +65,29 @@ public:
         return a+b+c;
     }
 
-    std::string concatenate2(const std::string& a, const FB::VariantList& list)
+	// catch >= 1 arguments as strings and concatenate
+	std::string concatMany(const std::string& a, const FB::CatchAll& rest)
     {
-        FB::VariantList::const_iterator it(list.begin());
+        FB::VariantList::const_iterator it(rest.value.begin());
         std::string s(a);
 
-        for( ; it != list.end(); ++it)
+        for( ; it != rest.value.end(); ++it)
             s += it->convert_cast<std::string>();
 
         return s;
     }
+
+	// catch 2 arguments: 1 string, 1 script array
+	std::string concatMany2(const std::string& a, const FB::VariantList& arr)
+	{
+		FB::VariantList::const_iterator it(arr.begin());
+        std::string s(a);
+
+        for( ; it != arr.end(); ++it)
+            s += it->convert_cast<std::string>();
+
+        return s;
+	}
 
     void set_Message(const std::string& s)
     {

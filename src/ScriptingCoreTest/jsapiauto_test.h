@@ -78,6 +78,7 @@ TEST(JSAPIAuto_Methods)
     }
 
     {
+		// test catching all remaining params with CatchAll as the last argument
         struct IncNumber {
             unsigned n;
             IncNumber() : n(1) {}
@@ -97,9 +98,37 @@ TEST(JSAPIAuto_Methods)
             FB::VariantList args(strings.begin(), strings.begin()+i);
             FB::variant ret = test->Invoke(method, args);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
-            CHECK(ret.cast<std::string>() == expected);
+			const std::string result   = ret.cast<std::string>();
+            CHECK(result == expected);
         }
     }
+
+	{
+		// test that CatchAll doesn't break catching arrays as the last parameter
+		struct IncNumber {
+            unsigned n;
+            IncNumber() : n(1) {}
+            std::string operator()() 
+            { return boost::lexical_cast<std::string>(n++); }
+        };
+
+        const std::string method("concatMany2");
+        CHECK(test->HasMethod("concatMany2"));
+
+        const unsigned max_args = 20;
+        std::vector<std::string> strings(max_args);
+        std::generate(strings.begin(), strings.end(), IncNumber());
+                
+        for(unsigned i=2; i<=max_args; ++i)
+        {
+			FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
+			FB::VariantList params = variant_list_of(strings.front())(FB::AutoPtr<BrowserObjectAPI>(jsarr));
+            FB::variant ret = test->Invoke(method, params);
+            const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
+			const std::string result   = ret.cast<std::string>();
+            CHECK(result == expected);
+        }
+	}
 
     {
         const std::string prop("message");

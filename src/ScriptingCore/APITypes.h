@@ -37,6 +37,10 @@ namespace FB
     typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
     typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
     typedef FB::AutoPtr<FB::BrowserHostWrapper> BrowserHost;
+    struct CatchAll {
+        typedef FB::VariantList value_type;
+        FB::VariantList value;
+    };
 
     // JSAPI methods
 
@@ -73,8 +77,8 @@ namespace FB
 
     // new style JSAPI properties
 
-	typedef boost::function<FB::variant ()> GetPropFunctor;
-	typedef boost::function<void (const FB::variant&)> SetPropFunctor;
+    typedef boost::function<FB::variant ()> GetPropFunctor;
+    typedef boost::function<void (const FB::variant&)> SetPropFunctor;
     struct PropertyFunctors
     {
         GetPropFunctor get;
