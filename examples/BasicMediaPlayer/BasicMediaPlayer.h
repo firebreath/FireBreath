@@ -39,7 +39,7 @@ public:
     std::string version() const;
     std::string type() const;
 
-    FB::AutoPtr<FB::BrowserObjectAPI> playlist() const;
+	FB::JSOutArray playlist() const;
     void setPlaylist(PlayList&);
 
 private:

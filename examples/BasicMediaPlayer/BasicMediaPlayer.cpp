@@ -81,10 +81,11 @@ std::string BasicMediaPlayer::type() const
     return m_player->Type();
 }
 
-FB::AutoPtr<FB::BrowserObjectAPI> BasicMediaPlayer::playlist() const
+FB::JSOutArray BasicMediaPlayer::playlist() const
 {
-    FB::AutoPtr<FB::BrowserObjectAPI> arr = new ArrayHelper(FB::make_variant_list(m_playlist), m_host);
-    return arr;
+    //FB::AutoPtr<FB::BrowserObjectAPI> arr = new ArrayHelper(FB::make_variant_list(m_playlist), m_host);
+    //return arr;
+	return FB::make_variant_list(m_playlist);
 }
 
 void BasicMediaPlayer::setPlaylist(PlayList& list)
