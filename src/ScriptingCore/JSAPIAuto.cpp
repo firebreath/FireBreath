@@ -49,6 +49,31 @@ void FB::JSAPIAuto::registerProperty(const std::string& name, PropertyFunctors p
     m_propertyFunctorsMap[name] = propFuncs;
 }
 
+void FB::JSAPIAuto::getMemberNames(std::vector<std::string> &nameVector)
+{
+    nameVector.clear();
+
+    for (FB::MethodFunctorMap::iterator it = m_methodFunctorMap.begin();
+        it != m_methodFunctorMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+    for (FB::PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.begin();
+        it != m_propertyFunctorsMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+    for (FB::EventSingleMap::iterator it = m_defEventMap.begin();
+        it != m_defEventMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+}
+
+size_t FB::JSAPIAuto::getMemberCount()
+{
+    return m_methodFunctorMap.size()
+        + m_propertyFunctorsMap.size()
+        + m_defEventMap.size();
+}
+
 bool FB::JSAPIAuto::HasMethod(std::string methodName)
 {
     if(!m_valid)

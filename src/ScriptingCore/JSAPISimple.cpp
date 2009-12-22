@@ -53,6 +53,30 @@ variant JSAPISimple::getValid()
     return m_valid;
 }
 
+void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector)
+{
+    nameVector.clear();
+
+    for (FB::MethodMap::iterator it = m_methodMap.begin();
+        it != m_methodMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+    for (FB::PropertyMap::iterator it = m_propertyMap.begin();
+        it != m_propertyMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+    for (FB::EventSingleMap::iterator it = m_defEventMap.begin();
+        it != m_defEventMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+}
+
+size_t JSAPISimple::getMemberCount()
+{
+    return m_methodMap.size()
+        + m_propertyMap.size()
+        + m_defEventMap.size();
+}
 
 // Methods for registering properties and functions to the auto-table
 void JSAPISimple::registerMethod(std::string name, CallMethodPtr func)

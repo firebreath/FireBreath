@@ -87,6 +87,10 @@ namespace FB
         virtual BrowserObjectAPI *getDefaultEventMethod(std::string name);
         virtual void setDefaultEventMethod(std::string name, BrowserObjectAPI *event);
 
+        // Methods for enumeration
+        virtual void getMemberNames(std::vector<std::string> &nameVector) = 0;
+        virtual size_t getMemberCount() = 0;
+
         // Methods to query existance of members on the API
         virtual bool HasMethod(std::string methodName) = 0;
         virtual bool HasProperty(std::string propertyName) = 0;

@@ -15,11 +15,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_IDISPATCHAPI
 #define H_IDISPATCHAPI
 
+#include "Win/win_common.h"
 #include "JSAPI.h"
 #include "AutoPtr.h"
 #include "BrowserObjectAPI.h"
 #include "ActiveXBrowserHost.h"
 #include <atlctl.h>
+#include <vector>
+#include <string>
 
 class IDispatchAPI :
     public FB::BrowserObjectAPI
@@ -31,9 +34,14 @@ public:
     void *getEventId() { return (void*)m_obj; }
     void *getEventContext() { return m_browser->getContextID(); };
     IDispatch *getIDispatch() { return m_obj; }
+
+    // Enumerate members
+    void getMemberNames(std::vector<std::string> &nameVector);
+    size_t getMemberCount();
+
 protected:
     FB::AutoPtr<ActiveXBrowserHost> m_browser;
-    CComPtr<IDispatch> m_obj;
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> m_obj;
 
 protected:
     // Utility functions

@@ -195,8 +195,18 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
 bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
 {
     try {
-        // TODO: add support for enumerating members
-        return false;
+        typedef std::vector<std::string> StringArray;
+        StringArray memberList;
+        m_api->getMemberNames(memberList);
+        NPIdentifier *outList = (NPIdentifier*)m_browser->MemAlloc(sizeof(NPIdentifier) * memberList.size());
+        
+        for (uint32_t i = 0; i < memberList.size(); i++) {
+            outList[i] = m_browser->GetStringIdentifier(memberList[i].c_str());
+            i++;
+        }
+        *value = outList;
+        *count = memberList.size();
+        return true;
     } catch (script_error& e) {
         m_browser->SetException(this, e.what());
         return false;

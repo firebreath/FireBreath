@@ -18,6 +18,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "JSAPI.h"
 #include "MethodConverter.h"
 #include "PropertyConverter.h"
+#include <vector>
+#include <string>
 
 namespace FB {
     class JSAPIAuto : public JSAPI
@@ -25,6 +27,10 @@ namespace FB {
     public:
         JSAPIAuto();
         ~JSAPIAuto();
+
+        // Enumerate members
+        void getMemberNames(std::vector<std::string> &nameVector);
+        size_t getMemberCount();
 
         // Invoke method
         virtual variant Invoke(std::string methodName, std::vector<variant>& args);

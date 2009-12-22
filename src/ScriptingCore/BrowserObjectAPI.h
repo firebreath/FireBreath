@@ -38,6 +38,9 @@ namespace FB
         //       is used.
         template<class Cont>
         static void GetArrayValues(FB::JSObject src, Cont& dst);
+        
+        template<class Dict>
+        void GetObjectValues(FB::JSObject src, Dict& dst);
 
     public:
         AutoPtr<BrowserHostWrapper> host;
@@ -56,6 +59,24 @@ namespace FB
             }
         }
         catch(FB::script_error& e) 
+        {
+            throw e;
+        }
+    }
+
+    template<class Dict>
+    void BrowserObjectAPI::GetObjectValues(FB::JSObject src, Dict& dst)
+    {
+        try 
+        {
+            std::vector<std::string> fields;
+            src->getMemberNames(fields);
+            std::insert_iterator<Dict> inserter(dst, dst.begin());
+            for (std::vector<std::string>::iterator it = fields.begin(); it != fields.end(); it++) {
+                *inserter++ = std::pair<Dict::key_type, Dict::mapped_type>
+                    (*it, src->GetProperty(*it).convert_cast<Dict::mapped_type>());
+            }
+        } catch (FB::script_error& e)
         {
             throw e;
         }

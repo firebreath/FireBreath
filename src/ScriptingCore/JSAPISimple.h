@@ -28,6 +28,10 @@ namespace FB {
         virtual ~JSAPISimple(void);
 
     public:
+        // Enumerate members
+        void getMemberNames(std::vector<std::string> &nameVector);
+        size_t getMemberCount();
+
         // Methods for registering properties and functions to the auto-table
         virtual void registerMethod(std::string name, CallMethodPtr func);
         virtual void registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc);

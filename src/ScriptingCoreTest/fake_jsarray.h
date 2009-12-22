@@ -30,6 +30,11 @@ public:
     void FB::JSAPI::SetProperty(std::string,const FB::variant) {}
     FB::variant FB::JSAPI::Invoke(std::string,FB::VariantList&) { return FB::variant(); }
 
+    // Methods for enumeration
+    virtual void getMemberNames(std::vector<std::string> &nameVector) { }
+    virtual size_t getMemberCount() { return 0; }
+
+
     bool HasProperty(std::string s)    
     { 
         return (s == "length"); 

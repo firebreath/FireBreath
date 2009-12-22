@@ -34,6 +34,10 @@ namespace FB { namespace Npapi {
         void *getEventId() { return (void*)obj; }
         void *getEventContext() { return browser->getContextID(); };
         NPObject *getNPObject() { return obj; }
+
+        // Enumerate members
+        void getMemberNames(std::vector<std::string> &nameVector);
+        size_t getMemberCount();
     protected:
         FB::AutoPtr<NpapiBrowserHost> browser;
         NPObject *obj;

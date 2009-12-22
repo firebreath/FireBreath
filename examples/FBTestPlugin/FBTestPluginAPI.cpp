@@ -32,6 +32,8 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
     registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
+    registerMethod("getObjectKeys",  make_method(this, &FBTestPluginAPI::getObjectKeys));
+    registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
 
     // Read-write property
     registerProperty("testString",
@@ -52,6 +54,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 
 FBTestPluginAPI::~FBTestPluginAPI()
 {
+    //std::map<int,int>::capacity()
 }
 
 // Read/Write property someInt
@@ -108,6 +111,30 @@ FB::JSOutArray FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
     for (std::vector<std::string>::reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
     {
         outArr.push_back(*it);
+    }
+    return outArr;
+}
+
+FB::JSOutArray FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
+{
+    FB::JSOutArray outArr;
+    std::map<std::string, FB::variant> inMap;
+    arr->GetObjectValues(arr, inMap);
+
+    for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
+        outArr.push_back(it->first);
+    }
+    return outArr;
+}
+
+FB::JSOutArray FBTestPluginAPI::getObjectValues(FB::JSObject arr)
+{
+    FB::JSOutArray outArr;
+    std::map<std::string, FB::variant> inMap;
+    arr->GetObjectValues(arr, inMap);
+
+    for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
+        outArr.push_back(it->second);
     }
     return outArr;
 }

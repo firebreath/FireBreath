@@ -32,6 +32,27 @@ NPObjectAPI::~NPObjectAPI(void)
     }
 }
 
+void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
+{
+    NPIdentifier *idArray(NULL);
+    uint32_t count;
+
+    browser->Enumerate(obj, &idArray, &count);
+    for (uint32_t i = 0; i < count; i++) {
+        nameVector.push_back(browser->StringFromIdentifier(idArray[i]));
+    }
+    browser->MemFree(idArray);
+}
+
+size_t NPObjectAPI::getMemberCount()
+{
+    NPIdentifier *idArray(NULL);
+    uint32_t count;
+    browser->Enumerate(obj, &idArray, &count);
+    browser->MemFree(idArray);
+    return (size_t)count;
+}
+
 bool NPObjectAPI::HasMethod(std::string methodName)
 {
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
