@@ -198,14 +198,14 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         typedef std::vector<std::string> StringArray;
         StringArray memberList;
         m_api->getMemberNames(memberList);
-        NPIdentifier *outList = (NPIdentifier*)m_browser->MemAlloc(sizeof(NPIdentifier) * memberList.size());
+        *count = memberList.size();
+        NPIdentifier *outList(NULL);
+        outList = (NPIdentifier*)m_browser->MemAlloc((uint32)(sizeof(NPIdentifier) * *count));
         
         for (uint32_t i = 0; i < memberList.size(); i++) {
-            outList[i] = m_browser->GetStringIdentifier(memberList[i].c_str());
-            i++;
+            outList[i] = m_browser->GetStringIdentifier(memberList.at(i).c_str());
         }
         *value = outList;
-        *count = memberList.size();
         return true;
     } catch (script_error& e) {
         m_browser->SetException(this, e.what());
