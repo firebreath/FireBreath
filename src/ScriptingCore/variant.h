@@ -24,13 +24,8 @@
 #include <sstream>
 #include <string>
 
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/contains.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
 #include "AutoPtr.h"
+#include "Util/meta_util.h"
 //#include "BrowserObjectAPI.h"
 
 
@@ -172,22 +167,6 @@ namespace FB
                 return true;
             }
         };
-
-        typedef boost::mpl::vector
-        <
-            std::string, 
-            std::wstring
-        > non_container_types;
-
-        template<typename T>
-        struct plain_type {
-            typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
-        };
-
-        template<class T>
-        struct is_non_container 
-          : boost::mpl::bool_<boost::mpl::contains<non_container_types, typename plain_type<T>::type>::value>::type
-        {};
     } // namespace variant_detail
 
     struct variant
@@ -326,28 +305,43 @@ namespace FB
         }
 
         template<typename T>
-        const T convert_cast(...) const {
+        typename FB::meta::disable_for_containers<T, const T>::type
+        convert_cast() const
+        {
             return convert_cast_impl<T>();
         }
 
-        template<typename T>
-        const T convert_cast_impl() const {
-            return cast<T>();
-        }
-
-        template<class Container>
-        typename boost::disable_if< variant_detail::is_non_container<Container>, const Container >::type
-        convert_cast(typename Container::iterator = Container().begin(),
-                     typename Container::iterator = Container().end()) const
+        template<class Cont>
+        typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+        convert_cast() const
         {
             typedef FB::JSObject JsObject;
 
             if(!(get_type() == typeid(JsObject)))
                 throw bad_variant_cast(get_type(), typeid(JsObject));
 
-            Container cont;
+            Cont cont;
             FB::BrowserObjectAPI::GetArrayValues(convert_cast<JsObject>(), cont);
             return cont;
+        }
+
+        template<class Dict>
+        typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+        convert_cast() const
+        {
+            typedef FB::JSObject JsObject;
+
+            if(!(get_type() == typeid(JsObject)))
+                throw bad_variant_cast(get_type(), typeid(JsObject));
+
+            Dict dict;
+            FB::BrowserObjectAPI::GetObjectValues(convert_cast<JsObject>(), dict);
+            return dict;
+        }
+
+        template<typename T>
+        const T convert_cast_impl() const {
+            return cast<T>();
         }
 
         template<> const void convert_cast_impl<void>() const {
