@@ -40,9 +40,9 @@ namespace FB
             : script_error("Invalid Arguments")
         { }
 
-		invalid_arguments(const std::string& error)
-			: script_error(error)
-		{ }
+        invalid_arguments(const std::string& error)
+            : script_error(error)
+        { }
     };
 
     struct object_invalidated : script_error
@@ -80,7 +80,7 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-		virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
+        virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void registerEventInterface(BrowserObjectAPI *event);
         virtual void unregisterEventInterface(BrowserObjectAPI *event);
@@ -110,7 +110,7 @@ namespace FB
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
         EventIFaceMap m_evtIfaces;
-		        
+                
         bool m_valid;
     };
 
