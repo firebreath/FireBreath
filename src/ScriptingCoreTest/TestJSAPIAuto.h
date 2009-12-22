@@ -17,7 +17,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <algorithm>
 #include "JSAPIAuto.h"
 
-class TestObjectJSAPIAuto : public JSAPIAuto
+class TestObjectJSAPIAuto : public FB::JSAPIAuto
 {
 public:
     virtual ~TestObjectJSAPIAuto() {}
@@ -30,7 +30,7 @@ public:
         registerMethod("sumOf",         make_method(this, &TestObjectJSAPIAuto::sumOf));
         registerMethod("concatenate",   make_method(this, &TestObjectJSAPIAuto::concatenate));
         registerMethod("concatMany",    make_method(this, &TestObjectJSAPIAuto::concatMany));
-		registerMethod("concatMany2",   make_method(this, &TestObjectJSAPIAuto::concatMany2));
+        registerMethod("concatMany2",   make_method(this, &TestObjectJSAPIAuto::concatMany2));
         registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
         registerMethod("accumulate",    make_method(this, &TestObjectJSAPIAuto::accumulate));
 
@@ -65,8 +65,8 @@ public:
         return a+b+c;
     }
 
-	// catch >= 1 arguments as strings and concatenate
-	std::string concatMany(const std::string& a, const FB::CatchAll& rest)
+    // catch >= 1 arguments as strings and concatenate
+    std::string concatMany(const std::string& a, const FB::CatchAll& rest)
     {
         FB::VariantList::const_iterator it(rest.value.begin());
         std::string s(a);
@@ -77,17 +77,17 @@ public:
         return s;
     }
 
-	// catch 2 arguments: 1 string, 1 script array
-	std::string concatMany2(const std::string& a, const FB::VariantList& arr)
-	{
-		FB::VariantList::const_iterator it(arr.begin());
+    // catch 2 arguments: 1 string, 1 script array
+    std::string concatMany2(const std::string& a, const FB::VariantList& arr)
+    {
+        FB::VariantList::const_iterator it(arr.begin());
         std::string s(a);
 
         for( ; it != arr.end(); ++it)
             s += it->convert_cast<std::string>();
 
         return s;
-	}
+    }
 
     void set_Message(const std::string& s)
     {

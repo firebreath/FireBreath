@@ -15,11 +15,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "TypeIDMap.h"
 
-using namespace FB;
-
 TEST(TypeIDMapTest_voidptr)
 {
     PRINT_TESTNAME;
+
+	using namespace FB;
 
     TypeIDMap<void *> idMap((void*)0x1);
 
@@ -40,6 +40,7 @@ TEST(TypeIDMapTest_voidptr)
 TEST(TypeIDMapTest_int)
 {
     PRINT_TESTNAME;
+	using namespace FB;
 
     TypeIDMap<int> idMap(1);
 
@@ -60,6 +61,7 @@ TEST(TypeIDMapTest_int)
 TEST(TypeIDMapTest_setid)
 {
     PRINT_TESTNAME;
+	using namespace FB;
 
     TypeIDMap<int> idMap(1);
 
@@ -81,6 +83,9 @@ TEST(TypeIDMapTest_setid)
 
 TEST(TypeIDMapTest_testlong)
 {
+	PRINT_TESTNAME;
+	using namespace FB;
+
     TypeIDMap<long> idMap(100);
     idMap.setIdForValue(0, "value");
     idMap.setIdForValue(-3, "propertyput");

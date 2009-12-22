@@ -25,7 +25,7 @@ TEST(JSArrayTest)
     PRINT_TESTNAME;
 
     using boost::assign::list_of;
-    using FB::variant_list_of;
+    using namespace FB;
 
     {
         // test C++ acess 
@@ -33,7 +33,7 @@ TEST(JSArrayTest)
         FB::VariantList values = variant_list_of(1)("3")(2.3);
         FB::AutoPtr<FB::JSArray> test = new FB::JSArray(values);
         
-        std::vector<FB::VariantList> copies = boost::assign::list_of
+        std::vector<FB::VariantList> copies = list_of
             (test->Values())
             (FB::VariantList())
             (convert_variant_list< std::vector<FB::variant> >(test->Values()));
