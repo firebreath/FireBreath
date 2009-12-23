@@ -22,6 +22,8 @@ public:
     const std::string& Version() const;
     const std::string& Type() const;
 
+    std::string play(const std::string& file);
+
 private:
     boost::shared_ptr<PlayerContext> m_context;
     std::string m_version;

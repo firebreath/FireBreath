@@ -54,9 +54,9 @@ BasicMediaPlayer::~BasicMediaPlayer()
     m_player.reset();
 }
 
-bool BasicMediaPlayer::play()
+std::string BasicMediaPlayer::play(const std::string& file)
 {
-    return false;
+    return m_player->play(file);
 }
 
 bool BasicMediaPlayer::stop()
@@ -85,7 +85,7 @@ FB::JSOutArray BasicMediaPlayer::playlist() const
 {
     //FB::AutoPtr<FB::BrowserObjectAPI> arr = new ArrayHelper(FB::make_variant_list(m_playlist), m_host);
     //return arr;
-	return FB::make_variant_list(m_playlist);
+    return FB::make_variant_list(m_playlist);
 }
 
 void BasicMediaPlayer::setPlaylist(PlayList& list)
