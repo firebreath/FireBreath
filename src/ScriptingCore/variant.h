@@ -321,7 +321,7 @@ namespace FB
                 throw bad_variant_cast(get_type(), typeid(JsObject));
 
             Cont cont;
-            FB::BrowserObjectAPI::GetArrayValues(convert_cast<JsObject>(), cont);
+            FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
             return cont;
         }
 
@@ -335,7 +335,7 @@ namespace FB
                 throw bad_variant_cast(get_type(), typeid(JsObject));
 
             Dict dict;
-            FB::BrowserObjectAPI::GetObjectValues(convert_cast<JsObject>(), dict);
+            FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
             return dict;
         }
 
