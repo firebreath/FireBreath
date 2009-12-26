@@ -1,4 +1,6 @@
 
+#define _WIN32_DCOM
+
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlstr.h>
@@ -23,9 +25,8 @@ MediaPlayer::MediaPlayer()
   , m_version("")
   , m_type("DirectShow")
 {
-    ::CoInitialize(0);
+	CoInitializeEx(0, COINIT_MULTITHREADED);
 
-#if 0
     m_context = PlayerContextPtr(new PlayerContext);
     if(!m_context) throw InitializationException("failed to create context");
 
@@ -40,7 +41,6 @@ MediaPlayer::MediaPlayer()
 
     m_context->spMediaControl = spMediaControl;
     m_context->spMediaEvent   = spMediaEvent;
-#endif
 }
 
 MediaPlayer::~MediaPlayer()
@@ -62,32 +62,17 @@ std::string MediaPlayer::play(const std::string& file)
 {
     HRESULT hr;
 
-    m_context = PlayerContextPtr(new PlayerContext);
-    if(!m_context) throw InitializationException("failed to create context");
-
-    hr =  m_context->spGraph.CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER);
-    if(FAILED(hr)) throw InitializationException("failed to create player");
-    
-    CComQIPtr<IMediaControl> spMediaControl(m_context->spGraph);
-    if(!spMediaControl) throw InitializationException("failed to QI for IMediaControl");
-
-    CComQIPtr<IMediaEvent> spMediaEvent(m_context->spGraph);
-    if(!spMediaEvent) throw InitializationException("failed to QI for IMediaEvent");
-
-    m_context->spMediaControl = spMediaControl;
-    m_context->spMediaEvent   = spMediaEvent;
-
     hr = m_context->spGraph->RenderFile(L"c:\\tmp\\weare.wav", 0);
     if(FAILED(hr)) {
         std::ostringstream ss;
-        ss << "failed to render file: " << mapVfwError(hr);
+		ss << "IGraphBuilder::RenderFile() failed: " << mapVfwError(hr);
         return ss.str();
     }
 
     hr = m_context->spMediaControl->Run();
     if(FAILED(hr)) {
         std::ostringstream ss;
-        ss << "failed to render file: " << mapVfwError(hr);
+		ss << "IMediaControl::Run() failed: " << mapVfwError(hr);
         return ss.str();
     }
 
