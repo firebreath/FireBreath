@@ -29,14 +29,15 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     using FB::make_method;
     using FB::make_property;
 
-    registerMethod  ("play",     make_method  (this, &BasicMediaPlayer::play));
-    registerMethod  ("stop",     make_method  (this, &BasicMediaPlayer::stop));
-    registerMethod  ("addItem",  make_method  (this, &BasicMediaPlayer::addItem));
+    registerMethod  ("play",      make_method  (this, &BasicMediaPlayer::play));
+    registerMethod  ("stop",      make_method  (this, &BasicMediaPlayer::stop));
+    registerMethod  ("addItem",   make_method  (this, &BasicMediaPlayer::addItem));
 
-    registerProperty("version",  make_property(this, &BasicMediaPlayer::version));
-    registerProperty("type",     make_property(this, &BasicMediaPlayer::type));
-    registerProperty("playlist", make_property(this, &BasicMediaPlayer::playlist,
-                                                     &BasicMediaPlayer::setPlaylist));
+    registerProperty("version",   make_property(this, &BasicMediaPlayer::version));
+    registerProperty("type",      make_property(this, &BasicMediaPlayer::type));
+	registerProperty("lastError", make_property(this, &BasicMediaPlayer::lastError));
+    registerProperty("playlist",  make_property(this, &BasicMediaPlayer::playlist,
+                                                      &BasicMediaPlayer::setPlaylist));
 
     try 
     {
@@ -54,14 +55,14 @@ BasicMediaPlayer::~BasicMediaPlayer()
     m_player.reset();
 }
 
-std::string BasicMediaPlayer::play(const std::string& file)
+bool BasicMediaPlayer::play(const std::string& file)
 {
     return m_player->play(file);
 }
 
 bool BasicMediaPlayer::stop()
 {
-    return false;
+	return m_player->stop();
 }
 
 bool BasicMediaPlayer::addItem(const FB::variant& v)
@@ -73,12 +74,17 @@ bool BasicMediaPlayer::addItem(const FB::variant& v)
 
 std::string BasicMediaPlayer::version() const
 {
-    return m_player->Version();
+    return m_player->version();
 }
 
 std::string BasicMediaPlayer::type() const
 {
-    return m_player->Type();
+    return m_player->type();
+}
+
+std::string BasicMediaPlayer::lastError() const
+{
+	return m_player->lastError();
 }
 
 FB::JSOutArray BasicMediaPlayer::playlist() const

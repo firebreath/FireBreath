@@ -29,7 +29,7 @@ public:
 
     // methods exposed to script
 
-    std::string play(const std::string& file);
+    bool play(const std::string& file);
     bool stop();
 
     bool addItem(const FB::variant&);
@@ -38,6 +38,7 @@ public:
 
     std::string version() const;
     std::string type() const;
+	std::string lastError() const;
 
     FB::JSOutArray playlist() const;
     void setPlaylist(PlayList&);
