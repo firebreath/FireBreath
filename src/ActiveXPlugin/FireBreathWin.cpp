@@ -67,6 +67,7 @@ STDAPI DllRegisterServer(void)
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
+    FbPerUserRegistration perUser(true);
     HRESULT hr = _AtlModule.DllUnregisterServer();
     if (!SUCCEEDED(hr))
         hr = CFBControl::UpdateRegistry(false);

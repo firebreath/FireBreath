@@ -43,6 +43,7 @@ set_target_properties (${PROJNAME} PROPERTIES
 
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    Strmiids.lib
     )
 
 add_dependencies(${PROJNAME}

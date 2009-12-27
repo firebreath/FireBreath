@@ -23,7 +23,6 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
 #if _MSC_VER > 1400
 	AtlSetPerUserRegistration(perUser);
 #else // _MSC_VER < 1500
-#  if 0 
 	// this seems to be always active and therefore may break
 	// any COM functionality thats not registered per user
 
@@ -44,7 +43,6 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
 	}
 
 	m_hkey = key;
-#  endif
 #endif
 }
 
