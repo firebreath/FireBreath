@@ -18,6 +18,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "BrowserHostWrapper.h"
 #include "BrowserObjectAPI.h"
 
+namespace FB { class PluginWindow; };
 class MediaPlayer;
 
 class BasicMediaPlayer : public FB::JSAPIAuto
@@ -29,26 +30,39 @@ public:
 
     // methods exposed to script
 
-    bool play(const std::string& file);
+	bool play(const FB::CatchAll&);
     bool stop();
 
-    bool addItem(const FB::variant&);
+	bool next();
+	bool previous();
+
+	bool addEntry(const std::string&);
+	bool removeEntry(const FB::variant&);
 
     // properties exposed to script
 
     std::string version() const;
-    std::string type() const;
-	std::string lastError() const;
+    std::string lastError() const;
 
     FB::JSOutArray playlist() const;
     void setPlaylist(PlayList&);
 
+	PlayList::size_type currentIndex() const;
+
+	// helpers
+
+	void setWindow(FB::PluginWindow*);
+
 private:
-    typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
+	typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
+
+	void firePlaylistChanged();
+	void fireCurrentItemChanged();
 
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
     MediaPlayerPtr m_player;
     bool m_valid;
 
     PlayList m_playlist;
+	PlayList::size_type m_currentIndex;
 };

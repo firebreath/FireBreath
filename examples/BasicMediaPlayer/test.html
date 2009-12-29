@@ -1,52 +1,156 @@
 <html>
 <head>
+	<style type="text/css">
+		#playerBody {
+			width: 400px;
+			background-color: #9040d0;
+			overflow: hidden;
+			padding: 2px 2px 20px 2px;
+		}
+		
+		#playerPlugin {
+			border: 1px solid #000000; 
+			display: inline-block;
+			margin: 5px;
+		}
+		
+		#playlist {
+			border: 1px solid #ffffff;
+			margin: 5px;
+			width: 90%;
+			border-collapse: collapse;
+			empty-cells: show;
+		}
+		
+		.playlistHeader {
+			background-color: #d0d0d0;
+			color: #505050;
+			font-size: 90%;
+		}
+		
+		.playlistHeader > th {
+			border: 1px solid #ffffff;
+		}
+		
+		.playlistRowEven {
+			background-color: #a050e0;
+		}
+		
+		.playlistRowOdd {
+			background-color: #b060f0;
+		}
+		
+		.playlistRowActive {
+			background-color: #d060f0;
+			font-style: italic;
+		}
+		
+		.playlistRowEven > td, .playlistRowOdd > td, .playlistRowActive > td
+		{
+			border: 1px solid #ffffff;
+		}
+		
+		#fileInput {
+			margin: 2px;
+		}
+		
+		.button {
+			border: 1px outset #8080f0;
+			padding: 1px 7px 1px 7px;
+			background-color: #8080f0;
+			color: #000000;
+			text-decoration: none;
+		}
+	</style>
+
     <script type="text/JavaScript">
         var player;
 		var fileInput;
-		var songList;
+		var playlist;
         
         function load()
         {
-            player    = window.document["player"];
-			fileInput = document.forms['fileInput']['browse'];
-			songList  = document.forms['songs']['list'];
+            player    = window.document['player'];
+			fileInput = document.forms['fileInput']['file'];
+			playlist  = document.getElementById('playlist');
 			
-			songList.value = '';
+			player.addEventListener("playlistChanged", onPlaylistChanged, false);
+			player.addEventListener("currentItemChanged", onCurrentItemChanged, false);
         }
         
-        function putPlaylist()
-        {
-            alert("moo");
-            player.playlist = new Array(1, "2", 3.0);
-        }
-		
-		function fileDialog()
-		{
-			fileInput.click();
-		}
-		
-		function addFiles()
+        function addFile()
 		{
 			player.addItem(fileInput.value);
-			songList.value = player.playlist;
+		}
+		
+		function onPlaylistChanged(files, currentIndex)
+		{
+			var rows = playlist.rows.length;
+			for(i=1; i<rows; ++i) {
+				playlist.deleteRow(1);
+			}
+			
+			var current = player.currentIndex;
+		
+			files.forEach( function(elem, index) {
+				var count = playlist.rows.length;
+				var row = playlist.insertRow(count);
+				var cellNo     = row.insertCell(0);
+				var cellFile   = row.insertCell(1);
+				var cellRemove = row.insertCell(2);
+				
+				row.setAttribute
+					("class", 
+					 (index == current) ?
+						"playlistRowActive" :
+						(index % 2) ? "playlistRowEven" : "playlistRowOdd");
+								
+				cellNo  .appendChild(document.createTextNode(index+1));
+				cellFile.appendChild(document.createTextNode(elem));
+				
+				var remove = document.createElement('a');
+				remove.appendChild(document.createTextNode('x'));
+				cellRemove.appendChild(remove);
+				remove.setAttribute('href', '#');
+				remove.setAttribute('onclick', 'javascript:player.removeItem('+index+')');
+			});
+		}
+		
+		function onCurrentItemChanged(index)
+		{
+			onPlaylistChanged(player.playlist, index);
 		}
     </script>
 </head>
 <body onload="javascript:load()">
-    <div style="border: 1px solid #000000; display: inline-block;">
-        <embed name="player" type="application/x-vnd.FBBasicMediaPlayer"
-               width="100" height="100">
-    </div>
-    <br/>
-	
-	<form name="songs">
-		<textarea cols="100" rows="10" name="list" readonly>
-		</textarea>
-	</form>
-	<a href="javascript:fileDialog();">add files ...</a>
-	
-	<form name="fileInput" style="width:1px; height:1px;">
-		<input type="file" name="browse" size="1" onchange="javascript:addFiles();"> 
-	</form>
+	<div id="playerBody">
+		<div id="playerPlugin">
+			<embed name="player" type="application/x-vnd.FBBasicMediaPlayer"
+				   width="100" height="100">
+		</div>
+		<br/>
+		
+		<a class="button" href="#" onclick="javascript:player.play()">&gt;</a>
+		<a class="button" href="#" onclick="javascript:player.stop()">[]</a>
+		<a class="button" href="#" onclick="javascript:player.previous()">|&lt;&lt;</a>
+		<a class="button" href="#" onclick="javascript:player.next()">&gt;&gt;|</a>
+		
+		<table id="playlist">
+			<tr class="playlistHeader">
+				<th>#</th>
+				<th>file</th>
+				<th></th>
+			</tr>
+		</table>
+			
+		<form name="fileInput" style="width:1px; height:1px;">
+			<table>
+				<tr>
+					<td><input type="text" name="file" size="50"></td>
+					<td><a class="button" href="javascript:addFile()">add</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
 </body>
 </html>

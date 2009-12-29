@@ -20,6 +20,7 @@ Copyright 2009 Georg Fritzsche,
 #include <atlstr.h>
 #include <dshow.h>
 #include "JSAPI.h"
+#include "Win/PluginWindowWin.h"
 #include "../MediaPlayer.h"
 #include "error_mapping.h"
 
@@ -30,10 +31,12 @@ struct PlayerContext
     CComPtr<IGraphBuilder> spGraph;
     CComPtr<IMediaControl> spMediaControl;
     CComPtr<IMediaEvent>   spMediaEvent;
+	CComPtr<IVideoWindow>  spVideoWindow;
+	HWND hwnd;
 
 	std::string error;
 
-    PlayerContext() {}
+	PlayerContext() : hwnd(0) {}
 };
 
 PlayerContextPtr make_context()
@@ -44,13 +47,20 @@ PlayerContextPtr make_context()
     HRESULT hr =  context->spGraph.CoCreateInstance(CLSID_FilterGraph, 0, CLSCTX_INPROC_SERVER);
     if(FAILED(hr)) throw MediaPlayer::InitializationException("failed to create player");
     
-    context->spMediaControl = context->spGraph;
-    if(!context->spMediaControl) 
+	CComQIPtr<IMediaControl> spMediaControl = context->spGraph;
+    if(!spMediaControl) 
 		throw MediaPlayer::InitializationException("failed to QI for IMediaControl");
+	context->spMediaControl = spMediaControl;
 
-    context->spMediaEvent = context->spGraph;
-    if(!context->spMediaEvent) 
+    CComQIPtr<IMediaEvent> spMediaEvent = context->spGraph;
+    if(!spMediaEvent) 
 		throw MediaPlayer::InitializationException("failed to QI for IMediaEvent");
+	context->spMediaEvent = spMediaEvent;
+
+	CComQIPtr<IVideoWindow> spVideoWindow = context->spGraph;
+	if(!spVideoWindow) 
+		throw MediaPlayer::InitializationException("failed to QI for IVideoWindow");
+	context->spVideoWindow = spVideoWindow;
 
 	return context;
 }
@@ -61,12 +71,29 @@ MediaPlayer::MediaPlayer()
   , m_type("DirectShow")
 {
 	::CoInitializeEx(0, COINIT_MULTITHREADED);
-	m_context = make_context();
+
+	try
+	{
+		m_context = make_context();
+	}
+	catch(InitializationException& e)
+	{
+		if(!m_context)
+			m_context = PlayerContextPtr(new PlayerContext);
+		m_context->error = e.what();
+		throw;
+	}
 }
 
 MediaPlayer::~MediaPlayer()
 {
 
+}
+
+void MediaPlayer::setWindow(FB::PluginWindow* pluginWindow)
+{
+	FB::PluginWindowWin* wnd = reinterpret_cast<FB::PluginWindowWin*>(pluginWindow);
+	m_context->hwnd = wnd->getHWND();
 }
 
 const std::string& MediaPlayer::version() const
@@ -120,6 +147,15 @@ bool MediaPlayer::play(const std::string& file_)
 	}
 
 	std::swap(m_context, context);
+
+#if 0
+	m_context->spVideoWindow->put_Owner((OAHWND)m_context->hwnd);
+	m_context->spVideoWindow->put_WindowStyle(WS_CHILD | WS_CLIPSIBLINGS);
+
+	RECT rc;
+	::GetClientRect(m_context->hwnd, &rc);
+	m_context->spVideoWindow->SetWindowPosition(0, 0, rc.right, rc.bottom);
+#endif
 
     hr = m_context->spMediaControl->Run();
     if(FAILED(hr)) {

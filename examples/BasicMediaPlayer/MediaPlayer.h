@@ -20,6 +20,7 @@ Copyright 2009 Georg Fritzsche,
 #include <stdexcept>
 #include <string>
 
+namespace FB { class PluginWindow; };
 struct PlayerContext;
 typedef boost::shared_ptr<PlayerContext> PlayerContextPtr;
 
@@ -39,6 +40,8 @@ public:
 
     bool play(const std::string& file);
 	bool stop();
+
+	void setWindow(FB::PluginWindow*);
 
 private:
     boost::shared_ptr<PlayerContext> m_context;
