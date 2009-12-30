@@ -80,6 +80,7 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
+		virtual void registerEvent(const std::string& name);
         virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void registerEventInterface(BrowserObjectAPI *event);
