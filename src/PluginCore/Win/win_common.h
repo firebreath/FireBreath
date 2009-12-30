@@ -29,5 +29,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlctl.h>
+#include <dispex.h>
 
 using namespace ATL;

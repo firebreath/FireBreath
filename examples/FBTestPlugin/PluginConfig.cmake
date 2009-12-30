@@ -5,6 +5,7 @@
 
 set(PLUGIN_NAME "FBTestPlugin")
 set(PLUGIN_PREFIX "FBTP")
+set(COMPANY_NAME "FBDevTeam")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME FBTestPluginLib)
@@ -23,8 +24,6 @@ set(FBControl_GUID 9e506282-69d3-5aba-9c1d-15994b37f4ac)
 set(IFBComJavascriptObject_GUID a7f89003-620a-56e0-aeea-ec0e8da18fb3)
 set(FBComJavascriptObject_GUID 0861570f-19df-54f3-a7ed-4b6db6f943bc)
 set(IFBComEventSource_GUID abc530a7-7627-5b5c-9285-f43d6c23c957)
-set(INSTALL_PRODUCT_GUID f07b6a23-790f-5aa3-b326-44846d168a37)
-set(INSTALL_UPGRADE_GUID 20a1c791-c3fb-5929-aacc-ba4c813cc680)
 
 # these are the pieces that are relevant to using it from Javascript
 set(ACTIVEX_PROGID "FBDevTeam.FBTestPlugin")

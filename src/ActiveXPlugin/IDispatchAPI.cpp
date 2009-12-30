@@ -25,6 +25,36 @@ IDispatchAPI::~IDispatchAPI(void)
 {
 }
 
+void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
+{
+    USES_CONVERSION;
+    HRESULT hr;
+    DISPID dispid;
+
+    hr = m_obj->GetNextDispID(fdexEnumAll, DISPID_STARTENUM, &dispid);
+    while (SUCCEEDED(hr)) {
+        CComBSTR curName;
+        hr = m_obj->GetMemberName(dispid, &curName);
+        CW2A cStr(curName);
+        nameVector.push_back(std::string(cStr));
+        hr = m_obj->GetNextDispID(fdexEnumAll, dispid, &dispid);
+    }
+}
+
+size_t IDispatchAPI::getMemberCount()
+{
+    HRESULT hr;
+    DISPID dispid;
+    size_t count(0);
+
+    hr = m_obj->GetNextDispID(fdexEnumAll, DISPID_STARTENUM, &dispid);
+    while (SUCCEEDED(hr)) {
+        count++;
+        hr = m_obj->GetNextDispID(fdexEnumAll, dispid, &dispid);
+    }
+    return count;
+}
+
 DISPID IDispatchAPI::getIDForName(std::string name)
 {
     USES_CONVERSION;
@@ -33,13 +63,9 @@ DISPID IDispatchAPI::getIDForName(std::string name)
     DISPID dispId(-1);
 
     HRESULT hr = E_NOTIMPL;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p != NULL) {
-        hr = dispex->GetDispID(CComBSTR(name.c_str()),
-            fdexNameEnsure | fdexNameCaseSensitive | 0x10000000, &dispId);
-    } else {
-        hr = m_obj->GetIDsOfNames(IID_NULL, &oleStr, 1, LOCALE_SYSTEM_DEFAULT, &dispId);
-    }
+    hr = m_obj->GetDispID(CComBSTR(name.c_str()),
+        fdexNameEnsure | fdexNameCaseSensitive | 0x10000000, &dispId);
+
     if (SUCCEEDED(hr)) {
         return dispId;
     } else if (hr == E_NOTIMPL) {
@@ -88,14 +114,8 @@ FB::variant IDispatchAPI::GetProperty(std::string propertyName)
     EXCEPINFO eInfo;
 
     HRESULT hr = E_NOTIMPL;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p) {
-        hr = dispex->InvokeEx(getIDForName(propertyName), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
-            &res, &eInfo, NULL);
-    } else {
-        hr = m_obj->Invoke(getIDForName(propertyName), IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
-    }
+    hr = m_obj->InvokeEx(getIDForName(propertyName), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET,
+        &params, &res, &eInfo, NULL);
 
     if (SUCCEEDED(hr)) {
         return m_browser->getVariant(&res);
@@ -122,14 +142,8 @@ void IDispatchAPI::SetProperty(std::string propertyName, const FB::variant value
 
     HRESULT hr = E_NOTIMPL;
     DISPID id(getIDForName(propertyName));
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p) {
-        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
-            &res, &eInfo, NULL);
-    } else {
-        hr = m_obj->Invoke(id, IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_PROPERTYPUT, &params, &res, NULL, NULL);
-    }
+    hr = m_obj->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
+        &res, &eInfo, NULL);
 
     if (!SUCCEEDED(hr)) {
         throw FB::script_error("Could not set property");

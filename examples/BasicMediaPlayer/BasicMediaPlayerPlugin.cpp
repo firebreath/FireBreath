@@ -13,10 +13,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
+#define _WIN32_DCOM
+
 #include "NpapiTypes.h"
 #include "atlbase.h"
 #include "BasicMediaPlayer.h"
-
+#include "Win/PluginWindowWin.h"
 #include "BasicMediaPlayerPlugin.h"
 
 void BasicMediaPlayerPlugin::StaticInitialize()
@@ -62,4 +64,13 @@ bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
+}
+
+bool BasicMediaPlayerPlugin::onAttached(FB::AttachedEvent* evt)
+{
+	FB::JSAPI* js = getRootJSAPI();
+	BasicMediaPlayer* player = reinterpret_cast<BasicMediaPlayer*>(js);
+	//bmp->setWindow(reinterpret_cast<FB::PluginWindowWin*>(m_Window)->getHWND());
+	player->setWindow(m_Window);
+	return true;
 }

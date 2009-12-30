@@ -36,6 +36,8 @@ TEST(JSAPIAuto_Methods)
     PRINT_TESTNAME;
 
     using boost::assign::list_of;
+	using namespace FB;
+
     FB::AutoPtr<FB::JSAPI> test = new TestObjectJSAPIAuto;
 
     {

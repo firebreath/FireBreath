@@ -61,6 +61,7 @@ protected:
     CComQIPtr<IPropertyNotifySink, &IID_IPropertyNotifySink> m_propNotify;
     
     bool m_valid;
+    std::vector<std::string> m_memberList;
 
 public:
     /* IConnectionPointContainer members */
@@ -353,7 +354,33 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetMemberName(DISPID id, BSTR *pbstrNam
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid)
 {
-    return E_NOTIMPL;
+    if (m_api.ptr() == NULL)
+        return S_FALSE;
+
+    if (m_memberList.size() != m_api->getMemberCount()) {
+        m_memberList.clear();
+        m_api->getMemberNames(m_memberList);
+    }
+    if (id == DISPID_STARTENUM) {
+        *pid = AxIdMap.getIdForValue(m_memberList[0]);
+        return S_OK;
+    } 
+    std::string str = AxIdMap.getValueForId<std::string>(id);
+
+    std::vector<std::string>::iterator it;
+    for (it = m_memberList.begin(); it != m_memberList.end(); it++) {
+        if (str == *it) {
+            it++;
+            if (AxIdMap.getIdForValue(*it) > -1 || it == m_memberList.end())
+                break;
+        }
+    }
+    if (it != m_memberList.end()) {
+        *pid = AxIdMap.getIdForValue(*it);
+    } else {
+        return S_FALSE;
+    }
+    return S_OK;
 }
 
 template <class T, class IDISP, const IID* piid>

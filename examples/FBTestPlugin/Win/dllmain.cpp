@@ -18,7 +18,5 @@ STDAPI DllRegisterServer(void);
 // DLL Entry Point
 extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved)
 {
-	FbPerUserRegistration perUser(true);
-    
     return _AtlModule.DllMain(dwReason, lpReserved); 
 }
