@@ -12,6 +12,7 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
+include(${CMAKE_DIR}/wix.cmake)
 
 get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
@@ -63,3 +64,43 @@ function (include_platform)
     include(${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
 
 endfunction(include_platform)
+
+function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
+    if (WIN32 AND WIX_FOUND)
+        set(SOURCELIST )
+        FOREACH(_curFile ${WIX_SOURCEFILES})
+            GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
+            configure_file(${_curFile} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+            message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
+            set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+        ENDFOREACH()
+        
+        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${CMAKE_DIR}\\FixFragment.xslt")
+        set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
+        set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
+        WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)
+        set (SOURCELIST ${SOURCELIST} ${WIXDLLWXS_LIST})
+        WIX_COMPILE(SOURCELIST WIXOBJ_LIST WIXDLLWXS_LIST)
+        SET (WIX_FULLOBJLIST ${WIXOBJ_LIST} )
+
+        SET (WIX_DEST ${WIX_OUTDIR}/${PROJNAME}.msi)
+
+        set_source_files_properties(${SOURCELIST} PROPERTIES HEADER_FILE_ONLY 1)
+        SOURCE_GROUP(Sources FILES ${WIX_SOURCEFILES})
+        SOURCE_GROUP(Generated FILES ${SOURCELIST})
+        set_source_files_properties(${WIXOBJ_LIST} ${WIX_DEST} PROPERTIES GENERATED 1)
+        SOURCE_GROUP(Binary FILES ${WIXOBJ_LIST})
+        set (WIX_SOURCES
+                ${CMAKE_DIR}/dummy.cpp
+                ${WIX_SOURCEFILES}
+                ${SOURCELIST}
+                ${WIXOBJ_LIST}
+            )
+        ADD_LIBRARY(${PROJNAME}_WiXInstall STATIC ${WIX_SOURCES})
+
+        WIX_LINK(${PROJNAME}_WiXInstall ${WIX_DEST} WIX_FULLOBJLIST NONE)
+
+        ADD_DEPENDENCIES(${PROJNAME}_WiXInstall ${WIX_PROJDEP})
+
+    endif()
+endfunction(add_wix_installer)
