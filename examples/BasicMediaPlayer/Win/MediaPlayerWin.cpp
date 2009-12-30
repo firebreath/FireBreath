@@ -14,6 +14,7 @@ Copyright 2009 Georg Fritzsche,
 \**********************************************************/
 
 #define _WIN32_DCOM
+#pragma warning(disable : 4995)
 
 #include <atlbase.h>
 #include <atlcom.h>
@@ -24,7 +25,6 @@ Copyright 2009 Georg Fritzsche,
 #include "../MediaPlayer.h"
 #include "error_mapping.h"
 
-#pragma warning(disable:4995)
 
 struct PlayerContext 
 {
