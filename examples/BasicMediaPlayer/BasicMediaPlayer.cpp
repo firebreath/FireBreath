@@ -44,6 +44,9 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     registerProperty("playlist",     make_property(this, &BasicMediaPlayer::playlist,
                                                          &BasicMediaPlayer::setPlaylist));
 
+	registerEvent("playlistChanged");
+	registerEvent("currentItemChanged");
+
     try 
     {
         m_player  = MediaPlayerPtr(new MediaPlayer);
