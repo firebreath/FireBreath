@@ -261,10 +261,15 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
     if (m_api.ptr() == NULL || !AxIdMap.idExists(id)) {
         return DISP_E_MEMBERNOTFOUND;
     }
-    try {
+
+    try 
+    {
         std::string sName = AxIdMap.getValueForId<std::string>(id);
 
         if (wFlags & DISPATCH_PROPERTYGET) {
+            if(!pvarRes)
+                return E_INVALIDARG;
+
             switch(id) {
                 case DISPID_READYSTATE:
                     CComVariant(this->m_readyState).Detach(pvarRes);
@@ -276,6 +281,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
         }
 
         if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(sName)) {
+
+            if(!pvarRes)
+                return E_INVALIDARG;
 
             FB::variant rVal = m_api->GetProperty(sName);
 
@@ -295,7 +303,8 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             }
             FB::variant rVal = m_api->Invoke(sName, params);
 
-            m_host->getComVariant(pvarRes, rVal);
+            if(pvarRes)
+                m_host->getComVariant(pvarRes, rVal);
 
         } else {
             throw FB::invalid_member("Invalid method or property name");
