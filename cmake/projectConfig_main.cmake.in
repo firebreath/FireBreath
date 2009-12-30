@@ -49,14 +49,6 @@ foreach(TemplateFile ${TEMPLATELIST})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
-if (WIN32)
-    configure_file(${FB_ROOT_DIR}/Installer/WiX/Installer.wixproj ${BIN_DIR}/${PLUGIN_NAME}/WiX/${PLUGIN_PREFIX}_WiXInstaller.wixproj)
-    configure_file(${FB_ROOT_DIR}/Installer/WiX/Product.wxs ${BIN_DIR}/${PLUGIN_NAME}/WiX/Product.wxs)
-    message("Including WiX project ${PLUGIN_PREFIX}_WiXInstaller")
-    #include_external_msproject(${PLUGIN_PREFIX}_WiXInstaller ${BIN_DIR}/${PLUGIN_NAME}/WiX/${PLUGIN_PREFIX}_WiXInstaller.wixproj)
-endif(WIN32)
-
-
 set(PLUGIN_INTERNAL_DEPS
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ${PLUGIN_PREFIX}_NpapiPlugin

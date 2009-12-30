@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+    <Product Id="@{GUID.generate("INSTPROD")}" Name="${PLUGIN_NAME}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="@{GUID.generate("INSTUPGR")}">
+        <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${PLUGIN_NAME} plugin" InstallScope="perUser" />
+        <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
+
+        <Directory Id="TARGETDIR" Name="SourceDir">
+            <Directory Id="LocalAppDataFolder">
+                <Directory Id="INSTALLDIR" Name="${COMPANY_NAME}">
+                    <Directory Id="INSTALLDIR" Name="${PLUGIN_NAME}">
+                        <Component Id="InstallFolderComponent" Guid="24ED0909-F712-49E7-8F79-B811B28C9BE6">
+                            <RemoveFolder Id="INSTALLDIR" On="uninstall" />
+                            <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}" Name="Version" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
+                        </Component>
+                    </Directory>
+                </Directory>
+            </Directory>
+        </Directory>
+
+        <Feature Id="MainPluginFeature" Title="${FBSTRING_ProductName}" Level="1">
+            <ComponentGroupRef Id="PluginDLLGroup"/>
+            <ComponentRef Id="InstallFolderComponent"/>
+        </Feature>
+    </Product>
+</Wix>

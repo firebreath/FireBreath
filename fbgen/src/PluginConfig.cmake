@@ -7,6 +7,7 @@
 
 set(PLUGIN_NAME "@{PLUGIN.ident}")
 set(PLUGIN_PREFIX "@{PLUGIN.prefix}")
+set(COMPANY_NAME "@{COMPANY.ident}")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME @{PLUGIN.ident}Lib)
@@ -25,8 +26,6 @@ set(FBControl_GUID @{GUID.generate("CONTROL")})
 set(IFBComJavascriptObject_GUID @{GUID.generate("JSIF")})
 set(FBComJavascriptObject_GUID @{GUID.generate("JSOBJ")})
 set(IFBComEventSource_GUID @{GUID.generate("EVTSRC")})
-set(INSTALL_PRODUCT_GUID @{GUID.generate("INSTPROD")})
-set(INSTALL_UPGRADE_GUID @{GUID.generate("INSTUPGR")})
 
 # these are the pieces that are relevant to using it from Javascript
 set(ACTIVEX_PROGID "@{COMPANY.ident}.@{PLUGIN.ident}")
