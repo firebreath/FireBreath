@@ -28,6 +28,7 @@ Release/*
 .bzr/*
 .git
 .git/*
+.fbgen.cfg
 build/
 build/*
 buildex/
