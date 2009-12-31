@@ -33,19 +33,19 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
 
     registerMethod  ("play",         make_method  (this, &BasicMediaPlayer::play));
     registerMethod  ("stop",         make_method  (this, &BasicMediaPlayer::stop));
-	registerMethod  ("next",         make_method  (this, &BasicMediaPlayer::next));
-	registerMethod  ("previous",     make_method  (this, &BasicMediaPlayer::previous));
+    registerMethod  ("next",         make_method  (this, &BasicMediaPlayer::next));
+    registerMethod  ("previous",     make_method  (this, &BasicMediaPlayer::previous));
     registerMethod  ("addItem",      make_method  (this, &BasicMediaPlayer::addEntry));
-	registerMethod  ("removeItem",   make_method  (this, &BasicMediaPlayer::removeEntry));
+    registerMethod  ("removeItem",   make_method  (this, &BasicMediaPlayer::removeEntry));
 
     registerProperty("version",      make_property(this, &BasicMediaPlayer::version));
     registerProperty("lastError",    make_property(this, &BasicMediaPlayer::lastError));
-	registerProperty("currentIndex", make_property(this, &BasicMediaPlayer::currentIndex));
+    registerProperty("currentIndex", make_property(this, &BasicMediaPlayer::currentIndex));
     registerProperty("playlist",     make_property(this, &BasicMediaPlayer::playlist,
                                                          &BasicMediaPlayer::setPlaylist));
 
-	registerEvent("playlistChanged");
-	registerEvent("currentItemChanged");
+    registerEvent("playlistChanged");
+    registerEvent("currentItemChanged");
 
     try 
     {
@@ -65,105 +65,105 @@ BasicMediaPlayer::~BasicMediaPlayer()
 
 bool BasicMediaPlayer::play(const FB::CatchAll& catchall)
 {
-	const FB::VariantList& args = catchall.value;
+    const FB::VariantList& args = catchall.value;
 
-	if(args.size() == 0)
-	{
-		if(!m_playlist.size())
-			return false;
-		return m_player->play(m_playlist[m_currentIndex]);
-	}
-	else if(args.size() == 1)
-	{
-		const FB::variant& var = args.front();
-		const std::type_info& ti = var.get_type();
+    if(args.size() == 0)
+    {
+        if(!m_playlist.size())
+            return false;
+        return m_player->play(m_playlist[m_currentIndex]);
+    }
+    else if(args.size() == 1)
+    {
+        const FB::variant& var = args.front();
+        const std::type_info& ti = var.get_type();
 
-		if((ti == typeid(std::string))) 
-		{
-			m_playlist.push_back(var.cast<std::string>());
-			m_currentIndex = m_playlist.size() - 1;
-			fireCurrentItemChanged();
-			return m_player->play(m_playlist.back());
-		} 
-		else 
-		{
-			long idx = var.convert_cast<long>();
-			if((idx < 0) || (idx >= m_playlist.size())) {
-				return false;
-			}
+        if((ti == typeid(std::string))) 
+        {
+            m_playlist.push_back(var.cast<std::string>());
+            m_currentIndex = m_playlist.size() - 1;
+            fireCurrentItemChanged();
+            return m_player->play(m_playlist.back());
+        } 
+        else 
+        {
+            long idx = var.convert_cast<long>();
+            if((idx < 0) || (idx >= m_playlist.size())) {
+                return false;
+            }
 
-			if(m_currentIndex != idx) {
-				m_currentIndex = idx;
-				fireCurrentItemChanged();
-			}
-			
-			return m_player->play(m_playlist[idx]);
-		}
-	}
+            if(m_currentIndex != idx) {
+                m_currentIndex = idx;
+                fireCurrentItemChanged();
+            }
+            
+            return m_player->play(m_playlist[idx]);
+        }
+    }
 
-	return false;
+    return false;
 }
 
 bool BasicMediaPlayer::stop()
 {
-	return m_player->stop();
+    return m_player->stop();
 }
 
 bool BasicMediaPlayer::next()
 {
-	if(m_currentIndex >= (m_playlist.size()-1))
-		return false;
-	bool result = m_player->play(m_playlist[++m_currentIndex]);
-	if(result)
-		fireCurrentItemChanged();
-	return result;
+    if(m_currentIndex >= (m_playlist.size()-1))
+        return false;
+    bool result = m_player->play(m_playlist[++m_currentIndex]);
+    if(result)
+        fireCurrentItemChanged();
+    return result;
 }
 
 bool BasicMediaPlayer::previous()
 {
-	if(m_currentIndex < 1)
-		return false;
-	bool result = m_player->play(m_playlist[--m_currentIndex]);
-	if(result)
-		fireCurrentItemChanged();
-	return result;
+    if(m_currentIndex < 1)
+        return false;
+    bool result = m_player->play(m_playlist[--m_currentIndex]);
+    if(result)
+        fireCurrentItemChanged();
+    return result;
 }
 
 bool BasicMediaPlayer::addEntry(const std::string& entry)
 {
-	if(!entry.length())
-		return false;
+    if(!entry.length())
+        return false;
     m_playlist.push_back(entry);
-	firePlaylistChanged();
-	return true;
+    firePlaylistChanged();
+    return true;
 }
 
 bool BasicMediaPlayer::removeEntry(const FB::variant& arg)
 {
-	const std::type_info& ti = arg.get_type();
+    const std::type_info& ti = arg.get_type();
 
-	if(ti == typeid(std::string)) {
-		PlayList::iterator it =	std::find(m_playlist.begin(), m_playlist.end(),
-										  arg.cast<std::string>());
-		if(it == m_playlist.end())
-			return false;
-		m_playlist.erase(it);
-		if(m_currentIndex > 0)
-			--m_currentIndex;
-		firePlaylistChanged();
-		return true;
-	} 
+    if(ti == typeid(std::string)) {
+        PlayList::iterator it =    std::find(m_playlist.begin(), m_playlist.end(),
+                                          arg.cast<std::string>());
+        if(it == m_playlist.end())
+            return false;
+        m_playlist.erase(it);
+        if(m_currentIndex > 0)
+            --m_currentIndex;
+        firePlaylistChanged();
+        return true;
+    } 
 
-	long idx = arg.convert_cast<long>();
-	if((idx < 0) || (idx >= m_playlist.size())) {
-		return false;
-	}
+    long idx = arg.convert_cast<long>();
+    if((idx < 0) || (idx >= m_playlist.size())) {
+        return false;
+    }
 
-	m_playlist.erase(m_playlist.begin() + idx);
-	if(m_currentIndex > 0)
-		--m_currentIndex;
-	firePlaylistChanged();
-	return true;
+    m_playlist.erase(m_playlist.begin() + idx);
+    if(m_currentIndex > 0)
+        --m_currentIndex;
+    firePlaylistChanged();
+    return true;
 }
 
 std::string BasicMediaPlayer::version() const
@@ -173,13 +173,13 @@ std::string BasicMediaPlayer::version() const
 
 std::string BasicMediaPlayer::lastError() const
 {
-	return m_player->lastError();
+    return m_player->lastError();
 }
 
 BasicMediaPlayer::PlayList::size_type 
 BasicMediaPlayer::currentIndex() const
 {
-	return m_currentIndex;
+    return m_currentIndex;
 }
 
 FB::JSOutArray BasicMediaPlayer::playlist() const
@@ -190,27 +190,27 @@ FB::JSOutArray BasicMediaPlayer::playlist() const
 void BasicMediaPlayer::setPlaylist(PlayList& list)
 {
     m_playlist = list;
-	m_currentIndex = 0;
-	firePlaylistChanged();
+    m_currentIndex = 0;
+    firePlaylistChanged();
 }
 
 void BasicMediaPlayer::setWindow(FB::PluginWindow* win)
 {
-	m_player->setWindow(win);
+    m_player->setWindow(win);
 }
 
 void BasicMediaPlayer::firePlaylistChanged()
 {
-	FireEvent
-		("playlistChanged", 
-		 FB::variant_list_of
-		   (FB::make_variant_list(m_playlist))
-		   (m_currentIndex));
+    FireEvent
+        ("playlistChanged", 
+         FB::variant_list_of
+           (FB::make_variant_list(m_playlist))
+           (m_currentIndex));
 }
 
 void BasicMediaPlayer::fireCurrentItemChanged()
 {
-	FireEvent
-		("currentItemChanged",
-		 FB::variant_list_of(m_currentIndex));
+    FireEvent
+        ("currentItemChanged",
+         FB::variant_list_of(m_currentIndex));
 }
