@@ -68,9 +68,8 @@ bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt)
 
 bool BasicMediaPlayerPlugin::onAttached(FB::AttachedEvent* evt)
 {
-	FB::JSAPI* js = getRootJSAPI();
-	BasicMediaPlayer* player = reinterpret_cast<BasicMediaPlayer*>(js);
-	//bmp->setWindow(reinterpret_cast<FB::PluginWindowWin*>(m_Window)->getHWND());
-	player->setWindow(m_Window);
-	return true;
+    FB::JSAPI* js = getRootJSAPI();
+    BasicMediaPlayer* player = reinterpret_cast<BasicMediaPlayer*>(js);
+    player->setWindow(evt->getStatus() ? m_Window : 0);
+    return true;
 }
