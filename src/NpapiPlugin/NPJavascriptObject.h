@@ -38,8 +38,7 @@ namespace FB { namespace Npapi {
         virtual ~NPJavascriptObject(void);
 
     protected:
-        virtual bool callAddEventListener(std::vector<variant> &args);
-        virtual bool callRemoveEventListener(std::vector<variant> &args);
+        virtual bool callSetEventListener(std::vector<variant> &args, bool add);
 
     protected:
         void Invalidate();
