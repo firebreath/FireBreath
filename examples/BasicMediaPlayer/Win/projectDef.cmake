@@ -56,6 +56,7 @@ set(WIX_HEAT_FLAGS
     -cg PluginDLLGroup  # Set the Component group name
     -dr INSTALLDIR      # Set the directory ID to put the files in
     )
+    
 add_wix_installer( ${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/BasicMediaPlayerInstaller.wxs
     PluginDLLGroup

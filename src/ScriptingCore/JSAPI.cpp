@@ -21,7 +21,7 @@ using namespace FB;
 
 JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
 {
-    setDefaultEventMethod("onload", NULL);
+    registerEvent("onload");
 }
 
 JSAPI::~JSAPI(void)
