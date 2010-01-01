@@ -44,8 +44,8 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     registerProperty("playlist",     make_property(this, &BasicMediaPlayer::playlist,
                                                          &BasicMediaPlayer::setPlaylist));
 
-    registerEvent("playlistChanged");
-    registerEvent("currentItemChanged");
+	registerEvent("onplaylistChanged");
+	registerEvent("oncurrentItemChanged");
 
     try 
     {
@@ -202,7 +202,7 @@ void BasicMediaPlayer::setWindow(FB::PluginWindow* win)
 void BasicMediaPlayer::firePlaylistChanged()
 {
     FireEvent
-        ("playlistChanged", 
+        ("onplaylistChanged", 
          FB::variant_list_of
            (FB::make_variant_list(m_playlist))
            (m_currentIndex));
@@ -211,6 +211,6 @@ void BasicMediaPlayer::firePlaylistChanged()
 void BasicMediaPlayer::fireCurrentItemChanged()
 {
     FireEvent
-        ("currentItemChanged",
+        ("oncurrentItemChanged",
          FB::variant_list_of(m_currentIndex));
 }

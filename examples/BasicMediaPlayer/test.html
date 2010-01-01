@@ -68,23 +68,29 @@
         var fileInput;
         var playlist;
         
+        function $(name)
+        {
+            return document.getElementById(name);
+        }
+
         function addEvent(obj, name, func)
         {
-            if (obj.addEventListener) {
+            if (window.addEventListener) {
                 obj.addEventListener(name, func, false); 
-            } else if (obj.attachEvent) {
-                obj.attachEvent(name, func);
+            } else {
+                //alert("obj.attachEvent('on"+name+"', func);");
+                obj.attachEvent("on"+name, func);
             }
         }
         
         function load()
         {
-            player    = window.document['player'];
-            fileInput = document.forms['fileInput']['file'];
-            playlist  = document.getElementById('playlist');
+            player    = $('player');
+            fileInput = $('fileField');
+            playlist  = $('playlist');
             
-            addEvent(player, "playlistChanged",    onPlaylistChanged,    false);
-            addEvent(player, "currentItemChanged", onCurrentItemChanged, false);
+            addEvent(player, "playlistChanged",    onPlaylistChanged);
+            addEvent(player, "currentItemChanged", onCurrentItemChanged);
         }
         
         function addFile()
@@ -92,8 +98,34 @@
             player.addItem(fileInput.value);
         }
         
+        function addRow(idx, file, active)
+        {
+            var row = playlist.insertRow(idx+1);
+            var cellNo     = row.insertCell(0)
+            var cellFile   = row.insertCell(1);
+            var cellRemove = row.insertCell(2);            
+        
+            var cellClass = active ?
+                    "playlistRowActive" :
+                    (idx % 2) ? "playlistRowEven" : "playlistRowOdd";
+            cellNo.setAttribute("class", cellClass);
+            cellFile.setAttribute("class", cellClass);
+            cellRemove.setAttribute("class", cellClass);
+            
+            cellNo  .appendChild(document.createTextNode(idx+1));
+            cellFile.appendChild(document.createTextNode(elem));
+            
+            var remove = document.createElement('a');
+            remove.appendChild(document.createTextNode('x'));
+            cellRemove.appendChild(remove);
+            remove.setAttribute('href', '#');
+            remove.setAttribute('onclick', 'javascript:player.removeItem('+idx+'); return false;');
+        }
+        
         function onPlaylistChanged(files, currentIndex)
         {
+            alert(files);
+            alert(currentIndex);
             var rows = playlist.rows.length;
             for(i=1; i<rows; ++i) {
                 playlist.deleteRow(1);
@@ -101,28 +133,11 @@
             
             var current = player.currentIndex;
         
-            files.forEach( function(elem, index) {
+            for (var index = 0; index < files.length; index++) {
+                elem = files[index];
                 var count = playlist.rows.length;
-                var row = playlist.insertRow(count);
-                var cellNo     = row.insertCell(0);
-                var cellFile   = row.insertCell(1);
-                var cellRemove = row.insertCell(2);
-                
-                row.setAttribute
-                    ("class", 
-                     (index == current) ?
-                        "playlistRowActive" :
-                        (index % 2) ? "playlistRowEven" : "playlistRowOdd");
-                                
-                cellNo  .appendChild(document.createTextNode(index+1));
-                cellFile.appendChild(document.createTextNode(elem));
-                
-                var remove = document.createElement('a');
-                remove.appendChild(document.createTextNode('x'));
-                cellRemove.appendChild(remove);
-                remove.setAttribute('href', '#');
-                remove.setAttribute('onclick', 'javascript:player.removeItem('+index+')');
-            });
+                addRow (index, elem, (index == current));
+            };
         }
         
         function onCurrentItemChanged(index)
@@ -131,11 +146,11 @@
         }
     </script>
 </head>
-<body onload="javascript:load()">
+<body onload="load()">
     <div id="playerBody">
         <div id="playerPlugin">
-            <embed name="player" type="application/x-vnd.FBBasicMediaPlayer"
-                   width="100" height="100">
+            <object id="player" type="application/x-vnd.FBBasicMediaPlayer"
+                   width="100" height="100"></object>
         </div>
         <br/>
         
@@ -155,7 +170,7 @@
         <form name="fileInput" style="width:1px; height:1px;">
             <table>
                 <tr>
-                    <td><input type="text" name="file" size="50"></td>
+                    <td><input type="text" name="file" id="fileField" size="50"></td>
                     <td><a class="button" href="javascript:addFile()">add</a></td>
                 </tr>
             </table>

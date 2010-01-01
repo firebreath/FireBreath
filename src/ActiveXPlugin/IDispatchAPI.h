@@ -41,7 +41,7 @@ public:
 
 protected:
     FB::AutoPtr<ActiveXBrowserHost> m_browser;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> m_obj;
+    CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
 
 protected:
     // Utility functions
