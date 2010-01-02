@@ -292,6 +292,11 @@ namespace FB
         }
 
         template<typename T>
+        bool is_of_type() const {
+            return (get_type() == typeid(T));
+        }
+
+        template<typename T>
         const T& cast() const {
             if (get_type() != typeid(T)) {
                 throw bad_variant_cast(get_type(), typeid(T));

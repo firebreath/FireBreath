@@ -107,4 +107,20 @@ TEST(VariantTest)
             CHECK(value.second.convert_cast<std::string>() == result.second.convert_cast<std::string>());
         }
     }
+
+    // is_of_type<>()
+    {
+        const std::string stringVal = "foo";
+        const long longVal = 1;
+        const char charArrVal[] = "bar";
+        
+        FB::variant stringVar(stringVal);
+        CHECK(( stringVar.is_of_type<std::string>() ));
+
+        FB::variant longVar(longVal);
+        CHECK(( longVar.is_of_type<long>() ));
+
+        FB::variant charArrVar(charArrVal);
+        CHECK(( charArrVar.is_of_type<std::string>() ));
+    }
 }
