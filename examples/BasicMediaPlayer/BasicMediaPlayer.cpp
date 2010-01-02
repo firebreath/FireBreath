@@ -44,8 +44,8 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     registerProperty("playlist",     make_property(this, &BasicMediaPlayer::playlist,
                                                          &BasicMediaPlayer::setPlaylist));
 
-	registerEvent("onplaylistChanged");
-	registerEvent("oncurrentItemChanged");
+    registerEvent("onplaylistChanged");
+    registerEvent("oncurrentItemChanged");
 
     try 
     {
@@ -76,14 +76,28 @@ bool BasicMediaPlayer::play(const FB::CatchAll& catchall)
     else if(args.size() == 1)
     {
         const FB::variant& var = args.front();
-        const std::type_info& ti = var.get_type();
-
-        if((ti == typeid(std::string))) 
+       
+        if((var.is_of_type<std::string>())) 
         {
-            m_playlist.push_back(var.cast<std::string>());
-            m_currentIndex = m_playlist.size() - 1;
-            fireCurrentItemChanged();
-            return m_player->play(m_playlist.back());
+            const std::string& entry = var.cast<std::string>();
+            PlayList::iterator it = std::find(m_playlist.begin(), m_playlist.end(), entry);
+
+            if(it != m_playlist.end()) 
+            {
+                PlayList::size_type idx = std::distance(m_playlist.begin(), it);
+                if(idx != m_currentIndex) {
+                    m_currentIndex = idx;
+                    fireCurrentItemChanged();
+                }
+                return m_player->play(*it);
+            }
+            else 
+            {
+                m_playlist.push_back(var.cast<std::string>());
+                m_currentIndex = m_playlist.size() - 1;
+                fireCurrentItemChanged();
+                return m_player->play(m_playlist.back());
+            }
         } 
         else 
         {
@@ -140,11 +154,11 @@ bool BasicMediaPlayer::addEntry(const std::string& entry)
 
 bool BasicMediaPlayer::removeEntry(const FB::variant& arg)
 {
-    const std::type_info& ti = arg.get_type();
-
-    if(ti == typeid(std::string)) {
-        PlayList::iterator it =    std::find(m_playlist.begin(), m_playlist.end(),
-                                          arg.cast<std::string>());
+    if(arg.is_of_type<std::string>()) 
+    {
+        PlayList::iterator it = 
+            std::find(m_playlist.begin(), m_playlist.end(),
+                      arg.cast<std::string>());
         if(it == m_playlist.end())
             return false;
         m_playlist.erase(it);
