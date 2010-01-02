@@ -108,11 +108,11 @@
             var cellClass = active ?
                     "playlistRowActive" :
                     (idx % 2) ? "playlistRowEven" : "playlistRowOdd";
-            cellNo.setAttribute("class", cellClass);
-            cellFile.setAttribute("class", cellClass);
+            cellNo    .setAttribute("class", cellClass);
+            cellFile  .setAttribute("class", cellClass);
             cellRemove.setAttribute("class", cellClass);
             
-            cellNo  .appendChild(document.createTextNode(idx+1));
+            cellNo  .appendChild(document.createTextNode(active ? ('>'+(idx+1)) : (idx+1)));
             cellFile.appendChild(document.createTextNode(elem));
             
             var remove = document.createElement('a');
@@ -124,8 +124,8 @@
         
         function onPlaylistChanged(files, currentIndex)
         {
-            alert(files);
-            alert(currentIndex);
+            //alert(files);
+            //alert(currentIndex);
             var rows = playlist.rows.length;
             for(i=1; i<rows; ++i) {
                 playlist.deleteRow(1);
@@ -150,7 +150,7 @@
     <div id="playerBody">
         <div id="playerPlugin">
             <object id="player" type="application/x-vnd.FBBasicMediaPlayer"
-                   width="100" height="100"></object>
+                   width="300" height="200"></object>
         </div>
         <br/>
         

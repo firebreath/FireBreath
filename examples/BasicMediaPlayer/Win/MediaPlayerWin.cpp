@@ -16,6 +16,8 @@ Copyright 2009 Georg Fritzsche,
 #define _WIN32_DCOM
 #pragma warning(disable : 4995)
 
+#include <list>
+#include <boost/assign/list_of.hpp>
 #include <atlbase.h>
 #include <atlcom.h>
 #include <atlstr.h>
@@ -41,6 +43,13 @@ struct PlayerContext
 
 namespace 
 {
+    std::string vfwErrorString(const std::string& what, HRESULT hr)
+    {
+        std::ostringstream os;
+        os << what << ": " << mapVfwError(hr);
+        return os.str();
+    }
+
     PlayerContextPtr make_context(HWND hwnd)
     {
         PlayerContextPtr context(new PlayerContext);
@@ -68,12 +77,44 @@ namespace
 
         return context;
     }
-    
-    std::string vfwErrorString(const std::string& what, HRESULT hr)
+
+    bool activateVideo(PlayerContextPtr context)
     {
-        std::ostringstream os;
-        os << what << ": " << mapVfwError(hr);
-        return os.str();
+        if(!context->hwnd)
+            return true;
+
+        static const std::list<HRESULT> ignore = 
+            boost::assign::list_of(E_PROP_ID_UNSUPPORTED)(E_NOINTERFACE);
+        HRESULT hr;
+
+        hr = context->spVideoWindow->put_Owner((OAHWND)context->hwnd);
+        
+        if(std::find(ignore.begin(), ignore.end(), hr) != ignore.end())
+            return true;
+
+    
+        if(FAILED(hr)) {
+            context->error = vfwErrorString("IVideoWindow::put_Owner() failed", hr);
+            return false;
+        }
+
+        const long windowStyle = WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+        hr = context->spVideoWindow->put_WindowStyle(windowStyle);
+        if(FAILED(hr)) {
+            context->error = vfwErrorString("IVideoWindow::put_WindowStyle() failed", hr);
+            return false;
+        }
+
+        RECT rect;
+        ::GetClientRect(context->hwnd, &rect);
+        hr = context->spVideoWindow->SetWindowPosition
+                (rect.left, rect.top, rect.right, rect.bottom);
+        if(FAILED(hr)) {
+            context->error = vfwErrorString("IVideoWindow::SetWindowPosition() failed", hr);
+            return false;
+        }
+
+        return true;
     }
 };
 
@@ -171,30 +212,7 @@ bool MediaPlayer::play(const std::string& file_)
 
     std::swap(m_context, context);
 
-    if(m_context->hwnd)
-    {
-        hr = m_context->spVideoWindow->put_Owner((OAHWND)m_context->hwnd);
-        if(FAILED(hr)) {
-            m_context->error = vfwErrorString("IVideoWindow::put_Owner() failed", hr);
-            return false;
-        }
-
-        const long windowStyle = WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-        hr = m_context->spVideoWindow->put_WindowStyle(windowStyle);
-        if(FAILED(hr)) {
-            m_context->error = vfwErrorString("IVideoWindow::put_WindowStyle() failed", hr);
-            return false;
-        }
-
-        RECT rect;
-        ::GetClientRect(m_context->hwnd, &rect);
-        hr = m_context->spVideoWindow->SetWindowPosition
-                (rect.left, rect.top, rect.right, rect.bottom);
-        if(FAILED(hr)) {
-            m_context->error = vfwErrorString("IVideoWindow::SetWindowPosition() failed", hr);
-            return false;
-        }
-    }
+    activateVideo(m_context);
 
     hr = m_context->spMediaControl->Run();
     if(FAILED(hr)) {
@@ -208,18 +226,15 @@ bool MediaPlayer::play(const std::string& file_)
 bool MediaPlayer::stop()
 {
     HRESULT hr;
+    bool success = true;
     
     hr = m_context->spMediaControl->Stop();
     if(FAILED(hr)) {
         m_context->error = vfwErrorString("IMediaControl::Stop() failed", hr);
-        return false;
+        success = false;
     }
 
-    hr = m_context->spVideoWindow->put_Owner(0);
-    if(FAILED(hr)) {
-        m_context->error = vfwErrorString("IVideoWindow::put_Owner() failed", hr);
-        return false;
-    }
+    m_context = make_context(0);
 
-    return SUCCEEDED(hr);
+    return success;
 }    
