@@ -73,6 +73,11 @@ JSAPI* PluginCore::getRootJSAPI()
     return m_api.ptr();
 }
 
+PluginWindow* PluginCore::GetWindow()
+{
+	return m_Window;
+}
+
 void PluginCore::SetWindow(PluginWindow *wind)
 {
     if (m_Window && m_Window != wind) {

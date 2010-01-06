@@ -70,6 +70,6 @@ bool BasicMediaPlayerPlugin::onAttached(FB::AttachedEvent* evt)
 {
     FB::JSAPI* js = getRootJSAPI();
     BasicMediaPlayer* player = reinterpret_cast<BasicMediaPlayer*>(js);
-    player->setWindow(evt->getStatus() ? m_Window : 0);
+	player->setWindow(evt->getStatus() ? GetWindow() : 0);
     return true;
 }

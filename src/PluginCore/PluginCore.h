@@ -46,6 +46,7 @@ namespace FB {
         virtual ~PluginCore();
 
         void SetHost(BrowserHostWrapper *);
+		PluginWindow* GetWindow();
         void SetWindow(PluginWindow *);
         void ClearWindow();
 
