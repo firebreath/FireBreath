@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
+JSAPI::JSAPI(void) : m_refCount(0), m_valid(true)
 {
     registerEvent("onload");
 }

@@ -29,72 +29,73 @@ namespace FB
 {
     namespace detail { namespace properties 
     {
+        template<class C, bool IsConst = false>
+        struct select_property_functor {
+            template<typename T>
+            static inline 
+            FB::GetPropFunctor f(C* instance, T (C::*getter)())
+            { 
+                return boost::bind(boost::mem_fn(getter), instance);
+            }
+        };
+        
+        template<class C>
+        struct select_property_functor<C, /* IsConst= */ true> {
+            template<typename T>
+            static inline 
+            FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
+            { 
+                return boost::bind(boost::mem_fn(getter), instance);
+            }
+        };
+                
         template<class C, typename F>
         struct getter 
         {
-            template<bool IsConst = false>
-            struct helper {
-                template<typename T>
-                static inline 
-                FB::GetPropFunctor f(C* instance, T (C::*getter)())
-                { 
-                    return boost::bind(boost::mem_fn(getter), instance);
-                }
-            };
-
-            template<>
-            struct helper</* IsConst= */ true> {
-                template<typename T>
-                static inline 
-                FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
-                { 
-                    return boost::bind(boost::mem_fn(getter), instance);
-                }
-            };
-
             enum { const_qualified =
                 boost::function_types::is_member_function_pointer
                 <F, boost::function_types::const_qualified>::value };
 
-            typedef helper<const_qualified> result;
+            typedef select_property_functor<C, const_qualified> result;
         };
 
+        template<class C, bool IsConst = false>
+        struct set_property_functor {
+            template<typename T>
+            static inline 
+            FB::SetPropFunctor f(C* instance, void (C::*setter)(T))
+            { 
+                typedef typename FB::detail::plain_type<T>::type Ty;
+                typedef FB::detail::converter<Ty, FB::variant> converter;
+                return 
+                boost::bind(setter, instance, 
+                            boost::bind(&converter::convert, _1)); 
+            }
+        };
+        
+        template<class C>
+        struct set_property_functor<C, /* IsConst= */ true> {
+            template<typename T>
+            static inline 
+            void f(C* instance, void (C::*setter)(T) const, const FB::variant& v)
+            { 
+                typedef typename FB::detail::plain_type<T>::type Ty;
+                typedef FB::detail::converter<Ty, FB::variant> converter;
+                return 
+                boost::bind(setter, instance, 
+                            boost::bind(&converter::convert, _1)); 
+            }
+        };
+        
         template<class C, typename F>
         struct setter 
         {
-            template<bool IsConst = false>
-            struct helper {
-                template<typename T>
-                static inline 
-                FB::SetPropFunctor f(C* instance, void (C::*setter)(T))
-                { 
-                    typedef typename FB::detail::plain_type<T>::type Ty;
-                    typedef FB::detail::converter<Ty, FB::variant> converter;
-                    return 
-                        boost::bind(setter, instance, 
-                                    boost::bind(&converter::convert, _1)); 
-                }
-            };
-
-            template<>
-            struct helper</* IsConst= */ true> {
-                template<typename T>
-                static inline 
-                void f(C* instance, void (C::*setter)(T) const, const FB::variant& v)
-                { 
-                    typedef typename FB::detail::plain_type<T>::type Ty;
-                    typedef FB::detail::converter<Ty, FB::variant> converter;
-                    return 
-                        boost::bind(setter, instance, 
-                                    boost::bind(&converter::convert, _1)); 
-                }
-            };
-
+            
             enum { const_qualified =
                 boost::function_types::is_member_function_pointer
                 <F, boost::function_types::const_qualified>::value };
 
-            typedef helper<const_qualified> result;
+            typedef set_property_functor<C, const_qualified> result;
         };
 
         inline void dummySetter(const FB::variant&) 

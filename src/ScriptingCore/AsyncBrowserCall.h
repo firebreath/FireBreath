@@ -34,7 +34,7 @@ namespace FB {
         AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
             std::vector<variant> &inParams);
 
-        static void AsyncBrowserCall::asyncCallback(void *userData);
+        static void asyncCallback(void *userData);
 
         JSObject m_obj;
         std::vector<variant> m_params;

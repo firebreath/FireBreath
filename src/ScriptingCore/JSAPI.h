@@ -28,6 +28,7 @@ namespace FB
         script_error(std::string error)
             : m_error(error)
         { }
+		~script_error() throw() { }
         virtual const char* what() { 
             return m_error.c_str(); 
         }
@@ -39,6 +40,7 @@ namespace FB
         invalid_arguments()
             : script_error("Invalid Arguments")
         { }
+		~invalid_arguments() throw() { }
 
         invalid_arguments(const std::string& error)
             : script_error(error)
@@ -50,6 +52,7 @@ namespace FB
         object_invalidated()
             : script_error("This object is no longer valid")
         { }
+		~object_invalidated() throw() { }
     };
     
     struct invalid_member : script_error
@@ -57,6 +60,7 @@ namespace FB
         invalid_member(std::string memberName)
             : script_error("The specified member does not exist: " + memberName)
         { }
+		~invalid_member() throw() { }
     };
 
     class JSAPI

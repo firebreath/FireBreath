@@ -21,8 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NPObjectAPI.h"
 #include "DOM/JSAPI_DOMDocument.h"
 #include "DOM/JSAPI_DOMWindow.h"
-#include <boost/assign.hpp>
-using boost::assign::list_of;
+#include "variant_list.h"
 
 #include "NpapiBrowserHost.h"
 
@@ -65,7 +64,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 {
     if (m_htmlDoc.ptr() == NULL)
-        throw std::exception("Cannot find HTML document");
+        throw std::runtime_error("Cannot find HTML document");
 
     return FB::JSAPI_DOMDocument(m_htmlDoc.ptr());
 }
@@ -73,7 +72,7 @@ FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 {
     if (m_htmlWin.ptr() == NULL)
-        throw std::exception("Cannot find HTML window");
+        throw std::runtime_error("Cannot find HTML window");
 
     return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
 }
@@ -152,7 +151,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::JSOutArray inArr = var.cast<FB::JSOutArray>();
         for (FB::JSOutArray::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr.callMethod<void>("push", FB::VariantList(list_of(*it)));
+            outArr.callMethod<void>("push", FB::VariantList(variant_list_of(*it)));
         }
         FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(outArr.getJSObject().ptr());
         if (api.ptr() != NULL) {

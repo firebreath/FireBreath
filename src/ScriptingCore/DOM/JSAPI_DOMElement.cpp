@@ -16,11 +16,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
-JSAPI_DOMElement::JSAPI_DOMElement(JSObject element) : JSAPI_DOMNode(element)
+JSAPI_DOMElement::JSAPI_DOMElement(const JSObject element) : JSAPI_DOMNode(element)
 {
 }
 
-JSAPI_DOMElement::JSAPI_DOMElement(JSAPI_DOMElement& rhs) : JSAPI_DOMNode(rhs)
+JSAPI_DOMElement::JSAPI_DOMElement(const JSAPI_DOMElement& rhs) : JSAPI_DOMNode(rhs)
 {
 }
 
@@ -62,10 +62,12 @@ int JSAPI_DOMElement::getChildNodeCount()
 
 JSAPI_DOMElement JSAPI_DOMElement::getChildNode(int idx)
 {
-    return getElement("childNodes").getElement(idx);
+	JSAPI_DOMElement retVal(getElement("childNodes").getElement(idx));
+    return retVal;
 }
 
 JSAPI_DOMElement JSAPI_DOMElement::getParentNode()
 {
-    return getElement("parentNode");
+	JSAPI_DOMElement retVal(getElement("parentNode"));
+    return retVal;
 }

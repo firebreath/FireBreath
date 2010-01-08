@@ -136,7 +136,7 @@ namespace FB
     {
         Cont to;
         convert_variant_list<Cont::value_type>(begin, end, std::back_inserter(to));
-        return tu;
+        return to;
     }
 
     template<class Cont>

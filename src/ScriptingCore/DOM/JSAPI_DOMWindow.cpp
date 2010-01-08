@@ -12,20 +12,18 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include <boost/assign.hpp>
+#include "variant_list.h"
 
 #include "JSAPI_DOMWindow.h"
 #include "JSAPI_DOMDocument.h"
 
-using boost::assign::list_of;
-
 using namespace FB;
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(JSObject element) : JSAPI_DOMNode(element)
+JSAPI_DOMWindow::JSAPI_DOMWindow(const JSObject element) : JSAPI_DOMNode(element)
 {
 }
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(JSAPI_DOMWindow &rhs) : JSAPI_DOMNode(rhs)
+JSAPI_DOMWindow::JSAPI_DOMWindow(const JSAPI_DOMWindow &rhs) : JSAPI_DOMNode(rhs)
 {
 }
 
@@ -41,7 +39,7 @@ JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
 
 void JSAPI_DOMWindow::alert(std::string str)
 {
-    callMethod<void>("alert", VariantList(list_of(str)));
+    callMethod<void>("alert", VariantList(variant_list_of(str)));
 }
 
 JSAPI_DOMNode JSAPI_DOMWindow::createArray()

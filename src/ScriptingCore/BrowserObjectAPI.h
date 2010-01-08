@@ -67,8 +67,8 @@ namespace FB
     template<class Dict>
     void BrowserObjectAPI::GetObjectValues(FB::JSObject src, Dict& dst)
     {
-        typedef Dict::key_type KeyType;
-        typedef Dict::mapped_type MappedType;
+        typedef typename Dict::key_type KeyType;
+        typedef typename Dict::mapped_type MappedType;
         typedef std::pair<KeyType, MappedType> PairType;
         typedef std::vector<std::string> StringVec;
 
@@ -87,6 +87,35 @@ namespace FB
             throw e;
         }
     }
+    
+    template<class Cont>
+    typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+    variant::convert_cast() const
+    {
+        typedef FB::JSObject JsObject;
+        
+        if(!(get_type() == typeid(JsObject)))
+            throw bad_variant_cast(get_type(), typeid(JsObject));
+        
+        Cont cont;
+        FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
+        return cont;
+    }
+    
+    template<class Dict>
+    typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+    variant::convert_cast() const
+    {
+        typedef FB::JSObject JsObject;
+        
+        if(!(get_type() == typeid(JsObject)))
+            throw bad_variant_cast(get_type(), typeid(JsObject));
+        
+        Dict dict;
+        FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
+        return dict;
+    }
+    
 };
 
 #endif

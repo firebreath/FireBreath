@@ -82,7 +82,7 @@ namespace FB
             }
             inline bool operator !=(const T* obj) const
             {
-                return (object != p.object);
+                return (object != obj);
             }
             inline bool operator !=(const AutoPtr<T>& p) const
             {
