@@ -12,7 +12,17 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-include(${CMAKE_DIR}/wix.cmake)
+if (WIN32)
+    set (PLATFORM_NAME "Win")
+elseif(APPLE)
+    set (PLATFORM_NAME "Mac")
+elseif(UNIX)
+    set (PLATFORM_NAME "Linux")
+endif()
+
+if (WIN32)
+    include(${CMAKE_DIR}/wix.cmake)
+endif(WIN32)
 
 get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
@@ -58,10 +68,11 @@ endfunction(browserplugin_project)
 
 function (include_platform)
 
-    if (WIN32)
-        set (PLATFORM_NAME "Win")
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
+        include(${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
+    else()
+        message ("Could not find a ${PLATFORM_NAME} directory for the current project")
     endif()
-    include(${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
 
 endfunction(include_platform)
 
