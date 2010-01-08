@@ -360,7 +360,7 @@ namespace FB
 
     // boost::any-like casting
     template<typename T>
-    T* variant_cast(variant* this_) {
+    inline T* variant_cast(variant* this_) {
         if (this_->get_type() != typeid(T)) {
             throw bad_variant_cast(this_->get_type(), typeid(T));
         }
@@ -373,24 +373,24 @@ namespace FB
     }
 
     template<typename T>
-    T const* variant_cast(variant const* this_) {
+    inline T const* variant_cast(variant const* this_) {
         return variant_cast<T>(const_cast<variant*>(this_));
     }
 
     template<typename T>
-    T const& variant_cast(variant const& this_){
+    inline T const& variant_cast(variant const& this_){
         return *variant_cast<T>(const_cast<variant*>(&this_));
     }
 	
-	template<> const void variant::convert_cast_impl<void>() const {
+	template<> inline const void variant::convert_cast_impl<void>() const {
 		return;
 	}
 	
-	template<> const variant variant::convert_cast_impl<variant>() const {
+	template<> inline const variant variant::convert_cast_impl<variant>() const {
 		return *this;
 	}
 	
-	template<> const int variant::convert_cast_impl<int>() const {
+	template<> inline const int variant::convert_cast_impl<int>() const {
 		BEGIN_CONVERT_MAP(int)
 		CONVERT_ENTRY_SIMPLE(int, double)
 		CONVERT_ENTRY_SIMPLE(int, float)
@@ -404,7 +404,7 @@ namespace FB
 		END_CONVERT_MAP(int)
 	}
 	
-	template<> const double variant::convert_cast_impl<double>() const {
+	template<> inline const double variant::convert_cast_impl<double>() const {
 		BEGIN_CONVERT_MAP(double);
 		CONVERT_ENTRY_SIMPLE(double, float);
 		CONVERT_ENTRY_SIMPLE(double, char);
@@ -421,7 +421,7 @@ namespace FB
 		END_CONVERT_MAP(double);
 	}
 	
-	template<> const float variant::convert_cast_impl<float>() const {
+	template<> inline const float variant::convert_cast_impl<float>() const {
 		BEGIN_CONVERT_MAP(float);
 		CONVERT_ENTRY_SIMPLE(float, char);
 		CONVERT_ENTRY_SIMPLE(float, unsigned char);
@@ -435,7 +435,7 @@ namespace FB
 		END_CONVERT_MAP(double);
 	}
 	
-	template<> const long variant::convert_cast_impl<long>() const {
+	template<> inline const long variant::convert_cast_impl<long>() const {
 		BEGIN_CONVERT_MAP(long);
 		CONVERT_ENTRY_SIMPLE(long, double);
 		CONVERT_ENTRY_SIMPLE(long, float);
@@ -451,7 +451,7 @@ namespace FB
 		END_CONVERT_MAP(long);
 	}
 	
-	template<> const short variant::convert_cast_impl<short>() const {
+	template<> inline const short variant::convert_cast_impl<short>() const {
 		BEGIN_CONVERT_MAP(short);
 		CONVERT_ENTRY_SIMPLE(short, double);
 		CONVERT_ENTRY_SIMPLE(short, float);
@@ -463,7 +463,7 @@ namespace FB
 		END_CONVERT_MAP(short);
 	}
 	
-	template<> const std::string variant::convert_cast_impl<std::string>() const {
+	template<> inline const std::string variant::convert_cast_impl<std::string>() const {
 		BEGIN_CONVERT_MAP(std::string);
 		CONVERT_ENTRY_TOSTRING(double);
 		CONVERT_ENTRY_TOSTRING(float);
@@ -481,7 +481,7 @@ namespace FB
 		END_CONVERT_MAP(std::string);
 	}
 	
-	template<> const bool variant::convert_cast_impl<bool>() const {
+	template<> inline const bool variant::convert_cast_impl<bool>() const {
 		BEGIN_CONVERT_MAP(bool);
 		CONVERT_ENTRY_SIMPLE(bool, double);
 		CONVERT_ENTRY_SIMPLE(bool, float);

@@ -39,7 +39,7 @@ JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
 
 void JSAPI_DOMWindow::alert(std::string str)
 {
-    callMethod<void>("alert", VariantList(variant_list_of(str)));
+    callMethod<void>("alert", variant_list_of(str));
 }
 
 JSAPI_DOMNode JSAPI_DOMWindow::createArray()

@@ -88,6 +88,7 @@ namespace FB
         }
     }
     
+    // TODO: this doesn't belong here
     template<class Cont>
     typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
     variant::convert_cast() const
@@ -101,7 +102,8 @@ namespace FB
         FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
         return cont;
     }
-    
+
+    // TODO: this doesn't belong here
     template<class Dict>
     typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
     variant::convert_cast() const

@@ -151,7 +151,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::JSOutArray inArr = var.cast<FB::JSOutArray>();
         for (FB::JSOutArray::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr.callMethod<void>("push", FB::VariantList(variant_list_of(*it)));
+            outArr.callMethod<void>("push", variant_list_of(*it));
         }
         FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(outArr.getJSObject().ptr());
         if (api.ptr() != NULL) {

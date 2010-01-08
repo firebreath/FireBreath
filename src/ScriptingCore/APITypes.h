@@ -107,5 +107,7 @@ namespace FB
 }
 
 // This needs to be included after all our classes are defined because it relies on types defined in this file
+// TODO: can this be done better?
 #include "variant.h"
+
 #endif

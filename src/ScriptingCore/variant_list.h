@@ -32,28 +32,28 @@ namespace FB
 
     // create variant list from any STL-style container (i.e. exposes begin() and end())
     template<typename Cont>
-    FB::VariantList make_variant_list(const Cont&);
+    inline FB::VariantList make_variant_list(const Cont&);
     template<class InputIterator>
-    FB::VariantList make_variant_list(InputIterator begin, InputIterator end);
+    inline FB::VariantList make_variant_list(InputIterator begin, InputIterator end);
     template<class InputIterator>
-    void make_variant_list(InputIterator begin, InputIterator end, FB::VariantList::iterator result);
+    inline void make_variant_list(InputIterator begin, InputIterator end, FB::VariantList::iterator result);
 
     // convert variant list to STL-style container (i.e. supports value_type and back-insert-iterators)
     template<class Cont>
-    Cont convert_variant_list(const FB::VariantList& v);
+    inline Cont convert_variant_list(const FB::VariantList& v);
     template<class Cont>
-    void convert_variant_list(const FB::VariantList& from, Cont& to);
+    inline void convert_variant_list(const FB::VariantList& from, Cont& to);
     template<class Cont>
-    Cont convert_variant_list(FB::VariantList::const_iterator begin,
+    inline Cont convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end);
     template<typename To, class Cont>
-    void convert_variant_list(FB::VariantList::const_iterator begin,
+    inline void convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end,
                               typename Cont::iterator result);
 
     // convenience creation of variant list similar to boost::assign but passable as a temporary
-    FB::detail::VariantListInserter variant_list_of(FB::variant v);
-    FB::detail::VariantListInserter variant_list_of();
+    inline FB::detail::VariantListInserter variant_list_of(FB::variant v);
+    inline FB::detail::VariantListInserter variant_list_of();
 
     ///////////////////////////////////
     // detail definitions
@@ -83,20 +83,20 @@ namespace FB
     ///////////////////////////////////
     // definitions
 
-    FB::detail::VariantListInserter 
+    inline FB::detail::VariantListInserter 
     variant_list_of(FB::variant v)
     {
         return FB::detail::VariantListInserter(v);
     }
 
-    FB::detail::VariantListInserter 
+    inline FB::detail::VariantListInserter 
     variant_list_of()
     {
         return FB::detail::VariantListInserter();
     }
 
     template<class InputIterator>
-    void make_variant_list(InputIterator begin, 
+    inline void make_variant_list(InputIterator begin, 
                            InputIterator end, 
                            FB::VariantList::iterator result)
     {
@@ -105,7 +105,7 @@ namespace FB
     }
 
     template<class InputIterator>
-    FB::VariantList make_variant_list(InputIterator begin, InputIterator end)
+    inline FB::VariantList make_variant_list(InputIterator begin, InputIterator end)
     {
         FB::VariantList result(end-begin);
         std::copy(begin, end, result.begin());
@@ -113,7 +113,7 @@ namespace FB
     }
 
     template<class Cont>
-    FB::VariantList make_variant_list(const Cont& c)
+    inline FB::VariantList make_variant_list(const Cont& c)
     {
         FB::VariantList result;
         std::copy(c.begin(), c.end(), std::back_inserter(result));
@@ -121,7 +121,7 @@ namespace FB
     }
 
     template<typename To, class OutputIterator>
-    void convert_variant_list(FB::VariantList::const_iterator begin,
+    inline void convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end,
                               OutputIterator result)
     {
@@ -131,7 +131,7 @@ namespace FB
     }
 
     template<class Cont>
-    Cont convert_variant_list(FB::VariantList::const_iterator begin,
+    inline Cont convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end)
     {
         Cont to;
@@ -140,7 +140,7 @@ namespace FB
     }
 
     template<class Cont>
-    Cont convert_variant_list(const FB::VariantList& from)
+    inline Cont convert_variant_list(const FB::VariantList& from)
     {
         Cont to;
         convert_variant_list<Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
@@ -148,7 +148,7 @@ namespace FB
     }
 
     template<class Cont>
-    void convert_variant_list(const FB::VariantList& from, Cont& to)
+    inline void convert_variant_list(const FB::VariantList& from, Cont& to)
     {
         convert_variant_list<Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
     }

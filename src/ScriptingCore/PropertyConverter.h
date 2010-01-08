@@ -30,7 +30,7 @@ namespace FB
     namespace detail { namespace properties 
     {
         template<class C, bool IsConst = false>
-        struct select_property_functor {
+        struct select_get_property_functor {
             template<typename T>
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)())
@@ -40,7 +40,7 @@ namespace FB
         };
         
         template<class C>
-        struct select_property_functor<C, /* IsConst= */ true> {
+        struct select_get_property_functor<C, /* IsConst= */ true> {
             template<typename T>
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
@@ -56,11 +56,11 @@ namespace FB
                 boost::function_types::is_member_function_pointer
                 <F, boost::function_types::const_qualified>::value };
 
-            typedef select_property_functor<C, const_qualified> result;
+            typedef select_get_property_functor<C, const_qualified> result;
         };
 
         template<class C, bool IsConst = false>
-        struct set_property_functor {
+        struct select_set_property_functor {
             template<typename T>
             static inline 
             FB::SetPropFunctor f(C* instance, void (C::*setter)(T))
@@ -74,7 +74,7 @@ namespace FB
         };
         
         template<class C>
-        struct set_property_functor<C, /* IsConst= */ true> {
+        struct select_set_property_functor<C, /* IsConst= */ true> {
             template<typename T>
             static inline 
             void f(C* instance, void (C::*setter)(T) const, const FB::variant& v)
@@ -95,7 +95,7 @@ namespace FB
                 boost::function_types::is_member_function_pointer
                 <F, boost::function_types::const_qualified>::value };
 
-            typedef set_property_functor<C, const_qualified> result;
+            typedef select_set_property_functor<C, const_qualified> result;
         };
 
         inline void dummySetter(const FB::variant&) 
