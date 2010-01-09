@@ -45,7 +45,8 @@ BasicMediaPlayerPlugin::~BasicMediaPlayerPlugin()
 FB::JSAPI* BasicMediaPlayerPlugin::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    return new BasicMediaPlayer(m_host);
+    m_player = new BasicMediaPlayer(m_host);
+    return m_player.ptr();
 }
 
 bool BasicMediaPlayerPlugin::onMouseDown(FB::MouseDownEvent *evt)
@@ -66,10 +67,14 @@ bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt)
     return false;
 }
 
-bool BasicMediaPlayerPlugin::onAttached(FB::AttachedEvent* evt)
+bool BasicMediaPlayerPlugin::onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow* win)
 {
-    FB::JSAPI* js = getRootJSAPI();
-    BasicMediaPlayer* player = reinterpret_cast<BasicMediaPlayer*>(js);
-	player->setWindow(evt->getStatus() ? GetWindow() : 0);
+    m_player->setWindow(win);
+    return true;
+}
+
+bool BasicMediaPlayerPlugin::onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow* win)
+{
+    m_player->setWindow(NULL);
     return true;
 }

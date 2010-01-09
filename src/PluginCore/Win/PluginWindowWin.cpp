@@ -12,13 +12,14 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "Win/win_common.h"
+
 #include "PluginEvents/WindowsEvent.h"
+#include "PluginEvents/GeneralEvents.h"
+#include "PluginEvents/DrawingEvents.h" 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowWin.h"
     
-#include "windows.h"
-#include "windowsx.h"
-
 using namespace FB;
 
 PluginWindowWin::PluginWindowMap FB::PluginWindowWin::m_windowMap;
@@ -35,7 +36,7 @@ PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), lpOldWinProc(NULL)
 PluginWindowWin::~PluginWindowWin()
 {
     // Unsubclass the window so that everything is as it was before we got it
-	SubclassWindow(m_hWnd, lpOldWinProc);
+    SubclassWindow(m_hWnd, lpOldWinProc);
 
     PluginWindowMap::iterator it = m_windowMap.find(static_cast<void*>(m_hWnd));
     if (it != m_windowMap.end()) 
@@ -44,6 +45,12 @@ PluginWindowWin::~PluginWindowWin()
 
 bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT lRes)
 {
+    lRes = 0;
+    // Before all else, give the plugin a chance to handle the platform specific event
+    if (SendEvent(&WindowsEvent(hWnd, uMsg, wParam, lParam))) {
+        return true;
+    }
+
     switch(uMsg) {
         case WM_LBUTTONDOWN: 
             return SendEvent(&MouseDownEvent(MouseButtonEvent::MouseButton_Left,
@@ -73,14 +80,19 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_MOUSEMOVE:
             return SendEvent(&MouseMoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
             break;
+
+        case WM_PAINT:
+            return SendEvent(&RefreshEvent());
+            break;
+
+        case WM_TIMER:
+            return SendEvent(&TimerEvent((unsigned int)wParam, (void*)lParam));
     }
 
     if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
         return true;
 
-    // Default event if nothing else is done with it
-    WindowsEvent evt(hWnd, uMsg, wParam, lParam);
-    return this->SendEvent(&evt);
+    return false;
 }
 
 LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -94,13 +106,13 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     PluginWindowMap::iterator it = m_windowMap.find(static_cast<void*>(hWnd));
     if (it == m_windowMap.end()) 
         return 0;
-	PluginWindowWin *win = it->second;
+    PluginWindowWin *win = it->second;
 
 
-	LRESULT lResult(0);
-	// Try to handle the event through the plugin instace; if that doesn't work, handle it through the default winproc
-	if (win->WinProc(hWnd, uMsg, wParam, lParam, lResult))
-		return lResult;
-	else
-		return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    LRESULT lResult(0);
+    // Try to handle the event through the plugin instace; if that doesn't work, handle it through the default winproc
+    if (win->WinProc(hWnd, uMsg, wParam, lParam, lResult))
+        return lResult;
+    else
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }

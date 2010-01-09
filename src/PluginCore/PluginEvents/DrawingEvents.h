@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_PLUGINEVENTS_MOUSEEVENTS
-#define H_FB_PLUGINEVENTS_MOUSEEVENTS
+#ifndef H_FB_PLUGINEVENTS_DRAWINGEVENTS
+#define H_FB_PLUGINEVENTS_DRAWINGEVENTS
 
 #include "PluginEvent.h"
 
@@ -25,4 +25,4 @@ namespace FB {
 
 };
 
-#endif // H_FB_PLUGINEVENTS_MOUSEEVENTS
+#endif // H_FB_PLUGINEVENTS_DRAWINGEVENTS

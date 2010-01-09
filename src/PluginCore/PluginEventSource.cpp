@@ -30,8 +30,8 @@ PluginEventSource::~PluginEventSource()
 void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 {
     m_observers.push_back(sink);
-    AttachedEvent newEvent(true);
-    sink->HandleEvent(&newEvent);
+    AttachedEvent newEvent;
+    sink->HandleEvent(&newEvent, this);
 }
 
 void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
@@ -39,8 +39,8 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
     for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
         if (*it == sink) {
             m_observers.erase(it);
-            AttachedEvent newEvent(false);
-            sink->HandleEvent(&newEvent);
+            DetachedEvent newEvent;
+            sink->HandleEvent(&newEvent, this);
             return;
         }
     }
@@ -49,7 +49,7 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 bool PluginEventSource::SendEvent(PluginEvent* evt)
 {
     for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
-        if ((*it)->HandleEvent(evt)) {
+        if ((*it)->HandleEvent(evt, this)) {
             return true;    // Tell the caller that the event was handled
         }
     }

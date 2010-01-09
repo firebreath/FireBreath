@@ -13,13 +13,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "windows.h"
-
 #include "FactoryDefinitions.h"
-#include "JSAPISimple.h"
 #include "config.h"
-#include "Win/NpapiPluginWin.h"
-#include "NpapiBrowserHost.h"
 #include "BasicMediaPlayerPlugin.h"
 
 static const char *pluginName = FBSTRING_PluginName;

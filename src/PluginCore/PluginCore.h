@@ -56,7 +56,7 @@ namespace FB {
     public:
         virtual JSAPI* getRootJSAPI();
         virtual bool IsWindowless() = 0;
-        virtual bool HandleEvent(PluginEvent *) = 0;
+        virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;
 
     protected:
         PluginWindow *m_Window;

@@ -6,7 +6,7 @@
   doing!
 \**********************************************************/
 
-#include "windows.h"
+#include "Win/win_common.h"
 
 #include "npupp.h"
 #include "NpapiPluginModule.h"

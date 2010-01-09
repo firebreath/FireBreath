@@ -18,9 +18,9 @@ class Base(object):
             desc     = ("Description", re.compile(r"^.*$"), "Description may not contain carriage returns."),
             prefix   = ("Prefix", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,4}$"), "Prefix must be 3 to 5 alphanumeric characters (underscores allowed)."),
             domain   = ("Domain", re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,4}$"), "Domain must be a valid domain name."),
-            mimetype = ("MIME type", re.compile(r"^[a-zA-Z]+\/[a-zA-Z\-]+$"), "Please use alphabetic characters and dashes in the format: application/x-firebreath"),
+            mimetype = ("MIME type", re.compile(r"^[a-zA-Z0-9]+\/[a-zA-Z0-9\-]+$"), "Please use alphanumeric characters and dashes in the format: application/x-firebreath"),
         )
-    
+
     def getValue(self, key, default):
         desc, regex, error = self.keys[key]
         if default is None:
@@ -31,25 +31,25 @@ class Base(object):
         else:
             print "Invalid syntax: %s" % error
             return self.getValue(key, default)
-    
+
     def promptValues(self):
         """
         Override in sub-classes. Prompts for necessary configuration information.
         """
         pass
-    
+
     def readCfg(self, cfg):
         """
         Override in sub-classes. Reads an existing configuration out of a file for anything not already defined by other means.
         """
         pass
-    
+
     def updateCfg(self, cfg):
         """
         Override in sub-classes. Updates a configuration object with current values.
         """
         pass
-    
+
 
 class JSAPI_Member(Base):
     """
@@ -70,19 +70,19 @@ class JSAPI_Member(Base):
             JSOBJ	= "FB::AutoPtr<FB::JSAPI>",
             API		= "FB::AutoPtr<FB::BrowserObjectAPI>",
         )
-    
+
     def translateType(self, type):
         return self.types[type]
-    
+
     def isValidType(self, type):
         return self.types.has_key(type)
-    
+
     def setType(self, type):
         self.type = type
-    
+
     def getRealType(self):
         return self.translateType(self.type)
-    
+
 
 
 class JSAPI_Property(JSAPI_Member):
@@ -95,7 +95,7 @@ class JSAPI_Property(JSAPI_Member):
             raise Exception("Invalid type %s.  Valid types are: %s" % type, ', '.join(self.types))
         self.type = type
         self.ident = ident
-    
+
 
 
 class JSAPI_Method(JSAPI_Member):
@@ -111,13 +111,13 @@ class JSAPI_Method(JSAPI_Member):
         for curArg in argTypes:
             if not self.isValidType(curArg):
                 raise Exception("Invalid type %s.  Valid types are: %s" % (curArg, ', '.join(self.types)))
-    
+
     def getRealArgTypes(self):
         retVal = []
         for cur in self.argTypes:
             retVal.append(self.translateType(cur))
         return retVal
-    
+
 
 
 class Plugin(Base):
@@ -149,19 +149,19 @@ class Plugin(Base):
                 needed += 1
                 word -= 1
         return "".join( [ lett[0] for lett in words[:word] ] ).upper() + postfix.upper()
-    
+
     def __init__(self, **kwargs):
         super(Plugin, self).__init__(**kwargs)
         if self.mimetype:
             self.mimetype = self.mimetype.lower()
-    
+
     def promptValues(self):
         self.name     = self.getValue("name", self.name)
         self.ident    = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
         self.prefix   = self.getValue("prefix", self.makeDefaultPrefix(self.name))
         self.mimetype = self.getValue("mimetype", "application/x-%s" % self.ident.lower()).lower()
         self.desc     = self.desc or self.getValue("desc", self.desc)
-    
+
     def readCfg(self, cfg):
         if not cfg.has_section("plugin"):
             return
@@ -179,10 +179,10 @@ class Plugin(Base):
         cfg.set("plugin", "prefix", self.prefix)
         cfg.set("plugin", "mimetype", self.mimetype)
         cfg.set("plugin", "description", self.desc)
-    
+
     def __str__(self):
         return "\nPlugin Details:\n--------------\nName:        %(name)s\nIdentifier:  %(ident)s\nPrefix:      %(prefix)s\nMIME type:   %(mimetype)s\nDescription: %(desc)s" % self
-    
+
 
 
 class Company(Base):
@@ -191,12 +191,12 @@ class Company(Base):
     domain = None
     def __init__(self, **kwargs):
         super(Company, self).__init__(**kwargs)
-    
+
     def promptValues(self):
         self.name   = self.getValue("name", self.name)
         self.ident  = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
         self.domain = self.getValue("domain", "%s.com" % self.ident.lower())
-    
+
     def readCfg(self, cfg):
         if not cfg.has_section("company"):
             return
@@ -210,10 +210,10 @@ class Company(Base):
         cfg.set("company", "name", self.name)
         cfg.set("company", "ident", self.ident)
         cfg.set("company", "domain", self.domain)
-    
+
     def __str__(self):
         return "\nCompany Details\n---------------\nName:        %(name)s\nIdentifier:  %(ident)s\nDomain:      %(domain)s" % self
-    
+
 
 
 class GUID(Base):
@@ -227,8 +227,8 @@ class GUID(Base):
     def __init__(self, **kwargs):
         super(GUID, self).__init__(**kwargs)
         self.master = uuid.uuid5(uuid.NAMESPACE_DNS, self.ident + '.' + self.domain)
-    
+
     def generate(self, string):
         return uuid.uuid5(self.master, string)
-    
+
 
