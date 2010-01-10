@@ -22,8 +22,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::Npapi;
 
+extern std::string g_dllPath;
+
 NpapiPluginWin::NpapiPluginWin(NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
+    setFSPath(g_dllPath);
 }
 
 NpapiPluginWin::~NpapiPluginWin()

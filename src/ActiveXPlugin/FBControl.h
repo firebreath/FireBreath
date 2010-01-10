@@ -31,6 +31,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "registrymap.hpp"
 
+extern std::string g_dllPath;
+
 // CFBControl
 class ATL_NO_VTABLE CFBControl :
     public CComObjectRootEx<CComMultiThreadModel>,
@@ -67,6 +69,7 @@ public:
 
     CFBControl() : pluginWin(NULL)
     {
+        setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
     }
 

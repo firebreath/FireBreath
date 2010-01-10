@@ -29,7 +29,7 @@ namespace FB {
     protected:
         class compare_variants { // simple comparison function
            public:
-               bool operator()(const FB::variant &x, const FB::variant &y)
+               bool operator()(const FB::variant &x, const FB::variant &y) const
                {
                    return x.lessthan(y);
                }
@@ -37,7 +37,7 @@ namespace FB {
 
         class compare_numerics { // simple numeric comparison function
             public:
-                bool operator()(const IDTYPE &x, const IDTYPE &y)
+                bool operator()(const IDTYPE &x, const IDTYPE &y) const
                 {
                     long long x2 = (long long)(x);
                     long long y2 = (long long)(y);
