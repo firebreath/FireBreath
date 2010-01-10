@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Dec 9, 2009
@@ -16,8 +16,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_JSAPI_DOMNODE
 
 #include <string>
+#include "BrowserObjectAPI.h"
 namespace FB {
-    class BrowserObjectAPI;
     /**
      * JSAPI_DOMNode
      *
@@ -52,9 +52,9 @@ namespace FB {
         }
 
         JSAPI_DOMNode getNode(std::string name);
-        
+
         JSAPI_DOMNode getNode(int idx);
-        
+
         void setProperty(std::string name, variant val);
 
         void setProperty(int idx, variant val);

@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -20,7 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
-    /** 
+    /**
      * PluginEvent
      *
      * This is the base class for all OS events that are used in the plugin;
@@ -40,7 +40,7 @@ namespace FB {
         {
             T* out(dynamic_cast<T*>(this));
             if (out == NULL) {
-                throw std::invalid_argument("Invalid message type");
+                throw FB::invalid_argument("Invalid message type");
             }
             return out;
         }
