@@ -80,6 +80,7 @@ public:
     {
         m_host->setWindow(m_hWnd);
         pluginWin = _createPluginWindow(m_hWnd);
+        pluginMain->SetWindow(pluginWin);
         return S_OK;
     }
 
