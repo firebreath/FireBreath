@@ -17,6 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <string>
 #include <map>
+#include <stdexcept>
 
 namespace FB {
 
@@ -40,7 +41,7 @@ namespace FB {
         {
             T* out(dynamic_cast<T*>(this));
             if (out == NULL) {
-                throw FB::invalid_argument("Invalid message type");
+                throw std::invalid_argument("Invalid message type");
             }
             return out;
         }

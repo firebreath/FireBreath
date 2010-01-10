@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -16,13 +16,14 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINEVENTSOURCE
 
 #include <vector>
+#include <typeinfo>
 
 namespace FB {
 
     class PluginEventSink;
     class PluginEvent;
 
-    /** 
+    /**
      * PluginWindow
      *
      * This is the base class for the window of a user-defined Plugin
