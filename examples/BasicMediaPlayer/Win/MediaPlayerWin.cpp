@@ -234,7 +234,7 @@ bool MediaPlayer::stop()
         success = false;
     }
 
-    m_context = make_context(0);
+    m_context = make_context(m_context->hwnd);
 
     return success;
 }    
