@@ -31,7 +31,7 @@ namespace FB {
         virtual ~BrowserPlugin();
 
         virtual void shutdown() = 0;
-        virtual void setFSPath(std::string path) { m_filesystemPath = path; }
+        virtual void setFSPath(std::string path);
 
     protected:
         std::string m_filesystemPath;
