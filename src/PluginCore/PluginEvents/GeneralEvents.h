@@ -12,31 +12,23 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_EVENTS_WINDOWSEVENT
-#define H_FB_EVENTS_WINDOWSEVENT
-
-#ifndef _WINDOWS
-#define HWND void *
-#else
-#include "Win/win_common.h"
-#endif
+#ifndef H_FB_EVENTS_GENERALEVENTS
+#define H_FB_EVENTS_GENERALEVENTS
 
 #include "PluginEvent.h"
 
 namespace FB {
 
-    class WindowsEvent : public PluginEvent
+    class TimerEvent : public PluginEvent
     {
     public:
-        WindowsEvent(HWND hWnd, unsigned int msg, unsigned int wparam, long lparam)
-            : hWnd(hWnd), uMsg(msg), wParam(wparam), lParam(lparam)
+        TimerEvent(unsigned int timer_id, void *opaquePointer)
+            : timerId(timer_id), opaquePointer(opaquePointer)
         { }
 
     public:
-        HWND hWnd;
-        unsigned int uMsg;
-        unsigned int wParam;
-        long lParam;
+        unsigned int timerId;
+        void *opaquePointer;
     };
 };
 

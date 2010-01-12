@@ -16,13 +16,13 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_JSAPI_DOMWINDOW
 
 #include <string>
-#include "BrowserObjectAPI.h"
 #include "JSAPI_DOMNode.h"
 #include "JSAPI_DOMElement.h"
 
 namespace FB {
 
     class JSAPI_DOMDocument;
+    class BrowserObjectAPI;
     /**
      * JSAPI_DOMWindow
      *

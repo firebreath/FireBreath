@@ -8,7 +8,7 @@ License:    Eclipse Public License - Version 1.0
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "windows.h"
+#include "Win/win_common.h"
 
 #include "npupp.h"
 #include "NpapiPluginModule.h"

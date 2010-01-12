@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -17,10 +17,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <string>
 #include <map>
+#include <stdexcept>
 
 namespace FB {
 
-    /** 
+    /**
      * PluginEvent
      *
      * This is the base class for all OS events that are used in the plugin;

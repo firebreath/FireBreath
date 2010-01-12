@@ -40,20 +40,31 @@ FB::JSAPI* @{PLUGIN.ident}::createJSAPI()
     return new @{PLUGIN.ident}API(m_host);
 }
 
-bool @{PLUGIN.ident}::onMouseDown(FB::MouseDownEvent *evt)
+bool @{PLUGIN.ident}::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)
 {
     //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool @{PLUGIN.ident}::onMouseUp(FB::MouseUpEvent *evt)
+bool @{PLUGIN.ident}::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow *)
 {
     //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool @{PLUGIN.ident}::onMouseMove(FB::MouseMoveEvent *evt)
+bool @{PLUGIN.ident}::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
+    return false;
+}
+bool @{PLUGIN.ident}::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *)
+{
+    // The window is attached; act appropriately
+    return false;
+}
+
+bool @{PLUGIN.ident}::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *)
+{
+    // The window is about to be detached; act appropriately
     return false;
 }

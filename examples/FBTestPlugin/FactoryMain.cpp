@@ -7,8 +7,6 @@
 
 \**********************************************************/
 
-#include "windows.h"
-
 #include "FactoryDefinitions.h"
 #include "FBTestPlugin.h"
 

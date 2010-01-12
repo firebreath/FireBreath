@@ -60,9 +60,6 @@ if (WIN32)
             IF(WIX_FIND_REQUIRED)
                 MESSAGE(FATAL_ERROR
                     "Windows Installer XML required but some files not found. Please specify it's location with WIX_ROOT_DIR env. variable.")
-            ELSE(WIX_FIND_REQUIRED)
-                MESSAGE(STATUS 
-                    "ERROR: Windows Installer XML was not found.")
             ENDIF(WIX_FIND_REQUIRED)
         ENDIF(NOT WIX_FIND_QUIETLY)
     ELSE(NOT WIX_FOUND)

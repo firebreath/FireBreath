@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -16,13 +16,14 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINEVENTSOURCE
 
 #include <vector>
+#include <typeinfo>
 
 namespace FB {
 
     class PluginEventSink;
     class PluginEvent;
 
-    /** 
+    /**
      * PluginWindow
      *
      * This is the base class for the window of a user-defined Plugin
@@ -36,6 +37,15 @@ namespace FB {
         virtual void AttachObserver(PluginEventSink*);
         virtual void DetachObserver(PluginEventSink*);
         virtual bool SendEvent(PluginEvent*);
+
+		template <class T>
+		T* get_as()
+		{
+			T* tmp = dynamic_cast<T*>(this);
+			if (!tmp)
+				throw std::bad_cast();
+			return tmp;
+		}
 
     protected:
         typedef std::vector<PluginEventSink*> ObserverMap;

@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
   Default auto-generated np_winmain.cpp
 
   This file contains the entrypoints for a windows NPAPI
@@ -6,7 +6,7 @@
   doing!
 \**********************************************************/
 
-#include "windows.h"
+#include "Win/win_common.h"
 
 #include "npupp.h"
 #include "NpapiPluginModule.h"

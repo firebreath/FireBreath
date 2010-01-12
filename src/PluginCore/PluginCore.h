@@ -56,12 +56,14 @@ namespace FB {
     public:
         virtual JSAPI* getRootJSAPI();
         virtual bool IsWindowless() = 0;
-        virtual bool HandleEvent(PluginEvent *) = 0;
+        virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;
+        virtual void setFSPath(std::string path) { m_filesystemPath = path; }
 
     protected:
         PluginWindow *m_Window;
         AutoPtr<JSAPI> m_api;
         AutoPtr<BrowserHostWrapper> m_host;
+        std::string m_filesystemPath;
     };
 };
 

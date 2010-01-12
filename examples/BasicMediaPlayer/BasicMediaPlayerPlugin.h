@@ -17,8 +17,11 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/AttachedEvent.h"
+#include "PluginWindow.h"
 
 #include "PluginCore.h"
+
+class BasicMediaPlayer;
 
 class BasicMediaPlayerPlugin : public FB::PluginCore
 {
@@ -30,6 +33,9 @@ public:
     BasicMediaPlayerPlugin();
     virtual ~BasicMediaPlayerPlugin();
 
+protected:
+    FB::AutoPtr<BasicMediaPlayer> m_player;
+
 public:
     virtual FB::JSAPI* createJSAPI();
     virtual bool IsWindowless() { return false; }
@@ -38,13 +44,15 @@ public:
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown)
         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp)
         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove)
-		EVENTTYPE_CASE(FB::AttachedEvent, onAttached)
+        EVENTTYPE_CASE_WITHWIN(FB::AttachedEvent, onWindowAttached, FB::PluginWindow)
+        EVENTTYPE_CASE_WITHWIN(FB::DetachedEvent, onWindowDetached, FB::PluginWindow)
     END_PLUGIN_EVENT_MAP()
 
     virtual bool onMouseDown(FB::MouseDownEvent *evt);
     virtual bool onMouseUp(FB::MouseUpEvent *evt);
     virtual bool onMouseMove(FB::MouseMoveEvent *evt);
-	virtual bool onAttached(FB::AttachedEvent* evt);
+	virtual bool onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow*);
+	virtual bool onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow*);
 };
 
 #endif

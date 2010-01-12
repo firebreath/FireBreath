@@ -14,9 +14,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "BrowserObjectAPI.h"
-#include <boost/assign.hpp>
+#include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
-using boost::assign::list_of;
 
 #include "@{PLUGIN.ident}API.h"
 
@@ -40,7 +39,7 @@ using boost::assign::list_of;
 {
 }
 
-// Read/Write property ${PROPERTY.ident}
+// Read/Write property testString
 std::string @{PLUGIN.ident}API::get_testString()
 {
     return m_testString;

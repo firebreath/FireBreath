@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Dec 9, 2009
@@ -17,9 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <string>
 #include "BrowserObjectAPI.h"
-
 namespace FB {
-
     /**
      * JSAPI_DOMNode
      *
@@ -53,29 +51,13 @@ namespace FB {
             return m_element->GetProperty(idx).convert_cast<T>();
         }
 
-        JSAPI_DOMNode getNode(std::string name)
-        {
-            JSObject api = getProperty<JSObject>(name);
-            JSAPI_DOMNode retVal(api);
-			return retVal;
-        }
-        
-        JSAPI_DOMNode getNode(int idx)
-        {
-            JSObject api = getProperty<JSObject>(idx);
-			JSAPI_DOMNode retVal(api);
-            return retVal;
-        }
-        
-        void setProperty(std::string name, variant val)
-        {
-            m_element->SetProperty(name, val);
-        }
+        JSAPI_DOMNode getNode(std::string name);
 
-        void setProperty(int idx, variant val)
-        {
-            m_element->SetProperty(idx, val);
-        }
+        JSAPI_DOMNode getNode(int idx);
+
+        void setProperty(std::string name, variant val);
+
+        void setProperty(int idx, variant val);
 
     protected:
         JSObject m_element;
