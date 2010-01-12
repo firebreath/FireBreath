@@ -25,33 +25,33 @@ import "ocidl.idl";
 import "dispex.idl";
 
 [
-    object,
-    uuid(IFBControl_GUID),
-    dual,
-    nonextensible,
-    helpstring(IFBControl_DESC),
-    pointer_default(unique)
-]
-interface IFBControl : IDispatchEx {
-};
-[
-    object,
-    uuid(IFBComJavascriptObject_GUID),
-    dual,
-    nonextensible,
-    helpstring(IFBComJavascriptObject_DESC),
-    pointer_default(unique)
-]
-interface IFBComJavascriptObject : IDispatchEx {
-};
-
-[
     uuid(FBTYPELIB_GUID),
     version(1.0),
     helpstring(FBTYPELIB_DESC)
 ]
 library ${FBTYPELIB_NAME}
 {
+    [
+        object,
+        uuid(IFBControl_GUID),
+        dual,
+        nonextensible,
+        helpstring(IFBControl_DESC),
+        pointer_default(unique)
+    ]
+    interface IFBControl : IDispatchEx {
+    };
+    [
+        object,
+        uuid(IFBComJavascriptObject_GUID),
+        dual,
+        nonextensible,
+        helpstring(IFBComJavascriptObject_DESC),
+        pointer_default(unique)
+    ]
+    interface IFBComJavascriptObject : IDispatchEx {
+    };
+
     importlib("stdole2.tlb");
     [
         uuid(IFBComEventSource_GUID),

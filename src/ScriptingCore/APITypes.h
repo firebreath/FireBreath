@@ -19,7 +19,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <map>
 #include <boost/function.hpp>
-#include "variant.h"
 #include "AutoPtr.h"
 
 namespace FB
@@ -28,15 +27,18 @@ namespace FB
     class BrowserHostWrapper;
     class JSAPI;
     class BrowserObjectAPI;
+	struct variant;
 
     // Variant list
 
     typedef std::vector<variant> VariantList;
     typedef std::vector<variant> JSOutArray;
     typedef std::map<std::string, variant> JSOutMap;
+    
     typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
     typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
     typedef FB::AutoPtr<FB::BrowserHostWrapper> BrowserHost;
+    
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
@@ -103,5 +105,9 @@ namespace FB
     typedef std::map<void*, FB::JSObject> EventIFaceMap;
     typedef std::map<std::string, FB::JSObject> EventSingleMap;
 }
+
+// This needs to be included after all our classes are defined because it relies on types defined in this file
+// TODO: can this be done better?
+#include "variant.h"
 
 #endif

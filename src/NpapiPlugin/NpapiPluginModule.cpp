@@ -146,7 +146,9 @@ NPUTF8 *NpapiPluginModule::UTF8FromIdentifier(NPIdentifier identifier)
 std::string NpapiPluginModule::StringFromIdentifier(NPIdentifier identifier)
 {
     NPUTF8* idStr = UTF8FromIdentifier(identifier);
-    std::string str(idStr);
+    std::string str;
+    if (idStr != NULL)
+        str = idStr;
     MemFree(idStr);
     return str;
 }

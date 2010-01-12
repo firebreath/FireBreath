@@ -28,6 +28,7 @@ namespace FB
         script_error(std::string error)
             : m_error(error)
         { }
+		~script_error() throw() { }
         virtual const char* what() { 
             return m_error.c_str(); 
         }
@@ -39,10 +40,11 @@ namespace FB
         invalid_arguments()
             : script_error("Invalid Arguments")
         { }
+		~invalid_arguments() throw() { }
 
-		invalid_arguments(const std::string& error)
-			: script_error(error)
-		{ }
+        invalid_arguments(const std::string& error)
+            : script_error(error)
+        { }
     };
 
     struct object_invalidated : script_error
@@ -50,6 +52,7 @@ namespace FB
         object_invalidated()
             : script_error("This object is no longer valid")
         { }
+		~object_invalidated() throw() { }
     };
     
     struct invalid_member : script_error
@@ -57,6 +60,7 @@ namespace FB
         invalid_member(std::string memberName)
             : script_error("The specified member does not exist: " + memberName)
         { }
+		~invalid_member() throw() { }
     };
 
     class JSAPI
@@ -80,7 +84,8 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-		virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
+		virtual void registerEvent(const std::string& name);
+        virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void registerEventInterface(BrowserObjectAPI *event);
         virtual void unregisterEventInterface(BrowserObjectAPI *event);
@@ -110,7 +115,7 @@ namespace FB
         EventMultiMap m_eventMap;
         EventSingleMap m_defEventMap;
         EventIFaceMap m_evtIfaces;
-		        
+                
         bool m_valid;
     };
 

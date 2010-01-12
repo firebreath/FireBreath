@@ -64,7 +64,7 @@ namespace FB {
 
         IDTYPE getIdForValue(variant val)
         {
-            VariantIdMap::iterator it = m_variantId.find(val);
+            typename VariantIdMap::iterator it = m_variantId.find(val);
 
             if (it != m_variantId.end()) {
                 return it->second;
@@ -78,7 +78,7 @@ namespace FB {
 
         std::type_info& idGetType(IDTYPE id)
         {
-            IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(id);
 
             if (it != m_idVariant.end()) {
                 return it->second.get_type();
@@ -95,7 +95,7 @@ namespace FB {
         template <class T>
         bool idIsType(IDTYPE id)
         {
-            IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(id);
 
             if (it != m_idVariant.end()) {
                 return it->second.get_type() == typeid(T);
@@ -107,10 +107,11 @@ namespace FB {
         template <class T>
         T getValueForId(IDTYPE id)
         {
-            IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(id);
 
             if (it != m_idVariant.end()) {
-                return it->second.cast<T>();
+                T retVal = (*it).second.template cast<T>();
+                return retVal;
             } else {
                 throw FB::bad_variant_cast(typeid(void), typeid(T));
             }

@@ -31,7 +31,7 @@ void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, std::string method,
 
 AsyncBrowserCall::AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
                                    std::vector<variant> &inParams) :
-    m_obj(obj), m_methodName(method), m_params(inParams)
+    m_obj(obj), m_params(inParams), m_methodName(method)
 {
 }
 

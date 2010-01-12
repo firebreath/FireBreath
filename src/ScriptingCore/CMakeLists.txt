@@ -45,6 +45,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     AutoPtr.*
     variant.*
     variant_list.*
+	variant_map.*
     TypeIDMap.*
 )
 

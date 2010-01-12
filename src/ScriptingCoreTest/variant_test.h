@@ -15,13 +15,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "variant_list.h"
+#include "variant_map.h"
 #include "fake_jsarray.h"
-
-using namespace FB;
+#include "fake_jsmap.h"
 
 TEST(VariantTest)
 {
     PRINT_TESTNAME;
+    using namespace FB;
 
     variant a = 23.23;
     
@@ -69,6 +70,7 @@ TEST(VariantTest)
     a = NULL;
     CHECK(a.get_type() == typeid(int));
 
+    // scripting style array conversion
     {
         typedef std::vector<std::string> StringVec;
         FB::VariantList values = variant_list_of("1")(2)(3.0);
@@ -79,5 +81,46 @@ TEST(VariantTest)
         StringVec vs2 = FB::convert_variant_list<StringVec>(values);
         
         CHECK(vs1 == vs2);
+    }
+
+    // scripting style map conversion
+    {
+        typedef std::vector<std::string> StringVec;
+        typedef std::map<std::string, FB::variant> VariantMap;
+        typedef VariantMap::value_type StringVariantPair;
+        typedef std::map<std::string, std::string> StringStringMap;
+
+        VariantMap values = variant_map_of<std::string>("a","a")("b","b")("c","c");
+        FB::AutoPtr<FakeJsMap> jsmap(new FakeJsMap(values));
+        variant varJsMap = FB::AutoPtr<BrowserObjectAPI>(jsmap);
+        VariantMap result = varJsMap.convert_cast<VariantMap>();
+
+        VariantMap::const_iterator itval = values.begin();
+        VariantMap::const_iterator itres = result.begin();
+
+        for( ; itval != values.end(); ++itval, ++itres) 
+        {
+            CHECK(itres != result.end());
+            const StringVariantPair& value  = *itval;
+            const StringVariantPair& result = *itres;
+            CHECK(value.first == result.first);
+            CHECK(value.second.convert_cast<std::string>() == result.second.convert_cast<std::string>());
+        }
+    }
+
+    // is_of_type<>()
+    {
+        const std::string stringVal = "foo";
+        const long longVal = 1;
+        const char charArrVal[] = "bar";
+        
+        FB::variant stringVar(stringVal);
+        CHECK(( stringVar.is_of_type<std::string>() ));
+
+        FB::variant longVar(longVal);
+        CHECK(( longVar.is_of_type<long>() ));
+
+        FB::variant charArrVar(charArrVal);
+        CHECK(( charArrVar.is_of_type<std::string>() ));
     }
 }

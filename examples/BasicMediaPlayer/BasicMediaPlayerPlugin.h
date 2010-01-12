@@ -16,6 +16,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #define H_BASICMEDIAPLAYERPLUGIN
 
 #include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/AttachedEvent.h"
 
 #include "PluginCore.h"
 
@@ -37,11 +38,13 @@ public:
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown)
         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp)
         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove)
+		EVENTTYPE_CASE(FB::AttachedEvent, onAttached)
     END_PLUGIN_EVENT_MAP()
 
     virtual bool onMouseDown(FB::MouseDownEvent *evt);
     virtual bool onMouseUp(FB::MouseUpEvent *evt);
     virtual bool onMouseMove(FB::MouseMoveEvent *evt);
+	virtual bool onAttached(FB::AttachedEvent* evt);
 };
 
 #endif

@@ -29,8 +29,9 @@ namespace FB {
     class JSAPI_DOMElement : public JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMElement(JSObject element);
-        JSAPI_DOMElement(JSAPI_DOMElement &rhs);
+        JSAPI_DOMElement(const JSObject element);
+        JSAPI_DOMElement(const JSAPI_DOMElement &rhs);
+
         virtual ~JSAPI_DOMElement();
 
     public:
@@ -49,13 +50,15 @@ namespace FB {
         JSAPI_DOMElement getElement(std::string name)
         {
             JSObject api = getProperty<JSObject>(name);
-            return JSAPI_DOMElement(api.ptr());
+			JSAPI_DOMElement retVal(api);
+            return retVal;
         }
 
         JSAPI_DOMElement getElement(int idx)
         {
             JSObject api = getProperty<JSObject>(idx);
-            return JSAPI_DOMElement(api.ptr());
+			JSAPI_DOMElement retVal(api);
+            return retVal;
         }
     };
 

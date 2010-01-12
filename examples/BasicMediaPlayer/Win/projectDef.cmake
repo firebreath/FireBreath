@@ -43,8 +43,24 @@ set_target_properties (${PROJNAME} PROPERTIES
 
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    Strmiids.lib
     )
 
 add_dependencies(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    )
+
+set(WIX_HEAT_FLAGS
+    -gg                 # Generate GUIDs
+    -srd                # Suppress Root Dir
+    -cg PluginDLLGroup  # Set the Component group name
+    -dr INSTALLDIR      # Set the directory ID to put the files in
+    )
+    
+add_wix_installer( ${PLUGIN_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/BasicMediaPlayerInstaller.wxs
+    PluginDLLGroup
+    ${BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+    ${BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/np${PLUGIN_NAME}.dll
+    ${PROJNAME}
     )

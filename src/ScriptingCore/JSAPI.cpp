@@ -19,9 +19,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-JSAPI::JSAPI(void) : m_valid(true), m_refCount(0)
+JSAPI::JSAPI(void) : m_refCount(0), m_valid(true)
 {
-    setDefaultEventMethod("onload", NULL);
+    registerEvent("onload");
 }
 
 JSAPI::~JSAPI(void)
@@ -123,4 +123,10 @@ BrowserObjectAPI *JSAPI::getDefaultEventMethod(std::string name)
 void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *event)
 {
     m_defEventMap[name] = event;
+}
+
+void JSAPI::registerEvent(const std::string &name)
+{
+	if(m_defEventMap.find(name) == m_defEventMap.end())
+		m_defEventMap[name] = 0;
 }

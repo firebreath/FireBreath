@@ -24,13 +24,9 @@
 #include <sstream>
 #include <string>
 
-#include <boost/mpl/vector.hpp>
-#include <boost/mpl/contains.hpp>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-
 #include "AutoPtr.h"
+#include "APITypes.h"
+#include "Util/meta_util.h"
 //#include "BrowserObjectAPI.h"
 
 
@@ -40,9 +36,9 @@
 #endif
 
 #define BEGIN_CONVERT_MAP(_type_) \
-    const type_info *type = &get_type(); \
+    const std::type_info *type(&get_type()); \
     if (*type == typeid(_type_)) { \
-    return cast<_type_>(); \
+    return cast< _type_ >(); \
     } else
 
 #define END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
@@ -68,6 +64,7 @@
 
 namespace FB
 {
+	class BrowserObjectAPI;
     struct bad_variant_cast : std::bad_cast {
         bad_variant_cast(const std::type_info& src, const std::type_info& dest)
             : from(src.name()), to(dest.name())
@@ -172,22 +169,6 @@ namespace FB
                 return true;
             }
         };
-
-        typedef boost::mpl::vector
-        <
-            std::string, 
-            std::wstring
-        > non_container_types;
-
-        template<typename T>
-        struct plain_type {
-            typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
-        };
-
-        template<class T>
-        struct is_non_container 
-          : boost::mpl::bool_<boost::mpl::contains<non_container_types, typename plain_type<T>::type>::value>::type
-        {};
     } // namespace variant_detail
 
     struct variant
@@ -290,6 +271,7 @@ namespace FB
         variant& swap(variant& x) {
             std::swap(table, x.table);
             std::swap(object, x.object);
+			return *this;
         }
 
         // comparison function
@@ -313,6 +295,11 @@ namespace FB
         }
 
         template<typename T>
+        bool is_of_type() const {
+            return (get_type() == typeid(T));
+        }
+
+        template<typename T>
         const T& cast() const {
             if (get_type() != typeid(T)) {
                 throw bad_variant_cast(get_type(), typeid(T));
@@ -326,140 +313,22 @@ namespace FB
         }
 
         template<typename T>
-        const T convert_cast(...) const {
+        typename FB::meta::disable_for_containers<T, const T>::type
+        convert_cast() const
+        {
             return convert_cast_impl<T>();
         }
+
+        template<class Cont>
+        typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+        convert_cast() const;        
+        template<class Dict>
+        typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+        convert_cast() const;
 
         template<typename T>
         const T convert_cast_impl() const {
             return cast<T>();
-        }
-
-        template<class Container>
-        typename boost::disable_if< variant_detail::is_non_container<Container>, const Container >::type
-        convert_cast(typename Container::iterator = Container().begin(),
-                     typename Container::iterator = Container().end()) const
-        {
-            typedef FB::JSObject JsObject;
-
-            if(!(get_type() == typeid(JsObject)))
-                throw bad_variant_cast(get_type(), typeid(JsObject));
-
-            Container cont;
-            FB::BrowserObjectAPI::GetArrayValues(convert_cast<JsObject>(), cont);
-            return cont;
-        }
-
-        template<> const void convert_cast_impl<void>() const {
-            return;
-        }
-        
-        template<> const variant convert_cast_impl<variant>() const {
-            return *this;
-        }
-
-        template<> const int convert_cast_impl<int>() const {
-            BEGIN_CONVERT_MAP(int)
-                CONVERT_ENTRY_SIMPLE(int, double)
-                CONVERT_ENTRY_SIMPLE(int, float)
-                CONVERT_ENTRY_SIMPLE(int, char)
-                CONVERT_ENTRY_SIMPLE(int, unsigned char)
-                CONVERT_ENTRY_SIMPLE(int, short)
-                CONVERT_ENTRY_SIMPLE(int, unsigned short)
-                CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-                return strtol(str.c_str(), NULL, 10);
-                CONVERT_ENTRY_COMPLEX_END()
-            END_CONVERT_MAP(int)
-        }
-
-        template<> const double convert_cast_impl<double>() const {
-            BEGIN_CONVERT_MAP(double);
-            CONVERT_ENTRY_SIMPLE(double, float);
-            CONVERT_ENTRY_SIMPLE(double, char);
-            CONVERT_ENTRY_SIMPLE(double, unsigned char);
-            CONVERT_ENTRY_SIMPLE(double, short);
-            CONVERT_ENTRY_SIMPLE(double, unsigned short);
-            CONVERT_ENTRY_SIMPLE(double, int);
-            CONVERT_ENTRY_SIMPLE(double, unsigned int);
-            CONVERT_ENTRY_SIMPLE(double, long);
-            CONVERT_ENTRY_SIMPLE(double, unsigned long);
-            CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-                return strtod(str.c_str(), NULL);
-            CONVERT_ENTRY_COMPLEX_END()
-            END_CONVERT_MAP(double);
-        }
-
-        template<> const float convert_cast_impl<float>() const {
-            BEGIN_CONVERT_MAP(float);
-            CONVERT_ENTRY_SIMPLE(float, char);
-            CONVERT_ENTRY_SIMPLE(float, unsigned char);
-            CONVERT_ENTRY_SIMPLE(float, short);
-            CONVERT_ENTRY_SIMPLE(float, unsigned short);
-            CONVERT_ENTRY_SIMPLE(float, int);
-            CONVERT_ENTRY_SIMPLE(float, unsigned int);
-            CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-                return static_cast<float>(strtod(str.c_str(), NULL));
-            CONVERT_ENTRY_COMPLEX_END()
-            END_CONVERT_MAP(double);
-        }
-
-        template<> const long convert_cast_impl<long>() const {
-            BEGIN_CONVERT_MAP(long);
-            CONVERT_ENTRY_SIMPLE(long, double);
-            CONVERT_ENTRY_SIMPLE(long, float);
-            CONVERT_ENTRY_SIMPLE(long, char);
-            CONVERT_ENTRY_SIMPLE(long, unsigned char);
-            CONVERT_ENTRY_SIMPLE(long, short);
-            CONVERT_ENTRY_SIMPLE(long, unsigned short);
-            CONVERT_ENTRY_SIMPLE(long, int);
-            CONVERT_ENTRY_SIMPLE(long, unsigned int);
-            CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-                return strtol(str.c_str(), NULL, 10);
-            CONVERT_ENTRY_COMPLEX_END()
-            END_CONVERT_MAP(long);
-        }
-
-        template<> const short convert_cast_impl<short>() const {
-            BEGIN_CONVERT_MAP(short);
-            CONVERT_ENTRY_SIMPLE(short, double);
-            CONVERT_ENTRY_SIMPLE(short, float);
-            CONVERT_ENTRY_SIMPLE(short, char);
-            CONVERT_ENTRY_SIMPLE(short, unsigned char);
-            CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
-            return static_cast<short>(strtol(str.c_str(), NULL, 10));
-            CONVERT_ENTRY_COMPLEX_END();
-            END_CONVERT_MAP(short);
-        }
-
-        template<> const std::string convert_cast_impl<std::string>() const {
-            BEGIN_CONVERT_MAP(std::string);
-            CONVERT_ENTRY_TOSTRING(double);
-            CONVERT_ENTRY_TOSTRING(float);
-            CONVERT_ENTRY_TOSTRING(int);
-            CONVERT_ENTRY_TOSTRING(unsigned int);
-            CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
-            return bval ? "true" : "false";
-            CONVERT_ENTRY_COMPLEX_END();
-            CONVERT_ENTRY_TOSTRING(long);
-            CONVERT_ENTRY_TOSTRING(unsigned long);
-            CONVERT_ENTRY_TOSTRING(short);
-            CONVERT_ENTRY_TOSTRING(unsigned short);
-            CONVERT_ENTRY_TOSTRING(char);
-            CONVERT_ENTRY_TOSTRING(unsigned char);
-            END_CONVERT_MAP(std::string);
-        }
-
-        template<> const bool convert_cast_impl<bool>() const {
-            BEGIN_CONVERT_MAP(bool);
-            CONVERT_ENTRY_SIMPLE(bool, double);
-            CONVERT_ENTRY_SIMPLE(bool, float);
-            CONVERT_ENTRY_SIMPLE(bool, char);
-            CONVERT_ENTRY_SIMPLE(bool, unsigned char);
-            CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
-            transform(str.begin(), str.end(), str.begin(), ::tolower); 
-            return (str == "y" || str == "1" || str == "yes" || str == "true" || str == "t");
-            CONVERT_ENTRY_COMPLEX_END();
-            END_CONVERT_MAP(short);
         }
 
         // implicit casting is disabled by default for compatibility with boost::any 
@@ -491,7 +360,7 @@ namespace FB
 
     // boost::any-like casting
     template<typename T>
-    T* variant_cast(variant* this_) {
+    inline T* variant_cast(variant* this_) {
         if (this_->get_type() != typeid(T)) {
             throw bad_variant_cast(this_->get_type(), typeid(T));
         }
@@ -504,14 +373,126 @@ namespace FB
     }
 
     template<typename T>
-    T const* variant_cast(variant const* this_) {
+    inline T const* variant_cast(variant const* this_) {
         return variant_cast<T>(const_cast<variant*>(this_));
     }
 
     template<typename T>
-    T const& variant_cast(variant const& this_){
+    inline T const& variant_cast(variant const& this_){
         return *variant_cast<T>(const_cast<variant*>(&this_));
     }
+	
+	template<> inline const void variant::convert_cast_impl<void>() const {
+		return;
+	}
+	
+	template<> inline const variant variant::convert_cast_impl<variant>() const {
+		return *this;
+	}
+	
+	template<> inline const int variant::convert_cast_impl<int>() const {
+		BEGIN_CONVERT_MAP(int)
+		CONVERT_ENTRY_SIMPLE(int, double)
+		CONVERT_ENTRY_SIMPLE(int, float)
+		CONVERT_ENTRY_SIMPLE(int, char)
+		CONVERT_ENTRY_SIMPLE(int, unsigned char)
+		CONVERT_ENTRY_SIMPLE(int, short)
+		CONVERT_ENTRY_SIMPLE(int, unsigned short)
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
+		return strtol(str.c_str(), NULL, 10);
+		CONVERT_ENTRY_COMPLEX_END()
+		END_CONVERT_MAP(int)
+	}
+	
+	template<> inline const double variant::convert_cast_impl<double>() const {
+		BEGIN_CONVERT_MAP(double);
+		CONVERT_ENTRY_SIMPLE(double, float);
+		CONVERT_ENTRY_SIMPLE(double, char);
+		CONVERT_ENTRY_SIMPLE(double, unsigned char);
+		CONVERT_ENTRY_SIMPLE(double, short);
+		CONVERT_ENTRY_SIMPLE(double, unsigned short);
+		CONVERT_ENTRY_SIMPLE(double, int);
+		CONVERT_ENTRY_SIMPLE(double, unsigned int);
+		CONVERT_ENTRY_SIMPLE(double, long);
+		CONVERT_ENTRY_SIMPLE(double, unsigned long);
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
+		return strtod(str.c_str(), NULL);
+		CONVERT_ENTRY_COMPLEX_END()
+		END_CONVERT_MAP(double);
+	}
+	
+	template<> inline const float variant::convert_cast_impl<float>() const {
+		BEGIN_CONVERT_MAP(float);
+		CONVERT_ENTRY_SIMPLE(float, char);
+		CONVERT_ENTRY_SIMPLE(float, unsigned char);
+		CONVERT_ENTRY_SIMPLE(float, short);
+		CONVERT_ENTRY_SIMPLE(float, unsigned short);
+		CONVERT_ENTRY_SIMPLE(float, int);
+		CONVERT_ENTRY_SIMPLE(float, unsigned int);
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
+		return static_cast<float>(strtod(str.c_str(), NULL));
+		CONVERT_ENTRY_COMPLEX_END()
+		END_CONVERT_MAP(double);
+	}
+	
+	template<> inline const long variant::convert_cast_impl<long>() const {
+		BEGIN_CONVERT_MAP(long);
+		CONVERT_ENTRY_SIMPLE(long, double);
+		CONVERT_ENTRY_SIMPLE(long, float);
+		CONVERT_ENTRY_SIMPLE(long, char);
+		CONVERT_ENTRY_SIMPLE(long, unsigned char);
+		CONVERT_ENTRY_SIMPLE(long, short);
+		CONVERT_ENTRY_SIMPLE(long, unsigned short);
+		CONVERT_ENTRY_SIMPLE(long, int);
+		CONVERT_ENTRY_SIMPLE(long, unsigned int);
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
+		return strtol(str.c_str(), NULL, 10);
+		CONVERT_ENTRY_COMPLEX_END()
+		END_CONVERT_MAP(long);
+	}
+	
+	template<> inline const short variant::convert_cast_impl<short>() const {
+		BEGIN_CONVERT_MAP(short);
+		CONVERT_ENTRY_SIMPLE(short, double);
+		CONVERT_ENTRY_SIMPLE(short, float);
+		CONVERT_ENTRY_SIMPLE(short, char);
+		CONVERT_ENTRY_SIMPLE(short, unsigned char);
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
+		return static_cast<short>(strtol(str.c_str(), NULL, 10));
+		CONVERT_ENTRY_COMPLEX_END();
+		END_CONVERT_MAP(short);
+	}
+	
+	template<> inline const std::string variant::convert_cast_impl<std::string>() const {
+		BEGIN_CONVERT_MAP(std::string);
+		CONVERT_ENTRY_TOSTRING(double);
+		CONVERT_ENTRY_TOSTRING(float);
+		CONVERT_ENTRY_TOSTRING(int);
+		CONVERT_ENTRY_TOSTRING(unsigned int);
+		CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+		return bval ? "true" : "false";
+		CONVERT_ENTRY_COMPLEX_END();
+		CONVERT_ENTRY_TOSTRING(long);
+		CONVERT_ENTRY_TOSTRING(unsigned long);
+		CONVERT_ENTRY_TOSTRING(short);
+		CONVERT_ENTRY_TOSTRING(unsigned short);
+		CONVERT_ENTRY_TOSTRING(char);
+		CONVERT_ENTRY_TOSTRING(unsigned char);
+		END_CONVERT_MAP(std::string);
+	}
+	
+	template<> inline const bool variant::convert_cast_impl<bool>() const {
+		BEGIN_CONVERT_MAP(bool);
+		CONVERT_ENTRY_SIMPLE(bool, double);
+		CONVERT_ENTRY_SIMPLE(bool, float);
+		CONVERT_ENTRY_SIMPLE(bool, char);
+		CONVERT_ENTRY_SIMPLE(bool, unsigned char);
+		CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
+		transform(str.begin(), str.end(), str.begin(), ::tolower); 
+		return (str == "y" || str == "1" || str == "yes" || str == "true" || str == "t");
+		CONVERT_ENTRY_COMPLEX_END();
+		END_CONVERT_MAP(short);
+	}
 }
 
 #endif // CDIGGINS_ANY_HPP

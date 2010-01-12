@@ -57,7 +57,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
     }
 }
 
-bool NPJavascriptObject::callAddEventListener(std::vector<FB::variant> &args)
+bool NPJavascriptObject::callSetEventListener(std::vector<FB::variant> &args, bool add)
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)
@@ -65,22 +65,14 @@ bool NPJavascriptObject::callAddEventListener(std::vector<FB::variant> &args)
         throw invalid_arguments();
     }
 
-    m_api->registerEventMethod(args[0].convert_cast<std::string>(),
-        args[1].convert_cast<JSObject>());
-
-    return true;
-}
-
-bool NPJavascriptObject::callRemoveEventListener(std::vector<FB::variant> &args)
-{
-    if (args.size() < 2 || args.size() > 3
-         || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(JSObject)) {
-        throw invalid_arguments();
+    std::string evtName = "on" + args[0].convert_cast<std::string>();
+    if (add) {
+        m_api->registerEventMethod(evtName,
+            args[1].convert_cast<JSObject>());
+    } else {
+        m_api->unregisterEventMethod(evtName,
+            args[1].convert_cast<JSObject>());
     }
-
-    m_api->unregisterEventMethod(args[0].convert_cast<std::string>(),
-        args[1].convert_cast<JSObject>());
 
     return true;
 }
@@ -97,9 +89,9 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
 
         // Event Handling
         if (mName == "addEventListener") {
-            return callAddEventListener(vArgs);
+            return callSetEventListener(vArgs, true);
         } else if (mName == "removeEventListener") {
-            return callRemoveEventListener(vArgs);
+            return callSetEventListener(vArgs, false);
         } else {
             // Default method call
             FB::variant ret = m_api->Invoke(mName, vArgs);
@@ -198,14 +190,14 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         typedef std::vector<std::string> StringArray;
         StringArray memberList;
         m_api->getMemberNames(memberList);
-        NPIdentifier *outList = (NPIdentifier*)m_browser->MemAlloc(sizeof(NPIdentifier) * memberList.size());
+        *count = memberList.size();
+        NPIdentifier *outList(NULL);
+        outList = (NPIdentifier*)m_browser->MemAlloc((uint32)(sizeof(NPIdentifier) * *count));
         
         for (uint32_t i = 0; i < memberList.size(); i++) {
-            outList[i] = m_browser->GetStringIdentifier(memberList[i].c_str());
-            i++;
+            outList[i] = m_browser->GetStringIdentifier(memberList.at(i).c_str());
         }
         *value = outList;
-        *count = memberList.size();
         return true;
     } catch (script_error& e) {
         m_browser->SetException(this, e.what());

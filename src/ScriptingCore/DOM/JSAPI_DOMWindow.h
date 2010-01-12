@@ -31,8 +31,8 @@ namespace FB {
     class JSAPI_DOMWindow : public JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMWindow(JSObject element);
-        JSAPI_DOMWindow(JSAPI_DOMWindow &rhs);
+        JSAPI_DOMWindow(const JSObject element);
+        JSAPI_DOMWindow(const JSAPI_DOMWindow &rhs);
         virtual ~JSAPI_DOMWindow();
 
     public:

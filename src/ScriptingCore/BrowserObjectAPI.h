@@ -40,7 +40,7 @@ namespace FB
         static void GetArrayValues(FB::JSObject src, Cont& dst);
         
         template<class Dict>
-        void GetObjectValues(FB::JSObject src, Dict& dst);
+        static void GetObjectValues(FB::JSObject src, Dict& dst);
 
     public:
         AutoPtr<BrowserHostWrapper> host;
@@ -67,20 +67,57 @@ namespace FB
     template<class Dict>
     void BrowserObjectAPI::GetObjectValues(FB::JSObject src, Dict& dst)
     {
+        typedef typename Dict::key_type KeyType;
+        typedef typename Dict::mapped_type MappedType;
+        typedef std::pair<KeyType, MappedType> PairType;
+        typedef std::vector<std::string> StringVec;
+
         try 
         {
-            std::vector<std::string> fields;
+            StringVec fields;
             src->getMemberNames(fields);
             std::insert_iterator<Dict> inserter(dst, dst.begin());
-            for (std::vector<std::string>::iterator it = fields.begin(); it != fields.end(); it++) {
-                *inserter++ = std::pair<Dict::key_type, Dict::mapped_type>
-                    (*it, src->GetProperty(*it).convert_cast<Dict::mapped_type>());
+
+            for(StringVec::iterator it = fields.begin(); it != fields.end(); it++) 
+            {
+                *inserter++ = PairType(*it, src->GetProperty(*it).convert_cast<MappedType>());
             }
         } catch (FB::script_error& e)
         {
             throw e;
         }
     }
+    
+    // TODO: this doesn't belong here
+    template<class Cont>
+    typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+    variant::convert_cast() const
+    {
+        typedef FB::JSObject JsObject;
+        
+        if(!(get_type() == typeid(JsObject)))
+            throw bad_variant_cast(get_type(), typeid(JsObject));
+        
+        Cont cont;
+        FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
+        return cont;
+    }
+
+    // TODO: this doesn't belong here
+    template<class Dict>
+    typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+    variant::convert_cast() const
+    {
+        typedef FB::JSObject JsObject;
+        
+        if(!(get_type() == typeid(JsObject)))
+            throw bad_variant_cast(get_type(), typeid(JsObject));
+        
+        Dict dict;
+        FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
+        return dict;
+    }
+    
 };
 
 #endif

@@ -28,8 +28,8 @@ namespace FB {
     class JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMNode(JSObject element) : m_element(element) { }
-        JSAPI_DOMNode(JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
+        JSAPI_DOMNode(const JSObject element) : m_element(element) { }
+        JSAPI_DOMNode(const JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
         virtual ~JSAPI_DOMNode() { }
 
         JSObject getJSObject() { return m_element; }
@@ -56,13 +56,15 @@ namespace FB {
         JSAPI_DOMNode getNode(std::string name)
         {
             JSObject api = getProperty<JSObject>(name);
-            return JSAPI_DOMNode(api.ptr());
+            JSAPI_DOMNode retVal(api);
+			return retVal;
         }
         
         JSAPI_DOMNode getNode(int idx)
         {
             JSObject api = getProperty<JSObject>(idx);
-            return JSAPI_DOMNode(api.ptr());
+			JSAPI_DOMNode retVal(api);
+            return retVal;
         }
         
         void setProperty(std::string name, variant val)

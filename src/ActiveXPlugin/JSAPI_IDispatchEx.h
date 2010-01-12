@@ -63,6 +63,8 @@ protected:
     bool m_valid;
     std::vector<std::string> m_memberList;
 
+    virtual bool callSetEventListener(std::vector<FB::variant> &args, bool add);
+
 public:
     /* IConnectionPointContainer members */
     HRESULT STDMETHODCALLTYPE EnumConnectionPoints(IEnumConnectionPoints **ppEnum);
@@ -252,6 +254,28 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
     return S_OK;
 }
 
+// helper method for Invoke
+template <class T, class IDISP, const IID* piid>
+bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(std::vector<FB::variant> &args, bool add)
+{
+    if (args.size() < 2 || args.size() > 3
+         || args[0].get_type() != typeid(std::string)
+         || args[1].get_type() != typeid(FB::JSObject)) {
+        throw FB::invalid_arguments();
+    }
+
+    std::string evtName = args[0].convert_cast<std::string>();
+    if (add) {
+        m_api->registerEventMethod(evtName,
+            args[1].convert_cast<FB::JSObject>());
+    } else {
+        m_api->unregisterEventMethod(evtName,
+            args[1].convert_cast<FB::JSObject>());
+    }
+
+    return true;
+}
+
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFlags,
                                              DISPPARAMS *pdp, VARIANT *pvarRes, 
@@ -261,10 +285,15 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
     if (m_api.ptr() == NULL || !AxIdMap.idExists(id)) {
         return DISP_E_MEMBERNOTFOUND;
     }
-    try {
+
+    try 
+    {
         std::string sName = AxIdMap.getValueForId<std::string>(id);
 
         if (wFlags & DISPATCH_PROPERTYGET) {
+            if(!pvarRes)
+                return E_INVALIDARG;
+
             switch(id) {
                 case DISPID_READYSTATE:
                     CComVariant(this->m_readyState).Detach(pvarRes);
@@ -276,6 +305,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
         }
 
         if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(sName)) {
+
+            if(!pvarRes)
+                return E_INVALIDARG;
 
             FB::variant rVal = m_api->GetProperty(sName);
 
@@ -293,9 +325,17 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             for (int i = pdp->cArgs - 1; i >= 0; i--) {
                 params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
             }
-            FB::variant rVal = m_api->Invoke(sName, params);
+            FB::variant rVal;
+            if (sName == "attachEvent") {
+                this->callSetEventListener(params, true);
+            } else if (sName == "detachEvent") {
+                this->callSetEventListener(params, false);
+            } else {
+                rVal = m_api->Invoke(sName, params);
+            }
 
-            m_host->getComVariant(pvarRes, rVal);
+            if(pvarRes)
+                m_host->getComVariant(pvarRes, rVal);
 
         } else {
             throw FB::invalid_member("Invalid method or property name");

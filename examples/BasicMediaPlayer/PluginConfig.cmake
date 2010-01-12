@@ -14,11 +14,7 @@
 
 set(PLUGIN_NAME "BasicMediaPlayer")
 set(PLUGIN_PREFIX "BasicMediaPlayer")
-
-if (NOT GEN_DIR)
-    get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/../gen" ABSOLUTE)
-    message("Found plugin config at ${GEN_DIR}")
-endif()
+set(COMPANY_NAME "FBDevTeam")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME FireBreathWinLib)
