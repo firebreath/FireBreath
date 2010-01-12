@@ -88,7 +88,7 @@ namespace FB
         }
     }
     
-#ifdef _WINDOWS
+#ifdef FB_PORTABLE_META
     // TODO: this doesn't belong here
     template<class Cont>
     typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type

@@ -19,7 +19,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { namespace meta 
 {
-#ifdef _WINDOWS
     // get the plain type of T (without pointers, references, ...)
     template<typename T>
     struct plain_type 
@@ -29,6 +28,7 @@ namespace FB { namespace meta
     // STL style container classification
     //   T - the type to compare
 
+#ifdef FB_PORTABLE_META
     template<class T>
     struct is_container 
         : FB::meta::detail::is_container<T> {};

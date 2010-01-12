@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), m_details.testName); \
     fflush(stdout)
 
+#include "meta_test.h"
 #include "variant_test.h"
 #include "variant_list_test.h"
 #include "variant_map_test.h"
