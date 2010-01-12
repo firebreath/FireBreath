@@ -25,20 +25,17 @@ set (SOURCES
     ${PLATFORM}
     )
 
-add_mac_plugin(${PROJNAME}
-    ${SOURCES}
-    Mac/bundle_template/Info.plist
-    Mac/bundle_tempalte/InfoPlist.strings
-    Mac/Localized.r
+message("SOURCES = ${SOURCES}")
+
+set(PLIST "Mac/bundle_template/Info.plist")
+set(STRINGS "Mac/bundle_template/InfoPlist.strings")
+set(LOCALIZED "Mac/bundle_template/Localized.r")
+
+
+add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} ${SOURCES})
     )
 
-set_target_properties (${PROJNAME} PROPERTIES
-    OUTPUT_NAME np${PLUGIN_NAME}
-    PROJECT_LABEL ${PROJNAME}
-    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    )
-
+message("Linking ${PROJNAME} to ${PLUGIN_INTERNAL_DEPS}")
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}

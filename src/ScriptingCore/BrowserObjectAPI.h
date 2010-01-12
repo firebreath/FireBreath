@@ -88,6 +88,7 @@ namespace FB
         }
     }
     
+#ifdef _WINDOWS
     // TODO: this doesn't belong here
     template<class Cont>
     typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
@@ -117,7 +118,7 @@ namespace FB
         FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
         return dict;
     }
-    
+#endif
 };
 
 #endif

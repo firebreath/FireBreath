@@ -312,19 +312,30 @@ namespace FB
             }
         }
 
-        template<typename T>
+#ifdef _WINDOWS
+        template<typename T>        
         typename FB::meta::disable_for_containers<T, const T>::type
         convert_cast() const
         {
             return convert_cast_impl<T>();
         }
+#else
+        template<typename T>        
+        const T
+        convert_cast() const
+        {
+            return convert_cast_impl<T>();
+        }
+#endif
 
+#ifdef _WINDOWS
         template<class Cont>
         typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
         convert_cast() const;        
         template<class Dict>
         typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
         convert_cast() const;
+#endif
 
         template<typename T>
         const T convert_cast_impl() const {

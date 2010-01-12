@@ -28,7 +28,7 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
     set (XCODE_DIR "${XCODE_DIR}" CACHE PATH "Path to Xcode")
 endif()
 
-function(add_mac_plugin PROJECT_NAME SOURCES PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE)
+MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE SOURCES)
 
     message ("Creating Mac Browser Plugin project ${PROJECT_NAME}")
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/bundle)
@@ -42,8 +42,9 @@ function(add_mac_plugin PROJECT_NAME SOURCES PLIST_TEMPLATE STRINGS_TEMPLATE LOC
 
     #set(MAC_RESOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
 
+    message("${SOURCES} = ${${SOURCES}}")
     set(SOURCES
-        ${SOURCES}
+        ${${SOURCES}}
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
@@ -78,5 +79,5 @@ function(add_mac_plugin PROJECT_NAME SOURCES PLIST_TEMPLATE STRINGS_TEMPLATE LOC
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
 
-endfunction(add_mac_plugin)
+ENDMACRO(add_mac_plugin)
 

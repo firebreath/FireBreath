@@ -19,6 +19,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { namespace meta 
 {
+#ifdef _WINDOWS
     // get the plain type of T (without pointers, references, ...)
     template<typename T>
     struct plain_type 
@@ -72,6 +73,7 @@ namespace FB { namespace meta
     template<class T, typename R=void>
     struct disable_for_non_assoc_containers 
         : FB::meta::detail::disable_for_non_assoc_containers_impl<T,R> {};
+#endif
 }; };
 
 

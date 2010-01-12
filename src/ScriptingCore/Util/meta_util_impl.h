@@ -23,6 +23,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { namespace meta { namespace detail
 {
+#ifdef _WINDOWS
     template<typename C>
     struct is_container_impl
     {
@@ -121,6 +122,7 @@ namespace FB { namespace meta { namespace detail
     struct disable_for_non_assoc_containers_impl 
         : boost::disable_if<is_non_assoc_container<T>, R>
     {};
+#endif
 }; }; };
 
 #endif
