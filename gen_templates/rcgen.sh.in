@@ -1,3 +1,3 @@
 #!/bin/bash
-ARCHS="i386"
+ARCHS="-arch i386 -arch x86_64"
 ${RC_COMPILER} ${RCFILES} -useDF $ARCHS -o $BUILT_PRODUCTS_DIR/$CONTENTS_FOLDER_PATH/Resources/English.lproj/Localized.rsrc

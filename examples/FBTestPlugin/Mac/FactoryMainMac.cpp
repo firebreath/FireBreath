@@ -7,16 +7,15 @@
   instantiate the correct types.
 \**********************************************************/
 
-#include "Win/FactoryDefinitionsWin.h"
-#include "Win/NpapiPluginWin.h"
-#include "Win/PluginWindowWin.h"
+#include "NpapiPlugin.h"
+#include "PluginWindow.h"
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 {
-    return new FB::Npapi::NpapiPluginWin(host);
+    return new FB::Npapi::NpapiPlugin(host);
 }
 
-FB::PluginWindowWin *_createPluginWindow(HWND hWnd)
+FB::PluginWindow *_createPluginWindow()
 {
-    return new FB::PluginWindowWin(hWnd);
+    return new FB::PluginWindow();
 }

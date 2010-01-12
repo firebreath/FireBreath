@@ -6,13 +6,37 @@
   doing!
 \**********************************************************/
 
-#include "windows.h"
-
 #include "npupp.h"
 #include "NpapiPluginModule.h"
 
 using namespace FB::Npapi;
 FB::Npapi::NpapiPluginModule *module = NULL;
+
+typedef void (*NPP_ShutdownProcPtr)(void);
+
+#pragma GCC visibility push(default)
+
+extern "C" {
+	NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
+	NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
+	void NP_Shutdown(void);
+    
+#ifndef UNITTEST
+	// For compatibility with CFM browsers.
+	int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown);
+#endif
+}
+
+#pragma GCC visibility pop
+
+#ifndef UNITTEST
+int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown)
+{
+    NP_Initialize(browserFuncs);
+    NP_GetEntryPoints(pluginFuncs);
+    *shutdown = (NPP_ShutdownProcPtr)&NP_Shutdown;
+}
+#endif
 
 void initPluginModule()
 {
@@ -37,8 +61,7 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
     return NPERR_NO_ERROR;
 }
 
-NPError OSCALL NP_Shutdown()
+void OSCALL NP_Shutdown()
 {
     delete module;
-    return NPERR_NO_ERROR;
 }

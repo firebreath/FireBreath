@@ -28,7 +28,7 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
     set (XCODE_DIR "${XCODE_DIR}" CACHE PATH "Path to Xcode")
 endif()
 
-MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE SOURCES)
+MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES)
 
     message ("Creating Mac Browser Plugin project ${PROJECT_NAME}")
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/bundle)
@@ -42,9 +42,8 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
 
     #set(MAC_RESOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
 
-    message("${SOURCES} = ${${SOURCES}}")
     set(SOURCES
-        ${${SOURCES}}
+        ${${INSOURCES}}
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
@@ -60,7 +59,7 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
         XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
         XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ROOT_DIR}/gen_templates/ExportList_plugin.txt ${XCODE_LINK_FLAGS}")
+        LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ROOT_DIR}/gen_templates/ExportList_plugin.txt -Wl,-read_only_relocs,suppress ${XCODE_LINK_FLAGS}")
 
     set (RCFILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
     # Compile the resource file

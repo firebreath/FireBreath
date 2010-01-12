@@ -8,7 +8,6 @@
 \**********************************************************/
 
 #include "NpapiTypes.h"
-#include "atlbase.h"
 #include "FBTestPluginAPI.h"
 
 #include "FBTestPlugin.h"

@@ -25,15 +25,13 @@ set (SOURCES
     ${PLATFORM}
     )
 
-message("SOURCES = ${SOURCES}")
-
 set(PLIST "Mac/bundle_template/Info.plist")
 set(STRINGS "Mac/bundle_template/InfoPlist.strings")
 set(LOCALIZED "Mac/bundle_template/Localized.r")
 
 
-add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} ${SOURCES})
-    )
+add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
+    
 
 message("Linking ${PROJNAME} to ${PLUGIN_INTERNAL_DEPS}")
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
