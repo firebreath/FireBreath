@@ -106,7 +106,7 @@ namespace FB
 
     // TODO: this doesn't belong here
     template<class Dict>
-    typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+    typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
     variant::convert_cast() const
     {
         typedef FB::JSObject JsObject;

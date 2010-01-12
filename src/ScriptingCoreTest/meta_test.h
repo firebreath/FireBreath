@@ -22,6 +22,8 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 TEST(MetaTest)
 {
+    PRINT_TESTNAME;
+
     namespace m = FB::meta;
     namespace d = FB::meta::detail;    
 
@@ -96,6 +98,24 @@ TEST(MetaTest)
         CHECK((!d::is_assoc_impl<T>::has_memfun_equal_range));
     }
     
+    // is_pair_assoc_impl<>
+
+    {
+        typedef std::map<int,int> T;
+        CHECK((d::has_type_mapped_type<T>::value));
+        CHECK((d::check_pair_assoc_value_type<true, T>::value));
+        CHECK((d::is_pair_assoc_impl<T>::has_mapped_type));
+        CHECK((d::is_pair_assoc_impl<T>::value_type_is_pair));
+    }
+
+    {
+        typedef Empty T;
+        CHECK((!d::has_type_mapped_type<T>::value));
+        CHECK((!d::check_pair_assoc_value_type<false, T>::value));
+        CHECK((!d::is_pair_assoc_impl<T>::has_mapped_type));
+        CHECK((!d::is_pair_assoc_impl<T>::value_type_is_pair));
+    }
+
     // implementation checks
 
     {

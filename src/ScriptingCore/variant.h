@@ -328,7 +328,7 @@ namespace FB
         typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
         convert_cast() const;        
         template<class Dict>
-        typename FB::meta::enable_for_assoc_containers<Dict, const Dict>::type
+        typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
         convert_cast() const;
 #endif
 

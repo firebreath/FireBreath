@@ -15,6 +15,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_META_UTIL_IMPL_22122009
 #define H_META_UTIL_IMPL_22122009
 
+#include <utility>
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/vector.hpp>
@@ -71,6 +72,7 @@ namespace FB { namespace meta { namespace detail
     FB_HAS_TYPE(const_iterator,  has_type_const_iterator);
     FB_HAS_TYPE(key_type,        has_type_key_type);
     FB_HAS_TYPE(value_type,      has_type_value_type);
+    FB_HAS_TYPE(mapped_type,     has_type_mapped_type);
 //    FB_HAS_TYPE(reference,       has_type_reference);
 //    FB_HAS_TYPE(const_reference, has_type_const_reference);
     FB_HAS_TYPE(pointer,         has_type_pointer);
@@ -181,6 +183,36 @@ namespace FB { namespace meta { namespace detail
             && has_memfun_equal_range;
         typedef boost::mpl::bool_<value> type;
     };
+
+    template<bool has_mapped_type, class T>
+    struct check_pair_assoc_value_type
+    {
+        typedef typename T::key_type Key;
+        typedef typename T::mapped_type Mapped;
+        typedef typename T::value_type Value;
+        typedef std::pair<const Key, Mapped> Pair;
+
+        static const bool value = boost::is_same<Value, Pair>::value;
+    };
+
+    template<class T>
+    struct check_pair_assoc_value_type<false, T>
+    {
+        static const bool value = false;
+    };
+
+    template<class T>
+    class is_pair_assoc_impl
+    {
+        
+    public:
+        static const bool has_mapped_type = has_type_mapped_type<T>::value;
+        static const bool value_type_is_pair = 
+            check_pair_assoc_value_type<has_mapped_type, T>::value;
+
+        static const bool value = value_type_is_pair;
+        typedef boost::mpl::bool_<value> type;
+    };
 #endif
 
     typedef boost::mpl::vector
@@ -239,6 +271,26 @@ namespace FB { namespace meta { namespace detail
       : is_assoc_container_helper<boost::is_class<T>::value, T>
     {};
 
+    //////////////////////
+    // is_pair_assoc_container
+
+    template<bool isClass, class T>
+    struct is_pair_assoc_container_helper
+      : boost::mpl::and_<
+          typename is_pair_assoc_impl<T>::type, 
+          is_assoc_container<T> >::type
+    {};
+
+    template<class T>
+    struct is_pair_assoc_container_helper<false, T>
+      : boost::mpl::false_
+    {};
+
+    template<class T>
+    struct is_pair_assoc_container
+      : is_pair_assoc_container_helper<boost::is_class<T>::value, T>
+    {};
+
     //////////////////////////
     // is_non_assoc_container
 
@@ -282,6 +334,16 @@ namespace FB { namespace meta { namespace detail
     template<class T, typename R>
     struct disable_for_assoc_containers_impl
         : boost::disable_if<is_assoc_container<T>, R>
+    {};
+
+    template<class T, typename R>
+    struct enable_for_pair_assoc_containers_impl
+        : boost::enable_if<is_pair_assoc_container<T>, R>
+    {};
+
+    template<class T, typename R>
+    struct disable_for_pair_assoc_containers_impl
+        : boost::disable_if<is_pair_assoc_container<T>, R>
     {};
 
     template<class T, typename R>

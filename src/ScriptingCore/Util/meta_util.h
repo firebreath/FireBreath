@@ -38,6 +38,10 @@ namespace FB { namespace meta
         : FB::meta::detail::is_assoc_container<T> {};
 
     template<class T>
+    struct is_pair_assoc_container
+        : FB::meta::detail::is_pair_assoc_container<T> {};
+
+    template<class T>
     struct is_non_assoc_container 
         : FB::meta::detail::is_non_assoc_container<T> {};
 
@@ -65,6 +69,14 @@ namespace FB { namespace meta
     template<class T, typename R=void>
     struct disable_for_assoc_containers 
         : FB::meta::detail::disable_for_assoc_containers_impl<T,R> {};
+
+    template<class T, typename R=void>
+    struct enable_for_pair_assoc_containers 
+        : FB::meta::detail::enable_for_pair_assoc_containers_impl<T,R> {};
+
+    template<class T, typename R=void>
+    struct disable_for_pair_assoc_containers 
+        : FB::meta::detail::disable_for_pair_assoc_containers_impl<T,R> {};
 
     template<class T, typename R=void>
     struct enable_for_non_assoc_containers 
