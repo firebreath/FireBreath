@@ -1,5 +1,5 @@
-/**********************************************************\ 
-Original Author: Richard Bateman and Georg Fritzsche 
+/**********************************************************\
+Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
 License:    Dual license model; choose one of two:
@@ -41,16 +41,16 @@ public:
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()
-        EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown)
-        EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp)
-        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove)
-        EVENTTYPE_CASE_WITHWIN(FB::AttachedEvent, onWindowAttached, FB::PluginWindow)
-        EVENTTYPE_CASE_WITHWIN(FB::DetachedEvent, onWindowDetached, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindow)
     END_PLUGIN_EVENT_MAP()
 
-    virtual bool onMouseDown(FB::MouseDownEvent *evt);
-    virtual bool onMouseUp(FB::MouseUpEvent *evt);
-    virtual bool onMouseMove(FB::MouseMoveEvent *evt);
+    virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*);
+    virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*);
+    virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
 	virtual bool onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow*);
 	virtual bool onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow*);
 };

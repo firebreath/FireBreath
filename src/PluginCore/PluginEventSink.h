@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -21,7 +21,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 namespace FB {
 
     class PluginEvent;
-    /** 
+    /**
      * PluginWindow
      *
      * This is the base class for the main plugin class of a user-defined Plugin
@@ -40,11 +40,8 @@ namespace FB {
 #define BEGIN_PLUGIN_EVENT_MAP() virtual bool HandleEvent(FB::PluginEvent *evt, FB::PluginEventSource *win) { \
                                           if (0) { }
 
-#define EVENTTYPE_CASE_WITHWIN(eventType, methodName, winType) else if (evt->validType<eventType>()) { \
+#define EVENTTYPE_CASE(eventType, methodName, winType) else if (evt->validType<eventType>()) { \
                                                 return methodName(evt->get<eventType>(), win->get_as<winType>()); }
-
-#define EVENTTYPE_CASE(eventType, methodName) else if (evt->validType<eventType>()) { \
-                                                return methodName(evt->get<eventType>()); }
 
 #define END_PLUGIN_EVENT_MAP() return false; }
 

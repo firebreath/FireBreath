@@ -1,8 +1,8 @@
-/**********************************************************\ 
+/**********************************************************\
 
   Auto-generated FBTestPlugin.cpp
 
-  This file contains the auto-generated main plugin object 
+  This file contains the auto-generated main plugin object
   implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
@@ -28,15 +28,15 @@ public:
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()
-        EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown)
-        EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp)
-        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove)
+        EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
     END_PLUGIN_EVENT_MAP()
 
     /** BEGIN EVENTDEF -- DON'T CHANGE THIS LINE **/
-    virtual bool onMouseDown(FB::MouseDownEvent *evt);
-    virtual bool onMouseUp(FB::MouseUpEvent *evt);
-    virtual bool onMouseMove(FB::MouseMoveEvent *evt);
+    virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*);
+    virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*);
+    virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 };
 
