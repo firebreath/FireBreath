@@ -70,7 +70,7 @@ void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
         m_clipLeft = l;
         m_clipBottom = b;
         m_clipRight = r;
-        ClipChangedEvent evt
+        ClipChangedEvent evt;
         SendEvent(&evt);
     }
 }
