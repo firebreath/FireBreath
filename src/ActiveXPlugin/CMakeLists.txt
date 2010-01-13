@@ -36,7 +36,6 @@ set (GENERATED_IDL
     "${GEN_DIR}/gen/FireBreathWin.tlb"
     "${GEN_DIR}/gen/FireBreathWin_i.h"
     "${GEN_DIR}/gen/FireBreathWin_i.c"
-    "${GEN_DIR}/gen/FireBreathWin_p.c"
     )
 
 SET (IDL_FILE ${GEN_DIR}/gen/FireBreathWin.idl)
