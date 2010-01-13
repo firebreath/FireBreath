@@ -109,7 +109,7 @@ public:
         return a.get_type().name();
     }
 
-    long int accumulate(std::vector<int>& values)
+    long int accumulate(const std::vector<int>& values)
     {
         return std::accumulate(values.begin(), values.end(), 0);
     }

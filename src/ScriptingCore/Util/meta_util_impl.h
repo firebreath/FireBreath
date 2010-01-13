@@ -64,7 +64,7 @@ namespace FB { namespace meta { namespace detail
     struct Name_ { \
         template<class U> static yes test(typename U::Type_ const*); \
         template<class U> static no  test(...); \
-        enum { value = (sizeof(test<T>(0)) == sizeof(yes)) }; \
+        static const bool value = (sizeof(test<T>(0)) == sizeof(yes)); \
         typedef boost::mpl::bool_<value> type; \
     }
 

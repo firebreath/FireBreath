@@ -20,6 +20,8 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 #include "Util/meta_util.h"
 
+class MetaTestEmptyClass {};
+
 TEST(MetaTest)
 {
     PRINT_TESTNAME;
@@ -27,7 +29,7 @@ TEST(MetaTest)
     namespace m = FB::meta;
     namespace d = FB::meta::detail;    
 
-    class Empty {};
+    typedef MetaTestEmptyClass Empty;
     
     // has_type_*<> checks
     

@@ -55,7 +55,7 @@ namespace FB
             std::back_insert_iterator<Cont> inserter(dst);
 
             for(int i=0; i<length; ++i) {
-                *inserter++ = src->GetProperty(i).convert_cast<Cont::value_type>();
+                *inserter++ = src->GetProperty(i).convert_cast<typename Cont::value_type>();
             }
         }
         catch(FB::script_error& e) 
@@ -82,7 +82,8 @@ namespace FB
             {
                 *inserter++ = PairType(*it, src->GetProperty(*it).convert_cast<MappedType>());
             }
-        } catch (FB::script_error& e)
+        } 
+        catch (FB::script_error& e)
         {
             throw e;
         }

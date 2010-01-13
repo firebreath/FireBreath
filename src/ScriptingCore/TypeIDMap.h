@@ -56,7 +56,7 @@ namespace FB {
         {
             if (m_idVariant.find(id) != m_idVariant.end()
                 || m_variantId.find(val) != m_variantId.end()) {
-                throw std::exception("ID or value already defined");
+                throw std::runtime_error("ID or value already defined");
             }
             m_variantId[val] = id;
             m_idVariant[id] = val;

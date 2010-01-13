@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "variant_list_test.h"
 #include "variant_map_test.h"
 #include "autoptr_test.h"
-#include "jsapi_test.h"
+//#include "jsapi_test.h"
 #include "jsapiauto_test.h"
 #include "jsarray_test.h"
 #include "TypeIDMap_test.h"

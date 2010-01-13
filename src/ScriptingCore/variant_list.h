@@ -135,7 +135,7 @@ namespace FB
                               FB::VariantList::const_iterator end)
     {
         Cont to;
-        convert_variant_list<Cont::value_type>(begin, end, std::back_inserter(to));
+        convert_variant_list<typename Cont::value_type>(begin, end, std::back_inserter(to));
         return to;
     }
 
@@ -143,14 +143,14 @@ namespace FB
     inline Cont convert_variant_list(const FB::VariantList& from)
     {
         Cont to;
-        convert_variant_list<Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
+        convert_variant_list<typename Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
         return to;
     }
 
     template<class Cont>
     inline void convert_variant_list(const FB::VariantList& from, Cont& to)
     {
-        convert_variant_list<Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
+        convert_variant_list<typename Cont::value_type>(from.begin(), from.end(), std::back_inserter(to));
     }
 }
 

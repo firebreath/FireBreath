@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_JSAPISIMPLE
 #define H_FB_JSAPISIMPLE
 
-#include "jsapi.h"
+#include "JSAPI.h"
 
 namespace FB {
 

@@ -37,9 +37,9 @@ public:
     }
 
     bool HasMethod(std::string) { return false; }
-    void FB::JSAPI::SetProperty(int,const FB::variant) {}
-    void FB::JSAPI::SetProperty(std::string,const FB::variant) {}
-    FB::variant FB::JSAPI::Invoke(std::string,FB::VariantList&) { return FB::variant(); }
+    void SetProperty(int,const FB::variant) {}
+    void SetProperty(std::string,const FB::variant) {}
+    FB::variant Invoke(std::string,FB::VariantList&) { return FB::variant(); }
 
     // Methods for enumeration
     virtual void getMemberNames(StringVec &names) 

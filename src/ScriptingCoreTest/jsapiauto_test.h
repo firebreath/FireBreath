@@ -19,6 +19,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/lexical_cast.hpp>
 #include "TestJSAPIAuto.h"
 #include "fake_jsarray.h"
+#include "variant_list.h"
 
 namespace helper
 {
@@ -29,6 +30,14 @@ namespace helper
         ss << t;
         return ss.str();
     }
+    
+    struct IncNumber
+    {
+        unsigned n;
+        IncNumber() : n(1) {}
+        std::string operator()() 
+        { return boost::lexical_cast<std::string>(n++); }
+    };
 }
 
 TEST(JSAPIAuto_Methods)
@@ -81,19 +90,13 @@ TEST(JSAPIAuto_Methods)
 
     {
 		// test catching all remaining params with CatchAll as the last argument
-        struct IncNumber {
-            unsigned n;
-            IncNumber() : n(1) {}
-            std::string operator()() 
-            { return boost::lexical_cast<std::string>(n++); }
-        };
 
         const std::string method("concatMany");
         CHECK(test->HasMethod("concatMany"));
 
         const unsigned max_args = 20;
         std::vector<std::string> strings(max_args);
-        std::generate(strings.begin(), strings.end(), IncNumber());
+        std::generate(strings.begin(), strings.end(), helper::IncNumber());
                 
         for(unsigned i=1; i<=max_args; ++i)
         {
@@ -107,19 +110,13 @@ TEST(JSAPIAuto_Methods)
 
 	{
 		// test that CatchAll doesn't break catching arrays as the last parameter
-		struct IncNumber {
-            unsigned n;
-            IncNumber() : n(1) {}
-            std::string operator()() 
-            { return boost::lexical_cast<std::string>(n++); }
-        };
 
         const std::string method("concatMany2");
         CHECK(test->HasMethod("concatMany2"));
 
         const unsigned max_args = 20;
         std::vector<std::string> strings(max_args);
-        std::generate(strings.begin(), strings.end(), IncNumber());
+        std::generate(strings.begin(), strings.end(), helper::IncNumber());
                 
         for(unsigned i=2; i<=max_args; ++i)
         {
@@ -155,23 +152,23 @@ TEST(JSAPIAuto_Methods)
         const std::string method("getType");
         CHECK(test->HasMethod(method));
         
-        FB::variant ret = test->Invoke(method, FB::VariantList(list_of((long)12)));
+        FB::variant ret = test->Invoke(method, FB::variant_list_of((long)12));
         CHECK(ret.cast<std::string>() == "long");
 
-        ret = test->Invoke(method, FB::VariantList(list_of((double)12.4)));
+        ret = test->Invoke(method, FB::variant_list_of((double)12.4));
         CHECK(ret.cast<std::string>() == "double");
 
-        ret = test->Invoke(method, FB::VariantList(list_of((bool)true)));
+        ret = test->Invoke(method, FB::variant_list_of((bool)true));
         CHECK(ret.cast<std::string>() == "bool");
 
-        ret = test->Invoke(method, FB::VariantList(list_of((void *)0x12)));
+        ret = test->Invoke(method, FB::variant_list_of((void *)0x12));
         CHECK(ret.cast<std::string>() == "void *");
     }
 
     {
         // test array conversions
         const std::string method("accumulate");
-        std::vector<int> values(list_of(1)(2)(3)(42));
+        std::vector<int> values = list_of((int)1)(2)(3)(42);
         FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(values)));
         FB::variant varJsArr = FB::AutoPtr<BrowserObjectAPI>(jsarr);
 
