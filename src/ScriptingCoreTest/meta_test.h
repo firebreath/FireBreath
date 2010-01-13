@@ -17,7 +17,7 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #include <set>
 #include <vector>
 #include <string>
-#include <stdio.h>
+#include <cstdio>
 
 #include "Util/meta_util.h"
 
