@@ -48,9 +48,17 @@ void NpapiPlugin::shutdown(void)
     delete pluginMain; pluginMain = NULL;
 }
 
+void NpapiPlugin::init(NPMIMEType pluginType, int16 argc, char* argn[], char *argv[])
+{
+    FB::VariantMap paramList;
+    for (int16 i = 0; i < argc; i++) {
+        paramList[argn[i]] = argv[i];
+    }
+    pluginMain->setParams(paramList);
+}
+
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
-
     return NPERR_NO_ERROR;
 }
 

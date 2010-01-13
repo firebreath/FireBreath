@@ -43,6 +43,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16 m
     FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
     host->setBrowserFuncs(&(NpapiPluginModule::Default->NPNFuncs));
     NpapiPlugin *plugin = _getNpapiPlugin(host);
+    plugin->init(pluginType, argc, argn, argv);
     if (plugin == NULL)
         return NPERR_OUT_OF_MEMORY_ERROR;
 

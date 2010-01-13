@@ -23,6 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <atlctl.h>
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
+#include "DOM/JSAPI_DOMWindow.h"
 #include "Win/FactoryDefinitionsWin.h"
 
 #include "BrowserPlugin.h"
@@ -122,7 +123,30 @@ public:
 
     STDMETHOD(Load)(IPropertyBag *pPropBag, IErrorLog *pErrorLog)
     {
-        
+        FB::VariantMap paramMap;
+        FB::StringSet *paramList = this->pluginMain->getSupportedParams();
+        for (FB::StringSet::iterator it = paramList->begin(); it != paramList->end(); it++) {
+            CComVariant val;
+            pPropBag->Read(CA2W(it->c_str()), &val, pErrorLog);
+            if (val.vt) {
+                FB::variant varval = m_host->getVariant(&val);
+                if (it->substr(0, 2) == "on") {
+                    val.ChangeType(VT_BSTR);
+
+                    FB::JSObject tmp;
+                    try {
+                        tmp = m_host->getDOMWindow()
+                            .getProperty<FB::JSObject>(varval.convert_cast<std::string>());
+
+                        paramMap[it->c_str()] = tmp;
+                    } catch (...) {
+                        paramMap[it->c_str()] = varval;
+                    }
+                } else {
+                    paramMap[it->c_str()] = varval;
+                }
+            }
+        }
         return S_OK;
     }
 

@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 #include <boost/function.hpp>
 #include "AutoPtr.h"
 
@@ -33,6 +34,7 @@ namespace FB
 
     typedef std::vector<variant> VariantList;
     typedef std::map<std::string, variant> VariantMap;
+    typedef std::set<std::string> StringSet;
     
     typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
     typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;

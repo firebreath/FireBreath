@@ -28,6 +28,7 @@ namespace FB { namespace Npapi {
         NpapiPlugin(NpapiBrowserHost *host);
         virtual ~NpapiPlugin(void);
 
+        virtual void init(NPMIMEType pluginType, int16 argc, char* argn[], char *argv[]);
         virtual void shutdown();
 
     protected:

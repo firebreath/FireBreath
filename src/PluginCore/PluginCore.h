@@ -16,6 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINCORE
 
 #include "PluginEventSink.h"
+#include "APITypes.h"
 #include "AutoPtr.h"
 #include <string>
 #include <set>
@@ -64,13 +65,17 @@ namespace FB {
         virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;
         virtual void setFSPath(std::string path) { m_filesystemPath = path; }
 
+        virtual StringSet* getSupportedParams();
+        virtual void setParams(const FB::VariantMap& inParams);
+
     protected:
         PluginWindow *m_Window;
         AutoPtr<JSAPI> m_api;
         AutoPtr<BrowserHostWrapper> m_host;
         std::string m_filesystemPath;
-        std::set<std::string> m_supportedParamSet;
-        std::map<std::string, FB::variant> 
+        StringSet m_supportedParamSet;
+        bool m_paramsSet;
+        FB::VariantMap m_params;
     };
 };
 

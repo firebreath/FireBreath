@@ -39,7 +39,7 @@ void PluginCore::setPlatform(std::string os, std::string browser)
      Regular Class Stuff
 \***************************/
 
-PluginCore::PluginCore() : m_Window(NULL)
+PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
 {
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
@@ -51,7 +51,8 @@ PluginCore::PluginCore() : m_Window(NULL)
     
 }
 
-PluginCore::PluginCore(std::set<std::string> params) : m_Window(NULL)
+PluginCore::PluginCore(std::set<std::string> params)
+    : m_Window(NULL), m_supportedParamSet(params), m_paramsSet(false)
 {
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
@@ -59,6 +60,9 @@ PluginCore::PluginCore(std::set<std::string> params) : m_Window(NULL)
         // Only on the first initialization
         GlobalPluginInitialize();
     }
+    m_supportedParamSet.insert("onload");
+    m_supportedParamSet.insert("onerror");
+    m_supportedParamSet.insert("onlog");
 }
 
 PluginCore::~PluginCore()
@@ -69,6 +73,16 @@ PluginCore::~PluginCore()
         // Only on the destruction of the final plugin instance
         GlobalPluginDeinitialize();
     }
+}
+
+StringSet* PluginCore::getSupportedParams()
+{
+    return &m_supportedParamSet;
+}
+
+void PluginCore::setParams(const FB::VariantMap& inParams)
+{
+    m_params.insert(inParams.begin(), inParams.end());
 }
 
 void PluginCore::SetHost(BrowserHostWrapper *host)
