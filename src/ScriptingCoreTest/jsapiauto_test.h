@@ -153,16 +153,16 @@ TEST(JSAPIAuto_Methods)
         CHECK(test->HasMethod(method));
         
         FB::variant ret = test->Invoke(method, FB::variant_list_of((long)12));
-        CHECK(ret.cast<std::string>() == "long");
+        CHECK(ret.cast<std::string>() == typeid(long).name());
 
         ret = test->Invoke(method, FB::variant_list_of((double)12.4));
-        CHECK(ret.cast<std::string>() == "double");
+        CHECK(ret.cast<std::string>() == typeid(double).name());
 
         ret = test->Invoke(method, FB::variant_list_of((bool)true));
-        CHECK(ret.cast<std::string>() == "bool");
+        CHECK(ret.cast<std::string>() == typeid(bool).name());
 
         ret = test->Invoke(method, FB::variant_list_of((void *)0x12));
-        CHECK(ret.cast<std::string>() == "void *");
+        CHECK(ret.cast<std::string>() == typeid(void*).name());
     }
 
     {
