@@ -48,14 +48,14 @@ public:
         return s;
     }
 
-    std::string intToString(int i)
+    std::string intToString(long i)
     {
         std::stringstream ss;
         ss << i;
         return ss.str();
     }
 
-    int sumOf(int a, int b)
+    int sumOf(long a, long b)
     {
         return a+b;
     }
