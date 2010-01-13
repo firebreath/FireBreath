@@ -171,8 +171,9 @@ namespace FB
         };
     } // namespace variant_detail
 
-    struct variant
+    class variant
     {
+    public:
         // structors
         template <typename T>
         variant(const T& x) {
@@ -332,11 +333,6 @@ namespace FB
         convert_cast() const;
 #endif
 
-        template<typename T>
-        const T convert_cast_impl() const {
-            return cast<T>();
-        }
-
         // implicit casting is disabled by default for compatibility with boost::any 
 #ifdef ANY_IMPLICIT_CASTING
         // automatic casting operator
@@ -357,6 +353,12 @@ namespace FB
             table->static_delete(&object);
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
+        }
+
+    private:
+        template<typename T>
+        const T convert_cast_impl() const {
+            return cast<T>();
         }
 
         // fields
