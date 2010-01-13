@@ -201,7 +201,7 @@ FB::VariantList BasicMediaPlayer::playlist() const
     return FB::make_variant_list(m_playlist);
 }
 
-void BasicMediaPlayer::setPlaylist(PlayList& list)
+void BasicMediaPlayer::setPlaylist(const PlayList& list)
 {
     m_playlist = list;
     m_currentIndex = 0;
