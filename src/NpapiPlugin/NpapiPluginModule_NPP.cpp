@@ -51,9 +51,9 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         if (plugin == NULL)
             return NPERR_OUT_OF_MEMORY_ERROR;
     } catch (PluginCreateError &e) {
-        printf(e.what());
-        printf("\n");
-        delete plugin; plugin = NULL;
+        printf("%s\n", e.what());
+        delete plugin; 
+        plugin = NULL;
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
     instance->pdata = static_cast<void *>(plugin);
