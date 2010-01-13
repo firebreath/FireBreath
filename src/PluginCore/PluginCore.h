@@ -18,6 +18,10 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginEventSink.h"
 #include "AutoPtr.h"
 #include <string>
+#include <set>
+#include "boost/assign.hpp"
+
+using boost::assign::list_of;
 
 namespace FB {
 
@@ -43,10 +47,11 @@ namespace FB {
 
     public:
         PluginCore();
+        PluginCore(const std::set<std::string> params);
         virtual ~PluginCore();
 
         void SetHost(BrowserHostWrapper *);
-		PluginWindow* GetWindow();
+		PluginWindow* GetWindow() const;
         void SetWindow(PluginWindow *);
         void ClearWindow();
 
@@ -64,6 +69,8 @@ namespace FB {
         AutoPtr<JSAPI> m_api;
         AutoPtr<BrowserHostWrapper> m_host;
         std::string m_filesystemPath;
+        std::set<std::string> m_supportedParamSet;
+        std::map<std::string, FB::variant> 
     };
 };
 

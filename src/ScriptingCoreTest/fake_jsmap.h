@@ -20,7 +20,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 class FakeJsMap : public FB::BrowserObjectAPI
 {
     typedef std::vector<std::string> StringVec;
-    typedef FB::JSOutMap::value_type OutPair;
+    typedef FB::VariantMap::value_type OutPair;
 
     struct GrabKeys {
         std::back_insert_iterator<StringVec> inserter;
@@ -30,7 +30,7 @@ class FakeJsMap : public FB::BrowserObjectAPI
         }
     };
 public:
-    FakeJsMap(const FB::JSOutMap& values)
+    FakeJsMap(const FB::VariantMap& values)
       : FB::BrowserObjectAPI(0), m_values(values)
     {
         std::for_each(m_values.begin(), m_values.end(), GrabKeys(m_names));
@@ -67,7 +67,7 @@ public:
     { 
         if(s == "length")
             return (int)m_values.size();
-        FB::JSOutMap::const_iterator it = m_values.find(s);
+        FB::VariantMap::const_iterator it = m_values.find(s);
         if(it != m_values.end())
             return it->second;
         throw FB::script_error(std::string("no such property '")+s+"'");
@@ -84,7 +84,7 @@ public:
     }
 
 private:
-    FB::JSOutMap m_values;
+    FB::VariantMap m_values;
     StringVec m_names;
 };
 

@@ -47,6 +47,18 @@ PluginCore::PluginCore() : m_Window(NULL)
         // Only on the first initialization
         GlobalPluginInitialize();
     }
+
+    
+}
+
+PluginCore::PluginCore(std::set<std::string> params) : m_Window(NULL)
+{
+    // This class is only created on the main UI thread,
+    // so there is no need for mutexes here
+    if (++PluginCore::ActivePluginCount == 1) {
+        // Only on the first initialization
+        GlobalPluginInitialize();
+    }
 }
 
 PluginCore::~PluginCore()
@@ -73,7 +85,7 @@ JSAPI* PluginCore::getRootJSAPI()
     return m_api.ptr();
 }
 
-PluginWindow* PluginCore::GetWindow()
+PluginWindow* PluginCore::GetWindow() const
 {
 	return m_Window;
 }

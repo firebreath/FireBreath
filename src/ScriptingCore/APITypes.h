@@ -32,8 +32,7 @@ namespace FB
     // Variant list
 
     typedef std::vector<variant> VariantList;
-    typedef std::vector<variant> JSOutArray;
-    typedef std::map<std::string, variant> JSOutMap;
+    typedef std::map<std::string, variant> VariantMap;
     
     typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
     typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
