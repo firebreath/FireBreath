@@ -27,7 +27,7 @@ namespace FB
     class BrowserHostWrapper;
     class JSAPI;
     class BrowserObjectAPI;
-	struct variant;
+	class variant;
 
     // Variant list
 
