@@ -12,6 +12,7 @@
 #include "PluginEvents/MouseEvents.h"
 
 #include "PluginCore.h"
+#include "PluginWindow.h"
 
 class FBTestPlugin : public FB::PluginCore
 {

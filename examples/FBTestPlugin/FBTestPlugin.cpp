@@ -39,19 +39,19 @@ FB::JSAPI* FBTestPlugin::createJSAPI()
     return new FBTestPluginAPI(m_host);
 }
 
-bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt)
+bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt)
+bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt)
+bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;

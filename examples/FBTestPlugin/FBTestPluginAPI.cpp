@@ -104,10 +104,9 @@ double FBTestPluginAPI::asDouble(FB::variant a)
     return a.convert_cast<double>();
 }
 
-FB::JSOutArray FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
+FB::VariantList FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
 {
-    FB::JSOutArray outArr;
-    bool start(true);
+    FB::VariantList outArr;
     for (std::vector<std::string>::reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
     {
         outArr.push_back(*it);
@@ -115,9 +114,9 @@ FB::JSOutArray FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
     return outArr;
 }
 
-FB::JSOutArray FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
+FB::VariantList FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
 {
-    FB::JSOutArray outArr;
+    FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
     arr->GetObjectValues(arr, inMap);
 
@@ -127,9 +126,9 @@ FB::JSOutArray FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
     return outArr;
 }
 
-FB::JSOutArray FBTestPluginAPI::getObjectValues(FB::JSObject arr)
+FB::VariantList FBTestPluginAPI::getObjectValues(FB::JSObject arr)
 {
-    FB::JSOutArray outArr;
+    FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
     arr->GetObjectValues(arr, inMap);
 
@@ -154,14 +153,14 @@ std::string FBTestPluginAPI::listArray(std::vector<std::string> arr)
     return outStr;
 }
 
-FB::JSOutMap FBTestPluginAPI::getUserData()
+FB::VariantMap FBTestPluginAPI::getUserData()
 {
-    FB::JSOutMap map;
+    FB::VariantMap map;
     map["Name"] = "Richard Bateman";
     map["Location"] = "Somewhere in Utah";
     map["EyeColor"] = "Hazel";
     map["HairColor"] = "Brown";
-    FB::JSOutArray kids;
+    FB::VariantList kids;
     kids.push_back("Caleb");
     kids.push_back("Unknown");
     kids.push_back("Ok, I only have one, but I'm filling space");

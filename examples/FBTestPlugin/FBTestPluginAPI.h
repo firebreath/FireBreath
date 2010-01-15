@@ -40,10 +40,10 @@ public:
     double asDouble(FB::variant a);
 
     std::string listArray(std::vector<std::string>);
-    FB::JSOutArray reverseArray(std::vector<std::string> arr);
-    FB::JSOutArray getObjectKeys(FB::JSObject arr);
-    FB::JSOutArray getObjectValues(FB::JSObject arr);
-    FB::JSOutMap getUserData();
+    FB::VariantList reverseArray(std::vector<std::string> arr);
+    FB::VariantList getObjectKeys(FB::JSObject arr);
+    FB::VariantList getObjectValues(FB::JSObject arr);
+    FB::VariantMap getUserData();
 
     // Method add
     long add(long a, long b);
