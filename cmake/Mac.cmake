@@ -12,6 +12,8 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
+set (PATCH_DESC_FILENAME ${BUILD_DIR}/xcode_patch_desc.txt)
+
 if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
     execute_process (COMMAND
          xcode-select -print-path
@@ -27,6 +29,22 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
 
     set (XCODE_DIR "${XCODE_DIR}" CACHE PATH "Path to Xcode")
 endif()
+
+function(patch_xcode_plugin PRJNAME TARGETNAME)
+
+    file(APPEND ${PATCH_DESC_FILENAME} "${TARGETNAME} ${PRJNAME}\n")
+
+endfunction(patch_xcode_plugin)
+
+function(clear_xcode_patches)
+
+    if (APPLE)
+        if (EXISTS ${PATCH_DESC_FILENAME})
+            file(REMOVE ${PATCH_DESC_FILENAME})
+        endif()
+    endif(APPLE)
+
+endfunction(clear_xcode_patches)
 
 MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES)
 
@@ -77,6 +95,9 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
     set_source_Files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
+
+    patch_xcode_plugin( "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
+    patch_xcode_plugin( "${BUILD_DIR}/FireBreath.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
 
 ENDMACRO(add_mac_plugin)
 

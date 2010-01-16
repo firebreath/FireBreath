@@ -19,6 +19,8 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.8)
 Project (FireBreath)
 include(${CMAKE_DIR}/common.cmake)
 
+clear_xcode_patches()
+
 message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
 
 # Common projects -- projects that don't have any plugin specific code

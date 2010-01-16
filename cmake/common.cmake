@@ -12,17 +12,6 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-if (WIN32)
-    set (PLATFORM_NAME "Win")
-    include(${CMAKE_DIR}/Win.cmake)
-    include(${CMAKE_DIR}/wix.cmake)
-elseif(APPLE)
-    set (PLATFORM_NAME "Mac")
-    include(${CMAKE_DIR}/Mac.cmake)
-elseif(UNIX)
-    set (PLATFORM_NAME "Linux")
-endif()
-
 get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
@@ -39,6 +28,17 @@ set (BIN_DIR "${BUILD_DIR}/bin")
 
 if (NOT EXISTS ${BUILD_DIR})
    file (MAKE_DIRECTORY ${BUILD_DIR})
+endif()
+
+if (WIN32)
+    set (PLATFORM_NAME "Win")
+    include(${CMAKE_DIR}/Win.cmake)
+    include(${CMAKE_DIR}/wix.cmake)
+elseif(APPLE)
+    set (PLATFORM_NAME "Mac")
+    include(${CMAKE_DIR}/Mac.cmake)
+elseif(UNIX)
+    set (PLATFORM_NAME "Linux")
 endif()
 
 # Get the project paths

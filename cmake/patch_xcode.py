@@ -1,5 +1,21 @@
+#!/usr/bin/env python
+# encoding: utf-8
+"""
+Utility script to patch a cmake project and convert a target to a browser plugin compatible bundle
 
-import re
+Original Author(s): Richard Bateman
+Created:    15 January 2010
+License:    Dual license model; choose one of two:
+            Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2009 Firebreath development team
+"""
+import re, sys
+from optparse import OptionParser
 
 class XCodeProject:
     projectFname = ""
@@ -55,4 +71,25 @@ class XCodeProject:
         f = open(fName, "w")
         f.write(self.projectString)
         f.close()
+
+def Main():
+    # Define the command-line interface via OptionParser
+    usage = "usage: %prog [options]"
+    parser = OptionParser(usage)
+    parser.add_option("-f", "--filename", dest = "fName", help="Filename of the xcode project to patch")
+    parser.add_option("-t", "--target", dest = "target", help="Target to patch")
+    options, args = parser.parse_args()
+
+    if options.fName and options.target:
+        print "Patching XCode project %s with target %s" % (options.fName, options.target)
+        proj = XCodeProject(options.fName)
+        proj.patchTarget(options.target)
+        proj.save(options.fName)
+    else:
+        parser.print_help()
+        sys.exit(1)
+
+
+if __name__ == "__main__":
+    Main()
 
