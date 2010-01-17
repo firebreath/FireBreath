@@ -12,19 +12,11 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-if(WIN32)
-  set (PLAT_INCLUDE_DIR "win")
-elseif(APPLE)
-  set (PLAT_INCLUDE_DIR "mac")
-elseif(UNIX)
-  set (PLAT_INCLUDE_DIR "linux")
-endif()
-
 set (FIREBREATH_SOURCE_DIR ${FB_ROOT_DIR})
 set (FIREBREATH_BINARY_DIR ${BUILD_DIR})
 
 set (BOOST_SOURCE_DIR ${SOURCE_DIR}/3rdParty/boost)
-set (GECKOSDK_SOURCE_DIR ${SOURCE_DIR}/3rdParty/gecko-sdk/${PLAT_INCLUDE_DIR}/includes)
+set (GECKOSDK_SOURCE_DIR ${SOURCE_DIR}/3rdParty/gecko-sdk/includes)
 
 set (ACTIVEXPLUGIN_SOURCE_DIR "${SOURCE_DIR}/ActiveXPlugin")
 set (ACTIVEXPLUGINTEST_SOURCE_DIR "${SOURCE_DIR}/ActiveXPluginTest")

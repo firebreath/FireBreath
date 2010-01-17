@@ -22,10 +22,26 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiPluginMac::NpapiPluginMac(NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
     // TODO: Get the path to the bundle
     //setFSPath();
+
+    // Select CoreGraphics drawing model
+    NPBool supportsCoreGraphics(false);
+    if (host->GetValue(NPNVsupportsCoreGraphicsBool, &supportsCoreGraphics) == NPERR_NO_ERROR && supportsCoreGraphics) {
+        host->SetValue(NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics);
+    } else {
+        throw PluginCreateError("CoreGraphics drawing model not supported; can't create plugin instance");
+    }
+
+    // For now, we default to using Carbon events
+    NPBool supportsCarbonEvents(false);
+    if (host->GetValue(NPNVsupportsCarbonBool, &supportsCarbonEvents) != NPERR_NO_ERROR || supportsCarbonEvents) {
+        host->SetValue(NPPVpluginEventModel, (void*)NPEventModelCarbon);
+    } else {
+        throw PluginCreateError("Carbon event model not supported; can't create plugin instance (are you using 64 bit?)");
+    }
 }
 
 NpapiPluginMac::~NpapiPluginMac()

@@ -37,15 +37,17 @@
  * ***** END LICENSE BLOCK ***** */
 
 /*
- * Header file for ensuring that C99 types ([u]int32_t and bool) are
- * available.
+ * Header file for ensuring that C99 types ([u]int32_t and bool) and
+ * true/false macros are available.
  */
 
 #if defined(WIN32) || defined(OS2)
   /*
-   * Win32 and OS/2 don't know C99, so define [u]int_32 here. The bool
+   * Win32 and OS/2 don't know C99, so define [u]int_16/32 here. The bool
    * is predefined tho, both in C and C++.
    */
+  typedef short int16_t;
+  typedef unsigned short uint16_t;
   typedef int int32_t;
   typedef unsigned int uint32_t;
 #elif defined(_AIX) || defined(__sun) || defined(__osf__) || defined(IRIX) || defined(HPUX)
@@ -57,6 +59,8 @@
 
   #ifndef __cplusplus
     typedef int bool;
+    #define true   1
+    #define false  0
   #endif
 #elif defined(bsdi) || defined(FREEBSD) || defined(OPENBSD)
   /*
@@ -73,6 +77,8 @@
 
   #if !defined(__cplusplus)
     typedef int bool;
+    #define true   1
+    #define false  0
   #endif
   #else
   /*
@@ -100,6 +106,8 @@
        * works.
        */
       #define bool int
+      #define true   1
+      #define false  0
     #endif
   #endif
 #endif

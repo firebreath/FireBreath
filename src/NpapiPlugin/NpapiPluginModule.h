@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Authors: Richard Bateman (taxilian)
 Don Jordan (kc7zax)
 
@@ -21,6 +21,18 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiTypes.h"
 
 namespace FB { namespace Npapi {
+
+    struct PluginCreateError : std::exception
+    {
+        PluginCreateError(std::string error)
+            : m_error(error)
+        { }
+		~PluginCreateError() throw() { }
+        virtual const char* what() {
+            return m_error.c_str();
+        }
+        std::string m_error;
+    };
 
     class NpapiPluginModule
     {

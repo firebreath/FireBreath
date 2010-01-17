@@ -34,3 +34,4 @@ build/*
 buildex/
 buildex/*
 projects/*
+tags

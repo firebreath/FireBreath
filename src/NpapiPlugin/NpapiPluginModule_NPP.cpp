@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -42,11 +42,16 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16 m
 
     FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
     host->setBrowserFuncs(&(NpapiPluginModule::Default->NPNFuncs));
+    try {
     NpapiPlugin *plugin = _getNpapiPlugin(host);
     plugin->init(pluginType, argc, argn, argv);
     if (plugin == NULL)
         return NPERR_OUT_OF_MEMORY_ERROR;
-
+    } catch (PluginCreateError &e) {
+        printf(e.what());
+        printf("\n");
+        return NPERR_INCOMPATIBLE_VERSION_ERROR;
+    }
     instance->pdata = static_cast<void *>(plugin);
     return NPERR_NO_ERROR;
 }
