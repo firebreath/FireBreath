@@ -192,7 +192,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         m_api->getMemberNames(memberList);
         *count = memberList.size();
         NPIdentifier *outList(NULL);
-        outList = (NPIdentifier*)m_browser->MemAlloc((uint32)(sizeof(NPIdentifier) * *count));
+        outList = (NPIdentifier*)m_browser->MemAlloc((uint32_t)(sizeof(NPIdentifier) * *count));
         
         for (uint32_t i = 0; i < memberList.size(); i++) {
             outList[i] = m_browser->GetStringIdentifier(memberList.at(i).c_str());

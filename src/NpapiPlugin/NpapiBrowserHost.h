@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPAPIBROWSERHOST
 #define H_NPAPIBROWSERHOST
 
-#include "npupp.h"
+#include "NpapiTypes.h"
 #include "BrowserHostWrapper.h"
 
 namespace FB { namespace Npapi {
@@ -54,9 +54,9 @@ namespace FB { namespace Npapi {
 
     public:
         /* These are proxied to the module */
-        void* MemAlloc(uint32 size);
+        void* MemAlloc(uint32_t size);
         void MemFree(void* ptr);
-        uint32 MemFlush(uint32 size);
+        uint32_t MemFlush(uint32_t size);
         
         NPObject *RetainObject(NPObject *npobj);
         void ReleaseObject(NPObject *npobj);
@@ -73,11 +73,11 @@ namespace FB { namespace Npapi {
         /* npapi.h definitions */
         NPError GetURLNotify(const char* url, const char* target, void* notifyData);
         NPError GetURL(const char* url, const char* target);
-        NPError PostURLNotify(const char* url, const char* target, uint32 len, const char* buf, NPBool file, void* notifyData);
-        NPError PostURL(const char* url, const char* target, uint32 len, const char* buf, NPBool file);
+        NPError PostURLNotify(const char* url, const char* target, uint32_t len, const char* buf, NPBool file, void* notifyData);
+        NPError PostURL(const char* url, const char* target, uint32_t len, const char* buf, NPBool file);
         NPError RequestRead(NPStream* stream, NPByteRange* rangeList);
         NPError NewStream(NPMIMEType type, const char* target, NPStream** stream);
-        int32 Write(NPStream* stream, int32 len, void* buffer);
+        int32_t Write(NPStream* stream, int32_t len, void* buffer);
         NPError DestroyStream(NPStream* stream, NPReason reason);
         void Status(const char* message);
         const char* UserAgent();

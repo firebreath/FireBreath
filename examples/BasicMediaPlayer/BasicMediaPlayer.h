@@ -44,7 +44,7 @@ public:
     std::string version() const;
     std::string lastError() const;
 
-    FB::JSOutArray playlist() const;
+    FB::VariantList playlist() const;
     void setPlaylist(PlayList&);
 
 	PlayList::size_type currentIndex() const;

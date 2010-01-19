@@ -48,10 +48,10 @@ void NpapiPlugin::shutdown(void)
     delete pluginMain; pluginMain = NULL;
 }
 
-void NpapiPlugin::init(NPMIMEType pluginType, int16 argc, char* argn[], char *argv[])
+void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[])
 {
     FB::VariantMap paramList;
-    for (int16 i = 0; i < argc; i++) {
+    for (int16_t i = 0; i < argc; i++) {
         paramList[argn[i]] = argv[i];
     }
     pluginMain->setParams(paramList);
@@ -117,7 +117,7 @@ NPP_Write.
 If the plug-in receives a value of zero, the data flow temporarily stops. The browser checks to
 see if the plug-in can receive data again by resending the data at regular intervals. 
 */
-int32 NpapiPlugin::WriteReady(NPStream* stream)
+int32_t NpapiPlugin::WriteReady(NPStream* stream)
 {
     return 0;
 
@@ -144,7 +144,7 @@ value increases as the each buffer is written. The buf parameter is not persiste
 must process data immediately or allocate memory and save a copy of it. In a seekable stream with
 byte range requests, you can use this parameter to track NPN_RequestRead requests.
 */
-int32 NpapiPlugin::Write(NPStream* stream, int32 offset, int32 len, void* buffer)
+int32_t NpapiPlugin::Write(NPStream* stream, int32_t offset, int32_t len, void* buffer)
 {
     // TODO: support browser streams
     return len;
@@ -228,7 +228,7 @@ NPP_HandleEvent is called, the current port is set up so that its origin matches
 corner of the plug-in. A plug-in does not need to set up the current port for mouse coordinate
 translation.
 */
-int16 NpapiPlugin::HandleEvent(void* event)
+int16_t NpapiPlugin::HandleEvent(void* event)
 {
     return 0;   // 0, false, indicates that the event was not handled
 }
@@ -246,7 +246,7 @@ stream with the function NPN_GetURL. The browser calls NPP_DestroyStream when th
 (either successfully or abnormally). The plug-in can terminate the stream itself by calling
 NPN_DestroyStream.
 */
-NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype)
+NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype)
 {
 
     return NPERR_NO_ERROR;

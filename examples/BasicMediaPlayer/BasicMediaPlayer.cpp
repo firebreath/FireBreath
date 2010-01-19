@@ -196,7 +196,7 @@ BasicMediaPlayer::currentIndex() const
     return m_currentIndex;
 }
 
-FB::JSOutArray BasicMediaPlayer::playlist() const
+FB::VariantList BasicMediaPlayer::playlist() const
 {
     return FB::make_variant_list(m_playlist);
 }

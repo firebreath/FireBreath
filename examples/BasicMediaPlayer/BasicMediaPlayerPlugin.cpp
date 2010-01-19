@@ -49,19 +49,19 @@ FB::JSAPI* BasicMediaPlayerPlugin::createJSAPI()
     return m_player.ptr();
 }
 
-bool BasicMediaPlayerPlugin::onMouseDown(FB::MouseDownEvent *evt)
+bool BasicMediaPlayerPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool BasicMediaPlayerPlugin::onMouseUp(FB::MouseUpEvent *evt)
+bool BasicMediaPlayerPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
     return false;
 }
 
-bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt)
+bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
 {
     //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
     return false;

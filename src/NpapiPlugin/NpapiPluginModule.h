@@ -54,9 +54,9 @@ namespace FB { namespace Npapi {
         // These are the NPN_ functions that don't require a NPP
         void Version(int* plugin_major, int* plugin_minor, int* netscape_major,
             int* netscape_minor);
-        void* MemAlloc(uint32 size);
+        void* MemAlloc(uint32_t size);
         void MemFree(void* ptr);
-        uint32 MemFlush(uint32 size);
+        uint32_t MemFlush(uint32_t size);
         void ReloadPlugins(NPBool reloadPages);
         void ReleaseVariantValue(NPVariant *variant);
         NPIdentifier GetStringIdentifier(const NPUTF8 *name);
@@ -74,19 +74,19 @@ namespace FB { namespace Npapi {
         // These are the static NPP_ functions; NPP_New and NPP_Destroy create and destroy the
         // plugin, the rest are wrappers that dereference NPP->pdata to get at the plugin object
         // and proxy the call to there.
-        static NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc,
+        static NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc,
             char* argn[], char* argv[], NPSavedData* saved);
         static NPError NPP_Destroy(NPP instance, NPSavedData** save);
         static NPError NPP_SetWindow(NPP instance, NPWindow* window);
         static NPError NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream,
-            NPBool seekable, uint16* stype);
+            NPBool seekable, uint16_t* stype);
         static NPError NPP_DestroyStream(NPP instance, NPStream* stream, NPReason reason);
-        static int32 NPP_WriteReady(NPP instance, NPStream* stream);
-        static int32 NPP_Write(NPP instance, NPStream* stream, int32 offset, int32 len,
+        static int32_t NPP_WriteReady(NPP instance, NPStream* stream);
+        static int32_t NPP_Write(NPP instance, NPStream* stream, int32_t offset, int32_t len,
             void* buffer);
         static void NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname);
         static void NPP_Print(NPP instance, NPPrint* platformPrint);
-        static int16 NPP_HandleEvent(NPP instance, void* event);
+        static int16_t NPP_HandleEvent(NPP instance, void* event);
         static void NPP_URLNotify(NPP instance, const char* url, NPReason reason,
             void* notifyData);
         static NPError NPP_GetValue(NPP instance, NPPVariable variable, void *ret_alue);

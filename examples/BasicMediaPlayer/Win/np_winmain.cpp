@@ -10,7 +10,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 
-#include "npupp.h"
+#include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
 
 using namespace FB::Npapi;

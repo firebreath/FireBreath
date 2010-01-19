@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 /* NPN_MemAlloc */
-void* NP_LOADDS NpapiHost::NH_MemAlloc(uint32 size)
+void* NP_LOADDS NpapiHost::NH_MemAlloc(uint32_t size)
 {
     return malloc(size);
 }
@@ -36,7 +36,7 @@ void NP_LOADDS NpapiHost::NH_MemFree(void* ptr)
 }
 
 /* NPN_MemFlush */
-uint32 NP_LOADDS NpapiHost::NH_MemFlush(uint32 size)
+uint32_t NP_LOADDS NpapiHost::NH_MemFlush(uint32_t size)
 {
     return 0;
 }

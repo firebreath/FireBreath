@@ -36,7 +36,7 @@ namespace FB {
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
         NPError SetWindow(NPWindow* window);
-        //int16 HandleEvent(void* event);
+        //int16_t HandleEvent(void* event);
     };
 
 }; }; // FB::Npapi

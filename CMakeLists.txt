@@ -19,7 +19,9 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.8)
 Project (FireBreath)
 include(${CMAKE_DIR}/common.cmake)
 
-clear_xcode_patches()
+if (APPLE)
+    clear_xcode_patches()
+endif()
 
 message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
 

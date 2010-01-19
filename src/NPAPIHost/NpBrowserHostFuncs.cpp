@@ -42,7 +42,7 @@ NPError	NP_LOADDS NPN_GetURLNotify(NPP instance, const char* url, const char* wi
 }
 
 /* NPN_PostUrlNotify */
-NPError NP_LOADDS NpapiHost::NH_PostURLNotify(NPP instance, const char* url, const char* window, uint32 len, const char* buf, NPBool file, void* notifyData)
+NPError NP_LOADDS NpapiHost::NH_PostURLNotify(NPP instance, const char* url, const char* window, uint32_t len, const char* buf, NPBool file, void* notifyData)
 {
     return NPERR_INVALID_PARAM;
 }
@@ -59,7 +59,7 @@ NPError NP_LOADDS NpapiHost::NH_GetURLNotify(NPP instance, const char* url, cons
 }
 
 /* NPN_PostUrl */
-NPError NP_LOADDS NpapiHost::NH_PostURL(NPP instance, const char* url, const char* window, uint32 len, const char* buf, NPBool file)
+NPError NP_LOADDS NpapiHost::NH_PostURL(NPP instance, const char* url, const char* window, uint32_t len, const char* buf, NPBool file)
 {
     return NPERR_INVALID_PARAM;
 }
@@ -77,7 +77,7 @@ NPError	NP_LOADDS NpapiHost::NH_NewStream(NPP instance, NPMIMEType type, const c
 }
 
 /* NPN_Write */
-int32 NP_LOADDS NpapiHost::NH_Write(NPP instance, NPStream* stream, int32 len, void* buffer)
+int32_t NP_LOADDS NpapiHost::NH_Write(NPP instance, NPStream* stream, int32_t len, void* buffer)
 {
     return 0;
 }

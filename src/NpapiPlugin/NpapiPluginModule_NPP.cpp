@@ -33,7 +33,7 @@ inline bool validInstance(NPP instance)
 // These are the static NPP_ functions; NPP_New and NPP_Destroy create and destroy the
 // plugin, the rest are wrappers that dereference NPP->pdata to get at the plugin object
 // and proxy the call to there.
-NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16 mode, int16 argc,
+NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc,
                                    char* argn[], char* argv[], NPSavedData* saved)
 {
     if (instance == NULL) {
@@ -42,14 +42,16 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16 m
 
     FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
     host->setBrowserFuncs(&(NpapiPluginModule::Default->NPNFuncs));
+    NpapiPlugin *plugin(NULL);
     try {
-    NpapiPlugin *plugin = _getNpapiPlugin(host);
-    plugin->init(pluginType, argc, argn, argv);
-    if (plugin == NULL)
-        return NPERR_OUT_OF_MEMORY_ERROR;
+        plugin = _getNpapiPlugin(host);
+        plugin->init(pluginType, argc, argn, argv);
+        if (plugin == NULL)
+            return NPERR_OUT_OF_MEMORY_ERROR;
     } catch (PluginCreateError &e) {
         printf(e.what());
         printf("\n");
+        delete plugin; plugin = NULL;
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
     instance->pdata = static_cast<void *>(plugin);
@@ -83,7 +85,7 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
 }
 
 NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream,
-                                       NPBool seekable, uint16* stype)
+                                       NPBool seekable, uint16_t* stype)
 {
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
@@ -103,7 +105,7 @@ NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPR
     return plugin->DestroyStream(stream, reason);
 }
 
-int32 NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
+int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
 {
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
@@ -113,7 +115,7 @@ int32 NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
     return plugin->WriteReady(stream);
 }
 
-int32 NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32 offset, int32 len,
+int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t offset, int32_t len,
                                  void* buffer)
 {
     if (!validInstance(instance)) {
@@ -144,7 +146,7 @@ void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
     plugin->Print(platformPrint);
 }
 
-int16 NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
+int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
 {
     if (!validInstance(instance)) {
         return 0;

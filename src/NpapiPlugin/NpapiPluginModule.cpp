@@ -59,7 +59,7 @@ void NpapiPluginModule::Version(int* plugin_major, int* plugin_minor, int* netsc
 }
 
 
-void* NpapiPluginModule::MemAlloc(uint32 size)
+void* NpapiPluginModule::MemAlloc(uint32_t size)
 {
     if (NPNFuncs.memalloc != NULL) {
         return NPNFuncs.memalloc(size);
@@ -75,7 +75,7 @@ void NpapiPluginModule::MemFree(void* ptr)
     }
 }
 
-uint32 NpapiPluginModule::MemFlush(uint32 size)
+uint32_t NpapiPluginModule::MemFlush(uint32_t size)
 {
     if (NPNFuncs.memflush != NULL) {
         return NPNFuncs.memflush(size);

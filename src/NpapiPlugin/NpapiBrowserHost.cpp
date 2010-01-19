@@ -224,7 +224,7 @@ NPError NpapiBrowserHost::GetURL(const char* url, const char* target)
     }
 }
 
-NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uint32 len,
+NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uint32_t len,
                                         const char* buf, NPBool file, void* notifyData)
 {
     if (NPNFuncs.posturlnotify != NULL) {
@@ -234,7 +234,7 @@ NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uin
     }
 }
 
-NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32 len,
+NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32_t len,
                                   const char* buf, NPBool file)
 {
     if (NPNFuncs.posturl != NULL) {
@@ -262,7 +262,7 @@ NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStrea
     }
 }
 
-int32 NpapiBrowserHost::Write(NPStream* stream, int32 len, void* buffer)
+int32_t NpapiBrowserHost::Write(NPStream* stream, int32_t len, void* buffer)
 {
     if (NPNFuncs.write != NULL) {
         return NPNFuncs.write(m_npp, stream, len, buffer);
@@ -280,7 +280,7 @@ NPError NpapiBrowserHost::DestroyStream(NPStream* stream, NPReason reason)
     }
 }
 
-void* NpapiBrowserHost::MemAlloc(uint32 size)
+void* NpapiBrowserHost::MemAlloc(uint32_t size)
 {
     return module->MemAlloc(size);
 }
@@ -288,7 +288,7 @@ void NpapiBrowserHost::MemFree(void* ptr)
 {
     module->MemFree(ptr);
 }
-uint32 NpapiBrowserHost::MemFlush(uint32 size)
+uint32_t NpapiBrowserHost::MemFlush(uint32_t size)
 {
     return module->MemFlush(size);
 }

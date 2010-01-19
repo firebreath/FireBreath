@@ -19,7 +19,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "Win/win_common.h"
 #endif
 
-#include "npupp.h"
+#include "nptypes.h"
+#include "npfunctions.h"
+#include "npapi.h"
 #include "npruntime.h"
 #include "variant.h"
 

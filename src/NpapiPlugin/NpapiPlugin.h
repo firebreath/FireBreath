@@ -28,7 +28,7 @@ namespace FB { namespace Npapi {
         NpapiPlugin(NpapiBrowserHost *host);
         virtual ~NpapiPlugin(void);
 
-        virtual void init(NPMIMEType pluginType, int16 argc, char* argn[], char *argv[]);
+        virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);
         virtual void shutdown();
 
     protected:
@@ -41,13 +41,13 @@ namespace FB { namespace Npapi {
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
         virtual NPError SetWindow(NPWindow* window);
-        virtual NPError NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16* stype);
+        virtual NPError NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype);
         virtual NPError DestroyStream(NPStream* stream, NPReason reason);
-        virtual int32 WriteReady(NPStream* stream);
-        virtual int32 Write(NPStream* stream, int32 offset, int32 len, void* buffer);
+        virtual int32_t WriteReady(NPStream* stream);
+        virtual int32_t Write(NPStream* stream, int32_t offset, int32_t len, void* buffer);
         virtual void StreamAsFile(NPStream* stream, const char* fname);
         virtual void Print(NPPrint* platformPrint);
-        virtual int16 HandleEvent(void* event);
+        virtual int16_t HandleEvent(void* event);
         virtual void URLNotify(const char* url, NPReason reason, void* notifyData);
         virtual NPError GetValue(NPPVariable variable, void *);
         virtual NPError SetValue(NPNVariable variable, void *);
