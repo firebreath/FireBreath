@@ -15,6 +15,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitionsMac
 #define H_FactoryDefinitionsMac
 
+#include <Carbon/Carbon.h>
+
 namespace FB {
     class JSAPI;
     class PluginCore;
@@ -30,6 +32,6 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowMac *_createPluginWindow();
+FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y);
 
 #endif

@@ -40,19 +40,45 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 source_group(PluginEvents FILES ${EVENTS})
 
-if (WIN32)
-    file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        Win/*.h
-        Win/*.cpp
-        )
+file (GLOB LINUX_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Linux/*.h
+    Linux/*.cpp
+    )
 
-    source_group(Windows FILES ${WIN_SOURCES})
+SOURCE_GROUP(Linux FILES ${Linux_SOURCES})
+
+file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Win/*.h
+    Win/*.cpp
+    )
+
+SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
+
+file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*.h
+    Mac/*.cpp
+    )
+
+SOURCE_GROUP(Mac FILES ${MAC_SOURCES})
+
+if (WIN32)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${LINUX_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+endif()
+if(APPLE)
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${LINUX_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+elseif(UNIX)
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
 endif()
 
 set (SOURCES
     ${GENERAL}
     ${EVENTS}
     ${WIN_SOURCES}
+    ${MAC_SOURCES}
+    ${LINUX_SOURCES}
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})

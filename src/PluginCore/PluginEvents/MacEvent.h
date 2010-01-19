@@ -1,7 +1,7 @@
 /**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
-Created:    Dec 7, 2009
+Created:    Oct 19, 2009
 License:    Dual license model; choose one of two:
             Eclipse Public License - Version 1.0
             http://www.eclipse.org/legal/epl-v10.html
@@ -9,28 +9,33 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 Richard Bateman, Firebreath development team
+Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_PLUGINEVENTS_DRAWINGEVENTS
-#define H_FB_PLUGINEVENTS_DRAWINGEVENTS
+#ifndef H_FB_EVENTS_MACEVENT
+#define H_FB_EVENTS_MACEVENT
+
+#ifndef XP_MACOSX
+#define EventRecord NPEvent
+#else
+#include <Carbon/Carbon.h>
+#endif
 
 #include "PluginEvent.h"
 
 namespace FB {
 
-    class ResizedEvent : public PluginEvent
+    class MacEvent : public PluginEvent
     {
-    };
+    public:
+        MacEvent(EventRecord *src)
+        {
+            memcpy(&msg, src, sizeof(EventRecord));
+        }
 
-    class ClipChangedEvent : public PluginEvent
-    {
+    public:
+        EventRecord msg;
     };
-
-    class RefreshEvent : public PluginEvent
-    {
-    };
-
 };
 
-#endif // H_FB_PLUGINEVENTS_DRAWINGEVENTS
+#endif

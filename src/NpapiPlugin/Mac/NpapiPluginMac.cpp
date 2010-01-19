@@ -12,13 +12,12 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
 #include "NpapiTypes.h"
 #include "PluginCore.h"
-#include "Win/PluginWindowMac.h"
-#include "Win/FactoryDefinitionsWin.h"
+#include "Mac/PluginWindowMac.h"
+#include "Mac/FactoryDefinitionsMac.h"
 
-#include "Win/NpapiPluginMac.h"
+#include "Mac/NpapiPluginMac.h"
 
 using namespace FB::Npapi;
 
@@ -51,18 +50,21 @@ NpapiPluginMac::~NpapiPluginMac()
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window)
 {
-    if (window != NULL) {
-        if (pluginWin != NULL
-             && pluginWin->getHWND() != window->window) {
-
+    if (window != NULL && window->window != NULL) {
+        NP_Port *prt = (NP_Port*)window->window;
+        if (pluginWin != NULL && pluginWin->getPort() != prt->port) {
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
         }
 
         if (pluginWin == NULL) {
-            pluginWin = _createPluginWindow((HWND)window->window);
+            pluginWin = _createPluginWindow((CGrafPtr)prt->port, prt->portx, prt->porty);
             pluginMain->SetWindow(pluginWin);
         }
+        
+        pluginWin->setWindowPosition(window->x, window->y, window->width, window->height);
+        pluginWin->setWindowClipping(window->clipRect.top, window->clipRect.left,
+                                      window->clipRect.bottom, window->clipRect.right);
     } else if (pluginWin != NULL) {
         // If the handle goes to NULL, our window is gone and we need to stop using it
         pluginMain->ClearWindow();
@@ -70,4 +72,14 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window)
     }
 
     return NPERR_NO_ERROR;
+}
+
+int16_t NpapiPluginMac::HandleEvent(void* event)
+{
+    if (pluginWin != NULL)
+        return pluginWin->HandleEvent((EventRecord*)event);
+    else {
+        return 0;
+    }
+
 }

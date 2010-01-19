@@ -48,19 +48,45 @@ SOURCE_GROUP(NpapiScripting FILES ${SCRIPTING})
 
 SOURCE_GROUP(NpapiPlugin FILES ${PLUGIN})
 
-if (WIN32)
-    file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        Win/*.h
-        Win/*.cpp
-        )
+file (GLOB LINUX_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Linux/*.h
+    Linux/*.cpp
+    )
 
-    SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
+SOURCE_GROUP(Linux FILES ${Linux_SOURCES})
+
+file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Win/*.h
+    Win/*.cpp
+    )
+
+SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
+
+file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*.h
+    Mac/*.cpp
+    )
+
+SOURCE_GROUP(Mac FILES ${MAC_SOURCES})
+
+if (WIN32)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${LINUX_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+endif()
+if(APPLE)
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${LINUX_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+elseif(UNIX)
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
 endif()
 
 set (SOURCES
     ${SCRIPTING}
     ${PLUGIN}
     ${WIN_SOURCES}
+    ${MAC_SOURCES}
+    ${LINUX_SOURCES}
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})

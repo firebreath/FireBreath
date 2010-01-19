@@ -78,7 +78,7 @@
 #endif
 #endif
 
-#if defined(XP_UNIX) 
+#if defined(XP_UNIX)
 # include <stdio.h>
 # if defined(MOZ_X11)
 #  include <X11/Xlib.h>
@@ -207,11 +207,11 @@ typedef struct _NPRect
   uint16_t right;
 } NPRect;
 
-typedef struct _NPSize 
-{ 
-  int32_t width; 
-  int32_t height; 
-} NPSize; 
+typedef struct _NPSize
+{
+  int32_t width;
+  int32_t height;
+} NPSize;
 
 #ifdef XP_UNIX
 /*
@@ -259,24 +259,31 @@ typedef enum {
 #endif
   NPDrawingModelCoreGraphics = 1
 } NPDrawingModel;
+
+typedef enum {
+#ifndef NP_NO_CARBON
+    NPEventModelCarbon = 0,
+#endif
+    NPEventModelCocoa = 1
+} NPEventModel;
 #endif
 
 /*
- *   The following masks are applied on certain platforms to NPNV and 
- *   NPPV selectors that pass around pointers to COM interfaces. Newer 
- *   compilers on some platforms may generate vtables that are not 
- *   compatible with older compilers. To prevent older plugins from 
- *   not understanding a new browser's ABI, these masks change the 
+ *   The following masks are applied on certain platforms to NPNV and
+ *   NPPV selectors that pass around pointers to COM interfaces. Newer
+ *   compilers on some platforms may generate vtables that are not
+ *   compatible with older compilers. To prevent older plugins from
+ *   not understanding a new browser's ABI, these masks change the
  *   values of those selectors on those platforms. To remain backwards
- *   compatible with differenet versions of the browser, plugins can 
+ *   compatible with differenet versions of the browser, plugins can
  *   use these masks to dynamically determine and use the correct C++
- *   ABI that the browser is expecting. This does not apply to Windows 
+ *   ABI that the browser is expecting. This does not apply to Windows
  *   as Microsoft's COM ABI will likely not change.
  */
 
 #define NP_ABI_GCC3_MASK  0x10000000
 /*
- *   gcc 3.x generated vtables on UNIX and OSX are incompatible with 
+ *   gcc 3.x generated vtables on UNIX and OSX are incompatible with
  *   previous compilers.
  */
 #if (defined (XP_UNIX) && defined(__GNUC__) && (__GNUC__ >= 3))
@@ -291,7 +298,7 @@ typedef enum {
  *   different than CFM. In addition to having a different
  *   C++ ABI, it also has has different C calling convention.
  *   You must use glue code when calling between CFM and
- *   Mach-O C functions. 
+ *   Mach-O C functions.
  */
 #if (defined(TARGET_RT_MAC_MACHO))
 #define _NP_ABI_MIXIN_FOR_MACHO NP_ABI_MACHO_MASK
@@ -334,9 +341,9 @@ typedef enum {
    * in Mozilla 1.8b2 (NPAPI minor version 15).
    */
   NPPVformValue = 16,
-  
+
   NPPVpluginUrlRequestsDisplayedBool = 17,
-  
+
   /* Checks if the plugin is interested in receiving the http body of
    * all http requests (including failed ones, http status != 200).
    */
@@ -345,6 +352,8 @@ typedef enum {
 #ifdef XP_MACOSX
   /* Used for negotiating drawing models */
   , NPPVpluginDrawingModel = 1000
+  /* Used for negotiating event models */
+  , NPPVpluginEventModel = 1001
 #endif
 } NPPVariable;
 
@@ -383,6 +392,10 @@ typedef enum {
   , NPNVsupportsQuickDrawBool = 2000
 #endif
   , NPNVsupportsCoreGraphicsBool = 2001
+#ifndef NP_NO_CARBON
+  , NPNVsupportsCarbonBool = 3000 /* TRUE if the browser supports the Carbon event model */
+#endif
+  , NPNVsupportsCocoaBool = 3001 /* TRUE if the browser supports the Cocoa event model */
 #endif
 } NPNVariable;
 

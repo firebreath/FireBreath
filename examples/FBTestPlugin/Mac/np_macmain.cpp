@@ -6,7 +6,7 @@
   doing!
 \**********************************************************/
 
-#include "npupp.h"
+#include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
 
 using namespace FB::Npapi;
@@ -21,7 +21,7 @@ extern "C" {
 	NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
 	void NP_Shutdown(void);
     
-#ifndef UNITTEST
+#ifndef _NO_MAIN
 	// For compatibility with CFM browsers.
 	int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown);
 #endif
@@ -29,7 +29,7 @@ extern "C" {
 
 #pragma GCC visibility pop
 
-#ifndef UNITTEST
+#ifndef _NO_MAIN
 int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown)
 {
     printf("Main called");
