@@ -8,7 +8,6 @@
 \**********************************************************/
 
 #include "NpapiTypes.h"
-#include "atlbase.h"
 #include "@{PLUGIN.ident}API.h"
 
 #include "@{PLUGIN.ident}.h"
