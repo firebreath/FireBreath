@@ -12,9 +12,9 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-# Written to work with cmake 2.8
-cmake_minimum_required (VERSION 2.8)
-set (CMAKE_BACKWARDS_COMPATIBILITY 2.8)
+# Written to work with cmake 2.6
+cmake_minimum_required (VERSION 2.6)
+set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/common.cmake)
 
