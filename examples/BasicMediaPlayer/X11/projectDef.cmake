@@ -12,7 +12,7 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-# Windows template platform definition CMake file
+# X11 (*nix) template platform definition CMake file
 # Included from ../CMakeLists.txt
 
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

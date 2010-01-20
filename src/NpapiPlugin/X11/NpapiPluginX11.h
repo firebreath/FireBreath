@@ -12,30 +12,29 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_NPAPI_NPAPIPLUGINMAC
-#define H_FB_NPAPI_NPAPIPLUGINMAC
+#ifndef H_FB_NPAPI_NPAPIPLUGINX11
+#define H_FB_NPAPI_NPAPIPLUGINX11
 
 #include "NpapiPlugin.h"
 
 namespace FB {
-    class PluginWindowMac;
+    class PluginWindowLinux;
     namespace Npapi {
 
-    class NpapiPluginMac : public NpapiPlugin
+    class NpapiPluginLinux : public NpapiPlugin
     {
     public:
-        NpapiPluginMac(NpapiBrowserHost *host);
-        virtual ~NpapiPluginMac(void);
+        NpapiPluginLinux(NpapiBrowserHost *host);
+        virtual ~NpapiPluginLinux(void);
 
     protected:
-        FB::PluginWindowMac *pluginWin;
+        FB::PluginWindowLinux *pluginWin;
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
         NPError SetWindow(NPWindow* window);
-        int16_t HandleEvent(void* event);
     };
 
 }; }; // FB::Npapi
