@@ -18,17 +18,17 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiPlugin.h"
 
 namespace FB {
-    class PluginWindowLinux;
+    class PluginWindowX11;
     namespace Npapi {
 
-    class NpapiPluginLinux : public NpapiPlugin
+    class NpapiPluginX11 : public NpapiPlugin
     {
     public:
-        NpapiPluginLinux(NpapiBrowserHost *host);
-        virtual ~NpapiPluginLinux(void);
+        NpapiPluginX11(NpapiBrowserHost *host);
+        virtual ~NpapiPluginX11(void);
 
     protected:
-        FB::PluginWindowLinux *pluginWin;
+        FB::PluginWindowX11 *pluginWin;
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
