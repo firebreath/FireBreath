@@ -40,6 +40,19 @@ def getTemplateFiles(basePath, origPath=None):
             files.append(tmpName[plen:])
     return files
 
+def createDir(dirName):
+    """
+    Creates a directory, even if it has to create parent directories to do so
+    """
+    parentDir = os.path.dirname(dirName)
+    print "Parent of %s is %s" % (dirName, parentDir)
+    if os.path.isdir(parentDir):
+        print "Creating dir %s" % dirName
+        os.mkdir(dirName)
+    else:
+        createDir(parentDir)
+        createDir(dirName)
+
 
 def Main():
     """
@@ -62,23 +75,23 @@ def Main():
     parser.add_option("-d", "--company-domain", dest = "companyDomain")
     options, args = parser.parse_args()
 
-    
+
     if options.pluginName and options.pluginIdent and options.companyName and options.companyDomain:
         options.interactive = False
     else:
         options.interactive = True
-    
+
     scriptDir = os.path.dirname(os.path.abspath(__file__) )
     cfgFilename = os.path.join(scriptDir, ".fbgen.cfg")
     cfgFile = SafeConfigParser()
     cfgFile.read(cfgFilename)
-    
+
     # Instantiate the appropriate classes
     plugin = Plugin(name = options.pluginName, ident = options.pluginIdent)
     plugin.readCfg(cfgFile)
     company = Company(name = options.companyName)
     company.readCfg(cfgFile)
-    
+
     if options.interactive:
         try:
             plugin.promptValues()
@@ -91,7 +104,7 @@ def Main():
     guid = GUID(ident = plugin.ident, domain = company.domain)
     # Save configuration for another go
     cfgFile.write(open(cfgFilename, "wb") )
-    
+
     # Make sure we can get into the projects directory
     basePath = os.path.join(scriptDir, "projects")
     if not os.path.isdir(basePath):
@@ -100,7 +113,7 @@ def Main():
         except:
             print "Unable to create directory", basePath
             sys.exit(1)
-    
+
     # Try to create a directory for this project
     projPath = os.path.abspath(os.path.join(basePath, "%s" % plugin.ident))
     if os.path.isdir(projPath):
@@ -118,7 +131,7 @@ def Main():
         except:
             print "Failed to create project directory", projPath
             sys.exit(1)
-    
+
     print "\nProcessing templates"
     srcDir = os.path.join(scriptDir, "fbgen", "src")
     srcDirLen = len(srcDir) + len(os.path.sep)
@@ -137,7 +150,7 @@ def Main():
                 filename = os.path.join(projPath, tplFilename)
             dirname = os.path.dirname(filename)
             if not os.path.isdir(dirname):
-                os.mkdir(dirname)
+                createDir(dirname)
             tplFile = os.path.join("fbgen", "src", tpl)
             print tplFile
             template = Template(file = tplFile, searchList = [{"PLUGIN": plugin, "COMPANY": company,
