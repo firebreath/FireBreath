@@ -6,7 +6,7 @@
   doing!
 \**********************************************************/
 
-#inculde "config.h"
+#include "config.h"
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
 
