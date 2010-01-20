@@ -12,24 +12,24 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-// #include "PluginEvents/LinuxEvent.h"
+// #include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
-#include "PluginWindowLinux.h"
+#include "PluginWindowX11.h"
 
 using namespace FB;
 
-PluginWindowLinux::PluginWindowLinux(XWindow win)
+PluginWindowX11::PluginWindowX11(XWindow win)
 {
     m_window = win;
 }
 
-PluginWindowLinux::~PluginWindowLinux()
+PluginWindowX11::~PluginWindowX11()
 {
 }
 
-void PluginWindowLinux::getWindowPosition(int &x, int &y, int &w, int &h)
+void PluginWindowX11::getWindowPosition(int &x, int &y, int &w, int &h)
 {
     x = m_x;
     y = m_y;
@@ -37,7 +37,7 @@ void PluginWindowLinux::getWindowPosition(int &x, int &y, int &w, int &h)
     h = m_height;
 }
 
-void PluginWindowLinux::setWindowPosition(int x, int y, int w, int h)
+void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
 {
     if (m_x != x
         || m_y != y
@@ -51,7 +51,7 @@ void PluginWindowLinux::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowLinux::getWindowClipping(int &t, int &l, int &b, int &r)
+void PluginWindowX11::getWindowClipping(int &t, int &l, int &b, int &r)
 {
     t = m_clipTop;
     l = m_clipLeft;
@@ -59,7 +59,7 @@ void PluginWindowLinux::getWindowClipping(int &t, int &l, int &b, int &r)
     r = m_clipRight;
 }
 
-void PluginWindowLinux::setWindowClipping(int t, int l, int b, int r)
+void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
 {
     if (m_clipTop != t
         || m_clipLeft != l
@@ -73,7 +73,7 @@ void PluginWindowLinux::setWindowClipping(int t, int l, int b, int r)
     }
 }
 //
-// int16_t PluginWindowLinux::HandleEvent(EventRecord* evt)
+// int16_t PluginWindowX11::HandleEvent(EventRecord* evt)
 // {
 //     // Give the plugin a change to handle the event itself if desired
 //     if (SendEvent(&MacEvent(evt))) {

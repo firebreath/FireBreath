@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <stdio.h>
+#include "config.h"
 #include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
 #include "FactoryDefinitions.h"

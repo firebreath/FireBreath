@@ -12,14 +12,14 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FactoryDefinitionsLinux
-#define H_FactoryDefinitionsLinux
+#ifndef H_FactoryDefinitionsX11
+#define H_FactoryDefinitionsX11
 
 
 namespace FB {
     class JSAPI;
     class PluginCore;
-    class PluginWindowLinux;
+    class PluginWindowX11;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -31,6 +31,6 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowLinux *_createPluginWindow(XWindow win);
+FB::PluginWindowX11 *_createPluginWindow(XWindow win);
 
 #endif

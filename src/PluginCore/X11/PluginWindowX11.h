@@ -21,11 +21,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
-    class PluginWindowLinux : public PluginWindow
+    class PluginWindowX11 : public PluginWindow
     {
     public:
-        PluginWindowLinux(XWindow);
-        virtual ~PluginWindowLinux();
+        PluginWindowX11(XWindow);
+        virtual ~PluginWindowX11();
 
 //         int16_t HandleEvent(EventRecord* evt);
         void setWindowPosition(int x, int y, int w, int h);

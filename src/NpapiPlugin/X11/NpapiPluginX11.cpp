@@ -14,26 +14,26 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "NpapiTypes.h"
 #include "PluginCore.h"
-#include "Linux/PluginWindowLinux.h"
-#include "Linux/FactoryDefinitionsLinux.h"
+#include "X11/PluginWindowX11.h"
+#include "X11/FactoryDefinitionsX11.h"
 
-#include "Linux/NpapiPluginLinux.h"
+#include "X11/NpapiPluginX11.h"
 
 using namespace FB::Npapi;
 
-NpapiPluginLinux::NpapiPluginLinux(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
     // TODO: Get the path to the shared lib
     //setFSPath();
 
 }
 
-NpapiPluginLinux::~NpapiPluginLinux()
+NpapiPluginX11::~NpapiPluginX11()
 {
     delete pluginWin; pluginWin = NULL;
 }
 
-NPError NpapiPluginLinux::SetWindow(NPWindow* window)
+NPError NpapiPluginX11::SetWindow(NPWindow* window)
 {
     if (window != NULL && window->window != NULL) {
 
