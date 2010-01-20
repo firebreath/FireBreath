@@ -14,8 +14,8 @@
 
     
 if (WIN32)
-	set(CMAKE_C_FLAGS                            "/DWIN32 /W3 /wd4996 /nologo /D UNICODE /D _UNICODE /D _WINDOWS")
-	set(CMAKE_CXX_FLAGS                          "/DWIN32 /W3 /wd4996 /nologo /EHsc /wd4290 /D UNICODE /D _UNICODE /D _WINDOWS")
+	set(CMAKE_C_FLAGS                            "/DWIN32 /DXP_WIN=1 /W3 /wd4996 /nologo /D UNICODE /D _UNICODE /D _WINDOWS")
+	set(CMAKE_CXX_FLAGS                          "/DWIN32 /DXP_WIN=1 /W3 /wd4996 /nologo /EHsc /wd4290 /D UNICODE /D _UNICODE /D _WINDOWS")
 	set(CMAKE_C_FLAGS_RELEASE                    "/MT /O1 /DNDEBUG")
 	set(CMAKE_CXX_FLAGS_RELEASE                  "/MT /O1 /DNDEBUG")
 	set(CMAKE_C_FLAGS_DEBUG                      "/MTd /Od /DDEBUG /D_DEBUG /ZI /RTC1 /Gm")

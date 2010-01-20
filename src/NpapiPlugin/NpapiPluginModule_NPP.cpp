@@ -170,6 +170,17 @@ void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason re
 
 NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
+    /* Some values are not dependent on having a valid plugin instance */
+    switch(variable) {
+    case NPPVpluginNameString:
+        *((const char **)value) = FBSTRING_PluginName;
+        return NPERR_NO_ERROR;
+        break;
+    case NPPVpluginDescriptionString:
+        *((const char **)value) = FBSTRING_FileDescription;
+        return NPERR_NO_ERROR;
+        break;
+    }
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

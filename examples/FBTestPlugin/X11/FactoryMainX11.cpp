@@ -1,22 +1,22 @@
 /**********************************************************\
-  Default Mac factory methods
+  Default X11 factory methods
 
   These are used to create the Npapi plugin type and
-  the PluginWindow type on mac; if you want to extend
+  the PluginWindow type on x11 (*nix); if you want to extend
   these classses, do so and update these functions to
   instantiate the correct types.
 \**********************************************************/
 
 #include "NpapiPlugin.h"
-#include "Mac/PluginWindowMac.h"
-#include "Mac/NpapiPluginMac.h"
+#include "X11/PluginWindowX11.h"
+#include "X11/NpapiPluginX11.h"
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 {
-    return new FB::Npapi::NpapiPluginMac(host);
+    return new FB::Npapi::NpapiPluginX11(host);
 }
 
-FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y)
+FB::PluginWindowX11 *_createPluginWindow(CGrafPtr port, int x, int y)
 {
-    return new FB::PluginWindowMac(port, x, y);
+    return new FB::PluginWindowX11(port, x, y);
 }
