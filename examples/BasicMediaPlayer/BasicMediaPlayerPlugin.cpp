@@ -13,12 +13,21 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
+#ifdef FB_WIN32
 #define _WIN32_DCOM
+#endif
 
 #include "NpapiTypes.h"
+#ifdef FB_WIN32
 #include "atlbase.h"
+#endif
 #include "BasicMediaPlayer.h"
+#ifdef FB_WIN32
 #include "Win/PluginWindowWin.h"
+#endif
+#ifdef FB_X11
+//#include "X11/PluginWindowX11.h"
+#endif
 #include "BasicMediaPlayerPlugin.h"
 
 void BasicMediaPlayerPlugin::StaticInitialize()

@@ -68,7 +68,7 @@ TEST(VariantTest)
     CHECK(d.convert_cast<std::string>() == "This is a test");
 
     a = NULL;
-    CHECK(a.get_type() == typeid(int));
+    CHECK(a.get_type() == typeid(long));
 
     // scripting style array conversion
     {

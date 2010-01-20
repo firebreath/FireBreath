@@ -38,7 +38,8 @@ elseif(APPLE)
     set (PLATFORM_NAME "Mac")
     include(${CMAKE_DIR}/Mac.cmake)
 elseif(UNIX)
-    set (PLATFORM_NAME "Linux")
+    set (PLATFORM_NAME "X11")
+    include(${CMAKE_DIR}/X11.cmake)
 endif()
 
 # Get the project paths
