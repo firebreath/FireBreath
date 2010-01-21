@@ -37,13 +37,13 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
 {
     if (window != NULL && window->window != NULL) {
 
-        if (pluginWin != NULL && pluginWin->getPort() != prt->port) {
+        if (pluginWin != NULL && pluginWin->getWindow() != reinterpret_cast<Window>(window->window)) {
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
         }
 
         if (pluginWin == NULL) {
-            pluginWin = _createPluginWindow((CGrafPtr)prt->port, prt->portx, prt->porty);
+            pluginWin = _createPluginWindow((Window)window->window);
             pluginMain->SetWindow(pluginWin);
         }
 

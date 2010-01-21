@@ -15,6 +15,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitionsX11
 #define H_FactoryDefinitionsX11
 
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 
 namespace FB {
     class JSAPI;
@@ -31,6 +34,6 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowX11 *_createPluginWindow(XWindow win);
+FB::PluginWindowX11 *_createPluginWindow(Window win);
 
 #endif

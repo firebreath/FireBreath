@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 15, 2009
@@ -55,7 +55,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 
     NPObject *window(NULL);
     GetValue(NPNVWindowNPObject, (void**)&window);
-    
+
     m_htmlWin = new FB::Npapi::NPObjectAPI(window, this);
     m_htmlDoc = dynamic_cast<NPObjectAPI*>(m_htmlWin->GetProperty("document")
         .cast<FB::JSObject>().ptr());
@@ -184,7 +184,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
             outObj = tmpObj->getNPObject();
             this->RetainObject(outObj);
         }
-        
+
         dst->type = NPVariantType_Object;
         dst->value.objectValue = outObj;
 
@@ -199,7 +199,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
             outObj = tmpObj->getNPObject();
             this->RetainObject(outObj);
         }
-        
+
         dst->type = NPVariantType_Object;
         dst->value.objectValue = outObj;
     }
@@ -336,7 +336,7 @@ int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier)
 }
 
 
-void NpapiBrowserHost::Status(const char* message)
+void NpapiBrowserHost::SetStatus(const char* message)
 {
     if (NPNFuncs.status != NULL) {
         NPNFuncs.status(m_npp, message);
@@ -422,7 +422,7 @@ NPObject *NpapiBrowserHost::CreateObject(NPClass *aClass)
     }
 }
 
-bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args, 
+bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args,
                               uint32_t argCount, NPVariant *result)
 {
     if (NPNFuncs.invoke != NULL) {

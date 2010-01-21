@@ -16,7 +16,7 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
     return new FB::Npapi::NpapiPluginX11(host);
 }
 
-FB::PluginWindowX11 *_createPluginWindow(CGrafPtr port, int x, int y)
+FB::PluginWindowX11 *_createPluginWindow(Window win)
 {
-    return new FB::PluginWindowX11(port, x, y);
+    return new FB::PluginWindowX11(win);
 }

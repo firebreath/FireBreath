@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-PluginWindowX11::PluginWindowX11(XWindow win)
+PluginWindowX11::PluginWindowX11(Window win)
 {
     m_window = win;
 }

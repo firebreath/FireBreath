@@ -25,7 +25,8 @@ message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
+    ${GTK_INCLUDE_DIRS}
+    ${CMAKE_CURRENT_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}

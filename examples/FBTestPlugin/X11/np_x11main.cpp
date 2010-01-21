@@ -13,6 +13,14 @@
 using namespace FB::Npapi;
 FB::Npapi::NpapiPluginModule *module = NULL;
 
+void initPluginModule()
+{
+    if (module == NULL) {
+        module = new NpapiPluginModule();
+        NpapiPluginModule::Default = module;
+    }
+}
+
 char * NP_GetMIMEDescription()
 {
     return FBSTRING_X11MIMEType;
@@ -22,14 +30,6 @@ NPError NP_GetValue(void *future, NPPVariable variable, void *value)
 {
     initPluginModule();
     return module->NPP_GetValue((NPP_t *)future, variable, value);
-}
-
-void initPluginModule()
-{
-    if (module == NULL) {
-        module = new NpapiPluginModule();
-        NpapiPluginModule::Default = module;
-    }
 }
 
 NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs

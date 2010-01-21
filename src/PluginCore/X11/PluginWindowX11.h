@@ -15,6 +15,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_PLUGINWINDOWX11
 #define H_PLUGINWINDOWX11
 
+#include <gdk/gdk.h>
+#include <gdk/gdkx.h>
+#include <gtk/gtk.h>
 #include "PluginWindow.h"
 
 #include <map>
@@ -24,7 +27,7 @@ namespace FB {
     class PluginWindowX11 : public PluginWindow
     {
     public:
-        PluginWindowX11(XWindow);
+        PluginWindowX11(Window);
         virtual ~PluginWindowX11();
 
 //         int16_t HandleEvent(EventRecord* evt);
@@ -32,9 +35,9 @@ namespace FB {
         void getWindowPosition(int &x, int &y, int &w, int &h);
         void setWindowClipping(int t, int l, int b, int r);
         void getWindowClipping(int &t, int &l, int &b, int &r);
-        CGrafPtr getWindow() { return m_port; }
+        Window getWindow() { return m_window; }
     protected:
-        XWindow m_port;
+        Window m_window;
         int m_x;
         int m_y;
         int m_width;

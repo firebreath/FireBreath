@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 15, 2009
@@ -57,11 +57,11 @@ namespace FB { namespace Npapi {
         void* MemAlloc(uint32_t size);
         void MemFree(void* ptr);
         uint32_t MemFlush(uint32_t size);
-        
+
         NPObject *RetainObject(NPObject *npobj);
         void ReleaseObject(NPObject *npobj);
         void ReleaseVariantValue(NPVariant *variant);
-        
+
         NPIdentifier GetStringIdentifier(const NPUTF8 *name);
         void GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers);
         NPIdentifier GetIntIdentifier(int32_t intid);
@@ -69,7 +69,7 @@ namespace FB { namespace Npapi {
         NPUTF8 *UTF8FromIdentifier(NPIdentifier identifier);
         std::string StringFromIdentifier(NPIdentifier identifier);
         int32_t IntFromIdentifier(NPIdentifier identifier);
-        
+
         /* npapi.h definitions */
         NPError GetURLNotify(const char* url, const char* target, void* notifyData);
         NPError GetURL(const char* url, const char* target);
@@ -79,7 +79,7 @@ namespace FB { namespace Npapi {
         NPError NewStream(NPMIMEType type, const char* target, NPStream** stream);
         int32_t Write(NPStream* stream, int32_t len, void* buffer);
         NPError DestroyStream(NPStream* stream, NPReason reason);
-        void Status(const char* message);
+        void SetStatus(const char* message);
         const char* UserAgent();
         NPError GetValue(NPNVariable variable, void *value);
         NPError SetValue(NPPVariable variable, void *value);
@@ -91,7 +91,7 @@ namespace FB { namespace Npapi {
         void PluginThreadAsyncCall(void (*func) (void *), void *userData);
         /* npruntime.h definitions */
         NPObject *CreateObject(NPClass *aClass);
-        bool Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args, 
+        bool Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args,
                                         uint32_t argCount, NPVariant *result);
         bool InvokeDefault(NPObject *npobj, const NPVariant *args,
                                         uint32_t argCount, NPVariant *result);
