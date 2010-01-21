@@ -173,14 +173,16 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
 {
     /* Some values are not dependent on having a valid plugin instance */
     switch(variable) {
-    case NPPVpluginNameString:
-        *((const char **)value) = FBSTRING_PluginName;
-        return NPERR_NO_ERROR;
-        break;
-    case NPPVpluginDescriptionString:
-        *((const char **)value) = FBSTRING_FileDescription;
-        return NPERR_NO_ERROR;
-        break;
+        case NPPVpluginNameString:
+            *((const char **)value) = FBSTRING_PluginName;
+            return NPERR_NO_ERROR;
+            break;
+        case NPPVpluginDescriptionString:
+            *((const char **)value) = FBSTRING_FileDescription;
+            return NPERR_NO_ERROR;
+            break;
+        default:
+            break;
     }
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
