@@ -1,7 +1,7 @@
 /**********************************************************\
   Default auto-generated np_x11main.cpp
 
-  This file contains the entrypoints for a windows NPAPI
+  This file contains the entrypoints for a *nix NPAPI
   plugin.  Don't change this unless you know what you're
   doing!
 \**********************************************************/
