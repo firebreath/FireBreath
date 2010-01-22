@@ -47,7 +47,8 @@ void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
         m_y = y;
         m_width = w;
         m_height = h;
-        SendEvent(&ResizedEvent());
+        ResizedEvent evt;
+        SendEvent(&evt);
     }
 }
 
@@ -69,7 +70,8 @@ void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
         m_clipLeft = l;
         m_clipBottom = b;
         m_clipRight = r;
-        SendEvent(&ClipChangedEvent());
+        ClipChangedEvent evt
+        SendEvent(&evt);
     }
 }
 //
