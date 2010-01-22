@@ -15,9 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitionsX11
 #define H_FactoryDefinitionsX11
 
-#include <gdk/gdk.h>
-#include <gdk/gdkx.h>
-#include <gtk/gtk.h>
+#include <X11/X.h>
 
 namespace FB {
     class JSAPI;

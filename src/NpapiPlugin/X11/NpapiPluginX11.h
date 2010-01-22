@@ -35,6 +35,7 @@ namespace FB {
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
         NPError SetWindow(NPWindow* window);
+        virtual NPError GetValue(NPPVariable variable, void *);
     };
 
 }; }; // FB::Npapi

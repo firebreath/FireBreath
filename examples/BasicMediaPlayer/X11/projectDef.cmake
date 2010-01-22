@@ -38,13 +38,13 @@ add_library(${PROJNAME} SHARED ${SOURCES})
 set_target_properties (${PROJNAME} PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
     PROJECT_LABEL ${PROJNAME}
+    LINK_FLAGS ${NPAPI_LINK_FLAGS}
     RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     )
 
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
-    Strmiids.lib
     )
 
 add_dependencies(${PROJNAME}

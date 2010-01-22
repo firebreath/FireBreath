@@ -21,20 +21,18 @@ void initPluginModule()
     }
 }
 
-char * NP_GetMIMEDescription()
+extern "C" char * NP_GetMIMEDescription()
 {
-    printf("Mime description queried\n");
-    return FBSTRING_X11MIMEType;
+    return (char *)FBSTRING_X11MIMEType;
 }
 
-NPError NP_GetValue(void *future, NPPVariable variable, void *value)
+extern "C" NPError NP_GetValue(void *future, NPPVariable variable, void *value)
 {
-    printf("GetValue\n");
     initPluginModule();
     return module->NPP_GetValue((NPP_t *)future, variable, value);
 }
 
-NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs
+extern "C" NPError NP_Initialize(NPNetscapeFuncs* pFuncs
                              , NPPluginFuncs *pluginFuncs)
 {
     initPluginModule();
@@ -44,7 +42,7 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs
     return NPERR_NO_ERROR;
 }
 
-NPError OSCALL NP_Shutdown()
+extern "C" NPError NP_Shutdown()
 {
     delete module;
     return NPERR_NO_ERROR;

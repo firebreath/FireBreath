@@ -33,9 +33,32 @@ NpapiPluginX11::~NpapiPluginX11()
     delete pluginWin; pluginWin = NULL;
 }
 
+NPError NpapiPluginX11::GetValue(NPPVariable variable, void *value)
+{
+    switch (variable) {
+    /* Tell browser we use XEmbed, this is required for Chrome on Unix */
+    case NPPVpluginNeedsXEmbed:
+        *((bool *)value) = true;
+        return NPERR_NO_ERROR;
+    default:
+        return NpapiPlugin::GetValue(variable, value);
+    }
+}
+
 NPError NpapiPluginX11::SetWindow(NPWindow* window)
 {
     if (window != NULL && window->window != NULL) {
+        /* Require XEmbed support from browser, see:
+         * https://developer.mozilla.org/en/XEmbed_Extension_for_Mozilla_Plugins
+         */
+        int xembedSupported = 0;
+
+        m_npHost->GetValue(NPNVSupportsXEmbedBool, &xembedSupported);
+        if (!xembedSupported)
+        {
+            printf("XEmbed not supported\n");
+            return NPERR_GENERIC_ERROR;
+        }
 
         if (pluginWin != NULL && pluginWin->getWindow() != reinterpret_cast<Window>(window->window)) {
             pluginMain->ClearWindow();
