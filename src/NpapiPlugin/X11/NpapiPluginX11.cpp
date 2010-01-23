@@ -21,6 +21,13 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::Npapi;
 
+inline GdkNativeWindow getGdkWindow(void *in)
+{
+    long long tmp((long long)in);
+    GdkNativeWindow retVal((GdkNativeWindow)tmp);
+    return retVal;
+}
+
 NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
     // TODO: Get the path to the shared lib
@@ -60,13 +67,13 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
             return NPERR_GENERIC_ERROR;
         }
 
-        if (pluginWin != NULL && pluginWin->getWindow() != reinterpret_cast<Window>(window->window)) {
+        if (pluginWin != NULL && pluginWin->getWindow() != getGdkWindow(window->window)) {
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
         }
 
         if (pluginWin == NULL) {
-            pluginWin = _createPluginWindow((Window)window->window);
+            pluginWin = _createPluginWindow(getGdkWindow(window->window));
             pluginMain->SetWindow(pluginWin);
         }
 

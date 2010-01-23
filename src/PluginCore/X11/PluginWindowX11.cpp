@@ -20,9 +20,38 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-PluginWindowX11::PluginWindowX11(Window win)
+gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    PluginWindowX11 *pluginWin = (PluginWindowX11 *)user_data;
+    return pluginWin->EventCallback(widget, event);
+}
+
+PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win)
 {
     m_window = win;
+    m_container = gtk_plug_new((GdkNativeWindow)win);
+    m_canvas = gtk_drawing_area_new();
+    GTK_WIDGET_SET_FLAGS (GTK_WIDGET(m_canvas), GTK_CAN_FOCUS);
+
+    gtk_widget_add_events(
+        m_canvas,
+        GDK_BUTTON_PRESS_MASK |
+        GDK_BUTTON_RELEASE_MASK |
+        GDK_KEY_PRESS_MASK |
+        GDK_KEY_RELEASE_MASK |
+        GDK_POINTER_MOTION_MASK |
+        GDK_SCROLL_MASK |
+        GDK_EXPOSURE_MASK |
+        GDK_VISIBILITY_NOTIFY_MASK |
+        GDK_ENTER_NOTIFY_MASK |
+        GDK_LEAVE_NOTIFY_MASK |
+        GDK_FOCUS_CHANGE_MASK
+    );
+
+    g_signal_connect(G_OBJECT(m_canvas), "event", G_CALLBACK(&PluginWindowX11::_EventCallback), this);
+    gtk_widget_show(m_canvas);
+    gtk_container_add(GTK_CONTAINER(m_container), m_canvas);
+    gtk_widget_show(m_container);
 }
 
 PluginWindowX11::~PluginWindowX11()
@@ -74,6 +103,75 @@ void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
         SendEvent(&evt);
     }
 }
+
+inline bool isButtonEvent(GdkEvent *event)
+{
+    switch(event->type) {
+        case GDK_BUTTON_PRESS:
+        case GDK_BUTTON_RELEASE:
+        case GDK_2BUTTON_PRESS:
+        case GDK_3BUTTON_PRESS:
+            return true;
+        default:
+            return false;
+    }
+}
+
+gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
+{
+    gboolean handled = 0;
+    GdkEventKey *key;
+    GdkEventFocus *focus;
+    GdkEventMotion *motion;
+    GdkEventButton *button;
+    MouseButtonEvent::MouseButton btn;
+
+    if (isButtonEvent(event)) {
+        button = (GdkEventButton *)event;
+        switch(button->button) {
+            case 1:
+                btn = MouseButtonEvent::MouseButton_Left;
+                break;
+            case 2:
+                btn = MouseButtonEvent::MouseButton_Middle;
+                break;
+            case 3:
+                btn = MouseButtonEvent::MouseButton_Right;
+                break;
+            default:
+                return 0;
+        }
+    }
+
+    switch(event->type)
+    {
+        // Mouse button down
+        case GDK_BUTTON_PRESS: {
+            MouseDownEvent evt(btn, button->x, button->y);
+            SendEvent(&evt) ? 1 : 0;
+        } break;
+        // Mouse button up
+        case GDK_BUTTON_RELEASE: {
+            MouseUpEvent evt(btn, button->x, button->y);
+            return SendEvent(&evt) ? 1 : 0;
+        } break;
+
+        case GDK_MOTION_NOTIFY: {
+            motion = (GdkEventMotion *)event;
+            MouseMoveEvent evt(button->x, button->y);
+            return SendEvent(&evt) ? 1 : 0;
+        } break;
+
+        case GDK_FOCUS_CHANGE: {
+            focus = (GdkEventFocus *)event;
+            FocusChangedEvent evt(focus->in ? true : false);
+            return SendEvent(&evt) ? 1 : 0;
+        }
+        default:
+            return false;
+    }
+}
+
 //
 // int16_t PluginWindowX11::HandleEvent(EventRecord* evt)
 // {

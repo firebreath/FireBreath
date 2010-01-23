@@ -20,19 +20,27 @@ set(BUILD_SHARED_LIBS YES)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
+# GTK is required for XEmbed to work
+if (NOT GTK_INCLUDE_DIRS)
+    pkg_check_modules(GTK REQUIRED gtk+-2.0)
+    set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
+    set (GTK_LIBRARIES ${GTK_LIBRARIES} CACHE INTERNAL "GTK include dirs")
+    set (GTK_LIBRARY_DIRS ${GTK_LIBRARY_DIRS} CACHE INTERNAL "GTK include dirs")
+    set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
+endif()
+
 # Control symbol visibility and error handling with linker flags.
 # -Wl,--discard-all     - discard all local symbols
 # -Wl,-z,defs           - report unresolved symbol references
 # -Wl,-Bsymbolic        - do not allow browser globals to override plugins
 # -Wl,--version-script= - List symbols to be exported in the plugin DSO
 
-set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt")
-
-# if (NOT GTK_INCLUDE_DIRS)
-#     pkg_check_modules(GTK REQUIRED gtk+-2.0)
-#     set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
-# endif()
-
+set(NPAPI_LINK_FLAGS
+  "-Wl,--discard-all"
+  "-Wl,-Bsymbolic"
+  "-Wl,-z,defs"
+  "-Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt"
+  ${GTK_LDFLAGS})
 function (add_rpm_package PROJNAME )
 
 endfunction(add_rpm_package)

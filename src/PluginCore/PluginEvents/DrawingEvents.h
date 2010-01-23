@@ -31,6 +31,17 @@ namespace FB {
     {
     };
 
+    class FocusChangedEvent : public PluginEvent
+    {
+        public:
+            FocusChangedEvent(bool hasFocus) : m_hasFocus(hasFocus) { }
+            virtual ~FocusChangedEvent() { }
+
+            bool hasFocus() { return m_hasFocus; }
+        protected:
+            bool m_hasFocus;
+    };
+
 };
 
 #endif // H_FB_PLUGINEVENTS_DRAWINGEVENTS

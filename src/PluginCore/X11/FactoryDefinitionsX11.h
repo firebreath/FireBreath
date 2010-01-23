@@ -32,6 +32,6 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowX11 *_createPluginWindow(Window win);
+FB::PluginWindowX11 *_createPluginWindow(GdkNativeWindow win);
 
 #endif

@@ -24,6 +24,7 @@ message("Generating plugin configuration files in ${TEMPLATE_DEST_DIR}")
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GECKOSDK_SOURCE_DIR}
+    ${GTK_INCLUDE_DIRS}
     ${ACTIVEXPLUGIN_SOURCE_DIR}
     ${NPAPIPLUGIN_SOURCE_DIR}
     ${WINDOWSCOMMON_SOURCE_DIR}
