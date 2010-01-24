@@ -46,13 +46,13 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     AutoPtr.*
     variant.*
     variant_list.*
-	variant_map.*
+	  variant_map.*
     TypeIDMap.*
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ./JSAPI*
-    BrowserHostWr*
+    JSAPI*
+    BrowserHostWrapper.*
     BrowserObjectAPI.*
     AsyncBrowser*
     *Converter.*

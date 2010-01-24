@@ -7,6 +7,7 @@
   instantiate the correct types.
 \**********************************************************/
 
+#include <gtk/gtk.h>
 #include "NpapiPlugin.h"
 #include "X11/PluginWindowX11.h"
 #include "X11/NpapiPluginX11.h"
@@ -16,7 +17,7 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
     return new FB::Npapi::NpapiPluginX11(host);
 }
 
-FB::PluginWindowX11 *_createPluginWindow(Window win)
+FB::PluginWindowX11 *_createPluginWindow(GdkNativeWindow win)
 {
     return new FB::PluginWindowX11(win);
 }

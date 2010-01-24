@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <cstdio>
 #include "BrowserObjectAPI.h"
 #include "DOM/JSAPI_DOMWindow.h"
 #include "variant_list.h"
@@ -21,13 +22,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 void FB::BrowserHostWrapper::htmlLog(std::string str)
 {
     try {
-        printf("Logging: %s\n", str.c_str());
         FB::JSAPI_DOMWindow window = getDOMWindow();
+        printf("Logging: %s\n", str.c_str());
 
         FB::JSObject obj = window.getProperty<FB::JSObject>("console");
-        obj->invoke("log", FB::variant_list_of(str));
+        obj->Invoke("log", FB::variant_list_of(str));
     } catch (std::exception &e) {
-        printf("Exception: %s", e.what());
+        printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
         return;
     }

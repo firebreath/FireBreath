@@ -22,6 +22,9 @@ using namespace FB;
 
 gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data)
 {
+    if (!user_data)
+        return 0;
+
     PluginWindowX11 *pluginWin = (PluginWindowX11 *)user_data;
     return pluginWin->EventCallback(widget, event);
 }
@@ -128,6 +131,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
     if (isButtonEvent(event)) {
         button = (GdkEventButton *)event;
+
         switch(button->button) {
             case 1:
                 btn = MouseButtonEvent::MouseButton_Left;
@@ -158,7 +162,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
         case GDK_MOTION_NOTIFY: {
             motion = (GdkEventMotion *)event;
-            MouseMoveEvent evt(button->x, button->y);
+            MouseMoveEvent evt(motion->x, motion->y);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
