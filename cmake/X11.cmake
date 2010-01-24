@@ -35,12 +35,15 @@ endif()
 # -Wl,-Bsymbolic        - do not allow browser globals to override plugins
 # -Wl,--version-script= - List symbols to be exported in the plugin DSO
 
+# break on cmake 2.6 (semi-column list are not gcc compatible)
+# GTK_LDFLAGS are added automatically to LDFLAGS
 set(NPAPI_LINK_FLAGS
-  "-Wl,--discard-all"
-  "-Wl,-Bsymbolic"
-  "-Wl,-z,defs"
-  "-Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt"
-  ${GTK_LDFLAGS})
+#  "-Wl,--discard-all"
+#  "-Wl,-Bsymbolic"
+#  "-Wl,-z,defs"
+#  "-Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt"
+#  ${GTK_LDFLAGS})
+  "")
 function (add_rpm_package PROJNAME )
 
 endfunction(add_rpm_package)

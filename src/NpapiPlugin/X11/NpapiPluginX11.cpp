@@ -23,14 +23,13 @@ using namespace FB::Npapi;
 
 inline GdkNativeWindow getGdkWindow(void *in)
 {
-    long long tmp((long long)in);
-    GdkNativeWindow retVal((GdkNativeWindow)tmp);
-    return retVal;
+    return (char*)in - (char*)0;
 }
 
 NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
     // TODO: Get the path to the shared lib
+    //   --- why?  Richard P
     //setFSPath();
 
 }

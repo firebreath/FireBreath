@@ -56,4 +56,4 @@ namespace FB {
 
 };
 
-#endif // H_PLUGINWINDOWMAC
+#endif // H_PLUGINWINDOWX11

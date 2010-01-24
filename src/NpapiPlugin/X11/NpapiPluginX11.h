@@ -1,5 +1,6 @@
 /**********************************************************\
 Original Author: Richard Bateman (taxilian)
+                 Richard Prescott (rdprescott)
 
 Created:    Dec 3, 2009
 License:    Dual license model; choose one of two:
@@ -15,7 +16,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #ifndef H_FB_NPAPI_NPAPIPLUGINX11
 #define H_FB_NPAPI_NPAPIPLUGINX11
 
-#include "gtk/gtk.h"
 #include "NpapiPlugin.h"
 
 namespace FB {
