@@ -24,6 +24,14 @@ namespace FB
     class JSAPI_DOMDocument;
     class JSAPI_DOMWindow;
 
+    struct AsyncLogRequest
+    {
+        AsyncLogRequest(BrowserHostWrapper *host, std::string message) : m_host(host), m_msg(message) { }
+
+        BrowserHost m_host;
+        std::string m_msg;
+    };
+
     class BrowserHostWrapper
     {
     public:
@@ -32,6 +40,8 @@ namespace FB
 
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
+
+        static void AsyncHtmlLog(void *);
 
         virtual void *getContextID() = 0;
 

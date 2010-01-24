@@ -21,15 +21,23 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 void FB::BrowserHostWrapper::htmlLog(std::string str)
 {
+    this->ScheduleAsyncCall(&FB::BrowserHostWrapper::AsyncHtmlLog,
+            new FB::AsyncLogRequest(this, str));
+}
+
+void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
+{
+    FB::AsyncLogRequest *req = (FB::AsyncLogRequest*)logReq;
     try {
-        FB::JSAPI_DOMWindow window = getDOMWindow();
-        printf("Logging: %s\n", str.c_str());
+        FB::JSAPI_DOMWindow window = req->m_host->getDOMWindow();
 
         FB::JSObject obj = window.getProperty<FB::JSObject>("console");
-        obj->Invoke("log", FB::variant_list_of(str));
+        printf("Logging: %s\n", req->m_msg.c_str());
+        obj->Invoke("log", FB::variant_list_of(req->m_msg));
     } catch (std::exception &e) {
         printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
         return;
     }
+    delete req;
 }

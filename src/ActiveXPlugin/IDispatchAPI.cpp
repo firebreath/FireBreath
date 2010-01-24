@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Nov 4, 2009
@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axmain.h"
 #include <dispex.h>
 
-IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) : 
+IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) :
     m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
 {
 }

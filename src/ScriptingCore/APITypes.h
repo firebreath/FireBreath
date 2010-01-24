@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 24, 2009
@@ -35,11 +35,11 @@ namespace FB
     typedef std::vector<variant> VariantList;
     typedef std::map<std::string, variant> VariantMap;
     typedef std::set<std::string> StringSet;
-    
+
     typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
     typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
     typedef FB::AutoPtr<FB::BrowserHostWrapper> BrowserHost;
-    
+
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
