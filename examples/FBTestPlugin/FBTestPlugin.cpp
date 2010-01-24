@@ -1,12 +1,13 @@
-/**********************************************************\ 
+/**********************************************************\
 
   Auto-generated FBTestPlugin.cpp
 
-  This file contains the auto-generated main plugin object 
+  This file contains the auto-generated main plugin object
   implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
 
+#include <sstream>
 #include "NpapiTypes.h"
 #include "FBTestPluginAPI.h"
 
@@ -41,18 +42,24 @@ FB::JSAPI* FBTestPlugin::createJSAPI()
 
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
 {
-    //printf("Mouse down at: %d, %d\n", evt->m_x, evt->m_y);
+    std::ostringstream oStr;
+    oStr << "Mouse down at: " << evt->m_x << ", " << evt->m_y;
+    this->m_host->htmlLog(oStr.str());
     return false;
 }
 
 bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
 {
-    //printf("Mouse up at: %d, %d\n", evt->m_x, evt->m_y);
+    std::ostringstream oStr;
+    oStr << "Mouse up at: " << evt->m_x << ", " << evt->m_y;
+    this->m_host->htmlLog(oStr.str());
     return false;
 }
 
 bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
 {
-    //printf("Mouse move at: %d, %d\n", evt->m_x, evt->m_y);
+    std::ostringstream oStr;
+    oStr << "Mouse move at: " << evt->m_x << ", " << evt->m_y;
+    this->m_host->htmlLog(oStr.str());
     return false;
 }

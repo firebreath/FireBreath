@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 24, 2009
@@ -39,6 +39,7 @@ namespace FB
     public:
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
+        virtual void htmlLog(std::string str);
 
     protected:
         unsigned int refCount;

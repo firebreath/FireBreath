@@ -1,5 +1,5 @@
-/**********************************************************\ 
-Original Author: Richard Bateman and Georg Fritzsche 
+/**********************************************************\
+Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
 License:    Dual license model; choose one of two:
@@ -37,7 +37,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 
     // Read-write property
     registerProperty("testString",
-                     make_property(this, 
+                     make_property(this,
                         &FBTestPluginAPI::get_testString,
                         &FBTestPluginAPI::set_testString));
 
@@ -45,7 +45,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
                      make_property(this,
                         &FBTestPluginAPI::get_simpleMath));
     // Read-only property
-    registerProperty("someInt", 
+    registerProperty("someInt",
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
 
@@ -70,17 +70,20 @@ void FBTestPluginAPI::set_testString(std::string val)
 // Read-only property someInt
 long FBTestPluginAPI::get_someInt()
 {
+    m_host->htmlLog("Returning some int");
     return 12;
 }
 
 // add Method
 long FBTestPluginAPI::add(long a, long b)
 {
+    m_host->htmlLog("Adding two numbers");
     return a+b;
 }
 
 FB::variant FBTestPluginAPI::echo(FB::variant a)
 {
+    m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
     return a;
 }
 
