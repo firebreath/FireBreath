@@ -18,8 +18,6 @@ include(${CMAKE_DIR}/FindPkgConfig.cmake)
 # not even optional
 set(BUILD_SHARED_LIBS YES)
 
-set(CMAKE_SHARED_LIBRARY_PREFIX "")
-
 # GTK is required for XEmbed to work
 if (NOT GTK_INCLUDE_DIRS)
     pkg_check_modules(GTK REQUIRED gtk+-2.0)

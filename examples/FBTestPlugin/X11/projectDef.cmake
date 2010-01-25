@@ -1,5 +1,5 @@
 #/**********************************************************\ 
-# Auto-generated Windows project definition file for the
+# Auto-generated X11 project definition file for the
 # FBTestPlugin project
 #\**********************************************************/
 
@@ -31,6 +31,7 @@ set_target_properties ("${PROJNAME}" PROPERTIES
     OUTPUT_NAME np${PLUGIN_NAME}
     PROJECT_LABEL "${PROJNAME}"
     LINK_FLAGS "${NPAPI_LINK_FLAGS}"
+    PREFIX ""
     RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     )
