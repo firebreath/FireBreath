@@ -38,6 +38,27 @@ endif()
 # which is not gcc compatible
 set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt")
 
+MACRO(add_x11_plugin PROJNAME INSOURCES)
+    add_definitions(
+        -D"FB_X11=1"
+    )
+
+    add_library(${PROJNAME} SHARED ${SOURCES})
+
+    set_target_properties ("${PROJNAME}" PROPERTIES
+        OUTPUT_NAME np${PLUGIN_NAME}
+        PROJECT_LABEL "${PROJNAME}"
+        LINK_FLAGS "${NPAPI_LINK_FLAGS}"
+        PREFIX ""
+        RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+        LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+    )
+
+    target_link_libraries(${PROJNAME}
+        ${GTK_LIBRARIES}
+    )
+ENDMACRO(add_x11_plugin)
+
 function (add_rpm_package PROJNAME )
 
 endfunction(add_rpm_package)
