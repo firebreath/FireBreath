@@ -43,6 +43,10 @@ MACRO(add_x11_plugin PROJNAME INSOURCES)
         -D"FB_X11=1"
     )
 
+    set(SOURCES
+        ${${INSOURCES}}
+    )
+
     add_library(${PROJNAME} SHARED ${SOURCES})
 
     set_target_properties ("${PROJNAME}" PROPERTIES
