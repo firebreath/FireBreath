@@ -33,9 +33,6 @@ public:
     BasicMediaPlayerPlugin();
     virtual ~BasicMediaPlayerPlugin();
 
-protected:
-    FB::AutoPtr<BasicMediaPlayer> m_player;
-
 public:
     virtual FB::JSAPI* createJSAPI();
     virtual bool IsWindowless() { return false; }
@@ -53,6 +50,10 @@ public:
     virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
 	virtual bool onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow*);
 	virtual bool onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow*);
+
+private:
+    FB::AutoPtr<BasicMediaPlayer> m_player;
+	FB::PluginWindow* m_window;
 };
 
 #endif

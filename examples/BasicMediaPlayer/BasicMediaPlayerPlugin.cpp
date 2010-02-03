@@ -44,6 +44,8 @@ void BasicMediaPlayerPlugin::StaticDeinitialize()
 
 
 BasicMediaPlayerPlugin::BasicMediaPlayerPlugin()
+  : m_player()
+  , m_window(0)
 {
 }
 
@@ -55,6 +57,7 @@ FB::JSAPI* BasicMediaPlayerPlugin::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
     m_player = new BasicMediaPlayer(m_host);
+	m_player->setWindow(m_window);
     return m_player.ptr();
 }
 
@@ -78,7 +81,9 @@ bool BasicMediaPlayerPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWind
 
 bool BasicMediaPlayerPlugin::onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow* win)
 {
-    m_player->setWindow(win);
+	m_window = win;
+	if(m_player)
+	    m_player->setWindow(win);
     return true;
 }
 
