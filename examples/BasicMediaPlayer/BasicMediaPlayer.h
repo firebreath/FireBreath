@@ -45,7 +45,7 @@ public:
     std::string lastError() const;
 
     FB::VariantList playlist() const;
-    void setPlaylist(PlayList&);
+    void setPlaylist(const PlayList&);
 
 	PlayList::size_type currentIndex() const;
 
