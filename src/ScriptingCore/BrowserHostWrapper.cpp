@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserHostWrapper.h"
 
-void FB::BrowserHostWrapper::htmlLog(std::string str)
+void FB::BrowserHostWrapper::htmlLog(const std::string& str)
 {
     this->ScheduleAsyncCall(&FB::BrowserHostWrapper::AsyncHtmlLog,
             new FB::AsyncLogRequest(this, str));
