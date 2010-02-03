@@ -30,14 +30,14 @@ public:
 
     // methods exposed to script
 
-	bool play(const FB::CatchAll&);
+    bool play(const FB::CatchAll&);
     bool stop();
 
-	bool next();
-	bool previous();
+    bool next();
+    bool previous();
 
-	bool addEntry(const std::string&);
-	bool removeEntry(const FB::variant&);
+    bool addEntry(const std::string&);
+    bool removeEntry(const FB::variant&);
 
     // properties exposed to script
 
@@ -47,22 +47,22 @@ public:
     FB::VariantList playlist() const;
     void setPlaylist(const PlayList&);
 
-	PlayList::size_type currentIndex() const;
+    PlayList::size_type currentIndex() const;
 
-	// helpers
+    // helpers
 
-	void setWindow(FB::PluginWindow*);
+    void setWindow(FB::PluginWindow*);
 
 private:
-	typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
+    typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
 
-	void firePlaylistChanged();
-	void fireCurrentItemChanged();
+    void firePlaylistChanged();
+    void fireCurrentItemChanged();
 
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;
     MediaPlayerPtr m_player;
     bool m_valid;
 
     PlayList m_playlist;
-	PlayList::size_type m_currentIndex;
+    PlayList::size_type m_currentIndex;
 };
