@@ -97,46 +97,66 @@ wl("using FB::convertArgument;")
 wl("")
 
 for i in range(max_args+1):
-    s = "template<class C"
-    for i2 in range(i): 
-        s += ", typename T"+str(i2)
-    wl(s + ", typename F>")
-    wl("struct "+methodWrapStructName+str(i)+" {")
-    ind_in()
-    wl("typedef FB::variant result_type;")
-    wl("F f;")
-    wl(methodWrapStructName+str(i)+"(F f) : f(f) {}")
-    wl("FB::variant operator()(C* instance, const FB::VariantList& in)")
-    wl("{")
-    ind_in()
-    if i<1:
-        wl("if(in.size() != 0)")
-    else:
-        wl("typedef typename plain_type<T"+str(i-1)+">::type TLast;")
-        wl("if(!checkArgumentCount<TLast>(in, "+str(i)+"))") 
-    wl(tab+"return FB::variant();")
-    s = "return (instance->*f)(";
-#    if i>0:
-#        s+="in[0].convert_cast<typename FB::detail::plain_type<T0>::type>()"
-#    for i2 in range(1,i):
-#        s+= ", in["+str(i2)+"].convert_cast<typename FB::detail::plain_type<T"+str(i2)+">::type>()"
-    if i<1:
-        wl(s+");")
-    else:
+    for voidReturn in [False, True]:
+        s = "template<class C"
+        if not voidReturn:
+            s += ", class R"
+        for i2 in range(i): 
+            s += ", class T"+str(i2)
+        wl(s + ", class F>")
+        
+        s = "struct "+methodWrapStructName+str(i)
+        if voidReturn: # specializing on void return type
+            s += "<C, void"
+            for i2 in range(i): 
+                s += ", T"+str(i2)
+            s += ", F>"
         wl(s)
+        
+        wl("{")
         ind_in()
-        s = "convertArgument<typename plain_type<T0>::type>(in[0], 1)"
-        if i>1:
-            for i2 in range(1,i-1):
+        
+        wl("typedef FB::variant result_type;")
+        wl("F f;")
+        wl(methodWrapStructName+str(i)+"(F f) : f(f) {}")
+        
+        wl("FB::variant operator()(C* instance, const FB::VariantList& in)")
+        wl("{")
+        ind_in()
+        if i<1:
+            wl("if(in.size() != 0)")
+        else:
+            wl("typedef typename plain_type<T"+str(i-1)+">::type TLast;")
+            wl("if(!checkArgumentCount<TLast>(in, "+str(i)+"))") 
+        wl(tab+"return FB::variant();")
+        
+        if voidReturn: # specializing on void return type
+            s = "(instance->*f)("
+        else:
+            s = "return (instance->*f)(";
+    #    if i>0:
+    #        s+="in[0].convert_cast<typename FB::detail::plain_type<T0>::type>()"
+    #    for i2 in range(1,i):
+    #        s+= ", in["+str(i2)+"].convert_cast<typename FB::detail::plain_type<T"+str(i2)+">::type>()"
+        if i<1:
+            wl(s+");")
+        else:
+            wl(s)
+            ind_in()
+            s = "convertArgument<typename plain_type<T0>::type>(in[0], 1)"
+            if i>1:
+                for i2 in range(1,i-1):
+                    wl(s+",")
+                    s = "convertArgument<typename plain_type<T"+str(i2)+">::type>(in["+str(i2)+"], "+str(i2+1)+")"
                 wl(s+",")
-                s = "convertArgument<typename plain_type<T"+str(i2)+">::type>(in["+str(i2)+"], "+str(i2+1)+")"
-            wl(s+",")
-        wl("convertLastArgument<TLast>(in, "+str(i)+"));")
+            wl("convertLastArgument<TLast>(in, "+str(i)+"));")
+            ind_out()
+        if voidReturn: # specializing on void return type 
+            wl("return FB::variant();")
         ind_out()
-    ind_out()
-    wl("}")
-    ind_out()
-    wl("};")
+        wl("}")
+        ind_out()
+        wl("};")
     
 ind_out()
 wl("} } // namespace detail::methods")
@@ -145,33 +165,34 @@ wl("")
 # make_wrapper
 
 for i in range(max_args+1):
-    typenames = ""
-    if i>0:
-        typenames += "typename T0"
-        for i2 in range(1,i):
-            typenames += ", typename T"+str(i2)
-    typenames_app = ""
-    if i>0:
-        typenames_app = ", "+typenames
-    types = ""
-    if i>0:
-        types += "T0"
-        for i2 in range(1,i):
-            types += ", T"+str(i2)
-    print " * "+types
-    types_app = ""
-    if i>0: 
-        types_app = ", "+types
-    
-    wl("template<class C, typename R"+typenames_app+">")
-    wl("inline "+callMethodFunctorName)
-    wl(makeWrapperFunctionName+"(C* instance, R (C::*function)("+types+"))")
-    wl("{")
-    ind_in()
-    wl("return boost::bind(FB::detail::methods::"+methodWrapStructName+str(i)+"<C"+types_app+", R (C::*)("+types+")>(function), instance, _1);")
-    ind_out()
-    wl("}")
-    wl("")
+    for constness in ['', ' const']:
+        typenames = ""
+        if i>0:
+            typenames += "class T0"
+            for i2 in range(1,i):
+                typenames += ", class T"+str(i2)
+        typenames_app = ""
+        if i>0:
+            typenames_app = ", "+typenames
+        types = ""
+        if i>0:
+            types += "T0"
+            for i2 in range(1,i):
+                types += ", T"+str(i2)
+        print " * "+types
+        types_app = ""
+        if i>0: 
+            types_app = ", "+types
+        
+        wl("template<class C, class R"+typenames_app+">")
+        wl("inline "+callMethodFunctorName)
+        wl(makeWrapperFunctionName+"(C* instance, R (C::*function)("+types+")"+constness+")")
+        wl("{")
+        ind_in()
+        wl("return boost::bind(FB::detail::methods::"+methodWrapStructName+str(i)+"<C, R"+types_app+", R (C::*)("+types+")"+constness+">(function), instance, _1);")
+        ind_out()
+        wl("}")
+        wl("")
 
 # epilogue
 
