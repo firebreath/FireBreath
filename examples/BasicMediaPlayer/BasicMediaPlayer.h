@@ -46,6 +46,7 @@ public:
 
     FB::VariantList playlist() const;
     void setPlaylist(const PlayList&);
+	void foo() const;
 
     PlayList::size_type currentIndex() const;
 

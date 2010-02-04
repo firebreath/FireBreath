@@ -64,6 +64,8 @@ size_t IDispatchAPI::getMemberCount()
 
 DISPID IDispatchAPI::getIDForName(std::string name)
 {
+    if (name.empty())
+        return DISPID_VALUE;
     USES_CONVERSION;
     CA2W wStr(name.c_str());
     OLECHAR *oleStr = wStr;

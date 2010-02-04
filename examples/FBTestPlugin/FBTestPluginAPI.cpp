@@ -15,8 +15,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "BrowserObjectAPI.h"
 #include "DOM/JSAPI_DOMDocument.h"
-#include <boost/assign.hpp>
-using boost::assign::list_of;
+#include "variant_list.h"
 #include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
@@ -34,6 +33,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
     registerMethod("getObjectKeys",  make_method(this, &FBTestPluginAPI::getObjectKeys));
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
+    registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
 
     // Read-write property
     registerProperty("testString",
@@ -48,6 +48,8 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerProperty("someInt",
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
+
+	registerEvent("onfired");
 
     m_simpleMath = new SimpleMathAPI(m_host);
 }
@@ -79,6 +81,12 @@ long FBTestPluginAPI::add(long a, long b)
 {
     m_host->htmlLog("Adding two numbers");
     return a+b;
+}
+
+// test firing an event
+void FBTestPluginAPI::testEvent(std::string param)
+{
+	this->FireEvent("onfired", FB::variant_list_of(param));
 }
 
 FB::variant FBTestPluginAPI::echo(FB::variant a)
