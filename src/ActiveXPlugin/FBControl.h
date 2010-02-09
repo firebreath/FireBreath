@@ -70,7 +70,7 @@ public:
 
     CFBControl() : pluginWin(NULL)
     {
-        PluginCore::setPlatform("Windows", "IE");
+        FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
     }
