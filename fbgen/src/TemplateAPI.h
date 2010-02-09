@@ -9,6 +9,9 @@
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
 
+#ifndef H_@{PLUGIN.ident}API
+#define H_@{PLUGIN.ident}API
+
 class @{PLUGIN.ident}API : public FB::JSAPIAuto
 {
 public:
@@ -30,3 +33,5 @@ private:
 
     std::string m_testString;
 };
+
+#endif // H_@{PLUGIN.ident}API

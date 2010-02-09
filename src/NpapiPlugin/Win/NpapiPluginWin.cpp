@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Dec 3, 2009
@@ -26,6 +26,7 @@ extern std::string g_dllPath;
 
 NpapiPluginWin::NpapiPluginWin(NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
+    PluginCore::setPlatform("Windows", "NPAPI");
     setFSPath(g_dllPath);
 }
 
@@ -39,11 +40,11 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
     if (window != NULL) {
         if (pluginWin != NULL
              && pluginWin->getHWND() != window->window) {
-            
+
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
         }
-        
+
         if (pluginWin == NULL) {
             pluginWin = _createPluginWindow((HWND)window->window);
             pluginMain->SetWindow(pluginWin);
