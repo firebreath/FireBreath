@@ -47,7 +47,7 @@ file (GLOB PLUGIN_PROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
-    if (EXISTS ${CURPROJECT}/CMakeLists.txt)
+    if (EXISTS "${FB_ROOT_DIR}/${CURPROJECT}/CMakeLists.txt")
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
       configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
