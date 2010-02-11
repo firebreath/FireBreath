@@ -1,5 +1,5 @@
 #/**********************************************************\ 
-# Auto-generated Windows project definition file for the
+# Auto-generated Mac project definition file for the
 # @{PLUGIN.name} project
 #\**********************************************************/
 

@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -30,7 +30,7 @@ namespace FB {
     class PluginEvent;
     class JSAPI;
     class BrowserHostWrapper;
-    /** 
+    /**
      * PluginCore
      *
      * This is the base class for a user defined "Plugin"
@@ -51,10 +51,10 @@ namespace FB {
         PluginCore(const std::set<std::string> params);
         virtual ~PluginCore();
 
-        void SetHost(BrowserHostWrapper *);
-		PluginWindow* GetWindow() const;
-        void SetWindow(PluginWindow *);
-        void ClearWindow();
+        virtual void SetHost(BrowserHostWrapper *);
+		virtual PluginWindow* GetWindow() const;
+        virtual void SetWindow(PluginWindow *);
+        virtual void ClearWindow();
 
     protected:
         virtual JSAPI* createJSAPI() = 0;

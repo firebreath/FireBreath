@@ -318,6 +318,10 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
 
             m_api->SetProperty(sName, newVal);
+        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasEvent(sName)) {
+            
+            FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
+            m_api->setDefaultEventMethod(sName, newVal.cast<FB::JSObject>());
 
         } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(sName)) {
 

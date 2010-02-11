@@ -23,6 +23,7 @@ using namespace FB::Npapi;
 
 NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
 {
+    PluginCore::setPlatform("Mac", "NPAPI");
     // TODO: Get the path to the bundle
     //setFSPath();
 
@@ -61,7 +62,7 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window)
             pluginWin = _createPluginWindow((CGrafPtr)prt->port, prt->portx, prt->porty);
             pluginMain->SetWindow(pluginWin);
         }
-        
+
         pluginWin->setWindowPosition(window->x, window->y, window->width, window->height);
         pluginWin->setWindowClipping(window->clipRect.top, window->clipRect.left,
                                       window->clipRect.bottom, window->clipRect.right);

@@ -51,11 +51,13 @@ namespace FB
     {
         try
         {
-            long length = src->GetProperty("length").convert_cast<long>();
+            FB::variant tmp = src->GetProperty("length");
+            long length = tmp.convert_cast<long>();
             std::back_insert_iterator<Cont> inserter(dst);
 
             for(int i=0; i<length; ++i) {
-                *inserter++ = src->GetProperty(i).convert_cast<typename Cont::value_type>();
+                tmp = src->GetProperty(i);
+                *inserter++ = tmp.convert_cast<typename Cont::value_type>();
             }
         }
         catch(FB::script_error& e) 
@@ -80,7 +82,8 @@ namespace FB
 
             for(StringVec::iterator it = fields.begin(); it != fields.end(); it++) 
             {
-                *inserter++ = PairType(*it, src->GetProperty(*it).convert_cast<MappedType>());
+                FB::variant tmp = src->GetProperty(*it);
+                *inserter++ = PairType(*it, tmp.convert_cast<MappedType>());
             }
         } 
         catch (FB::script_error& e)

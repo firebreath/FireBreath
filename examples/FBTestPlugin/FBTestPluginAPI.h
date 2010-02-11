@@ -47,6 +47,7 @@ public:
 
     // Method add
     long add(long a, long b);
+	void testEvent(std::string param);
 
 private:
     FB::BrowserHost m_host;

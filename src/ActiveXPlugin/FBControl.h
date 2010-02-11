@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 17, 2009
@@ -70,6 +70,7 @@ public:
 
     CFBControl() : pluginWin(NULL)
     {
+        FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
     }
@@ -93,7 +94,7 @@ public:
         HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
     	if (!pClientSite)
             return hr;
-        	
+
         CComPtr<IOleContainer> container;
 
         if (m_spClientSite.p)
@@ -103,7 +104,7 @@ public:
             m_propNotify = m_spClientSite;
             m_htmlDocIDisp = container;
         }
-        
+
         m_host = new ActiveXBrowserHost(m_htmlDoc);
         pluginMain->SetHost(m_host.ptr());
         this->setAPI(pluginMain->getRootJSAPI(), m_host);

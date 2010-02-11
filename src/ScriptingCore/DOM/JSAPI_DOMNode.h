@@ -36,19 +36,22 @@ namespace FB {
         template <class T>
         T callMethod(std::string name, VariantList args)
         {
-            return m_element->Invoke(name, args).convert_cast<T>();
+            FB::variant tmp = m_element->Invoke(name, args);
+            return tmp.convert_cast<T>();
         }
 
         template <class T>
         T getProperty(std::string name)
         {
-            return m_element->GetProperty(name).convert_cast<T>();
+            FB::variant tmp = m_element->GetProperty(name);
+            return tmp.convert_cast<T>();
         }
 
         template <class T>
         T getProperty(int idx)
         {
-            return m_element->GetProperty(idx).convert_cast<T>();
+            FB::variant tmp = m_element->GetProperty(idx);
+            return tmp.convert_cast<T>();
         }
 
         JSAPI_DOMNode getNode(std::string name);

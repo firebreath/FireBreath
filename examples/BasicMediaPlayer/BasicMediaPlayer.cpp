@@ -54,13 +54,18 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
     } 
     catch(MediaPlayer::InitializationException&) 
     {
-        m_player.reset();
+        m_host->htmlLog("failed to initialize media player");
     }
 }
 
 BasicMediaPlayer::~BasicMediaPlayer()
 {
     m_player.reset();
+}
+
+void BasicMediaPlayer::foo() const
+{
+    
 }
 
 bool BasicMediaPlayer::play(const FB::CatchAll& catchall)

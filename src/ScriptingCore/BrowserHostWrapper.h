@@ -26,7 +26,7 @@ namespace FB
 
     struct AsyncLogRequest
     {
-        AsyncLogRequest(BrowserHostWrapper *host, std::string message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(BrowserHostWrapper *host, const std::string& message) : m_host(host), m_msg(message) { }
 
         BrowserHost m_host;
         std::string m_msg;
@@ -49,7 +49,7 @@ namespace FB
     public:
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
-        virtual void htmlLog(std::string str);
+        virtual void htmlLog(const std::string& str);
 
     protected:
         unsigned int refCount;
