@@ -9,7 +9,7 @@
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
 #            
-#Copyright 2009 PacketPass, Inc and the Firebreath development team
+#Copyright 2009-2010 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
     
@@ -30,18 +30,27 @@ if (WIN32)
 	    "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}    /SUBSYSTEM:WINDOWS /MACHINE:X86 /OPT:REF /OPT:ICF")
 endif()
 
-if (APPLE)
-    # We define preprocessor flags here in addition to other flags
-    # because it is the most convenient place to put them to apply
-    # to all targets
-    set (CMAKE_C_FLAGS "-DXP_MACOSX=1")
-    set (CMAKE_CXX_FLAGS "-DXP_MACOSX=1")
-endif()
+# We define preprocessor flags here in addition to other flags
+# because it is the most convenient place to put them to apply
+# to all targets
+if(UNIX)
+    # XP_UNIX is used by the Gecko SDK
+    set(gecko_defs "-DXP_UNIX")
+    if(APPLE)
+        # In addition, Gecko SDK on Mac OS X needs XP_MACOSX
+        set(gecko_defs "${gecko_defs} -DXP_MACOSX")
+    endif()
 
-if(UNIX AND NOT APPLE)
-    # On Mac OS X UNIX is also defined
-    # XP_UNIX is used by the gecko sdk
-    set (CMAKE_C_FLAGS "-fPIC -DXP_UNIX=1")
-    set (CMAKE_CXX_FLAGS "-fPIC -DXP_UNIX=1")
-endif()
+    if(NOT APPLE)
+        # On 64 bit, -fPIC is required for compiling all objects which get linked
+        # into a .so file.
+        # CMake correctly defaults to -fPIC for shared libs, but static libs are
+        # built without. Since we are linking static libs later into a shared lib
+        # (as opposed to an executable), we need to build static libs with -fPIC
+        # too.
+        set(fPIC_flag "-fPIC")
+    endif()
 
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${gecko_defs} ${fPIC_flag}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${gecko_defs} ${fPIC_flag}")
+endif()
