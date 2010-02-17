@@ -246,7 +246,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
 
     std::string sName(CW2A(bstrName).m_psz);
 
-    if (m_api->HasProperty(sName) || m_api->HasMethod(sName) || m_api->HasEvent(sName)) {
+    if ((sName == "attachEvent") || (sName == "detachEvent")) {
+        *pid = AxIdMap.getIdForValue(sName);
+    } else if (m_api->HasProperty(sName) || m_api->HasMethod(sName) || m_api->HasEvent(sName)) {
         *pid = AxIdMap.getIdForValue(sName);
     } else {
         *pid = -1;
@@ -323,21 +325,28 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             m_api->setDefaultEventMethod(sName, newVal.cast<FB::JSObject>());
 
-        } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(sName)) {
+        } else if (wFlags & DISPATCH_METHOD && ((sName == "attachEvent") || (sName == "detachEvent")) ) {
+        
+            std::vector<FB::variant> params;
+            for (int i = pdp->cArgs - 1; i >= 0; i--) {
+                params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+            }
+
+            if (sName == "attachEvent") {
+                this->callSetEventListener(params, true);
+            } else if (sName == "detachEvent") {
+                this->callSetEventListener(params, false);
+            }
+
+        } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(sName) ) {
 
             std::vector<FB::variant> params;
             for (int i = pdp->cArgs - 1; i >= 0; i--) {
                 params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
             }
             FB::variant rVal;
-            if (sName == "attachEvent") {
-                this->callSetEventListener(params, true);
-            } else if (sName == "detachEvent") {
-                this->callSetEventListener(params, false);
-            } else {
-                rVal = m_api->Invoke(sName, params);
-            }
-
+            rVal = m_api->Invoke(sName, params);
+            
             if(pvarRes)
                 m_host->getComVariant(pvarRes, rVal);
 
