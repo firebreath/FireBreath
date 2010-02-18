@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
   Default auto-generated np_winmain.cpp
 
   This file contains the entrypoints for a windows NPAPI

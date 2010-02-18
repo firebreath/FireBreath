@@ -45,5 +45,6 @@ extern "C" NPError NP_Initialize(NPNetscapeFuncs* pFuncs
 extern "C" NPError NP_Shutdown()
 {
     delete module;
+    module = NULL;
     return NPERR_NO_ERROR;
 }

@@ -52,7 +52,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
             return NPERR_OUT_OF_MEMORY_ERROR;
     } catch (PluginCreateError &e) {
         printf("%s\n", e.what());
-        delete plugin; 
+        delete plugin;
         plugin = NULL;
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
