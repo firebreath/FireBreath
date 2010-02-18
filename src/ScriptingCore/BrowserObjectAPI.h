@@ -100,9 +100,18 @@ namespace FB
     {
         typedef FB::JSObject JsObject;
         
+        // if the held data is of type Cont just return it
+
+        if(get_type() == typeid(Cont)) 
+            return convert_cast_impl<Cont>();
+
+        // if the help data is not a JavaScript object throw
+
         if(!(get_type() == typeid(JsObject)))
             throw bad_variant_cast(get_type(), typeid(JsObject));
         
+        // if it is a JavaScript object try to treat it as an array
+
         Cont cont;
         FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
         return cont;
@@ -115,9 +124,18 @@ namespace FB
     {
         typedef FB::JSObject JsObject;
         
+        // if the held data is of type Dict just return it
+
+        if(get_type() == typeid(Dict)) 
+            return convert_cast_impl<Dict>();
+
+        // if the help data is not a JavaScript object throw
+
         if(!(get_type() == typeid(JsObject)))
             throw bad_variant_cast(get_type(), typeid(JsObject));
         
+        // if it is a JavaScript object try to treat it as an array
+
         Dict dict;
         FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
         return dict;

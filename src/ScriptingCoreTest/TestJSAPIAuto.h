@@ -33,7 +33,8 @@ public:
         registerMethod("concatMany2",   make_method(this, &TestObjectJSAPIAuto::concatMany2));
         registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
         registerMethod("accumulate",    make_method(this, &TestObjectJSAPIAuto::accumulate));
-
+        registerMethod("container",        make_method(this, &TestObjectJSAPIAuto::container));
+        
         registerProperty("message",
                          make_property(this, 
                             &TestObjectJSAPIAuto::get_Message,
@@ -112,6 +113,11 @@ public:
     long int accumulate(const std::vector<int>& values)
     {
         return std::accumulate(values.begin(), values.end(), 0);
+    }
+
+    FB::VariantList container(const FB::CatchAll& all)
+    {
+        return all.value;
     }
 
 private:

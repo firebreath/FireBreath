@@ -45,7 +45,7 @@ TEST(JSAPIAuto_Methods)
     PRINT_TESTNAME;
 
     using boost::assign::list_of;
-	using namespace FB;
+    using namespace FB;
 
     FB::AutoPtr<FB::JSAPI> test = new TestObjectJSAPIAuto;
 
@@ -89,7 +89,7 @@ TEST(JSAPIAuto_Methods)
     }
 
     {
-		// test catching all remaining params with CatchAll as the last argument
+        // test catching all remaining params with CatchAll as the last argument
 
         const std::string method("concatMany");
         CHECK(test->HasMethod("concatMany"));
@@ -103,13 +103,13 @@ TEST(JSAPIAuto_Methods)
             FB::VariantList args(strings.begin(), strings.begin()+i);
             FB::variant ret = test->Invoke(method, args);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
-			const std::string result   = ret.cast<std::string>();
+            const std::string result   = ret.cast<std::string>();
             CHECK(result == expected);
         }
     }
 
-	{
-		// test that CatchAll doesn't break catching arrays as the last parameter
+    {
+        // test that CatchAll doesn't break catching arrays as the last parameter
 
         const std::string method("concatMany2");
         CHECK(test->HasMethod("concatMany2"));
@@ -120,14 +120,14 @@ TEST(JSAPIAuto_Methods)
                 
         for(unsigned i=2; i<=max_args; ++i)
         {
-			FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
-			FB::VariantList params = variant_list_of(strings.front())(FB::AutoPtr<BrowserObjectAPI>(jsarr));
+            FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
+            FB::VariantList params = variant_list_of(strings.front())(FB::AutoPtr<BrowserObjectAPI>(jsarr));
             FB::variant ret = test->Invoke(method, params);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
-			const std::string result   = ret.cast<std::string>();
+            const std::string result   = ret.cast<std::string>();
             CHECK(result == expected);
         }
-	}
+    }
 
     {
         const std::string prop("message");
@@ -174,5 +174,18 @@ TEST(JSAPIAuto_Methods)
 
         FB::variant ret = test->Invoke(method, variant_list_of(varJsArr));
         CHECK(ret.cast<long>() == std::accumulate(values.begin(), values.end(), 0));
+    }
+
+    {
+        // test returning container
+
+        FB::VariantList values = FB::variant_list_of(1)(2)(3);
+        FB::variant var = test->Invoke("container", values);
+        CHECK(var.is_of_type<FB::VariantList>());
+        
+        typedef std::vector<long> LongVec;
+        LongVec orig   = FB::convert_variant_list<LongVec>(values);
+        LongVec result = FB::convert_variant_list<LongVec>(var.convert_cast<FB::VariantList>());        
+        CHECK(orig == result);
     }
 }
