@@ -28,7 +28,7 @@ namespace FB { namespace Npapi {
         : m_error(error)
         { }
 		~PluginCreateError() throw() { }
-        virtual const char* what() {
+        virtual const char* what() const {
             return m_error.c_str();
         }
         std::string m_error;
