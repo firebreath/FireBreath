@@ -10,7 +10,7 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 Georg Fritzsche, Firebreath development team
+Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "NpapiBrowserHostAsyncWin.h"

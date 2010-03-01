@@ -47,19 +47,38 @@ namespace
         //static const bool useWorkaround = false;
         return useWorkaround;
     }
+
+    FB::AutoPtr<NpapiBrowserHost> createBrowserHost(NpapiPluginModule* module, NPP npp)
+    {
+        FB::AutoPtr<NpapiBrowserHost> host;
+        NPNetscapeFuncs& npnFuncs = module->NPNFuncs;
+
+        if(asyncCallsWorkaround(npp, &npnFuncs)) {
+            npnFuncs.pluginthreadasynccall = NULL;
+#ifdef _WINDOWS_
+            host = new NpapiBrowserHostAsyncWin(module, npp);
+#else
+            // no work-around for this platform
+            host = new NpapiBrowserHost(module, npp);
+#endif
+        } else {
+            host = new NpapiBrowserHost(module, npp);
+        }
+
+        return host;
+    }
 }
 
 namespace FB { namespace Npapi 
 {
     struct NpapiPDataHolder
     {
-        NpapiBrowserHost* host;
-        NpapiPlugin* plugin;
+        FB::AutoPtr<NpapiBrowserHost> host;
+        std::auto_ptr<NpapiPlugin> plugin;
 
-        NpapiPDataHolder(NpapiBrowserHost* host, NpapiPlugin* plugin)
+        NpapiPDataHolder(FB::AutoPtr<NpapiBrowserHost> host, std::auto_ptr<NpapiPlugin> plugin)
           : host(host), plugin(plugin) {}
-        NpapiPDataHolder(const NpapiPDataHolder& pd)
-          : host(pd.host), plugin(pd.plugin) {}
+        ~NpapiPDataHolder() {}
     };
 } }
 
@@ -67,13 +86,11 @@ NpapiPluginModule *NpapiPluginModule::Default = NULL;
 
 inline NpapiPlugin *getPlugin(NPP instance)
 {
-    //return static_cast<NpapiPlugin *>(instance->pdata);
-    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin;
+    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
 }
 
 inline NpapiBrowserHost *getHost(NPP instance)
 {
-    //return static_cast<NpapiPlugin *>(instance->pdata);
     return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
 }
 
@@ -94,18 +111,11 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
     FB::AutoPtr<NpapiBrowserHost> host;
     std::auto_ptr<NpapiPlugin> plugin;
-    //NpapiPlugin* plugin = 0;
     NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
 
     try 
     {
-        if(asyncCallsWorkaround(instance, &npnFuncs)) {
-            npnFuncs.pluginthreadasynccall = NULL;
-            host = new NpapiBrowserHostAsyncWin(NpapiPluginModule::Default, instance);
-        } else {
-            host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
-        }
-    
+        host = createBrowserHost(NpapiPluginModule::Default, instance);    
         host->setBrowserFuncs(&(npnFuncs));
 
         plugin = std::auto_ptr<NpapiPlugin>(_getNpapiPlugin(host));
@@ -115,7 +125,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
         plugin->init(pluginType, argc, argn, argv);
 
-        NpapiPDataHolder* holder = new NpapiPDataHolder(host, plugin.release());
+        NpapiPDataHolder* holder = new NpapiPDataHolder(host, plugin);
         instance->pdata = static_cast<void*>(holder);
     } 
     catch (const PluginCreateError &e) 
@@ -135,21 +145,22 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         return NPERR_GENERIC_ERROR;
     }
 
-    //instance->pdata = static_cast<void *>(plugin);
-
     return NPERR_NO_ERROR;
 }
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
-    if (instance == NULL) {
+    if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
+    //NpapiPlugin *plugin = getPlugin(instance);
 
-    plugin->shutdown();
-    delete plugin;
+    //plugin->shutdown();
+    //delete plugin;
+
+    NpapiPDataHolder* pdata = static_cast<NpapiPDataHolder*>(instance->pdata);
+    delete pdata;
 
     instance->pdata = NULL;
     return NPERR_NO_ERROR;
