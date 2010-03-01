@@ -131,7 +131,6 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
     catch (const PluginCreateError &e) 
     {
         printf("%s\n", e.what());
-        plugin = NULL;
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
     catch (const std::bad_alloc& e) 

@@ -49,7 +49,8 @@ void PluginWindowMac::setWindowPosition(int x, int y, int w, int h)
         m_y = y;
         m_width = w;
         m_height = h;
-        SendEvent(&ResizedEvent());
+        ResizedEvent ev;
+        SendEvent(&ev);
     }
 }
 
@@ -71,20 +72,25 @@ void PluginWindowMac::setWindowClipping(int t, int l, int b, int r)
         m_clipLeft = l;
         m_clipBottom = b;
         m_clipRight = r;
-        SendEvent(&ClipChangedEvent());
+        ClipChangedEvent ev;
+        SendEvent(&ev);
     }
 }
 
 int16_t PluginWindowMac::HandleEvent(EventRecord* evt)
 {
     // Give the plugin a change to handle the event itself if desired
-    if (SendEvent(&MacEvent(evt))) {
+    MacEvent macEv(evt);
+    if (SendEvent(&macEv)) {
         return true;
     }
     switch (evt->what) {
         case updateEvt:
-            return SendEvent(&RefreshEvent());
+        {
+            RefreshEvent refEv;
+            return SendEvent(&refEv);
             break;
+        }
         default:
             break;
     }
