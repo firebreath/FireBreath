@@ -44,7 +44,6 @@ namespace
     bool asyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs = 0)
     {
         static const bool useWorkaround = (funcs) ? needAsyncCallsWorkaround(npp, funcs) : false;
-        //static const bool useWorkaround = false;
         return useWorkaround;
     }
 }
@@ -67,13 +66,11 @@ NpapiPluginModule *NpapiPluginModule::Default = NULL;
 
 inline NpapiPlugin *getPlugin(NPP instance)
 {
-    //return static_cast<NpapiPlugin *>(instance->pdata);
     return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin;
 }
 
 inline NpapiBrowserHost *getHost(NPP instance)
 {
-    //return static_cast<NpapiPlugin *>(instance->pdata);
     return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
 }
 
@@ -94,14 +91,18 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
     FB::AutoPtr<NpapiBrowserHost> host;
     std::auto_ptr<NpapiPlugin> plugin;
-    //NpapiPlugin* plugin = 0;
     NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
 
     try 
     {
         if(asyncCallsWorkaround(instance, &npnFuncs)) {
             npnFuncs.pluginthreadasynccall = NULL;
+#ifdef _WINDOWS_
             host = new NpapiBrowserHostAsyncWin(NpapiPluginModule::Default, instance);
+#else
+            // no work-around for this platform
+            host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
+#endif
         } else {
             host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
         }
@@ -134,8 +135,6 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         printf("%s\n", e.what());
         return NPERR_GENERIC_ERROR;
     }
-
-    //instance->pdata = static_cast<void *>(plugin);
 
     return NPERR_NO_ERROR;
 }
