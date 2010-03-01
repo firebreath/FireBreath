@@ -129,7 +129,7 @@ MediaPlayer::MediaPlayer()
     {
         m_context = make_context(0);
     }
-    catch(InitializationException& e)
+    catch(const InitializationException& e)
     {
         if(!m_context)
             m_context = PlayerContextPtr(new PlayerContext);

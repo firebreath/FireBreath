@@ -124,7 +124,7 @@ void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant value)
     
     try {
         it->second.set(value);
-    } catch (FB::bad_variant_cast ex) {
+    } catch (const FB::bad_variant_cast& ex) {
         std::string errorMsg("Could not convert from ");
         errorMsg += ex.from;
         errorMsg += " to ";
@@ -161,7 +161,7 @@ FB::variant FB::JSAPIAuto::Invoke(std::string methodName, std::vector<variant> &
             throw invalid_member(methodName);
 
         return it->second(args);
-    } catch (FB::bad_variant_cast ex) {
+    } catch (const FB::bad_variant_cast& ex) {
         std::string errorMsg("Could not convert from ");
         errorMsg += ex.from;
         errorMsg += " to ";

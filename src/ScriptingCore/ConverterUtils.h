@@ -103,7 +103,7 @@ namespace FB { namespace detail
         {
             try {
                 return from.convert_cast<To>();
-            } catch(FB::bad_variant_cast& e) {
+            } catch(const FB::bad_variant_cast& e) {
                 std::stringstream ss;
                 ss << "Invalid argument conversion "
                    << "from " << e.from 
@@ -116,7 +116,7 @@ namespace FB { namespace detail
         {
             try {
                 return from.convert_cast<To>();
-            } catch(FB::bad_variant_cast& e) {
+            } catch(const FB::bad_variant_cast& e) {
                 std::stringstream ss;
                 ss << "Invalid argument conversion "
                    << "from " << e.from 

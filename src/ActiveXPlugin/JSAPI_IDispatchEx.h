@@ -353,9 +353,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
         } else {
             throw FB::invalid_member("Invalid method or property name");
         }
-    } catch (FB::invalid_member) {
+    } catch (const FB::invalid_member&) {
         return DISP_E_MEMBERNOTFOUND;
-    } catch (FB::script_error se) {
+    } catch (const FB::script_error& se) {
         if (pei != NULL) {
             pei->bstrSource = CComBSTR(ACTIVEX_PROGID);
             pei->bstrDescription = CComBSTR(se.what());

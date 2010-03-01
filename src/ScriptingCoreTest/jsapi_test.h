@@ -67,13 +67,13 @@ TEST(JSAPI_Methods)
         try {
             test1->Invoke("setValue", FB::VariantList());
             CHECK(false);
-        } catch (invalid_arguments e) {
+        } catch (const invalid_arguments& e) {
             CHECK(true);
-        } catch (object_invalidated e) {
+        } catch (const object_invalidated& e) {
             CHECK(false);
-        } catch (invalid_member e) {
+        } catch (const invalid_member& e) {
             CHECK(false);
-        } catch (script_error e) {
+        } catch (const script_error& e) {
             CHECK(false);
         }
     }
@@ -83,13 +83,13 @@ TEST(JSAPI_Methods)
         try {
             test1->Invoke("someMethodThatDoesntExist", FB::VariantList());
             CHECK(false);
-        } catch (invalid_arguments e) {
+        } catch (const invalid_arguments& e) {
             CHECK(false);
-        } catch (object_invalidated e) {
+        } catch (const object_invalidated& e) {
             CHECK(false);
-        } catch (invalid_member e) {
+        } catch (const invalid_member& e) {
             CHECK(true);
-        } catch (script_error e) {
+        } catch (const script_error& e) {
             CHECK(false);
         }
     }
@@ -100,13 +100,13 @@ TEST(JSAPI_Methods)
         try {
             test1->Invoke("setValue", variant_list_of(0)("This is a test"));
             CHECK(false);
-        } catch (invalid_arguments e) {
+        } catch (const invalid_arguments& e) {
             CHECK(false);
-        } catch (object_invalidated e) {
+        } catch (const object_invalidated& e) {
             CHECK(true);
-        } catch (invalid_member e) {
+        } catch (const invalid_member& e) {
             CHECK(false);
-        } catch (script_error e) {
+        } catch (const script_error& e) {
             CHECK(false);
         }
     }
@@ -124,7 +124,7 @@ TEST(JSAPI_Methods)
         try {   // invalid parameters
             test1->Invoke("setValue", variant_list_of(0));
             CHECK(false);
-        } catch (script_error e) {
+        } catch (const script_error& e) {
             CHECK(true);
         }
     }
@@ -158,20 +158,20 @@ TEST(JSAPI_Properties)
     try {
         test1->GetProperty("SomePropertyThatDoesntExist");
         CHECK(false);
-    } catch (invalid_arguments e) {
+    } catch (const invalid_arguments& e) {
         CHECK(false);
-    } catch (object_invalidated e) {
+    } catch (const object_invalidated& e) {
         CHECK(false);
-    } catch (invalid_member e) {
+    } catch (const invalid_member& e) {
         CHECK(true);
-    } catch (script_error e) {
+    } catch (const script_error& e) {
         CHECK(false);
     }
 
     try {
         test1->GetProperty("SomePropertyThatDoesntExist");
         CHECK(false);
-    } catch (script_error e) {
+    } catch (const script_error& e) {
         CHECK(true);
     }
 }

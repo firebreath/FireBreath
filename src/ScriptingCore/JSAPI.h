@@ -29,7 +29,7 @@ namespace FB
             : m_error(error)
         { }
 		~script_error() throw() { }
-        virtual const char* what() { 
+        virtual const char* what() const { 
             return m_error.c_str(); 
         }
         std::string m_error;

@@ -52,7 +52,7 @@ void FB::JSArray::ExtractList(FB::JSObject obj)
             inserter = obj->GetProperty(i);
         }
     }
-    catch(FB::script_error& e) 
+    catch(const FB::script_error& e) 
     {
         throw e;
     }

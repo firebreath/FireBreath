@@ -52,7 +52,7 @@ BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host)
         m_player  = MediaPlayerPtr(new MediaPlayer);
         m_valid   = true;
     } 
-    catch(MediaPlayer::InitializationException&) 
+    catch(const MediaPlayer::InitializationException&) 
     {
         m_host->htmlLog("failed to initialize media player");
     }

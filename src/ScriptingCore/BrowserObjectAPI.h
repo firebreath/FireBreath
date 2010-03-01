@@ -60,7 +60,7 @@ namespace FB
                 *inserter++ = tmp.convert_cast<typename Cont::value_type>();
             }
         }
-        catch(FB::script_error& e) 
+        catch(const FB::script_error& e) 
         {
             throw e;
         }
@@ -86,7 +86,7 @@ namespace FB
                 *inserter++ = PairType(*it, tmp.convert_cast<MappedType>());
             }
         } 
-        catch (FB::script_error& e)
+        catch (const FB::script_error& e)
         {
             throw e;
         }
