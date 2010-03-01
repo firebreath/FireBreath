@@ -1,0 +1,36 @@
+
+/**********************************************************\
+Original Author: Georg Fritzsche
+
+Created:    March 1, 2010
+License:    Dual license model; choose one of two:
+            Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2009 Georg Fritzsche, Firebreath development team
+\**********************************************************/
+
+#ifndef H_NPAPIBROWSERHOSTASYNCWIN
+#define H_NPAPIBROWSERHOSTASYNCWIN
+
+#include "../NpapiBrowserHost.h"
+
+namespace FB { namespace Npapi 
+{
+    class NpapiBrowserHostAsyncWin : public NpapiBrowserHost
+    {
+    public:
+        NpapiBrowserHostAsyncWin(NpapiPluginModule *module, NPP npp);
+        virtual ~NpapiBrowserHostAsyncWin();
+
+        virtual void ScheduleAsyncCall(void (*func)(void*), void* userData);
+        void setWindow(NPWindow* window);
+
+    private:
+        HWND m_hwnd;
+    };
+} }
+#endif

@@ -18,13 +18,63 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPlugin.h"
 #include "FactoryDefinitions.h"
 
+#ifdef _WINDOWS_
+#  include "Win/NpapiBrowserHostAsyncWin.h"
+#endif
+
 using namespace FB::Npapi;
+
+namespace
+{
+    bool needAsyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs)
+    {
+#ifdef _WINDOWS_
+        const char* const cstrUserAgent = funcs->uagent(npp);
+        if(!cstrUserAgent) 
+            return false;
+        
+        const std::string userAgent(cstrUserAgent);        
+        const bool result = userAgent.find("Opera") != std::string::npos;
+        return result;
+#else
+        return false;
+#endif
+    }
+
+    bool asyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs = 0)
+    {
+        static const bool useWorkaround = (funcs) ? needAsyncCallsWorkaround(npp, funcs) : false;
+        //static const bool useWorkaround = false;
+        return useWorkaround;
+    }
+}
+
+namespace FB { namespace Npapi 
+{
+    struct NpapiPDataHolder
+    {
+        NpapiBrowserHost* host;
+        NpapiPlugin* plugin;
+
+        NpapiPDataHolder(NpapiBrowserHost* host, NpapiPlugin* plugin)
+          : host(host), plugin(plugin) {}
+        NpapiPDataHolder(const NpapiPDataHolder& pd)
+          : host(pd.host), plugin(pd.plugin) {}
+    };
+} }
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
 
 inline NpapiPlugin *getPlugin(NPP instance)
 {
-    return static_cast<NpapiPlugin *>(instance->pdata);
+    //return static_cast<NpapiPlugin *>(instance->pdata);
+    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin;
+}
+
+inline NpapiBrowserHost *getHost(NPP instance)
+{
+    //return static_cast<NpapiPlugin *>(instance->pdata);
+    return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
 }
 
 inline bool validInstance(NPP instance)
@@ -42,21 +92,51 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
-    host->setBrowserFuncs(&(NpapiPluginModule::Default->NPNFuncs));
-    NpapiPlugin *plugin(NULL);
-    try {
-        plugin = _getNpapiPlugin(host);
-        plugin->init(pluginType, argc, argn, argv);
-        if (plugin == NULL)
+    FB::AutoPtr<NpapiBrowserHost> host;
+    std::auto_ptr<NpapiPlugin> plugin;
+    //NpapiPlugin* plugin = 0;
+    NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
+
+    try 
+    {
+        if(asyncCallsWorkaround(instance, &npnFuncs)) {
+            npnFuncs.pluginthreadasynccall = NULL;
+            host = new NpapiBrowserHostAsyncWin(NpapiPluginModule::Default, instance);
+        } else {
+            host = new NpapiBrowserHost(NpapiPluginModule::Default, instance);
+        }
+    
+        host->setBrowserFuncs(&(npnFuncs));
+
+        plugin = std::auto_ptr<NpapiPlugin>(_getNpapiPlugin(host));
+        if (!plugin.get()) {
             return NPERR_OUT_OF_MEMORY_ERROR;
-    } catch (PluginCreateError &e) {
+        }
+
+        plugin->init(pluginType, argc, argn, argv);
+
+        NpapiPDataHolder* holder = new NpapiPDataHolder(host, plugin.release());
+        instance->pdata = static_cast<void*>(holder);
+    } 
+    catch (const PluginCreateError &e) 
+    {
         printf("%s\n", e.what());
-        delete plugin;
         plugin = NULL;
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
-    instance->pdata = static_cast<void *>(plugin);
+    catch (const std::bad_alloc& e) 
+    {
+        printf("%s\n", e.what());
+        return NPERR_OUT_OF_MEMORY_ERROR;
+    }
+    catch (const std::exception& e) 
+    {
+        printf("%s\n", e.what());
+        return NPERR_GENERIC_ERROR;
+    }
+
+    //instance->pdata = static_cast<void *>(plugin);
+
     return NPERR_NO_ERROR;
 }
 
@@ -81,9 +161,21 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
+    if(asyncCallsWorkaround(instance)) {
+        NpapiBrowserHost* host = getHost(instance);
+        if(host) {
+#ifdef _WINDOWS_
+            NpapiBrowserHostAsyncWin* hostWin = reinterpret_cast<NpapiBrowserHostAsyncWin*>(host);
+            if(hostWin)
+                hostWin->setWindow(window);
+#endif
+        }
+    }
 
-    return plugin->SetWindow(window);
+    NpapiPlugin *plugin = getPlugin(instance);
+    NPError err = plugin->SetWindow(window);
+
+    return err;
 }
 
 NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream,
