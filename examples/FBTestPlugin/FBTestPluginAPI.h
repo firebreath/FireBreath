@@ -49,6 +49,9 @@ public:
     long add(long a, long b);
 	void testEvent(std::string param);
 
+	// Method to start the streams test
+	bool testStreams();
+
 private:
     FB::BrowserHost m_host;
     FB::JSOutObject m_simpleMath;

@@ -1,0 +1,56 @@
+/**********************************************************\ 
+Original Author: Matthias (nitrogenycs)
+
+Created:    Feb 28, 2010
+License:    Dual license model; choose one of two:
+            Eclipse Public License - Version 1.0
+            http://www.eclipse.org/legal/epl-v10.html
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2010 Richard Bateman, Firebreath development team
+\**********************************************************/
+
+#ifndef H_ACTIVEXSTREAM
+#define H_ACTIVEXSTREAM
+
+#include "BrowserStream.h"
+#include <set>
+
+class ActiveXBindStatusCallback;
+class ActiveXStreamRequest;
+
+class ActiveXStream : public FB::BrowserStream
+{
+public:
+	ActiveXStream(const std::string& url, bool cache, bool seekable, size_t internalBufferSize );
+	virtual ~ActiveXStream();
+	
+	virtual bool readRanges( const std::vector<Range>& ranges );
+	virtual bool write(const char* data, size_t dataLength, size_t& written);
+	virtual bool close();
+
+protected:
+	virtual bool	init();
+	virtual bool	addRequest( const ActiveXStreamRequest& request );
+
+	virtual size_t	signalDataArrived(void* buffer, size_t len, size_t offset);
+	virtual void	signalOpened();
+	virtual void	signalFailedOpen();
+	virtual void	signalCompleted(bool success);
+	virtual void	signalRequestCompleted(ActiveXStreamRequest* request, bool success);
+	virtual void	signalCacheFilename(const std::wstring& cacheFilename);
+
+	friend class ActiveXBrowserHost;
+	friend class ActiveXBindStatusCallback;
+
+protected:
+	std::set<ActiveXStreamRequest*>	requests;
+	bool	closing;
+};
+
+
+
+
+#endif

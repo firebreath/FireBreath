@@ -86,6 +86,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./axmain.*
     ./axutil.*
+    ./axstream*.*
     ./dlldatax.c
     ./registrymap.hpp
     )

@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "ActiveXBrowserHost.h"
+#include "axstream.h"
 #include "COMJavascriptObject.h"
 #include "DOM/JSAPI_DOMDocument.h"
 #include "DOM/JSAPI_DOMWindow.h"
@@ -195,4 +196,23 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     }
 
     outVar.Detach(dest);
+}
+
+FB::BrowserStream* ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
+									bool cache, bool seekable, size_t internalBufferSize )
+{
+	ActiveXStream* stream = new ActiveXStream( url, cache, seekable, internalBufferSize );
+	stream->AttachObserver( callback );
+
+	if ( stream->init() )
+	{
+		stream->SendEvent( &StreamCreatedEvent(stream) );
+		if ( seekable ) stream->signalOpened();
+		return stream;
+	}
+	else
+	{
+		delete stream;
+		return 0;
+	}
 }

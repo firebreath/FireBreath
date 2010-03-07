@@ -23,6 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "DOM/JSAPI_DOMWindow.h"
 #include "variant_list.h"
 
+#include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
 
 using namespace FB::Npapi;
@@ -524,4 +525,23 @@ void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message)
     if (NPNFuncs.setexception != NULL) {
         NPNFuncs.setexception(npobj, message);
     }
+}
+
+FB::BrowserStream* NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
+									bool cache, bool seekable, size_t internalBufferSize )
+{
+	NpapiStream* stream = new NpapiStream( url, cache, seekable, internalBufferSize, this );
+	stream->AttachObserver( callback );
+
+	// always use target = 0 for now
+	if ( GetURLNotify( url.c_str(), 0, stream ) == NPERR_NO_ERROR )
+	{
+		stream->SendEvent( &StreamCreatedEvent(stream) );
+		return stream;
+	}
+	else
+	{
+		delete stream;
+		return 0;
+	}
 }

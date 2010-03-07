@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "NpapiPlugin.h"
+#include "NpapiStream.h"
 #include "FactoryDefinitions.h"
 #include "PluginCore.h"
 #include "BrowserHostWrapper.h"
@@ -119,11 +120,11 @@ see if the plug-in can receive data again by resending the data at regular inter
 */
 int32_t NpapiPlugin::WriteReady(NPStream* stream)
 {
-    return 0;
+	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return -1;
 
-    // TODO: support browser streams
-    
-    return NPERR_NO_ERROR;
+    return s->getInternalBufferSize();
 }
 
 /*
@@ -146,8 +147,11 @@ byte range requests, you can use this parameter to track NPN_RequestRead request
 */
 int32_t NpapiPlugin::Write(NPStream* stream, int32_t offset, int32_t len, void* buffer)
 {
-    // TODO: support browser streams
-    return len;
+	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return -1;
+
+    return s->signalDataArrived( buffer, len, offset );
 }
 
 /*
@@ -159,6 +163,12 @@ If an error occurs while retrieving the data or writing the file, the file name 
 */
 void NpapiPlugin::StreamAsFile(NPStream* stream, const char* fname)
 {
+	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return;
+
+	std::string cacheFilename( fname );
+	s->signalCacheFilename( std::wstring( cacheFilename.begin(), cacheFilename.end() ) );
 }
 
 
@@ -177,6 +187,12 @@ NPN_GetURLNotify or NPN_PostURLNotify call, and can be used as an identifier for
 */
 void NpapiPlugin::URLNotify(const char* url, NPReason reason, void* notifyData)
 {
+	NpapiStream* s = static_cast<NpapiStream*>( notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return;
+
+	s->signalCompleted( reason == NPRES_DONE );
+	delete s;
 }
 
 /*
@@ -233,6 +249,7 @@ int16_t NpapiPlugin::HandleEvent(void* event)
     return 0;   // 0, false, indicates that the event was not handled
 }
 
+
 /*
 see https://developer.mozilla.org/en/NPP_NewStream
 
@@ -248,9 +265,40 @@ NPN_DestroyStream.
 */
 NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype)
 {
+	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return NPERR_NO_ERROR;
 
-    return NPERR_NO_ERROR;
+    s->mimeType = type;
+	s->stream = stream;
+	s->length = stream->end;
+	s->url = stream->url;
+	if( stream->headers ) s->headers = stream->headers;
+	bool seekRequested = s->isSeekable();
+    s->seekable = seekable;
+
+	if ( !seekable && seekRequested )	// requested seekable stream, but stream was not seekable
+	{									//  stream can only be made seekable by downloading the entire file
+										//  which we don't want to happen automatically.
+		s->signalFailedOpen();
+		delete s;						// delete stream here, cause NPP_Destroy stream will not be called
+		return NPERR_STREAM_NOT_SEEKABLE;
+	}
+
+	if ( seekRequested ) *stype = NP_SEEK;
+	else if ( s->isCached() ) *stype = NP_ASFILE;
+
+	if ( seekRequested ) m_npHost->ScheduleAsyncCall( signalStreamOpened, s );
+	else signalStreamOpened(s);
+
+	return NPERR_NO_ERROR;
 }
+
+void NpapiPlugin::signalStreamOpened(void* stream)
+{
+	static_cast<NpapiStream*>(stream)->signalOpened();
+}
+
 
 /*
 The browser calls the NPP_DestroyStream function when a data stream sent to the plug-in is
@@ -262,6 +310,12 @@ any further references to the stream object.
 */
 NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
 {
+	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+	// check for streams we did not request or create
+	if ( !s ) return NPERR_NO_ERROR;
+
+    s->stream = 0;
+	stream->notifyData = 0;
 
     return NPERR_NO_ERROR;
 }

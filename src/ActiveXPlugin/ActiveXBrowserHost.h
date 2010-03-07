@@ -31,7 +31,11 @@ public:
 
     virtual void *getContextID();
 
-    void setWindow(HWND wnd);
+	virtual FB::BrowserStream* createStream(const std::string& url, FB::PluginEventSink* callback, 
+											bool cache = true, bool seekable = false, 
+											size_t internalBufferSize = 128 * 1024 );
+
+	void setWindow(HWND wnd);
 
 public:
     FB::JSAPI_DOMDocument getDOMDocument();

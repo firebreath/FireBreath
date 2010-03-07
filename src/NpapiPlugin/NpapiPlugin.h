@@ -47,6 +47,7 @@ namespace FB { namespace Npapi {
         NPJavascriptObject *m_obj;
         AutoPtr<NpapiBrowserHost> m_npHost;
         NPObject *getScriptableObject();
+		static void signalStreamOpened(void* stream);
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
