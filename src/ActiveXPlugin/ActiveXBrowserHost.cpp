@@ -206,7 +206,8 @@ FB::BrowserStream* ActiveXBrowserHost::createStream(const std::string& url, FB::
 
 	if ( stream->init() )
 	{
-		stream->SendEvent( &StreamCreatedEvent(stream) );
+        StreamCreatedEvent ev(stream);
+		stream->SendEvent( &ev );
 		if ( seekable ) stream->signalOpened();
 		return stream;
 	}

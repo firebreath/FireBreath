@@ -87,7 +87,11 @@ size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
         {
             progress = float( offset + len ) / float( getLength() ) * 100.f;
         }
-        if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
+        if ( isOpen() ) 
+        {
+            StreamDataArrivedEvent ev(this, buffer, effectiveLen, offset, progress);
+            SendEvent( &ev );
+        }
     }
     return effectiveLen;
 }
@@ -95,12 +99,14 @@ size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
 void ActiveXStream::signalOpened()
 {
     opened = true;
-    SendEvent( &StreamOpenedEvent(this) );
+    StreamOpenedEvent ev(this);
+    SendEvent( &ev );
 }
 
 void ActiveXStream::signalFailedOpen()
 {
-    SendEvent( &StreamFailedOpenEvent(this) );
+    StreamFailedOpenEvent ev(this);
+    SendEvent( &ev );
 }
 
 void ActiveXStream::signalCompleted(bool success)
@@ -113,7 +119,8 @@ void ActiveXStream::signalCompleted(bool success)
     }
 
     opened = false;
-    SendEvent( &StreamCompletedEvent(this, success) );
+    StreamCompletedEvent ev(this, success);
+    SendEvent( &ev );
 }
 
 void ActiveXStream::signalRequestCompleted(ActiveXStreamRequest* request, bool success)
