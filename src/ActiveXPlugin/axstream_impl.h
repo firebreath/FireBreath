@@ -29,19 +29,19 @@ class ActiveXBindStatusCallback;
 class ActiveXStreamRequest
 {
 public:
-	ActiveXStreamRequest( ActiveXStream* stream );
-	ActiveXStreamRequest( ActiveXStream* stream, const std::vector<FB::BrowserStream::Range>& ranges );
+    ActiveXStreamRequest( ActiveXStream* stream );
+    ActiveXStreamRequest( ActiveXStream* stream, const std::vector<FB::BrowserStream::Range>& ranges );
 
-	bool start();
-	bool stop(bool streamDetached = false);
+    bool start();
+    bool stop(bool streamDetached = false);
 
 public:
-	ActiveXStream*		stream;
-	CComPtr<IMoniker>	FMoniker;
-	CComPtr<IBindCtx>	FBindCtx;
-	CComPtr<ActiveXBindStatusCallback> bindStatusCallback;
-	CComPtr<IStream>	fstream;
-	std::vector<FB::BrowserStream::Range>	ranges;
+    ActiveXStream*		stream;
+    CComPtr<IMoniker>	FMoniker;
+    CComPtr<IBindCtx>	FBindCtx;
+    CComPtr<ActiveXBindStatusCallback> bindStatusCallback;
+    CComPtr<IStream>	fstream;
+    std::vector<FB::BrowserStream::Range>	ranges;
 };
 
 class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate 
@@ -64,11 +64,11 @@ class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate
                         STGMEDIUM* pstgmed);
     STDMETHODIMP    OnObjectAvailable(REFIID riid, IUnknown* punk);
 
-	// IHttpNegotiate methods
-	STDMETHODIMP BeginningTransaction(/* [in] */ LPCWSTR szURL,
-					/* [unique][in] */ LPCWSTR szHeaders,
-					/* [in] */ DWORD dwReserved,
-					/* [out] */ LPWSTR __RPC_FAR *pszAdditionalHeaders);
+    // IHttpNegotiate methods
+    STDMETHODIMP BeginningTransaction(/* [in] */ LPCWSTR szURL,
+                    /* [unique][in] */ LPCWSTR szHeaders,
+                    /* [in] */ DWORD dwReserved,
+                    /* [out] */ LPWSTR __RPC_FAR *pszAdditionalHeaders);
         
     STDMETHODIMP OnResponse(/* [in] */ DWORD dwResponseCode,
         /* [unique][in] */ LPCWSTR szResponseHeaders,
@@ -76,26 +76,26 @@ class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate
         /* [out] */ LPWSTR __RPC_FAR *pszAdditionalRequestHeaders);
 
     // constructors/destructors
-	ActiveXBindStatusCallback();
-	virtual
+    ActiveXBindStatusCallback();
+    virtual
     ~ActiveXBindStatusCallback();
 
-	static HRESULT Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequest* request);
-	HRESULT Init(ActiveXStreamRequest* request);
+    static HRESULT Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequest* request);
+    HRESULT Init(ActiveXStreamRequest* request);
 
     bool close();
 
-	bool GetInfo(DWORD which, std::string& result);
+    bool GetInfo(DWORD which, std::string& result);
 
-	// data members
+    // data members
     DWORD           m_cRef;
     LPBINDING       m_pbinding;
     LPSTREAM        m_pstm;
     DWORD           m_cbOld;
-	BOOL			m_fRedirect; // need to be informed when we're being redirected by the server
-	BINDVERB		m_dwAction;
-	ActiveXStreamRequest*	m_request;
-	bool			m_transactionStarted;
+    BOOL			m_fRedirect; // need to be informed when we're being redirected by the server
+    BINDVERB		m_dwAction;
+    ActiveXStreamRequest*	m_request;
+    bool			m_transactionStarted;
 };
 
 #endif

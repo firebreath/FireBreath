@@ -21,33 +21,33 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB { namespace Npapi {
 
-	class NpapiPlugin;
+    class NpapiPlugin;
 
-	class NpapiStream : public FB::BrowserStream
+    class NpapiStream : public FB::BrowserStream
     {
     public:
-		NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHost* host );
-		virtual ~NpapiStream();
-		
-		//virtual bool is_open();
-		virtual bool	readRanges( const std::vector<Range>& ranges );
-		virtual bool	write(const char* data, size_t dataLength, size_t& written);
-		virtual bool	close();
+        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHost* host );
+        virtual ~NpapiStream();
+        
+        //virtual bool is_open();
+        virtual bool	readRanges( const std::vector<Range>& ranges );
+        virtual bool	write(const char* data, size_t dataLength, size_t& written);
+        virtual bool	close();
 
-	protected:
-		virtual int32_t		signalDataArrived(void* buffer, int32_t len, int32_t offset);
-		virtual void		signalOpened();
-		virtual void		signalFailedOpen();
-		virtual void		signalCompleted(bool success);
-		virtual void		signalCacheFilename(const std::wstring& cacheFilename);
+    protected:
+        virtual int32_t		signalDataArrived(void* buffer, int32_t len, int32_t offset);
+        virtual void		signalOpened();
+        virtual void		signalFailedOpen();
+        virtual void		signalCompleted(bool success);
+        virtual void		signalCacheFilename(const std::wstring& cacheFilename);
 
-	protected:
-		//std::vector<char>		internalBuffer;
-		NPStream*				stream;
-		NpapiBrowserHost*		host;
+    protected:
+        //std::vector<char>		internalBuffer;
+        NPStream*				stream;
+        NpapiBrowserHost*		host;
 
-		friend class NpapiPlugin;
-	};
+        friend class NpapiPlugin;
+    };
 
 }; }; // FB::Npapi
 

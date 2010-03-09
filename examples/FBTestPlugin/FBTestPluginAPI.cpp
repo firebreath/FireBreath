@@ -50,7 +50,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
 
-	registerEvent("onfired");
+    registerEvent("onfired");
 
     m_simpleMath = new SimpleMathAPI(m_host);
 }
@@ -87,7 +87,7 @@ long FBTestPluginAPI::add(long a, long b)
 // test firing an event
 void FBTestPluginAPI::testEvent(std::string param)
 {
-	this->FireEvent("onfired", FB::variant_list_of(param));
+    this->FireEvent("onfired", FB::variant_list_of(param));
 }
 
 FB::variant FBTestPluginAPI::echo(FB::variant a)
@@ -191,6 +191,6 @@ FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 // test streams
 bool FBTestPluginAPI::testStreams()
 {
-	StreamsTest test( m_host );
-	return test.run();
+    StreamsTest test( m_host );
+    return test.run();
 }

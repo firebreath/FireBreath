@@ -30,13 +30,13 @@ std::string fromWideString( const std::wstring& wideString )
 {
     size_t wcsChars = wideString.size();
 
-	size_t sizeRequired = WideCharToMultiByte( CP_UTF8, 0, wideString.c_str(), -1, 
+    size_t sizeRequired = WideCharToMultiByte( CP_UTF8, 0, wideString.c_str(), -1, 
                                                NULL, 0,  NULL, NULL);
 
-	std::vector<char> temp( sizeRequired + 1 );
+    std::vector<char> temp( sizeRequired + 1 );
     temp[sizeRequired] = '\0';
     WideCharToMultiByte(CP_UTF8, 0, wideString.c_str(), -1, &temp[0], sizeRequired, NULL, NULL);
-	return std::string( temp.begin(), temp.end() );
+    return std::string( temp.begin(), temp.end() );
 }
 
 // ===========================================================================
@@ -59,31 +59,31 @@ ActiveXBindStatusCallback::~ActiveXBindStatusCallback()
 // ---------------------------------------------------------------------------
 HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequest* request)
 {
-	HRESULT hr;
-	ActiveXBindStatusCallback* pBindStatusCallback;
+    HRESULT hr;
+    ActiveXBindStatusCallback* pBindStatusCallback;
 
-	if (!ppBindStatusCallback)
-	{
-		return E_POINTER;
-	}
-	
-	*ppBindStatusCallback = NULL;
+    if (!ppBindStatusCallback)
+    {
+        return E_POINTER;
+    }
+    
+    *ppBindStatusCallback = NULL;
 
-	pBindStatusCallback = new ActiveXBindStatusCallback();
-	if (!pBindStatusCallback)
-	{
-		return E_OUTOFMEMORY;
-	}
+    pBindStatusCallback = new ActiveXBindStatusCallback();
+    if (!pBindStatusCallback)
+    {
+        return E_OUTOFMEMORY;
+    }
 
-	hr = pBindStatusCallback->Init(request);
-	if (FAILED(hr))
-	{
-		delete pBindStatusCallback;
-		return hr;
-	}
+    hr = pBindStatusCallback->Init(request);
+    if (FAILED(hr))
+    {
+        delete pBindStatusCallback;
+        return hr;
+    }
 
-	*ppBindStatusCallback = pBindStatusCallback;
-	return NOERROR;
+    *ppBindStatusCallback = pBindStatusCallback;
+    return NOERROR;
 }
 
 // ---------------------------------------------------------------------------
@@ -91,8 +91,8 @@ HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStat
 // ---------------------------------------------------------------------------
 HRESULT ActiveXBindStatusCallback::Init(ActiveXStreamRequest* request)
 {
-	m_request = request;
-	return NOERROR;
+    m_request = request;
+    return NOERROR;
 }
 
 // ---------------------------------------------------------------------------
@@ -105,20 +105,20 @@ ActiveXBindStatusCallback::QueryInterface(REFIID riid, void** ppv)
 
     if (riid==IID_IUnknown || riid==IID_IBindStatusCallback)	
     {
-	    *ppv = (IBindStatusCallback*)this;
-		AddRef();
-		return S_OK;
-	}
-	else if (riid==IID_IHttpNegotiate)
-	{
-	    *ppv = (IHttpNegotiate*)this;
-		AddRef();
-		return S_OK;
-	}
-	else
-	{
-		return E_NOINTERFACE;
-	}
+        *ppv = (IBindStatusCallback*)this;
+        AddRef();
+        return S_OK;
+    }
+    else if (riid==IID_IHttpNegotiate)
+    {
+        *ppv = (IHttpNegotiate*)this;
+        AddRef();
+        return S_OK;
+    }
+    else
+    {
+        return E_NOINTERFACE;
+    }
 
 }  // ActiveXBindStatusCallback::QueryInterface
 
@@ -129,18 +129,18 @@ ActiveXBindStatusCallback::QueryInterface(REFIID riid, void** ppv)
 ActiveXBindStatusCallback::OnStartBinding(DWORD dwReserved, IBinding* pbinding)
 {
     if (NULL != m_pbinding)
-	{
+    {
         m_pbinding->Release();
-	}
+    }
 
-	// Cache the URLMON-provided IBinding interface so that we can control the download
+    // Cache the URLMON-provided IBinding interface so that we can control the download
     m_pbinding = pbinding;
 
     if (m_pbinding != NULL)
-	{
+    {
         m_pbinding->AddRef();
         //SetStatusText(_T("Starting to bind..."));
-	}
+    }
 
     return S_OK;
 }  // ActiveXBindStatusCallback::OnStartBinding
@@ -151,7 +151,7 @@ ActiveXBindStatusCallback::OnStartBinding(DWORD dwReserved, IBinding* pbinding)
  STDMETHODIMP
 ActiveXBindStatusCallback::GetPriority(LONG* pnPriority)
 {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }  // ActiveXBindStatusCallback::GetPriority
 
 // ---------------------------------------------------------------------------
@@ -168,73 +168,73 @@ ActiveXBindStatusCallback::OnLowResource(DWORD dwReserved)
 // ---------------------------------------------------------------------------
 STDMETHODIMP ActiveXBindStatusCallback::OnProgress(ULONG ulProgress, ULONG ulProgressMax, ULONG ulStatusCode, LPCWSTR szStatusText)
 {
-	//if ( ulProgressMax && m_request->stream ) m_request->stream->length = ulProgressMax;
+    //if ( ulProgressMax && m_request->stream ) m_request->stream->length = ulProgressMax;
 
-	// for more see here http://msdn.microsoft.com/en-us/library/ms775133(VS.85).aspx
-	switch (ulStatusCode)
-	{
-	case BINDSTATUS_REDIRECTING: 
-		ODS("Server redirecting client\n");
-		m_fRedirect = TRUE;
-		break;
-	case BINDSTATUS_FINDINGRESOURCE:
-		ODS("Finding resource\n");
-		break;
-	case BINDSTATUS_CONNECTING:
-		ODS("Connecting...\n");
-		break;
-	case BINDSTATUS_BEGINDOWNLOADDATA:
-		ODS("Beginning to download data...\n");
-		break;
-	case BINDSTATUS_DOWNLOADINGDATA:
-		ODS("Downloading data...\n");
-		break;
-	case BINDSTATUS_ENDDOWNLOADDATA:
-		ODS("Ending data download...\n");
-		break;
-	case BINDSTATUS_BEGINDOWNLOADCOMPONENTS:
-		ODS("Beginning to download components...\n");
-		break;
-	case BINDSTATUS_INSTALLINGCOMPONENTS:
-		ODS("Installing components...\n");
-		break;
-	case BINDSTATUS_ENDDOWNLOADCOMPONENTS:
-		ODS("Ending component download...\n");
-		break;
-	case BINDSTATUS_USINGCACHEDCOPY:
-		ODS("Using cached copy...\n");
-		break;
-	case BINDSTATUS_SENDINGREQUEST:
-		ODS("Sending request...\n");
-		break;
-	case BINDSTATUS_CLASSIDAVAILABLE:
-		ODS("CLSID available...\n");
-		break;
-	case BINDSTATUS_MIMETYPEAVAILABLE:
-		ODS("MIME type available...\n");
-		break;
-	case BINDSTATUS_CACHEFILENAMEAVAILABLE:
-		ODS("Cache file name available...\n");
-		if ( m_request->stream ) m_request->stream->signalCacheFilename( szStatusText );
-		break;
-	// also see OnResponse for these two
-	case BINDSTATUS_RAWMIMETYPE:
-		// never called?
-		//if ( m_request->stream ) m_request->stream->mimeType = fromWideString( szStatusText );
-		break;
-	case BINDSTATUS_ACCEPTRANGES:
-		// never called?
-		//if ( m_request->stream ) m_request->stream->seekable = true;
-		break;
-	default:
-		ODS("Unknown binding status code!\n");
-		break;
-	}
+    // for more see here http://msdn.microsoft.com/en-us/library/ms775133(VS.85).aspx
+    switch (ulStatusCode)
+    {
+    case BINDSTATUS_REDIRECTING: 
+        ODS("Server redirecting client\n");
+        m_fRedirect = TRUE;
+        break;
+    case BINDSTATUS_FINDINGRESOURCE:
+        ODS("Finding resource\n");
+        break;
+    case BINDSTATUS_CONNECTING:
+        ODS("Connecting...\n");
+        break;
+    case BINDSTATUS_BEGINDOWNLOADDATA:
+        ODS("Beginning to download data...\n");
+        break;
+    case BINDSTATUS_DOWNLOADINGDATA:
+        ODS("Downloading data...\n");
+        break;
+    case BINDSTATUS_ENDDOWNLOADDATA:
+        ODS("Ending data download...\n");
+        break;
+    case BINDSTATUS_BEGINDOWNLOADCOMPONENTS:
+        ODS("Beginning to download components...\n");
+        break;
+    case BINDSTATUS_INSTALLINGCOMPONENTS:
+        ODS("Installing components...\n");
+        break;
+    case BINDSTATUS_ENDDOWNLOADCOMPONENTS:
+        ODS("Ending component download...\n");
+        break;
+    case BINDSTATUS_USINGCACHEDCOPY:
+        ODS("Using cached copy...\n");
+        break;
+    case BINDSTATUS_SENDINGREQUEST:
+        ODS("Sending request...\n");
+        break;
+    case BINDSTATUS_CLASSIDAVAILABLE:
+        ODS("CLSID available...\n");
+        break;
+    case BINDSTATUS_MIMETYPEAVAILABLE:
+        ODS("MIME type available...\n");
+        break;
+    case BINDSTATUS_CACHEFILENAMEAVAILABLE:
+        ODS("Cache file name available...\n");
+        if ( m_request->stream ) m_request->stream->signalCacheFilename( szStatusText );
+        break;
+    // also see OnResponse for these two
+    case BINDSTATUS_RAWMIMETYPE:
+        // never called?
+        //if ( m_request->stream ) m_request->stream->mimeType = fromWideString( szStatusText );
+        break;
+    case BINDSTATUS_ACCEPTRANGES:
+        // never called?
+        //if ( m_request->stream ) m_request->stream->seekable = true;
+        break;
+    default:
+        ODS("Unknown binding status code!\n");
+        break;
+    }
 
     //wsprintf(szProgress, "%d of %d", ulProgress, (ulProgress>ulProgressMax)?ulProgress:ulProgressMax);
 
-	//SetStatusText(szProgress, SBAR_PART_PROGRESS);
-	//UpdateProgress(ulProgress, ulProgressMax);
+    //SetStatusText(szProgress, SBAR_PART_PROGRESS);
+    //UpdateProgress(ulProgress, ulProgressMax);
 
     return NOERROR;
 }  // ActiveXBindStatusCallback::OnProgress
@@ -245,15 +245,15 @@ STDMETHODIMP ActiveXBindStatusCallback::OnProgress(ULONG ulProgress, ULONG ulPro
  STDMETHODIMP
 ActiveXBindStatusCallback::OnStopBinding(HRESULT hrStatus, LPCWSTR pszError)
 {
-	if ( m_request->stream ) m_request->stream->signalRequestCompleted( m_request, !FAILED(hrStatus) );
+    if ( m_request->stream ) m_request->stream->signalRequestCompleted( m_request, !FAILED(hrStatus) );
 
-	if (m_pbinding)
-	{
-		m_pbinding->Release();
-		m_pbinding = NULL;
-	}
+    if (m_pbinding)
+    {
+        m_pbinding->Release();
+        m_pbinding = NULL;
+    }
 
-	ODS("OnStopBinding\n");
+    ODS("OnStopBinding\n");
 
     return S_OK;
 }  // ActiveXBindStatusCallback::OnStopBinding
@@ -264,22 +264,22 @@ ActiveXBindStatusCallback::OnStopBinding(HRESULT hrStatus, LPCWSTR pszError)
  STDMETHODIMP
 ActiveXBindStatusCallback::GetBindInfo(DWORD* pgrfBINDF, BINDINFO* pbindInfo)
 {
-	*pgrfBINDF = BINDF_ASYNCHRONOUS | BINDF_ASYNCSTORAGE | BINDF_PULLDATA;
-	*pgrfBINDF |= BINDF_GETNEWESTVERSION;
-	if ( m_request->stream && m_request->stream->isCached() ) *pgrfBINDF |= BINDF_NEEDFILE;
-	else *pgrfBINDF |= BINDF_NOWRITECACHE | BINDF_PRAGMA_NO_CACHE;
+    *pgrfBINDF = BINDF_ASYNCHRONOUS | BINDF_ASYNCSTORAGE | BINDF_PULLDATA;
+    *pgrfBINDF |= BINDF_GETNEWESTVERSION;
+    if ( m_request->stream && m_request->stream->isCached() ) *pgrfBINDF |= BINDF_NEEDFILE;
+    else *pgrfBINDF |= BINDF_NOWRITECACHE | BINDF_PRAGMA_NO_CACHE;
 
-	// Set up the BINDINFO data structure
-	pbindInfo->cbSize = sizeof(BINDINFO);
-	pbindInfo->dwBindVerb = m_dwAction; // here's where the action is defined
-	pbindInfo->szExtraInfo = NULL;
+    // Set up the BINDINFO data structure
+    pbindInfo->cbSize = sizeof(BINDINFO);
+    pbindInfo->dwBindVerb = m_dwAction; // here's where the action is defined
+    pbindInfo->szExtraInfo = NULL;
 
-	// Initialize the STGMEDIUM.
-	memset(&pbindInfo->stgmedData, 0, sizeof(STGMEDIUM));
-	pbindInfo->grfBindInfoF = 0;
-	pbindInfo->szCustomVerb = NULL;
+    // Initialize the STGMEDIUM.
+    memset(&pbindInfo->stgmedData, 0, sizeof(STGMEDIUM));
+    pbindInfo->grfBindInfoF = 0;
+    pbindInfo->szCustomVerb = NULL;
 
-	return S_OK;
+    return S_OK;
 }  // ActiveXBindStatusCallback::GetBindInfo
 
 // ---------------------------------------------------------------------------
@@ -288,72 +288,72 @@ ActiveXBindStatusCallback::GetBindInfo(DWORD* pgrfBINDF, BINDINFO* pbindInfo)
  STDMETHODIMP
 ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATETC* pfmtetc, STGMEDIUM* pstgmed)
 {
-	 HRESULT hr = S_OK;
+     HRESULT hr = S_OK;
 
     if (BSCF_FIRSTDATANOTIFICATION & grfBSCF)
     {
-		// Cache the incoming Stream
+        // Cache the incoming Stream
         if (!m_pstm && pstgmed->tymed == TYMED_ISTREAM)
-	    {
-		    m_pstm = pstgmed->pstm;
+        {
+            m_pstm = pstgmed->pstm;
             if (m_pstm)
                 m_pstm->AddRef();
-    	}
+        }
     }
 
     // If there is some data to be read then go ahead and read it
     if (m_pstm && dwSize > m_cbOld)
-	{
+    {
         DWORD dwRead = dwSize - m_cbOld;	// Minimum amount available that hasn't been read
         DWORD dwActuallyRead = 0;           // Placeholder for amount read during this pull
 
-		DWORD offset = 0;
-		std::string data;
-		if ( GetInfo( HTTP_QUERY_CONTENT_RANGE, data ) )		// data look like bytes 0-3/4234
-		{
-			size_t startPos = 6;		// "bytes "
-			size_t endPos = data.find( "-" );
-			if ( endPos != std::string::npos )
-			{
-				offset = atol( data.substr(startPos, endPos - startPos).c_str() );
-			}
-		}
+        DWORD offset = 0;
+        std::string data;
+        if ( GetInfo( HTTP_QUERY_CONTENT_RANGE, data ) )		// data look like bytes 0-3/4234
+        {
+            size_t startPos = 6;		// "bytes "
+            size_t endPos = data.find( "-" );
+            if ( endPos != std::string::npos )
+            {
+                offset = atol( data.substr(startPos, endPos - startPos).c_str() );
+            }
+        }
 
-		if (dwRead > 0)
-		do
-		{
-			std::vector<char> data( dwRead );
+        if (dwRead > 0)
+        do
+        {
+            std::vector<char> data( dwRead );
 
-			hr = m_pstm->Read( &data[0], dwRead, &dwActuallyRead);
+            hr = m_pstm->Read( &data[0], dwRead, &dwActuallyRead);
 
-			// If we really read something then lets add it to the Edit box
-			if (dwActuallyRead > 0)
-			{
-				if ( m_request->stream ) m_request->stream->signalDataArrived( &data[0], dwActuallyRead, offset + m_cbOld );
+            // If we really read something then lets add it to the Edit box
+            if (dwActuallyRead > 0)
+            {
+                if ( m_request->stream ) m_request->stream->signalDataArrived( &data[0], dwActuallyRead, offset + m_cbOld );
 
-				if (SUCCEEDED(hr))
-				{
-					m_cbOld += dwActuallyRead;
-				}
-			}
+                if (SUCCEEDED(hr))
+                {
+                    m_cbOld += dwActuallyRead;
+                }
+            }
 
-		} while (!(hr == E_PENDING || hr == S_FALSE) && SUCCEEDED(hr));
-	}
+        } while (!(hr == E_PENDING || hr == S_FALSE) && SUCCEEDED(hr));
+    }
 
-	// Clean up
-	if (BSCF_LASTDATANOTIFICATION & grfBSCF)
-	{
+    // Clean up
+    if (BSCF_LASTDATANOTIFICATION & grfBSCF)
+    {
         if (m_pstm)
-		{
+        {
             m_pstm->Release();
-		}
+        }
 
-		hr = S_OK;  // If it was the last data then we should return S_OK as we just finished reading everything
+        hr = S_OK;  // If it was the last data then we should return S_OK as we just finished reading everything
 
         //SetStatusText(_T("File downloaded."));
 
-		ODS("OnProgress: Last notification\n");
-	}
+        ODS("OnProgress: Last notification\n");
+    }
 
     return hr;
 }  // ActiveXBindStatusCallback::OnDataAvailable
@@ -371,44 +371,44 @@ ActiveXBindStatusCallback::OnObjectAvailable(REFIID riid, IUnknown* punk)
 // %%Function: ActiveXBindStatusCallback::BeginningTransaction
 // ---------------------------------------------------------------------------
 STDMETHODIMP ActiveXBindStatusCallback::BeginningTransaction(LPCWSTR szURL,
-					LPCWSTR szHeaders,
-					DWORD dwReserved,
-					LPWSTR __RPC_FAR *pszAdditionalHeaders)
+                    LPCWSTR szHeaders,
+                    DWORD dwReserved,
+                    LPWSTR __RPC_FAR *pszAdditionalHeaders)
 {
-	// Here's our opportunity to add headers
-	if (!pszAdditionalHeaders)
-	{
-		return E_POINTER;
-	}
+    // Here's our opportunity to add headers
+    if (!pszAdditionalHeaders)
+    {
+        return E_POINTER;
+    }
 
-	*pszAdditionalHeaders = NULL;
+    *pszAdditionalHeaders = NULL;
 
-	std::wstringstream extraHeaders;
+    std::wstringstream extraHeaders;
 
-	if ( m_request->ranges.size() )
-	{
-		extraHeaders << L"Request-Range: bytes=";
-		for ( std::vector<BrowserStream::Range>::const_iterator it = m_request->ranges.begin(); it != m_request->ranges.end(); ++it )
-		{
-			extraHeaders << it->start << L"-" << (it->end - 1);
-			if ( (it+1) != m_request->ranges.end() ) extraHeaders << L",";
-		}
-		extraHeaders << L"\r\n";
-	}
+    if ( m_request->ranges.size() )
+    {
+        extraHeaders << L"Request-Range: bytes=";
+        for ( std::vector<BrowserStream::Range>::const_iterator it = m_request->ranges.begin(); it != m_request->ranges.end(); ++it )
+        {
+            extraHeaders << it->start << L"-" << (it->end - 1);
+            if ( (it+1) != m_request->ranges.end() ) extraHeaders << L",";
+        }
+        extraHeaders << L"\r\n";
+    }
 
-	LPWSTR wszAdditionalHeaders = 
-		(LPWSTR)CoTaskMemAlloc((extraHeaders.str().size()+1) *sizeof(WCHAR));
-	if (!wszAdditionalHeaders)
-	{
-		return E_OUTOFMEMORY;
-	}
+    LPWSTR wszAdditionalHeaders = 
+        (LPWSTR)CoTaskMemAlloc((extraHeaders.str().size()+1) *sizeof(WCHAR));
+    if (!wszAdditionalHeaders)
+    {
+        return E_OUTOFMEMORY;
+    }
 
-	wcscpy(wszAdditionalHeaders, extraHeaders.str().c_str());
-	*pszAdditionalHeaders = wszAdditionalHeaders;
+    wcscpy(wszAdditionalHeaders, extraHeaders.str().c_str());
+    *pszAdditionalHeaders = wszAdditionalHeaders;
 
-	m_transactionStarted = true;
+    m_transactionStarted = true;
 
-	return NOERROR;
+    return NOERROR;
 }        
 
 // ---------------------------------------------------------------------------
@@ -419,65 +419,65 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
         /* [unique][in] */ LPCWSTR szRequestHeaders,
         /* [out] */ LPWSTR __RPC_FAR *pszAdditionalRequestHeaders)
 {
-	if (!pszAdditionalRequestHeaders)
-	{
-		return E_POINTER;
-	}
+    if (!pszAdditionalRequestHeaders)
+    {
+        return E_POINTER;
+    }
 
-	*pszAdditionalRequestHeaders = NULL;
+    *pszAdditionalRequestHeaders = NULL;
 
-	if ( m_request->stream )
-	{	
-		m_request->stream->headers = fromWideString( szResponseHeaders );
+    if ( m_request->stream )
+    {	
+        m_request->stream->headers = fromWideString( szResponseHeaders );
 
-		bool requestedSeekable = m_request->stream->seekable;
+        bool requestedSeekable = m_request->stream->seekable;
 
-		std::string data;
-		if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->length = atol( data.c_str() );		// nasty, should use a stringstream for conversion here
-		if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->mimeType = data;
-		if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->seekable = ( data == "bytes" );
+        std::string data;
+        if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->length = atol( data.c_str() );		// nasty, should use a stringstream for conversion here
+        if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->mimeType = data;
+        if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->seekable = ( data == "bytes" );
 
-		bool ok = ( dwResponseCode >= 200 && dwResponseCode < 300 );
-		if ( requestedSeekable && !m_request->stream->seekable ) ok = false;
+        bool ok = ( dwResponseCode >= 200 && dwResponseCode < 300 );
+        if ( requestedSeekable && !m_request->stream->seekable ) ok = false;
 
-		if ( ok )
-		{
-			if ( !m_request->stream->isOpen() ) m_request->stream->signalOpened();
-			return NOERROR;
-		}
-		else
-		{
-			m_request->stream->signalFailedOpen();
-			return E_ABORT;
-		}		
-	}
+        if ( ok )
+        {
+            if ( !m_request->stream->isOpen() ) m_request->stream->signalOpened();
+            return NOERROR;
+        }
+        else
+        {
+            m_request->stream->signalFailedOpen();
+            return E_ABORT;
+        }		
+    }
 
-	return E_ABORT;
+    return E_ABORT;
 }
 
 
 bool ActiveXBindStatusCallback::GetInfo(DWORD which, std::string& result)
 {
-	bool ok = false;
+    bool ok = false;
 
-	std::vector<char> buffer(2048);
-	DWORD bufferSize = buffer.size();
-	DWORD flags(0);
+    std::vector<char> buffer(2048);
+    DWORD bufferSize = buffer.size();
+    DWORD flags(0);
 
-	IWinInetHttpInfo* httpInfo;
-	if ( !FAILED(m_pbinding->QueryInterface( &httpInfo ) ) )
-	{
-		ok = !FAILED( httpInfo->QueryInfo( which, &buffer[0], &bufferSize, &flags, 0 ) );
-		result = std::string( buffer.begin(), buffer.begin() + bufferSize );
-	}
-	
-	return ok;
+    IWinInetHttpInfo* httpInfo;
+    if ( !FAILED(m_pbinding->QueryInterface( &httpInfo ) ) )
+    {
+        ok = !FAILED( httpInfo->QueryInfo( which, &buffer[0], &bufferSize, &flags, 0 ) );
+        result = std::string( buffer.begin(), buffer.begin() + bufferSize );
+    }
+    
+    return ok;
 }
 
 bool ActiveXBindStatusCallback::close()
 {
-	HRESULT hr = m_pbinding->Abort();
-	return (!FAILED( hr )) || ( hr == S_FALSE ) || ( hr == INET_E_RESULT_DISPATCHED );
+    HRESULT hr = m_pbinding->Abort();
+    return (!FAILED( hr )) || ( hr == S_FALSE ) || ( hr == INET_E_RESULT_DISPATCHED );
 }
 
 
@@ -491,23 +491,23 @@ ActiveXStreamRequest::ActiveXStreamRequest( ActiveXStream* Stream, const std::ve
 
 bool ActiveXStreamRequest::start()
 {
-	std::string url = stream->getUrl();
-	std::wstring wideUrl( url.begin(), url.end() );
+    std::string url = stream->getUrl();
+    std::wstring wideUrl( url.begin(), url.end() );
 
-	if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, this )) ) return false;	
-	if ( FAILED( CreateURLMoniker(0, wideUrl.c_str(), &FMoniker) ) ) return false;
-	if ( FAILED( CreateAsyncBindCtx(0, bindStatusCallback, 0, &FBindCtx) ) ) return false;
-	if ( FAILED( IsValidURL(FBindCtx, wideUrl.c_str(), 0) ) ) return false;
-   	HRESULT hr = FMoniker->BindToStorage(FBindCtx, 0, IID_IStream, (void**)&fstream);
+    if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, this )) ) return false;	
+    if ( FAILED( CreateURLMoniker(0, wideUrl.c_str(), &FMoniker) ) ) return false;
+    if ( FAILED( CreateAsyncBindCtx(0, bindStatusCallback, 0, &FBindCtx) ) ) return false;
+    if ( FAILED( IsValidURL(FBindCtx, wideUrl.c_str(), 0) ) ) return false;
+    HRESULT hr = FMoniker->BindToStorage(FBindCtx, 0, IID_IStream, (void**)&fstream);
 
-	if ( FAILED(hr) && (hr != MK_S_ASYNCHRONOUS) ) return false;
+    if ( FAILED(hr) && (hr != MK_S_ASYNCHRONOUS) ) return false;
 
-	return true;
+    return true;
 }
 
 bool ActiveXStreamRequest::stop(bool streamDetached)
 {
-	if ( streamDetached ) stream = 0;
-	if ( !bindStatusCallback ) return true;
-	return bindStatusCallback->close();
+    if ( streamDetached ) stream = 0;
+    if ( !bindStatusCallback ) return true;
+    return bindStatusCallback->close();
 }

@@ -15,16 +15,16 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 namespace FB
 {
-	class BrowserHostWrapper;
+    class BrowserHostWrapper;
 }
 
 class StreamsTest
 {
 public:
-	StreamsTest( FB::BrowserHostWrapper* host );
+    StreamsTest( FB::BrowserHostWrapper* host );
 
-	bool run();
+    bool run();
 
 protected:
-	FB::BrowserHostWrapper* host;
+    FB::BrowserHostWrapper* host;
 };

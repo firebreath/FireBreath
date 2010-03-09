@@ -24,30 +24,30 @@ class ActiveXStreamRequest;
 class ActiveXStream : public FB::BrowserStream
 {
 public:
-	ActiveXStream(const std::string& url, bool cache, bool seekable, size_t internalBufferSize );
-	virtual ~ActiveXStream();
-	
-	virtual bool readRanges( const std::vector<Range>& ranges );
-	virtual bool write(const char* data, size_t dataLength, size_t& written);
-	virtual bool close();
+    ActiveXStream(const std::string& url, bool cache, bool seekable, size_t internalBufferSize );
+    virtual ~ActiveXStream();
+    
+    virtual bool readRanges( const std::vector<Range>& ranges );
+    virtual bool write(const char* data, size_t dataLength, size_t& written);
+    virtual bool close();
 
 protected:
-	virtual bool	init();
-	virtual bool	addRequest( const ActiveXStreamRequest& request );
+    virtual bool	init();
+    virtual bool	addRequest( const ActiveXStreamRequest& request );
 
-	virtual size_t	signalDataArrived(void* buffer, size_t len, size_t offset);
-	virtual void	signalOpened();
-	virtual void	signalFailedOpen();
-	virtual void	signalCompleted(bool success);
-	virtual void	signalRequestCompleted(ActiveXStreamRequest* request, bool success);
-	virtual void	signalCacheFilename(const std::wstring& cacheFilename);
+    virtual size_t	signalDataArrived(void* buffer, size_t len, size_t offset);
+    virtual void	signalOpened();
+    virtual void	signalFailedOpen();
+    virtual void	signalCompleted(bool success);
+    virtual void	signalRequestCompleted(ActiveXStreamRequest* request, bool success);
+    virtual void	signalCacheFilename(const std::wstring& cacheFilename);
 
-	friend class ActiveXBrowserHost;
-	friend class ActiveXBindStatusCallback;
+    friend class ActiveXBrowserHost;
+    friend class ActiveXBindStatusCallback;
 
 protected:
-	std::set<ActiveXStreamRequest*>	requests;
-	bool	closing;
+    std::set<ActiveXStreamRequest*>	requests;
+    bool	closing;
 };
 
 

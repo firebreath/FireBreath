@@ -32,12 +32,12 @@ namespace FB { namespace Npapi {
 
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
-	public:
-		virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
-											bool cache = true, bool seekable = false, 
-											size_t internalBufferSize = 128 * 1024 );
+    public:
+        virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
+                                            bool cache = true, bool seekable = false, 
+                                            size_t internalBufferSize = 128 * 1024 );
 
-	public:
+    public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
         virtual void *getContextID() { return (void *)m_npp; }
 

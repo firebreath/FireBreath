@@ -15,6 +15,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "NpapiPlugin.h"
 #include "NpapiStream.h"
 #include "config.h"
+#undef min
 
 using namespace FB::Npapi;
 
@@ -24,80 +25,80 @@ NpapiStream::NpapiStream( const std::string& url, bool cache, bool seekable, siz
 
 NpapiStream::~NpapiStream()
 {
-	close();
+    close();
 }
 
 bool NpapiStream::readRanges( const std::vector<Range>& ranges )
 {
-	if ( !stream || !seekable ) return false;
-	if ( !ranges.size() ) return true;
-	
-	std::vector<NPByteRange> vecranges( ranges.size() );
-	for ( size_t i = 0; i < ranges.size(); i++ )
-	{
-		NPByteRange& range = vecranges[i];
-		range.offset = ranges[0].start;
-		range.length = ranges[0].end - ranges[0].start;
-		range.next = ( ( i + 1 ) < ranges.size() ) ? &vecranges[i+1] : 0;
-	}
+    if ( !stream || !seekable ) return false;
+    if ( !ranges.size() ) return true;
+    
+    std::vector<NPByteRange> vecranges( ranges.size() );
+    for ( size_t i = 0; i < ranges.size(); i++ )
+    {
+        NPByteRange& range = vecranges[i];
+        range.offset = ranges[0].start;
+        range.length = ranges[0].end - ranges[0].start;
+        range.next = ( ( i + 1 ) < ranges.size() ) ? &vecranges[i+1] : 0;
+    }
 
-	return host->RequestRead( stream, &vecranges[0] ) == NPERR_NO_ERROR;
+    return host->RequestRead( stream, &vecranges[0] ) == NPERR_NO_ERROR;
 }
 
 bool NpapiStream::write(const char* data, size_t dataLength, size_t& written)
 {
-	written = host->Write( stream, dataLength, const_cast<char*>(data) );
-	return written == dataLength;
+    written = host->Write( stream, dataLength, const_cast<char*>(data) );
+    return written == dataLength;
 }
 
 bool NpapiStream::close()
 {
-	if ( !opened ) return false;
-	return host->DestroyStream( stream, NPRES_DONE ) == NPERR_NO_ERROR;
+    if ( !opened ) return false;
+    return host->DestroyStream( stream, NPRES_DONE ) == NPERR_NO_ERROR;
 }
 
 int32_t NpapiStream::signalDataArrived(void* buffer, int32_t len, int32_t offset)
 {
-	size_t effectiveLen = min( internalBufferSize, static_cast<size_t>(len) );
-	if ( effectiveLen ) 
-	{
-		//memcpy( &internalBuffer[0], buffer, effectiveLen );
-		
-		float progress = 0;
-		if ( getLength() )
-		{
-			progress = float( offset + len ) / float( getLength() ) * 100.f;
-		}
-		if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
-	}
-	return effectiveLen;
+    size_t effectiveLen = std::min( internalBufferSize, static_cast<size_t>(len) );
+    if ( effectiveLen ) 
+    {
+        //memcpy( &internalBuffer[0], buffer, effectiveLen );
+        
+        float progress = 0;
+        if ( getLength() )
+        {
+            progress = float( offset + len ) / float( getLength() ) * 100.f;
+        }
+        if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
+    }
+    return effectiveLen;
 }
 
 void NpapiStream::signalOpened()
 {
-	opened = true;
-	SendEvent( &StreamOpenedEvent(this) );
+    opened = true;
+    SendEvent( &StreamOpenedEvent(this) );
 }
 
 void NpapiStream::signalFailedOpen()
 {
-	SendEvent( &StreamFailedOpenEvent(this) );
+    SendEvent( &StreamFailedOpenEvent(this) );
 }
 
 void NpapiStream::signalCompleted(bool success)
 {
-	completed = true;
+    completed = true;
 
-	if ( !isOpen() && !success )
-	{
-		signalFailedOpen();
-	}
+    if ( !isOpen() && !success )
+    {
+        signalFailedOpen();
+    }
 
-	opened = false;
-	SendEvent( &StreamCompletedEvent(this, success) );
+    opened = false;
+    SendEvent( &StreamCompletedEvent(this, success) );
 }
 
 void NpapiStream::signalCacheFilename(const std::wstring& CacheFilename)
 {
-	cacheFilename = CacheFilename;
+    cacheFilename = CacheFilename;
 }

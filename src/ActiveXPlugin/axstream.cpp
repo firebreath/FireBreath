@@ -24,112 +24,112 @@ ActiveXStream::ActiveXStream( const std::string& url, bool cache, bool seekable,
 
 ActiveXStream::~ActiveXStream()
 {
-	close();
+    close();
 }
 
 bool ActiveXStream::readRanges( const std::vector<Range>& ranges )
 {
-	addRequest( ActiveXStreamRequest( this, ranges ) );
-	return true;
+    addRequest( ActiveXStreamRequest( this, ranges ) );
+    return true;
 }
 
 bool ActiveXStream::write(const char* data, size_t dataLength, size_t& written)
 {
-	return false;
+    return false;
 }
 
 bool ActiveXStream::close()
 {
-	if ( closing ) return true;			// prevent re-entrant calls
-	closing = true;
+    if ( closing ) return true;			// prevent re-entrant calls
+    closing = true;
 
-	if ( !isOpen() ) return false;
+    if ( !isOpen() ) return false;
 
-	opened = false;
+    opened = false;
 
-	bool result = true;
-	std::set<ActiveXStreamRequest *> copiedRequests( requests );
+    bool result = true;
+    std::set<ActiveXStreamRequest *> copiedRequests( requests );
 
-	for ( std::set<ActiveXStreamRequest *>::const_iterator it = copiedRequests.begin(); it != copiedRequests.end(); ++it )
-	{
-		result &= (*it)->stop(true);
-	}
-	requests.clear();
+    for ( std::set<ActiveXStreamRequest *>::const_iterator it = copiedRequests.begin(); it != copiedRequests.end(); ++it )
+    {
+        result &= (*it)->stop(true);
+    }
+    requests.clear();
 
-	closing = false;
-	return result;
+    closing = false;
+    return result;
 }
 
 bool ActiveXStream::init()
 {
-	if ( seekable ) return true;					// if seekable, wait for the user to pull data ...
-	else return addRequest( ActiveXStreamRequest( this ) );		// ... otherwise start downloading the whole thing
+    if ( seekable ) return true;					// if seekable, wait for the user to pull data ...
+    else return addRequest( ActiveXStreamRequest( this ) );		// ... otherwise start downloading the whole thing
 }
 
 bool ActiveXStream::addRequest( const ActiveXStreamRequest& Request )
 {
-	ActiveXStreamRequest* request = new ActiveXStreamRequest( Request );
-	bool result = request->start();
-	if ( result ) requests.insert( request );
-	return result;
+    ActiveXStreamRequest* request = new ActiveXStreamRequest( Request );
+    bool result = request->start();
+    if ( result ) requests.insert( request );
+    return result;
 }
 
 
 size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
 {
-	size_t effectiveLen = min( internalBufferSize, static_cast<size_t>(len) );
-	if ( effectiveLen ) 
-	{
-		//memcpy( &internalBuffer[0], buffer, effectiveLen );
-		
-		float progress = 0;
-		if ( getLength() )
-		{
-			progress = float( offset + len ) / float( getLength() ) * 100.f;
-		}
-		if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
-	}
-	return effectiveLen;
+    size_t effectiveLen = min( internalBufferSize, static_cast<size_t>(len) );
+    if ( effectiveLen ) 
+    {
+        //memcpy( &internalBuffer[0], buffer, effectiveLen );
+        
+        float progress = 0;
+        if ( getLength() )
+        {
+            progress = float( offset + len ) / float( getLength() ) * 100.f;
+        }
+        if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
+    }
+    return effectiveLen;
 }
 
 void ActiveXStream::signalOpened()
 {
-	opened = true;
-	SendEvent( &StreamOpenedEvent(this) );
+    opened = true;
+    SendEvent( &StreamOpenedEvent(this) );
 }
 
 void ActiveXStream::signalFailedOpen()
 {
-	SendEvent( &StreamFailedOpenEvent(this) );
+    SendEvent( &StreamFailedOpenEvent(this) );
 }
 
 void ActiveXStream::signalCompleted(bool success)
 {
-	completed = true;
+    completed = true;
 
-	if ( !isOpen() && !success )
-	{
-		signalFailedOpen();
-	}
+    if ( !isOpen() && !success )
+    {
+        signalFailedOpen();
+    }
 
-	opened = false;
-	SendEvent( &StreamCompletedEvent(this, success) );
+    opened = false;
+    SendEvent( &StreamCompletedEvent(this, success) );
 }
 
 void ActiveXStream::signalRequestCompleted(ActiveXStreamRequest* request, bool success)
 {
-	requests.erase( request );
-	if ( !requests.size() )
-	{
-		signalCompleted( success );
-		close();
-		delete this;
-	}
+    requests.erase( request );
+    if ( !requests.size() )
+    {
+        signalCompleted( success );
+        close();
+        delete this;
+    }
 }
-	
+    
 void ActiveXStream::signalCacheFilename(const std::wstring& CacheFilename)
 {
-	cacheFilename = CacheFilename;
+    cacheFilename = CacheFilename;
 }
 
 #if 0
@@ -157,7 +157,7 @@ void UseWinHTTP(const WCHAR* URL)
                              WINHTTP_NO_PROXY_NAME, 
                              WINHTTP_NO_PROXY_BYPASS, 0);
 
-	URL_COMPONENTS comps;
+    URL_COMPONENTS comps;
     ZeroMemory(&comps, sizeof(comps));
     comps.dwStructSize = sizeof(comps);
 
@@ -167,9 +167,9 @@ void UseWinHTTP(const WCHAR* URL)
     comps.dwHostNameLength  = -1;
     comps.dwUrlPathLength   = -1;
     comps.dwExtraInfoLength = -1;
-	comps.dwUrlPathLength	= -1;
+    comps.dwUrlPathLength	= -1;
 
-	::WinHttpCrackUrl( URL, 0, 0, &comps );
+    ::WinHttpCrackUrl( URL, 0, 0, &comps );
 
     // Specify an HTTP server.
     if (hSession)
@@ -184,8 +184,8 @@ void UseWinHTTP(const WCHAR* URL)
                                        WINHTTP_DEFAULT_ACCEPT_TYPES,
                                        0);
 
-	const WCHAR headers[] = 
-		L"Request-Range: bytes=2-5\r\n";
+    const WCHAR headers[] = 
+        L"Request-Range: bytes=2-5\r\n";
     // Send a Request.
     if (hRequest) 
         bResults = WinHttpSendRequest( hRequest,
@@ -193,18 +193,18 @@ void UseWinHTTP(const WCHAR* URL)
                                        0, WINHTTP_NO_REQUEST_DATA, 0, 
                                        0, 0);
 
-	if (bResults)
-		bResults = WinHttpReceiveResponse( hRequest, 0 );
+    if (bResults)
+        bResults = WinHttpReceiveResponse( hRequest, 0 );
 
 
-	char buffer[1000];
-	DWORD readBytes, availBytes;
+    char buffer[1000];
+    DWORD readBytes, availBytes;
 
-	if (bResults)
-		bResults = WinHttpQueryDataAvailable( hRequest, &availBytes );
+    if (bResults)
+        bResults = WinHttpQueryDataAvailable( hRequest, &availBytes );
 
-	if (bResults && availBytes)
-		bResults = WinHttpReadData( hRequest, buffer, availBytes, &readBytes );
+    if (bResults && availBytes)
+        bResults = WinHttpReadData( hRequest, buffer, availBytes, &readBytes );
 
     // PLACE ADDITIONAL CODE HERE.
 
@@ -222,88 +222,88 @@ void UseWinHTTP(const WCHAR* URL)
 
 // WinInet - This one seems to work with Internet Explorer's proxies. It also uses internet explorer's default user agent and additional headers.
 /* Wireshark example (with proxy enabled)
-	GET /Resources.zip HTTP/1.0
-	Accept: *//*
-	Request-Range: bytes=2-5
-	Accept-Encoding: gzip, deflate
-	User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)
-	Host: www.myurl.com
-	Pragma: no-cache
-	Via: 1.1 myproxy.com:3128 (squid/2.7.STABLE7)
-	X-Forwarded-For: 192.168.0.2
-	Cache-Control: max-age=259200
-	Connection: keep-alive
+    GET /Resources.zip HTTP/1.0
+    Accept: *//*
+    Request-Range: bytes=2-5
+    Accept-Encoding: gzip, deflate
+    User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)
+    Host: www.myurl.com
+    Pragma: no-cache
+    Via: 1.1 myproxy.com:3128 (squid/2.7.STABLE7)
+    X-Forwarded-For: 192.168.0.2
+    Cache-Control: max-age=259200
+    Connection: keep-alive
 
    Wireshark example (no proxy, direct connection):
-	GET /Resources.zip HTTP/1.1
-	Accept: *//*
-	Request-Range: bytes=2-5
-	Accept-Encoding: gzip, deflate
-	User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)
-	Host: www.myurl.com
-	Connection: Keep-Alive
-	Cache-Control: no-cache
+    GET /Resources.zip HTTP/1.1
+    Accept: *//*
+    Request-Range: bytes=2-5
+    Accept-Encoding: gzip, deflate
+    User-Agent: Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 6.1; WOW64; Trident/4.0; SLCC2; .NET CLR 2.0.50727; .NET CLR 3.5.30729; .NET CLR 3.0.30729; Media Center PC 6.0)
+    Host: www.myurl.com
+    Connection: Keep-Alive
+    Cache-Control: no-cache
 */
 void UseWinInet(const WCHAR* URL)
 {
-	HRESULT hr;
+    HRESULT hr;
 
-	IBindStatusCallback* ibscb(0);
-	::CBindStatusCallback::Create( &ibscb );
-	/*HRESULT uoshr = URLOpenStream( 0, L"http://www.myurl.com/Resources.zip", 0, ibscb );
-	ShowMessage( hwnd, "URLOpenStream: " + toString(uoshr) );*/
-	IMoniker* FMoniker;
-	CreateURLMoniker(0, URL, &FMoniker);
+    IBindStatusCallback* ibscb(0);
+    ::CBindStatusCallback::Create( &ibscb );
+    /*HRESULT uoshr = URLOpenStream( 0, L"http://www.myurl.com/Resources.zip", 0, ibscb );
+    ShowMessage( hwnd, "URLOpenStream: " + toString(uoshr) );*/
+    IMoniker* FMoniker;
+    CreateURLMoniker(0, URL, &FMoniker);
 
-	IBindCtx* FBindCtx;
-	CreateAsyncBindCtx(0, ibscb, 0, &FBindCtx);
+    IBindCtx* FBindCtx;
+    CreateAsyncBindCtx(0, ibscb, 0, &FBindCtx);
 
-	hr = IsValidURL(FBindCtx, URL, 0);
-	if ( hr != S_OK )
-	{
-		ShowMessage( 0, "Invalid url" );
-	}
+    hr = IsValidURL(FBindCtx, URL, 0);
+    if ( hr != S_OK )
+    {
+        ShowMessage( 0, "Invalid url" );
+    }
    
-	IStream* fstream;
-	hr = FMoniker->BindToStorage(FBindCtx, 0, IID_IStream, (void**)&fstream);
+    IStream* fstream;
+    hr = FMoniker->BindToStorage(FBindCtx, 0, IID_IStream, (void**)&fstream);
 
-	if ( (hr != S_OK) && (hr != MK_S_ASYNCHRONOUS) )
-	{
-		ShowMessage( 0, "error" );
-	}
+    if ( (hr != S_OK) && (hr != MK_S_ASYNCHRONOUS) )
+    {
+        ShowMessage( 0, "error" );
+    }
 }
 
 
 // WinInet2 - This one seems to work with Internet Explorer's proxies. It does not use internet explorer's default user agent and only sends its own headers.
 /* Wireshark example (with proxy enabled)
-	GET /Resources.zip HTTP/1.0
-	Request-Range: bytes=2-5
-	User-Agent: DCWebPlayer/1.0
-	Host: www.myurl.com
-	Via: 1.1 myproxy.com:3128 (squid/2.7.STABLE7)
-	X-Forwarded-For: 192.168.0.2
-	Cache-Control: max-age=259200
-	Connection: keep-alive
+    GET /Resources.zip HTTP/1.0
+    Request-Range: bytes=2-5
+    User-Agent: DCWebPlayer/1.0
+    Host: www.myurl.com
+    Via: 1.1 myproxy.com:3128 (squid/2.7.STABLE7)
+    X-Forwarded-For: 192.168.0.2
+    Cache-Control: max-age=259200
+    Connection: keep-alive
 
    Wireshark example (no proxy, direct connection):
-	GET /Resources.zip HTTP/1.1
-	Request-Range: bytes=2-5
-	User-Agent: DCWebPlayer/1.0
-	Host: www.myurl.com
-	Connection: Keep-Alive
+    GET /Resources.zip HTTP/1.1
+    Request-Range: bytes=2-5
+    User-Agent: DCWebPlayer/1.0
+    Host: www.myurl.com
+    Connection: Keep-Alive
 */
 void UseWinInet2(const WCHAR* URL)
 {
-	HINTERNET hSession = InternetOpen( L"DCWebPlayer/1.0", INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, 0 /*INTERNET_FLAG_ASYNC*/ );
-	if ( !hSession ) ShowMessage( 0, "could not open internet" );
-	const WCHAR headers[] = L"Request-Range: bytes=2-5\r\n";
-	HINTERNET handleurl = InternetOpenUrl( hSession, URL, headers, -1, INTERNET_FLAG_EXISTING_CONNECT | INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_NO_CACHE_WRITE, 0 );
-	if ( !handleurl ) ShowMessage( 0, "could not open internet url" );
+    HINTERNET hSession = InternetOpen( L"DCWebPlayer/1.0", INTERNET_OPEN_TYPE_PRECONFIG, 0, 0, 0 /*INTERNET_FLAG_ASYNC*/ );
+    if ( !hSession ) ShowMessage( 0, "could not open internet" );
+    const WCHAR headers[] = L"Request-Range: bytes=2-5\r\n";
+    HINTERNET handleurl = InternetOpenUrl( hSession, URL, headers, -1, INTERNET_FLAG_EXISTING_CONNECT | INTERNET_FLAG_KEEP_CONNECTION | INTERNET_FLAG_NO_CACHE_WRITE, 0 );
+    if ( !handleurl ) ShowMessage( 0, "could not open internet url" );
 
-	char buf[1000];
-	DWORD noBytes;
-	InternetReadFile( handleurl, buf, 100, &noBytes );
+    char buf[1000];
+    DWORD noBytes;
+    InternetReadFile( handleurl, buf, 100, &noBytes );
 
-	ShowMessage( 0, "WinInet2: "+ toString(noBytes) );
+    ShowMessage( 0, "WinInet2: "+ toString(noBytes) );
 }
 #endif

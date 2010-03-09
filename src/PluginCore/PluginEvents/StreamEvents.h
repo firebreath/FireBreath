@@ -1,7 +1,7 @@
 /**********************************************************\ 
-Original Author: Richard Bateman (taxilian)
+Original Author: Matthias (nitrogenycs)
 
-Created:    Dec 7, 2009
+Created:    Feb 28, 2010
 License:    Dual license model; choose one of two:
             Eclipse Public License - Version 1.0
             http://www.eclipse.org/legal/epl-v10.html
@@ -9,7 +9,7 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 Richard Bateman, Firebreath development team
+Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #ifndef H_FB_PLUGINEVENTS_STREAMEVENTS
@@ -18,13 +18,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvent.h"
 
 namespace FB {
-	class BrowserStream;
+    class BrowserStream;
 
     class StreamEvent : public PluginEvent
     {
     public:
         StreamEvent(BrowserStream* Stream) : stream(Stream)
-		{}
+        {}
 
     public:
         BrowserStream* stream;
@@ -32,53 +32,53 @@ namespace FB {
 
     class StreamCreatedEvent : public StreamEvent
     {
-	public:
+    public:
         StreamCreatedEvent(BrowserStream* stream) : StreamEvent(stream)
-		{}
+        {}
     };
 
     class StreamDestroyedEvent : public StreamEvent
     {
-	public:
+    public:
         StreamDestroyedEvent(BrowserStream* stream) : StreamEvent(stream)
-		{}
+        {}
     };
 
     class StreamDataArrivedEvent : public StreamEvent
     {
-	public:
-		StreamDataArrivedEvent( BrowserStream* stream, const void* Data, const size_t Length, const size_t DataPosition, const float Progress ) : StreamEvent(stream), data(Data), length(Length), dataPosition(DataPosition), progress(Progress)
-		{}
-	
-	public:
-		const void*		data;			// the data
-		const size_t	length;			// length of the data in bytes
-		const size_t	dataPosition;	// the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
-		const float		progress;		// the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
+    public:
+        StreamDataArrivedEvent( BrowserStream* stream, const void* Data, const size_t Length, const size_t DataPosition, const float Progress ) : StreamEvent(stream), data(Data), length(Length), dataPosition(DataPosition), progress(Progress)
+        {}
+    
+    public:
+        const void*		data;			// the data
+        const size_t	length;			// length of the data in bytes
+        const size_t	dataPosition;	// the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
+        const float		progress;		// the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
     };
 
     class StreamFailedOpenEvent : public StreamEvent
     {
-	public:
+    public:
         StreamFailedOpenEvent(BrowserStream* stream) : StreamEvent(stream)
-		{}
+        {}
     };
 
     class StreamOpenedEvent : public StreamEvent
     {
-	public:
+    public:
         StreamOpenedEvent(BrowserStream* stream) : StreamEvent(stream)
-		{}
+        {}
     };
 
     class StreamCompletedEvent : public StreamEvent
     {
-	public:
+    public:
         StreamCompletedEvent(BrowserStream* stream, bool Success) : StreamEvent(stream), success(Success)
-		{}
+        {}
 
-	public:
-		bool success;
+    public:
+        bool success;
     };
 };
 
