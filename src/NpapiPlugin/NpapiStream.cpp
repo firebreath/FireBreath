@@ -69,7 +69,11 @@ int32_t NpapiStream::signalDataArrived(void* buffer, int32_t len, int32_t offset
         {
             progress = float( offset + len ) / float( getLength() ) * 100.f;
         }
-        if ( isOpen() ) SendEvent( &StreamDataArrivedEvent( this, buffer, effectiveLen, offset, progress ) );
+        if ( isOpen() ) 
+        {
+            StreamDataArrivedEvent ev(this, buffer, effectiveLen, offset, progress);
+            SendEvent( &ev );
+        }
     }
     return effectiveLen;
 }
@@ -77,12 +81,14 @@ int32_t NpapiStream::signalDataArrived(void* buffer, int32_t len, int32_t offset
 void NpapiStream::signalOpened()
 {
     opened = true;
-    SendEvent( &StreamOpenedEvent(this) );
+    StreamOpenedEvent ev(this);
+    SendEvent( &ev );
 }
 
 void NpapiStream::signalFailedOpen()
 {
-    SendEvent( &StreamFailedOpenEvent(this) );
+    StreamFailedOpenEvent ev(this);
+    SendEvent( &ev );
 }
 
 void NpapiStream::signalCompleted(bool success)
@@ -95,7 +101,8 @@ void NpapiStream::signalCompleted(bool success)
     }
 
     opened = false;
-    SendEvent( &StreamCompletedEvent(this, success) );
+    StreamCompletedEvent ev(this, success);
+    SendEvent( &ev );
 }
 
 void NpapiStream::signalCacheFilename(const std::wstring& CacheFilename)

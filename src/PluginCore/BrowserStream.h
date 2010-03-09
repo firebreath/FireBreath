@@ -48,13 +48,14 @@ namespace FB {
 
     public:
         /// Standard constructor.
-        BrowserStream( const std::string& Url, bool Cache, bool Seekable, size_t InternalBufferSize) : url(Url), cached(Cache), seekable(Seekable), internalBufferSize(InternalBufferSize), length(0), completed(false), opened(false)
+        BrowserStream( const std::string& Url, bool Cache, bool Seekable, size_t InternalBufferSize) : url(Url), seekable(Seekable), cached(Cache), internalBufferSize(InternalBufferSize), length(0), completed(false), opened(false)
         {}
 
         /// Destructor. The SendEvent() might be moved to Destroy() instead.
         virtual ~BrowserStream()
         {
-            SendEvent( &StreamDestroyedEvent(this) );
+            StreamDestroyedEvent ev(this);
+            SendEvent( &ev );
         }
 
         /// Performs a read range request, returns the bytes in the range [start, end). Only works if stream is seekable.

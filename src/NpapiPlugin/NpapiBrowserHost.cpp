@@ -536,7 +536,8 @@ FB::BrowserStream* NpapiBrowserHost::createStream(const std::string& url, FB::Pl
     // always use target = 0 for now
     if ( GetURLNotify( url.c_str(), 0, stream ) == NPERR_NO_ERROR )
     {
-        stream->SendEvent( &StreamCreatedEvent(stream) );
+        StreamCreatedEvent ev(stream);
+        stream->SendEvent( &ev );
         return stream;
     }
     else
