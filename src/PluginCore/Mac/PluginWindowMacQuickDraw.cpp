@@ -12,26 +12,26 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "PluginEvents/MacEvent.h"
+#include "PluginEvents/MacEventCarbon.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
-#include "PluginWindowMac.h"
+#include "PluginWindowMacQuickDraw.h"
 
 using namespace FB;
 
-PluginWindowMac::PluginWindowMac(CGrafPtr port, int x, int y)
+PluginWindowMacQuickDraw::PluginWindowMacQuickDraw(CGrafPtr port, int x, int y)
 {
     m_port = port;
     m_x = x;
     m_y = y;
 }
 
-PluginWindowMac::~PluginWindowMac()
+PluginWindowMacQuickDraw::~PluginWindowMacQuickDraw()
 {
 }
 
-void PluginWindowMac::getWindowPosition(int &x, int &y, int &w, int &h)
+void PluginWindowMacQuickDraw::getWindowPosition(int &x, int &y, int &w, int &h)
 {
     x = m_x;
     y = m_y;
@@ -39,7 +39,7 @@ void PluginWindowMac::getWindowPosition(int &x, int &y, int &w, int &h)
     h = m_height;
 }
 
-void PluginWindowMac::setWindowPosition(int x, int y, int w, int h)
+void PluginWindowMacQuickDraw::setWindowPosition(int x, int y, int w, int h)
 {
     if (m_x != x
         || m_y != y
@@ -54,7 +54,7 @@ void PluginWindowMac::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowMac::getWindowClipping(int &t, int &l, int &b, int &r)
+void PluginWindowMacQuickDraw::getWindowClipping(int &t, int &l, int &b, int &r)
 {
     t = m_clipTop;
     l = m_clipLeft;
@@ -62,7 +62,7 @@ void PluginWindowMac::getWindowClipping(int &t, int &l, int &b, int &r)
     r = m_clipRight;
 }
 
-void PluginWindowMac::setWindowClipping(int t, int l, int b, int r)
+void PluginWindowMacQuickDraw::setWindowClipping(int t, int l, int b, int r)
 {
     if (m_clipTop != t
         || m_clipLeft != l
@@ -77,10 +77,10 @@ void PluginWindowMac::setWindowClipping(int t, int l, int b, int r)
     }
 }
 
-int16_t PluginWindowMac::HandleEvent(EventRecord* evt)
+int16_t PluginWindowMacQuickDraw::HandleEvent(EventRecord* evt)
 {
     // Give the plugin a change to handle the event itself if desired
-    MacEvent macEv(evt);
+    MacEventCarbon macEv(evt);
     if (SendEvent(&macEv)) {
         return true;
     }

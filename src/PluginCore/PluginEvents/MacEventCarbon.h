@@ -25,10 +25,10 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
-    class MacEvent : public PluginEvent
+    class MacEventCarbon : public PluginEvent
     {
     public:
-        MacEvent(EventRecord *src)
+        MacEventCarbon(EventRecord *src)
         {
             memcpy(&msg, src, sizeof(EventRecord));
         }

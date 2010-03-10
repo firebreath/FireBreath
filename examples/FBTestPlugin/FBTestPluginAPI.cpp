@@ -34,6 +34,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("getObjectKeys",  make_method(this, &FBTestPluginAPI::getObjectKeys));
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
+    registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
 
     // Read-write property
     registerProperty("testString",
@@ -49,7 +50,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
 
-	registerEvent("onfired");
+    registerEvent("onfired");
 
     m_simpleMath = new SimpleMathAPI(m_host);
 }
@@ -86,7 +87,7 @@ long FBTestPluginAPI::add(long a, long b)
 // test firing an event
 void FBTestPluginAPI::testEvent(std::string param)
 {
-	this->FireEvent("onfired", FB::variant_list_of(param));
+    this->FireEvent("onfired", FB::variant_list_of(param));
 }
 
 FB::variant FBTestPluginAPI::echo(FB::variant a)
@@ -182,4 +183,14 @@ FB::VariantMap FBTestPluginAPI::getUserData()
 FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
+}
+
+
+#include "SimpleStreams.h"
+
+// test streams
+bool FBTestPluginAPI::testStreams()
+{
+    StreamsTest test( m_host );
+    return test.run();
 }

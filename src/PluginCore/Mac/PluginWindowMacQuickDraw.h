@@ -22,11 +22,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
-    class PluginWindowMac : public PluginWindow
+    class PluginWindowMacQuickDraw : public PluginWindow
     {
     public:
-        PluginWindowMac(CGrafPtr port, int x, int y);
-        virtual ~PluginWindowMac();
+        PluginWindowMacQuickDraw(CGrafPtr port, int x, int y);
+        virtual ~PluginWindowMacQuickDraw();
 
         int16_t HandleEvent(EventRecord* evt);
         void setWindowPosition(int x, int y, int w, int h);

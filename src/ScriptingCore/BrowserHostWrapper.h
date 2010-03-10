@@ -20,6 +20,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
+    class BrowserStream;
+    class PluginEventSink;
     class BrowserObjectAPI;
     class JSAPI_DOMDocument;
     class JSAPI_DOMWindow;
@@ -45,6 +47,10 @@ namespace FB
 
         virtual void *getContextID() = 0;
 
+        virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
+                                            bool cache = true, bool seekable = false, 
+                                            size_t internalBufferSize = 128 * 1024 ) = 0;
+        
         // Methods for accessing the DOM
     public:
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
