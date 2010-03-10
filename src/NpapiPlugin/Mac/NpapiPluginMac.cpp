@@ -14,7 +14,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "NpapiTypes.h"
 #include "PluginCore.h"
-#include "Mac/PluginWindowMac.h"
+#include "Mac/PluginWindowMacQuickDraw.h"
 #include "Mac/FactoryDefinitionsMac.h"
 
 #include "Mac/NpapiPluginMac.h"

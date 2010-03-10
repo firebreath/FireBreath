@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB {
     class JSAPI;
     class PluginCore;
-    class PluginWindowMac;
+    class PluginWindowMacQuickDraw;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -32,6 +32,6 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y);
+FB::PluginWindowMacQuickDraw *_createPluginWindow(CGrafPtr port, int x, int y);
 
 #endif

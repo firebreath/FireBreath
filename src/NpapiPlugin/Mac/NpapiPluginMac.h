@@ -18,7 +18,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiPlugin.h"
 
 namespace FB {
-    class PluginWindowMac;
+    class PluginWindowMacQuickDraw;
     namespace Npapi {
 
     class NpapiPluginMac : public NpapiPlugin
@@ -28,7 +28,7 @@ namespace FB {
         virtual ~NpapiPluginMac(void);
 
     protected:
-        FB::PluginWindowMac *pluginWin;
+        FB::PluginWindowMacQuickDraw *pluginWin;
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
