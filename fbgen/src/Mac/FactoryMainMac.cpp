@@ -15,7 +15,7 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
     return new FB::Npapi::NpapiPlugin(host);
 }
 
-FB::PluginWindowMac *_createPluginWindow(CGrafPtr port, int x, int y)
+FB::PluginWindowMacQuickDraw* _createPluginWindow(CGrafPtr port, int x, int y)
 {
     return new FB::PluginWindowMacQuickDraw(port, x, y);
 }
