@@ -47,46 +47,63 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 {
     lRes = 0;
     // Before all else, give the plugin a chance to handle the platform specific event
-    if (SendEvent(&WindowsEvent(hWnd, uMsg, wParam, lParam))) {
+    WindowsEvent ev(hWnd, uMsg, wParam, lParam);
+    if (SendEvent(&ev)) {
         return true;
     }
 
     switch(uMsg) {
         case WM_LBUTTONDOWN: 
-            return SendEvent(&MouseDownEvent(MouseButtonEvent::MouseButton_Left,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
+        {
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, 
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_RBUTTONDOWN:
-            return SendEvent(&MouseDownEvent(MouseButtonEvent::MouseButton_Right,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
+        {
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_MBUTTONDOWN:
-            return SendEvent(&MouseDownEvent(MouseButtonEvent::MouseButton_Middle,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
+        {
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle,
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_LBUTTONUP: 
-            return SendEvent(&MouseUpEvent(MouseButtonEvent::MouseButton_Left,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
+        {
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_RBUTTONUP:
-            return SendEvent(&MouseUpEvent(MouseButtonEvent::MouseButton_Right,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
+        {
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Right,
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_MBUTTONUP:
-            return SendEvent(&MouseUpEvent(MouseButtonEvent::MouseButton_Middle,
-                GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
-
+        {
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle,
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_MOUSEMOVE:
-            return SendEvent(&MouseMoveEvent(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
-            break;
-
+        {
+            MouseMoveEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            return SendEvent(&ev);
+        }
         case WM_PAINT:
-            return SendEvent(&RefreshEvent());
-            break;
-
+        {
+            RefreshEvent ev;
+            return SendEvent(&ev);
+        }
         case WM_TIMER:
-            return SendEvent(&TimerEvent((unsigned int)wParam, (void*)lParam));
+        {
+            TimerEvent ev((unsigned int)wParam, (void*)lParam);
+            return SendEvent(&ev);
+        }
     }
 
     if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
