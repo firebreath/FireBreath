@@ -17,9 +17,11 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "BrowserStream.h"
 #include <set>
+#include "boost/shared_ptr.hpp"
 
 class ActiveXBindStatusCallback;
 class ActiveXStreamRequest;
+typedef boost::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
 
 class ActiveXStream : public FB::BrowserStream
 {
@@ -39,14 +41,14 @@ protected:
     virtual void	signalOpened();
     virtual void	signalFailedOpen();
     virtual void	signalCompleted(bool success);
-    virtual void	signalRequestCompleted(ActiveXStreamRequest* request, bool success);
+    virtual void	signalRequestCompleted(ActiveXStreamRequestPtr request, bool success);
     virtual void	signalCacheFilename(const std::wstring& cacheFilename);
 
     friend class ActiveXBrowserHost;
     friend class ActiveXBindStatusCallback;
 
 protected:
-    std::set<ActiveXStreamRequest*>	requests;
+    std::set< ActiveXStreamRequestPtr >	requests;
     bool	closing;
 };
 

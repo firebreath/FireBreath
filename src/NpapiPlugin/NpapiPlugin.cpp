@@ -192,7 +192,6 @@ void NpapiPlugin::URLNotify(const char* url, NPReason reason, void* notifyData)
 	if ( !s ) return;
 
 	s->signalCompleted( reason == NPRES_DONE );
-	delete s;
 }
 
 /*
@@ -269,34 +268,39 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
 	// check for streams we did not request or create
 	if ( !s ) return NPERR_NO_ERROR;
 
-    s->mimeType = type;
-	s->stream = stream;
-	s->length = stream->end;
-	s->url = stream->url;
-	if( stream->headers ) s->headers = stream->headers;
+    s->setMimeType( type );
+	s->setStream( stream );
+	s->setLength( stream->end );
+	s->setUrl( stream->url );
+	if( stream->headers ) s->setHeaders( stream->headers );
 	bool seekRequested = s->isSeekable();
-    s->seekable = seekable;
+    s->setSeekable( seekable );
 
 	if ( !seekable && seekRequested )	// requested seekable stream, but stream was not seekable
 	{									//  stream can only be made seekable by downloading the entire file
 										//  which we don't want to happen automatically.
 		s->signalFailedOpen();
-		delete s;						// delete stream here, cause NPP_Destroy stream will not be called
+        // If unsuccessful, the function should return one of the NPError Error Codes.
+        // This will cause the browser to destroy the stream without calling NPP_DestroyStream.
+        s->setStream( 0 );
 		return NPERR_STREAM_NOT_SEEKABLE;
 	}
 
 	if ( seekRequested ) *stype = NP_SEEK;
 	else if ( s->isCached() ) *stype = NP_ASFILE;
+    else *stype = NP_NORMAL;
 
-	if ( seekRequested ) m_npHost->ScheduleAsyncCall( signalStreamOpened, s );
-	else signalStreamOpened(s);
+    // first npp_newstream has to finish before the user may perform a RequestRead in the opened handler
+	if ( seekRequested ) signalStreamOpened( s ); //m_npHost->ScheduleAsyncCall( signalStreamOpened, s );      
+	else signalStreamOpened( s );
 
 	return NPERR_NO_ERROR;
 }
 
 void NpapiPlugin::signalStreamOpened(void* stream)
 {
-	static_cast<NpapiStream*>(stream)->signalOpened();
+    NpapiStream* s = static_cast<NpapiStream*>(stream);
+    if ( !s->isCompleted() ) s->signalOpened();
 }
 
 
@@ -314,7 +318,9 @@ NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
 	// check for streams we did not request or create
 	if ( !s ) return NPERR_NO_ERROR;
 
-    s->stream = 0;
+    if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );
+
+    s->setStream( 0 );
 	stream->notifyData = 0;
 
     return NPERR_NO_ERROR;

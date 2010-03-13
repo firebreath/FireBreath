@@ -46,7 +46,7 @@ std::string fromWideString( const std::wstring& wideString )
 // ---------------------------------------------------------------------------
 // %%Function: ActiveXBindStatusCallback::ActiveXBindStatusCallback
 // ---------------------------------------------------------------------------
-ActiveXBindStatusCallback::ActiveXBindStatusCallback() : m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_request(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
+ActiveXBindStatusCallback::ActiveXBindStatusCallback() : m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
 {
 }
 
@@ -57,7 +57,7 @@ ActiveXBindStatusCallback::~ActiveXBindStatusCallback()
 // ---------------------------------------------------------------------------
 // %%Function: ActiveXBindStatusCallback::Create
 // ---------------------------------------------------------------------------
-HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequest* request)
+HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequestPtr request)
 {
     HRESULT hr;
     ActiveXBindStatusCallback* pBindStatusCallback;
@@ -89,7 +89,7 @@ HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStat
 // ---------------------------------------------------------------------------
 // %%Function: ActiveXBindStatusCallback::Init
 // ---------------------------------------------------------------------------
-HRESULT ActiveXBindStatusCallback::Init(ActiveXStreamRequest* request)
+HRESULT ActiveXBindStatusCallback::Init(ActiveXStreamRequestPtr request)
 {
     m_request = request;
     return NOERROR;
@@ -385,9 +385,11 @@ STDMETHODIMP ActiveXBindStatusCallback::BeginningTransaction(LPCWSTR szURL,
 
     std::wstringstream extraHeaders;
 
+    extraHeaders << L"Accept-Encoding: identity\r\n";
+
     if ( m_request->ranges.size() )
     {
-        extraHeaders << L"Request-Range: bytes=";
+        extraHeaders << L"Range: bytes=";
         for ( std::vector<BrowserStream::Range>::const_iterator it = m_request->ranges.begin(); it != m_request->ranges.end(); ++it )
         {
             extraHeaders << it->start << L"-" << (it->end - 1);
@@ -428,17 +430,17 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
 
     if ( m_request->stream )
     {	
-        m_request->stream->headers = fromWideString( szResponseHeaders );
+        m_request->stream->setHeaders( fromWideString( szResponseHeaders ) );
 
-        bool requestedSeekable = m_request->stream->seekable;
+        bool requestedSeekable = m_request->stream->isSeekable();
 
         std::string data;
-        if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->length = atol( data.c_str() );		// nasty, should use a stringstream for conversion here
-        if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->mimeType = data;
-        if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->seekable = ( data == "bytes" );
+        if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->setLength( atol( data.c_str() ) );		// nasty, should use a stringstream for conversion here
+        if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->setMimeType( data );
+        if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->setSeekable( data == "bytes" );
 
         bool ok = ( dwResponseCode >= 200 && dwResponseCode < 300 );
-        if ( requestedSeekable && !m_request->stream->seekable ) ok = false;
+        if ( requestedSeekable && !m_request->stream->isSeekable() ) ok = false;
 
         if ( ok )
         {
@@ -494,7 +496,7 @@ bool ActiveXStreamRequest::start()
     std::string url = stream->getUrl();
     std::wstring wideUrl( url.begin(), url.end() );
 
-    if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, this )) ) return false;	
+    if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, shared_from_this() )) ) return false;	
     if ( FAILED( CreateURLMoniker(0, wideUrl.c_str(), &FMoniker) ) ) return false;
     if ( FAILED( CreateAsyncBindCtx(0, bindStatusCallback, 0, &FBindCtx) ) ) return false;
     if ( FAILED( IsValidURL(FBindCtx, wideUrl.c_str(), 0) ) ) return false;
@@ -505,9 +507,9 @@ bool ActiveXStreamRequest::start()
     return true;
 }
 
-bool ActiveXStreamRequest::stop(bool streamDetached)
+bool ActiveXStreamRequest::stop()
 {
-    if ( streamDetached ) stream = 0;
+    stream = 0;
     if ( !bindStatusCallback ) return true;
     return bindStatusCallback->close();
 }

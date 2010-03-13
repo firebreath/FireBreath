@@ -40,29 +40,20 @@ namespace FB {
         /// Specifies the range for a read range request.
         struct Range
         {
-            Range( size_t Start, size_t End ) : start(Start), end(End)
-            {}
+            Range( size_t start, size_t end );
 
             size_t start, end;
         };
 
     public:
         /// Standard constructor.
-        BrowserStream( const std::string& Url, bool Cache, bool Seekable, size_t InternalBufferSize) : url(Url), seekable(Seekable), cached(Cache), internalBufferSize(InternalBufferSize), length(0), completed(false), opened(false)
-        {}
+        BrowserStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize);
 
         /// Destructor. The SendEvent() might be moved to Destroy() instead.
-        virtual ~BrowserStream()
-        {
-            StreamDestroyedEvent ev(this);
-            SendEvent( &ev );
-        }
+        virtual ~BrowserStream();
 
         /// Performs a read range request, returns the bytes in the range [start, end). Only works if stream is seekable.
-        virtual bool	readRange( size_t start, size_t end )
-        {
-            return readRanges( std::vector<Range>( 1, Range(start, end) ) );
-        }
+        virtual bool	readRange( size_t start, size_t end );
         /// Same as function above, except multiple ranges can be requested at once.
         virtual bool	readRanges( const std::vector<Range>& ranges ) = 0;
         /// Writes data to the stream.
@@ -71,67 +62,34 @@ namespace FB {
         virtual bool	close() = 0;
 
 
-        virtual
-        std::string getUrl()
-        {
-            return url;
-        }
-
-        virtual
-        bool isSeekable()
-        {
-            return seekable;
-        }
-
-        virtual
-        bool isCached()
-        {
-            return cached;
-        }
-
-        virtual
-        size_t getInternalBufferSize()
-        {
-            return internalBufferSize;
-        }
-
-        virtual
-        std::wstring getCacheFilename()
-        {
-            return cacheFilename;
-        }
-
-        virtual
-        size_t getLength()
-        {
-            return length;
-        }
-
-        virtual
-        std::string getMimeType()
-        {
-            return mimeType;
-        }
-
-        virtual
-        bool isCompleted()
-        {
-            return completed;
-        }
-
-        virtual
-        bool isOpen()
-        {
-            return opened;
-        }
-
-        virtual
-        std::string getHeaders()
-        {
-            return headers;
-        }
+    public:
+        // property getters
+        virtual std::string getUrl() const;
+        virtual bool isSeekable() const;
+        virtual bool isCached() const;
+        virtual bool isCompleted() const;
+        virtual bool isOpen() const;
+        virtual std::string getMimeType() const;
+        virtual std::wstring getCacheFilename() const;
+        virtual std::string getHeaders() const;
+        virtual size_t getInternalBufferSize() const;
+        virtual size_t getLength() const;
 
     protected:
+        // property setters
+        virtual void setUrl(const std::string& url);
+        virtual void setSeekable(bool seekable);
+        virtual void setCached(bool cached);
+        virtual void setCompleted(bool completed);
+        virtual void setOpen(bool open);
+        virtual void setMimeType(const std::string& mimeType);
+        virtual void setCacheFilename(const std::wstring& cacheFilename);
+        virtual void setHeaders(const std::string& headers);
+        virtual void setInternalBufferSize(size_t internalBufferSize);
+        virtual void setLength(size_t length);
+
+    private:
+        // properties
         std::string		url;
         bool			seekable;
         bool			cached;
@@ -159,33 +117,12 @@ namespace FB {
             EVENTTYPE_CASE(FB::StreamCompletedEvent, onStreamCompleted, FB::BrowserStream)
         END_PLUGIN_EVENT_MAP()
 
-        virtual bool onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream * Stream)
-        {
-            stream = Stream;
-            return false;
-        }
-        virtual bool onStreamDestroyed(FB::StreamDestroyedEvent *evt, FB::BrowserStream *)
-        {
-            stream = 0;
-            return false;
-        }
-        virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *)
-        {
-            // process data
-            return false;
-        }
-        virtual bool onStreamFailedOpen(FB::StreamFailedOpenEvent *evt, FB::BrowserStream *)
-        {
-            return false;
-        }
-        virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *)
-        {
-            return false;
-        }
-        virtual bool onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *)
-        {
-            return false;
-        }
+        virtual bool onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream * Stream);
+        virtual bool onStreamDestroyed(FB::StreamDestroyedEvent *evt, FB::BrowserStream *);
+        virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *);
+        virtual bool onStreamFailedOpen(FB::StreamFailedOpenEvent *evt, FB::BrowserStream *);
+        virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *);
+        virtual bool onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *);
 
     protected:
         BrowserStream* stream;

@@ -530,19 +530,19 @@ void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message)
 FB::BrowserStream* NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
                                     bool cache, bool seekable, size_t internalBufferSize )
 {
-    NpapiStream* stream = new NpapiStream( url, cache, seekable, internalBufferSize, this );
+    std::auto_ptr<NpapiStream> stream( new NpapiStream( url, cache, seekable, internalBufferSize, this ) );
     stream->AttachObserver( callback );
 
     // always use target = 0 for now
-    if ( GetURLNotify( url.c_str(), 0, stream ) == NPERR_NO_ERROR )
+    if ( GetURLNotify( url.c_str(), 0, stream.get() ) == NPERR_NO_ERROR )
     {
-        StreamCreatedEvent ev(stream);
+        StreamCreatedEvent ev(stream.get());
         stream->SendEvent( &ev );
-        return stream;
+        return stream.release();
     }
     else
     {
-        delete stream;
+        stream.reset();
         return 0;
     }
 }

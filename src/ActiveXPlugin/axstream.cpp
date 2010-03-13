@@ -29,6 +29,9 @@ ActiveXStream::~ActiveXStream()
 
 bool ActiveXStream::readRanges( const std::vector<Range>& ranges )
 {
+    if ( !isSeekable() || !isOpen() ) return false;
+    if ( !ranges.size() ) return true;
+
     addRequest( ActiveXStreamRequest( this, ranges ) );
     return true;
 }
@@ -45,14 +48,14 @@ bool ActiveXStream::close()
 
     if ( !isOpen() ) return false;
 
-    opened = false;
+    setOpen( false );
 
     bool result = true;
-    std::set<ActiveXStreamRequest *> copiedRequests( requests );
+    std::set<ActiveXStreamRequestPtr> copiedRequests( requests );
 
-    for ( std::set<ActiveXStreamRequest *>::const_iterator it = copiedRequests.begin(); it != copiedRequests.end(); ++it )
+    for ( std::set<ActiveXStreamRequestPtr>::const_iterator it = copiedRequests.begin(); it != copiedRequests.end(); ++it )
     {
-        result &= (*it)->stop(true);
+        result &= (*it)->stop();
     }
     requests.clear();
 
@@ -62,13 +65,13 @@ bool ActiveXStream::close()
 
 bool ActiveXStream::init()
 {
-    if ( seekable ) return true;					// if seekable, wait for the user to pull data ...
+    if ( isSeekable() ) return true;					        // if seekable, wait for the user to pull data ...
     else return addRequest( ActiveXStreamRequest( this ) );		// ... otherwise start downloading the whole thing
 }
 
 bool ActiveXStream::addRequest( const ActiveXStreamRequest& Request )
 {
-    ActiveXStreamRequest* request = new ActiveXStreamRequest( Request );
+    ActiveXStreamRequestPtr request( new ActiveXStreamRequest( Request ) );
     bool result = request->start();
     if ( result ) requests.insert( request );
     return result;
@@ -77,7 +80,7 @@ bool ActiveXStream::addRequest( const ActiveXStreamRequest& Request )
 
 size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
 {
-    size_t effectiveLen = min( internalBufferSize, static_cast<size_t>(len) );
+    size_t effectiveLen = min( getInternalBufferSize(), static_cast<size_t>(len) );
     if ( effectiveLen ) 
     {
         //memcpy( &internalBuffer[0], buffer, effectiveLen );
@@ -98,7 +101,7 @@ size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
 
 void ActiveXStream::signalOpened()
 {
-    opened = true;
+    setOpen( true );
     StreamOpenedEvent ev(this);
     SendEvent( &ev );
 }
@@ -111,33 +114,33 @@ void ActiveXStream::signalFailedOpen()
 
 void ActiveXStream::signalCompleted(bool success)
 {
-    completed = true;
+    setCompleted( true );
 
     if ( !isOpen() && !success )
     {
         signalFailedOpen();
     }
 
-    opened = false;
+    close();
+
     StreamCompletedEvent ev(this, success);
     SendEvent( &ev );
 }
 
-void ActiveXStream::signalRequestCompleted(ActiveXStreamRequest* request, bool success)
+void ActiveXStream::signalRequestCompleted(ActiveXStreamRequestPtr request, bool success)
 {
     requests.erase( request );
     if ( !requests.size() )
     {
         signalCompleted( success );
         close();
-        delete this;
     }
 }
     
-void ActiveXStream::signalCacheFilename(const std::wstring& CacheFilename)
+void ActiveXStream::signalCacheFilename(const std::wstring& cacheFilename)
 {
-    cacheFilename = CacheFilename;
-}
+    setCacheFilename( cacheFilename );
+} 
 
 #if 0
 #ifdef USE_WINHTTP

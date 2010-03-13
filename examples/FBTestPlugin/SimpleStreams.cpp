@@ -38,6 +38,9 @@ public:
 class MyStreamHandler2 : public FB::DefaultBrowserStreamHandler
 {
 public:
+    MyStreamHandler2( BrowserHostWrapper* Host ) : host(Host)
+    {}
+
     virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *)
     {
         // see also these properties, accessible through evt->stream->{property}:
@@ -53,16 +56,23 @@ public:
         // std::string		headers;
 
         // since this handler handles a seeking stream, request two ranges
-        evt->stream->readRange( 0, 4 );
-        evt->stream->readRange( 100, 100 + 15 );
+        host->ScheduleAsyncCall( performRead, this );
         return true;
+    }
+
+    static void performRead( void* data )
+    {
+        MyStreamHandler2* handler = static_cast<MyStreamHandler2*>( data );
+        if ( handler->stream ) handler->stream->readRange( 100, 100 + 15 );
     }
 
     virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *)
     {
-        size_t end = evt->dataPosition + evt->length;
+        size_t end = evt->getDataPosition() + evt->getLength();
         return true;
     }
+
+    BrowserHostWrapper* host;
 };
 
 
@@ -79,9 +89,9 @@ bool StreamsTest::run()
     FB::BrowserStream* testStream1 = host->createStream( "http://colonelpanic.net/", streamHandler1, true, false );
 
     // create a seekable, non-cached stream
-    FB::PluginEventSink* streamHandler2 = new MyStreamHandler2;
-    FB::BrowserStream* testStream2 = host->createStream( "http://colonelpanic.net/", streamHandler2, false, true );
-
+    FB::PluginEventSink* streamHandler2 = new MyStreamHandler2( host );
+    FB::BrowserStream* testStream2 = host->createStream( "http://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Wikipedia-logo.png/100px-Wikipedia-logo.png", streamHandler2, false, true );
+ 
     // try to access a page which does not exists (e.g. 404 or dns fails)
     FB::PluginEventSink* streamHandler3 = new MyStreamHandler3;
     FB::BrowserStream* testStream3 = host->createStream( "http://www.idontexist.invalid/index.html", streamHandler3, true, false );

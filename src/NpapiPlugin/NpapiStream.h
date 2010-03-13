@@ -41,7 +41,11 @@ namespace FB { namespace Npapi {
         virtual void		signalCompleted(bool success);
         virtual void		signalCacheFilename(const std::wstring& cacheFilename);
 
-    protected:
+        virtual void		setStream(NPStream* stream);
+        virtual NPStream*	getStream() const;
+        virtual NpapiBrowserHost*	getHost() const;
+
+    private:
         //std::vector<char>		internalBuffer;
         NPStream*				stream;
         NpapiBrowserHost*		host;

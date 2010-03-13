@@ -18,6 +18,8 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "BrowserStream.h"
 #include "urlmon.h"
 #include "atlbase.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 // includes parts of Microsoft examples:
 //   http://support.microsoft.com/kb/223500
@@ -26,14 +28,14 @@ Copyright 2010 Richard Bateman, Firebreath development team
 class ActiveXStream;
 class ActiveXBindStatusCallback;
 
-class ActiveXStreamRequest
+class ActiveXStreamRequest : public boost::enable_shared_from_this<ActiveXStreamRequest>
 {
 public:
     ActiveXStreamRequest( ActiveXStream* stream );
     ActiveXStreamRequest( ActiveXStream* stream, const std::vector<FB::BrowserStream::Range>& ranges );
 
     bool start();
-    bool stop(bool streamDetached = false);
+    bool stop();
 
 public:
     ActiveXStream*		stream;
@@ -43,6 +45,8 @@ public:
     CComPtr<IStream>	fstream;
     std::vector<FB::BrowserStream::Range>	ranges;
 };
+
+typedef boost::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
 
 class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate 
 {
@@ -80,8 +84,8 @@ class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate
     virtual
     ~ActiveXBindStatusCallback();
 
-    static HRESULT Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequest* request);
-    HRESULT Init(ActiveXStreamRequest* request);
+    static HRESULT Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequestPtr request);
+    HRESULT Init(ActiveXStreamRequestPtr request);
 
     bool close();
 
@@ -94,7 +98,7 @@ class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate
     DWORD           m_cbOld;
     BOOL			m_fRedirect; // need to be informed when we're being redirected by the server
     BINDVERB		m_dwAction;
-    ActiveXStreamRequest*	m_request;
+    ActiveXStreamRequestPtr	m_request;
     bool			m_transactionStarted;
 };
 

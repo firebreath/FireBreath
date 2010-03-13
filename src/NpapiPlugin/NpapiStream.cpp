@@ -30,7 +30,7 @@ NpapiStream::~NpapiStream()
 
 bool NpapiStream::readRanges( const std::vector<Range>& ranges )
 {
-    if ( !stream || !seekable ) return false;
+    if ( !getStream() || !isSeekable() || !isOpen() ) return false;
     if ( !ranges.size() ) return true;
     
     std::vector<NPByteRange> vecranges( ranges.size() );
@@ -42,24 +42,33 @@ bool NpapiStream::readRanges( const std::vector<Range>& ranges )
         range.next = ( ( i + 1 ) < ranges.size() ) ? &vecranges[i+1] : 0;
     }
 
-    return host->RequestRead( stream, &vecranges[0] ) == NPERR_NO_ERROR;
+    return getHost()->RequestRead( getStream(), &vecranges[0] ) == NPERR_NO_ERROR;
 }
 
 bool NpapiStream::write(const char* data, size_t dataLength, size_t& written)
 {
-    written = host->Write( stream, dataLength, const_cast<char*>(data) );
+    if ( !getStream() || !isOpen() ) return false;
+    written = getHost()->Write( getStream(), dataLength, const_cast<char*>(data) );
     return written == dataLength;
 }
 
 bool NpapiStream::close()
 {
-    if ( !opened ) return false;
-    return host->DestroyStream( stream, NPRES_DONE ) == NPERR_NO_ERROR;
+    if ( !getStream() ) return false;
+    if ( isSeekable() && isOpen() )
+    {
+        StreamCompletedEvent ev(this, true);
+        SendEvent( &ev );
+    }
+    setOpen( false );
+    bool result = getHost()->DestroyStream( getStream(), NPRES_DONE ) == NPERR_NO_ERROR;
+    setStream( 0 );
+    return result;
 }
 
 int32_t NpapiStream::signalDataArrived(void* buffer, int32_t len, int32_t offset)
 {
-    size_t effectiveLen = std::min( internalBufferSize, static_cast<size_t>(len) );
+    size_t effectiveLen = std::min( getInternalBufferSize(), static_cast<size_t>(len) );
     if ( effectiveLen ) 
     {
         //memcpy( &internalBuffer[0], buffer, effectiveLen );
@@ -80,7 +89,7 @@ int32_t NpapiStream::signalDataArrived(void* buffer, int32_t len, int32_t offset
 
 void NpapiStream::signalOpened()
 {
-    opened = true;
+    setOpen( true );
     StreamOpenedEvent ev(this);
     SendEvent( &ev );
 }
@@ -93,19 +102,38 @@ void NpapiStream::signalFailedOpen()
 
 void NpapiStream::signalCompleted(bool success)
 {
-    completed = true;
+    if ( isSeekable() && success ) return;      // If seekable, then complete is immediately sent after the open call worked. 
+                                                        // But we don't want to signal completenes right then.
 
-    if ( !isOpen() && !success )
+    setCompleted( true );
+
+    /*if ( !isOpen() && !success )
     {
         signalFailedOpen();
-    }
+    }*/
 
-    opened = false;
+    close();
+
     StreamCompletedEvent ev(this, success);
     SendEvent( &ev );
 }
 
 void NpapiStream::signalCacheFilename(const std::wstring& CacheFilename)
 {
-    cacheFilename = CacheFilename;
+    setCacheFilename( CacheFilename );
+}
+
+void NpapiStream::setStream(NPStream* Stream)
+{
+    stream = Stream;
+}
+
+NPStream* NpapiStream::getStream() const
+{
+    return stream;
+}
+
+NpapiBrowserHost* NpapiStream::getHost() const
+{
+    return host;
 }

@@ -49,8 +49,27 @@ namespace FB {
     public:
         StreamDataArrivedEvent( BrowserStream* stream, const void* Data, const size_t Length, const size_t DataPosition, const float Progress ) : StreamEvent(stream), data(Data), length(Length), dataPosition(DataPosition), progress(Progress)
         {}
+
+        const void* getData() const
+        {
+            return data;
+        }
     
-    public:
+        const size_t getLength() const
+        {
+            return length;
+        }
+
+        const size_t getDataPosition() const
+        {
+            return dataPosition;
+        }
+
+        const float getProgress() const
+        {
+            return progress;
+        }
+    protected:
         const void*		data;			// the data
         const size_t	length;			// length of the data in bytes
         const size_t	dataPosition;	// the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
