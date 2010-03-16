@@ -33,10 +33,10 @@ include_directories(
     ${BOOST_SOURCE_DIR}
     )
 
-file (GLOB PLUGINWINDOW RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    PluginWindow*.cpp
-    PluginWindow*.h
-    )
+#file (GLOB PLUGINWINDOW RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+#    PluginWindow*.cpp
+#    PluginWindow*.h
+#    )
 
 # X11 *****************************************************************
 
