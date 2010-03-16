@@ -316,12 +316,12 @@ NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
 {
 	NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
 	// check for streams we did not request or create
-	if ( !s ) return NPERR_NO_ERROR;
-
-    if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );
+    if ( !s || !s->getStream() ) return NPERR_NO_ERROR;
 
     s->setStream( 0 );
 	stream->notifyData = 0;
+
+    if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );
 
     return NPERR_NO_ERROR;
 }
