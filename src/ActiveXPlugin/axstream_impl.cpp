@@ -330,11 +330,7 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
             if (dwActuallyRead > 0)
             {
                 if ( m_request->stream ) m_request->stream->signalDataArrived( &data[0], dwActuallyRead, offset + m_cbOld );
-
-                if (SUCCEEDED(hr))
-                {
-                    m_cbOld += dwActuallyRead;
-                }
+                m_cbOld += dwActuallyRead;
             }
 
         } while (!(hr == E_PENDING || hr == S_FALSE) && SUCCEEDED(hr));
