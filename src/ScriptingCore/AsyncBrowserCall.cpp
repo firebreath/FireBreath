@@ -19,7 +19,15 @@ using namespace FB;
 void AsyncBrowserCall::asyncCallback(void *userData)
 {
     AsyncBrowserCall *call = static_cast<AsyncBrowserCall *>(userData);
-    call->m_obj->Invoke(call->m_methodName, call->m_params);
+    
+    try 
+    {
+        call->m_obj->Invoke(call->m_methodName, call->m_params);
+    }
+    catch(const FB::script_error&)
+    {
+        // can't really do anything useful here
+    }
 }
 
 void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, std::string method,
