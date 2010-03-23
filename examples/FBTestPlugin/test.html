@@ -1,0 +1,65 @@
+<!--
+    Auto-generated test-site
+-->
+<html>
+<head>
+<title>atl 8.0 test page for object fbcontrol</title>
+<script type="text/javascript">
+    function plugin()
+    {
+        return document.getElementById('plugin');
+    }
+    
+    function addEvent(obj, name, func)
+    {
+        if (window.addEventListener) {
+            obj.addEventListener(name, func, false); 
+        } else {
+            obj.attachEvent("on"+name, func);
+        }
+    }
+    
+    function load()
+    {
+        addEvent(plugin(), 'fired', function(x){
+            alert('onfired() from load(): '+x)
+        });
+    }
+    
+    function addTestEvent()
+    {
+        addEvent(plugin(), 'fired', function(x){
+            alert('onfired(): '+x)
+        });
+    }
+    
+    function testEvent()
+    {
+        plugin().testEvent('test stuff');
+    }
+    
+    function pluginValid()
+    {
+        alert(plugin().valid);
+    }
+    
+    function testStreams()
+    {
+        alert(plugin().testStreams());
+    }
+</script>
+</head>
+<body onload="load()">
+
+
+<object id="plugin" type="application/x-fbtestplugin" width="300" height="300"></object><br />
+
+<a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
+
+<a href="#" onclick="javascript:testEvent()">Fire event</a> <br />
+
+<a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />
+<a href="#" onclick="javascript:testStreams()">test streams</a> <br />
+
+</body>
+</html>
