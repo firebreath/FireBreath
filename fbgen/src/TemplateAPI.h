@@ -20,13 +20,16 @@ public:
 
     // Read/Write property ${PROPERTY.ident}
     std::string get_testString();
-    void set_testString(std::string val);
+    void set_testString(const std::string& val);
 
     // Read-only property ${PROPERTY.ident}
     std::string get_version();
 
     // Method echo
-    FB::variant echo(FB::variant msg);
+    FB::variant echo(const FB::variant& msg);
+    
+    // Method test-event
+    void testEvent(const FB::variant& s);
 
 private:
     FB::AutoPtr<FB::BrowserHostWrapper> m_host;

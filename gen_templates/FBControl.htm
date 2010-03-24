@@ -3,21 +3,57 @@
 -->
 <html>
 <head>
-<title>atl 8.0 test page for object fbcontrol</title>
+<title>test page for object fbcontrol</title>
 </head>
-<body>
+    <script type="text/javascript">
+        function plugin()
+        {
+            return document.getElementById('plugin');
+        }
+        
+        function addEvent(obj, name, func)
+        {
+            if (window.addEventListener) {
+                obj.addEventListener(name, func, false); 
+            } else {
+                obj.attachEvent("on"+name, func);
+            }
+        }
+        
+        function load()
+        {
+            addEvent(plugin(), 'fired', function(x){
+                alert('onfired() from load(): '+x)
+            });
+        }
+        
+        function addTestEvent()
+        {
+            addEvent(plugin(), 'fired', function(x){
+                alert('onfired(): '+x)
+            });
+        }
+        
+        function testEvent()
+        {
+            plugin().testEvent('test stuff');
+        }
+        
+        function pluginValid()
+        {
+            alert(plugin().valid);
+        }
+    </script>
+<body onload="load()">
 
 
-<object id="plugin" type="${FBSTRING_MIMEType}" width="300" height="300"></object>
+<object id="plugin" type="${FBSTRING_MIMEType}" width="300" height="300"></object><br />
 
-<a href="javascript:plugin.addEventListener('load', function(test) { alert(test); })">set onload (ff)</a> <br />
-<a href="#" onclick="plugin.attachEvent('onload', function(test) { alert(test); }); return false;">set onload (ie)</a> <br />
+<a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
 
-<a href="#" onclick="plugin.testEvent('onload', 'test stuff'); return false;">Fire onload</a> <br />
+<a href="#" onclick="javascript:testEvent()">Fire event</a> <br />
 
-<a href="javascript:alert(plugin.valid)">alert plugin valid</a> <br />
-<a href="javascript:alert(plugin.testStreams())">test streams</a> <br />
-
+<a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />
 
 </body>
 </html>

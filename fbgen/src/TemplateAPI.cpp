@@ -12,7 +12,8 @@
 
 @{PLUGIN.ident}API::@{PLUGIN.ident}API(FB::BrowserHostWrapper *host) : m_host(host)
 {
-    registerMethod("echo",  make_method(this, &@{PLUGIN.ident}API::echo));
+    registerMethod("echo",      make_method(this, &@{PLUGIN.ident}API::echo));
+    registerMethod("testEvent", make_method(this, &@{PLUGIN.ident}API::testEvent));
 
     // Read-write property
     registerProperty("testString",
@@ -24,6 +25,9 @@
     registerProperty("version",
                      make_property(this,
                         &@{PLUGIN.ident}API::get_version));
+    
+    
+    registerEvent("onfired");    
 }
 
 @{PLUGIN.ident}API::~@{PLUGIN.ident}API()
@@ -35,7 +39,7 @@ std::string @{PLUGIN.ident}API::get_testString()
 {
     return m_testString;
 }
-void @{PLUGIN.ident}API::set_testString(std::string val)
+void @{PLUGIN.ident}API::set_testString(const std::string& val)
 {
     m_testString = val;
 }
@@ -47,7 +51,13 @@ std::string @{PLUGIN.ident}API::get_version()
 }
 
 // Method echo
-FB::variant @{PLUGIN.ident}API::echo(FB::variant msg)
+FB::variant @{PLUGIN.ident}API::echo(const FB::variant& msg)
 {
     return msg;
 }
+
+void @{PLUGIN.ident}API::testEvent(const FB::variant& var)
+{
+    FireEvent("onfired", FB::variant_list_of(var));
+}
+
