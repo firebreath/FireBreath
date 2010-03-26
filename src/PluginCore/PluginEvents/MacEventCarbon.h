@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_EVENTS_MACEVENT
-#define H_FB_EVENTS_MACEVENT
+#ifndef H_FB_EVENTS_MACEVENTCARBON
+#define H_FB_EVENTS_MACEVENTCARBON
 
 #ifndef XP_MACOSX
 #define EventRecord NPEvent
