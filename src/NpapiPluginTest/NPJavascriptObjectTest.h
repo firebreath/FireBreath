@@ -90,7 +90,7 @@ TEST(NPJavascriptObject_Methods)
     try {
         INT32_TO_NPVARIANT(0, oneParam);
         CHECK(host->Invoke(obj, STRID(host, "getValue"), &oneParam, 1, &res));
-        CHECK(std::string("This is a test") == res.value.stringValue.utf8characters);
+        CHECK(std::string("This is a test") == res.value.stringValue.UTF8Characters);
     } catch (...) {
         CHECK(false);
     }
@@ -168,7 +168,7 @@ TEST(NPJavascriptObject_Properties)
             host->getNPVariant(&oneParam, FB::variant(testVal));
             CHECK(host->SetProperty(obj, STRID(host, "value"), &oneParam));
             CHECK(host->GetProperty(obj, STRID(host, "value"), &res));
-            CHECK(testVal == res.value.stringValue.utf8characters);
+            CHECK(testVal == res.value.stringValue.UTF8Characters);
         }
     } catch (...) {
         CHECK(false);

@@ -83,8 +83,8 @@ namespace FB { namespace Npapi {
         static void     NP_LOADDS NH_InvalidateRect(NPP instance, NPRect *rect);
         static void     NP_LOADDS NH_InvalidateRegion(NPP instance, NPRegion region);
         static void     NP_LOADDS NH_ForceRedraw(NPP instance);
-        static bool     NP_LOADDS NH_PushPopupsEnabledState(NPP npp, NPBool enabled);
-        static bool     NP_LOADDS NH_PopPopupsEnabledState(NPP npp);
+        static void     NP_LOADDS NH_PushPopupsEnabledState(NPP npp, NPBool enabled);
+        static void     NP_LOADDS NH_PopPopupsEnabledState(NPP npp);
         static void     NP_LOADDS NH_PluginThreadAsyncCall(NPP instance, void (*func)(void *), void *userData);
         static bool     NP_LOADDS NH_Evaluate(NPP npp, NPObject *obj, NPString *script, NPVariant *result);
         static void     NP_LOADDS NH_SetException(NPObject *obj, const NPUTF8 *message);

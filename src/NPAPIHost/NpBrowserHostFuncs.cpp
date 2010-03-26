@@ -120,15 +120,15 @@ void NP_LOADDS NpapiHost::NH_ForceRedraw(NPP instance)
 }
 
 /* NPN_PushPopupsEnabledStateUPP */
-bool NP_LOADDS NpapiHost::NH_PushPopupsEnabledState(NPP npp, NPBool enabled)
+void NP_LOADDS NpapiHost::NH_PushPopupsEnabledState(NPP npp, NPBool enabled)
 {
-    return true;
+    
 }
 
 /* NPN_PopPopupsEnabledState */
-bool NP_LOADDS NpapiHost::NH_PopPopupsEnabledState(NPP npp)
+void NP_LOADDS NpapiHost::NH_PopPopupsEnabledState(NPP npp)
 {
-    return true;
+    
 }
 
 /* NPN_PluginThreadAsyncCall */
