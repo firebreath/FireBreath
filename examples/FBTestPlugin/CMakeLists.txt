@@ -10,6 +10,9 @@ include(${CMAKE_DIR}/common.cmake)
 
 set (PROJNAME ${PLUGIN_NAME})
 
+set (FBMAC_USE_COCOA         1)
+set (FBMAC_USE_COREGRAPHICS  1)
+
 browserplugin_project(${PROJNAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
