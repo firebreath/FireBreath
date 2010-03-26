@@ -13,17 +13,24 @@
  Copyright 2010 Georg Fritzsche, Firebreath development team
  \**********************************************************/
 
+#ifndef H_PLUGINWINDOWMAC_COCOA
+#define H_PLUGINWINDOWMAC_COCOA
 
-#include "PluginWindowMacCoreGraphics.h"
+#include "PluginWindow.h"
+#include <map>
 
-using namespace FB;
+namespace FB {
+    
+    class PluginWindowMacCocoa : public PluginWindow
+    {
+    public:
+        PluginWindowMacCocoa();
+        virtual ~PluginWindowMacCocoa();
+        
+    private:
+        
+    };
+    
+};
 
-PluginWindowMacCoreGraphics::PluginWindowMacCoreGraphics()
-{
-
-}
-
-PluginWindowMacCoreGraphics::~PluginWindowMacCoreGraphics()
-{
-
-}
+#endif // H_PLUGINWINDOWMAC_COCOA

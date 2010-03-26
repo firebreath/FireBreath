@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_PLUGINWINDOWMAC
-#define H_PLUGINWINDOWMAC
+#ifndef H_PLUGINWINDOWMAC_QUICKDRAW
+#define H_PLUGINWINDOWMAC_QUICKDRAW
 
 #include <Carbon/Carbon.h>
 #include "PluginWindow.h"
@@ -49,4 +49,4 @@ namespace FB {
 
 };
 
-#endif // H_PLUGINWINDOWMAC
+#endif // H_PLUGINWINDOWMAC_QUICKDRAW

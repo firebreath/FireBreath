@@ -14,16 +14,16 @@
  \**********************************************************/
 
 
-#include "PluginWindowMacCoreGraphics.h"
+#include "PluginWindowMacCocoa.h"
 
 using namespace FB;
 
-PluginWindowMacCoreGraphics::PluginWindowMacCoreGraphics()
+PluginWindowMacCocoa::PluginWindowMacCocoa()
 {
-
+    
 }
 
-PluginWindowMacCoreGraphics::~PluginWindowMacCoreGraphics()
+PluginWindowMacCocoa::~PluginWindowMacCocoa()
 {
-
+    
 }
