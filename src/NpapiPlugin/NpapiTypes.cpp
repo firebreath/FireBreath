@@ -12,7 +12,15 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <cstring>
 #include "NpapiTypes.h"
+
+#ifdef min
+#  undef min
+#endif
+#ifdef max
+#  undef max
+#endif
 
 void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs)
 {
@@ -56,9 +64,50 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
     dstFuncs->hasmethod = srcFuncs->hasmethod;
     dstFuncs->releasevariantvalue = srcFuncs->releasevariantvalue;
     dstFuncs->setexception = srcFuncs->setexception;
-    dstFuncs->pushpopupsenabledstate = srcFuncs->pushpopupsenabledstate;
-    dstFuncs->poppopupsenabledstate = srcFuncs->poppopupsenabledstate;
-    dstFuncs->enumerate = srcFuncs->enumerate;
-    dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
     dstFuncs->construct = srcFuncs->construct;
+    
+
+    if(srcFuncs->version >= NPVERS_HAS_STREAMOUTPUT) { // 8
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_NOTIFICATION) { // 9
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_LIVECONNECT) { // 9
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_68K_HAS_LIVECONNECT) { // 11
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_WINDOWLESS) { // 11
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_XPCONNECT_SCRIPTING) { // 13
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_NPRUNTIME_SCRIPTING) { // 14
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_FORM_VALUES) { // 15
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_POPUPS_ENABLED_STATE) {
+        dstFuncs->pushpopupsenabledstate = srcFuncs->pushpopupsenabledstate;
+        dstFuncs->poppopupsenabledstate = srcFuncs->poppopupsenabledstate;
+    }
+    if(srcFuncs->version >= NPVERS_HAS_RESPONSE_HEADERS) { // 17
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_NPOBJECT_ENUM) { // 18
+        dstFuncs->enumerate = srcFuncs->enumerate;
+    }
+    if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
+        dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
+    }
+    if(srcFuncs->version >= NPVERS_HAS_ALL_NETWORK_STREAMS) { // 20
+        // ?
+    }
+    if(srcFuncs->version >= NPVERS_HAS_URL_AND_AUTH_INFO) { // 21
+        // ?
+    }
 }
