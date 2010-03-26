@@ -28,7 +28,9 @@ namespace
 {
     bool needAsyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs)
     {
+        // work-around detection here
 #ifdef _WINDOWS_
+#if 0
         const char* const cstrUserAgent = funcs->uagent(npp);
         if(!cstrUserAgent) 
             return false;
@@ -36,9 +38,9 @@ namespace
         const std::string userAgent(cstrUserAgent);        
         const bool result = userAgent.find("Opera") != std::string::npos;
         return result;
-#else
-        return false;
 #endif
+#endif
+        return (funcs->version < NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL);
     }
 
     bool asyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs = 0)
