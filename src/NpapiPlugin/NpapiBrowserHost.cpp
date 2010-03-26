@@ -99,7 +99,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_String:
-            retVal = std::string(npVar->value.stringValue.utf8characters, npVar->value.stringValue.utf8length);
+            retVal = std::string(npVar->value.stringValue.UTF8Characters, npVar->value.stringValue.UTF8Length);
             break;
 
         case NPVariantType_Object:
@@ -145,8 +145,8 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         char *outStr = (char*)this->MemAlloc(str.size() + 1);
         memcpy(outStr, str.c_str(), str.size() + 1);
         dst->type = NPVariantType_String;
-        dst->value.stringValue.utf8characters = outStr;
-        dst->value.stringValue.utf8length = str.size();
+        dst->value.stringValue.UTF8Characters = outStr;
+        dst->value.stringValue.UTF8Length = str.size();
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();

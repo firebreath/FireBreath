@@ -45,10 +45,6 @@
 #define NP_LOADDS
 #endif
 
-#ifndef GENERATINGCFM
-#define GENERATINGCFM 0
-#endif
-
 #include "npapi.h"
 #include "npruntime.h"
 
@@ -65,6 +61,8 @@ typedef void         (* NP_LOADDS NPP_StreamAsFileProcPtr)(NPP instance, NPStrea
 typedef void         (* NP_LOADDS NPP_PrintProcPtr)(NPP instance, NPPrint* platformPrint);
 typedef int16_t      (* NP_LOADDS NPP_HandleEventProcPtr)(NPP instance, void* event);
 typedef void         (* NP_LOADDS NPP_URLNotifyProcPtr)(NPP instance, const char* url, NPReason reason, void* notifyData);
+/* Any NPObjects returned to the browser via NPP_GetValue should be retained
+   by the plugin on the way out. The browser is responsible for releasing. */
 typedef NPError      (* NP_LOADDS NPP_GetValueProcPtr)(NPP instance, NPPVariable variable, void *ret_value);
 typedef NPError      (* NP_LOADDS NPP_SetValueProcPtr)(NPP instance, NPNVariable variable, void *value);
 
@@ -79,6 +77,8 @@ typedef NPError      (*NPN_NewStreamProcPtr)(NPP instance, NPMIMEType type, cons
 typedef int32_t      (*NPN_WriteProcPtr)(NPP instance, NPStream* stream, int32_t len, void* buffer);
 typedef NPError      (*NPN_DestroyStreamProcPtr)(NPP instance, NPStream* stream, NPReason reason);
 typedef void         (*NPN_StatusProcPtr)(NPP instance, const char* message);
+/* Browser manages the lifetime of the buffer returned by NPN_UserAgent, don't
+   depend on it sticking around and don't free it. */
 typedef const char*  (*NPN_UserAgentProcPtr)(NPP instance);
 typedef void*        (*NPN_MemAllocProcPtr)(uint32_t size);
 typedef void         (*NPN_MemFreeProcPtr)(void* ptr);
@@ -108,14 +108,18 @@ typedef bool         (*NPN_HasPropertyProcPtr)(NPP npp, NPObject *obj, NPIdentif
 typedef bool         (*NPN_HasMethodProcPtr)(NPP npp, NPObject *obj, NPIdentifier propertyName);
 typedef void         (*NPN_ReleaseVariantValueProcPtr)(NPVariant *variant);
 typedef void         (*NPN_SetExceptionProcPtr)(NPObject *obj, const NPUTF8 *message);
-typedef bool         (*NPN_PushPopupsEnabledStateProcPtr)(NPP npp, NPBool enabled);
-typedef bool         (*NPN_PopPopupsEnabledStateProcPtr)(NPP npp);
+typedef void         (*NPN_PushPopupsEnabledStateProcPtr)(NPP npp, NPBool enabled);
+typedef void         (*NPN_PopPopupsEnabledStateProcPtr)(NPP npp);
 typedef bool         (*NPN_EnumerateProcPtr)(NPP npp, NPObject *obj, NPIdentifier **identifier, uint32_t *count);
 typedef void         (*NPN_PluginThreadAsyncCallProcPtr)(NPP instance, void (*func)(void *), void *userData);
 typedef bool         (*NPN_ConstructProcPtr)(NPP npp, NPObject* obj, const NPVariant *args, uint32_t argCount, NPVariant *result);
 typedef NPError      (*NPN_GetValueForURLPtr)(NPP npp, NPNURLVariable variable, const char *url, char **value, uint32_t *len);
 typedef NPError      (*NPN_SetValueForURLPtr)(NPP npp, NPNURLVariable variable, const char *url, const char *value, uint32_t len);
 typedef NPError      (*NPN_GetAuthenticationInfoPtr)(NPP npp, const char *protocol, const char *host, int32_t port, const char *scheme, const char *realm, char **username, uint32_t *ulen, char **password, uint32_t *plen);
+typedef uint32_t     (*NPN_ScheduleTimerPtr)(NPP instance, uint32_t interval, NPBool repeat, void (*timerFunc)(NPP npp, uint32_t timerID));
+typedef void         (*NPN_UnscheduleTimerPtr)(NPP instance, uint32_t timerID);
+typedef NPError      (*NPN_PopUpContextMenuPtr)(NPP instance, NPMenu* menu);
+typedef NPBool       (*NPN_ConvertPointPtr)(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
 
 typedef struct _NPPluginFuncs {
   uint16_t size;
@@ -187,11 +191,13 @@ typedef struct _NPNetscapeFuncs {
   NPN_GetValueForURLPtr getvalueforurl;
   NPN_SetValueForURLPtr setvalueforurl;
   NPN_GetAuthenticationInfoPtr getauthenticationinfo;
+  NPN_ScheduleTimerPtr scheduletimer;
+  NPN_UnscheduleTimerPtr unscheduletimer;
+  NPN_PopUpContextMenuPtr popupcontextmenu;
+  NPN_ConvertPointPtr convertpoint;
 } NPNetscapeFuncs;
 
 #ifdef XP_MACOSX
-/* Don't use this, it is going away. */
-typedef NPError (* NPP_MainEntryProcPtr)(NPNetscapeFuncs*, NPPluginFuncs*, NPP_ShutdownProcPtr*);
 /*
  * Mac OS X version(s) of NP_GetMIMEDescription(const char *)
  * These can be called to retreive MIME information from the plugin dynamically
@@ -256,7 +262,7 @@ typedef struct _NPPluginData {   /* Alternate OS2 Plugin interface */
 NPError OSCALL NP_GetPluginData(NPPluginData * pPluginData);
 #endif
 NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs);
-NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs);
+NPError OSCALL NP_Initialize(NPNetscapeFuncs* bFuncs);
 NPError OSCALL NP_Shutdown();
 char*          NP_GetMIMEDescription();
 #ifdef __cplusplus
@@ -276,6 +282,7 @@ NP_EXPORT(char*)   NP_GetPluginVersion();
 NP_EXPORT(char*)   NP_GetMIMEDescription();
 #ifdef XP_MACOSX
 NP_EXPORT(NPError) NP_Initialize(NPNetscapeFuncs* bFuncs);
+NP_EXPORT(NPError) NP_GetEntryPoints(NPPluginFuncs* pFuncs);
 #else
 NP_EXPORT(NPError) NP_Initialize(NPNetscapeFuncs* bFuncs, NPPluginFuncs* pFuncs);
 #endif
