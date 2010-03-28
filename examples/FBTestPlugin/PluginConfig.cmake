@@ -40,3 +40,8 @@ set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "FBTestPlugin")
 set(FBSTRING_MIMEType "application/x-fbtestplugin")
 
+# mac settings
+set (FBMAC_USE_COCOA         1)
+set (FBMAC_USE_COREGRAPHICS  1)
+
+
