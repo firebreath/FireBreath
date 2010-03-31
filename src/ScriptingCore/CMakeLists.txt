@@ -30,13 +30,13 @@ include_directories(
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    DOM/*
+    DOM/[^.]*
 )
 
 SOURCE_GROUP(DOM FILES ${DOMTYPES})
 
 file (GLOB UTILTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Util/*
+    Util/[^.]*
 )
 
 SOURCE_GROUP(Util FILES ${UTILTYPES})
@@ -62,7 +62,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Converter*
     Factory*
     Test*
-    *.py
+    [^.]*.py
     )
 
 SOURCE_GROUP(JSAPI FILES ${JSAPI_OBJECTS})

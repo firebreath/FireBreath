@@ -39,8 +39,8 @@ add_definitions(
 )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ./*.h
-    ./*.cpp
+    ./[^.]*.h
+    ./[^.]*.cpp
     )
 
 set (SOURCES

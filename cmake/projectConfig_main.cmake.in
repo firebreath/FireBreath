@@ -35,7 +35,7 @@ include_directories(
     )
 
 # configure default generated files
-file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/*)
+file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     #    message("Configuring ${CURFILE}")
@@ -43,7 +43,7 @@ foreach(TemplateFile ${TEMPLATELIST})
 endforeach()
 
 # configure project-specific generated files
-file(GLOB TEMPLATELIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/*)
+file(GLOB TEMPLATELIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     message("Configuring ${CURFILE}")
@@ -63,9 +63,9 @@ if (WIN32)
         )
 
     file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}
-        ${GEN_DIR}/gen/*.rgs
-        ${GEN_DIR}/gen/*.def
-        ${GEN_DIR}/gen/*.rc
+        ${GEN_DIR}/gen/[^.]*.rgs
+        ${GEN_DIR}/gen/[^.]*.def
+        ${GEN_DIR}/gen/[^.]*.rc
     )
 
 endif(WIN32)

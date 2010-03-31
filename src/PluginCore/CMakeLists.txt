@@ -30,34 +30,34 @@ include_directories(
     )
 
 file (GLOB EVENTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    PluginEvents/*.h
-    PluginEvents/*.cpp
+    PluginEvents/[^.]*.h
+    PluginEvents/[^.]*.cpp
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.cpp
-    *.h
+    [^.]*.cpp
+    [^.]*.h
     )
 
 source_group(PluginEvents FILES ${EVENTS})
 
 file (GLOB X11_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    X11/*.h
-    X11/*.cpp
+    X11/[^.]*.h
+    X11/[^.]*.cpp
     )
 
 SOURCE_GROUP(X11 FILES ${X11_SOURCES})
 
 file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Win/*.h
-    Win/*.cpp
+    Win/[^.]*.h
+    Win/[^.]*.cpp
     )
 
 SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 
 file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*.h
-    Mac/*.cpp
+    Mac/[^.]*.h
+    Mac/[^.]*.cpp
     )
 
 SOURCE_GROUP(Mac FILES ${MAC_SOURCES})

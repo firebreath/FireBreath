@@ -34,8 +34,8 @@ include_directories(
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.cpp
-    *.h
+    [^.]*.cpp
+    [^.]*.h
     )
 
 set (SOURCES

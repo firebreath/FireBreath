@@ -10,9 +10,9 @@
 
 # remember that the current source dir is the project root; this file is in Win/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Win/*.cpp
-    Win/*.h
-    Win/*.cmake
+    Win/[^.]*.cpp
+    Win/[^.]*.h
+    Win/[^.]*.cmake
     )
 
 # use this to add preprocessor definitions
