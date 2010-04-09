@@ -52,12 +52,14 @@ add_executable(${PROJNAME} ${SOURCES})
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
+    PluginCore
     UnitTest++
     )
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
+    PluginCore
     UnitTest++
     )
 

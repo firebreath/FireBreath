@@ -28,6 +28,7 @@ void AsyncBrowserCall::asyncCallback(void *userData)
     {
         // can't really do anything useful here
     }
+	delete call;
 }
 
 void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, std::string method,

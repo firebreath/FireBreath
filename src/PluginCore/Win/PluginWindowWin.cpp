@@ -117,6 +117,7 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     if (uMsg == WM_ASYNCTHREADINVOKE) {
         WINDOWS_ASYNC_EVENT *evt = static_cast<WINDOWS_ASYNC_EVENT*>((void*)lParam);
         evt->func(evt->userData);
+		delete evt;
         return S_OK;
     } 
 
