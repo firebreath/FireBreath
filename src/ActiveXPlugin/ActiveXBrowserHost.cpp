@@ -160,7 +160,8 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr.callMethod<void>("push", FB::VariantList(list_of(*it)));
+			FB::VariantList vl = list_of(*it);
+            outArr.callMethod<void>("push", vl);
         }
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(outArr.getJSObject().ptr());
         if (api.ptr() != NULL) {

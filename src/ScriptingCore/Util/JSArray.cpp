@@ -13,6 +13,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "JSArray.h"
+#include <iterator>
 
 FB::JSArray::JSArray()
   : m_values()

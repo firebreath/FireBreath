@@ -41,7 +41,7 @@ class ATL_NO_VTABLE CFBControl :
     public CComControl<CFBControl>,
 
     public JSAPI_IDispatchEx<CFBControl, IFBControl, &DIID_IFBComEventSource>,
-    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
+    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/ >,
 
     // Required for standard events
     public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &FB_LIBID>,
