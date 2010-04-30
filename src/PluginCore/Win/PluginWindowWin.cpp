@@ -13,12 +13,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "Win/win_common.h"
+#include "Win/KeyCodesWin.h"
 
 #include "PluginEvents/WindowsEvent.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h" 
 #include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/KeyboardEvents.h"
 #include "PluginWindowWin.h"
+
     
 using namespace FB;
 
@@ -91,6 +94,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         }
         case WM_MOUSEMOVE:
         {
+			SetFocus( m_hWnd ); //get key focus, as the mouse is over our region
             MouseMoveEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             return SendEvent(&ev);
         }
@@ -104,6 +108,18 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             TimerEvent ev((unsigned int)wParam, (void*)lParam);
             return SendEvent(&ev);
         }
+		case WM_KEYUP:
+		{
+			FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
+			KeyUpEvent ev(fb_key, (unsigned int)wParam);
+			return SendEvent(&ev);
+		}
+		case WM_KEYDOWN:
+		{
+			FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
+			KeyDownEvent ev(fb_key, (unsigned int)wParam);
+			return SendEvent(&ev);
+		}	
     }
 
     if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
