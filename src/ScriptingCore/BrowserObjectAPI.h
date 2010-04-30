@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI.h"
 #include "BrowserHostWrapper.h"
 #include "AutoPtr.h"
+#include <iterator>
 
 namespace FB
 {
