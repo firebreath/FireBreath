@@ -127,6 +127,6 @@ void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *event)
 
 void JSAPI::registerEvent(const std::string &name)
 {
-	if(m_defEventMap.find(name) == m_defEventMap.end())
-		m_defEventMap[name] = 0;
+    if(m_defEventMap.find(name) == m_defEventMap.end())
+        m_defEventMap[name] = 0;
 }

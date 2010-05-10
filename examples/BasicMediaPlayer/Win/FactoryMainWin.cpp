@@ -24,5 +24,5 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
 
 FB::PluginWindowWin *_createPluginWindow(HWND hWnd)
 {
-	return new FB::PluginWindowWin(hWnd);
+    return new FB::PluginWindowWin(hWnd);
 }

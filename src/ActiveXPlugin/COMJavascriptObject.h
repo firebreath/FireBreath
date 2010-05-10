@@ -41,11 +41,11 @@ public:
     static IDispatchEx *NewObject(ActiveXBrowserHost *host, FB::JSAPI *api)
     {
         CComObject<COMJavascriptObject> *obj;
-		HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
+        HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
         
         obj->setAPI(api, host);
         IDispatchEx *retval;
-		hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
+        hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
 
         return retval;
     }

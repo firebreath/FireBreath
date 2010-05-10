@@ -77,7 +77,7 @@ TEST(CheckEqualFailureIncludesCheckExpectedAndActual)
     const int something = 2;
     CheckEqual(results, 1, something, TestDetails("", "", "", 0));
 
-	using namespace std;
+    using namespace std;
     CHECK(strstr(reporter.lastFailedMessage, "xpected 1"));
     CHECK(strstr(reporter.lastFailedMessage, "was 2"));
 }
@@ -151,7 +151,7 @@ TEST(CheckCloseFailureIncludesCheckExpectedAndActual)
     const float actual = 1.1f;
     CheckClose(results, expected, actual, 0.01f, TestDetails("", "", "", 0));
 
-	using namespace std;
+    using namespace std;
     CHECK(strstr(reporter.lastFailedMessage, "xpected 0.9"));
     CHECK(strstr(reporter.lastFailedMessage, "was 1.1"));
 }
@@ -162,7 +162,7 @@ TEST(CheckCloseFailureIncludesTolerance)
     TestResults results(&reporter);
     CheckClose(results, 2, 3, 0.01f, TestDetails("", "", "", 0));
 
-	using namespace std;
+    using namespace std;
     CHECK(strstr(reporter.lastFailedMessage, "0.01"));
 }
 

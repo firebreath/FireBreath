@@ -70,10 +70,10 @@ namespace FB {
             return progress;
         }
     protected:
-        const void*		data;			// the data
-        const size_t	length;			// length of the data in bytes
-        const size_t	dataPosition;	// the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
-        const float		progress;		// the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
+        const void*     data;           // the data
+        const size_t    length;         // length of the data in bytes
+        const size_t    dataPosition;   // the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
+        const float     progress;       // the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
     };
 
     class StreamFailedOpenEvent : public StreamEvent

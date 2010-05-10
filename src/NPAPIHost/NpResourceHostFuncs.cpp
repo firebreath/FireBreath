@@ -79,7 +79,7 @@ void NP_LOADDS NpapiHost::NH_ReleaseObject(NPObject *obj)
 void NP_LOADDS NpapiHost::NH_ReleaseVariantValue(NPVariant *variant)
 {
     if (variant->type == NPVariantType_String) {
-		NH_MemFree((void*)variant->value.stringValue.UTF8Characters);
+        NH_MemFree((void*)variant->value.stringValue.UTF8Characters);
     } else if (variant->type == NPVariantType_Object) {
         NH_ReleaseObject(variant->value.objectValue);
     }

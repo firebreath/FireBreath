@@ -44,16 +44,16 @@ public:
     virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *)
     {
         // see also these properties, accessible through evt->stream->{property}:
-        // std::string		url;
-        // bool				seekable;
-        // bool				cached;
-        // size_t			internalBufferSize;
-        // std::wstring		cacheFilename;
-        // size_t			length;
-        // std::string		mimeType;
-        // bool				opened;
-        // bool				completed;
-        // std::string		headers;
+        // std::string      url;
+        // bool             seekable;
+        // bool             cached;
+        // size_t           internalBufferSize;
+        // std::wstring     cacheFilename;
+        // size_t           length;
+        // std::string      mimeType;
+        // bool             opened;
+        // bool             completed;
+        // std::string      headers;
 
         // since this handler handles a seeking stream, request two ranges
         host->ScheduleAsyncCall( performRead, this );

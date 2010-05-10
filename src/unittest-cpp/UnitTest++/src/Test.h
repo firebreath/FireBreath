@@ -24,7 +24,7 @@ public:
     virtual void RunImpl() const;
 
 private:
-	Test(Test const&);
+    Test(Test const&);
     Test& operator =(Test const&);
 };
 

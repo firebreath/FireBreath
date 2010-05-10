@@ -61,14 +61,14 @@ TEST(StreamingFloatWritesCorrectCharacters)
 {
     MemoryOutStream stream;
     stream << 3.1415f;
-	CHECK(strstr(stream.GetText(), "3.1415"));
+    CHECK(strstr(stream.GetText(), "3.1415"));
 }
 
 TEST(StreamingDoubleWritesCorrectCharacters)
 {
-	MemoryOutStream stream;
-	stream << 3.1415;
-	CHECK(strstr(stream.GetText(), "3.1415"));
+    MemoryOutStream stream;
+    stream << 3.1415;
+    CHECK(strstr(stream.GetText(), "3.1415"));
 }
 
 TEST(StreamingPointerWritesCorrectCharacters)

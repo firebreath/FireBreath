@@ -43,13 +43,13 @@ namespace FB {
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
-		virtual void InvalidateWindow();
+        virtual void InvalidateWindow();
 
     protected:
         static PluginWindowMap m_windowMap;
 
         bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT lRes);
-    	WNDPROC lpOldWinProc;
+        WNDPROC lpOldWinProc;
         HWND m_hWnd;
 
         virtual bool CustomWinProc(HWND hWnd,

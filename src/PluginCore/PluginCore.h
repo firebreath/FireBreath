@@ -52,7 +52,7 @@ namespace FB {
         virtual ~PluginCore();
 
         virtual void SetHost(BrowserHostWrapper *);
-		virtual PluginWindow* GetWindow() const;
+        virtual PluginWindow* GetWindow() const;
         virtual void SetWindow(PluginWindow *);
         virtual void ClearWindow();
 

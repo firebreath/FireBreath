@@ -34,14 +34,14 @@ JSAPI_DOMDocument::~JSAPI_DOMDocument()
 JSAPI_DOMWindow JSAPI_DOMDocument::getWindow()
 {
     JSObject api = getProperty<JSObject>("window");
-	JSAPI_DOMWindow retVal(api);
-	return retVal;
+    JSAPI_DOMWindow retVal(api);
+    return retVal;
 }
 
 JSAPI_DOMElement JSAPI_DOMDocument::getElementById(std::string id)
 {
     JSObject api =
         callMethod<JSObject>("getElementById", FB::VariantList(variant_list_of(id)));
-	JSAPI_DOMElement retVal(api);
-	return retVal;
+    JSAPI_DOMElement retVal(api);
+    return retVal;
 }

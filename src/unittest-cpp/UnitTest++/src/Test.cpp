@@ -31,7 +31,7 @@ Test::~Test()
 
 void Test::Run()
 {
-	ExecuteTest(*this, m_details);
+    ExecuteTest(*this, m_details);
 }
 
 void Test::RunImpl() const

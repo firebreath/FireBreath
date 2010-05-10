@@ -20,30 +20,30 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB {
 
-	class KeyEvent : public PluginEvent
-	{
-	public:
-		KeyEvent(FBKeyCode fb_key, unsigned int os_key)
-			:
-		m_key_code( fb_key ), m_os_key_code( os_key )
-		{ }
+    class KeyEvent : public PluginEvent
+    {
+    public:
+        KeyEvent(FBKeyCode fb_key, unsigned int os_key)
+            :
+        m_key_code( fb_key ), m_os_key_code( os_key )
+        { }
 
-	public:
-		FBKeyCode m_key_code;
-		unsigned int m_os_key_code;
-	};
+    public:
+        FBKeyCode m_key_code;
+        unsigned int m_os_key_code;
+    };
 
-	class KeyUpEvent : public KeyEvent
-	{
-	public:
-		KeyUpEvent(FBKeyCode fb_key, unsigned int os_key) :	KeyEvent(fb_key, os_key) {}
-	};
+    class KeyUpEvent : public KeyEvent
+    {
+    public:
+        KeyUpEvent(FBKeyCode fb_key, unsigned int os_key) : KeyEvent(fb_key, os_key) {}
+    };
 
-	class KeyDownEvent : public KeyEvent
-	{
-	public:
-		KeyDownEvent(FBKeyCode fb_key, unsigned int os_key) :	KeyEvent(fb_key, os_key) {}
-	};
+    class KeyDownEvent : public KeyEvent
+    {
+    public:
+        KeyDownEvent(FBKeyCode fb_key, unsigned int os_key) :   KeyEvent(fb_key, os_key) {}
+    };
 
 };
 

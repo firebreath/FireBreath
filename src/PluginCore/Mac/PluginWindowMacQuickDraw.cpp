@@ -97,7 +97,7 @@ int16_t PluginWindowMacQuickDraw::HandleEvent(EventRecord* evt)
     return false;
 }
 
-void PluginWindowWin::InvalidateWindow()
+void PluginWindowMacQuickDraw::InvalidateWindow()
 {
-	// Doesn't exist yet
+    // Doesn't exist yet
 }

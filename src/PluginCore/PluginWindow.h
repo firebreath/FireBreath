@@ -32,7 +32,7 @@ namespace FB {
         PluginWindow() { };
         virtual ~PluginWindow() { };
 
-		virtual void InvalidateWindow() = 0;
+        virtual void InvalidateWindow() = 0;
     };
 };
 

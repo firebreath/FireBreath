@@ -50,14 +50,14 @@ namespace FB {
         JSAPI_DOMElement getElement(std::string name)
         {
             JSObject api = getProperty<JSObject>(name);
-			JSAPI_DOMElement retVal(api);
+            JSAPI_DOMElement retVal(api);
             return retVal;
         }
 
         JSAPI_DOMElement getElement(int idx)
         {
             JSObject api = getProperty<JSObject>(idx);
-			JSAPI_DOMElement retVal(api);
+            JSAPI_DOMElement retVal(api);
             return retVal;
         }
     };

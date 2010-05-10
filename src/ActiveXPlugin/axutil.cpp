@@ -21,35 +21,35 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
 #endif
 {
 #if _MSC_VER > 1400
-	AtlSetPerUserRegistration(perUser);
+    AtlSetPerUserRegistration(perUser);
 #else // _MSC_VER < 1500
-	// this seems to be always active and therefore may break
-	// any COM functionality thats not registered per user
+    // this seems to be always active and therefore may break
+    // any COM functionality thats not registered per user
 
-	HRESULT hr;
-	HKEY key;
+    HRESULT hr;
+    HKEY key;
 
-	if(!perUser)
-		return;
+    if(!perUser)
+        return;
 
-	hr = ::RegOpenKeyW(HKEY_CURRENT_USER, L"Software\\Classes", &key);
-	if(FAILED(hr))
-		return;
+    hr = ::RegOpenKeyW(HKEY_CURRENT_USER, L"Software\\Classes", &key);
+    if(FAILED(hr))
+        return;
 
-	hr = ::RegOverridePredefKey(HKEY_CLASSES_ROOT, key);
-	if(FAILED(hr)) {
-		::RegCloseKey(key);
-		key = 0;
-	}
+    hr = ::RegOverridePredefKey(HKEY_CLASSES_ROOT, key);
+    if(FAILED(hr)) {
+        ::RegCloseKey(key);
+        key = 0;
+    }
 
-	m_hkey = key;
+    m_hkey = key;
 #endif
 }
 
 FbPerUserRegistration::~FbPerUserRegistration()
 {
 #if _MSC_VER < 1500
-	if(m_hkey)
-		::RegCloseKey(m_hkey);
+    if(m_hkey)
+        ::RegCloseKey(m_hkey);
 #endif
 }

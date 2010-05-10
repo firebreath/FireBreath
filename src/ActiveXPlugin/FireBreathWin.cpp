@@ -83,12 +83,12 @@ STDAPI DllUnregisterServer(void)
 }
 
 // DllInstall - Adds/Removes entries to the system registry per user
-//              per machine.	
+//              per machine.    
 STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 {
     HRESULT hr = E_FAIL;
     static const wchar_t szUserSwitch[] = _T("user");
-	bool doPerUserRegistration = false;
+    bool doPerUserRegistration = false;
 
     if (pszCmdLine != NULL)
     {
@@ -98,13 +98,13 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
         }
     }
 
-	FbPerUserRegistration perUser(doPerUserRegistration);
+    FbPerUserRegistration perUser(doPerUserRegistration);
 
     if (bInstall)
-    {	
+    {   
         hr = DllRegisterServer();
         if (FAILED(hr))
-        {	
+        {   
             DllUnregisterServer();
         }
     }

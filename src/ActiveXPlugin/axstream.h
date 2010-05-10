@@ -34,22 +34,22 @@ public:
     virtual bool close();
 
 protected:
-    virtual bool	init();
-    virtual bool	addRequest( const ActiveXStreamRequest& request );
+    virtual bool    init();
+    virtual bool    addRequest( const ActiveXStreamRequest& request );
 
-    virtual size_t	signalDataArrived(void* buffer, size_t len, size_t offset);
-    virtual void	signalOpened();
-    virtual void	signalFailedOpen();
-    virtual void	signalCompleted(bool success);
-    virtual void	signalRequestCompleted(ActiveXStreamRequestPtr request, bool success);
-    virtual void	signalCacheFilename(const std::wstring& cacheFilename);
+    virtual size_t  signalDataArrived(void* buffer, size_t len, size_t offset);
+    virtual void    signalOpened();
+    virtual void    signalFailedOpen();
+    virtual void    signalCompleted(bool success);
+    virtual void    signalRequestCompleted(ActiveXStreamRequestPtr request, bool success);
+    virtual void    signalCacheFilename(const std::wstring& cacheFilename);
 
     friend class ActiveXBrowserHost;
     friend class ActiveXBindStatusCallback;
 
 protected:
-    std::set< ActiveXStreamRequestPtr >	requests;
-    bool	closing;
+    std::set< ActiveXStreamRequestPtr > requests;
+    bool    closing;
 };
 
 

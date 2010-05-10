@@ -20,13 +20,13 @@ FB::JSAPI_DOMNode FB::JSAPI_DOMNode::getNode(std::string name)
 {
     FB::JSObject api = getProperty<FB::JSObject>(name);
     FB::JSAPI_DOMNode retVal(api);
-	return retVal;
+    return retVal;
 }
 
 FB::JSAPI_DOMNode FB::JSAPI_DOMNode::getNode(int idx)
 {
     FB::JSObject api = getProperty<JSObject>(idx);
-	FB::JSAPI_DOMNode retVal(api);
+    FB::JSAPI_DOMNode retVal(api);
     return retVal;
 }
 

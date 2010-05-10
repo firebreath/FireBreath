@@ -38,14 +38,14 @@ namespace FB {
         virtual void DetachObserver(PluginEventSink*);
         virtual bool SendEvent(PluginEvent*);
 
-		template <class T>
-		T* get_as()
-		{
-			T* tmp = dynamic_cast<T*>(this);
-			if (!tmp)
-				throw std::bad_cast();
-			return tmp;
-		}
+        template <class T>
+        T* get_as()
+        {
+            T* tmp = dynamic_cast<T*>(this);
+            if (!tmp)
+                throw std::bad_cast();
+            return tmp;
+        }
 
     protected:
         typedef std::vector<PluginEventSink*> ObserverMap;

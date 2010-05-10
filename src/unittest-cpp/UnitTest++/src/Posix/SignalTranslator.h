@@ -33,8 +33,8 @@ private:
 #endif
 
 #define UNITTEST_THROW_SIGNALS \
-	UnitTest::SignalTranslator sig; \
-	if (UNITTEST_EXTENSION sigsetjmp(*UnitTest::SignalTranslator::s_jumpTarget, 1) != 0) \
+    UnitTest::SignalTranslator sig; \
+    if (UNITTEST_EXTENSION sigsetjmp(*UnitTest::SignalTranslator::s_jumpTarget, 1) != 0) \
         throw ("Unhandled system exception"); 
 
 }

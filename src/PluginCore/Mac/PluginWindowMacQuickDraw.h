@@ -34,7 +34,7 @@ namespace FB {
         void setWindowClipping(int t, int l, int b, int r);
         void getWindowClipping(int &t, int &l, int &b, int &r);
         CGrafPtr getPort() { return m_port; }
-		virtual void InvalidateWindow();
+        virtual void InvalidateWindow();
     protected:
         CGrafPtr m_port;
         int m_x;

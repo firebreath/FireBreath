@@ -90,9 +90,9 @@ public:
     }
 
     STDMETHOD(SetClientSite)(IOleClientSite *pClientSite)
-	{
+    {
         HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
-    	if (!pClientSite)
+        if (!pClientSite)
             return hr;
 
         CComPtr<IOleContainer> container;
@@ -113,7 +113,7 @@ public:
         //this->FireOnChanged(DISPID_READYSTATE);
 
         return S_OK;
-	}
+    }
 
     /* IPersistPropertyBag calls */
     // This will be called once when the browser initializes the property bag (PARAM tags)

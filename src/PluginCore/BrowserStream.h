@@ -53,13 +53,13 @@ namespace FB {
         virtual ~BrowserStream();
 
         /// Performs a read range request, returns the bytes in the range [start, end). Only works if stream is seekable.
-        virtual bool	readRange( size_t start, size_t end );
+        virtual bool    readRange( size_t start, size_t end );
         /// Same as function above, except multiple ranges can be requested at once.
-        virtual bool	readRanges( const std::vector<Range>& ranges ) = 0;
+        virtual bool    readRanges( const std::vector<Range>& ranges ) = 0;
         /// Writes data to the stream.
-        virtual bool	write(const char* data, size_t dataLength, size_t& written) = 0;
+        virtual bool    write(const char* data, size_t dataLength, size_t& written) = 0;
         /// Destroys the stream.
-        virtual bool	close() = 0;
+        virtual bool    close() = 0;
 
 
     public:
@@ -90,16 +90,16 @@ namespace FB {
 
     private:
         // properties
-        std::string		url;
-        bool			seekable;
-        bool			cached;
-        size_t			internalBufferSize;
-        std::wstring	cacheFilename;
-        size_t			length;
-        std::string		mimeType;
-        bool			completed;
-        bool			opened;
-        std::string		headers;
+        std::string     url;
+        bool            seekable;
+        bool            cached;
+        size_t          internalBufferSize;
+        std::wstring    cacheFilename;
+        size_t          length;
+        std::string     mimeType;
+        bool            completed;
+        bool            opened;
+        std::string     headers;
     };
 
 

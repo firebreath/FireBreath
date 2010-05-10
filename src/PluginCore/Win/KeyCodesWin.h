@@ -16,6 +16,6 @@ Copyright 2010 Dan Groom and the Firebreath development team
 
 namespace FB {
 
-	FBKeyCode WinKeyCodeToFBKeyCode( unsigned int wparam );
+    FBKeyCode WinKeyCodeToFBKeyCode( unsigned int wparam );
 
 }

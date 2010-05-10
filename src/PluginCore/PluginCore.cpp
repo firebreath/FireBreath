@@ -101,7 +101,7 @@ JSAPI* PluginCore::getRootJSAPI()
 
 PluginWindow* PluginCore::GetWindow() const
 {
-	return m_Window;
+    return m_Window;
 }
 
 void PluginCore::SetWindow(PluginWindow *wind)

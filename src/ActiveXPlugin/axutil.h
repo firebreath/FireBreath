@@ -17,11 +17,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 class FbPerUserRegistration
 {
 public:
-	FbPerUserRegistration(bool perUser = true);
-	~FbPerUserRegistration();
+    FbPerUserRegistration(bool perUser = true);
+    ~FbPerUserRegistration();
 
 private:
 #if _MSC_VER < 1500
-	HKEY m_hkey;
+    HKEY m_hkey;
 #endif
 };

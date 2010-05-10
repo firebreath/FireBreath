@@ -487,7 +487,7 @@ typedef unsigned long PRUword;
 ** Fundamental NSPR macros, used nearly everywhere.
 */
 
-#define PR_PUBLIC_API		PR_IMPLEMENT
+#define PR_PUBLIC_API       PR_IMPLEMENT
 
 /*
 ** Macro body brackets so that macros with compound statement definitions

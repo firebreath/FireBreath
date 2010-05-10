@@ -43,7 +43,7 @@ bool ActiveXStream::write(const char* data, size_t dataLength, size_t& written)
 
 bool ActiveXStream::close()
 {
-    if ( closing ) return true;			// prevent re-entrant calls
+    if ( closing ) return true;         // prevent re-entrant calls
     closing = true;
 
     if ( !isOpen() ) return false;
@@ -65,8 +65,8 @@ bool ActiveXStream::close()
 
 bool ActiveXStream::init()
 {
-    if ( isSeekable() ) return true;					        // if seekable, wait for the user to pull data ...
-    else return addRequest( ActiveXStreamRequest( this ) );		// ... otherwise start downloading the whole thing
+    if ( isSeekable() ) return true;                            // if seekable, wait for the user to pull data ...
+    else return addRequest( ActiveXStreamRequest( this ) );     // ... otherwise start downloading the whole thing
 }
 
 bool ActiveXStream::addRequest( const ActiveXStreamRequest& Request )
@@ -177,7 +177,7 @@ void UseWinHTTP(const WCHAR* URL)
     comps.dwHostNameLength  = -1;
     comps.dwUrlPathLength   = -1;
     comps.dwExtraInfoLength = -1;
-    comps.dwUrlPathLength	= -1;
+    comps.dwUrlPathLength   = -1;
 
     ::WinHttpCrackUrl( URL, 0, 0, &comps );
 

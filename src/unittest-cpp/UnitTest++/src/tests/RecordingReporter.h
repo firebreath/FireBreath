@@ -35,7 +35,7 @@ public:
 
     virtual void ReportTestStart(UnitTest::TestDetails const& test)
     {
-		using namespace std;
+        using namespace std;
 
         ++testRunCount;
         strcpy(lastStartedSuite, test.suiteName);
@@ -44,9 +44,9 @@ public:
 
     virtual void ReportFailure(UnitTest::TestDetails const& test, char const* failure)
     {
-		using namespace std;
+        using namespace std;
 
-		++testFailedCount;
+        ++testFailedCount;
         strcpy(lastFailedFile, test.filename);
         lastFailedLine = test.lineNumber;
         strcpy(lastFailedSuite, test.suiteName);
@@ -56,9 +56,9 @@ public:
 
     virtual void ReportTestFinish(UnitTest::TestDetails const& test, float testDuration)
     {
-		using namespace std;
+        using namespace std;
 
-		++testFinishedCount;
+        ++testFinishedCount;
         strcpy(lastFinishedSuite, test.suiteName);
         strcpy(lastFinishedTest, test.testName);
         lastFinishedTestTime = testDuration;

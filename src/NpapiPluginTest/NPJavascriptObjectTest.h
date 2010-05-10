@@ -68,7 +68,7 @@ TEST(NPJavascriptObject_Methods)
 {
     PRINT_TESTNAME;
 
-	using FB::variant_list_of;
+    using FB::variant_list_of;
 
     NpapiPluginModule module;
     NpapiHost testHost(NULL, NULL, NULL);

@@ -62,12 +62,12 @@ int JSAPI_DOMElement::getChildNodeCount()
 
 JSAPI_DOMElement JSAPI_DOMElement::getChildNode(int idx)
 {
-	JSAPI_DOMElement retVal(getElement("childNodes").getElement(idx));
+    JSAPI_DOMElement retVal(getElement("childNodes").getElement(idx));
     return retVal;
 }
 
 JSAPI_DOMElement JSAPI_DOMElement::getParentNode()
 {
-	JSAPI_DOMElement retVal(getElement("parentNode"));
+    JSAPI_DOMElement retVal(getElement("parentNode"));
     return retVal;
 }

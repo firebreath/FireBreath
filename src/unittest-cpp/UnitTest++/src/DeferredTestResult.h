@@ -11,7 +11,7 @@ namespace UnitTest
 
 struct DeferredTestResult
 {
-	DeferredTestResult();
+    DeferredTestResult();
     DeferredTestResult(char const* suite, char const* test);
     ~DeferredTestResult();
     
@@ -24,7 +24,7 @@ struct DeferredTestResult
     FailureVec failures;
     
     float timeElapsed;
-	bool failed;
+    bool failed;
 };
 
 }

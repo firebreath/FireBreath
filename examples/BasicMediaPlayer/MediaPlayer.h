@@ -36,12 +36,12 @@ public:
 
     const std::string& version() const;
     const std::string& type() const;
-	const std::string& lastError() const;
+    const std::string& lastError() const;
 
     bool play(const std::string& file);
-	bool stop();
+    bool stop();
 
-	void setWindow(FB::PluginWindow*);
+    void setWindow(FB::PluginWindow*);
 
 private:
     boost::shared_ptr<PlayerContext> m_context;

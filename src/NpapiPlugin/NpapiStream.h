@@ -30,25 +30,25 @@ namespace FB { namespace Npapi {
         virtual ~NpapiStream();
         
         //virtual bool is_open();
-        virtual bool	readRanges( const std::vector<Range>& ranges );
-        virtual bool	write(const char* data, size_t dataLength, size_t& written);
-        virtual bool	close();
+        virtual bool    readRanges( const std::vector<Range>& ranges );
+        virtual bool    write(const char* data, size_t dataLength, size_t& written);
+        virtual bool    close();
 
     protected:
-        virtual int32_t		signalDataArrived(void* buffer, int32_t len, int32_t offset);
-        virtual void		signalOpened();
-        virtual void		signalFailedOpen();
-        virtual void		signalCompleted(bool success);
-        virtual void		signalCacheFilename(const std::wstring& cacheFilename);
+        virtual int32_t     signalDataArrived(void* buffer, int32_t len, int32_t offset);
+        virtual void        signalOpened();
+        virtual void        signalFailedOpen();
+        virtual void        signalCompleted(bool success);
+        virtual void        signalCacheFilename(const std::wstring& cacheFilename);
 
-        virtual void		setStream(NPStream* stream);
-        virtual NPStream*	getStream() const;
-        virtual NpapiBrowserHost*	getHost() const;
+        virtual void        setStream(NPStream* stream);
+        virtual NPStream*   getStream() const;
+        virtual NpapiBrowserHost*   getHost() const;
 
     private:
-        //std::vector<char>		internalBuffer;
-        NPStream*				stream;
-        NpapiBrowserHost*		host;
+        //std::vector<char>     internalBuffer;
+        NPStream*               stream;
+        NpapiBrowserHost*       host;
 
         friend class NpapiPlugin;
     };

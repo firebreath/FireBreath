@@ -21,14 +21,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 /* NPN_GetValue */
-NPError	NP_LOADDS NpapiHost::NH_GetValue(NPP instance, NPNVariable variable, void *ret_value)
+NPError NP_LOADDS NpapiHost::NH_GetValue(NPP instance, NPNVariable variable, void *ret_value)
 {
     // TODO: Implement NpapiHost_GetValue
     return NPERR_INVALID_PARAM;
 }
 
 /* NPN_SetValue */
-NPError	NP_LOADDS NpapiHost::NH_SetValue(NPP instance, NPPVariable variable, void *ret_alue)
+NPError NP_LOADDS NpapiHost::NH_SetValue(NPP instance, NPPVariable variable, void *ret_alue)
 {
     // TODO: Implement NpapiHost_SetValue
     return NPERR_INVALID_PARAM;
@@ -36,7 +36,7 @@ NPError	NP_LOADDS NpapiHost::NH_SetValue(NPP instance, NPPVariable variable, voi
 
 
 /* NPN_GetUrlNotify */
-NPError	NP_LOADDS NPN_GetURLNotify(NPP instance, const char* url, const char* window, void* notifyData)
+NPError NP_LOADDS NPN_GetURLNotify(NPP instance, const char* url, const char* window, void* notifyData)
 {
     return NPERR_INVALID_PARAM;
 }
@@ -48,7 +48,7 @@ NPError NP_LOADDS NpapiHost::NH_PostURLNotify(NPP instance, const char* url, con
 }
 
 /* NPN_GetUrl */
-NPError	NP_LOADDS NpapiHost::NH_GetURL(NPP instance, const char* url, const char* window)
+NPError NP_LOADDS NpapiHost::NH_GetURL(NPP instance, const char* url, const char* window)
 {
     return NPERR_INVALID_PARAM;
 }
@@ -65,13 +65,13 @@ NPError NP_LOADDS NpapiHost::NH_PostURL(NPP instance, const char* url, const cha
 }
 
 /* NPN_RequestRead */
-NPError	NP_LOADDS NpapiHost::NH_RequestRead(NPStream* stream, NPByteRange* rangeList)
+NPError NP_LOADDS NpapiHost::NH_RequestRead(NPStream* stream, NPByteRange* rangeList)
 {
     return NPERR_INVALID_PARAM;
 }
 
 /* NPN_NewStream */
-NPError	NP_LOADDS NpapiHost::NH_NewStream(NPP instance, NPMIMEType type, const char* window, NPStream** stream)
+NPError NP_LOADDS NpapiHost::NH_NewStream(NPP instance, NPMIMEType type, const char* window, NPStream** stream)
 {
     return NPERR_INVALID_PARAM;
 }
@@ -94,7 +94,7 @@ void NP_LOADDS NpapiHost::NH_Status(NPP instance, const char* message)
 }
 
 /* NPN_UserAgent */
-const char*	NP_LOADDS NpapiHost::NH_UserAgent(NPP instance)
+const char* NP_LOADDS NpapiHost::NH_UserAgent(NPP instance)
 {
     return "Fake Browser Host!";
 }
@@ -146,5 +146,5 @@ bool NP_LOADDS NpapiHost::NH_Evaluate(NPP npp, NPObject *obj, NPString *script, 
 /* NPN_SetException */
 void NP_LOADDS NpapiHost::NH_SetException(NPObject *obj, const NPUTF8 *message)
 {
-	
+    
 }

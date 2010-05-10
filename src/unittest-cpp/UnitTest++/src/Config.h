@@ -5,13 +5,13 @@
 
 #if defined(_MSC_VER)
     #pragma warning(disable:4127) // conditional expression is constant
-	#pragma warning(disable:4702) // unreachable code
-	#pragma warning(disable:4722) // destructor never returns, potential memory leak
+    #pragma warning(disable:4702) // unreachable code
+    #pragma warning(disable:4722) // destructor never returns, potential memory leak
 
-	#if (_MSC_VER == 1200)  // VC6
-		#pragma warning(disable:4786)
-		#pragma warning(disable:4290)
-	#endif
+    #if (_MSC_VER == 1200)  // VC6
+        #pragma warning(disable:4786)
+        #pragma warning(disable:4290)
+    #endif
 #endif
 
 #if defined(unix) || defined(__unix__) || defined(__unix) || defined(linux) || \
