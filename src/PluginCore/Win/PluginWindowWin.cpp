@@ -150,3 +150,8 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     else
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
+
+void PluginWindowWin::InvalidateWindow()
+{
+	InvalidateRect(m_hWnd, NULL, true);
+}

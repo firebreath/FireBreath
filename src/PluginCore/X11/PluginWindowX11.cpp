@@ -201,3 +201,8 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 //     }
 //     return false;
 // }
+
+void PluginWindowWin::InvalidateWindow()
+{
+	// Doesn't exist yet
+}

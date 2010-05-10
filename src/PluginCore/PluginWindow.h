@@ -31,6 +31,8 @@ namespace FB {
     public:
         PluginWindow() { };
         virtual ~PluginWindow() { };
+
+		virtual void InvalidateWindow() = 0;
     };
 };
 

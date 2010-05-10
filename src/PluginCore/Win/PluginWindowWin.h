@@ -42,6 +42,9 @@ namespace FB {
         HWND getHWND() { return m_hWnd; }
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
+
+		virtual void InvalidateWindow();
+
     protected:
         static PluginWindowMap m_windowMap;
 

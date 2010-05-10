@@ -36,6 +36,7 @@ namespace FB {
         void getWindowClipping(int &t, int &l, int &b, int &r);
         GdkNativeWindow getWindow() { return m_window; }
         static gboolean _EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+		virtual void InvalidateWindow();
     protected:
         gboolean EventCallback(GtkWidget *widget, GdkEvent *event);
 
