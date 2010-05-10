@@ -22,7 +22,7 @@ BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
         int i = 2;
         i++;
     }
-    BOOL bHandled = TRUE;
+    BOOL bHandled = FALSE;
     switch(dwMsgMapID)
     {
     case 0: {
