@@ -148,6 +148,7 @@ public:
                 }
             }
         }
+        pluginMain->setParams(paramMap);
         return S_OK;
     }
 
