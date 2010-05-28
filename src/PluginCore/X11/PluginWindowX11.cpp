@@ -52,6 +52,7 @@ PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
         GDK_KEY_PRESS_MASK |
         GDK_KEY_RELEASE_MASK |
         GDK_POINTER_MOTION_MASK |
+        GDK_POINTER_MOTION_HINT_MASK |
         GDK_SCROLL_MASK |
         GDK_EXPOSURE_MASK |
         GDK_VISIBILITY_NOTIFY_MASK |
