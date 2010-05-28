@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-// #include "PluginEvents/X11Event.h"
+#include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
@@ -131,7 +131,12 @@ inline bool isButtonEvent(GdkEvent *event)
 
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 {
-    gboolean handled = 0;
+    X11Event ev(widget, event);
+    if (SendEvent(&ev)) {
+        return true;
+    }
+
+	gboolean handled = 0;
     GdkEventKey *key;
     GdkEventFocus *focus;
     GdkEventMotion *motion;
