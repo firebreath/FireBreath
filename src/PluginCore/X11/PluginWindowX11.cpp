@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-// #include "PluginEvents/X11Event.h"
+#include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
@@ -52,6 +52,7 @@ PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
         GDK_KEY_PRESS_MASK |
         GDK_KEY_RELEASE_MASK |
         GDK_POINTER_MOTION_MASK |
+        GDK_POINTER_MOTION_HINT_MASK |
         GDK_SCROLL_MASK |
         GDK_EXPOSURE_MASK |
         GDK_VISIBILITY_NOTIFY_MASK |
@@ -131,6 +132,11 @@ inline bool isButtonEvent(GdkEvent *event)
 
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 {
+    X11Event ev(widget, event);
+    if (SendEvent(&ev)) {
+        return true;
+    }
+
     gboolean handled = 0;
     GdkEventKey *key;
     GdkEventFocus *focus;

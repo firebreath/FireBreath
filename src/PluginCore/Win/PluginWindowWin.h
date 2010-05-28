@@ -48,7 +48,7 @@ namespace FB {
     protected:
         static PluginWindowMap m_windowMap;
 
-        bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT lRes);
+        bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT & lRes);
         WNDPROC lpOldWinProc;
         HWND m_hWnd;
 
@@ -56,7 +56,7 @@ namespace FB {
                                    UINT uMsg,
                                    WPARAM wParam,
                                    LPARAM lParamm,
-                                   LRESULT lRes) { return false; }
+                                   LRESULT & lRes) { return false; }
     };
 
 };
