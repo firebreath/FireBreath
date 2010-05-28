@@ -46,11 +46,11 @@ PluginWindowWin::~PluginWindowWin()
         m_windowMap.erase(it);
 }
 
-bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT lRes)
+bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT & lRes)
 {
     lRes = 0;
     // Before all else, give the plugin a chance to handle the platform specific event
-    WindowsEvent ev(hWnd, uMsg, wParam, lParam);
+    WindowsEvent ev(hWnd, uMsg, wParam, lParam, lRes);
     if (SendEvent(&ev)) {
         return true;
     }

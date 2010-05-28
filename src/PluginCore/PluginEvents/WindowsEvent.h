@@ -28,8 +28,8 @@ namespace FB {
     class WindowsEvent : public PluginEvent
     {
     public:
-        WindowsEvent(HWND hWnd, unsigned int msg, unsigned int wparam, long lparam)
-            : hWnd(hWnd), uMsg(msg), wParam(wparam), lParam(lparam)
+        WindowsEvent(HWND hWnd, unsigned int msg, unsigned int wparam, long lparam, LRESULT & lres)
+            : hWnd(hWnd), uMsg(msg), wParam(wparam), lParam(lparam), lRes(lres)
         { }
 
     public:
@@ -37,7 +37,8 @@ namespace FB {
         unsigned int uMsg;
         unsigned int wParam;
         long lParam;
-    };
+		LRESULT & lRes;
+	};
 };
 
 #endif
