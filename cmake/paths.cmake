@@ -12,9 +12,6 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-set (FIREBREATH_SOURCE_DIR ${FB_ROOT_DIR})
-set (FIREBREATH_BINARY_DIR ${BUILD_DIR})
-
 set (BOOST_SOURCE_DIR ${SOURCE_DIR}/3rdParty/boost)
 set (GECKOSDK_SOURCE_DIR ${SOURCE_DIR}/3rdParty/gecko-sdk/includes)
 
