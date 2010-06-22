@@ -28,7 +28,7 @@ include_directories(
 	${SCRIPTINGCORE_SOURCE_DIR}
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     ${GEN_DIR}/gen
     )
 

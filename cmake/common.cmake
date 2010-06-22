@@ -45,11 +45,20 @@ endif()
 # Get the project paths
 include(${CMAKE_DIR}/paths.cmake)
 
+# include file with build options
+include(${CMAKE_DIR}/options.cmake)
+
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)
 
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
+endif()
+
+if (WITH_SYSTEM_BOOST)
+    find_package(Boost REQUIRED)
+else()
+    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
 endif()
 
 if (NOT GEN_DIR)

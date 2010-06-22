@@ -28,7 +28,7 @@ include_directories(
     ${FIREBREATH_CONFIG_DIR}
     ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

@@ -29,7 +29,7 @@ include_directories(
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 add_definitions(

@@ -30,7 +30,7 @@ include_directories(
     ${GEN_DIR}/gen
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 file (GLOB SCRIPTING RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

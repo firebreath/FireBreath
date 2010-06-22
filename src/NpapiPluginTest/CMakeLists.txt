@@ -30,7 +30,7 @@ include_directories(
     ${NPAPIHOST_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${GEN_DIR}/gen
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     ${UNITTEST_FW_SOURCE_DIR}/src
     )
 
