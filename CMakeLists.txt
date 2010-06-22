@@ -18,13 +18,7 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 Project (FireBreath)
 
-# use prep*.* scripts
-
-#if(not ${CMAKE_DIR})
-##    set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-#    message(FATAL_ERROR "use one of the prep*.* scripts")
-#endif()
-
+set(CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 
 include(${CMAKE_DIR}/common.cmake)
 

@@ -1,14 +1,22 @@
 @echo off
 
+set GEN="Visual Studio 9 2008"
+
 IF /I "%1"=="examples" GOTO examples
 
 :normal
 echo Building projects
-cmake -D GEN="Visual Studio 9 2008" -P cmake\genproject.cmake
-goto end
+set BUILDDIR=build
+goto runcmake
 
 :examples
 echo Building example projects
-cmake -D GEN="Visual Studio 9 2008" -D BUILD_EXAMPLES="YES" -P cmake\genproject.cmake
+set BUILDDIR=buildex
+set EXAMPLES=-DBUILD_EXAMPLES:BOOL=YES
+goto runcmake
 
-:end
+:runcmake
+mkdir %BUILDDIR%
+pushd %BUILDDIR%
+cmake -G %GEN% %EXAMPLES% ..
+popd
