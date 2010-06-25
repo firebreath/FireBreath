@@ -167,7 +167,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         // Mouse button down
         case GDK_BUTTON_PRESS: {
             MouseDownEvent evt(btn, button->x, button->y);
-            SendEvent(&evt) ? 1 : 0;
+            return SendEvent(&evt) ? 1 : 0;
         } break;
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
