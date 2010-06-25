@@ -13,7 +13,7 @@
 #Copyright 2010 Richard Prescott <rdprescott@gmail.com>
 #\**********************************************************/
 
-include(${CMAKE_DIR}/FindPkgConfig.cmake)
+find_package(PkgConfig)
 
 # not even optional
 set(BUILD_SHARED_LIBS YES)
