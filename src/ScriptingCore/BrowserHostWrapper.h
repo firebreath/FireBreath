@@ -55,6 +55,7 @@ namespace FB
     public:
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
+        virtual void evaluateJavaScript(const std::string &script) = 0;
         virtual void htmlLog(const std::string& str);
 
     protected:

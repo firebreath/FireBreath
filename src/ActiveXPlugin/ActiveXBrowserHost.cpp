@@ -66,6 +66,25 @@ FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
     return FB::JSAPI_DOMWindow(retObj);
 }
 
+void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
+{
+    VARIANT res;
+
+    if(m_htmlDoc.p == NULL) {
+        throw FB::script_error("Can't execute JavaScript: Window is NULL");
+    }
+
+    HRESULT hr = m_htmlWin->execScript(CComBSTR(script.c_str()),
+                                       CComBSTR("javascript"), &res);
+    if (SUCCEEDED(hr)) {
+        /* Throw away returned VARIANT, this method always returns VT_EMPTY.
+           http://msdn.microsoft.com/en-us/library/aa741364(VS.85).aspx */
+        return;
+    } else {
+        throw FB::script_error("Error executing JavaScript code");
+    }
+}
+
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 {
     CComVariant converted;

@@ -40,6 +40,7 @@ public:
 public:
     FB::JSAPI_DOMDocument getDOMDocument();
     FB::JSAPI_DOMWindow getDOMWindow();
+    void evaluateJavaScript(const std::string &script);
 
 protected:
     HWND m_hWnd;
@@ -54,3 +55,4 @@ public:
 };
 
 #endif // H_ACTIVEXBROWSERHOST
+
