@@ -28,6 +28,17 @@ if (WIN32)
 	    "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}      /SUBSYSTEM:WINDOWS")
 	set(CMAKE_SHARED_LINKER_FLAGS_RELEASE
 	    "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}    /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF")
+
+	if (WITH_DYNAMIC_MSVC_RUNTIME)
+	    message(STATUS "Building with dynamic MSVC runtime")
+	    foreach(flag_var
+	            CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+	            CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+	        if(${flag_var} MATCHES "/MT")
+	            string(REGEX REPLACE "/MT" "/MD" ${flag_var} "${${flag_var}}")
+	        endif()
+	    endforeach(flag_var)
+	endif()
 endif()
 
 # We define preprocessor flags here in addition to other flags
