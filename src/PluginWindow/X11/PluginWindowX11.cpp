@@ -137,8 +137,6 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         return true;
     }
 
-    gboolean handled = 0;
-    GdkEventKey *key;
     GdkEventFocus *focus;
     GdkEventMotion *motion;
     GdkEventButton *button;
