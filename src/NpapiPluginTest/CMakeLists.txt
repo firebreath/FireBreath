@@ -55,7 +55,4 @@ target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
     NPAPIHost
     UnitTest++
-
-add_custom_command(TARGET ${PROJNAME} POST_BUILD
-    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJNAME}")
     )
