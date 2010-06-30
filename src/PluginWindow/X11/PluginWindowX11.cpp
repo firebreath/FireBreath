@@ -189,6 +189,8 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         default:
             return false;
     }
+
+    return false;
 }
 
 //
