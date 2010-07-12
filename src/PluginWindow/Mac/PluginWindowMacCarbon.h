@@ -28,7 +28,8 @@ namespace FB {
         PluginWindowMacCarbon();
         virtual ~PluginWindowMacCarbon();
         
-        virtual int16_t HandleEvent(EventRecord* evt) { return 0; };
+        virtual int16_t HandleEvent(EventRecord* evt) { return 0; }
+        void InvalidateWindow() {/* TODO */}
         virtual void clearWindow();
 
         // Accessors 
@@ -37,7 +38,6 @@ namespace FB {
         int getWindowHeight();
         int getWindowWidth();
 
-        void setWindow(PluginWindow win);
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
 

@@ -30,7 +30,6 @@ namespace FB {
 
     public:
         void clearWindow();
-        void setWindow(PluginWindow win);
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
         int16_t HandleEvent(NPCocoaEvent* event);
