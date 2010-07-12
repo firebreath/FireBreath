@@ -19,4 +19,5 @@ endif(WIN32)
 
 add_subdirectory(${NPAPIPLUGIN_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiPlugin)
 add_subdirectory(${NPAPIPLUGINTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiPluginTest)
+add_subdirectory(${PLUGINWINDOW_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginWindow)
 

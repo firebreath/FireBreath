@@ -32,7 +32,7 @@ extern "C" {
 #ifndef _NO_MAIN
 int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown)
 {
-    printf("Main called");
+    printf("main()\n");
     NP_Initialize(browserFuncs);
     NP_GetEntryPoints(pluginFuncs);
     *shutdown = (NPP_ShutdownProcPtr)&NP_Shutdown;
@@ -49,7 +49,7 @@ void initPluginModule()
 
 NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 {
-    printf("GetEntryPoints called");
+    printf("NP_GetEntryPoints()\n");
     initPluginModule();
     module->getPluginFuncs(pFuncs);
     return NPERR_NO_ERROR;
@@ -57,7 +57,7 @@ NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 
 NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
 {
-    printf("Initialize called");
+    printf("NP_Initialize()\n");
     initPluginModule();
     module->setNetscapeFuncs(pFuncs);
 

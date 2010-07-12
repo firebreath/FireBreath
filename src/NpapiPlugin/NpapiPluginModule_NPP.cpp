@@ -112,6 +112,8 @@ NpapiPluginModule *NpapiPluginModule::Default = NULL;
 NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc,
                                    char* argn[], char* argv[], NPSavedData* saved)
 {
+    printf("NPP_New()\n");
+    
     if (instance == NULL) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

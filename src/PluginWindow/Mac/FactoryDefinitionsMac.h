@@ -15,23 +15,30 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitionsMac
 #define H_FactoryDefinitionsMac
 
+#include "npapi.h"
 #include <Carbon/Carbon.h>
 
 namespace FB {
     class JSAPI;
     class PluginCore;
-    class PluginWindowMacQuickDraw;
+    class PluginWindowMacCarbonQD;
+    class PluginWindowMacCarbonCG;
+    class PluginWindowMacCocoaCA;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
     };
-}
+};
 
 // These global functions *must* be defined in your main plugin project -- that's the one that
 // actually builds into a DLL that everything links to.  These are used to determine what
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowMacQuickDraw *_createPluginWindow(CGrafPtr port, int x, int y);
+FB::PluginWindowMacCarbonQD* _createPluginWindow(CGrafPtr port, int x, int y);
+
+FB::PluginWindowMacCarbonCG*_createPluginWindow(NP_CGContext* context);
+
+FB::PluginWindowMacCarbonCG*_createPluginWindow();
 
 #endif

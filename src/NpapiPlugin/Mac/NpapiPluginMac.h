@@ -16,19 +16,39 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_NPAPI_NPAPIPLUGINMAC
 
 #include "NpapiPlugin.h"
+#include "PluginWindow.h"
 
 namespace FB {
     class PluginWindowMacQuickDraw;
+    class PluginWindowMacCGCarbon;
+    
     namespace Npapi {
 
     class NpapiPluginMac : public NpapiPlugin
-    {
+    {        
+    public:
+        enum EventModel
+        {
+            EventModelCarbon,
+            EventModelCocoa
+        };
+        
+        enum DrawingModel
+        {
+            DrawingModelQuickDraw,
+            DrawingModelCoreGraphics,
+            DrawingModelCoreAnimation
+        };
+        
     public:
         NpapiPluginMac(NpapiBrowserHost *host);
         virtual ~NpapiPluginMac(void);
+        
+        EventModel   getEventModel  () const;
+        DrawingModel getDrawingModel() const;
 
     protected:
-        FB::PluginWindowMacQuickDraw *pluginWin;
+        FB::PluginWindow* pluginWin;
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
@@ -36,6 +56,17 @@ namespace FB {
         // plugin instance
         NPError SetWindow(NPWindow* window);
         int16_t HandleEvent(void* event);
+        
+    private:
+        NPError SetWindowCarbonQD(NPWindow*);
+        NPError SetWindowCarbonCG(NPWindow*);
+        NPError SetWindowCocoaCG(NPWindow*);
+        NPError SetWindowCocoaCA(NPWindow*);
+        int16_t HandleEventCarbon(void* event);
+        int16_t HandleEventCocoa(void* event);
+        
+        EventModel m_eventModel;
+        DrawingModel m_drawingModel;
     };
 
 }; }; // FB::Npapi

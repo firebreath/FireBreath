@@ -15,6 +15,7 @@
 get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}" ABSOLUTE)
 configure_file(PluginConfig.cmake ${CMAKE_CURRENT_BINARY_DIR}/PluginConfig.cmake COPYONLY)
 
+include(${CMAKE_DIR}/PluginConfigDefaults.cmake)
 include(PluginConfig.cmake)
 
 get_filename_component(TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
@@ -30,6 +31,7 @@ include_directories(
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
+    ${PLUGINWINDOW_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     )
@@ -52,6 +54,7 @@ endforeach()
 
 set(PLUGIN_INTERNAL_DEPS
     ${PLUGIN_PREFIX}_NpapiPlugin
+    ${PLUGIN_PREFIX}_PluginWindow
     ScriptingCore
     PluginCore
     )
