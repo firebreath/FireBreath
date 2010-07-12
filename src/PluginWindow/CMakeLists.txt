@@ -61,11 +61,13 @@ SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Mac.h
     Mac/*Mac.cpp
+    Mac/*Carbon.h
+    Mac/*Carbon.cpp
     )
 
 file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*QuickDraw.h
-    Mac/*QuickDraw.cpp
+    Mac/*QD.h
+    Mac/*QD.cpp
     )
 
 file (GLOB MAC_COCOAWINDOW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -74,13 +76,13 @@ file (GLOB MAC_COCOAWINDOW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 file (GLOB MAC_COREGRAPHICS_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CoreGraphics.h
-    Mac/*CoreGraphics.cpp
+    Mac/*CG.h
+    Mac/*CG.cpp
     )
 
 file (GLOB MAC_COREANIMATION_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CoreAnimation.h
-    Mac/*CoreAnimation.cpp
+    Mac/*CA.h
+    Mac/*CA.cpp
     )  
 
 if(FBMAC_USE_QUICKDRAW)

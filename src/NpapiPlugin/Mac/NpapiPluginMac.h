@@ -16,9 +16,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_NPAPI_NPAPIPLUGINMAC
 
 #include "NpapiPlugin.h"
+#include "PluginWindow.h"
 
 namespace FB {
     class PluginWindowMacQuickDraw;
+    class PluginWindowMacCGCarbon;
     
     namespace Npapi {
 
@@ -56,11 +58,12 @@ namespace FB {
         int16_t HandleEvent(void* event);
         
     private:
-        NPError SetWindowQuickDraw    (NPWindow*);
-        NPError SetWindowCoreGraphics (NPWindow*);
-        NPError SetWindowCoreAnimation(NPWindow*);
+        NPError SetWindowCarbonQD(NPWindow*);
+        NPError SetWindowCarbonCG(NPWindow*);
+        NPError SetWindowCocoaCG(NPWindow*);
+        NPError SetWindowCocoaCA(NPWindow*);
         int16_t HandleEventCarbon(void* event);
-        int16_t HandleEventCocoa (void* event);
+        int16_t HandleEventCocoa(void* event);
         
         EventModel m_eventModel;
         DrawingModel m_drawingModel;
