@@ -1,24 +1,50 @@
 /**********************************************************\ 
 Original Author: Richard Bateman (taxilian)
 
-Created:    Dec 7, 2009
+Created:    April 2, 2010
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
-            - or -
-            GNU Lesser General Public License, version 2.1
-            http://www.gnu.org/licenses/lgpl-2.1.html
+New BSD License
+http://www.opensource.org/licenses/bsd-license.php
+- or -
+GNU Lesser General Public License, version 2.1
+http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 Richard Bateman, Firebreath development team
+Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_PLUGINEVENTS_MOUSEEVENTS
-#define H_FB_PLUGINEVENTS_MOUSEEVENTS
+#ifndef H_FB_PLUGINEVENTS_KEYBOARDEVENTS
+#define H_FB_PLUGINEVENTS_KEYBOARDEVENTS
 
 #include "PluginEvent.h"
+#include "KeyCodes.h"
 
 namespace FB {
 
+    class KeyEvent : public PluginEvent
+    {
+    public:
+        KeyEvent(FBKeyCode fb_key, unsigned int os_key)
+            :
+        m_key_code( fb_key ), m_os_key_code( os_key )
+        { }
+
+    public:
+        FBKeyCode m_key_code;
+        unsigned int m_os_key_code;
+    };
+
+    class KeyUpEvent : public KeyEvent
+    {
+    public:
+        KeyUpEvent(FBKeyCode fb_key, unsigned int os_key) : KeyEvent(fb_key, os_key) {}
+    };
+
+    class KeyDownEvent : public KeyEvent
+    {
+    public:
+        KeyDownEvent(FBKeyCode fb_key, unsigned int os_key) :   KeyEvent(fb_key, os_key) {}
+    };
+
 };
 
-#endif // H_FB_PLUGINEVENTS_MOUSEEVENTS
+#endif // H_FB_PLUGINEVENTS_KEYBOARDEVENTS

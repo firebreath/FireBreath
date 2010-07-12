@@ -157,10 +157,10 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    //NpapiPlugin *plugin = getPlugin(instance);
+    NpapiPlugin *plugin = getPlugin(instance);
 
-    //plugin->shutdown();
-    //delete plugin;
+    plugin->shutdown();
+    delete plugin;
 
     NpapiPDataHolder* pdata = static_cast<NpapiPDataHolder*>(instance->pdata);
     delete pdata;
