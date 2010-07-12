@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 17, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -41,7 +41,7 @@ class ATL_NO_VTABLE CFBControl :
     public CComControl<CFBControl>,
 
     public JSAPI_IDispatchEx<CFBControl, IFBControl, &DIID_IFBComEventSource>,
-    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
+    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/ >,
 
     // Required for standard events
     public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &FB_LIBID>,
@@ -90,9 +90,9 @@ public:
     }
 
     STDMETHOD(SetClientSite)(IOleClientSite *pClientSite)
-	{
+    {
         HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
-    	if (!pClientSite)
+        if (!pClientSite)
             return hr;
 
         CComPtr<IOleContainer> container;
@@ -113,7 +113,7 @@ public:
         //this->FireOnChanged(DISPID_READYSTATE);
 
         return S_OK;
-	}
+    }
 
     /* IPersistPropertyBag calls */
     // This will be called once when the browser initializes the property bag (PARAM tags)
@@ -148,6 +148,7 @@ public:
                 }
             }
         }
+        pluginMain->setParams(paramMap);
         return S_OK;
     }
 

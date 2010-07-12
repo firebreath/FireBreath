@@ -3,8 +3,8 @@
 #
 #Created:    Nov 20, 2009
 #License:    Dual license model; choose one of two:
-#            Eclipse Public License - Version 1.0
-#            http://www.eclipse.org/legal/epl-v10.html
+#            New BSD License
+#            http://www.opensource.org/licenses/bsd-license.php
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
@@ -29,7 +29,7 @@ include_directories(
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 add_definitions(
@@ -39,8 +39,8 @@ add_definitions(
 )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ./*.h
-    ./*.cpp
+    ./[^.]*.h
+    ./[^.]*.cpp
     )
 
 set (SOURCES
@@ -52,12 +52,14 @@ add_executable(${PROJNAME} ${SOURCES})
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
+    PluginCore
     UnitTest++
     )
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
+    PluginCore
     UnitTest++
     )
 

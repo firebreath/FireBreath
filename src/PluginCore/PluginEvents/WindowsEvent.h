@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -28,8 +28,8 @@ namespace FB {
     class WindowsEvent : public PluginEvent
     {
     public:
-        WindowsEvent(HWND hWnd, unsigned int msg, unsigned int wparam, long lparam)
-            : hWnd(hWnd), uMsg(msg), wParam(wparam), lParam(lparam)
+        WindowsEvent(HWND hWnd, unsigned int msg, unsigned int wparam, long lparam, LRESULT & lres)
+            : hWnd(hWnd), uMsg(msg), wParam(wparam), lParam(lparam), lRes(lres)
         { }
 
     public:
@@ -37,6 +37,7 @@ namespace FB {
         unsigned int uMsg;
         unsigned int wParam;
         long lParam;
+        LRESULT & lRes;
     };
 };
 

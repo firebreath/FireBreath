@@ -3,8 +3,8 @@
 #
 #Created:    Nov 20, 2009
 #License:    Dual license model; choose one of two:
-#            Eclipse Public License - Version 1.0
-#            http://www.eclipse.org/legal/epl-v10.html
+#            New BSD License
+#            http://www.opensource.org/licenses/bsd-license.php
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
@@ -12,23 +12,16 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-get_filename_component (CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
 if (BUILD_EXAMPLES)
-    get_filename_component (BUILD_DIR "${CMAKE_DIR}/../buildex" ABSOLUTE)
     set(PROJECT_SRC_DIR "examples")
 else()
-    get_filename_component (BUILD_DIR "${CMAKE_DIR}/../build" ABSOLUTE)
     set(PROJECT_SRC_DIR "projects")
 endif()
 
-set (PROJECT_ROOT "${BUILD_DIR}/projects")
-set (BIN_DIR "${BUILD_DIR}/bin")
-
-if (NOT EXISTS ${BUILD_DIR})
-   file (MAKE_DIRECTORY ${BUILD_DIR})
-endif()
+set (PROJECT_ROOT "${CMAKE_BINARY_DIR}/projects")
+set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
 if (WIN32)
     set (PLATFORM_NAME "Win")
@@ -45,11 +38,20 @@ endif()
 # Get the project paths
 include(${CMAKE_DIR}/paths.cmake)
 
+# include file with build options
+include(${CMAKE_DIR}/options.cmake)
+
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)
 
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
+endif()
+
+if (WITH_SYSTEM_BOOST)
+    find_package(Boost REQUIRED)
+else()
+    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
 endif()
 
 if (NOT GEN_DIR)

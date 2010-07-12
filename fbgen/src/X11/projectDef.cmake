@@ -8,9 +8,9 @@
 
 # remember that the current source dir is the project root; this file is in ${PLATFORM_NAME}/
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PLATFORM_NAME}/*.cpp
-    ${PLATFORM_NAME}/*.h
-    ${PLATFORM_NAME}/*.cmake
+    ${PLATFORM_NAME}/[^.]*.cpp
+    ${PLATFORM_NAME}/[^.]*.h
+    ${PLATFORM_NAME}/[^.]*.cmake
     )
 
 SOURCE_GROUP(${PLATFORM_NAME} FILES ${PLATFORM})

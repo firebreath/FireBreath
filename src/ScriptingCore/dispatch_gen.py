@@ -3,8 +3,8 @@
 #
 # Created:    November 6, 2009
 # License:    Dual license model; choose one of two:
-#             Eclipse Public License - Version 1.0
-#             http://www.eclipse.org/legal/epl-v10.html
+#             New BSD License
+#             http://www.opensource.org/licenses/bsd-license.php
 #             - or -
 #             GNU Lesser General Public License, version 2.1
 #             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -56,8 +56,8 @@ wl("/**********************************************************\\")
 wl("Original Author: Georg Fritzsche")
 wl("Generated on: " + date.today().isoformat())
 wl("License:      Dual license model; choose one of two:")
-wl("              Eclipse Public License - Version 1.0")
-wl("              http://www.eclipse.org/legal/epl-v10.html")
+wl("              New BSD License")
+wl("              http://www.opensource.org/licenses/bsd-license.php")
 wl("              - or -")
 wl("              GNU Lesser General Public License, version 2.1")
 wl("              http://www.gnu.org/licenses/lgpl-2.1.html")

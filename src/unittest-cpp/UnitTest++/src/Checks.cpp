@@ -8,7 +8,7 @@ namespace {
 void CheckStringsEqual(TestResults& results, char const* expected, char const* actual, 
                        TestDetails const& details)
 {
-	using namespace std;
+    using namespace std;
 
     if (strcmp(expected, actual))
     {

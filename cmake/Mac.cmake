@@ -3,8 +3,8 @@
 #
 #Created:    Jan 11, 2010
 #License:    Dual license model; choose one of two:
-#            Eclipse Public License - Version 1.0
-#            http://www.eclipse.org/legal/epl-v10.html
+#            New BSD License
+#            http://www.opensource.org/licenses/bsd-license.php
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
@@ -12,7 +12,7 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-set (PATCH_DESC_FILENAME ${BUILD_DIR}/xcode_patch_desc.txt)
+set (PATCH_DESC_FILENAME ${CMAKE_BINARY_DIR}/xcode_patch_desc.txt)
 
 if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
     execute_process (COMMAND
@@ -97,7 +97,7 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
 
     patch_xcode_plugin( "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
-    patch_xcode_plugin( "${BUILD_DIR}/FireBreath.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
+    patch_xcode_plugin( "${CMAKE_BINARY_DIR}/FireBreath.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
 
 ENDMACRO(add_mac_plugin)
 

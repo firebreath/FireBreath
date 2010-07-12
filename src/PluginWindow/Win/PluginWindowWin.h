@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Nov 24, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -42,18 +42,21 @@ namespace FB {
         HWND getHWND() { return m_hWnd; }
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
+
+        virtual void InvalidateWindow();
+
     protected:
         static PluginWindowMap m_windowMap;
 
-        bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT lRes);
-    	WNDPROC lpOldWinProc;
+        bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT & lRes);
+        WNDPROC lpOldWinProc;
         HWND m_hWnd;
 
         virtual bool CustomWinProc(HWND hWnd,
                                    UINT uMsg,
                                    WPARAM wParam,
                                    LPARAM lParamm,
-                                   LRESULT lRes) { return false; }
+                                   LRESULT & lRes) { return false; }
     };
 
 };

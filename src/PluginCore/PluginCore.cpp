@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -101,7 +101,7 @@ JSAPI* PluginCore::getRootJSAPI()
 
 PluginWindow* PluginCore::GetWindow() const
 {
-	return m_Window;
+    return m_Window;
 }
 
 void PluginCore::SetWindow(PluginWindow *wind)

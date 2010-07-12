@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 21, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -19,7 +19,7 @@ TEST(TypeIDMapTest_voidptr)
 {
     PRINT_TESTNAME;
 
-	using namespace FB;
+    using namespace FB;
 
     TypeIDMap<void *> idMap((void*)0x1);
 
@@ -40,7 +40,7 @@ TEST(TypeIDMapTest_voidptr)
 TEST(TypeIDMapTest_int)
 {
     PRINT_TESTNAME;
-	using namespace FB;
+    using namespace FB;
 
     TypeIDMap<int> idMap(1);
 
@@ -61,7 +61,7 @@ TEST(TypeIDMapTest_int)
 TEST(TypeIDMapTest_setid)
 {
     PRINT_TESTNAME;
-	using namespace FB;
+    using namespace FB;
 
     TypeIDMap<int> idMap(1);
 
@@ -83,8 +83,8 @@ TEST(TypeIDMapTest_setid)
 
 TEST(TypeIDMapTest_testlong)
 {
-	PRINT_TESTNAME;
-	using namespace FB;
+    PRINT_TESTNAME;
+    using namespace FB;
 
     TypeIDMap<long> idMap(100);
     idMap.setIdForValue(0, "value");

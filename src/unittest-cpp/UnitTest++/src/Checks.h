@@ -67,17 +67,17 @@ void CheckArrayEqual(TestResults& results, Expected const& expected, Actual cons
     {
         UnitTest::MemoryOutStream stream;
 
-		stream << "Expected [ ";
+        stream << "Expected [ ";
 
-		for (int expectedIndex = 0; expectedIndex < count; ++expectedIndex)
+        for (int expectedIndex = 0; expectedIndex < count; ++expectedIndex)
             stream << expected[expectedIndex] << " ";
 
-		stream << "] but was [ ";
+        stream << "] but was [ ";
 
-		for (int actualIndex = 0; actualIndex < count; ++actualIndex)
+        for (int actualIndex = 0; actualIndex < count; ++actualIndex)
             stream << actual[actualIndex] << " ";
 
-		stream << "]";
+        stream << "]";
 
         results.OnTestFailure(details, stream.GetText());
     }
@@ -107,7 +107,7 @@ void CheckArrayClose(TestResults& results, Expected const& expected, Actual cons
             stream << expected[expectedIndex] << " ";
         stream << "] +/- " << tolerance << " but was [ ";
 
-		for (int actualIndex = 0; actualIndex < count; ++actualIndex)
+        for (int actualIndex = 0; actualIndex < count; ++actualIndex)
             stream << actual[actualIndex] << " ";
         stream << "]";
 
@@ -129,7 +129,7 @@ void CheckArray2DClose(TestResults& results, Expected const& expected, Actual co
 
         stream << "Expected [ ";    
 
-		for (int expectedRow = 0; expectedRow < rows; ++expectedRow)
+        for (int expectedRow = 0; expectedRow < rows; ++expectedRow)
         {
             stream << "[ ";
             for (int expectedColumn = 0; expectedColumn < columns; ++expectedColumn)
@@ -137,9 +137,9 @@ void CheckArray2DClose(TestResults& results, Expected const& expected, Actual co
             stream << "] ";
         }
 
-		stream << "] +/- " << tolerance << " but was [ ";
+        stream << "] +/- " << tolerance << " but was [ ";
 
-		for (int actualRow = 0; actualRow < rows; ++actualRow)
+        for (int actualRow = 0; actualRow < rows; ++actualRow)
         {
             stream << "[ ";
             for (int actualColumn = 0; actualColumn < columns; ++actualColumn)
@@ -147,7 +147,7 @@ void CheckArray2DClose(TestResults& results, Expected const& expected, Actual co
             stream << "] ";
         }
 
-		stream << "]";
+        stream << "]";
 
         results.OnTestFailure(details, stream.GetText());
     }

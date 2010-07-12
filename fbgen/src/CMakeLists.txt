@@ -15,9 +15,9 @@ set (PROJNAME ${PLUGIN_NAME})
 browserplugin_project(${PROJNAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.cpp
-    *.h
-    *.cmake
+    [^.]*.cpp
+    [^.]*.h
+    [^.]*.cmake
     )
 
 # Generated files are stored in ${GENERATED} by the project configuration

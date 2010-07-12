@@ -3,8 +3,8 @@ Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -36,12 +36,12 @@ public:
 
     const std::string& version() const;
     const std::string& type() const;
-	const std::string& lastError() const;
+    const std::string& lastError() const;
 
     bool play(const std::string& file);
-	bool stop();
+    bool stop();
 
-	void setWindow(FB::PluginWindow*);
+    void setWindow(FB::PluginWindow*);
 
 private:
     boost::shared_ptr<PlayerContext> m_context;

@@ -3,8 +3,8 @@
 #
 #Created:    Nov 20, 2009
 #License:    Dual license model; choose one of two:
-#            Eclipse Public License - Version 1.0
-#            http://www.eclipse.org/legal/epl-v10.html
+#            New BSD License
+#            http://www.opensource.org/licenses/bsd-license.php
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
@@ -26,38 +26,38 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${SCRIPTINGCORE_SOURCE_DIR}
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 file (GLOB EVENTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    PluginEvents/*.h
-    PluginEvents/*.cpp
+    PluginEvents/[^.]*.h
+    PluginEvents/[^.]*.cpp
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    *.cpp
-    *.h
+    [^.]*.cpp
+    [^.]*.h
     )
 
 source_group(PluginEvents FILES ${EVENTS})
 
 file (GLOB X11_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    X11/*.h
-    X11/*.cpp
+    X11/[^.]*.h
+    X11/[^.]*.cpp
     )
 
 SOURCE_GROUP(X11 FILES ${X11_SOURCES})
 
 file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Win/*.h
-    Win/*.cpp
+    Win/[^.]*.h
+    Win/[^.]*.cpp
     )
 
 SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 
 file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*.h
-    Mac/*.cpp
+    Mac/[^.]*.h
+    Mac/[^.]*.cpp
     )
 
 SOURCE_GROUP(Mac FILES ${MAC_SOURCES})

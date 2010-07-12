@@ -38,21 +38,21 @@ TEST(TimeConstraintMacroComparesAgainstPreciseActual)
     int testLine = 0;
     RecordingReporter reporter;
 
-	{
-		UnitTest::TestResults testResults(&reporter);
-		ScopedCurrentTest scopedResults(testResults);
+    {
+        UnitTest::TestResults testResults(&reporter);
+        ScopedCurrentTest scopedResults(testResults);
 
-		UNITTEST_TIME_CONSTRAINT(1);  testLine = __LINE__;
+        UNITTEST_TIME_CONSTRAINT(1);  testLine = __LINE__;
 
-		// start a new timer and run until we're as little over the 1 msec
-		// threshold as we can achieve; this should guarantee that the "test"
-		// runs in some very small amount of time > 1 msec
-		UnitTest::Timer myTimer;
-		myTimer.Start();
+        // start a new timer and run until we're as little over the 1 msec
+        // threshold as we can achieve; this should guarantee that the "test"
+        // runs in some very small amount of time > 1 msec
+        UnitTest::Timer myTimer;
+        myTimer.Start();
 
-		while (myTimer.GetTimeInMs() < 1.001)
-			UnitTest::TimeHelpers::SleepMs(0);
-	}
+        while (myTimer.GetTimeInMs() < 1.001)
+            UnitTest::TimeHelpers::SleepMs(0);
+    }
 
     using namespace std;
 

@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 30, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -66,62 +66,81 @@ FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
     return FB::JSAPI_DOMWindow(retObj);
 }
 
+void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
+{
+    VARIANT res;
+
+    if(m_htmlDoc.p == NULL) {
+        throw FB::script_error("Can't execute JavaScript: Window is NULL");
+    }
+
+    HRESULT hr = m_htmlWin->execScript(CComBSTR(script.c_str()),
+                                       CComBSTR("javascript"), &res);
+    if (SUCCEEDED(hr)) {
+        /* Throw away returned VARIANT, this method always returns VT_EMPTY.
+           http://msdn.microsoft.com/en-us/library/aa741364(VS.85).aspx */
+        return;
+    } else {
+        throw FB::script_error("Error executing JavaScript code");
+    }
+}
+
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 {
     CComVariant converted;
     FB::variant retVal;
 
-	switch(cVar->vt)
-	{        
-	case VT_R4:
-	case VT_R8:
-	case VT_DECIMAL:
+    switch(cVar->vt)
+    {        
+    case VT_R4:
+    case VT_R8:
+    case VT_DECIMAL:
         converted.ChangeType(VT_R8, cVar);
-		retVal = (double)converted.dblVal;
-		break;
+        retVal = (double)converted.dblVal;
+        break;
 
-	case VT_I1:
-	case VT_I2:
-	case VT_I4:
-	case VT_UI1:
-	case VT_UI2:
-	case VT_UI4:
-	case VT_I8:
-	case VT_UI8:
-	case VT_INT:
-	case VT_UINT:
+    case VT_I1:
+    case VT_I2:
+    case VT_I4:
+    case VT_UI1:
+    case VT_UI2:
+    case VT_UI4:
+    case VT_I8:
+    case VT_UI8:
+    case VT_INT:
+    case VT_UINT:
         converted.ChangeType(VT_I4, cVar);
         retVal = (long)converted.lVal;
-		break;
+        break;
 
-	case VT_LPSTR:
-	case VT_LPWSTR:
-	case VT_BSTR:
-	case VT_CLSID:
-		{
+    case VT_LPSTR:
+    case VT_LPWSTR:
+    case VT_BSTR:
+    case VT_CLSID:
+        {
             converted.ChangeType(VT_BSTR, cVar);
-			CW2A cStr(converted.bstrVal);
+            CW2A cStr(converted.bstrVal);
 
             retVal = std::string(cStr);
-		}
-		break;
+        }
+        break;
 
-	case VT_DISPATCH:
+    case VT_DISPATCH:
         retVal = FB::JSObject(new IDispatchAPI(cVar->pdispVal, this)); 
-		break;
+        break;
 
-	case VT_ERROR:
-	case VT_BOOL:
+    case VT_ERROR:
+    case VT_BOOL:
         converted.ChangeType(VT_BOOL, cVar);
-		retVal = (converted.boolVal == VARIANT_TRUE) ? true : false;
-		break;
+        retVal = (converted.boolVal == VARIANT_TRUE) ? true : false;
+        break;
 
-	case VT_EMPTY:
-	case VT_NULL:
+    case VT_EMPTY:
+    case VT_NULL:
     default:
         // retVal is already empty, leave it such
-		break;
-	}
+        break;
+    }
 
     return retVal;
 }
@@ -160,7 +179,8 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr.callMethod<void>("push", FB::VariantList(list_of(*it)));
+            FB::VariantList vl = list_of(*it);
+            outArr.callMethod<void>("push", vl);
         }
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(outArr.getJSObject().ptr());
         if (api.ptr() != NULL) {
@@ -178,7 +198,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
             outVar = api->getIDispatch();
         }
 
-	} else if (var.get_type() == typeid(FB::JSObject)) {
+    } else if (var.get_type() == typeid(FB::JSObject)) {
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<FB::JSObject>().ptr());
         if (api.ptr() != NULL) {
             outVar = api->getIDispatch();
@@ -186,7 +206,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
             outVar = COMJavascriptObject::NewObject(this, var.cast<FB::JSObject>().ptr());
         }
 
-	} else if (var.get_type() == typeid(JSOutObject)) {
+    } else if (var.get_type() == typeid(JSOutObject)) {
         FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<JSOutObject>().ptr());
         if (api.ptr() != NULL) {
             outVar = api->getIDispatch();
@@ -199,21 +219,21 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
 }
 
 FB::BrowserStream* ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
-									bool cache, bool seekable, size_t internalBufferSize )
+                                    bool cache, bool seekable, size_t internalBufferSize )
 {
-	ActiveXStream* stream = new ActiveXStream( url, cache, seekable, internalBufferSize );
-	stream->AttachObserver( callback );
+    ActiveXStream* stream = new ActiveXStream( url, cache, seekable, internalBufferSize );
+    stream->AttachObserver( callback );
 
-	if ( stream->init() )
-	{
+    if ( stream->init() )
+    {
         StreamCreatedEvent ev(stream);
-		stream->SendEvent( &ev );
-		if ( seekable ) stream->signalOpened();
-		return stream;
-	}
-	else
-	{
-		delete stream;
-		return 0;
-	}
+        stream->SendEvent( &ev );
+        if ( seekable ) stream->signalOpened();
+        return stream;
+    }
+    else
+    {
+        delete stream;
+        return 0;
+    }
 }

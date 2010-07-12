@@ -16,8 +16,8 @@ class Timer
 {
 public:
     Timer();
-	void Start();
-	double GetTimeInMs() const;    
+    void Start();
+    double GetTimeInMs() const;    
 
 private:
     __int64 GetTime() const;
@@ -30,8 +30,8 @@ private:
     unsigned long m_processAffinityMask;
 #endif
 
-	__int64 m_startTime;
-	__int64 m_frequency;
+    __int64 m_startTime;
+    __int64 m_frequency;
 };
 
 

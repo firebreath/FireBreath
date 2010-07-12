@@ -3,8 +3,8 @@ Original Author: Matthias (nitrogenycs)
 
 Created:    Feb 28, 2010
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -38,12 +38,12 @@ public:
     bool stop();
 
 public:
-    ActiveXStream*		stream;
-    CComPtr<IMoniker>	FMoniker;
-    CComPtr<IBindCtx>	FBindCtx;
+    ActiveXStream*      stream;
+    CComPtr<IMoniker>   FMoniker;
+    CComPtr<IBindCtx>   FBindCtx;
     CComPtr<ActiveXBindStatusCallback> bindStatusCallback;
-    CComPtr<IStream>	fstream;
-    std::vector<FB::BrowserStream::Range>	ranges;
+    CComPtr<IStream>    fstream;
+    std::vector<FB::BrowserStream::Range>   ranges;
 };
 
 typedef boost::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
@@ -96,10 +96,10 @@ class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate
     LPBINDING       m_pbinding;
     LPSTREAM        m_pstm;
     DWORD           m_cbOld;
-    BOOL			m_fRedirect; // need to be informed when we're being redirected by the server
-    BINDVERB		m_dwAction;
-    ActiveXStreamRequestPtr	m_request;
-    bool			m_transactionStarted;
+    BOOL            m_fRedirect; // need to be informed when we're being redirected by the server
+    BINDVERB        m_dwAction;
+    ActiveXStreamRequestPtr m_request;
+    bool            m_transactionStarted;
 };
 
 #endif

@@ -5,14 +5,14 @@ namespace UnitTest {
 
 TestResults*& CurrentTest::Results()
 {
-	static TestResults* testResults = NULL;
-	return testResults;
+    static TestResults* testResults = NULL;
+    return testResults;
 }
 
 const TestDetails*& CurrentTest::Details()
 {
-	static const TestDetails* testDetails = NULL;
-	return testDetails;
+    static const TestDetails* testDetails = NULL;
+    return testDetails;
 }
 
 }

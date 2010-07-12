@@ -3,8 +3,8 @@ Original Author: Matthias (nitrogenycs)
 
 Created:    Feb 28, 2010
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -103,7 +103,7 @@ ActiveXBindStatusCallback::QueryInterface(REFIID riid, void** ppv)
 {
     *ppv = NULL;
 
-    if (riid==IID_IUnknown || riid==IID_IBindStatusCallback)	
+    if (riid==IID_IUnknown || riid==IID_IBindStatusCallback)    
     {
         *ppv = (IBindStatusCallback*)this;
         AddRef();
@@ -304,14 +304,14 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
     // If there is some data to be read then go ahead and read it
     if (m_pstm && dwSize > m_cbOld)
     {
-        DWORD dwRead = dwSize - m_cbOld;	// Minimum amount available that hasn't been read
+        DWORD dwRead = dwSize - m_cbOld;    // Minimum amount available that hasn't been read
         DWORD dwActuallyRead = 0;           // Placeholder for amount read during this pull
 
         DWORD offset = 0;
         std::string data;
-        if ( GetInfo( HTTP_QUERY_CONTENT_RANGE, data ) )		// data look like bytes 0-3/4234
+        if ( GetInfo( HTTP_QUERY_CONTENT_RANGE, data ) )        // data look like bytes 0-3/4234
         {
-            size_t startPos = 6;		// "bytes "
+            size_t startPos = 6;        // "bytes "
             size_t endPos = data.find( "-" );
             if ( endPos != std::string::npos )
             {
@@ -425,13 +425,13 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
     *pszAdditionalRequestHeaders = NULL;
 
     if ( m_request->stream )
-    {	
+    {   
         m_request->stream->setHeaders( fromWideString( szResponseHeaders ) );
 
         bool requestedSeekable = m_request->stream->isSeekable();
 
         std::string data;
-        if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->setLength( atol( data.c_str() ) );		// nasty, should use a stringstream for conversion here
+        if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->setLength( atol( data.c_str() ) );     // nasty, should use a stringstream for conversion here
         if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->setMimeType( data );
         if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->setSeekable( data == "bytes" );
 
@@ -447,7 +447,7 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
         {
             m_request->stream->signalFailedOpen();
             return E_ABORT;
-        }		
+        }       
     }
 
     return E_ABORT;
@@ -492,7 +492,7 @@ bool ActiveXStreamRequest::start()
     std::string url = stream->getUrl();
     std::wstring wideUrl( url.begin(), url.end() );
 
-    if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, shared_from_this() )) ) return false;	
+    if ( FAILED( ActiveXBindStatusCallback::Create( &bindStatusCallback, shared_from_this() )) ) return false;  
     if ( FAILED( CreateURLMoniker(0, wideUrl.c_str(), &FMoniker) ) ) return false;
     if ( FAILED( CreateAsyncBindCtx(0, bindStatusCallback, 0, &FBindCtx) ) ) return false;
     if ( FAILED( IsValidURL(FBindCtx, wideUrl.c_str(), 0) ) ) return false;

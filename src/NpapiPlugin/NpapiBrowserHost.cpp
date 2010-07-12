@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 15, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -76,6 +76,28 @@ FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
         throw std::runtime_error("Cannot find HTML window");
 
     return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
+}
+
+void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
+{
+    NPVariant retVal;
+    NPVariant tmp;
+
+    this->getNPVariant(&tmp, FB::variant(script));
+
+    if (m_htmlWin.ptr() == NULL)
+        throw std::runtime_error("Cannot find HTML window");
+
+
+    if (this->Evaluate(m_htmlWin->getNPObject(),
+                       &tmp.value.stringValue, &retVal)) {
+        this->ReleaseVariantValue(&retVal);
+        /* Throw away returned variant. NPN_Evaluate supports returning
+           stuff from JS, but ActiveX IHTMLWindow2::execScript does not */
+        return;
+    } else {
+        throw script_error("Error executing JavaScript code");
+    }
 }
 
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)

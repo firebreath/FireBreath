@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 24, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -28,7 +28,7 @@ namespace FB
         script_error(std::string error)
             : m_error(error)
         { }
-		~script_error() throw() { }
+        ~script_error() throw() { }
         virtual const char* what() const throw() { 
             return m_error.c_str(); 
         }
@@ -40,7 +40,7 @@ namespace FB
         invalid_arguments()
             : script_error("Invalid Arguments")
         { }
-		~invalid_arguments() throw() { }
+        ~invalid_arguments() throw() { }
 
         invalid_arguments(const std::string& error)
             : script_error(error)
@@ -52,7 +52,7 @@ namespace FB
         object_invalidated()
             : script_error("This object is no longer valid")
         { }
-		~object_invalidated() throw() { }
+        ~object_invalidated() throw() { }
     };
     
     struct invalid_member : script_error
@@ -60,7 +60,7 @@ namespace FB
         invalid_member(std::string memberName)
             : script_error("The specified member does not exist: " + memberName)
         { }
-		~invalid_member() throw() { }
+        ~invalid_member() throw() { }
     };
 
     class JSAPI
@@ -84,7 +84,7 @@ namespace FB
         virtual void FireEvent(std::string eventName, std::vector<variant>&);
 
     public:
-		virtual void registerEvent(const std::string& name);
+        virtual void registerEvent(const std::string& name);
         virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
         virtual void registerEventInterface(BrowserObjectAPI *event);

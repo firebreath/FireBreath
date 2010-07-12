@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Nov 24, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-// #include "PluginEvents/X11Event.h"
+#include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
@@ -52,6 +52,7 @@ PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
         GDK_KEY_PRESS_MASK |
         GDK_KEY_RELEASE_MASK |
         GDK_POINTER_MOTION_MASK |
+        GDK_POINTER_MOTION_HINT_MASK |
         GDK_SCROLL_MASK |
         GDK_EXPOSURE_MASK |
         GDK_VISIBILITY_NOTIFY_MASK |
@@ -131,6 +132,11 @@ inline bool isButtonEvent(GdkEvent *event)
 
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 {
+    X11Event ev(widget, event);
+    if (SendEvent(&ev)) {
+        return true;
+    }
+
     gboolean handled = 0;
     GdkEventKey *key;
     GdkEventFocus *focus;
@@ -161,7 +167,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         // Mouse button down
         case GDK_BUTTON_PRESS: {
             MouseDownEvent evt(btn, button->x, button->y);
-            SendEvent(&evt) ? 1 : 0;
+            return SendEvent(&evt) ? 1 : 0;
         } break;
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
@@ -201,3 +207,8 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 //     }
 //     return false;
 // }
+
+void PluginWindowX11::InvalidateWindow()
+{
+    // Doesn't exist yet
+}

@@ -20,10 +20,10 @@ TEST(PassingTestHasNoFailures)
     };
 
     TestResults results;
-	{
-		ScopedCurrentTest scopedResults(results);
-		PassingTest().Run();
-	}
+    {
+        ScopedCurrentTest scopedResults(results);
+        PassingTest().Run();
+    }
 
     CHECK_EQUAL(0, results.GetFailureCount());
 }
@@ -42,10 +42,10 @@ TEST(FailingTestHasFailures)
     };
 
     TestResults results;
-	{
-		ScopedCurrentTest scopedResults(results);
-		FailingTest().Run();
-	}
+    {
+        ScopedCurrentTest scopedResults(results);
+        FailingTest().Run();
+    }
 
     CHECK_EQUAL(1, results.GetFailureCount());
 }
@@ -64,12 +64,12 @@ TEST(ThrowingTestsAreReportedAsFailures)
     };
  
     TestResults results;
-	{
-		ScopedCurrentTest scopedResult(results);
-		CrashingTest().Run();
-	}
+    {
+        ScopedCurrentTest scopedResult(results);
+        CrashingTest().Run();
+    }
 
-	CHECK_EQUAL(1, results.GetFailureCount());
+    CHECK_EQUAL(1, results.GetFailureCount());
 }
 
 
@@ -87,12 +87,12 @@ TEST(CrashingTestsAreReportedAsFailures)
     };
 
     TestResults results;
-	{
-		ScopedCurrentTest scopedResult(results);
-		CrashingTest().Run();
-	}
+    {
+        ScopedCurrentTest scopedResult(results);
+        CrashingTest().Run();
+    }
 
-	CHECK_EQUAL(1, results.GetFailureCount());
+    CHECK_EQUAL(1, results.GetFailureCount());
 }
 #endif
 
@@ -112,18 +112,18 @@ TEST(TestReflectsSpecifiedSuiteName)
 
 void Fail()
 {
-	CHECK(false);
+    CHECK(false);
 }
 
 TEST(OutOfCoreCHECKMacrosCanFailTests)
 {
-	TestResults results;
-	{
-		ScopedCurrentTest scopedResult(results);
-		Fail();
-	}
+    TestResults results;
+    {
+        ScopedCurrentTest scopedResult(results);
+        Fail();
+    }
 
-	CHECK_EQUAL(1, results.GetFailureCount());
+    CHECK_EQUAL(1, results.GetFailureCount());
 }
 
 }

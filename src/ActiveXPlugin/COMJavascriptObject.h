@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Nov 6, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -25,7 +25,7 @@ class ATL_NO_VTABLE COMJavascriptObject :
     public CComCoClass<COMJavascriptObject, &CLSID_FBComJavascriptObject>,
 
     public JSAPI_IDispatchEx<COMJavascriptObject, IFBComJavascriptObject, &DIID_IFBComEventSource>,
-    public IObjectSafetyImpl<COMJavascriptObject, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA | INTERFACE_USES_DISPEX >,
+    public IObjectSafetyImpl<COMJavascriptObject, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/ >,
 
     // Required for standard events
     public IProvideClassInfo2Impl<&CLSID_FBComJavascriptObject, NULL, &FB_LIBID>
@@ -41,11 +41,11 @@ public:
     static IDispatchEx *NewObject(ActiveXBrowserHost *host, FB::JSAPI *api)
     {
         CComObject<COMJavascriptObject> *obj;
-		HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
+        HRESULT hr = CComObject<COMJavascriptObject>::CreateInstance(&obj);
         
         obj->setAPI(api, host);
         IDispatchEx *retval;
-		hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
+        hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
 
         return retval;
     }

@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 17, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -22,7 +22,7 @@ BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
         int i = 2;
         i++;
     }
-    BOOL bHandled = TRUE;
+    BOOL bHandled = FALSE;
     switch(dwMsgMapID)
     {
     case 0: {

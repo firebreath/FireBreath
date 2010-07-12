@@ -3,8 +3,8 @@ Original Author: Georg Fritzsche
 
 Created:    Dec 22, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -16,6 +16,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #define H_FAKE_JS_MAP
 
 #include "BrowserObjectAPI.h"
+#include <iterator>
 
 class FakeJsMap : public FB::BrowserObjectAPI
 {

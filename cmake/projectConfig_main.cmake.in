@@ -3,8 +3,8 @@
 #
 #Created:    Nov 20, 2009
 #License:    Dual license model; choose one of two:
-#            Eclipse Public License - Version 1.0
-#            http://www.eclipse.org/legal/epl-v10.html
+#            New BSD License
+#            http://www.opensource.org/licenses/bsd-license.php
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
@@ -33,11 +33,11 @@ include_directories(
     ${PLUGINCORE_SOURCE_DIR}
     ${PLUGINWINDOW_SOURCE_DIR}
     ${GEN_DIR}/gen
-    ${BOOST_SOURCE_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
 # configure default generated files
-file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/*)
+file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     #    message("Configuring ${CURFILE}")
@@ -45,7 +45,7 @@ foreach(TemplateFile ${TEMPLATELIST})
 endforeach()
 
 # configure project-specific generated files
-file(GLOB TEMPLATELIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/*)
+file(GLOB TEMPLATELIST ${CMAKE_CURRENT_SOURCE_DIR}/templates/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     message("Configuring ${CURFILE}")
@@ -66,9 +66,9 @@ if (WIN32)
         )
 
     file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}
-        ${GEN_DIR}/gen/*.rgs
-        ${GEN_DIR}/gen/*.def
-        ${GEN_DIR}/gen/*.rc
+        ${GEN_DIR}/gen/[^.]*.rgs
+        ${GEN_DIR}/gen/[^.]*.def
+        ${GEN_DIR}/gen/[^.]*.rc
     )
 
 endif(WIN32)

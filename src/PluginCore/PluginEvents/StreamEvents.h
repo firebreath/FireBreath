@@ -3,8 +3,8 @@ Original Author: Matthias (nitrogenycs)
 
 Created:    Feb 28, 2010
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -70,10 +70,10 @@ namespace FB {
             return progress;
         }
     protected:
-        const void*		data;			// the data
-        const size_t	length;			// length of the data in bytes
-        const size_t	dataPosition;	// the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
-        const float		progress;		// the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
+        const void*     data;           // the data
+        const size_t    length;         // length of the data in bytes
+        const size_t    dataPosition;   // the position in the stream where the data starts (e.g. 0 if the data starts at the beginning)
+        const float     progress;       // the current progress in percent (0-100). 0 if progress is unknown (stream length not known in advance).
     };
 
     class StreamFailedOpenEvent : public StreamEvent

@@ -28,7 +28,7 @@ namespace {
 template<typename ValueType>
 void FormatToStream(MemoryOutStream& stream, char const* format, ValueType const& value)
 {
-	using namespace std;
+    using namespace std;
 
     char txt[32];
     sprintf(txt, format, value);
@@ -63,7 +63,7 @@ char const* MemoryOutStream::GetText() const
 
 MemoryOutStream& MemoryOutStream::operator << (char const* txt)
 {
-	using namespace std;
+    using namespace std;
 
     int const bytesLeft = m_capacity - (int)strlen(m_buffer);
     int const bytesRequired = (int)strlen(txt) + 1;
@@ -116,8 +116,8 @@ MemoryOutStream& MemoryOutStream::operator << (unsigned int const s)
 
 MemoryOutStream& MemoryOutStream::operator <<(double const d)
 {
-	FormatToStream(*this, "%f", d);
-	return *this;
+    FormatToStream(*this, "%f", d);
+    return *this;
 }
 
 int MemoryOutStream::GetCapacity() const
@@ -130,7 +130,7 @@ void MemoryOutStream::GrowBuffer(int const desiredCapacity)
 {
     int const newCapacity = RoundUpToMultipleOfPow2Number(desiredCapacity, GROW_CHUNK_SIZE);
 
-	using namespace std;
+    using namespace std;
 
     char* buffer = new char[newCapacity];
     if (m_buffer)

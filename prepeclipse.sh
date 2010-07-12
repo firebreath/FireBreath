@@ -4,8 +4,14 @@ GEN='Eclipse CDT4 - Unix Makefiles'
 
 if [ "$1" = "examples" ]; then
     echo Building example projects
-    cmake -D GEN="${GEN}" -D BUILD_EXAMPLES="YES" -P cmake/genproject.cmake
+    BUILDDIR=buildex
+    EXAMPLES='-DBUILD_EXAMPLES:BOOL=YES'
 else
     echo Building projects
-    cmake -D GEN="${GEN}" -P cmake/genproject.cmake
+    BUILDDIR=build
 fi
+
+mkdir -p "$BUILDDIR"
+pushd "$BUILDDIR"
+cmake -G "$GEN" "$EXAMPLES" ..
+popd

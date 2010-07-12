@@ -17,13 +17,13 @@ typedef void (*NPP_ShutdownProcPtr)(void);
 #pragma GCC visibility push(default)
 
 extern "C" {
-	NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
-	NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
-	NPError NP_Shutdown(void);
+    NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
+    NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
+    NPError NP_Shutdown(void);
     
 #ifndef _NO_MAIN
-	// For compatibility with CFM browsers.
-	int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown);
+    // For compatibility with CFM browsers.
+    int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown);
 #endif
 }
 
@@ -67,5 +67,5 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
 NPError OSCALL NP_Shutdown()
 {
     delete module;
-	return NPERR_NO_ERROR;
+    return NPERR_NO_ERROR;
 }

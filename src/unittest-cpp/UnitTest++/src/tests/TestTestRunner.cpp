@@ -39,14 +39,14 @@ struct MockTest : public Test
 
 struct TestRunnerFixture
 {
-	TestRunnerFixture()
-		: runner(reporter)
-	{
-	}
+    TestRunnerFixture()
+        : runner(reporter)
+    {
+    }
 
     RecordingReporter reporter;
     TestList list;
-	TestRunner runner;
+    TestRunner runner;
 };
 
 TEST_FIXTURE(TestRunnerFixture, TestStartIsReportedCorrectly)
@@ -54,7 +54,7 @@ TEST_FIXTURE(TestRunnerFixture, TestStartIsReportedCorrectly)
     MockTest test("goodtest", true, false);
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(1, reporter.testRunCount);
     CHECK_EQUAL("goodtest", reporter.lastStartedTest);
 }
@@ -64,7 +64,7 @@ TEST_FIXTURE(TestRunnerFixture, TestFinishIsReportedCorrectly)
     MockTest test("goodtest", true, false);
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(1, reporter.testFinishedCount);
     CHECK_EQUAL("goodtest", reporter.lastFinishedTest);
 }
@@ -84,13 +84,13 @@ TEST_FIXTURE(TestRunnerFixture, TestFinishIsCalledWithCorrectTime)
     SlowTest test;
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK(reporter.lastFinishedTestTime >= 0.005f && reporter.lastFinishedTestTime <= 0.050f);
 }
 
 TEST_FIXTURE(TestRunnerFixture, FailureCountIsZeroWhenNoTestsAreRun)
 {
-	CHECK_EQUAL(0, runner.RunTestsIf(list, NULL, True(), 0));
+    CHECK_EQUAL(0, runner.RunTestsIf(list, NULL, True(), 0));
     CHECK_EQUAL(0, reporter.testRunCount);
     CHECK_EQUAL(0, reporter.testFailedCount);
 }
@@ -104,7 +104,7 @@ TEST_FIXTURE(TestRunnerFixture, CallsReportFailureOncePerFailingTest)
     MockTest test3("test", false, false);
     list.Add(&test3);
 
-	CHECK_EQUAL(2, 	runner.RunTestsIf(list, NULL, True(), 0));
+    CHECK_EQUAL(2,  runner.RunTestsIf(list, NULL, True(), 0));
     CHECK_EQUAL(2, reporter.testFailedCount);
 }
 
@@ -113,7 +113,7 @@ TEST_FIXTURE(TestRunnerFixture, TestsThatAssertAreReportedAsFailing)
     MockTest test("test", true, true);
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(1, reporter.testFailedCount);
 }
 
@@ -127,7 +127,7 @@ TEST_FIXTURE(TestRunnerFixture, ReporterNotifiedOfTestCount)
     list.Add(&test2);
     list.Add(&test3);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(3, reporter.summaryTotalTestCount);
 }
 
@@ -140,7 +140,7 @@ TEST_FIXTURE(TestRunnerFixture, ReporterNotifiedOfFailedTests)
     list.Add(&test2);
     list.Add(&test3);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(2, reporter.summaryFailedTestCount);
 }
 
@@ -153,8 +153,8 @@ TEST_FIXTURE(TestRunnerFixture, ReporterNotifiedOfFailures)
     list.Add(&test2);
     list.Add(&test3);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
-	CHECK_EQUAL(5, reporter.summaryFailureCount);
+    runner.RunTestsIf(list, NULL, True(), 0);
+    CHECK_EQUAL(5, reporter.summaryFailureCount);
 }
 
 TEST_FIXTURE(TestRunnerFixture, SlowTestPassesForHighTimeThreshold)
@@ -162,7 +162,7 @@ TEST_FIXTURE(TestRunnerFixture, SlowTestPassesForHighTimeThreshold)
     SlowTest test;
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(0, reporter.testFailedCount);
 }
 
@@ -171,7 +171,7 @@ TEST_FIXTURE(TestRunnerFixture, SlowTestFailsForLowTimeThreshold)
     SlowTest test;
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 3);
+    runner.RunTestsIf(list, NULL, True(), 3);
     CHECK_EQUAL(1, reporter.testFailedCount);
 }
 
@@ -180,15 +180,15 @@ TEST_FIXTURE(TestRunnerFixture, SlowTestHasCorrectFailureInformation)
     SlowTest test;
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 3);
+    runner.RunTestsIf(list, NULL, True(), 3);
 
-	using namespace std;
+    using namespace std;
 
     CHECK_EQUAL(test.m_details.testName, reporter.lastFailedTest);
     CHECK(strstr(test.m_details.filename, reporter.lastFailedFile));
     CHECK_EQUAL(test.m_details.lineNumber, reporter.lastFailedLine);
 
-	CHECK(strstr(reporter.lastFailedMessage, "Global time constraint failed"));
+    CHECK(strstr(reporter.lastFailedMessage, "Global time constraint failed"));
     CHECK(strstr(reporter.lastFailedMessage, "3ms"));
 }
 
@@ -208,7 +208,7 @@ TEST_FIXTURE(TestRunnerFixture, SlowTestWithTimeExemptionPasses)
     SlowExemptedTest test;
     list.Add(&test);
 
-	runner.RunTestsIf(list, NULL, True(), 3);
+    runner.RunTestsIf(list, NULL, True(), 3);
     CHECK_EQUAL(0, reporter.testFailedCount);
 }
 
@@ -218,7 +218,7 @@ struct TestSuiteFixture
         : test1("TestInDefaultSuite")
         , test2("TestInOtherSuite", "OtherSuite")
         , test3("SecondTestInDefaultSuite")
-		, runner(reporter)
+        , runner(reporter)
     {
         list.Add(&test1);
         list.Add(&test2);
@@ -229,47 +229,47 @@ struct TestSuiteFixture
     Test test3;
     RecordingReporter reporter;
     TestList list;
-	TestRunner runner;
+    TestRunner runner;
 };
 
 TEST_FIXTURE(TestSuiteFixture, TestRunnerRunsAllSuitesIfNullSuiteIsPassed)
 {
-	runner.RunTestsIf(list, NULL, True(), 0);
+    runner.RunTestsIf(list, NULL, True(), 0);
     CHECK_EQUAL(2, reporter.summaryTotalTestCount);
 }
 
 TEST_FIXTURE(TestSuiteFixture,TestRunnerRunsOnlySpecifiedSuite)
 {
-	runner.RunTestsIf(list, "OtherSuite", True(), 0);
+    runner.RunTestsIf(list, "OtherSuite", True(), 0);
     CHECK_EQUAL(1, reporter.summaryTotalTestCount);
     CHECK_EQUAL("TestInOtherSuite", reporter.lastFinishedTest);
 }
 
 struct RunTestIfNameIs
 {
-	RunTestIfNameIs(char const* name_)
-	: name(name_)
-	{		
-	}
-	
-	bool operator()(const Test* const test) const
-	{
-		using namespace std;
-		return (0 == strcmp(test->m_details.testName, name));
-	}
-	
-	char const* name;
+    RunTestIfNameIs(char const* name_)
+    : name(name_)
+    {       
+    }
+    
+    bool operator()(const Test* const test) const
+    {
+        using namespace std;
+        return (0 == strcmp(test->m_details.testName, name));
+    }
+    
+    char const* name;
 };
 
 TEST(TestMockPredicateBehavesCorrectly)
 {
-	RunTestIfNameIs predicate("pass");
-	
-	Test pass("pass");
-	Test fail("fail");
-	
-	CHECK(predicate(&pass));
-	CHECK(!predicate(&fail));	
+    RunTestIfNameIs predicate("pass");
+    
+    Test pass("pass");
+    Test fail("fail");
+    
+    CHECK(predicate(&pass));
+    CHECK(!predicate(&fail));   
 }
 
 TEST_FIXTURE(TestRunnerFixture, TestRunnerRunsTestsThatPassPredicate)
@@ -278,10 +278,10 @@ TEST_FIXTURE(TestRunnerFixture, TestRunnerRunsTestsThatPassPredicate)
     list.Add(&should_run);
 
     Test should_not_run("badtest");
-	list.Add(&should_not_run);
+    list.Add(&should_not_run);
  
-	runner.RunTestsIf(list, NULL, RunTestIfNameIs("goodtest"), 0);
-	CHECK_EQUAL(1, reporter.testRunCount);
+    runner.RunTestsIf(list, NULL, RunTestIfNameIs("goodtest"), 0);
+    CHECK_EQUAL(1, reporter.testRunCount);
     CHECK_EQUAL("goodtest", reporter.lastStartedTest);
 }
 
@@ -297,9 +297,9 @@ TEST_FIXTURE(TestRunnerFixture, TestRunnerOnlyRunsTestsInSpecifiedSuiteAndThatPa
     list.Add(&skippedTest3);
     list.Add(&skippedTest4);   
 
-	runner.RunTestsIf(list, "suite", RunTestIfNameIs("goodtest"), 0);
+    runner.RunTestsIf(list, "suite", RunTestIfNameIs("goodtest"), 0);
 
-	CHECK_EQUAL(1, reporter.testRunCount);
+    CHECK_EQUAL(1, reporter.testRunCount);
     CHECK_EQUAL("goodtest", reporter.lastStartedTest); 
     CHECK_EQUAL("suite", reporter.lastStartedSuite);    
 }

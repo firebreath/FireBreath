@@ -3,8 +3,8 @@ Original Author: Matthias (nitrogenycs)
 
 Created:    Feb 28, 2010
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -34,22 +34,22 @@ public:
     virtual bool close();
 
 protected:
-    virtual bool	init();
-    virtual bool	addRequest( const ActiveXStreamRequest& request );
+    virtual bool    init();
+    virtual bool    addRequest( const ActiveXStreamRequest& request );
 
-    virtual size_t	signalDataArrived(void* buffer, size_t len, size_t offset);
-    virtual void	signalOpened();
-    virtual void	signalFailedOpen();
-    virtual void	signalCompleted(bool success);
-    virtual void	signalRequestCompleted(ActiveXStreamRequestPtr request, bool success);
-    virtual void	signalCacheFilename(const std::wstring& cacheFilename);
+    virtual size_t  signalDataArrived(void* buffer, size_t len, size_t offset);
+    virtual void    signalOpened();
+    virtual void    signalFailedOpen();
+    virtual void    signalCompleted(bool success);
+    virtual void    signalRequestCompleted(ActiveXStreamRequestPtr request, bool success);
+    virtual void    signalCacheFilename(const std::wstring& cacheFilename);
 
     friend class ActiveXBrowserHost;
     friend class ActiveXBindStatusCallback;
 
 protected:
-    std::set< ActiveXStreamRequestPtr >	requests;
-    bool	closing;
+    std::set< ActiveXStreamRequestPtr > requests;
+    bool    closing;
 };
 
 

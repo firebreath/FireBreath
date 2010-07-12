@@ -3,8 +3,8 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
 License:    Dual license model; choose one of two:
-            Eclipse Public License - Version 1.0
-            http://www.eclipse.org/legal/epl-v10.html
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
@@ -71,7 +71,7 @@ namespace
     }
 }
 
-namespace FB { namespace Npapi 
+namespace
 {
     struct NpapiPDataHolder
     {
@@ -82,24 +82,29 @@ namespace FB { namespace Npapi
           : host(host), plugin(plugin) {}
         ~NpapiPDataHolder() {}
     };
-} }
+
+    inline NpapiPDataHolder* getHolder(NPP instance)
+    {   
+        return static_cast<NpapiPDataHolder*>(instance->pdata);
+    }
+
+    inline NpapiPlugin *getPlugin(NPP instance)
+    {
+        return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
+    }
+
+    inline NpapiBrowserHost *getHost(NPP instance)
+    {
+        return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
+    }
+
+    inline bool validInstance(NPP instance)
+    {
+        return instance != NULL && instance->pdata != NULL;
+    }
+} 
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
-
-inline NpapiPlugin *getPlugin(NPP instance)
-{
-    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
-}
-
-inline NpapiBrowserHost *getHost(NPP instance)
-{
-    return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
-}
-
-inline bool validInstance(NPP instance)
-{
-    return instance != NULL && instance->pdata != NULL;
-}
 
 // These are the static NPP_ functions; NPP_New and NPP_Destroy create and destroy the
 // plugin, the rest are wrappers that dereference NPP->pdata to get at the plugin object
@@ -157,15 +162,13 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
+    if (NpapiPlugin* plugin = getPlugin(instance)) {
+        plugin->shutdown();
+    }
 
-    plugin->shutdown();
-    delete plugin;
-
-    NpapiPDataHolder* pdata = static_cast<NpapiPDataHolder*>(instance->pdata);
-    delete pdata;
-
+    delete getHolder(instance);
     instance->pdata = NULL;
+
     return NPERR_NO_ERROR;
 }
 
@@ -186,10 +189,11 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
         }
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    NPError err = plugin->SetWindow(window);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->SetWindow(window);
+    }
 
-    return err;
+    return NPERR_NO_ERROR;
 }
 
 NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream,
@@ -199,8 +203,11 @@ NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->NewStream(type, stream, seekable, stype);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->NewStream(type, stream, seekable, stype);
+    } else {    
+        return NPERR_GENERIC_ERROR;
+    }
 }
 
 NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
@@ -209,8 +216,11 @@ NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPR
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->DestroyStream(stream, reason);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->DestroyStream(stream, reason);
+    } else {
+        return NPERR_GENERIC_ERROR;
+    }
 }
 
 int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
@@ -219,8 +229,11 @@ int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->WriteReady(stream);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->WriteReady(stream);
+    } else {    
+        return NPERR_GENERIC_ERROR;
+    }
 }
 
 int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t offset, int32_t len,
@@ -230,8 +243,11 @@ int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t off
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->Write(stream, offset, len, buffer);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->Write(stream, offset, len, buffer);
+    } else {
+        return NPERR_GENERIC_ERROR;
+    }
 }
 
 void NpapiPluginModule::NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname)
@@ -240,8 +256,9 @@ void NpapiPluginModule::NPP_StreamAsFile(NPP instance, NPStream* stream, const c
         return;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    plugin->StreamAsFile(stream, fname);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        plugin->StreamAsFile(stream, fname);
+    }
 }
 
 void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
@@ -250,8 +267,9 @@ void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
         return;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    plugin->Print(platformPrint);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        plugin->Print(platformPrint);
+    }
 }
 
 int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
@@ -260,8 +278,11 @@ int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
         return 0;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->HandleEvent(event);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->HandleEvent(event);
+    } else {
+        return 0;
+    }
 }
 
 void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason reason,
@@ -271,8 +292,9 @@ void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason re
         return;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    plugin->URLNotify(url, reason, notifyData);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        plugin->URLNotify(url, reason, notifyData);
+    }
 }
 
 NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void *value)
@@ -294,8 +316,11 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->GetValue(variable, value);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->GetValue(variable, value);
+    }
+
+    return NPERR_NO_ERROR;
 }
 
 NPError NpapiPluginModule::NPP_SetValue(NPP instance, NPNVariable variable, void *value)
@@ -304,6 +329,9 @@ NPError NpapiPluginModule::NPP_SetValue(NPP instance, NPNVariable variable, void
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiPlugin *plugin = getPlugin(instance);
-    return plugin->SetValue(variable, value);
+    if (NpapiPlugin *plugin = getPlugin(instance)) {
+        return plugin->SetValue(variable, value);
+    } else {
+        return NPERR_GENERIC_ERROR;
+    }
 }

@@ -5,7 +5,7 @@
 
 // cstdio doesn't pull in namespace std on VC6, so we do it here.
 #if defined(_MSC_VER) && (_MSC_VER == 1200)
-	namespace std {}
+    namespace std {}
 #endif
 
 namespace UnitTest {
@@ -18,7 +18,7 @@ void TestReporterStdout::ReportFailure(TestDetails const& details, char const* f
     char const* const errorFormat = "%s(%d): error: Failure in %s: %s\n";
 #endif
 
-	using namespace std;
+    using namespace std;
     printf(errorFormat, details.filename, details.lineNumber, details.testName, failure);
 }
 
@@ -33,7 +33,7 @@ void TestReporterStdout::ReportTestFinish(TestDetails const& /*test*/, float)
 void TestReporterStdout::ReportSummary(int const totalTestCount, int const failedTestCount,
                                        int const failureCount, float secondsElapsed)
 {
-	using namespace std;
+    using namespace std;
 
     if (failureCount > 0)
         printf("FAILURE: %d out of %d tests failed (%d failures).\n", failedTestCount, totalTestCount, failureCount);
