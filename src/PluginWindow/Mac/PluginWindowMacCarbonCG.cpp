@@ -57,27 +57,34 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
 
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left,
-                             point->x - m_clipLeft + m_x, m_height - point->y  + m_y);
+                              point->x - m_clipLeft + m_x, 
+                              m_height - point->y  + m_y);
             return SendEvent(&ev);
         }
 
         case mouseUp:
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
-                           evt->where.v, evt->where.h);
+                            evt->where.v, evt->where.h);
             return SendEvent(&ev);
         }
 
         case keyDown:
         {
-            FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message);
+            // I don't know why, but the key codes are shifted 8 lefts left,
+            // we must shift them back to their natural positions before
+            // the keymap can work properly
+            FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message >> 8);
             KeyDownEvent ev(fb_key, evt->message);
             return SendEvent(&ev);
         }
 
         case keyUp:
         {
-            FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message);
+            // I don't know why, but the key codes are shifted 8 lefts left,
+            // we must shift them back to their natural positions before
+            // the keymap can work properly
+            FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message >> 8);
             KeyUpEvent ev(fb_key, evt->message);
             return SendEvent(&ev);
         }
