@@ -117,12 +117,18 @@ void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
 BrowserObjectAPI *JSAPI::getDefaultEventMethod(std::string name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
-    return fnd->second.ptr();
+    if (fnd != m_defEventMap.end()) {
+        return fnd->second.ptr();
+    }
+    return NULL;
 }
 
-void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *event)
+void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *obj)
 {
-    m_defEventMap[name] = event;
+    if(obj == NULL)
+        m_defEventMap.erase(name);
+    else 
+        m_defEventMap[name] = obj;
 }
 
 void JSAPI::registerEvent(const std::string &name)
