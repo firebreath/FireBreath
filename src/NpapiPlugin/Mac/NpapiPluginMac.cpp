@@ -31,19 +31,45 @@ namespace
         NPBool value;        
         NPError err;
         
+        // err tells us if the browser supports model negotiation
         err = host->GetValue(what, &value);
         
         if (err != NPERR_NO_ERROR) {
+            if(what == NPNVsupportsCarbonBool|| what == NPNVsupportsQuickDrawBool) {
+                // Model negotiation is not supported, assume
+                // that Carbon and QuickDraw are supported & return true;
+                return true;
+            }
+
+            // If we aren't testing for Carbon or QD, assume that
+            // an NPERR_GENERIC_ERROR is bad, return unsupported
             return false;
         }
         
+        // If GetValue returns NPERR_NO_ERROR then return whether or not
+        // the browser supports the indicated Drawing/Event model
         return value;
     }
-    
+
     bool set(FB::Npapi::NpapiBrowserHost* host, NPPVariable what, void* value)
     {
         NPError err = host->SetValue(what, value);
-        return (err == NPERR_NO_ERROR);
+        void* model = value;
+
+        if(err != NPERR_NO_ERROR) {
+            if(model == (void*)NPEventModelCarbon || model == (void*)NPDrawingModelQuickDraw) {
+                // Model negotiation is not supported, assume
+                // that Carbon and QuickDraw are supported & return true;
+                return true;
+            }
+
+            // If we aren't testing for Carbon or QD, assume that
+            // an NPERR_GENERIC_ERROR is bad, return unsupported
+            return false;
+        }
+
+        // If SetValue returns NPERR_NO_ERROR then SetValue was successful
+        return true;
     }
     
     bool enableQuickDraw(FB::Npapi::NpapiBrowserHost* host)
@@ -79,12 +105,14 @@ namespace
         return false;
 #else
 		
-        if(!supports(host, NPNVsupportsCoreGraphicsBool)) {
+        if(!supports(host, NPNVsupportsCarbonBool))
             return false;
-        }
-        if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics)) {
+        if(!supports(host, NPNVsupportsCoreGraphicsBool))
             return false;
-        }
+        if(!set(host, NPPVpluginEventModel, (void*)NPEventModelCarbon))
+            return false;
+        if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics))
+            return false;
         
 		printf("CoreGraphics and Carbon supported\n");
         return true;
@@ -162,10 +190,15 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
         m_eventModel   = EventModelCarbon;
         m_drawingModel = DrawingModelQuickDraw;
     } else {
-        // Default to Carbon/CG
-        m_eventModel = EventModelCarbon;
+#ifdef __LP64__
+        // Default to Cocoa/CG for 64 bit plugins
+        m_eventModel = EventModelCocoa;
         m_drawingModel = DrawingModelCoreGraphics;
-        //throw PluginCreateError("none of the chosen drawing and event models are supported");
+#else
+        // Default to Carbon/QD for 32 bit plugins
+        m_eventModel = EventModelCarbon;
+        m_drawingModel = DrawingModelQuickDraw;
+#endif
     }
 }
 

@@ -149,9 +149,9 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-                if(value->type == NPVariantType_Null)
-                    m_api->setDefaultEventMethod(sName, NULL);
-                else if(value->type == NPVariantType_Object) {
+                if (arg.get_type() != typeid(FB::JSObject)) {
+                    throw script_error("Invalid event handler function");
+                } else {
                     FB::JSObject tmp(arg.cast<FB::JSObject>());
                     m_api->setDefaultEventMethod(sName, tmp.ptr());
                 }
