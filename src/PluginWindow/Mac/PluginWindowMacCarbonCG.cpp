@@ -50,15 +50,24 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     switch (evt->what) {
         case mouseDown:
         {
+            Rect windowRect, portRect;
+            int portWidth, portHeight;
+            WindowRef browserWindow = (WindowRef)cgContext->window;
+            GetWindowBounds(browserWindow, kWindowStructureRgn, &windowRect);
+            GetWindowBounds(browserWindow, kWindowContentRgn, &portRect);
+            portWidth = portRect.right - portRect.left;
+            portHeight = portRect.bottom - portRect.top;
+            int winHeight = windowRect.bottom - windowRect.top;
             // Query for the current coordinates of the mouse
             HIPoint* point = new HIPoint();
             point->x = evt->where.h;
             point->y = evt->where.v;
             HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
 
+            int bottom = winHeight - m_height - this->getWindowPosition().top + this->getWindowClipping().top - 80;
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left,
                               point->x - m_clipLeft + m_x, 
-                              m_height - point->y  + m_y);
+                              bottom + point->y - m_height);
             return SendEvent(&ev);
         }
 
