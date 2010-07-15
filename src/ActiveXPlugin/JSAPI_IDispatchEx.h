@@ -323,7 +323,15 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
         } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasEvent(sName)) {
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
+<<<<<<< local
+            if (newVal.empty()) {
+                m_api->setDefaultEventMethod(sName, NULL);
+            } else {
+                m_api->setDefaultEventMethod(sName, newVal.cast<FB::JSObject>());
+            }
+=======
             m_api->setDefaultEventMethod(sName, newVal.cast<FB::JSObject>());
+>>>>>>> other
 
         } else if (wFlags & DISPATCH_METHOD && ((sName == "attachEvent") || (sName == "detachEvent")) ) {
         
