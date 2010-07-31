@@ -354,6 +354,21 @@ namespace FB
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
         }
+        
+        // boost::any-like casting
+        template<typename T>
+        inline T* variant_cast() 
+        {
+            if (get_type() != typeid(T)) {
+                throw bad_variant_cast(get_type(), typeid(T));
+            }
+            if (sizeof(T) <= sizeof(void*)) {
+                return reinterpret_cast<T*>(&object);
+            }
+            else {
+                return reinterpret_cast<T*>(object);
+            }
+        }
 
     private:
         template<typename T>
@@ -368,26 +383,18 @@ namespace FB
 
     // boost::any-like casting
     template<typename T>
-    inline T* variant_cast(variant* this_) {
-        if (this_->get_type() != typeid(T)) {
-            throw bad_variant_cast(this_->get_type(), typeid(T));
-        }
-        if (sizeof(T) <= sizeof(void*)) {
-            return reinterpret_cast<T*>(&this_->object);
-        }
-        else {
-            return reinterpret_cast<T*>(this_->object);
-        }
+    inline T* variant_cast(variant* v) {
+        return v->variant_cast<T>();
     }
 
     template<typename T>
-    inline T const* variant_cast(variant const* this_) {
-        return variant_cast<T>(const_cast<variant*>(this_));
+    inline T const* variant_cast(variant const* v) {
+        return variant_cast<T>(const_cast<variant*>(v));
     }
 
     template<typename T>
-    inline T const& variant_cast(variant const& this_){
-        return *variant_cast<T>(const_cast<variant*>(&this_));
+    inline T const& variant_cast(variant const& v){
+        return *variant_cast<T>(const_cast<variant*>(&v));
     }
     
     template<> inline const void variant::convert_cast_impl<void>() const {

@@ -35,7 +35,7 @@ namespace
         err = host->GetValue(what, &value);
         
         if (err != NPERR_NO_ERROR) {
-            if(what == NPNVsupportsCarbonBool|| what == NPNVsupportsQuickDrawBool) {
+            if (what == NPNVsupportsCarbonBool || what == NPNVsupportsQuickDrawBool) {
                 // Model negotiation is not supported, assume
                 // that Carbon and QuickDraw are supported & return true;
                 return true;
