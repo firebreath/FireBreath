@@ -74,7 +74,11 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
         }
 
         if (pluginWin == NULL) {
+            GdkNativeWindow browserWindow;
+            m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserWindow);
+
             pluginWin = _createPluginWindow(getGdkWindow(window->window));
+            pluginWin->setBrowserWindow(browserWindow);
             pluginMain->SetWindow(pluginWin);
         }
 

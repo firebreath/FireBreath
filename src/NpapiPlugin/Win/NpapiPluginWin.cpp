@@ -46,7 +46,11 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
         }
 
         if (pluginWin == NULL) {
+            HWND browserHWND;
+            m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND);
+
             pluginWin = _createPluginWindow((HWND)window->window);
+            pluginWin->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(pluginWin);
         }
     } else if (pluginWin != NULL) {

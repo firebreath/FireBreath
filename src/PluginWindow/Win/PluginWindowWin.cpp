@@ -27,7 +27,7 @@ using namespace FB;
 
 PluginWindowWin::PluginWindowMap FB::PluginWindowWin::m_windowMap;
 
-PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), lpOldWinProc(NULL)
+PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), m_browserhWnd(NULL), lpOldWinProc(NULL)
 {
     // subclass window so we can intercept window messages 
     lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);

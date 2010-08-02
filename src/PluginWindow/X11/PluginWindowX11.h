@@ -35,12 +35,15 @@ namespace FB {
         void setWindowClipping(int t, int l, int b, int r);
         void getWindowClipping(int &t, int &l, int &b, int &r);
         GdkNativeWindow getWindow() { return m_window; }
+        void setBrowserWindow(GdkNativeWindow win) {  m_browserWindow = win; }
+        GdkNativeWindow getBrowserWindow() { return m_browserWindow; }
         static gboolean _EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data);
         virtual void InvalidateWindow();
     protected:
         gboolean EventCallback(GtkWidget *widget, GdkEvent *event);
 
         GdkNativeWindow m_window;
+        GdkNativeWindow m_browserWindow;
         GtkWidget *m_container;
         GtkWidget *m_canvas;
 

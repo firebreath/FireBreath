@@ -41,6 +41,9 @@ namespace FB {
                                                           LPARAM lParam);
         HWND getHWND() { return m_hWnd; }
 
+        void setBrowserHWND(HWND hWnd) { m_browserhWnd = hWnd; }
+        HWND getBrowserHWND() { return m_browserhWnd; }
+
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
         virtual void InvalidateWindow();
@@ -51,6 +54,7 @@ namespace FB {
         bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT & lRes);
         WNDPROC lpOldWinProc;
         HWND m_hWnd;
+        HWND m_browserhWnd;
 
         virtual bool CustomWinProc(HWND hWnd,
                                    UINT uMsg,
