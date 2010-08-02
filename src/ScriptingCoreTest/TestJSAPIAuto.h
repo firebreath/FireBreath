@@ -12,6 +12,9 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#ifndef TEST_JSAPIAUTO_H
+#define TEST_JSAPIAUTO_H
+
 #include <string>
 #include <sstream>
 #include <algorithm>
@@ -124,3 +127,5 @@ private:
     std::string m_message;
     const std::string m_readOnlyMessage;
 };
+
+#endif

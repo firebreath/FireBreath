@@ -28,6 +28,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "jsapiauto_test.h"
 #include "jsarray_test.h"
 #include "TypeIDMap_test.h"
+#include "jscallback_test.h"
 
 int main()
 {
