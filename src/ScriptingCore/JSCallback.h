@@ -38,11 +38,6 @@ namespace FB
         FB::AutoPtr<FB::JSAPI> m_jsapi;
     };
     
-    struct strong_reference_type {};
-    struct weak_reference_type {};
-    extern const strong_reference_type strong_reference;
-    extern const weak_reference_type weak_reference;
-    
     template<class T, class F>
     FB::AutoPtr<FB::JSAPI> make_callback(T* instance, F member_function, bool strong_reference = true)
     {
