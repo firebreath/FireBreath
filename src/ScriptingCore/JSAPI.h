@@ -25,7 +25,7 @@ namespace FB
     class BrowserHostWrapper;
     struct script_error : std::exception
     {
-        script_error(std::string error)
+        script_error(const std::string& error)
             : m_error(error)
         { }
         ~script_error() throw() { }
@@ -57,7 +57,7 @@ namespace FB
     
     struct invalid_member : script_error
     {
-        invalid_member(std::string memberName)
+        invalid_member(const std::string& memberName)
             : script_error("The specified member does not exist: " + memberName)
         { }
         ~invalid_member() throw() { }
@@ -81,35 +81,35 @@ namespace FB
 
     protected:
         // Used to fire an event to the listeners attached to this JSAPI
-        virtual void FireEvent(std::string eventName, std::vector<variant>&);
+        virtual void FireEvent(const std::string& eventName, const std::vector<variant>&);
 
     public:
         virtual void registerEvent(const std::string& name);
-        virtual void registerEventMethod(std::string name, BrowserObjectAPI *event);
-        virtual void unregisterEventMethod(std::string name, BrowserObjectAPI *event);
+        virtual void registerEventMethod(const std::string& name, BrowserObjectAPI *event);
+        virtual void unregisterEventMethod(const std::string& name, BrowserObjectAPI *event);
         virtual void registerEventInterface(BrowserObjectAPI *event);
         virtual void unregisterEventInterface(BrowserObjectAPI *event);
-        virtual BrowserObjectAPI *getDefaultEventMethod(std::string name);
-        virtual void setDefaultEventMethod(std::string name, BrowserObjectAPI *event);
+        virtual BrowserObjectAPI *getDefaultEventMethod(const std::string& name);
+        virtual void setDefaultEventMethod(const std::string& name, BrowserObjectAPI *event);
 
         // Methods for enumeration
         virtual void getMemberNames(std::vector<std::string> &nameVector) = 0;
         virtual size_t getMemberCount() = 0;
 
         // Methods to query existance of members on the API
-        virtual bool HasMethod(std::string methodName) = 0;
-        virtual bool HasProperty(std::string propertyName) = 0;
+        virtual bool HasMethod(const std::string& methodName) = 0;
+        virtual bool HasProperty(const std::string& propertyName) = 0;
         virtual bool HasProperty(int idx) = 0;
-        virtual bool HasEvent(std::string eventName);
+        virtual bool HasEvent(const std::string& eventName);
 
         // Methods to manage properties on the API
-        virtual variant GetProperty(std::string propertyName) = 0;
-        virtual void SetProperty(std::string propertyName, const variant value) = 0;
+        virtual variant GetProperty(const std::string& propertyName) = 0;
+        virtual void SetProperty(const std::string& propertyName, const variant& value) = 0;
         virtual variant GetProperty(int idx) = 0;
-        virtual void SetProperty(int idx, const variant value) = 0;
+        virtual void SetProperty(int idx, const variant& value) = 0;
 
         // Methods to manage methods on the API
-        virtual variant Invoke(std::string methodName, std::vector<variant>& args) = 0;
+        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
 
     protected:
         EventMultiMap m_eventMap;

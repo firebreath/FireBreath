@@ -37,7 +37,7 @@ public:
     }
 
 public:
-    FB::variant callSetValue(std::vector<FB::variant>& args)
+    FB::variant callSetValue(const std::vector<FB::variant>& args)
     {
         if (args.size() != 2)
             throw FB::invalid_arguments();
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    FB::variant callGetValue(std::vector<FB::variant>& args)
+    FB::variant callGetValue(const std::vector<FB::variant>& args)
     {
         if (args.size() != 1)
             throw FB::invalid_arguments();
@@ -75,7 +75,7 @@ public:
         throw FB::invalid_arguments();
     }
 
-    FB::variant callInvalidate(std::vector<FB::variant>& args)
+    FB::variant callInvalidate(const std::vector<FB::variant>& args)
     {
         invalidate();
         return FB::variant();
@@ -86,7 +86,7 @@ public:
         return propValue;
     }
 
-    void setValue(const FB::variant value)
+    void setValue(const FB::variant& value)
     {
         propValue = value;
     }

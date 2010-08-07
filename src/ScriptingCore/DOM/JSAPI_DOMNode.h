@@ -26,7 +26,7 @@ namespace FB {
     class JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMNode(const JSObject element) : m_element(element) { }
+        JSAPI_DOMNode(const JSObject& element) : m_element(element) { }
         JSAPI_DOMNode(const JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
         virtual ~JSAPI_DOMNode() { }
 
@@ -34,14 +34,14 @@ namespace FB {
 
     public:
         template <class T>
-        T callMethod(std::string name, VariantList args)
+        T callMethod(const std::string& name, const VariantList& args)
         {
             FB::variant tmp = m_element->Invoke(name, args);
             return tmp.convert_cast<T>();
         }
 
         template <class T>
-        T getProperty(std::string name)
+        T getProperty(const std::string& name)
         {
             FB::variant tmp = m_element->GetProperty(name);
             return tmp.convert_cast<T>();
@@ -54,13 +54,13 @@ namespace FB {
             return tmp.convert_cast<T>();
         }
 
-        JSAPI_DOMNode getNode(std::string name);
+        JSAPI_DOMNode getNode(const std::string& name);
 
         JSAPI_DOMNode getNode(int idx);
 
-        void setProperty(std::string name, variant val);
+        void setProperty(const std::string& name, const variant& val);
 
-        void setProperty(int idx, variant val);
+        void setProperty(int idx, const variant& val);
 
     protected:
         JSObject m_element;

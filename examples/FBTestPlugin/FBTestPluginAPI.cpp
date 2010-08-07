@@ -65,7 +65,7 @@ std::string FBTestPluginAPI::get_testString()
 {
     return m_testString;
 }
-void FBTestPluginAPI::set_testString(std::string val)
+void FBTestPluginAPI::set_testString(const std::string& val)
 {
     m_testString = val;
 }
@@ -85,38 +85,38 @@ long FBTestPluginAPI::add(long a, long b)
 }
 
 // test firing an event
-void FBTestPluginAPI::testEvent(std::string param)
+void FBTestPluginAPI::testEvent(const std::string& param)
 {
     this->FireEvent("onfired", FB::variant_list_of(param));
 }
 
-FB::variant FBTestPluginAPI::echo(FB::variant a)
+FB::variant FBTestPluginAPI::echo(const FB::variant& a)
 {
     m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
     return a;
 }
 
-std::string FBTestPluginAPI::asString(FB::variant a)
+std::string FBTestPluginAPI::asString(const FB::variant& a)
 {
     return a.convert_cast<std::string>();
 }
 
-bool FBTestPluginAPI::asBool(FB::variant a)
+bool FBTestPluginAPI::asBool(const FB::variant& a)
 {
     return a.convert_cast<bool>();
 }
 
-long FBTestPluginAPI::asInt(FB::variant a)
+long FBTestPluginAPI::asInt(const FB::variant& a)
 {
     return a.convert_cast<long>();
 }
 
-double FBTestPluginAPI::asDouble(FB::variant a)
+double FBTestPluginAPI::asDouble(const FB::variant& a)
 {
     return a.convert_cast<double>();
 }
 
-FB::VariantList FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
+FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& arr)
 {
     FB::VariantList outArr;
     for (std::vector<std::string>::reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
@@ -126,7 +126,7 @@ FB::VariantList FBTestPluginAPI::reverseArray(std::vector<std::string> arr)
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
+FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -138,7 +138,7 @@ FB::VariantList FBTestPluginAPI::getObjectKeys(FB::JSObject arr)
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectValues(FB::JSObject arr)
+FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObject& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -150,7 +150,7 @@ FB::VariantList FBTestPluginAPI::getObjectValues(FB::JSObject arr)
     return outArr;
 }
 
-std::string FBTestPluginAPI::listArray(std::vector<std::string> arr)
+std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
 {
     std::string outStr;
     bool start(true);

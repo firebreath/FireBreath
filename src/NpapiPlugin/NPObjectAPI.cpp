@@ -53,12 +53,12 @@ size_t NPObjectAPI::getMemberCount()
     return (size_t)count;
 }
 
-bool NPObjectAPI::HasMethod(std::string methodName)
+bool NPObjectAPI::HasMethod(const std::string& methodName)
 {
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
-bool NPObjectAPI::HasProperty(std::string propertyName)
+bool NPObjectAPI::HasProperty(const std::string& propertyName)
 {
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
@@ -68,14 +68,14 @@ bool NPObjectAPI::HasProperty(int idx)
     return browser->HasProperty(obj, browser->GetIntIdentifier(idx));
 }
 
-bool NPObjectAPI::HasEvent(std::string eventName)
+bool NPObjectAPI::HasEvent(const std::string& eventName)
 {
     return false;
 }
 
 
 // Methods to manage properties on the API
-FB::variant NPObjectAPI::GetProperty(std::string propertyName)
+FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
@@ -87,7 +87,7 @@ FB::variant NPObjectAPI::GetProperty(std::string propertyName)
     }
 }
 
-void NPObjectAPI::SetProperty(std::string propertyName, const FB::variant value)
+void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
     NPVariant val;
     browser->getNPVariant(&val, value);
@@ -108,7 +108,7 @@ FB::variant NPObjectAPI::GetProperty(int idx)
     }
 }
 
-void NPObjectAPI::SetProperty(int idx, const FB::variant value)
+void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
     NPVariant val;
     browser->getNPVariant(&val, value);
@@ -118,7 +118,7 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant value)
 }
 
 // Methods to manage methods on the API
-FB::variant NPObjectAPI::Invoke(std::string methodName, std::vector<FB::variant>& args)
+FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     NPVariant retVal;
 

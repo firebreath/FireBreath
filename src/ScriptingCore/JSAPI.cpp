@@ -48,7 +48,7 @@ void JSAPI::invalidate()
     m_valid = false;
 }
 
-void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
+void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::variant>& args)
 {
     if (!m_valid)   // When invalidated, do nothing more
         return;
@@ -69,7 +69,7 @@ void JSAPI::FireEvent(std::string eventName, std::vector<FB::variant>& args)
     }
 }
 
-bool JSAPI::HasEvent(std::string eventName)
+bool JSAPI::HasEvent(const std::string& eventName)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
     if (fnd != m_defEventMap.end()) {
@@ -79,7 +79,7 @@ bool JSAPI::HasEvent(std::string eventName)
     }
 }
 
-void JSAPI::registerEventMethod(std::string name, BrowserObjectAPI *event)
+void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -91,7 +91,7 @@ void JSAPI::registerEventMethod(std::string name, BrowserObjectAPI *event)
     m_eventMap.insert(EventPair(name, event));
 }
 
-void JSAPI::unregisterEventMethod(std::string name, BrowserObjectAPI *event)
+void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -114,7 +114,7 @@ void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
     m_evtIfaces.erase(fnd);
 }
 
-BrowserObjectAPI *JSAPI::getDefaultEventMethod(std::string name)
+BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::string& name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
     if (fnd != m_defEventMap.end()) {
@@ -123,7 +123,7 @@ BrowserObjectAPI *JSAPI::getDefaultEventMethod(std::string name)
     return NULL;
 }
 
-void JSAPI::setDefaultEventMethod(std::string name, BrowserObjectAPI *obj)
+void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj)
 {
     if(obj == NULL)
         m_defEventMap.erase(name);

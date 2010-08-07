@@ -31,15 +31,15 @@ void AsyncBrowserCall::asyncCallback(void *userData)
     delete call;
 }
 
-void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, std::string method,
-            std::vector<variant> &inParams)
+void AsyncBrowserCall::CallMethod(BrowserObjectAPI *obj, const std::string& method,
+            const std::vector<variant> &inParams)
 {
     AsyncBrowserCall *call = new AsyncBrowserCall(obj, method, inParams);
     obj->host->ScheduleAsyncCall(&AsyncBrowserCall::asyncCallback, call);
 }
 
-AsyncBrowserCall::AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
-                                   std::vector<variant> &inParams) :
+AsyncBrowserCall::AsyncBrowserCall(BrowserObjectAPI *obj, const std::string& method,
+                                   const std::vector<variant> &inParams) :
     m_obj(obj), m_params(inParams), m_methodName(method)
 {
 }

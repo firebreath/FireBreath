@@ -44,19 +44,19 @@ namespace FB { namespace Npapi {
 
     public:
         // Methods to query existance of members on the API
-        bool HasMethod(std::string methodName);
-        bool HasProperty(std::string propertyName);
+        bool HasMethod(const std::string& methodName);
+        bool HasProperty(const std::string& propertyName);
         bool HasProperty(int idx);
-        bool HasEvent(std::string eventName);
+        bool HasEvent(const std::string& eventName);
 
         // Methods to manage properties on the API
-        variant GetProperty(std::string propertyName);
-        void SetProperty(std::string propertyName, const variant value);
+        variant GetProperty(const std::string& propertyName);
+        void SetProperty(const std::string& propertyName, const variant& value);
         variant GetProperty(int idx);
-        void SetProperty(int idx, const variant value);
+        void SetProperty(int idx, const variant& value);
 
         // Methods to manage methods on the API
-        variant Invoke(std::string methodName, std::vector<variant>& args);
+        variant Invoke(const std::string& methodName, const std::vector<variant>& args);
     };
 
 }; };

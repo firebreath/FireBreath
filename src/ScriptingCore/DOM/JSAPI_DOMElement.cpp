@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
-JSAPI_DOMElement::JSAPI_DOMElement(const JSObject element) : JSAPI_DOMNode(element)
+JSAPI_DOMElement::JSAPI_DOMElement(const JSObject& element) : JSAPI_DOMNode(element)
 {
 }
 
@@ -32,7 +32,7 @@ std::string JSAPI_DOMElement::getInnerHTML()
 {
     return getProperty<std::string>("innerHTML");
 }
-void JSAPI_DOMElement::setInnerHTML(std::string html)
+void JSAPI_DOMElement::setInnerHTML(const std::string& html)
 {
     setProperty("innerHTML", html);
 }

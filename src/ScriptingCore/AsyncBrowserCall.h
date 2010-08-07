@@ -27,12 +27,12 @@ namespace FB {
     {
     public:
         virtual ~AsyncBrowserCall(void);
-        static void CallMethod(BrowserObjectAPI *obj, std::string method,
-            std::vector<variant> &inParams);
+        static void CallMethod(BrowserObjectAPI *obj, const std::string& method,
+            const std::vector<variant> &inParams);
 
     protected:
-        AsyncBrowserCall(BrowserObjectAPI *obj, std::string method,
-            std::vector<variant> &inParams);
+        AsyncBrowserCall(BrowserObjectAPI *obj, const std::string& method,
+            const std::vector<variant> &inParams);
 
         static void asyncCallback(void *userData);
 

@@ -26,7 +26,7 @@ BrowserObjectAPI::~BrowserObjectAPI(void)
 {
 }
 
-void BrowserObjectAPI::InvokeAsync(std::string methodName, std::vector<variant>& args)
+void BrowserObjectAPI::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
     FB::AsyncBrowserCall::CallMethod(this, methodName, args);
 }

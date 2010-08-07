@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "JSAPI_DOMNode.h"
 
-FB::JSAPI_DOMNode FB::JSAPI_DOMNode::getNode(std::string name)
+FB::JSAPI_DOMNode FB::JSAPI_DOMNode::getNode(const std::string& name)
 {
     FB::JSObject api = getProperty<FB::JSObject>(name);
     FB::JSAPI_DOMNode retVal(api);
@@ -30,12 +30,12 @@ FB::JSAPI_DOMNode FB::JSAPI_DOMNode::getNode(int idx)
     return retVal;
 }
 
-void FB::JSAPI_DOMNode::setProperty(std::string name, FB::variant val)
+void FB::JSAPI_DOMNode::setProperty(const std::string& name, const FB::variant& val)
 {
     m_element->SetProperty(name, val);
 }
 
-void FB::JSAPI_DOMNode::setProperty(int idx, FB::variant val)
+void FB::JSAPI_DOMNode::setProperty(int idx, const FB::variant& val)
 {
     m_element->SetProperty(idx, val);
 }

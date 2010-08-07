@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(const JSObject element) : JSAPI_DOMNode(element)
+JSAPI_DOMWindow::JSAPI_DOMWindow(const JSObject& element) : JSAPI_DOMNode(element)
 {
 }
 
@@ -37,7 +37,7 @@ JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
     return JSAPI_DOMDocument(api.ptr());
 }
 
-void JSAPI_DOMWindow::alert(std::string str)
+void JSAPI_DOMWindow::alert(const std::string& str)
 {
     callMethod<void>("alert", variant_list_of(str));
 }

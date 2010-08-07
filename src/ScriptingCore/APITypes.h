@@ -48,7 +48,7 @@ namespace FB
     // JSAPI methods
 
     class JSAPI;
-    typedef variant (JSAPI::*CallMethodPtr)(std::vector<variant>&);
+    typedef variant (JSAPI::*CallMethodPtr)(const std::vector<variant>&);
     struct MethodInfo {
         MethodInfo() : callFunc(NULL) { }
         MethodInfo(CallMethodPtr callFunc) : callFunc(callFunc) { }
@@ -62,7 +62,7 @@ namespace FB
     // JSAPI properties
 
     typedef variant (JSAPI::*GetPropPtr)();
-    typedef void (JSAPI::*SetPropPtr)(const variant value);
+    typedef void (JSAPI::*SetPropPtr)(const variant& value);
     struct PropertyInfo {
         PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }
@@ -75,7 +75,7 @@ namespace FB
 
     // new style JSAPI methods
 
-    typedef boost::function<variant (std::vector<variant>&)> CallMethodFunctor;
+    typedef boost::function<variant (const std::vector<variant>&)> CallMethodFunctor;
     typedef std::map<std::string, CallMethodFunctor> MethodFunctorMap;
 
     // new style JSAPI properties

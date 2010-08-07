@@ -25,17 +25,17 @@ public:
     {
     }
 
-    bool HasMethod(std::string) { return false; }
-    void SetProperty(int,const FB::variant) {}
-    void SetProperty(std::string,const FB::variant) {}
-    FB::variant Invoke(std::string,FB::VariantList&) { return FB::variant(); }
+    bool HasMethod(const std::string&) { return false; }
+    void SetProperty(int, const FB::variant&) {}
+    void SetProperty(const std::string&, const FB::variant) {}
+    FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
 
     // Methods for enumeration
     virtual void getMemberNames(std::vector<std::string> &nameVector) { }
     virtual size_t getMemberCount() { return 0; }
 
 
-    bool HasProperty(std::string s)    
+    bool HasProperty(const std::string& s)    
     { 
         return (s == "length"); 
     }
@@ -45,7 +45,7 @@ public:
         return ((unsigned)index < m_values.size()); 
     }
     
-    FB::variant GetProperty(std::string s) 
+    FB::variant GetProperty(const std::string& s) 
     { 
         if(s == "length")
             return (int)m_values.size();
@@ -61,6 +61,8 @@ public:
         }
         return m_values[index]; 
     }
+    
+    void SetProperty(const std::string& name, const FB::variant& value) {}
 
 private:
     FB::VariantList m_values;

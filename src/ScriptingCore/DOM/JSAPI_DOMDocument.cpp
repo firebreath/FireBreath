@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
-JSAPI_DOMDocument::JSAPI_DOMDocument(const JSObject element) : JSAPI_DOMElement(element)
+JSAPI_DOMDocument::JSAPI_DOMDocument(const JSObject& element) : JSAPI_DOMElement(element)
 {
 }
 
@@ -38,7 +38,7 @@ JSAPI_DOMWindow JSAPI_DOMDocument::getWindow()
     return retVal;
 }
 
-JSAPI_DOMElement JSAPI_DOMDocument::getElementById(std::string id)
+JSAPI_DOMElement JSAPI_DOMDocument::getElementById(const std::string& id)
 {
     JSObject api =
         callMethod<JSObject>("getElementById", FB::VariantList(variant_list_of(id)));

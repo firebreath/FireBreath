@@ -39,12 +39,12 @@ bool FB::JSAPIAuto::get_valid()
     return true;
 }
 
-void FB::JSAPIAuto::registerMethod(const std::string& name, CallMethodFunctor func)
+void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
 {
     m_methodFunctorMap[name] = func;
 }
 
-void FB::JSAPIAuto::registerProperty(const std::string& name, PropertyFunctors propFuncs)
+void FB::JSAPIAuto::registerProperty(const std::string& name, const PropertyFunctors& propFuncs)
 {
     m_propertyFunctorsMap[name] = propFuncs;
 }
@@ -74,7 +74,7 @@ size_t FB::JSAPIAuto::getMemberCount()
         + m_defEventMap.size();
 }
 
-bool FB::JSAPIAuto::HasMethod(std::string methodName)
+bool FB::JSAPIAuto::HasMethod(const std::string& methodName)
 {
     if(!m_valid)
         return false;
@@ -82,7 +82,7 @@ bool FB::JSAPIAuto::HasMethod(std::string methodName)
     return (m_methodFunctorMap.find(methodName) != m_methodFunctorMap.end());
 }
 
-bool FB::JSAPIAuto::HasProperty(std::string propertyName)
+bool FB::JSAPIAuto::HasProperty(const std::string& propertyName)
 {
     if(!m_valid)
         return false;
@@ -100,7 +100,7 @@ bool FB::JSAPIAuto::HasProperty(int idx)
     return false;
 }
 
-FB::variant FB::JSAPIAuto::GetProperty(std::string propertyName)
+FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
 {
     if(!m_valid)
         throw object_invalidated();
@@ -113,7 +113,7 @@ FB::variant FB::JSAPIAuto::GetProperty(std::string propertyName)
 
 }
 
-void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant value)
+void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& value)
 {
     if(!m_valid)
         throw object_invalidated();
@@ -145,12 +145,12 @@ FB::variant FB::JSAPIAuto::GetProperty(int idx)
     throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
-void FB::JSAPIAuto::SetProperty(int idx, const variant value)
+void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
 {
     throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
-FB::variant FB::JSAPIAuto::Invoke(std::string methodName, std::vector<variant> &args)
+FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)
 {
     if(!m_valid)
         throw object_invalidated();

@@ -30,14 +30,14 @@ namespace FB {
     class JSAPI_DOMDocument : public JSAPI_DOMElement
     {
     public:
-        JSAPI_DOMDocument(const JSObject element);
+        JSAPI_DOMDocument(const JSObject &element);
         JSAPI_DOMDocument(const JSAPI_DOMDocument &rhs);
         JSAPI_DOMDocument(const JSAPI_DOMNode &rhs);
         virtual ~JSAPI_DOMDocument();
 
     public:
         JSAPI_DOMWindow getWindow();
-        JSAPI_DOMElement getElementById(std::string id);
+        JSAPI_DOMElement getElementById(const std::string& elem_id);
     };
 
 };

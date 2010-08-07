@@ -31,24 +31,24 @@ namespace FB
         virtual void *getEventId() { return NULL; }
         virtual void *getEventContext() { return NULL; }
 
-        virtual void InvokeAsync(std::string methodName, std::vector<variant>& args);
+        virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
 
         // TODO: Find a better place for this conversion method.
         //       Gotcha to watch out for: has to be included after variant.h
         //       and everywhere where variant::convert_cast<SomeContainer>()
         //       is used.
         template<class Cont>
-        static void GetArrayValues(FB::JSObject src, Cont& dst);
+        static void GetArrayValues(const FB::JSObject& src, Cont& dst);
         
         template<class Dict>
-        static void GetObjectValues(FB::JSObject src, Dict& dst);
+        static void GetObjectValues(const FB::JSObject& src, Dict& dst);
 
     public:
         AutoPtr<BrowserHostWrapper> host;
     };
 
     template<class Cont>
-    void BrowserObjectAPI::GetArrayValues(FB::JSObject src, Cont& dst)
+    void BrowserObjectAPI::GetArrayValues(const FB::JSObject& src, Cont& dst)
     {
         try
         {
@@ -68,7 +68,7 @@ namespace FB
     }
 
     template<class Dict>
-    void BrowserObjectAPI::GetObjectValues(FB::JSObject src, Dict& dst)
+    void BrowserObjectAPI::GetObjectValues(const FB::JSObject& src, Dict& dst)
     {
         typedef typename Dict::key_type KeyType;
         typedef typename Dict::mapped_type MappedType;

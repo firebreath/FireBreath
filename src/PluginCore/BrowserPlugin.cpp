@@ -28,7 +28,7 @@ BrowserPlugin::~BrowserPlugin()
     delete pluginMain; pluginMain = NULL;
 }
 
-void BrowserPlugin::setFSPath(std::string path)
+void BrowserPlugin::setFSPath(const std::string& path)
 {
     m_filesystemPath = path;
     pluginMain->setFSPath(path);

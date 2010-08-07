@@ -52,17 +52,17 @@ namespace FB {
         TypeIDMap(IDTYPE startValue) : nextId((unsigned long)startValue) { }
         virtual ~TypeIDMap() { }
 
-        void setIdForValue(IDTYPE id, variant val)
+        void setIdForValue(IDTYPE idt, const variant& val)
         {
-            if (m_idVariant.find(id) != m_idVariant.end()
+            if (m_idVariant.find(idt) != m_idVariant.end()
                 || m_variantId.find(val) != m_variantId.end()) {
                 throw std::runtime_error("ID or value already defined");
             }
-            m_variantId[val] = id;
-            m_idVariant[id] = val;
+            m_variantId[val] = idt;
+            m_idVariant[idt] = val;
         }
 
-        IDTYPE getIdForValue(variant val)
+        IDTYPE getIdForValue(const variant& val)
         {
             typename VariantIdMap::iterator it = m_variantId.find(val);
 
@@ -76,9 +76,9 @@ namespace FB {
             }
         }
 
-        std::type_info& idGetType(IDTYPE id)
+        std::type_info& idGetType(IDTYPE idt)
         {
-            typename IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
                 return it->second.get_type();
@@ -87,15 +87,15 @@ namespace FB {
             }
         }
 
-        bool idExists(IDTYPE id)
+        bool idExists(IDTYPE idt)
         {
-            return m_idVariant.find(id) != m_idVariant.end();
+            return m_idVariant.find(idt) != m_idVariant.end();
         }
 
         template <class T>
-        bool idIsType(IDTYPE id)
+        bool idIsType(IDTYPE idt)
         {
-            typename IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
                 return it->second.get_type() == typeid(T);
@@ -105,9 +105,9 @@ namespace FB {
         }
 
         template <class T>
-        T getValueForId(IDTYPE id)
+        T getValueForId(IDTYPE idt)
         {
-            typename IdVariantMap::iterator it = m_idVariant.find(id);
+            typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
                 T retVal = (*it).second.template cast<T>();

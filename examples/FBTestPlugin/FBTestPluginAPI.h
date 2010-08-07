@@ -26,28 +26,28 @@ public:
 
     // Read/Write property testString
     std::string get_testString();
-    void set_testString(std::string val);
+    void set_testString(const std::string& val);
 
     // Read-only property someInt
     long get_someInt();
 
     FB::JSOutObject get_simpleMath();
-    FB::variant echo(FB::variant a);
+    FB::variant echo(const FB::variant& a);
 
-    std::string asString(FB::variant a);
-    bool asBool(FB::variant a);
-    long asInt(FB::variant a);
-    double asDouble(FB::variant a);
+    std::string asString(const FB::variant& a);
+    bool asBool(const FB::variant& a);
+    long asInt(const FB::variant& a);
+    double asDouble(const FB::variant& a);
 
-    std::string listArray(std::vector<std::string>);
-    FB::VariantList reverseArray(std::vector<std::string> arr);
-    FB::VariantList getObjectKeys(FB::JSObject arr);
-    FB::VariantList getObjectValues(FB::JSObject arr);
+    std::string listArray(const std::vector<std::string>&);
+    FB::VariantList reverseArray(const std::vector<std::string>& arr);
+    FB::VariantList getObjectKeys(const FB::JSObject& arr);
+    FB::VariantList getObjectValues(const FB::JSObject& arr);
     FB::VariantMap getUserData();
 
     // Method add
     long add(long a, long b);
-    void testEvent(std::string param);
+    void testEvent(const std::string& param);
 
     // Method to start the streams test
     bool testStreams();

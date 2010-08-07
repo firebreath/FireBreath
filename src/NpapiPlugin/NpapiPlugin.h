@@ -22,16 +22,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB { namespace Npapi {
 
-    struct PluginCreateError : std::exception
+    struct PluginCreateError : std::runtime_error
     {
-        PluginCreateError(std::string error)
-        : m_error(error)
+        PluginCreateError(const std::string& error)
+          : std::runtime_error(error)
         { }
-        ~PluginCreateError() throw() { }
-        virtual const char* what() const throw() {
-            return m_error.c_str();
-        }
-        std::string m_error;
     };
     
     class NpapiPlugin : public FB::BrowserPlugin

@@ -29,7 +29,7 @@ volatile int PluginCore::ActivePluginCount = 0;
 
 std::string PluginCore::OS;
 std::string PluginCore::Browser;
-void PluginCore::setPlatform(std::string os, std::string browser)
+void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
@@ -51,7 +51,7 @@ PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
     
 }
 
-PluginCore::PluginCore(std::set<std::string> params)
+PluginCore::PluginCore(const std::set<std::string>& params)
     : m_Window(NULL), m_supportedParamSet(params), m_paramsSet(false)
 {
     // This class is only created on the main UI thread,

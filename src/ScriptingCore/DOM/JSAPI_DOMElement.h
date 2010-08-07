@@ -29,14 +29,14 @@ namespace FB {
     class JSAPI_DOMElement : public JSAPI_DOMNode
     {
     public:
-        JSAPI_DOMElement(const JSObject element);
+        JSAPI_DOMElement(const JSObject& element);
         JSAPI_DOMElement(const JSAPI_DOMElement &rhs);
 
         virtual ~JSAPI_DOMElement();
 
     public:
         virtual std::string getInnerHTML();
-        virtual void setInnerHTML(std::string);
+        virtual void setInnerHTML(const std::string&);
 
         virtual int getWidth();
         virtual void setWidth(int);
@@ -47,7 +47,7 @@ namespace FB {
         virtual JSAPI_DOMElement getChildNode(int idx);
         virtual JSAPI_DOMElement getParentNode();
 
-        JSAPI_DOMElement getElement(std::string name)
+        JSAPI_DOMElement getElement(const std::string& name)
         {
             JSObject api = getProperty<JSObject>(name);
             JSAPI_DOMElement retVal(api);
