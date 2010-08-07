@@ -63,7 +63,7 @@ protected:
     bool m_valid;
     std::vector<std::string> m_memberList;
 
-    virtual bool callSetEventListener(std::vector<FB::variant> &args, bool add);
+    virtual bool callSetEventListener(const std::vector<FB::variant> &args, bool add);
 
 public:
     /* IConnectionPointContainer members */
@@ -258,7 +258,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
 
 // helper method for Invoke
 template <class T, class IDISP, const IID* piid>
-bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(std::vector<FB::variant> &args, bool add)
+bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB::variant> &args, bool add)
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)

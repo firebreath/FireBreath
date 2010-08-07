@@ -62,7 +62,7 @@ size_t IDispatchAPI::getMemberCount()
     return count;
 }
 
-DISPID IDispatchAPI::getIDForName(std::string name)
+DISPID IDispatchAPI::getIDForName(const std::string& name)
 {
     if (name.empty())
         return DISPID_VALUE;
@@ -89,14 +89,14 @@ DISPID IDispatchAPI::getIDForName(std::string name)
     }
 }
 
-bool IDispatchAPI::HasMethod(std::string methodName)
+bool IDispatchAPI::HasMethod(const std::string& methodName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(methodName) != -1;
 }
 
-bool IDispatchAPI::HasProperty(std::string propertyName)
+bool IDispatchAPI::HasProperty(const std::string& propertyName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
@@ -109,7 +109,7 @@ bool IDispatchAPI::HasProperty(int idx)
     return getIDForName(name.convert_cast<std::string>()) != -1;
 }
 
-bool IDispatchAPI::HasEvent(std::string eventName)
+bool IDispatchAPI::HasEvent(const std::string& eventName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
@@ -118,7 +118,7 @@ bool IDispatchAPI::HasEvent(std::string eventName)
 
 
 // Methods to manage properties on the API
-FB::variant IDispatchAPI::GetProperty(std::string propertyName)
+FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {
     DISPPARAMS params;
     params.cArgs = 0;
@@ -143,7 +143,7 @@ FB::variant IDispatchAPI::GetProperty(std::string propertyName)
     }
 }
 
-void IDispatchAPI::SetProperty(std::string propertyName, const FB::variant value)
+void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
     CComVariant arg[1];
     DISPID namedArg[1];
@@ -181,7 +181,7 @@ FB::variant IDispatchAPI::GetProperty(int idx)
     return GetProperty(sIdx.convert_cast<std::string>());
 }
 
-void IDispatchAPI::SetProperty(int idx, const FB::variant value)
+void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 {
     FB::variant sIdx(idx);
     SetProperty(sIdx.convert_cast<std::string>(), value);
@@ -189,7 +189,7 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant value)
 
 
 // Methods to manage methods on the API
-FB::variant IDispatchAPI::Invoke(std::string methodName, std::vector<FB::variant>& args)
+FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     CComVariant *comArgs = new CComVariant[args.size()];
     DISPPARAMS params;

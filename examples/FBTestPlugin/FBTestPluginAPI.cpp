@@ -119,7 +119,7 @@ double FBTestPluginAPI::asDouble(const FB::variant& a)
 FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& arr)
 {
     FB::VariantList outArr;
-    for (std::vector<std::string>::reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
+    for (std::vector<std::string>::const_reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
     {
         outArr.push_back(*it);
     }
@@ -154,7 +154,7 @@ std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
 {
     std::string outStr;
     bool start(true);
-    for (std::vector<std::string>::iterator it = arr.begin(); it != arr.end(); it++)
+    for (std::vector<std::string>::const_iterator it = arr.begin(); it != arr.end(); it++)
     {
         if (!start) {
             outStr += ", ";
