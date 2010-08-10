@@ -76,14 +76,14 @@ namespace FB {
             }
         }
 
-        std::type_info& idGetType(IDTYPE idt)
+        const std::type_info& idGetType(IDTYPE id)
         {
             typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
                 return it->second.get_type();
             } else {
-                throw typeid(void);
+                return typeid(void);
             }
         }
 
