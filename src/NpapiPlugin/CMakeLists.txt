@@ -30,7 +30,6 @@ include_directories(
     ${GEN_DIR}/gen
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
-    ${BOOST_SOURCE_DIR}
     ${PLUGINWINDOW_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     )
