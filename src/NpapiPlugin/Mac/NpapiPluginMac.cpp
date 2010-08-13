@@ -75,10 +75,10 @@ namespace
     bool enableQuickDraw(FB::Npapi::NpapiBrowserHost* host)
     {
 #if !FBMAC_USE_QUICKDRAW
-		printf("enableQuickDraw() - 0\n");
+        printf("enableQuickDraw() - 0\n");
         return false;  
 #else
-		printf("enableQuickDraw() - 1\n");
+        printf("enableQuickDraw() - 1\n");
         
         // QuickDraw can only be used with Carbon Event Model
         if(!supports(host, NPNVsupportsCarbonBool))
@@ -97,14 +97,14 @@ namespace
     bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHost* host)
     {
 #if !FBMAC_USE_COREGRAPHICS
-		printf("CoreGraphics not supported\n");
+        printf("CoreGraphics not supported\n");
         return false;
 #endif
 #if !FBMAC_USE_CARBON
         printf("Carbon not supported\n");
         return false;
 #else
-		
+        
         if(!supports(host, NPNVsupportsCarbonBool))
             return false;
         if(!supports(host, NPNVsupportsCoreGraphicsBool))
@@ -114,7 +114,7 @@ namespace
         if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics))
             return false;
         
-		printf("CoreGraphics and Carbon supported\n");
+        printf("CoreGraphics and Carbon supported\n");
         return true;
 #endif
     }
@@ -122,15 +122,15 @@ namespace
     bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHost* host)
     {
 #if !FBMAC_USE_COREGRAPHICS
-		printf("CoreGraphics not supported\n");
+        printf("CoreGraphics not supported\n");
         return false;
 #endif
 #if !FBMAC_USE_CARBON
         printf("Cocoa not supported\n");
         return false;
 #else
-		printf("CoreGraphics and Cocoa supported\n");
-		
+        printf("CoreGraphics and Cocoa supported\n");
+        
         if(!supports(host, NPNVsupportsCocoaBool)) {
             return false;           
         }
@@ -168,7 +168,7 @@ namespace
 }
 
 NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
-  : NpapiPlugin(host)	
+  : NpapiPlugin(host)   
   , pluginWin(NULL)
   , m_eventModel()
   , m_drawingModel()
@@ -291,7 +291,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
         pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
         pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
                                      window->clipRect.bottom, window->clipRect.right);
-		
+        
         pluginMain->SetWindow(pluginWin);
     } else if (pluginWin != NULL) {
         // Our window is gone, we should stop using it
@@ -368,7 +368,7 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window) {
 
 int16_t NpapiPluginMac::HandleEventCarbon(void* event) {
 #if !FBMAC_USE_CARBON
-	return 0;
+    return 0;
 #else
     if (!pluginWin) {
         return 0;
@@ -389,7 +389,7 @@ int16_t NpapiPluginMac::HandleEventCocoa(void* event)
     }
 
     PluginWindowMacCocoa* win = static_cast<PluginWindowMacCocoa*>(pluginWin);
-	return win->HandleEvent((NPCocoaEvent*)event);
+    return win->HandleEvent((NPCocoaEvent*)event);
 #endif
 }
 
