@@ -35,11 +35,13 @@ namespace
         err = host->GetValue(what, &value);
         
         if (err != NPERR_NO_ERROR) {
+#ifndef __LP64__
             if (what == NPNVsupportsCarbonBool || what == NPNVsupportsQuickDrawBool) {
                 // Model negotiation is not supported, assume
                 // that Carbon and QuickDraw are supported & return true;
                 return true;
             }
+#endif
 
             // If we aren't testing for Carbon or QD, assume that
             // an NPERR_GENERIC_ERROR is bad, return unsupported
@@ -57,11 +59,13 @@ namespace
         void* model = value;
 
         if(err != NPERR_NO_ERROR) {
+#ifndef __LP64__
             if(model == (void*)NPEventModelCarbon || model == (void*)NPDrawingModelQuickDraw) {
                 // Model negotiation is not supported, assume
                 // that Carbon and QuickDraw are supported & return true;
                 return true;
             }
+#endif
 
             // If we aren't testing for Carbon or QD, assume that
             // an NPERR_GENERIC_ERROR is bad, return unsupported
