@@ -11,9 +11,11 @@ else
     BUILDDIR=build
 fi
 
+ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
+
 mkdir -p "$BUILDDIR"
 pushd "$BUILDDIR"
-cmake -G "$GEN" "$EXAMPLES" ..
+cmake -G "$GEN" "$EXAMPLES" $ARCH ..
 popd
 
 if [ -f "cmake/patch_xcode.py" ]; then
