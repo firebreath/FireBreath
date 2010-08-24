@@ -41,7 +41,11 @@ set(FBSTRING_PluginName "FBTestPlugin")
 set(FBSTRING_MIMEType "application/x-fbtestplugin")
 
 # mac settings
-set (FBMAC_USE_COCOA         1)
-set (FBMAC_USE_COREGRAPHICS  1)
-
+# The plugin doesn't do any drawing and doesn't need mouse / keyboard events,
+# so turn the following off:
+set (FBMAC_USE_CARBON        0)
+set (FBMAC_USE_COCOA         0)
+set (FBMAC_USE_QUICKDRAW     0)
+set (FBMAC_USE_COREGRAPHICS  0)
+set (FBMAC_USE_COREANIMATION 0)
 
