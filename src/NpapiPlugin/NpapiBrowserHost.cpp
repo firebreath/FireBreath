@@ -549,6 +549,22 @@ void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message)
     }
 }
 
+int NpapiBrowserHost::ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32 timerID))
+{
+    if(NPNFuncs.scheduletimer != NULL) {
+        return NPNFuncs.scheduletimer(m_npp, interval, repeat, func);
+    } else {
+        return 0;
+    }
+}
+
+void NpapiBrowserHost::UnscheduleTimer(int timerId) 
+{
+    if(NPNFuncs.unscheduletimer != NULL) {
+        NPNFuncs.unscheduletimer(m_npp, timerId);
+    }
+}
+
 FB::BrowserStream* NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
                                     bool cache, bool seekable, size_t internalBufferSize )
 {

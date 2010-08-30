@@ -71,8 +71,7 @@ namespace
     }
 }
 
-namespace
-{
+namespace FB { namespace Npapi {
     struct NpapiPDataHolder
     {
         FB::AutoPtr<NpapiBrowserHost> host;
@@ -83,14 +82,14 @@ namespace
         ~NpapiPDataHolder() {}
     };
 
-    inline NpapiPDataHolder* getHolder(NPP instance)
-    {   
-        return static_cast<NpapiPDataHolder*>(instance->pdata);
-    }
-
     inline NpapiPlugin *getPlugin(NPP instance)
     {
         return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
+    }
+
+    inline NpapiPDataHolder* getHolder(NPP instance)
+    {   
+        return static_cast<NpapiPDataHolder*>(instance->pdata);
     }
 
     inline NpapiBrowserHost *getHost(NPP instance)
@@ -102,7 +101,7 @@ namespace
     {
         return instance != NULL && instance->pdata != NULL;
     }
-} 
+} }
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
 
@@ -131,6 +130,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         if (!plugin.get()) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
+        host->setBrowserFuncs(&(npnFuncs));
 
         plugin->init(pluginType, argc, argn, argv);
 

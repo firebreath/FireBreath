@@ -11,9 +11,12 @@ else
     BUILDDIR=build
 fi
 
+SDK=-DCMAKE_OSX_SYSROOT="/Developer/SDKs/MacOSX10.5.sdk"
+ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
+
 mkdir -p "$BUILDDIR"
 pushd "$BUILDDIR"
-cmake -G "$GEN" "$EXAMPLES" ..
+cmake -G "$GEN" "$EXAMPLES" "$ARCH" "$SDK" ..
 popd
 
 if [ -f "cmake/patch_xcode.py" ]; then
