@@ -30,6 +30,7 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
+            // TODO: Create Cocoa draw event that will forward the drawable to FB
             RefreshEvent ev;
             return SendEvent(&ev);
             break;
@@ -38,13 +39,18 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
             switch(evt->data.mouse.buttonNumber) {
-                case 1: {
+                case 0: {
                     MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
                     return SendEvent(&ev);
                     break;
                 }
-                case 2: {
+                case 1: {
                     MouseDownEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
+                    return SendEvent(&ev);
+                    break;
+                }
+                case 2: {
+                    MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
                     return SendEvent(&ev);
                     break;
                 }
@@ -54,13 +60,18 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
             switch(evt->data.mouse.buttonNumber) {
-                case 1: {
+                case 0: {
                     MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
                     return SendEvent(&ev);
                     break;
                 }
-                case 2: {
+                case 1: {
                     MouseUpEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
+                    return SendEvent(&ev);
+                    break;
+                }
+                case 2: {
+                    MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
                     return SendEvent(&ev);
                     break;
                 }
