@@ -61,8 +61,8 @@ int16_t PluginWindowMacCocoaCA::HandleEvent(NPCocoaEvent* event) {
     return false;
 }
 
-Rect PluginWindowMacCocoaCA::getWindowPosition() {
-    Rect windRect;
+NPRect PluginWindowMacCocoaCA::getWindowPosition() {
+    NPRect windRect;
     windRect.left = m_x;
     windRect.top = m_y;
     windRect.right = m_x + m_width;
@@ -70,11 +70,15 @@ Rect PluginWindowMacCocoaCA::getWindowPosition() {
     return windRect;
 }
 
-Rect PluginWindowMacCocoaCA::getWindowClipping() {
-    Rect clipRect;
+NPRect PluginWindowMacCocoaCA::getWindowClipping() {
+    NPRect clipRect;
     clipRect.left = m_clipLeft;
     clipRect.right = m_clipRight;
     clipRect.top = m_clipTop;
     clipRect.bottom = m_clipBottom;
     return clipRect;    
+}
+
+void PluginWindowMacCocoaCA::setLayer(void* layer) {
+    m_layer = layer;
 }

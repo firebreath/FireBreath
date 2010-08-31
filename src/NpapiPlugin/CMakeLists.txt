@@ -68,6 +68,7 @@ SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/[^.]*.h
     Mac/[^.]*.cpp
+    Mac/[^.]*.mm
     )
 
 SOURCE_GROUP(Mac FILES ${MAC_SOURCES})

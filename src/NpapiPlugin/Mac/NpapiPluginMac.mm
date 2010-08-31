@@ -16,6 +16,10 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginCore.h"
 #include "config.h"
 
+#if FBMAC_USE_COREANIMATION
+#include <QuartzCore/CoreAnimation.h>
+#endif
+
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
 #include "Mac/PluginWindowMacCocoaCA.h"
@@ -401,18 +405,23 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
             pluginWin = NULL;
         }
 
-        if (pluginWin = NULL) {
+        if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
             pluginWinCA = _createPluginWindowCocoaCA();
+            pluginWinCA->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCA);
+            // Initialize window position & clipping 
+            pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
             pluginMain->SetWindow(pluginWin);
+        } else {
+            // Initialize window position & clipping 
+            pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
         }
-
-        // Initialize window position & clipping 
-        pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
-        pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
-                                    window->clipRect.bottom, window->clipRect.right);
     } else if (pluginWin != NULL) {
         // Our window is gone, we should stop using it
         pluginMain->ClearWindow();
@@ -491,8 +500,15 @@ int16_t NpapiPluginMac::HandleEvent(void* event)
 int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
 #if FBMAC_USE_COREANIMATION
     if(variable == NPPVpluginCoreAnimationLayer) {
-        // TODO: Get a CA layer
-        return NPERR_NO_ERROR;
+        if(m_drawingModel == DrawingModelCoreAnimation) {
+            PluginWindowMacCocoaCA* win = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
+            CALayer* layer = [[CALayer alloc] init];
+            win->setLayer((void*)layer);
+            (CALayer*)value = layer;
+            return NPERR_NO_ERROR;
+        } else {
+            return NPERR_GENERIC_ERROR;
+        }
     } 
 #endif
     return NpapiPlugin::GetValue(variable, value);

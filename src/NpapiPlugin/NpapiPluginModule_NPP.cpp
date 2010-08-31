@@ -312,6 +312,7 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
         default:
             break;
     }
+
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
