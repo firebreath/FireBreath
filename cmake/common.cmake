@@ -14,11 +14,7 @@
 
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
-if (BUILD_EXAMPLES)
-    set(PROJECT_SRC_DIR "examples")
-else()
-    set(PROJECT_SRC_DIR "projects")
-endif()
+set(PROJECT_SRC_DIR ${PROJECTS_DIR})
 
 set (PROJECT_ROOT "${CMAKE_BINARY_DIR}/projects")
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")

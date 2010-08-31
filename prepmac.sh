@@ -2,20 +2,12 @@
 
 GEN='Xcode'
 
-if [ "$1" = "examples" ]; then
-    echo Building example projects
-    BUILDDIR=buildex
-    EXAMPLES='-DBUILD_EXAMPLES:BOOL=YES'
-else
-    echo Building projects
-    BUILDDIR=build
-fi
+source ${0%/*}/common.sh "$@"
 
 ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
 
-mkdir -p "$BUILDDIR"
 pushd "$BUILDDIR"
-cmake -G "$GEN" "$EXAMPLES" $ARCH ..
+cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" ${ARCH} "$@" "${FB_ROOT}"
 popd
 
 if [ -f "cmake/patch_xcode.py" ]; then
