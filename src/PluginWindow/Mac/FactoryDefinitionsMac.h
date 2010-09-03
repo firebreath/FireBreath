@@ -16,7 +16,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FactoryDefinitionsMac
 
 #include "npapi.h"
+
+#ifndef __LP64__
 #include <Carbon/Carbon.h>
+#endif
 
 namespace FB {
     class JSAPI;

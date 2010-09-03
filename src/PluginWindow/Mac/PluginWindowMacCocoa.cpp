@@ -30,9 +30,7 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
-            // TODO: Create Cocoa draw event that will forward the drawable to FB
-            RefreshEvent ev;
-            return SendEvent(&ev);
+            // TODO
             break;
         }
         case NPCocoaEventMouseDown: {
@@ -112,7 +110,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         }
     }
 
-    // Event was not handled
     return false;
 }
 
@@ -148,7 +145,7 @@ void PluginWindowMacCocoa::setWindowClipping(uint16_t top, uint16_t left, uint16
     m_clipRight = right;
 }
 
-void FB::timerCallback(NPP npp, uint32 timerID) {
+void FB::timerCallback(NPP npp, uint32_t timerID) {
     FB::Npapi::NpapiPlugin* p = FB::Npapi::getPlugin(npp);
     FB::Npapi::NpapiPluginMac* plugin = dynamic_cast<FB::Npapi::NpapiPluginMac*>(p);
     if(plugin != NULL) {
@@ -171,7 +168,8 @@ void PluginWindowMacCocoa::unscheduleTimer(int timerId) {
 }
 
 void PluginWindowMacCocoa::InvalidateWindow() {
-    NPRect rect = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
+    //NPRect rect = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
+    NPRect rect = { m_y, m_x, m_y + m_height, m_x + m_width };
     m_npHost->InvalidateRect(&rect);
 }
 

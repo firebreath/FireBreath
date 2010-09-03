@@ -18,6 +18,8 @@
 #include "PluginWindow.h"
 #include <map>
 #include "PluginEvents/MacEventCarbon.h"
+#include "PluginEvents/DrawingEvents.h"
+#include "NpapiTypes.h"
 #include <ApplicationServices/ApplicationServices.h>
 
 namespace FB {
@@ -33,8 +35,8 @@ namespace FB {
         virtual void clearWindow();
 
         // Accessors 
-        Rect getWindowPosition();
-        Rect getWindowClipping();
+        NPRect getWindowPosition();
+        NPRect getWindowClipping();
         int getWindowHeight();
         int getWindowWidth();
 

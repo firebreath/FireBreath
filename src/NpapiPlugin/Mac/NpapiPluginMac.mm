@@ -237,6 +237,10 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
 
 NpapiPluginMac::~NpapiPluginMac()
 {
+#ifdef FBMAC_USE_COCOA
+    PluginWindowMacCocoaCA* win = dynamic_cast<PluginWindowMacCocoaCA*>(pluginWin);
+    [win->getLayer() release];
+#endif
     delete pluginWin; pluginWin = NULL;
 }
 
@@ -301,7 +305,6 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 #if !FBMAC_USE_COREGRAPHICS
     return NPERR_GENERIC_ERROR;
 #else
-
     // SetWindow provides us with the window that our plugin should draw to.
     // In the Cocoa event model the window.window is null in the passed NPWindow
 
@@ -313,10 +316,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
                 delete pluginWin;
                 pluginWin = NULL;
-            } else {
-                // Received old window
-                return NPERR_NO_ERROR;
-            }
+            } 
         }
 
         if (pluginWin == NULL) {
@@ -502,10 +502,12 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
     if(variable == NPPVpluginCoreAnimationLayer) {
         if(m_drawingModel == DrawingModelCoreAnimation) {
             PluginWindowMacCocoaCA* win = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
-            CALayer* layer = [[CALayer alloc] init];
-            win->setLayer((void*)layer);
-            (CALayer*)value = layer;
-            return NPERR_NO_ERROR;
+            if(win != NULL) {
+                *((CALayer **)value) = (CALayer*)win->getLayer();
+                [win->getLayer() retain];
+                return NPERR_NO_ERROR;
+            }
+            return NPERR_GENERIC_ERROR;
         } else {
             return NPERR_GENERIC_ERROR;
         }

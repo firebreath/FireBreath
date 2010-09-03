@@ -549,7 +549,7 @@ void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message)
     }
 }
 
-int NpapiBrowserHost::ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32 timerID))
+int NpapiBrowserHost::ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32_t timerID))
 {
     if(NPNFuncs.scheduletimer != NULL) {
         return NPNFuncs.scheduletimer(m_npp, interval, repeat, func);

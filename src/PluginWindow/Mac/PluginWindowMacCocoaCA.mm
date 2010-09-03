@@ -22,7 +22,12 @@
 using namespace FB;
 
 PluginWindowMacCocoaCA::PluginWindowMacCocoaCA() {
-
+    m_x = 0;
+    m_y = 0;
+    m_width = 0;
+    m_height = 0;
+    m_layer = [CALayer new];
+    [m_layer setBackgroundColor:CGColorCreateGenericRGB(0.4, 0.3, 0.1, 1.0)];
 }
 
 PluginWindowMacCocoaCA::~PluginWindowMacCocoaCA() {
@@ -80,5 +85,5 @@ NPRect PluginWindowMacCocoaCA::getWindowClipping() {
 }
 
 void PluginWindowMacCocoaCA::setLayer(void* layer) {
-    m_layer = layer;
+    //m_layer = layer;
 }
