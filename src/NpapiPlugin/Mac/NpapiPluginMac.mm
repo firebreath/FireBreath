@@ -12,6 +12,9 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#include <stdio.h>
+#include <stdlib.h>
+
 #include "Mac/NpapiPluginMac.h"
 #include "PluginCore.h"
 #include "config.h"
@@ -206,6 +209,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
   , m_eventModel()
   , m_drawingModel()
 {
+    // If you receive a BAD_ACCESS error here you probably have something
+    // wrong in your FactoryMain.cpp in your projects folder
+
+    //sleep(30000);
+
     PluginCore::setPlatform("Mac", "NPAPI");
     // TODO: Get the path to the bundle
     //setFSPath();
@@ -213,6 +221,10 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
     if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
+#ifdef FBMAC_USE_COCOA
+        PluginWindowMacCocoaCA* pluginWinCA = _createPluginWindowCocoaCA();
+        this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
+#endif
     } else if(enableCoreGraphicsCarbon(host)) {
         m_eventModel   = EventModelCarbon;
         m_drawingModel = DrawingModelCoreGraphics;

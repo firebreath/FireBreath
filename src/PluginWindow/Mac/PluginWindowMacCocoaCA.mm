@@ -85,5 +85,5 @@ NPRect PluginWindowMacCocoaCA::getWindowClipping() {
 }
 
 void PluginWindowMacCocoaCA::setLayer(void* layer) {
-    //m_layer = layer;
+    m_layer = layer;
 }
