@@ -41,6 +41,7 @@ namespace FB { namespace Npapi {
     protected:
         NPJavascriptObject *m_obj;
         AutoPtr<NpapiBrowserHost> m_npHost;
+		bool m_retainReturnedNPObject;
         NPObject *getScriptableObject();
         static void signalStreamOpened(void* stream);
 
