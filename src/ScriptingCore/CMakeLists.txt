@@ -48,6 +48,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     variant_list.*
     variant_map.*
     TypeIDMap.*
+    utf8_tools.*
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

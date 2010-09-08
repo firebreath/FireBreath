@@ -27,6 +27,7 @@
 #include "AutoPtr.h"
 #include "APITypes.h"
 #include "Util/meta_util.h"
+#include "utf8_tools.h"
 //#include "BrowserObjectAPI.h"
 
 
@@ -58,6 +59,13 @@
 #define CONVERT_ENTRY_TOSTRING(_srctype_)             \
     CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, __varname) \
     std::stringstream sstr;                           \
+    sstr << __varname;                                \
+    return sstr.str();                                \
+    CONVERT_ENTRY_COMPLEX_END()
+
+#define CONVERT_ENTRY_TOWSTRING(_srctype_)             \
+    CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, __varname) \
+    std::wstringstream sstr;                           \
     sstr << __varname;                                \
     return sstr.str();                                \
     CONVERT_ENTRY_COMPLEX_END()
@@ -186,6 +194,12 @@ namespace FB
             }
         }
 
+        variant(const wchar_t *x) {
+            table = variant_detail::get_table<variant_detail::empty>::get();
+            object = NULL;
+            assign(x);
+        }
+
         variant(const char *x) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
@@ -223,6 +237,10 @@ namespace FB
 
         variant& assign(const char *x) {
             return assign(std::string(x));
+        }
+
+        variant& assign(const wchar_t *x) {
+            return assign(std::wstring(x));
         }
 
         template <typename T>
@@ -487,6 +505,9 @@ namespace FB
         CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
         return bval ? "true" : "false";
         CONVERT_ENTRY_COMPLEX_END();
+        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
+        return wstring_to_utf8(str);
+        CONVERT_ENTRY_COMPLEX_END();
         CONVERT_ENTRY_TOSTRING(long);
         CONVERT_ENTRY_TOSTRING(unsigned long);
         CONVERT_ENTRY_TOSTRING(short);
@@ -494,6 +515,27 @@ namespace FB
         CONVERT_ENTRY_TOSTRING(char);
         CONVERT_ENTRY_TOSTRING(unsigned char);
         END_CONVERT_MAP(std::string);
+    }
+
+    template<> inline const std::wstring variant::convert_cast_impl<std::wstring>() const {
+        BEGIN_CONVERT_MAP(std::wstring);
+        CONVERT_ENTRY_TOWSTRING(double);
+        CONVERT_ENTRY_TOWSTRING(float);
+        CONVERT_ENTRY_TOWSTRING(int);
+        CONVERT_ENTRY_TOWSTRING(unsigned int);
+        CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+        return bval ? L"true" : L"false";
+        CONVERT_ENTRY_COMPLEX_END();
+        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
+        return utf8_to_wstring(str);
+        CONVERT_ENTRY_COMPLEX_END();
+        CONVERT_ENTRY_TOWSTRING(long);
+        CONVERT_ENTRY_TOWSTRING(unsigned long);
+        CONVERT_ENTRY_TOWSTRING(short);
+        CONVERT_ENTRY_TOWSTRING(unsigned short);
+        CONVERT_ENTRY_TOWSTRING(char);
+        CONVERT_ENTRY_TOWSTRING(unsigned char);
+        END_CONVERT_MAP(std::wstring);
     }
     
     template<> inline const bool variant::convert_cast_impl<bool>() const {
