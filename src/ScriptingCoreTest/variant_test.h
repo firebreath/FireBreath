@@ -108,6 +108,23 @@ TEST(VariantTest)
         }
     }
 
+    // wstring type handling and conversion
+    {
+        variant wstr1 = L"This is a test string";
+        CHECK(wstr1.convert_cast<std::wstring>() == L"This is a test string");
+        CHECK(wstr1.convert_cast<std::string>() == "This is a test string");
+        variant str1 = "This is a single byte string";
+        CHECK(str1.convert_cast<std::wstring>() == L"This is a single byte string");
+
+        // Check another language
+        variant wstr2 = L"это работает?";
+        CHECK(wstr2.convert_cast<std::wstring>() == L"это работает?");
+
+        // Try it when wide data accidently gets stuck in a single byte string
+        variant str2 = "это работает?";
+        CHECK(wstr2.convert_cast<std::wstring>() == L"это работает?");
+    }
+
     // is_of_type<>()
     {
         const std::string stringVal = "foo";

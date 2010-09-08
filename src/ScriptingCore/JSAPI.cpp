@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/bind.hpp>
 #include "BrowserHostWrapper.h"
 #include "BrowserObjectAPI.h"
+#include "utf8_tools.h"
 
 using namespace FB;
 
@@ -48,7 +49,12 @@ void JSAPI::invalidate()
     m_valid = false;
 }
 
-void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::variant>& args)
+void JSAPI::FireEvent(const std::wstring& eventName, const std::vector<variant>& args)
+{
+    FireEvent(wstring_to_utf8(eventName), args);
+}
+
+void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& args)
 {
     if (!m_valid)   // When invalidated, do nothing more
         return;
@@ -69,6 +75,11 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::varian
     }
 }
 
+bool JSAPI::HasEvent(const std::wstring& eventName)
+{
+    return HasEvent(wstring_to_utf8(eventName));
+}
+
 bool JSAPI::HasEvent(const std::string& eventName)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
@@ -77,6 +88,11 @@ bool JSAPI::HasEvent(const std::string& eventName)
     } else {
         return false;
     }
+}
+
+void JSAPI::registerEventMethod(const std::wstring& name, BrowserObjectAPI *event)
+{
+    registerEventMethod(wstring_to_utf8(name), event);
 }
 
 void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event)
@@ -89,6 +105,11 @@ void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event
         }
     }
     m_eventMap.insert(EventPair(name, event));
+}
+
+void JSAPI::unregisterEventMethod(const std::wstring& name, BrowserObjectAPI *event)
+{
+    unregisterEventMethod(wstring_to_utf8(name), event);
 }
 
 void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *event)
@@ -114,6 +135,11 @@ void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
     m_evtIfaces.erase(fnd);
 }
 
+BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::wstring& name)
+{
+    return getDefaultEventMethod(wstring_to_utf8(name));
+}
+
 BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::string& name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
@@ -121,6 +147,11 @@ BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::string& name)
         return fnd->second.ptr();
     }
     return NULL;
+}
+
+void JSAPI::setDefaultEventMethod(const std::wstring& name, BrowserObjectAPI *obj)
+{
+    setDefaultEventMethod(wstring_to_utf8(name), obj);
 }
 
 void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj)
@@ -131,8 +162,50 @@ void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj
         m_defEventMap[name] = obj;
 }
 
+void JSAPI::registerEvent(const std::wstring &name)
+{
+    registerEvent(wstring_to_utf8(name));
+}
+
 void JSAPI::registerEvent(const std::string &name)
 {
     if(m_defEventMap.find(name) == m_defEventMap.end())
         m_defEventMap[name] = 0;
+}
+
+void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector)
+{
+    nameVector.clear();
+    std::vector<std::string> utf8Vector;
+    getMemberNames(utf8Vector);
+    for (std::vector<std::string>::iterator it = utf8Vector.begin();
+            it != utf8Vector.end(); ++it) {
+		std::wstring wStrVal(utf8_to_wstring(*it));
+        nameVector.push_back(wStrVal);
+    }
+}
+
+bool JSAPI::HasMethod(const std::wstring& methodName)
+{
+    return HasMethod(wstring_to_utf8(methodName));
+}
+
+bool JSAPI::HasProperty(const std::wstring& propertyName)
+{
+    return HasProperty(wstring_to_utf8(propertyName));
+}
+
+variant JSAPI::GetProperty(const std::wstring& propertyName)
+{
+    return GetProperty(wstring_to_utf8(propertyName));
+}
+
+void JSAPI::SetProperty(const std::wstring& propertyName, const variant& value)
+{
+    SetProperty(wstring_to_utf8(propertyName), value);
+}
+
+variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+{
+    return Invoke(wstring_to_utf8(methodName), args);
 }
