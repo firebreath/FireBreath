@@ -2,7 +2,7 @@
 Original Author: Dan Weatherford
 Imported with permission by: Richard Bateman (taxilian)
 
-Created:    Sept 24, 2009
+Imported:   Aug 7, 2010
 License:    Dual license model; choose one of two:
             New BSD License
             http://www.opensource.org/licenses/bsd-license.php
@@ -20,7 +20,6 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #include <stdexcept>
 
 #ifdef _WIN32
-#include "windows_defs.h"
 #include <windows.h>
 #else
 #include <xlocale.h>
@@ -28,6 +27,23 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #endif
 
 namespace FB {
+
+#ifdef _WIN32
+	std::string lastError(const char* fnname) {
+	  DWORD errcode = GetLastError();
+	  char* buf = NULL;
+	  FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+					 NULL, errcode, 0, (LPSTR)&buf, 0, NULL);
+  
+	  std::string err = std::string(fnname) + std::string(": ") + std::string(buf);
+	  LocalFree(buf);
+	  return err;
+	}
+
+	void throw_GetLastError(const char* fnname) {
+	  throw std::runtime_error(lastError(fnname).c_str());
+	}
+#endif
 
     std::string wstring_to_utf8(const std::wstring& src) {
 #ifdef _WIN32

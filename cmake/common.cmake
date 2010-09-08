@@ -16,6 +16,8 @@ get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
 set(PROJECT_SRC_DIR ${PROJECTS_DIR})
 
+set(PROJECTS_DIR "${CMAKE_DIR}/../projects" CACHE STRING "Location to search for project directories")
+
 set (PROJECT_ROOT "${CMAKE_BINARY_DIR}/projects")
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 

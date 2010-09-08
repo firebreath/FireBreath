@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI.h"
 #include "TypeIDMap.h"
 #include "COM_config.h"
+#include "utf8_tools.h"
 
 #include "axmain.h"
 #include "IDispatchAPI.h"
@@ -61,7 +62,7 @@ protected:
     CComQIPtr<IPropertyNotifySink, &IID_IPropertyNotifySink> m_propNotify;
     
     bool m_valid;
-    std::vector<std::string> m_memberList;
+    std::vector<std::wstring> m_memberList;
 
     virtual bool callSetEventListener(const std::vector<FB::variant> &args, bool add);
 
@@ -244,12 +245,12 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
     if (m_api.ptr() == NULL)
         return E_NOTIMPL;
 
-    std::string sName(CW2A(bstrName).m_psz);
+    std::wstring wsName(bstrName);
 
-    if ((sName == "attachEvent") || (sName == "detachEvent")) {
-        *pid = AxIdMap.getIdForValue(sName);
-    } else if (m_api->HasProperty(sName) || m_api->HasMethod(sName) || m_api->HasEvent(sName)) {
-        *pid = AxIdMap.getIdForValue(sName);
+    if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
+        *pid = AxIdMap.getIdForValue(wsName);
+    } else if (m_api->HasProperty(wsName) || m_api->HasMethod(wsName) || m_api->HasEvent(wsName)) {
+        *pid = AxIdMap.getIdForValue(wsName);
     } else {
         *pid = -1;
     }
@@ -290,7 +291,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
 
     try 
     {
-        std::string sName = AxIdMap.getValueForId<std::string>(id);
+        std::wstring wsName = AxIdMap.getValueForId<std::wstring>(id);
 
         if (wFlags & DISPATCH_PROPERTYGET) {
             if(!pvarRes)
@@ -306,50 +307,50 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             }
         }
 
-        if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(sName)) {
+        if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(wsName)) {
 
             if(!pvarRes)
                 return E_INVALIDARG;
 
-            FB::variant rVal = m_api->GetProperty(sName);
+            FB::variant rVal = m_api->GetProperty(wsName);
 
             m_host->getComVariant(pvarRes, rVal);
 
-        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasProperty(sName)) {
+        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasProperty(wsName)) {
 
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
 
-            m_api->SetProperty(sName, newVal);
-        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasEvent(sName)) {
+            m_api->SetProperty(wsName, newVal);
+        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasEvent(wsName)) {
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             if (newVal.empty()) {
-                m_api->setDefaultEventMethod(sName, NULL);
+                m_api->setDefaultEventMethod(wsName, NULL);
             } else {
-                m_api->setDefaultEventMethod(sName, newVal.cast<FB::JSObject>());
+                m_api->setDefaultEventMethod(wsName, newVal.cast<FB::JSObject>());
             }
 
-        } else if (wFlags & DISPATCH_METHOD && ((sName == "attachEvent") || (sName == "detachEvent")) ) {
+        } else if (wFlags & DISPATCH_METHOD && ((wsName == L"attachEvent") || (wsName == L"detachEvent")) ) {
         
             std::vector<FB::variant> params;
             for (int i = pdp->cArgs - 1; i >= 0; i--) {
                 params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
             }
 
-            if (sName == "attachEvent") {
+            if (wsName == L"attachEvent") {
                 this->callSetEventListener(params, true);
-            } else if (sName == "detachEvent") {
+            } else if (wsName == L"detachEvent") {
                 this->callSetEventListener(params, false);
             }
 
-        } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(sName) ) {
+        } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(wsName) ) {
 
             std::vector<FB::variant> params;
             for (int i = pdp->cArgs - 1; i >= 0; i--) {
                 params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
             }
             FB::variant rVal;
-            rVal = m_api->Invoke(sName, params);
+            rVal = m_api->Invoke(wsName, params);
             
             if(pvarRes)
                 m_host->getComVariant(pvarRes, rVal);
@@ -398,7 +399,7 @@ template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetMemberName(DISPID id, BSTR *pbstrName)
 {
     try {
-        CComBSTR outStr(AxIdMap.getValueForId<std::string>(id).c_str());
+        CComBSTR outStr(AxIdMap.getValueForId<std::wstring>(id).c_str());
 
         *pbstrName = outStr.Detach();
         return S_OK;
@@ -422,14 +423,13 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, 
         *pid = AxIdMap.getIdForValue(m_memberList[0]);
         return S_OK;
     } 
-    std::string str = AxIdMap.getValueForId<std::string>(id);
+    std::wstring wStr = AxIdMap.getValueForId<std::wstring>(id);
 
-    std::vector<std::string>::iterator it;
+    std::vector<std::wstring>::iterator it;
     for (it = m_memberList.begin(); it != m_memberList.end(); it++) {
-        if (str == *it) {
+        if (wStr == *it) {
             it++;
-            if (AxIdMap.getIdForValue(*it) > -1 || it == m_memberList.end())
-                break;
+            break;
         }
     }
     if (it != m_memberList.end()) {

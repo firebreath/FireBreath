@@ -38,10 +38,15 @@ add_definitions(
     /D "_ATL_STATIC_REGISTRY"
 )
 
+file (GLOB TESTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    *Test.h
+    )
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./[^.]*.h
     ./[^.]*.cpp
     )
+
+source_group(Tests FILES ${TESTS})
 
 set (SOURCES
     ${GENERAL}

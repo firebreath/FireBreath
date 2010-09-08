@@ -1,4 +1,4 @@
-/**********************************************************\
+﻿/**********************************************************\
 Original Author: Richard Bateman and Georg Fritzsche
 
 Created:    December 3, 2009
@@ -23,10 +23,10 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
-    registerMethod("echo",  make_method(this, &FBTestPluginAPI::echo));
-    registerMethod("asString",  make_method(this, &FBTestPluginAPI::asString));
-    registerMethod("asBool",  make_method(this, &FBTestPluginAPI::asBool));
-    registerMethod("asInt",  make_method(this, &FBTestPluginAPI::asInt));
+    registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
+    registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));
+    registerMethod(L"asBool",  make_method(this, &FBTestPluginAPI::asBool));
+    registerMethod(L"asInt",  make_method(this, &FBTestPluginAPI::asInt));
     registerMethod("asDouble",  make_method(this, &FBTestPluginAPI::asDouble));
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
@@ -35,6 +35,8 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
+
+    registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
     // Read-write property
     registerProperty("testString",
@@ -58,6 +60,11 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 FBTestPluginAPI::~FBTestPluginAPI()
 {
     //std::map<int,int>::capacity()
+}
+
+std::wstring FBTestPluginAPI::say(const std::wstring& val)
+{
+    return L"вот, я говорю \"" + val + L"\"";
 }
 
 // Read/Write property someInt

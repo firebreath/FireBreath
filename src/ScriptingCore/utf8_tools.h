@@ -2,7 +2,7 @@
 Original Author: Dan Weatherford
 Imported with permission by: Richard Bateman (taxilian)
 
-Created:    Sept 24, 2009
+Imported:   Aug 7, 2010
 License:    Dual license model; choose one of two:
             New BSD License
             http://www.opensource.org/licenses/bsd-license.php
@@ -20,6 +20,11 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #include <string>
 
 namespace FB {
+
+#ifdef _WIN32
+	std::string lastError(const char* fnname);
+	void throw_GetLastError(const char* fnname);
+#endif
 
     std::string wstring_to_utf8(const std::wstring& src);
     std::wstring utf8_to_wstring(const std::string& src);

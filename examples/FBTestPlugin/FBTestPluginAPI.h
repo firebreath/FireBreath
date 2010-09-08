@@ -24,6 +24,7 @@ public:
     FBTestPluginAPI(FB::BrowserHost host);
     virtual ~FBTestPluginAPI();
 
+    std::wstring say(const std::wstring& val);
     // Read/Write property testString
     std::string get_testString();
     void set_testString(const std::string& val);

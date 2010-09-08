@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "IDispatchAPI.h"
 #include "axmain.h"
 #include <dispex.h>
+#include "utf8_tools.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) :
     m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
@@ -38,8 +39,8 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
     while (SUCCEEDED(hr)) {
         CComBSTR curName;
         hr = dispex->GetMemberName(dispid, &curName);
-        CW2A cStr(curName);
-        nameVector.push_back(std::string(cStr));
+        std::wstring wStr(curName);
+        nameVector.push_back(FB::wstring_to_utf8(wStr));
         hr = dispex->GetNextDispID(fdexEnumAll, dispid, &dispid);
     }
 }
