@@ -170,6 +170,16 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         dst->value.stringValue.UTF8Characters = outStr;
         dst->value.stringValue.UTF8Length = str.size();
 
+    } else if (var.get_type() == typeid(std::wstring)) {
+        // This is not a typo; the std::string gets the UTF8 representation
+        // and we pass that back to the browser
+        std::string str = var.convert_cast<std::string>();
+        char *outStr = (char*)this->MemAlloc(str.size() + 1);
+        memcpy(outStr, str.c_str(), str.size() + 1);
+        dst->type = NPVariantType_String;
+        dst->value.stringValue.UTF8Characters = outStr;
+        dst->value.stringValue.UTF8Length = str.size();
+
     } else if (var.get_type() == typeid(FB::VariantList)) {
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();

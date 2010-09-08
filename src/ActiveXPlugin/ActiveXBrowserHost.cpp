@@ -175,6 +175,11 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         CComBSTR bStr(str.c_str());
         outVar = bStr;
 
+    } else if (var.get_type() == typeid(std::wstring)) {
+        std::wstring wstr = var.convert_cast<std::wstring>();
+        CComBSTR bStr(wstr.c_str());
+        outVar = bStr;
+
     } else if (var.get_type() == typeid(FB::VariantList)) {
         JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
