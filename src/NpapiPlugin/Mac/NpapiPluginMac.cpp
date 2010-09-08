@@ -211,7 +211,7 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
 		 */
 		bool isWebKit = false;
 		const char* const webKitVersionPrefix = " AppleWebKit/";
-		const char *userAgent = browser->uagent(instance);
+		const char *userAgent = host->UserAgent();
 		if (userAgent) {
 			isWebKit = (strstr(userAgent, webKitVersionPrefix) != NULL);
 		}
