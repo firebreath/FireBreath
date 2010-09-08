@@ -36,12 +36,14 @@ namespace FB {
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
 
         // Manage methods
+        virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
         virtual void registerMethod(const std::string& name, const CallMethodFunctor& func);
         virtual bool HasMethod(const std::string& methodName);
         virtual bool HasProperty(const std::string& propertyName);
         virtual bool HasProperty(int idx);
 
         // Manage properties
+        virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
         virtual void registerProperty(const std::string& name, const PropertyFunctors& propFuncs);
         virtual variant GetProperty(const std::string& propertyName);
         virtual void SetProperty(const std::string& propertyName, const variant& value);

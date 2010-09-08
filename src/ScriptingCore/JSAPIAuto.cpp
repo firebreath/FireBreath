@@ -13,6 +13,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "JSAPIAuto.h"
+#include "utf8_tools.h"
 
 FB::JSAPIAuto::JSAPIAuto()
   : m_methodFunctorMap(),
@@ -39,9 +40,19 @@ bool FB::JSAPIAuto::get_valid()
     return true;
 }
 
+void FB::JSAPIAuto::registerMethod(const std::wstring& name, const CallMethodFunctor& func)
+{
+    registerMethod(FB::wstring_to_utf8(name), func);
+}
+
 void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
 {
     m_methodFunctorMap[name] = func;
+}
+
+void FB::JSAPIAuto::registerProperty(const std::wstring& name, const PropertyFunctors& func)
+{
+    registerProperty(FB::wstring_to_utf8(name), func);
 }
 
 void FB::JSAPIAuto::registerProperty(const std::string& name, const PropertyFunctors& propFuncs)

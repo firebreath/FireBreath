@@ -119,9 +119,10 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
     case VT_CLSID:
         {
             converted.ChangeType(VT_BSTR, cVar);
-            CW2A cStr(converted.bstrVal);
+            std::wstring wStr(converted.bstrVal);
 
-            retVal = std::string(cStr);
+            // return it as a UTF8 std::string
+            retVal = FB::wstring_to_utf8(wStr);
         }
         break;
 
@@ -170,12 +171,8 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     } else if (var.get_type() == typeid(bool)) {
         outVar = var.convert_cast<bool>();
 
-    } else if (var.get_type() == typeid(std::string)) {
-        std::string str = var.convert_cast<std::string>();
-        CComBSTR bStr(str.c_str());
-        outVar = bStr;
-
-    } else if (var.get_type() == typeid(std::wstring)) {
+    } else if (var.get_type() == typeid(std::string)
+            || var.get_type() == typeid(std::wstring)) {
         std::wstring wstr = var.convert_cast<std::wstring>();
         CComBSTR bStr(wstr.c_str());
         outVar = bStr;
