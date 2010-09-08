@@ -203,6 +203,36 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
         m_eventModel = EventModelCarbon;
         m_drawingModel = DrawingModelQuickDraw;
 #endif
+		
+		/* Bugfix from Facebook: Certain older versions of webkit do a retain when
+		 * you return an NPObject from NPP_GetValue instead of assuming that we do
+		 * it before returninglike the NPAPI spec instructs; this results in a memory
+		 * leak if we don't fix it.   
+		 */
+		bool isWebKit = false;
+		const char* const webKitVersionPrefix = " AppleWebKit/";
+		const char *userAgent = browser->uagent(instance);
+		if (userAgent) {
+			isWebKit = (strstr(userAgent, webKitVersionPrefix) != NULL);
+		}
+
+		const int webKitVersionNumberWithRetainFix = 420;
+		if (isWebKit) {
+			// Find " AppleWebKit/" in the user agent string
+			const char *webKitVersionString = strstr(userAgent, webKitVersionPrefix);
+			if (webKitVersionString) {
+				// Skip past " AppleWebKit/"
+				webKitVersionString += strlen(webKitVersionPrefix);
+				
+				// Convert the version string into an integer.  There are some trailing junk characters after the version
+				// number, but atoi() is smart enough to handle those.
+				int webKitVersion = atoi(webKitVersionString);
+				
+				// Should not retain returned NPObjects when running in versions of WebKit earlier than 420
+				if (webKitVersion && webKitVersion < webKitVersionNumberWithRetainFix)
+					m_retainReturnedNPObject = false;
+			}
+		}
     }
 }
 
