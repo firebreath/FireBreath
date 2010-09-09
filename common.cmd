@@ -25,6 +25,11 @@ goto finish
 set BUILDDIR=%RUN_FROM%\buildex
 
 :finish
+IF EXIST %PROJDIR% GOTO direxists
+echo ERROR: Project directory %PROJDIR% does not exist.  usage: %0 [project dir] [build dir]
+exit 1
+
+:direxists
 echo Using projects in: %PROJDIR%
 echo Generating build files in: %BUILDDIR%
 echo NOTE: The build files in %BUILDDIR% should *NEVER* be modified directly.

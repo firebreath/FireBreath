@@ -13,12 +13,26 @@ elif [ "$2" = "" ]; then
     else
         BUILDDIR=${RUN_FROM}/build
     fi
-    PROJDIR=`cd $1; pwd`
+    if [ -d "$1" ]; then
+        PROJDIR=`cd $1; pwd`
+    else
+        PROJDIR=$1
+    fi
 else
-    PROJDIR=`cd $1; pwd`
+    if [ -d "$1" ]; then
+        PROJDIR=`cd $1; pwd`
+    else
+        PROJDIR=$1
+    fi
     mkdir -p "$2"
     BUILDDIR=`cd $2; pwd`
 fi
+
+if [ ! -d "$PROJDIR" ]; then
+    echo ERROR: Project directory "$PROJDIR" does not exist.  usage: $0 \<project dir\> \<build dir\>
+    exit
+fi
+
 mkdir -p "$BUILDDIR"
 
 echo Using projects in: $PROJDIR
