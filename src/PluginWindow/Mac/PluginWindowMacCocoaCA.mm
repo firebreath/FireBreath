@@ -27,7 +27,6 @@ PluginWindowMacCocoaCA::PluginWindowMacCocoaCA() {
     m_width = 0;
     m_height = 0;
     m_layer = [CALayer new];
-    [m_layer setBackgroundColor:CGColorCreateGenericRGB(0.4, 0.3, 0.1, 1.0)];
 }
 
 PluginWindowMacCocoaCA::~PluginWindowMacCocoaCA() {
@@ -38,52 +37,11 @@ void PluginWindowMacCocoaCA::clearWindow() {
     // TODO
 }
 
-void PluginWindowMacCocoaCA::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
-    m_x = x;
-    m_y = y;
-    m_width = width;
-    m_height = height;
-}
-
-void PluginWindowMacCocoaCA::setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right) {
-    m_clipTop = top;
-    m_clipLeft = left;
-    m_clipBottom = bottom;
-    m_clipRight = right;
-}
-
-int16_t PluginWindowMacCocoaCA::HandleEvent(NPCocoaEvent* event) {
-    // Let the plugin handle the event if it wants
-    //MacEventCocoa macEv(event);
-    MacEventCocoa* macEv = new MacEventCocoa(event);
-    if (SendEvent(macEv)) {
-        return true;
-    }
-
-    // Otherwise deal with the event here
-    // TODO: Implement this
-    //          - see TopHatPlugin.cpp for a hints
-    return false;
-}
-
-NPRect PluginWindowMacCocoaCA::getWindowPosition() {
-    NPRect windRect;
-    windRect.left = m_x;
-    windRect.top = m_y;
-    windRect.right = m_x + m_width;
-    windRect.bottom = m_y - m_height;
-    return windRect;
-}
-
-NPRect PluginWindowMacCocoaCA::getWindowClipping() {
-    NPRect clipRect;
-    clipRect.left = m_clipLeft;
-    clipRect.right = m_clipRight;
-    clipRect.top = m_clipTop;
-    clipRect.bottom = m_clipBottom;
-    return clipRect;    
-}
-
 void PluginWindowMacCocoaCA::setLayer(void* layer) {
     m_layer = layer;
+}
+
+void PluginWindowMacCocoaCA::InvalidateWindow() {
+    // Force a drawInContext message to be passed to the window's CALayer
+    [m_layer setNeedsDisplay];
 }

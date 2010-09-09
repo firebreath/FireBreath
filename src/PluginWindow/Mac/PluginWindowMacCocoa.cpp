@@ -33,9 +33,11 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
             // TODO
             break;
         }
+
         case NPCocoaEventMouseDown: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
+            y = m_height - y; // Reposition origin to bottom left
             switch(evt->data.mouse.buttonNumber) {
                 case 0: {
                     MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
@@ -54,9 +56,11 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
                 }
             }
         }
+
         case NPCocoaEventMouseUp: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
+            y = m_height - y; // Reposition origin to bottom left
             switch(evt->data.mouse.buttonNumber) {
                 case 0: {
                     MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
@@ -75,41 +79,71 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
                 }
             }
         }
+
         case NPCocoaEventMouseMoved: {
+            double x = evt->data.mouse.pluginX;
+            double y = evt->data.mouse.pluginY;
+            y = m_height - y; // Reposition origin to bottom left
+            MouseMoveEvent ev(x, y);
+            return SendEvent(&ev);
             break;
         }
+
         case NPCocoaEventMouseEntered: {
             break;
+
         }
+
         case NPCocoaEventMouseExited: {
             break;
         }
+
         case NPCocoaEventMouseDragged: {
             break;
         }
+
         case NPCocoaEventKeyDown: {
+            int key = (int)evt->data.key.keyCode;
+            // TODO: map key to FBKey
+            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
+            return SendEvent(&ev);
             break;
         }
+
         case NPCocoaEventKeyUp: {
+            int key = (int)evt->data.key.keyCode;
+            // TODO: map key to FBKey
+            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
+            return SendEvent(&ev);
             break;
         }
+
         case NPCocoaEventFlagsChanged: {
             break;
         }
+
         case NPCocoaEventFocusChanged: {
+            FocusChangedEvent ev(evt->data.focus.hasFocus);
+            return SendEvent(&ev);
             break;
         }
+
         case NPCocoaEventWindowFocusChanged: {
+            // Not handled
             break;
         }
+
         case NPCocoaEventScrollWheel: {
             break;
         }
+
         case NPCocoaEventTextInput: {
+            // Not handled
             break;
         }
     }
 
+    // Event was not handled by the plugin
     return false;
 }
 

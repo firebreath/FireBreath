@@ -221,9 +221,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
     if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
-#ifdef FBMAC_USE_COCOA
+#if FBMAC_USE_COCOA
         PluginWindowMacCocoaCA* pluginWinCA = _createPluginWindowCocoaCA();
         this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
+        pluginWinCA->setNpHost(m_npHost);
+        pluginMain->SetWindow(pluginWinCA);
 #endif
     } else if(enableCoreGraphicsCarbon(host)) {
         m_eventModel   = EventModelCarbon;
@@ -249,9 +251,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
 
 NpapiPluginMac::~NpapiPluginMac()
 {
-#ifdef FBMAC_USE_COCOA
+#if FBMAC_USE_COCOA
     PluginWindowMacCocoaCA* win = dynamic_cast<PluginWindowMacCocoaCA*>(pluginWin);
-    [win->getLayer() release];
+    if(win != NULL) {
+        [(CALayer*)win->getLayer() release];
+    }
 #endif
     delete pluginWin; pluginWin = NULL;
 }
@@ -362,8 +366,12 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 
 NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
 #if !FBMAC_USE_COREGRAPHICS
+#if !FBMAC_USE_COCOA
     return NPERR_GENERIC_ERROR;
-#else 
+#endif
+#endif
+#if FBMAC_USE_COREGRAPHICS
+#if FBMAC_USE_COCOA
     PluginWindowMacCocoaCG* pluginWinCG = static_cast<PluginWindowMacCocoaCG*>(pluginWin);
 
     if (window != NULL) {
@@ -401,6 +409,7 @@ NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
 
     return NPERR_NO_ERROR;
 #endif
+#endif
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
@@ -411,12 +420,6 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
     PluginWindowMacCocoaCA* pluginWinCA = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
     
     if (window != NULL) {
-        if (pluginWin != NULL) {
-            pluginMain->ClearWindow(); // Kill old window
-            delete pluginWin;
-            pluginWin = NULL;
-        }
-
         if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
@@ -429,7 +432,7 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
                                         window->clipRect.bottom, window->clipRect.right);
             pluginMain->SetWindow(pluginWin);
         } else {
-            // Initialize window position & clipping 
+            // Update window position & clipping 
             pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
             pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
                                         window->clipRect.bottom, window->clipRect.right);
@@ -516,7 +519,7 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
             PluginWindowMacCocoaCA* win = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
             if(win != NULL) {
                 *((CALayer **)value) = (CALayer*)win->getLayer();
-                [win->getLayer() retain];
+                [(CALayer *)win->getLayer() retain];
                 return NPERR_NO_ERROR;
             }
             return NPERR_GENERIC_ERROR;

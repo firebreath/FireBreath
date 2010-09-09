@@ -32,26 +32,11 @@ namespace FB {
 
     public:
         void clearWindow();
-        void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
-        void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
-        int16_t HandleEvent(NPCocoaEvent* event);
-        //void InvalidateWindow() {}
-        NPRect getWindowPosition();
-        NPRect getWindowClipping();
+        void InvalidateWindow();
         void setLayer(void* layer);
         void* getLayer() { return m_layer; }
 
-    protected:
-        int m_x;
-        int m_y;
-        int m_width;
-        int m_height;
-        
-        int m_clipLeft;
-        int m_clipRight;
-        int m_clipTop;
-        int m_clipBottom;
-
+    private:
         void* m_layer;
     };
 };

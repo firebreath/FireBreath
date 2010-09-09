@@ -50,28 +50,33 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     switch (evt->what) {
         case mouseDown:
         {
-            // Query for the current coordinates of the mouse
             HIPoint* point = new HIPoint();
             point->x = evt->where.h;
             point->y = evt->where.v;
             HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
 
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left,
-                              point->x - m_clipLeft + m_x, 
-                              m_height - point->y  + m_y);
+            int x_0 = point->x - m_x;
+            int y_0 = m_height - (point->y - m_y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);                               
             return SendEvent(&ev);
         }
 
         case mouseUp:
         {
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
-                            evt->where.v, evt->where.h);
+            HIPoint* point = new HIPoint();
+            point->x = evt->where.h;
+            point->y = evt->where.v;
+            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+
+            int x_0 = point->x - m_x;
+            int y_0 = m_height - (point->y - m_y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);
             return SendEvent(&ev);
         }
 
         case keyDown:
         {
-            // I don't know why, but the key codes are shifted 8 lefts left,
+            // I don't know why, but the key codes are shifted 8 bits left,
             // we must shift them back to their natural positions before
             // the keymap can work properly
             FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message >> 8);
@@ -81,7 +86,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
 
         case keyUp:
         {
-            // I don't know why, but the key codes are shifted 8 lefts left,
+            // I don't know why, but the key codes are shifted 8 bits left,
             // we must shift them back to their natural positions before
             // the keymap can work properly
             FBKeyCode fb_key = CarbonKeyCodeToFBKeyCode(evt->message >> 8);
@@ -94,16 +99,29 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             //TODO: Figure out more efficient timing mechanism
             // Get mouse coordinates and fire an event to the plugin
             CGEventRef nullEvent = CGEventCreate(NULL);
-            CGPoint point = CGEventGetLocation(nullEvent);
-            if((m_x < point.x) && (point.x < m_x + m_width) 
-                    && (m_y < point.y) && (point.y < m_y + m_height)
-                    && (point.x != this->m_old_x)
-                    && (point.y != this->m_old_y)) {
-                this->m_old_x = point.x;
-                this->m_old_y = point.y;
-                // Mouse event happened inside the plugin's window
-                MouseMoveEvent mmEvt(point.x, point.y);
-                SendEvent(&mmEvt);
+            CGPoint pointCG = CGEventGetLocation(nullEvent);
+            HIPoint* point = new HIPoint();
+            point->x = pointCG.x;
+            point->y = pointCG.y;
+            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            // <hack>
+            int px = point->x - m_x;
+            int py = m_height - (point->y - m_y);
+            // </hack>
+            // px & py have been translated to plugin window's coordinates space
+            if((px > 0) && (px < m_width)) {
+                if((py > 0) && (py < m_height)) {
+                    if ((px == this->m_old_x) && (py == this->m_old_y)) {
+                        SendEvent(&macEvent);
+                        return false;
+                    } else {
+                        this->m_old_x = px;
+                        this->m_old_y = py;
+                        // Mouse event happened inside the plugin's window
+                        MouseMoveEvent mmEvt(px, py);
+                        SendEvent(&mmEvt);
+                    }
+                }
             }
 
             // The plugin is still expecting a nullEvent (for drawing)

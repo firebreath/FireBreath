@@ -16,6 +16,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 \**********************************************************/
 
 #include "PluginWindow.h"
+#include "KeyCodesCocoa.h"
 #include "NpapiTypes.h"
 #include <map>
 #include "NpapiBrowserHost.h"
@@ -26,6 +27,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
+#include "PluginEvents/KeyboardEvents.h"
 
 namespace FB {
 
