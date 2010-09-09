@@ -21,23 +21,11 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include <tchar.h>
 #include <sstream>
 #include "wininet.h"
+#include "utf8_tools.h"
 
 using namespace FB;
 
 #define ODS(x)
-
-std::string fromWideString( const std::wstring& wideString )
-{
-    size_t wcsChars = wideString.size();
-
-    size_t sizeRequired = WideCharToMultiByte( CP_UTF8, 0, wideString.c_str(), -1, 
-                                               NULL, 0,  NULL, NULL);
-
-    std::vector<char> temp( sizeRequired + 1 );
-    temp[sizeRequired] = '\0';
-    WideCharToMultiByte(CP_UTF8, 0, wideString.c_str(), -1, &temp[0], sizeRequired, NULL, NULL);
-    return std::string( temp.begin(), temp.end() );
-}
 
 // ===========================================================================
 //                     ActiveXBindStatusCallback Implementation
@@ -220,7 +208,7 @@ STDMETHODIMP ActiveXBindStatusCallback::OnProgress(ULONG ulProgress, ULONG ulPro
     // also see OnResponse for these two
     case BINDSTATUS_RAWMIMETYPE:
         // never called?
-        //if ( m_request->stream ) m_request->stream->mimeType = fromWideString( szStatusText );
+        //if ( m_request->stream ) m_request->stream->mimeType = FB::wstring_to_utf8( szStatusText );
         break;
     case BINDSTATUS_ACCEPTRANGES:
         // never called?
@@ -426,7 +414,7 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
 
     if ( m_request->stream )
     {   
-        m_request->stream->setHeaders( fromWideString( szResponseHeaders ) );
+        m_request->stream->setHeaders( wstring_to_utf8( szResponseHeaders ) );
 
         bool requestedSeekable = m_request->stream->isSeekable();
 
