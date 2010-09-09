@@ -61,7 +61,9 @@ function (browserplugin_project PLUGIN_NAME)
     Project (${PLUGIN_NAME})
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
-    include(${FB_ROOT_DIR}/pluginProjects.cmake)
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
+        include(${FB_ROOT_DIR}/pluginProjects.cmake)
+    endif()
 
 endfunction(browserplugin_project)
 
