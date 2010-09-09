@@ -1,3 +1,6 @@
+#ifndef H_FB_NPAPI_NPAPIPLUGINMAC
+#define H_FB_NPAPI_NPAPIPLUGINMAC
+
 /**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
@@ -12,15 +15,17 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_NPAPI_NPAPIPLUGINMAC
-#define H_FB_NPAPI_NPAPIPLUGINMAC
-
 #include "NpapiPlugin.h"
 #include "PluginWindow.h"
+#include "NpapiTypes.h"
+
+#include "Mac/FactoryDefinitionsMac.h"
 
 namespace FB {
-    class PluginWindowMacQuickDraw;
-    class PluginWindowMacCGCarbon;
+    class PluginWindowMacCarbonQD;
+    class PluginWindowMacCarbonCG;
+    class PluginWindowMacCocoaCG;
+    class PluginWindowMacCocoaCA;
     
     namespace Npapi {
 
@@ -56,6 +61,9 @@ namespace FB {
         // plugin instance
         NPError SetWindow(NPWindow* window);
         int16_t HandleEvent(void* event);
+
+        // This call is proxied from the TimerFunctor callback (only used in Cocoa Event Model)
+        void HandleCocoaTimerEvent();
         
     private:
         NPError SetWindowCarbonQD(NPWindow*);
@@ -64,6 +72,7 @@ namespace FB {
         NPError SetWindowCocoaCA(NPWindow*);
         int16_t HandleEventCarbon(void* event);
         int16_t HandleEventCocoa(void* event);
+        int16_t GetValue(NPPVariable variable, void* value);
         
         EventModel m_eventModel;
         DrawingModel m_drawingModel;

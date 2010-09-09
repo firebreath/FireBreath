@@ -65,6 +65,8 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
     dstFuncs->releasevariantvalue = srcFuncs->releasevariantvalue;
     dstFuncs->setexception = srcFuncs->setexception;
     dstFuncs->construct = srcFuncs->construct;
+    dstFuncs->scheduletimer = srcFuncs->scheduletimer;
+    dstFuncs->unscheduletimer = srcFuncs->unscheduletimer;
     
 
     if(srcFuncs->version >= NPVERS_HAS_STREAMOUTPUT) { // 8

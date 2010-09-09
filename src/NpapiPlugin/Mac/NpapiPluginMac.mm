@@ -12,15 +12,22 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "NpapiTypes.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "Mac/NpapiPluginMac.h"
 #include "PluginCore.h"
+#include "config.h"
+
+#if FBMAC_USE_COREANIMATION
+#include <QuartzCore/CoreAnimation.h>
+#endif
+
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
 #include "Mac/PluginWindowMacCocoaCA.h"
-#include "Mac/FactoryDefinitionsMac.h"
-
-#include "Mac/NpapiPluginMac.h"
-#include "config.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
+#include "Mac/PluginWindowMacCocoa.h"
 
 using namespace FB::Npapi;
 
@@ -39,6 +46,12 @@ namespace
             if (what == NPNVsupportsCarbonBool || what == NPNVsupportsQuickDrawBool) {
                 // Model negotiation is not supported, assume
                 // that Carbon and QuickDraw are supported & return true;
+                return true;
+            }
+#else
+            if (what == NPNVsupportsCocoaBool || what == NPNVsupportsCoreGraphicsBool) {
+                // Model negotiation is not supported, assume
+                // that Cocoa and CoreGraphics are supported & return true;
                 return true;
             }
 #endif
@@ -65,6 +78,12 @@ namespace
                 // that Carbon and QuickDraw are supported & return true;
                 return true;
             }
+#else
+            if(model == (void*)NPEventModelCocoa || model == (void*)NPDrawingModelCoreGraphics) {
+                // Model negotiation is not supported, assume
+                // that Cocoa and CoreGraphics are supported & return true;
+                return true;
+            }
 #endif
 
             // If we aren't testing for Carbon or QD, assume that
@@ -78,6 +97,11 @@ namespace
     
     bool enableQuickDraw(FB::Npapi::NpapiBrowserHost* host)
     {
+#ifdef __LP64__
+        // QuickDraw does not exist for 64 bit 
+        return false;
+#else
+
 #if !FBMAC_USE_QUICKDRAW
         printf("enableQuickDraw() - 0\n");
         return false;  
@@ -85,6 +109,7 @@ namespace
         printf("enableQuickDraw() - 1\n");
         
         // QuickDraw can only be used with Carbon Event Model
+#ifndef __LP64__
         if(!supports(host, NPNVsupportsCarbonBool))
             return false;           
         if(!supports(host, NPNVsupportsQuickDrawBool))
@@ -93,17 +118,24 @@ namespace
             return false;
         if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelQuickDraw))
             return false;
-        
+#endif
+#endif
         return true;
 #endif   
     }
 
     bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHost* host)
     {
+#ifdef __LP64__
+        // Carbon does not exist for 64 bit
+        return false;
+#else
+
 #if !FBMAC_USE_COREGRAPHICS
         printf("CoreGraphics not supported\n");
         return false;
 #endif
+
 #if !FBMAC_USE_CARBON
         printf("Carbon not supported\n");
         return false;
@@ -121,6 +153,7 @@ namespace
         printf("CoreGraphics and Carbon supported\n");
         return true;
 #endif
+#endif
     }
 
     bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHost* host)
@@ -129,15 +162,14 @@ namespace
         printf("CoreGraphics not supported\n");
         return false;
 #endif
-#if !FBMAC_USE_CARBON
+#if !FBMAC_USE_COCOA
         printf("Cocoa not supported\n");
         return false;
 #else
         printf("CoreGraphics and Cocoa supported\n");
         
-        if(!supports(host, NPNVsupportsCocoaBool)) {
+        if(!supports(host, NPNVsupportsCocoaBool))
             return false;           
-        }
         if(!supports(host, NPNVsupportsCoreGraphicsBool))
             return false;
         if(!set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
@@ -177,6 +209,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
   , m_eventModel()
   , m_drawingModel()
 {
+    // If you receive a BAD_ACCESS error here you probably have something
+    // wrong in your FactoryMain.cpp in your projects folder
+
+    //sleep(30000);
+
     PluginCore::setPlatform("Mac", "NPAPI");
     // TODO: Get the path to the bundle
     //setFSPath();
@@ -184,6 +221,12 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
     if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
+#if FBMAC_USE_COCOA
+        PluginWindowMacCocoaCA* pluginWinCA = _createPluginWindowCocoaCA();
+        this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
+        pluginWinCA->setNpHost(m_npHost);
+        pluginMain->SetWindow(pluginWinCA);
+#endif
     } else if(enableCoreGraphicsCarbon(host)) {
         m_eventModel   = EventModelCarbon;
         m_drawingModel = DrawingModelCoreGraphics;
@@ -203,41 +246,17 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
         m_eventModel = EventModelCarbon;
         m_drawingModel = DrawingModelQuickDraw;
 #endif
-		
-		/* Bugfix from Facebook: Certain older versions of webkit do a retain when
-		 * you return an NPObject from NPP_GetValue instead of assuming that we do
-		 * it before returninglike the NPAPI spec instructs; this results in a memory
-		 * leak if we don't fix it.   
-		 */
-		bool isWebKit = false;
-		const char* const webKitVersionPrefix = " AppleWebKit/";
-		const char *userAgent = host->UserAgent();
-		if (userAgent) {
-			isWebKit = (strstr(userAgent, webKitVersionPrefix) != NULL);
-		}
-
-		const int webKitVersionNumberWithRetainFix = 420;
-		if (isWebKit) {
-			// Find " AppleWebKit/" in the user agent string
-			const char *webKitVersionString = strstr(userAgent, webKitVersionPrefix);
-			if (webKitVersionString) {
-				// Skip past " AppleWebKit/"
-				webKitVersionString += strlen(webKitVersionPrefix);
-				
-				// Convert the version string into an integer.  There are some trailing junk characters after the version
-				// number, but atoi() is smart enough to handle those.
-				int webKitVersion = atoi(webKitVersionString);
-				
-				// Should not retain returned NPObjects when running in versions of WebKit earlier than 420
-				if (webKitVersion && webKitVersion < webKitVersionNumberWithRetainFix)
-					m_retainReturnedNPObject = false;
-			}
-		}
     }
 }
 
 NpapiPluginMac::~NpapiPluginMac()
 {
+#if FBMAC_USE_COCOA
+    PluginWindowMacCocoaCA* win = dynamic_cast<PluginWindowMacCocoaCA*>(pluginWin);
+    if(win != NULL) {
+        [(CALayer*)win->getLayer() release];
+    }
+#endif
     delete pluginWin; pluginWin = NULL;
 }
 
@@ -253,6 +272,11 @@ NpapiPluginMac::DrawingModel NpapiPluginMac::getDrawingModel() const
 
 NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
 {
+#ifdef __LP64__
+    // Neither Carbon nor QuickDraw exist for 64bit Mac OS X
+    return NPERR_GENERIC_ERROR;
+#else
+
 #if !FBMAC_USE_QUICKDRAW
     return NPERR_GENERIC_ERROR;
 #else
@@ -271,7 +295,7 @@ NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
         
         if (pluginWin == NULL) 
         {
-            win = _createPluginWindow((CGrafPtr)prt->port, prt->portx, prt->porty);
+            win = _createPluginWindowCarbonQD((CGrafPtr)prt->port, prt->portx, prt->porty);
             pluginWin = static_cast<PluginWindow*>(win);
             pluginMain->SetWindow(win);
         }
@@ -290,13 +314,13 @@ NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
     
     return NPERR_NO_ERROR;
 #endif
+#endif
 }
 
 NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 #if !FBMAC_USE_COREGRAPHICS
     return NPERR_GENERIC_ERROR;
 #else
-
     // SetWindow provides us with the window that our plugin should draw to.
     // In the Cocoa event model the window.window is null in the passed NPWindow
 
@@ -308,25 +332,25 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
                 delete pluginWin;
                 pluginWin = NULL;
-            } else {
-                // Received old window
-                return NPERR_NO_ERROR;
-            }
+            } 
         }
 
         if (pluginWin == NULL) {
             // We have no plugin window associated with this plugin object.
             // Make a new plugin window object for FireBreath & our plugin.
-            pluginWinCG = _createPluginWindow((NP_CGContext*)window->window);
+            pluginWinCG = _createPluginWindowCarbonCG((NP_CGContext*)window->window);
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
+            // Initialize the window position & clipping from the newly arrived NPWindow window
+            pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
+            pluginMain->SetWindow(pluginWin);
+        } else {
+            // Initialize the window position & clipping from the newly arrived NPWindow window
+            pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
         }
-
-        // Initialize the window position & clipping from the newly arrived NPWindow window
-        pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
-        pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
-                                     window->clipRect.bottom, window->clipRect.right);
-        
-        pluginMain->SetWindow(pluginWin);
     } else if (pluginWin != NULL) {
         // Our window is gone, we should stop using it
         pluginMain->ClearWindow();
@@ -341,8 +365,51 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
-    // TODO: Implement
+#if !FBMAC_USE_COREGRAPHICS
+#if !FBMAC_USE_COCOA
     return NPERR_GENERIC_ERROR;
+#endif
+#endif
+#if FBMAC_USE_COREGRAPHICS
+#if FBMAC_USE_COCOA
+    PluginWindowMacCocoaCG* pluginWinCG = static_cast<PluginWindowMacCocoaCG*>(pluginWin);
+
+    if (window != NULL) {
+        if (pluginWin != NULL) {
+            if(pluginWinCG->getContext() != (NP_CGContext*)window->window) {
+                pluginMain->ClearWindow(); // Kill old window
+                delete pluginWin;
+                pluginWin = NULL;
+            }
+        }
+
+        if (pluginWin == NULL) {
+            // No window associated with this plugin object.
+            // Make a new window and associate with the object.
+            pluginWinCG = _createPluginWindowCocoaCG((NP_CGContext*)window->window);
+            pluginWinCG->setNpHost(m_npHost);
+            pluginWin = static_cast<PluginWindow*>(pluginWinCG);
+            // Initialize window position & clipping 
+            pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                    window->clipRect.bottom, window->clipRect.right);
+            pluginMain->SetWindow(pluginWin);
+        } else {
+            // Initialize window position & clipping 
+            pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCG->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
+        }
+    } else if (pluginWin != NULL) {
+        // Our window is gone, we should stop using it
+        pluginMain->ClearWindow();
+        delete pluginWin;
+        pluginWin = NULL;
+    }
+
+    return NPERR_NO_ERROR;
+#endif
+#endif
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
@@ -353,24 +420,23 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
     PluginWindowMacCocoaCA* pluginWinCA = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
     
     if (window != NULL) {
-        if (pluginWin != NULL) {
-            pluginMain->ClearWindow(); // Kill old window
-            delete pluginWin;
-            pluginWin = NULL;
-        }
-
-        if (pluginWin = NULL) {
+        if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
-            pluginWinCA = _createPluginWindow();
+            pluginWinCA = _createPluginWindowCocoaCA();
+            pluginWinCA->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCA);
+            // Initialize window position & clipping 
+            pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
             pluginMain->SetWindow(pluginWin);
+        } else {
+            // Update window position & clipping 
+            pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
         }
-
-        // Initialize window position & clipping 
-        pluginWinCA->setWindowPosition(window->x, window->y, window->width, window->height);
-        pluginWinCA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
-                                    window->clipRect.bottom, window->clipRect.right);
     } else if (pluginWin != NULL) {
         // Our window is gone, we should stop using it
         pluginMain->ClearWindow();
@@ -383,14 +449,20 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
 }
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
-    switch(m_drawingModel)
-    {
+    // Forward the SetWindow call to the appropriate SetWindow*() function
+    switch(m_drawingModel) {
         case DrawingModelQuickDraw:
             return SetWindowCarbonQD(window);
-        case DrawingModelCoreGraphics:
-            {
-                return SetWindowCarbonCG(window);
+        case DrawingModelCoreGraphics: {
+            switch(m_eventModel) {
+                case EventModelCarbon: {
+                    return SetWindowCarbonCG(window);
+                }
+                case EventModelCocoa: {
+                    return SetWindowCocoaCG(window);
+                }
             }
+        }
         case DrawingModelCoreAnimation:
             {
                 return SetWindowCocoaCA(window);
@@ -438,4 +510,32 @@ int16_t NpapiPluginMac::HandleEvent(void* event)
     }
     
     return 0;
+}
+
+int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
+#if FBMAC_USE_COREANIMATION
+    if(variable == NPPVpluginCoreAnimationLayer) {
+        if(m_drawingModel == DrawingModelCoreAnimation) {
+            PluginWindowMacCocoaCA* win = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
+            if(win != NULL) {
+                *((CALayer **)value) = (CALayer*)win->getLayer();
+                [(CALayer *)win->getLayer() retain];
+                return NPERR_NO_ERROR;
+            }
+            return NPERR_GENERIC_ERROR;
+        } else {
+            return NPERR_GENERIC_ERROR;
+        }
+    } 
+#endif
+    return NpapiPlugin::GetValue(variable, value);
+}
+
+void NpapiPluginMac::HandleCocoaTimerEvent() {
+#if !FBMAC_USE_COCOA
+    return;
+#else
+    PluginWindowMacCocoa* win = static_cast<PluginWindowMacCocoa*>(pluginWin);
+    return win->handleTimerEvent();
+#endif
 }

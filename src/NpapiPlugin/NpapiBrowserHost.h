@@ -115,6 +115,9 @@ namespace FB { namespace Npapi {
         bool Construct(NPObject *npobj, const NPVariant *args,
                                         uint32_t argCount, NPVariant *result);
         void SetException(NPObject *npobj, const NPUTF8 *message);
+
+        int ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32 timerID));
+        void UnscheduleTimer(int timerId);
     };
 }; };
 

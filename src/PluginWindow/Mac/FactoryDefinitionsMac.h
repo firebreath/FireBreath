@@ -16,7 +16,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FactoryDefinitionsMac
 
 #include "npapi.h"
+
+#ifndef __LP64__
 #include <Carbon/Carbon.h>
+#endif
 
 namespace FB {
     class JSAPI;
@@ -24,6 +27,7 @@ namespace FB {
     class PluginWindowMacCarbonQD;
     class PluginWindowMacCarbonCG;
     class PluginWindowMacCocoaCA;
+    class PluginWindowMacCocoaCG;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -35,10 +39,12 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
-FB::PluginWindowMacCarbonQD* _createPluginWindow(CGrafPtr port, int x, int y);
+FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, int y);
 
-FB::PluginWindowMacCarbonCG*_createPluginWindow(NP_CGContext* context);
+FB::PluginWindowMacCarbonCG* _createPluginWindowCarbonCG(NP_CGContext* context);
 
-FB::PluginWindowMacCarbonCG*_createPluginWindow();
+FB::PluginWindowMacCocoaCG* _createPluginWindowCocoaCG(NP_CGContext* context);
+
+FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA();
 
 #endif

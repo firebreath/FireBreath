@@ -70,6 +70,8 @@ NpapiHost::NpapiHost(NPInitFuncPtr initPtr, NPShutdownFuncPtr shutdownPtr, NPGet
     m_funcs.enumerate = &NpapiHost::NH_Enumerate;
     m_funcs.pluginthreadasynccall = &NpapiHost::NH_PluginThreadAsyncCall;
     m_funcs.construct = &NpapiHost::NH_Construct;
+    m_funcs.scheduletimer = &NpapiHost::NH_ScheduleTimer;
+    m_funcs.unscheduletimer = &NpapiHost::NH_UnscheduleTimer;
 
     m_instance.ndata = this;
 }
