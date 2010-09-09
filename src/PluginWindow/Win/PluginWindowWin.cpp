@@ -101,7 +101,13 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_PAINT:
         {
             RefreshEvent ev;
-            return SendEvent(&ev);
+            if (!SendEvent(&ev)) {
+                HDC hdc;
+                PAINTSTRUCT ps;
+                hdc = BeginPaint(m_hWnd, &ps);
+                // Release the device context
+                EndPaint(m_hWnd, &ps);
+            }
         }
         case WM_TIMER:
         {
@@ -124,7 +130,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
     if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
         return true;
-
+        
     return false;
 }
 
@@ -148,7 +154,8 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     if (win->WinProc(hWnd, uMsg, wParam, lParam, lResult))
         return lResult;
     else
-        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+        return win->lpOldWinProc(hWnd, uMsg, wParam, lParam);
+        //return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 void PluginWindowWin::InvalidateWindow()
