@@ -26,8 +26,7 @@ if (APPLE)
     clear_xcode_patches()
 endif()
 
-message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
-if (NOT EXISTS ${PROJECT_SRC_DIR}/)
+if (NOT EXISTS ${PROJECT_SRC_DIR})
     message(FATAL_ERROR "The specified project directory ${PROJECT_SRC_DIR} is not found")
 endif()
 
@@ -42,6 +41,7 @@ add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore
 file (GLOB PLUGIN_PROJECTS 
     ${PROJECT_SRC_DIR}/[^.]*
     )
+message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
 
 # loop through the found directories and add any with a CMakeLists.txt as a subproject
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
@@ -52,7 +52,7 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
       message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
       add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
     else()
-      message("Could not find ${CURPROJECT}/CMakeLists.txt")
+        message("Could not find ${CURPROJECT}/CMakeLists.txt")
     endif()
 endforeach()
 
