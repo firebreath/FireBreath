@@ -39,18 +39,20 @@ add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/Scripti
 add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
 
 # search the project src dir for plugin project directories
-file (GLOB PLUGIN_PROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+file (GLOB PLUGIN_PROJECTS 
     ${PROJECT_SRC_DIR}/[^.]*
     )
 
 # loop through the found directories and add any with a CMakeLists.txt as a subproject
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
-    if (EXISTS "${FB_ROOT_DIR}/${CURPROJECT}/CMakeLists.txt")
+    if (EXISTS "${CURPROJECT}/CMakeLists.txt")
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
       configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
       message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
       add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
+    else()
+      message("Could not find ${CURPROJECT}/CMakeLists.txt")
     endif()
 endforeach()
 
