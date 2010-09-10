@@ -28,7 +28,7 @@ class IDispatchAPI :
     public FB::BrowserObjectAPI
 {
 public:
-    IDispatchAPI(IDispatch *, ActiveXBrowserHost *);
+    IDispatchAPI(IDispatch *, ActiveXBrowserHostPtr);
     virtual ~IDispatchAPI(void);
 
     void *getEventId() { return (void*)m_obj; }
@@ -40,7 +40,7 @@ public:
     size_t getMemberCount();
 
 protected:
-    FB::AutoPtr<ActiveXBrowserHost> m_browser;
+    ActiveXBrowserHostPtr m_browser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
 
 protected:

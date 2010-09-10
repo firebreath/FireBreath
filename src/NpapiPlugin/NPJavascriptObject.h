@@ -27,13 +27,13 @@ namespace FB { namespace Npapi {
     {
     protected:
         static NPClass NPJavascriptObjectClass;
-        FB::AutoPtr<FB::JSAPI> m_api;
-        FB::AutoPtr<NpapiBrowserHost> m_browser;
+        FB::JSAPIPtr m_api;
+        NpapiBrowserHostPtr m_browser;
         bool m_valid;
 
     public:
-        static NPJavascriptObject *NewObject(NpapiBrowserHost *host, FB::JSAPI *api);
-        void setAPI(FB::JSAPI *api, NpapiBrowserHost *host);
+        static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIPtr api);
+        void setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host);
         NPJavascriptObject(NPP npp);
         virtual ~NPJavascriptObject(void);
 

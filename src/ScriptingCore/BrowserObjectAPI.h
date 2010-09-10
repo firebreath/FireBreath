@@ -25,7 +25,7 @@ namespace FB
     class BrowserObjectAPI : public FB::JSAPI
     {
     public:
-        BrowserObjectAPI(BrowserHostWrapper *h);
+        BrowserObjectAPI(BrowserHost h);
         virtual ~BrowserObjectAPI();
 
         virtual void *getEventId() { return NULL; }
@@ -44,7 +44,7 @@ namespace FB
         static void GetObjectValues(const FB::JSObject& src, Dict& dst);
 
     public:
-        AutoPtr<BrowserHostWrapper> host;
+        BrowserHost host;
     };
 
     template<class Cont>

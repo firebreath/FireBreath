@@ -51,16 +51,16 @@ namespace FB {
         PluginCore(const std::set<std::string>& params);
         virtual ~PluginCore();
 
-        virtual void SetHost(BrowserHostWrapper *);
+        virtual void SetHost(BrowserHost &);
         virtual PluginWindow* GetWindow() const;
         virtual void SetWindow(PluginWindow *);
         virtual void ClearWindow();
 
     protected:
-        virtual JSAPI* createJSAPI() = 0;
+        virtual JSAPIPtr createJSAPI() = 0;
 
     public:
-        virtual JSAPI* getRootJSAPI();
+        virtual JSAPIPtr getRootJSAPI();
         virtual bool IsWindowless() = 0;
         virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;
         virtual void setFSPath(const std::string& path) { m_filesystemPath = path; }
@@ -70,8 +70,8 @@ namespace FB {
 
     protected:
         PluginWindow *m_Window;
-        AutoPtr<JSAPI> m_api;
-        AutoPtr<BrowserHostWrapper> m_host;
+        JSAPIPtr m_api;
+        BrowserHost m_host;
         std::string m_filesystemPath;
         StringSet m_supportedParamSet;
         bool m_paramsSet;

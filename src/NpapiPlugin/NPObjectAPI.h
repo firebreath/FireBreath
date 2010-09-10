@@ -28,7 +28,7 @@ namespace FB { namespace Npapi {
         public FB::BrowserObjectAPI
     {
     public:
-        NPObjectAPI(NPObject *, NpapiBrowserHost *);
+        NPObjectAPI(NPObject *, NpapiBrowserHostPtr);
         virtual ~NPObjectAPI(void);
 
         void *getEventId() { return (void*)obj; }
@@ -39,7 +39,7 @@ namespace FB { namespace Npapi {
         void getMemberNames(std::vector<std::string> &nameVector);
         size_t getMemberCount();
     protected:
-        FB::AutoPtr<NpapiBrowserHost> browser;
+        NpapiBrowserHostPtr browser;
         NPObject *obj;
 
     public:

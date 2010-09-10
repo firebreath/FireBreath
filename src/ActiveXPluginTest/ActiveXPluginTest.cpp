@@ -52,7 +52,7 @@ FB::JSAPI *_getRootJSAPI()
     return new FB::JSAPISimple();
 }
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
 {
     return NULL;
     //return new FB::Npapi::NpapiPlugin(host);

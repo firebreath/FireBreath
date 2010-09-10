@@ -20,28 +20,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-JSAPI::JSAPI(void) : m_refCount(0), m_valid(true)
+JSAPI::JSAPI(void) : m_valid(true)
 {
     registerEvent("onload");
 }
 
 JSAPI::~JSAPI(void)
 {
-}
-
-void JSAPI::AddRef()
-{
-    ++m_refCount;
-}
-
-unsigned int JSAPI::Release()
-{
-    if (--m_refCount == 0) {
-        delete this;
-        return 0;
-    } else {
-        return m_refCount;
-    }
 }
 
 void JSAPI::invalidate()
@@ -65,7 +50,7 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& 
         eventIt->second->InvokeAsync("", args);
     }
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end() && fnd->second.ptr() != NULL && fnd->second->getEventId() != NULL) {
+    if (fnd != m_defEventMap.end() && fnd->second != NULL && fnd->second->getEventId() != NULL) {
         fnd->second->InvokeAsync("", args);
     }
 
@@ -90,12 +75,12 @@ bool JSAPI::HasEvent(const std::string& eventName)
     }
 }
 
-void JSAPI::registerEventMethod(const std::wstring& name, BrowserObjectAPI *event)
+void JSAPI::registerEventMethod(const std::wstring& name, JSObject &event)
 {
     registerEventMethod(wstring_to_utf8(name), event);
 }
 
-void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event)
+void JSAPI::registerEventMethod(const std::string& name, JSObject &event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -107,12 +92,12 @@ void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event
     m_eventMap.insert(EventPair(name, event));
 }
 
-void JSAPI::unregisterEventMethod(const std::wstring& name, BrowserObjectAPI *event)
+void JSAPI::unregisterEventMethod(const std::wstring& name, JSObject &event)
 {
     unregisterEventMethod(wstring_to_utf8(name), event);
 }
 
-void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *event)
+void JSAPI::unregisterEventMethod(const std::string& name, JSObject &event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -124,37 +109,37 @@ void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *eve
     }
 }
 
-void JSAPI::registerEventInterface(BrowserObjectAPI *event)
+void JSAPI::registerEventInterface(JSObject& event)
 {
-    m_evtIfaces[static_cast<void*>(event)] = event;
+    m_evtIfaces[static_cast<void*>(event.get())] = event;
 }
 
-void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
+void JSAPI::unregisterEventInterface(JSObject& event)
 {
-    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event));
+    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
     m_evtIfaces.erase(fnd);
 }
 
-BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::wstring& name)
+JSObject JSAPI::getDefaultEventMethod(const std::wstring& name)
 {
     return getDefaultEventMethod(wstring_to_utf8(name));
 }
 
-BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::string& name)
+JSObject JSAPI::getDefaultEventMethod(const std::string& name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
     if (fnd != m_defEventMap.end()) {
-        return fnd->second.ptr();
+        return fnd->second;
     }
-    return NULL;
+    return JSObject();
 }
 
-void JSAPI::setDefaultEventMethod(const std::wstring& name, BrowserObjectAPI *obj)
+void JSAPI::setDefaultEventMethod(const std::wstring& name, JSObject &obj)
 {
     setDefaultEventMethod(wstring_to_utf8(name), obj);
 }
 
-void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj)
+void JSAPI::setDefaultEventMethod(const std::string& name, JSObject &obj)
 {
     if(obj == NULL)
         m_defEventMap.erase(name);
@@ -170,7 +155,7 @@ void JSAPI::registerEvent(const std::wstring &name)
 void JSAPI::registerEvent(const std::string &name)
 {
     if(m_defEventMap.find(name) == m_defEventMap.end())
-        m_defEventMap[name] = 0;
+        m_defEventMap[name] = JSObject();
 }
 
 void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector)

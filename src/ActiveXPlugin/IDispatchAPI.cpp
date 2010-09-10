@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <dispex.h>
 #include "utf8_tools.h"
 
-IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHost *host) :
+IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
     m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
 {
 }

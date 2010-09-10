@@ -66,7 +66,7 @@ public:
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
 
-    FB::AutoPtr<ActiveXBrowserHost> m_host;
+    ActiveXBrowserHostPtr m_host;
 
     CFBControl() : pluginWin(NULL)
     {
@@ -105,8 +105,8 @@ public:
             m_htmlDocIDisp = container;
         }
 
-        m_host = new ActiveXBrowserHost(m_htmlDoc);
-        pluginMain->SetHost(m_host.ptr());
+        m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_htmlDoc));
+        pluginMain->SetHost(as_BrowserHost(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         setReadyState(READYSTATE_COMPLETE);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);

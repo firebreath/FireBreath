@@ -57,25 +57,25 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     NPObject *window(NULL);
     GetValue(NPNVWindowNPObject, (void**)&window);
 
-    m_htmlWin = new FB::Npapi::NPObjectAPI(window, this);
-    m_htmlDoc = dynamic_cast<NPObjectAPI*>(m_htmlWin->GetProperty("document")
-        .cast<FB::JSObject>().ptr());
+    m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, as_NpapiBrowserHost(shared_ptr())));
+    m_htmlDoc = as_NPObjectAPI(m_htmlWin->GetProperty("document")
+        .cast<FB::JSObject>());
 }
 
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 {
-    if (m_htmlDoc.ptr() == NULL)
+    if (!m_htmlDoc)
         throw std::runtime_error("Cannot find HTML document");
 
-    return FB::JSAPI_DOMDocument(m_htmlDoc.ptr());
+    return FB::JSAPI_DOMDocument(m_htmlDoc);
 }
 
 FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 {
-    if (m_htmlWin.ptr() == NULL)
+    if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
-    return FB::JSAPI_DOMWindow(m_htmlWin.ptr());
+    return FB::JSAPI_DOMWindow(m_htmlWin);
 }
 
 void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
@@ -85,7 +85,7 @@ void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
 
     this->getNPVariant(&tmp, FB::variant(script));
 
-    if (m_htmlWin.ptr() == NULL)
+    if (m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
 
@@ -125,7 +125,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = JSObject(new NPObjectAPI(npVar->value.objectValue, this));
+            retVal = JSObject(new NPObjectAPI(npVar->value.objectValue, as_NpapiBrowserHost(shared_ptr())));
             break;
 
         case NPVariantType_Void:
@@ -186,8 +186,8 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             outArr.callMethod<void>("push", variant_list_of(*it));
         }
-        FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(outArr.getJSObject().ptr());
-        if (api.ptr() != NULL) {
+        NPObjectAPIPtr api = as_NPObjectAPI(outArr.getJSObject());
+        if (api) {
             dst->type = NPVariantType_Object;
             dst->value.objectValue = api->getNPObject();
             this->RetainObject(dst->value.objectValue);
@@ -199,8 +199,8 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
             out.setProperty(it->first, it->second);
         }
-        FB::AutoPtr<NPObjectAPI> api = dynamic_cast<NPObjectAPI*>(out.getJSObject().ptr());
-        if (api.ptr() != NULL) {
+        NPObjectAPIPtr api = as_NPObjectAPI(out.getJSObject());
+        if (api) {
             dst->type = NPVariantType_Object;
             dst->value.objectValue = api->getNPObject();
             this->RetainObject(dst->value.objectValue);
@@ -209,10 +209,10 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
     } else if (var.get_type() == typeid(FB::JSOutObject)) {
         NPObject *outObj = NULL;
         FB::JSOutObject obj = var.cast<FB::JSOutObject>();
-        NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
+        NPObjectAPIPtr tmpObj = as_NPObjectAPI(obj);
 
         if (tmpObj == NULL) {
-            outObj = NPJavascriptObject::NewObject(this, obj);
+            outObj = NPJavascriptObject::NewObject(as_NpapiBrowserHost(shared_ptr()), obj);
         } else {
             outObj = tmpObj->getNPObject();
             this->RetainObject(outObj);
@@ -224,10 +224,10 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
     } else if (var.get_type() == typeid(FB::JSObject)) {
         NPObject *outObj = NULL;
         FB::JSObject obj = var.cast<JSObject>();
-        NPObjectAPI *tmpObj = dynamic_cast<NPObjectAPI *>(obj.ptr());
+        NPObjectAPIPtr tmpObj = as_NPObjectAPI(obj);
 
         if (tmpObj == NULL) {
-            outObj = NPJavascriptObject::NewObject(this, obj);
+            outObj = NPJavascriptObject::NewObject(as_NpapiBrowserHost(shared_ptr()), obj);
         } else {
             outObj = tmpObj->getNPObject();
             this->RetainObject(outObj);

@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include "AutoPtr.h"
 #include <stdexcept>
+#include <boost/enable_shared_from_this.hpp>
 
 namespace FB
 {
@@ -63,19 +64,17 @@ namespace FB
         ~invalid_member() throw() { }
     };
 
-    class JSAPI
+    class JSAPI : public boost::enable_shared_from_this<JSAPI>
     {
     public:
         JSAPI(void);
         virtual ~JSAPI(void);
 
-    // Support Reference counting
-    protected:
-        unsigned int m_refCount;
-
     public:
-        void AddRef();
-        unsigned int Release();
+        JSAPIPtr shared_ptr()
+        {
+            return shared_from_this();
+        }
 
         void invalidate();
 
@@ -85,18 +84,18 @@ namespace FB
         virtual void FireEvent(const std::string& eventName, const std::vector<variant>&);
 
     public:
-        virtual void registerEvent(const std::wstring& name);
         virtual void registerEvent(const std::string& name);
-        virtual void registerEventMethod(const std::wstring& name, BrowserObjectAPI *event);
-        virtual void registerEventMethod(const std::string& name, BrowserObjectAPI *event);
-        virtual void unregisterEventMethod(const std::wstring& name, BrowserObjectAPI *event);
-        virtual void unregisterEventMethod(const std::string& name, BrowserObjectAPI *event);
-        virtual void registerEventInterface(BrowserObjectAPI *event);
-        virtual void unregisterEventInterface(BrowserObjectAPI *event);
-        virtual BrowserObjectAPI *getDefaultEventMethod(const std::wstring& name);
-        virtual BrowserObjectAPI *getDefaultEventMethod(const std::string& name);
-        virtual void setDefaultEventMethod(const std::wstring& name, BrowserObjectAPI *event);
-        virtual void setDefaultEventMethod(const std::string& name, BrowserObjectAPI *event);
+        virtual void registerEvent(const std::wstring& name);
+        virtual void registerEventMethod(const std::string& name, JSObject& event);
+        virtual void registerEventMethod(const std::wstring& name, JSObject& event);
+        virtual void unregisterEventMethod(const std::string& name, JSObject& event);
+        virtual void unregisterEventMethod(const std::wstring& name, JSObject& event);
+        virtual void registerEventInterface(JSObject& event);
+        virtual void unregisterEventInterface(JSObject& event);
+        virtual JSObject getDefaultEventMethod(const std::wstring& name);
+        virtual JSObject getDefaultEventMethod(const std::string& name);
+        virtual void setDefaultEventMethod(const std::wstring& name, JSObject& event);
+        virtual void setDefaultEventMethod(const std::string& name, JSObject& event);
 
         // Methods for enumeration
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);

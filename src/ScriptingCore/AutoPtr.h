@@ -12,6 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Don Jordan, Firebreath development team
 \**********************************************************/
 
+#if 0
+
 #ifndef H_FB_AUTOPTR
 #define H_FB_AUTOPTR
 
@@ -108,5 +110,7 @@ namespace FB
         object = obj;
     }
 }
+
+#endif
 
 #endif

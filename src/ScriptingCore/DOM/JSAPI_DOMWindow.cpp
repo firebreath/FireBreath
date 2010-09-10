@@ -34,7 +34,7 @@ JSAPI_DOMWindow::~JSAPI_DOMWindow()
 JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
 {
     JSObject api = getProperty<JSObject>("document");
-    return JSAPI_DOMDocument(api.ptr());
+    return JSAPI_DOMDocument(api);
 }
 
 void JSAPI_DOMWindow::alert(const std::string& str)

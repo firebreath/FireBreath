@@ -15,12 +15,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitions
 #define H_FactoryDefinitions
 
+#include <boost/shared_ptr.hpp>
+
 namespace FB {
-    class JSAPI;
     class PluginCore;
     namespace Npapi {
         class NpapiPlugin;
+        typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
         class NpapiBrowserHost;
+        typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
     };
 }
 
@@ -31,7 +34,7 @@ namespace FB {
 
 FB::PluginCore *_getMainPlugin();
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host);
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host);
 
 void GlobalPluginInitialize();
 void GlobalPluginDeinitialize();

@@ -25,7 +25,7 @@ namespace FB {
     class NpapiPluginWin : public NpapiPlugin
     {
     public:
-        NpapiPluginWin(NpapiBrowserHost *host);
+        NpapiPluginWin(NpapiBrowserHostPtr host);
         virtual ~NpapiPluginWin(void);
 
     protected:

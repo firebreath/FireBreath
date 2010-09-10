@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include "AutoPtr.h"
+#include <boost/shared_ptr.hpp>
 
 namespace FB
 {
@@ -36,9 +37,14 @@ namespace FB
     typedef std::map<std::string, variant> VariantMap;
     typedef std::set<std::string> StringSet;
 
-    typedef FB::AutoPtr<FB::JSAPI> JSOutObject;
-    typedef FB::AutoPtr<FB::BrowserObjectAPI> JSObject;
-    typedef FB::AutoPtr<FB::BrowserHostWrapper> BrowserHost;
+#define as_JSAPIPtr(x) boost::dynamic_pointer_cast<FB::JSAPI>(x)
+#define as_JSObject(x) boost::dynamic_pointer_cast<FB::BrowserObjectAPI>(x)
+    typedef boost::shared_ptr<FB::JSAPI> JSOutObject; // Deprecated
+    typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; // Deprecated
+    typedef boost::shared_ptr<FB::BrowserObjectAPI> JSObject;
+
+#define as_BrowserHost(x) boost::dynamic_pointer_cast<FB::BrowserHostWrapper>(x)
+    typedef boost::shared_ptr<FB::BrowserHostWrapper> BrowserHost;
 
     struct CatchAll {
         typedef FB::VariantList value_type;

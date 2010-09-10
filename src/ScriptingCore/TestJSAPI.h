@@ -91,11 +91,6 @@ public:
         propValue = value;
     }
 
-    int getRefCount()
-    {
-        return m_refCount;
-    }
-
 protected:
     FB::variant m_accessList[TESTOBJECTJSAPI_ACCESSLISTLENGTH];
     FB::variant propValue;

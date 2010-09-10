@@ -54,7 +54,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 
     registerEvent("onfired");
 
-    m_simpleMath = new SimpleMathAPI(m_host);
+    m_simpleMath = FB::JSAPIPtr(new SimpleMathAPI(m_host));
 }
 
 FBTestPluginAPI::~FBTestPluginAPI()

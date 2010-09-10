@@ -17,17 +17,17 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHost *h)
+NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
     : BrowserObjectAPI(h), browser(h), obj(o)
 {
-    if (h != NULL && o != NULL) {
+    if (browser && o != NULL) {
         browser->RetainObject(obj);
     }
 }
 
 NPObjectAPI::~NPObjectAPI(void)
 {
-    if (browser.ptr() != NULL && obj != NULL) {
+    if (browser && obj != NULL) {
         browser->ReleaseObject(obj);
     }
 }
