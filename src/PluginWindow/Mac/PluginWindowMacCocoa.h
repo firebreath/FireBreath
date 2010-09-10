@@ -42,7 +42,7 @@ namespace FB {
             virtual void InvalidateWindow();
             
             // Set this window's browser host
-            void setNpHost(FB::AutoPtr<Npapi::NpapiBrowserHost> host) { m_npHost = host; }
+            void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
 
             // Schedules a timer, returns the timer's unique ID
             virtual int scheduleTimer(int interval, bool repeat);
@@ -61,7 +61,7 @@ namespace FB {
         protected:
             int m_x, m_y, m_width, m_height;
             int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
-            FB::AutoPtr<Npapi::NpapiBrowserHost> m_npHost;
+            FB::Npapi::NpapiBrowserHostPtr  m_npHost;
     };
 };
 
