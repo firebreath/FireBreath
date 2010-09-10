@@ -50,7 +50,7 @@ namespace FB {
         PluginCore(const std::set<std::string>& params);
         virtual ~PluginCore();
 
-        virtual void SetHost(BrowserHost &);
+        virtual void SetHost(FB::BrowserHost);
         virtual PluginWindow* GetWindow() const;
         virtual void SetWindow(PluginWindow *);
         virtual void ClearWindow();

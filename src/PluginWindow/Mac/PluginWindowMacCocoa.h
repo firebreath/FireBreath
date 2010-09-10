@@ -31,7 +31,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 
 namespace FB {
 
-    void timerCallback(NPP npp, uint32 timerID);
+    void timerCallback(NPP npp, uint32_t timerID);
 
     class PluginWindowMacCocoa : public PluginWindow {
         public:

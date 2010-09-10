@@ -134,12 +134,12 @@ JSObject JSAPI::getDefaultEventMethod(const std::string& name)
     return JSObject();
 }
 
-void JSAPI::setDefaultEventMethod(const std::wstring& name, JSObject &obj)
+void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObject obj)
 {
     setDefaultEventMethod(wstring_to_utf8(name), obj);
 }
 
-void JSAPI::setDefaultEventMethod(const std::string& name, JSObject &obj)
+void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObject obj)
 {
     if(obj == NULL)
         m_defEventMap.erase(name);

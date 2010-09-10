@@ -62,7 +62,7 @@ namespace
             host = NpapiBrowserHostPtr(new NpapiBrowserHostAsyncWin(module, npp));
 #else
             // no work-around for this platform
-            host = new NpapiBrowserHost(module, npp);
+            host = NpapiBrowserHostPtr(new NpapiBrowserHost(module, npp));
 #endif
         } else {
             host = NpapiBrowserHostPtr(new NpapiBrowserHost(module, npp));

@@ -85,7 +85,7 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
     m_params.insert(inParams.begin(), inParams.end());
 }
 
-void PluginCore::SetHost(BrowserHost &host)
+void PluginCore::SetHost(FB::BrowserHost host)
 {
     m_host = host;
 }

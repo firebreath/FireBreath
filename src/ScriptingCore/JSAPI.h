@@ -93,8 +93,8 @@ namespace FB
         virtual void unregisterEventInterface(JSObject& event);
         virtual JSObject getDefaultEventMethod(const std::wstring& name);
         virtual JSObject getDefaultEventMethod(const std::string& name);
-        virtual void setDefaultEventMethod(const std::wstring& name, JSObject& event);
-        virtual void setDefaultEventMethod(const std::string& name, JSObject& event);
+        virtual void setDefaultEventMethod(const std::string& name, JSObject event);
+        virtual void setDefaultEventMethod(const std::wstring& name, JSObject event);
 
         // Methods for enumeration
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);

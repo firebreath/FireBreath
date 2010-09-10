@@ -13,7 +13,7 @@
 #include "Mac/PluginWindowMacCarbonCG.h"
 #include "Mac/PluginWindowMacCocoaCA.h"
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
 {
     return new FB::Npapi::NpapiPluginMac(host);
 }
