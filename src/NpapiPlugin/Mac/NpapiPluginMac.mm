@@ -33,7 +33,7 @@ using namespace FB::Npapi;
 
 namespace 
 {
-    bool supports(FB::Npapi::NpapiBrowserHost* host, NPNVariable what)
+    bool supports(FB::Npapi::NpapiBrowserHostPtr host, NPNVariable what)
     {
         NPBool value;        
         NPError err;
@@ -66,7 +66,7 @@ namespace
         return value;
     }
 
-    bool set(FB::Npapi::NpapiBrowserHost* host, NPPVariable what, void* value)
+    bool set(FB::Npapi::NpapiBrowserHostPtr host, NPPVariable what, void* value)
     {
         NPError err = host->SetValue(what, value);
         void* model = value;
@@ -95,7 +95,7 @@ namespace
         return true;
     }
     
-    bool enableQuickDraw(FB::Npapi::NpapiBrowserHost* host)
+    bool enableQuickDraw(FB::Npapi::NpapiBrowserHostPtr host)
     {
 #ifdef __LP64__
         // QuickDraw does not exist for 64 bit 
@@ -124,7 +124,7 @@ namespace
 #endif   
     }
 
-    bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHost* host)
+    bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHostPtr host)
     {
 #ifdef __LP64__
         // Carbon does not exist for 64 bit
@@ -156,7 +156,7 @@ namespace
 #endif
     }
 
-    bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHost* host)
+    bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHostPtr host)
     {
 #if !FBMAC_USE_COREGRAPHICS
         printf("CoreGraphics not supported\n");
@@ -181,7 +181,7 @@ namespace
 #endif
     }
     
-    bool enableCoreAnimation(FB::Npapi::NpapiBrowserHost* host)
+    bool enableCoreAnimation(FB::Npapi::NpapiBrowserHostPtr host)
     {
 #if !FBMAC_USE_COREANIMATION
         printf("enableCoreAnimation() - 0\n");
@@ -203,7 +203,7 @@ namespace
     }
 }
 
-NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
+NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr host)
   : NpapiPlugin(host)   
   , pluginWin(NULL)
   , m_eventModel()
