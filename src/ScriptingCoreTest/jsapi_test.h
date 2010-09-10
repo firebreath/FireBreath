@@ -136,7 +136,7 @@ TEST(JSAPI_Properties)
 
     using namespace FB;
 
-    FB::AutoPtr<FB::JSAPI> test1 = new TestObjectJSAPI();
+    FB::JSAPIPtr test1(new TestObjectJSAPI());
     // Test setting and getting many different datatypes with properties
     try {
         for (int i = 0; i < 10000; i++) {

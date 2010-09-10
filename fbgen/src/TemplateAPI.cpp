@@ -10,7 +10,7 @@
 
 #include "@{PLUGIN.ident}API.h"
 
-@{PLUGIN.ident}API::@{PLUGIN.ident}API(FB::BrowserHostWrapper *host) : m_host(host)
+@{PLUGIN.ident}API::@{PLUGIN.ident}API(FB::BrowserHost host) : m_host(host)
 {
     registerMethod("echo",      make_method(this, &@{PLUGIN.ident}API::echo));
     registerMethod("testEvent", make_method(this, &@{PLUGIN.ident}API::testEvent));
