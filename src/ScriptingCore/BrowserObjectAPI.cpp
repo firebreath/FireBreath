@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-BrowserObjectAPI::BrowserObjectAPI(BrowserHostWrapper *h) :
+BrowserObjectAPI::BrowserObjectAPI(BrowserHost h) :
     host(h)
 {
 }
@@ -28,5 +28,5 @@ BrowserObjectAPI::~BrowserObjectAPI(void)
 
 void BrowserObjectAPI::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(this, methodName, args);
+    FB::AsyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
 }

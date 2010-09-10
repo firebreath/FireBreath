@@ -21,10 +21,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host)
+NpapiPlugin::NpapiPlugin(NpapiBrowserHostPtr host)
     : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true)
 {
-    pluginMain->SetHost(host);
+    pluginMain->SetHost(host->shared_ptr());
 }
 
 NpapiPlugin::~NpapiPlugin(void)
@@ -52,7 +52,6 @@ NPObject *NpapiPlugin::getScriptableObject()
 void NpapiPlugin::shutdown(void)
 {
     pluginMain->ClearWindow();
-    delete pluginMain; pluginMain = NULL;
 }
 
 void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[])

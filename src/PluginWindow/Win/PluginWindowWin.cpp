@@ -27,11 +27,10 @@ using namespace FB;
 
 PluginWindowWin::PluginWindowMap FB::PluginWindowWin::m_windowMap;
 
-PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), m_browserhWnd(NULL), lpOldWinProc(NULL)
+PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), m_browserhWnd(NULL), lpOldWinProc(NULL), m_callOldWinProc(false)
 {
     // subclass window so we can intercept window messages 
     lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);
-
     // associate window with this object so that we can route events properly
     m_windowMap[static_cast<void*>(m_hWnd)] = this;
 }
@@ -153,9 +152,11 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     // Try to handle the event through the plugin instace; if that doesn't work, handle it through the default winproc
     if (win->WinProc(hWnd, uMsg, wParam, lParam, lResult))
         return lResult;
-    else
+    else if (win->m_callOldWinProc)
         return win->lpOldWinProc(hWnd, uMsg, wParam, lParam);
-        //return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    else
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    return 0;
 }
 
 void PluginWindowWin::InvalidateWindow()

@@ -85,18 +85,18 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
     m_params.insert(inParams.begin(), inParams.end());
 }
 
-void PluginCore::SetHost(BrowserHostWrapper *host)
+void PluginCore::SetHost(BrowserHost &host)
 {
     m_host = host;
 }
 
-JSAPI* PluginCore::getRootJSAPI()
+JSAPIPtr PluginCore::getRootJSAPI()
 {
-    if (m_api.ptr() == NULL) {
+    if (!m_api) {
         m_api = createJSAPI();
     }
 
-    return m_api.ptr();
+    return m_api;
 }
 
 PluginWindow* PluginCore::GetWindow() const

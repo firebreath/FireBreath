@@ -24,7 +24,6 @@
 #include <sstream>
 #include <string>
 
-#include "AutoPtr.h"
 #include "APITypes.h"
 #include "Util/meta_util.h"
 #include "utf8_tools.h"

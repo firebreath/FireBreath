@@ -24,7 +24,7 @@ using namespace FB::Npapi;
 
 extern std::string g_dllPath;
 
-NpapiPluginWin::NpapiPluginWin(NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginWin::NpapiPluginWin(NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("Windows", "NPAPI");
     setFSPath(g_dllPath);

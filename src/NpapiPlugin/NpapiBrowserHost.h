@@ -22,6 +22,8 @@ namespace FB { namespace Npapi {
 
     class NpapiPluginModule;
     class NPObjectAPI;
+    typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
+#define as_NPObjectAPI(x) boost::dynamic_pointer_cast<FB::Npapi::NPObjectAPI>(x)
 
     class NpapiBrowserHost :
         public FB::BrowserHostWrapper
@@ -55,8 +57,8 @@ namespace FB { namespace Npapi {
         NPNetscapeFuncs NPNFuncs;   // Function pointers
         NpapiPluginModule *module;
         NPP m_npp;
-        FB::AutoPtr<NPObjectAPI> m_htmlDoc;
-        FB::AutoPtr<NPObjectAPI> m_htmlWin;
+        NPObjectAPIPtr m_htmlDoc;
+        NPObjectAPIPtr m_htmlWin;
 
     public:
         /* These are proxied to the module */
@@ -116,9 +118,12 @@ namespace FB { namespace Npapi {
                                         uint32_t argCount, NPVariant *result);
         void SetException(NPObject *npobj, const NPUTF8 *message);
 
-        int ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32 timerID));
+        int ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32_t timerID));
         void UnscheduleTimer(int timerId);
     };
+
+    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+#define as_NpapiBrowserHost(x) boost::dynamic_pointer_cast<FB::Npapi::NpapiBrowserHost>(x)
 }; };
 
 #endif

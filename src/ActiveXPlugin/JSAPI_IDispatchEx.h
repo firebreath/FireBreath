@@ -35,12 +35,12 @@ class JSAPI_IDispatchEx :
 {
     typedef CComEnum<IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*,
         _CopyInterface<IConnectionPoint> > CComEnumConnectionPoints;
-    typedef std::map<DWORD, FB::AutoPtr<IDispatchAPI>> ConnectionPointMap;
+    typedef std::map<DWORD, IDispatchAPIPtr> ConnectionPointMap;
 
 public:
     JSAPI_IDispatchEx(void) : m_readyState(READYSTATE_LOADING) { };
     virtual ~JSAPI_IDispatchEx(void) { };
-    void setAPI(FB::JSAPI *api, ActiveXBrowserHost *host)
+    void setAPI(FB::JSAPIPtr api, ActiveXBrowserHostPtr host)
     {
         m_api = api;
         m_host = host;
@@ -54,8 +54,8 @@ public:
     }
 
 protected:
-    FB::AutoPtr<FB::JSAPI> m_api;
-    FB::AutoPtr<ActiveXBrowserHost> m_host;
+    FB::JSAPIPtr m_api;
+    ActiveXBrowserHostPtr m_host;
     ConnectionPointMap m_connPtMap;
 
     READYSTATE m_readyState;
@@ -164,14 +164,14 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetConnectionPointContainer(IConnection
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCookie)
 {
-    if (m_api.ptr() == NULL) return CONNECT_E_CANNOTCONNECT;
+    if (!m_api) return CONNECT_E_CANNOTCONNECT;
 
     IDispatch *idisp(NULL);
     if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
-        FB::AutoPtr<IDispatchAPI> obj(new IDispatchAPI(idisp, m_host));
-        m_connPtMap[(DWORD)obj.ptr()] = obj;
-        *pdwCookie = (DWORD)obj.ptr();
-        m_api->registerEventInterface(static_cast<FB::BrowserObjectAPI *>(obj.ptr()));
+        IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
+        m_connPtMap[(DWORD)obj.get()] = obj;
+        *pdwCookie = (DWORD)obj.get();
+        m_api->registerEventInterface(as_JSObject(obj));
         return S_OK;
     } else {
         return CONNECT_E_CANNOTCONNECT;
@@ -185,7 +185,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Unadvise(DWORD dwCookie)
     if (fnd == m_connPtMap.end()) {
         return E_UNEXPECTED;
     } else {
-        m_api->registerEventInterface(static_cast<FB::BrowserObjectAPI *>(fnd->second.ptr()));
+        m_api->registerEventInterface(as_JSObject(fnd->second));
         m_connPtMap.erase(fnd);
         return S_OK;
     }
@@ -240,10 +240,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Invoke(DISPID dispIdMember, REFIID riid
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid)
 {
-    if (m_api.ptr() == NULL) return DISP_E_UNKNOWNNAME;
-
-    if (m_api.ptr() == NULL)
-        return E_NOTIMPL;
+    if (!m_api) return DISP_E_UNKNOWNNAME;
 
     std::wstring wsName(bstrName);
 
@@ -268,12 +265,11 @@ bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB:
     }
 
     std::string evtName = args[0].convert_cast<std::string>();
+    FB::JSObject method(args[1].convert_cast<FB::JSObject>());
     if (add) {
-        m_api->registerEventMethod(evtName,
-            args[1].convert_cast<FB::JSObject>());
+        m_api->registerEventMethod(evtName, method);
     } else {
-        m_api->unregisterEventMethod(evtName,
-            args[1].convert_cast<FB::JSObject>());
+        m_api->unregisterEventMethod(evtName, method);
     }
 
     return true;
@@ -285,7 +281,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
                                              EXCEPINFO *pei, 
                                              IServiceProvider *pspCaller)
 {
-    if (m_api.ptr() == NULL || !AxIdMap.idExists(id)) {
+    if (!m_api || !AxIdMap.idExists(id)) {
         return DISP_E_MEMBERNOTFOUND;
     }
 
@@ -325,9 +321,10 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             if (newVal.empty()) {
-                m_api->setDefaultEventMethod(wsName, NULL);
+                m_api->setDefaultEventMethod(wsName, FB::JSObject());
             } else {
-                m_api->setDefaultEventMethod(wsName, newVal.cast<FB::JSObject>());
+                FB::JSObject method(newVal.cast<FB::JSObject>());
+                m_api->setDefaultEventMethod(wsName, method);
             }
 
         } else if (wFlags & DISPATCH_METHOD && ((wsName == L"attachEvent") || (wsName == L"detachEvent")) ) {
@@ -412,7 +409,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetMemberName(DISPID id, BSTR *pbstrNam
 template <class T, class IDISP, const IID* piid>
 HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid)
 {
-    if (m_api.ptr() == NULL)
+    if (!m_api)
         return S_FALSE;
 
     if (m_memberList.size() != m_api->getMemberCount()) {

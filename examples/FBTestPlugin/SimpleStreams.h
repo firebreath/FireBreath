@@ -13,18 +13,15 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-namespace FB
-{
-    class BrowserHostWrapper;
-}
+#include "BrowserHostWrapper.h"
 
 class StreamsTest
 {
 public:
-    StreamsTest( FB::BrowserHostWrapper* host );
+    StreamsTest( FB::BrowserHost host );
 
     bool run();
 
 protected:
-    FB::BrowserHostWrapper* host;
+    FB::BrowserHost host;
 };

@@ -56,13 +56,13 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
 
 FB::JSAPI_DOMDocument ActiveXBrowserHost::getDOMDocument()
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, this));
+    FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())));
     return FB::JSAPI_DOMDocument(retObj);
 }
 
 FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, this));
+    FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr())));
     return FB::JSAPI_DOMWindow(retObj);
 }
 
@@ -127,7 +127,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-        retVal = FB::JSObject(new IDispatchAPI(cVar->pdispVal, this)); 
+        retVal = FB::JSObject(new IDispatchAPI(cVar->pdispVal, as_ActiveXBrowserHost(shared_ptr()))); 
         break;
 
     case VT_ERROR:
@@ -184,8 +184,8 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
             FB::VariantList vl = list_of(*it);
             outArr.callMethod<void>("push", vl);
         }
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(outArr.getJSObject().ptr());
-        if (api.ptr() != NULL) {
+        IDispatchAPIPtr api = as_IDispatchAPI(outArr.getJSObject());
+        if (api) {
             outVar = api->getIDispatch();
         }
 
@@ -195,25 +195,25 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
             out.setProperty(it->first, it->second);
         }
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(out.getJSObject().ptr());
-        if (api.ptr() != NULL) {
+        IDispatchAPIPtr api = as_IDispatchAPI(out.getJSObject());
+        if (api) {
             outVar = api->getIDispatch();
         }
 
     } else if (var.get_type() == typeid(FB::JSObject)) {
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<FB::JSObject>().ptr());
-        if (api.ptr() != NULL) {
+        IDispatchAPIPtr api = as_IDispatchAPI(var.cast<JSOutObject>());
+        if (api) {
             outVar = api->getIDispatch();
         } else {
-            outVar = COMJavascriptObject::NewObject(this, var.cast<FB::JSObject>().ptr());
+            outVar = COMJavascriptObject::NewObject(as_ActiveXBrowserHost(shared_ptr()), var.cast<FB::JSObject>());
         }
 
     } else if (var.get_type() == typeid(JSOutObject)) {
-        FB::AutoPtr<IDispatchAPI> api = dynamic_cast<IDispatchAPI*>(var.cast<JSOutObject>().ptr());
-        if (api.ptr() != NULL) {
+        IDispatchAPIPtr api = as_IDispatchAPI(var.cast<JSOutObject>());
+        if (api) {
             outVar = api->getIDispatch();
         } else {
-            outVar = COMJavascriptObject::NewObject(this, var.cast<JSOutObject>().ptr());
+            outVar = COMJavascriptObject::NewObject(as_ActiveXBrowserHost(shared_ptr()), var.cast<JSOutObject>());
         }
     }
 

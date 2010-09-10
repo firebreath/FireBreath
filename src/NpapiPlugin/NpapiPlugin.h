@@ -29,10 +29,13 @@ namespace FB { namespace Npapi {
         { }
     };
     
+    class NpapiPlugin;
+    typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
+
     class NpapiPlugin : public FB::BrowserPlugin
     {
     public:
-        NpapiPlugin(NpapiBrowserHost *host);
+        NpapiPlugin(NpapiBrowserHostPtr host);
         virtual ~NpapiPlugin(void);
 
         virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);
@@ -40,8 +43,9 @@ namespace FB { namespace Npapi {
 
     protected:
         NPJavascriptObject *m_obj;
-        AutoPtr<NpapiBrowserHost> m_npHost;
+        NpapiBrowserHostPtr m_npHost;
 		bool m_retainReturnedNPObject;
+
         NPObject *getScriptableObject();
         static void signalStreamOpened(void* stream);
 

@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
-#include "AutoPtr.h"
+#include <boost/enable_shared_from_this.hpp>
 
 namespace FB
 {
@@ -28,16 +28,16 @@ namespace FB
 
     struct AsyncLogRequest
     {
-        AsyncLogRequest(BrowserHostWrapper *host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(BrowserHost host, const std::string& message) : m_host(host), m_msg(message) { }
 
         BrowserHost m_host;
         std::string m_msg;
     };
 
-    class BrowserHostWrapper
+    class BrowserHostWrapper : public boost::enable_shared_from_this<BrowserHostWrapper>
     {
     public:
-        BrowserHostWrapper() : refCount(0) { }
+        BrowserHostWrapper() { }
         virtual ~BrowserHostWrapper() { }
 
     public:
@@ -58,17 +58,9 @@ namespace FB
         virtual void evaluateJavaScript(const std::string &script) = 0;
         virtual void htmlLog(const std::string& str);
 
-    protected:
-        unsigned int refCount;
-    public:
-        void AddRef() { refCount++; }
-        unsigned int Release()
+        BrowserHost shared_ptr()
         {
-            if (--refCount == 0) {
-                delete this;
-                return 0;
-            }
-            return refCount;
+            return shared_from_this();
         }
     };
 }

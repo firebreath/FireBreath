@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_NPAPIPLUGINMODULE
 
 #include "APITypes.h"
-#include "AutoPtr.h"
 #include "NpapiTypes.h"
 
 namespace FB { 

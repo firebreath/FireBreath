@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
 #include "FactoryDefinitions.h"
+#include "NpapiBrowserHost.h"
 
 #ifdef _WINDOWS_
 #  include "Win/NpapiBrowserHostAsyncWin.h"
@@ -50,21 +51,21 @@ namespace
         return useWorkaround;
     }
 
-    FB::AutoPtr<NpapiBrowserHost> createBrowserHost(NpapiPluginModule* module, NPP npp)
+    NpapiBrowserHostPtr createBrowserHost(NpapiPluginModule* module, NPP npp)
     {
-        FB::AutoPtr<NpapiBrowserHost> host;
+        NpapiBrowserHostPtr host;
         NPNetscapeFuncs& npnFuncs = module->NPNFuncs;
 
         if(asyncCallsWorkaround(npp, &npnFuncs)) {
             npnFuncs.pluginthreadasynccall = NULL;
 #ifdef _WINDOWS_
-            host = new NpapiBrowserHostAsyncWin(module, npp);
+            host = NpapiBrowserHostPtr(new NpapiBrowserHostAsyncWin(module, npp));
 #else
             // no work-around for this platform
             host = new NpapiBrowserHost(module, npp);
 #endif
         } else {
-            host = new NpapiBrowserHost(module, npp);
+            host = NpapiBrowserHostPtr(new NpapiBrowserHost(module, npp));
         }
 
         return host;
@@ -74,10 +75,10 @@ namespace
 namespace FB { namespace Npapi {
     struct NpapiPDataHolder
     {
-        FB::AutoPtr<NpapiBrowserHost> host;
-        std::auto_ptr<NpapiPlugin> plugin;
+        NpapiBrowserHostPtr host;
+        boost::shared_ptr<NpapiPlugin> plugin;
 
-        NpapiPDataHolder(FB::AutoPtr<NpapiBrowserHost> host, std::auto_ptr<NpapiPlugin> plugin)
+        NpapiPDataHolder(NpapiBrowserHostPtr host, boost::shared_ptr<NpapiPlugin> plugin)
           : host(host), plugin(plugin) {}
         ~NpapiPDataHolder() {}
     };
@@ -92,7 +93,7 @@ namespace FB { namespace Npapi {
         return static_cast<NpapiPDataHolder*>(instance->pdata);
     }
 
-    inline NpapiBrowserHost *getHost(NPP instance)
+    inline NpapiBrowserHostPtr getHost(NPP instance)
     {
         return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
     }
@@ -117,8 +118,8 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    FB::AutoPtr<NpapiBrowserHost> host;
-    std::auto_ptr<NpapiPlugin> plugin;
+    NpapiBrowserHostPtr host;
+    NpapiPluginPtr plugin;
     NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
 
     try 
@@ -129,8 +130,8 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 		// TODO: We should probably change this and pass the MIMEType into _getNpapiPlugin instead
 		// of into init later so that we can optionally return a different plugin type depending
 		// on the specific mimetype
-        plugin = std::auto_ptr<NpapiPlugin>(_getNpapiPlugin(host));
-        if (!plugin.get()) {
+        plugin = _getNpapiPlugin(host);
+        if (!plugin) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
         host->setBrowserFuncs(&(npnFuncs));
@@ -182,10 +183,10 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
     }
 
     if(asyncCallsWorkaround(instance)) {
-        NpapiBrowserHost* host = getHost(instance);
+        NpapiBrowserHostPtr host = getHost(instance);
         if(host) {
 #ifdef _WINDOWS_
-            NpapiBrowserHostAsyncWin* hostWin = reinterpret_cast<NpapiBrowserHostAsyncWin*>(host);
+            boost::shared_ptr<NpapiBrowserHostAsyncWin> hostWin = boost::dynamic_pointer_cast<NpapiBrowserHostAsyncWin>(host);
             if(hostWin)
                 hostWin->setWindow(window);
 #endif

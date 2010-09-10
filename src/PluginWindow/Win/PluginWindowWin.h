@@ -43,6 +43,7 @@ namespace FB {
 
         void setBrowserHWND(HWND hWnd) { m_browserhWnd = hWnd; }
         HWND getBrowserHWND() { return m_browserhWnd; }
+        void setCallOldWinProc(bool callOld) { m_callOldWinProc = callOld; }
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
@@ -53,6 +54,7 @@ namespace FB {
 
         bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT & lRes);
         WNDPROC lpOldWinProc;
+        bool m_callOldWinProc;
         HWND m_hWnd;
         HWND m_browserhWnd;
 
