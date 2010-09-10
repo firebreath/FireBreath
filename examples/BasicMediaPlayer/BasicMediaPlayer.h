@@ -60,7 +60,7 @@ private:
     void firePlaylistChanged();
     void fireCurrentItemChanged();
 
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
     MediaPlayerPtr m_player;
     bool m_valid;
 

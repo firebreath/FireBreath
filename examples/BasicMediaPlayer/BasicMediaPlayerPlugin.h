@@ -52,7 +52,7 @@ public:
     virtual bool onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow*);
 
 private:
-    FB::AutoPtr<BasicMediaPlayer> m_player;
+    FB::shared_ptr<BasicMediaPlayer> m_player;
     FB::PluginWindow* m_window;
 };
 
