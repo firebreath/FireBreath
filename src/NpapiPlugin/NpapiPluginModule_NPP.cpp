@@ -132,7 +132,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 		// of into init later so that we can optionally return a different plugin type depending
 		// on the specific mimetype
         plugin = _getNpapiPlugin(host);
-        if (!plugin.get()) {
+        if (!plugin) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
 
