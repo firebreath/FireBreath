@@ -10,9 +10,9 @@
 #include "NpapiPlugin.h"
 #include "Mac/PluginWindowMacQuickDraw.h"
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHost host)
 {
-    return new FB::Npapi::NpapiPlugin(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPlugin(host));
 }
 
 FB::PluginWindowMacQuickDraw* _createPluginWindow(CGrafPtr port, int x, int y)

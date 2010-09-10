@@ -15,7 +15,7 @@
 class @{PLUGIN.ident}API : public FB::JSAPIAuto
 {
 public:
-    @{PLUGIN.ident}API(FB::BrowserHostWrapper *host);
+    @{PLUGIN.ident}API(FB::BrowserHost host);
     virtual ~@{PLUGIN.ident}API();
 
     // Read/Write property ${PROPERTY.ident}
@@ -32,7 +32,7 @@ public:
     void testEvent(const FB::variant& s);
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
 
     std::string m_testString;
 };

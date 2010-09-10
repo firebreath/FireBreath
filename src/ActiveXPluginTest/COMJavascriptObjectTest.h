@@ -57,10 +57,10 @@ TEST (COMJavascriptObject_CreateTest)
 {
     PRINT_TESTNAME;
 
-    FB::AutoPtr<ActiveXBrowserHost> host = new ActiveXBrowserHost(NULL);
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
 
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
-    CComPtr<IDispatchEx> obj = COMJavascriptObject::NewObject(host, testIf);
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
+    CComPtr<IDispatchEx> obj(COMJavascriptObject::NewObject(host, testIf));
 
     CHECK (true);
 }
@@ -69,9 +69,9 @@ TEST(COMJavascriptObject_Methods)
 {
     PRINT_TESTNAME;
 
-    FB::AutoPtr<ActiveXBrowserHost> host = new ActiveXBrowserHost(NULL);
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
 
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj = COMJavascriptObject::NewObject(host, testIf);
 
     HRESULT hr = S_OK;

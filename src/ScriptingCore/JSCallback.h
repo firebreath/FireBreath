@@ -35,11 +35,11 @@ namespace FB
         }
         
     private:
-        FB::AutoPtr<FB::JSAPI> m_jsapi;
+        FB::JSAPIPtr m_jsapi;
     };
     
     template<class T, class F>
-    FB::AutoPtr<FB::JSAPI> make_callback(T* instance, F member_function, bool strong_reference = true)
+    FB::JSAPIPtr make_callback(T* instance, F member_function, bool strong_reference = true)
     {
         if (strong_reference) {
             return new JSCallback(FB::make_method(instance, member_function), instance);

@@ -67,8 +67,8 @@ class JSAPI_Member(Base):
             bool	= "bool",
             variant	= "FB::variant",
             dynamic	= "FB::VariantList",
-            JSOBJ	= "FB::AutoPtr<FB::JSAPI>",
-            API		= "FB::AutoPtr<FB::BrowserObjectAPI>",
+            JSOBJ	= "FB::JSAPIPtr",
+            API		= "FB::JSObject",
         )
 
     def translateType(self, type):
