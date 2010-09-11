@@ -120,7 +120,7 @@ TEST(JSAPIAuto_Methods)
         for(unsigned i=2; i<=max_args; ++i)
         {
             boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
-            FB::VariantList params = variant_list_of(strings.front())(boost::dynamic_pointer_cast<BrowserObjectAPIPtr>(jsarr));
+            FB::VariantList params = variant_list_of(strings.front())(as_JSObject(jsarr));
             FB::variant ret = test->Invoke(method, params);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
             const std::string result   = ret.cast<std::string>();
@@ -169,7 +169,7 @@ TEST(JSAPIAuto_Methods)
         const std::string method("accumulate");
         std::vector<int> values = list_of((int)1)(2)(3)(42);
         boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(values)));
-        FB::variant varJsArr = BrowserObjectAPIPtr(jsarr);
+        FB::variant varJsArr = FB::JSObject(jsarr);
 
         FB::variant ret = test->Invoke(method, variant_list_of(varJsArr));
         CHECK(ret.cast<long>() == std::accumulate(values.begin(), values.end(), 0));

@@ -113,7 +113,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Cont cont;
-        FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
+        FB::BrowserObjectAPI::GetArrayValues(cast<JsObject>(), cont);
         return cont;
     }
 
@@ -137,7 +137,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Dict dict;
-        FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
+        FB::BrowserObjectAPI::GetObjectValues(cast<JsObject>(), dict);
         return dict;
     }
 #endif

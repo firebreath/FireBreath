@@ -29,7 +29,7 @@ namespace FB
         }
         
         JSCallback(const FB::CallMethodFunctor& func, FB::JSAPI* jsapi) 
-          : m_jsapi(jsapi)
+          : m_jsapi(jsapi->shared_ptr())
         {
             registerMethod("", func);
         }
@@ -42,9 +42,9 @@ namespace FB
     FB::JSAPIPtr make_callback(T* instance, F member_function, bool strong_reference = true)
     {
         if (strong_reference) {
-            return new JSCallback(FB::make_method(instance, member_function), instance);
+            return FB::JSAPIPtr(new JSCallback(FB::make_method(instance, member_function), instance));
         } else {
-            return new JSCallback(FB::make_method(instance, member_function));
+            return FB::JSAPIPtr(new JSCallback(FB::make_method(instance, member_function)));
         }
     }
 }

@@ -43,10 +43,12 @@ set (SOURCES
     ${GENERAL}
     )
 
-add_library(${PROJNAME} STATIC ${SOURCES})
+add_executable(${PROJNAME} ${SOURCES})
 
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
+    ScriptingCore
+    PluginCore
     NPAPIHost
     UnitTest++
     )

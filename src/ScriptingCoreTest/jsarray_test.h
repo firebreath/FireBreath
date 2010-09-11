@@ -31,7 +31,7 @@ TEST(JSArrayTest)
         // test C++ acess 
 
         FB::VariantList values = variant_list_of(1)("3")(2.3);
-        boost::shared_ptr<FB::JSArray> test = new FB::JSArray(values);
+        boost::shared_ptr<FB::JSArray> test(new FB::JSArray(values));
         
         std::vector<FB::VariantList> copies = list_of
             (test->Values())
