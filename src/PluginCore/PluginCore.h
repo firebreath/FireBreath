@@ -50,10 +50,13 @@ namespace FB {
         PluginCore(const std::set<std::string>& params);
         virtual ~PluginCore();
 
+        void initDefaultParams();
         virtual void SetHost(FB::BrowserHost);
         virtual PluginWindow* GetWindow() const;
         virtual void SetWindow(PluginWindow *);
         virtual void ClearWindow();
+
+        virtual void setReady();
 
     protected:
         virtual JSAPIPtr createJSAPI() = 0;

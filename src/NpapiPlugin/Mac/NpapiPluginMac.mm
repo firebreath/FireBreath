@@ -485,6 +485,7 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window) {
             }
     }
 
+    setReady();
     return NPERR_GENERIC_ERROR;
 }
 

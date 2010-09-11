@@ -39,7 +39,17 @@ namespace FB {
             FB::variant tmp = m_element->Invoke(name, args);
             return tmp.convert_cast<T>();
         }
+        template <class T>
+        T callMethod(const std::wstring& name, const VariantList& args)
+        {
+            return callMethod<T>(FB::wstring_to_utf8(name), args); 
+        }
 
+        template <class T>
+        T getProperty(const std::wstring& name)
+        {
+            return getProperty<T>(FB::wstring_to_utf8(name));
+        }
         template <class T>
         T getProperty(const std::string& name)
         {
@@ -54,10 +64,12 @@ namespace FB {
             return tmp.convert_cast<T>();
         }
 
+        JSAPI_DOMNode getNode(const std::wstring& name);
         JSAPI_DOMNode getNode(const std::string& name);
 
         JSAPI_DOMNode getNode(int idx);
 
+        void setProperty(const std::wstring& name, const variant& val);
         void setProperty(const std::string& name, const variant& val);
 
         void setProperty(int idx, const variant& val);
