@@ -8,14 +8,14 @@
 \**********************************************************/
 
 #include "Mac/NpapiPluginMac.h"
-#include "Mac/PluginWindowMacQuickDraw.h"
+#include "Mac/PluginWindowMacCarbonQD.h"
 
 FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr &host)
 {
     return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginMac(host));
 }
 
-FB::PluginWindowMacQuickDraw* _createPluginWindow(CGrafPtr port, int x, int y)
+FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, int y)
 {
-    return new FB::PluginWindowMacQuickDraw(port, x, y);
+    return new FB::PluginWindowMacCarbonQD(port, x, y);
 }
