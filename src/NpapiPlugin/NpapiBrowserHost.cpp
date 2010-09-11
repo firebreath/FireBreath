@@ -57,8 +57,8 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     GetValue(NPNVWindowNPObject, (void**)&window);
 
     m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, as_NpapiBrowserHost(shared_ptr())));
-    m_htmlDoc = as_NPObjectAPI(m_htmlWin->GetProperty("document")
-        .cast<FB::JSObject>());
+    if (m_htmlWin) 
+        m_htmlDoc = as_NPObjectAPI(m_htmlWin->GetProperty("document").cast<FB::JSObject>());
 }
 
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
