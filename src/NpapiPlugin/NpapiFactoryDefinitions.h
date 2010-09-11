@@ -19,7 +19,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "NpapiBrowserHost.h"
 #include "NpapiPlugin.h"
 
-FB::Npapi::NpapiPluginPtr _getNpapiPlugin(int i, FB::Npapi::NpapiBrowserHostPtr &host);
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr &host);
 
 #endif // H_NpapiFactoryDefinitions
 
