@@ -39,7 +39,7 @@ namespace FB
 #define as_JSAPIPtr(x) boost::dynamic_pointer_cast<FB::JSAPI>(x)
 #define as_JSObject(x) boost::dynamic_pointer_cast<FB::BrowserObjectAPI>(x)
     typedef boost::shared_ptr<FB::JSAPI> JSOutObject; // Deprecated
-    typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; // Deprecated
+    typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
     typedef boost::shared_ptr<FB::BrowserObjectAPI> JSObject;
 
 #define as_BrowserHost(x) boost::dynamic_pointer_cast<FB::BrowserHostWrapper>(x)
