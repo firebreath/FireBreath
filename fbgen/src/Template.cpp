@@ -33,10 +33,10 @@ void @{PLUGIN.ident}::StaticDeinitialize()
 {
 }
 
-FB::JSAPI* @{PLUGIN.ident}::createJSAPI()
+FB::JSAPIPtr @{PLUGIN.ident}::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    return new @{PLUGIN.ident}API(m_host);
+    return FB::JSAPIPtr(new @{PLUGIN.ident}API(m_host));
 }
 
 bool @{PLUGIN.ident}::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)
