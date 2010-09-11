@@ -134,7 +134,7 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 		// TODO: We should probably change this and pass the MIMEType into _getNpapiPlugin instead
 		// of into init later so that we can optionally return a different plugin type depending
 		// on the specific mimetype
-        NpapiPluginPtr plugin(_getNpapiPlugin(15, host));
+        NpapiPluginPtr plugin(_getNpapiPlugin(host));
         if (!plugin) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
