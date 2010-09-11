@@ -26,7 +26,7 @@ inline GdkNativeWindow getGdkWindow(void *in)
     return (char*)in - (char*)0;
 }
 
-NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHost *host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");
     // TODO: Get the path to the shared lib

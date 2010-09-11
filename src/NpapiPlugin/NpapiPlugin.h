@@ -41,10 +41,13 @@ namespace FB { namespace Npapi {
         virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);
         virtual void shutdown();
 
+        virtual void setReady();
+
     protected:
         NPJavascriptObject *m_obj;
         NpapiBrowserHostPtr m_npHost;
 		bool m_retainReturnedNPObject;
+        bool m_isReady;
 
         NPObject *getScriptableObject();
         static void signalStreamOpened(void* stream);
