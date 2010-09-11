@@ -13,6 +13,8 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+#ifndef _WIN32
+
 #include <sys/types.h>
 
 #include <wchar.h>
@@ -318,3 +320,5 @@ wchar_to_utf8(const wchar_t *in, size_t insize, char *out, size_t outsize,
 
 	return (total);
 }
+
+#endif // not _WIN32

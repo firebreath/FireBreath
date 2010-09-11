@@ -124,17 +124,29 @@ TEST(VariantTest)
         variant str2 = "это работает?";
         CHECK(wstr2.convert_cast<std::wstring>() == L"это работает?");
 
+        std::wstring lstr(L"скажи");
+        variant str4(lstr);
+        std::string tmp = str4.convert_cast<std::string>();
+
         // Check it with UTF8 source data
-        char utf8str[] = {0xd1, 0x81,
-                          0xd0, 0xba,
-                          0xd0, 0xb0,
-                          0xd0, 0xb6,
-                          0xd0, 0xb8,
+        unsigned char utf8str[] = {0xc3, 0x91,
+                          0xc2, 0x81,
+                          0xc3, 0x90,
+                          0xc2, 0xba,
+                          0xc3, 0x90,
+                          0xc2, 0xb0,
+                          0xc3, 0x90,
+                          0xc2, 0xb6,
+                          0xc3, 0x90,
+                          0xc2, 0xb8,
                           0x00, 0x00};
-        std::string tmpstr(utf8str);
+        std::string tmpstr((char *)utf8str);
+
+        CHECK(tmpstr == tmp);
+
         variant str3(tmpstr);
         std::wstring widestr( str3.convert_cast<std::wstring>() );
-        CHECK(widestr == L"скажи");
+        CHECK(widestr == lstr);
     }
 
     // is_of_type<>()

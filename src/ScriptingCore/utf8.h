@@ -20,6 +20,8 @@
 #ifndef _UTF8_H_
 #define _UTF8_H_
 
+#ifndef _WIN32
+
 #include <sys/types.h>
 
 #include <wchar.h>
@@ -35,5 +37,7 @@ size_t		wchar_to_utf8(const wchar_t *in, size_t insize, char *out,
 		    size_t outsize, int flags);
 
 __END_DECLS
+
+#endif //_WIN32
 
 #endif /* !_UTF8_H_ */
