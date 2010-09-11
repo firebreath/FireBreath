@@ -165,7 +165,7 @@ void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector)
     getMemberNames(utf8Vector);
     for (std::vector<std::string>::iterator it = utf8Vector.begin();
             it != utf8Vector.end(); ++it) {
-		std::wstring wStrVal(utf8_to_wstring(*it));
+        std::wstring wStrVal(utf8_to_wstring(*it));
         nameVector.push_back(wStrVal);
     }
 }

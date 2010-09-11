@@ -31,7 +31,7 @@ Copyright 2009 Dan Weatherford, Facebook inc
 namespace FB {
 
 #ifdef _WIN32
-	std::string lastError(const char* fnname) {
+    std::string lastError(const char* fnname) {
         DWORD errcode = GetLastError();
         char* buf = NULL;
         FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
@@ -40,11 +40,11 @@ namespace FB {
         std::string err = std::string(fnname) + std::string(": ") + std::string(buf);
         LocalFree(buf);
         return err;
-	}
+    }
 
-	void throw_GetLastError(const char* fnname) {
+    void throw_GetLastError(const char* fnname) {
         throw std::runtime_error(lastError(fnname).c_str());
-	}
+    }
 #endif
 
     std::string wstring_to_utf8(const std::wstring& src) {

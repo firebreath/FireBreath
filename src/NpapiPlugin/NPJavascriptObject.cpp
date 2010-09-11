@@ -149,7 +149,7 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
                 if(value->type == NPVariantType_Null) {
-					FB::JSObject nullEvent;
+                    FB::JSObject nullEvent;
                     m_api->setDefaultEventMethod(sName, nullEvent);
                 } else if(value->type == NPVariantType_Object) {
                     FB::JSObject tmp(arg.cast<FB::JSObject>());
@@ -174,7 +174,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-				FB::JSObject nullEvent;
+                FB::JSObject nullEvent;
                 m_api->setDefaultEventMethod(sName, nullEvent);
             }
         }

@@ -22,8 +22,8 @@ Copyright 2009 Dan Weatherford, Facebook inc
 namespace FB {
 
 #ifdef _WIN32
-	std::string lastError(const char* fnname);
-	void throw_GetLastError(const char* fnname);
+    std::string lastError(const char* fnname);
+    void throw_GetLastError(const char* fnname);
 #endif
 
     std::string wstring_to_utf8(const std::wstring& src);

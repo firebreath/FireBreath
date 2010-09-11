@@ -46,7 +46,7 @@ namespace FB { namespace Npapi {
     protected:
         NPJavascriptObject *m_obj;
         NpapiBrowserHostPtr m_npHost;
-		bool m_retainReturnedNPObject;
+        bool m_retainReturnedNPObject;
         bool m_isReady;
 
         NPObject *getScriptableObject();

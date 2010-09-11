@@ -47,13 +47,13 @@ NPObject *NpapiPlugin::getScriptableObject()
     if (m_obj == NULL) {
         m_obj = NPJavascriptObject::NewObject(m_npHost, pluginMain->getRootJSAPI());
     }
-	/* Bugfix from Facebook: Certain older versions of webkit do a retain when
-	 * you return an NPObject from NPP_GetValue instead of assuming that we do
-	 * it before returninglike the NPAPI spec instructs; this results in a memory
-	 * leak if we don't fix it.   
-	 */
-	if (m_retainReturnedNPObject)
-		m_npHost->RetainObject(m_obj);
+    /* Bugfix from Facebook: Certain older versions of webkit do a retain when
+     * you return an NPObject from NPP_GetValue instead of assuming that we do
+     * it before returninglike the NPAPI spec instructs; this results in a memory
+     * leak if we don't fix it.   
+     */
+    if (m_retainReturnedNPObject)
+        m_npHost->RetainObject(m_obj);
     return m_obj;
 }
 
