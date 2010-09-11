@@ -15,17 +15,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FactoryDefinitions
 #define H_FactoryDefinitions
 
-#include <boost/shared_ptr.hpp>
-
-namespace FB {
-    class PluginCore;
-    namespace Npapi {
-        class NpapiPlugin;
-        typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
-        class NpapiBrowserHost;
-        typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-    };
-}
+// It is unfortunate that we have to include all of these, but otherwise the shared_ptrs don't work real well
+#include "PluginCore.h"
 
 // These global functions *must* be defined in your main plugin project -- that's the one that
 // actually builds into a DLL that everything links to.  These are used to determine what 
@@ -33,8 +24,6 @@ namespace FB {
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
 FB::PluginCore *_getMainPlugin();
-
-FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host);
 
 void GlobalPluginInitialize();
 void GlobalPluginDeinitialize();

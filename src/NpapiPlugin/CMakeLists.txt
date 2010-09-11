@@ -47,6 +47,7 @@ file (GLOB PLUGIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     NpapiPlugin*.h
     NpapiStream.*
     NpapiTypes.*
+    NpapiFactory*
     )
 
 SOURCE_GROUP(NpapiScripting FILES ${SCRIPTING})

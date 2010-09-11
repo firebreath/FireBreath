@@ -46,7 +46,7 @@ namespace FB {
         };
         
     public:
-        NpapiPluginMac(NpapiBrowserHostPtr host);
+        NpapiPluginMac(NpapiBrowserHostPtr &host);
         virtual ~NpapiPluginMac(void);
         
         EventModel   getEventModel  () const;

@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "config.h"
 #include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
-#include "FactoryDefinitions.h"
+#include "NpapiFactoryDefinitions.h"
 #include "NpapiBrowserHost.h"
 
 #ifdef _WINDOWS_
@@ -53,22 +53,28 @@ namespace
 
     NpapiBrowserHostPtr createBrowserHost(NpapiPluginModule* module, NPP npp)
     {
-        NpapiBrowserHostPtr host;
-        NPNetscapeFuncs& npnFuncs = module->NPNFuncs;
+        try {
+            NpapiBrowserHostPtr host;
+            NPNetscapeFuncs& npnFuncs = module->NPNFuncs;
 
-        if(asyncCallsWorkaround(npp, &npnFuncs)) {
-            npnFuncs.pluginthreadasynccall = NULL;
-#ifdef _WINDOWS_
-            host = NpapiBrowserHostPtr(new NpapiBrowserHostAsyncWin(module, npp));
-#else
-            // no work-around for this platform
-            host = NpapiBrowserHostPtr(new NpapiBrowserHost(module, npp));
-#endif
-        } else {
-            host = NpapiBrowserHostPtr(new NpapiBrowserHost(module, npp));
+            if(asyncCallsWorkaround(npp, &npnFuncs)) {
+                npnFuncs.pluginthreadasynccall = NULL;
+    #ifdef _WINDOWS_
+                NpapiBrowserHostPtr host(new NpapiBrowserHostAsyncWin(module, npp));
+                return host;
+    #else
+                // no work-around for this platform
+                NpapiBrowserHostPtr host(new NpapiBrowserHost(module, npp));
+                return host;
+    #endif
+            } else {
+                NpapiBrowserHostPtr host(new NpapiBrowserHost(module, npp));
+                return host;
+            }
+        } catch (...) {
+            // This function must not return an exception
+            return NpapiBrowserHostPtr();
         }
-
-        return host;
     }
 }
 
@@ -118,19 +124,17 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    NpapiBrowserHostPtr host;
-    NpapiPluginPtr plugin;
-    NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
-
     try 
     {
-        host = createBrowserHost(NpapiPluginModule::Default, instance);
+        NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
+        
+        NpapiBrowserHostPtr host(createBrowserHost(NpapiPluginModule::Default, instance));
         host->setBrowserFuncs(&(npnFuncs));
 
 		// TODO: We should probably change this and pass the MIMEType into _getNpapiPlugin instead
 		// of into init later so that we can optionally return a different plugin type depending
 		// on the specific mimetype
-        plugin = _getNpapiPlugin(host);
+        NpapiPluginPtr plugin(_getNpapiPlugin(15, host));
         if (!plugin) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }

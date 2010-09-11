@@ -24,7 +24,7 @@ using namespace FB::Npapi;
 NpapiPlugin::NpapiPlugin(NpapiBrowserHostPtr host)
     : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true), m_isReady(false)
 {
-    pluginMain->SetHost(host->shared_ptr());
+    pluginMain->SetHost(as_BrowserHost(host));
 }
 
 NpapiPlugin::~NpapiPlugin(void)
