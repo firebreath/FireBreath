@@ -30,7 +30,9 @@ if (NOT EXISTS ${PROJECT_SRC_DIR})
     message(FATAL_ERROR "The specified project directory ${PROJECT_SRC_DIR} is not found")
 endif()
 
-message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
+if (VERBOSE)
+    message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
+endif()
 
 # Common core projects -- projects that don't have any plugin specific code,
 # but are required before any plugins are loaded
@@ -41,7 +43,10 @@ add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore
 file (GLOB PLUGIN_PROJECTS 
     ${PROJECT_SRC_DIR}/[^.]*
     )
-message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
+
+if (VERBOSE)
+    message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
+endif()
 
 # loop through the found directories and add any with a CMakeLists.txt as a subproject
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
@@ -49,7 +54,9 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
       configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
-      message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
+      if (VERBOSE)
+          message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
+      endif()
       add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
     else()
         message("Could not find ${CURPROJECT}/CMakeLists.txt")
