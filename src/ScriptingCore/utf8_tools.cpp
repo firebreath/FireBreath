@@ -58,8 +58,8 @@ namespace FB {
 #else
         const size_t work_size = (src.size() * MB_LEN_MAX) + 1;
         boost::scoped_array<char> work(new char[work_size]);
-        size_t res = wcstombs(work.get(), src.data(), work_size);
-        //size_t res = wchar_to_utf8(src.data(), src.size(), work.get(), work_size, UTF8_IGNORE_ERROR);
+        //size_t res = wcstombs(work.get(), src.data(), work_size);
+        size_t res = wchar_to_utf8(src.data(), src.size() + 1, work.get(), work_size, UTF8_IGNORE_ERROR);
         if (res == 0) throw std::runtime_error("wstring_to_utf8: conversion error");
         return std::string(work.get());
 #endif
@@ -68,19 +68,20 @@ namespace FB {
 
     std::wstring utf8_to_wstring(const std::string& src) {
 #ifdef _WIN32
-      if (src.empty()) return std::wstring();
-      int buffer_len = MultiByteToWideChar(CP_UTF8, 0, src.data(), src.size()+1, NULL, 0);
-      if (buffer_len <= 0) throw_GetLastError("MultiByteToWideChar");
-      std::wstring res;
-      res.resize(buffer_len - 1);
-      MultiByteToWideChar(CP_UTF8, 0, src.data(), src.size()+1, const_cast<wchar_t*>(res.data()), (int)(res.size()+1));
-      return res;
+        if (src.empty()) return std::wstring();
+        int buffer_len = MultiByteToWideChar(CP_UTF8, 0, src.data(), src.size()+1, NULL, 0);
+        if (buffer_len <= 0) throw_GetLastError("MultiByteToWideChar");
+        std::wstring res;
+        res.resize(buffer_len - 1);
+        MultiByteToWideChar(CP_UTF8, 0, src.data(), src.size()+1, const_cast<wchar_t*>(res.data()), (int)(res.size()+1));
+        return res;
 #else
-      const size_t work_size = src.size() + 1;
-      boost::scoped_array<wchar_t> work(new wchar_t[work_size]);
-      size_t res = mbstowcs(work.get(), src.data(), work_size);
-      if (res == ((size_t)-1)) throw std::runtime_error("utf8_to_wstring: conversion error");
-      return std::wstring(work.get());
+        const size_t work_size = src.size()+1;
+        boost::scoped_array<wchar_t> work(new wchar_t[work_size]);
+        //size_t res = mbstowcs(work.get(), src.data(), work_size);
+        size_t res = utf8_to_wchar(src.data(), src.size()+1, work.get(), work_size, UTF8_IGNORE_ERROR);
+        if (res == ((size_t)-1)) throw std::runtime_error("utf8_to_wstring: conversion error");
+        return std::wstring(work.get());
 #endif
     }
 
