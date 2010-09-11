@@ -1,3 +1,6 @@
+#ifndef H_FactoryDefinitionsMac
+#define H_FactoryDefinitionsMac
+
 /**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
@@ -11,9 +14,6 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
-
-#ifndef H_FactoryDefinitionsMac
-#define H_FactoryDefinitionsMac
 
 #include "npapi.h"
 

@@ -52,6 +52,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             pluginWin = _createPluginWindow((HWND)window->window);
             pluginWin->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(pluginWin);
+            setReady();
         }
     } else if (pluginWin != NULL) {
         // If the handle goes to NULL, our window is gone and we need to stop using it

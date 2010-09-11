@@ -8,9 +8,11 @@
 \**********************************************************/
 
 #include "NpapiPlugin.h"
+#include "config.h"
 #include "Mac/NpapiPluginMac.h"
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
 #include "Mac/PluginWindowMacCocoaCA.h"
 
 FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
@@ -18,7 +20,20 @@ FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
     return new FB::Npapi::NpapiPluginMac(host);
 }
 
-FB::PluginWindowMacCarbonCG *_createPluginWindow(NP_CGContext* context)
+#if FBMAC_USE_CARBON
+#if FBMAC_USE_COREGRAPHICS
+FB::PluginWindowCarbonCG *_createPluginWindow(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCarbonCG(context);
 }
+#endif
+#endif
+
+#if FBMAC_USE_COCOA
+#if FBMAC_USE_COREGRAPHICS
+FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
+{
+    return new FB::PluginWindowMacCocoaCG(context);
+}
+#endif
+#endif
