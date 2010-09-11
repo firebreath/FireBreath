@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(NpapiBrowserHostPtr host)
-    : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true)
+    : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true), m_isReady(false)
 {
     pluginMain->SetHost(host->shared_ptr());
 }
@@ -31,6 +31,14 @@ NpapiPlugin::~NpapiPlugin(void)
 {
     if (m_obj != NULL) {
         m_npHost->ReleaseObject(m_obj);
+    }
+}
+
+void NpapiPlugin::setReady()
+{
+    if (!m_isReady) {
+        pluginMain->setReady();
+        m_isReady = true;
     }
 }
 
@@ -58,13 +66,16 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
 {
     FB::VariantMap paramList;
     for (int16_t i = 0; i < argc; i++) {
-        paramList[argn[i]] = argv[i];
+        if (argv[i] != NULL) {
+            paramList[argn[i]] = std::string(argv[i]);
+        }
     }
     pluginMain->setParams(paramList);
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
+    setReady();
     return NPERR_NO_ERROR;
 }
 
