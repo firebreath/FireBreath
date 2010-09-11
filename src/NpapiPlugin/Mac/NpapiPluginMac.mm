@@ -371,9 +371,9 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
         return NPERR_GENERIC_ERROR;
     }
 
+#endif
+#endif
     return NPERR_NO_ERROR;
-#endif
-#endif
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
@@ -459,10 +459,9 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
         delete pluginWin;
         pluginWin = NULL;
     }
-
-    return NPERR_NO_ERROR;
 #endif    
 #endif
+    return NPERR_NO_ERROR;
 }
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
