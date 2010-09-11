@@ -14,7 +14,7 @@
 
 FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
 {
-    return new FB::Npapi::NpapiPluginX11(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginX11(host));
 }
 
 FB::PluginWindowX11 *_createPluginWindow(GdkNativeWindow win)
