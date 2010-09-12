@@ -12,7 +12,7 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-set (PROJECTS_SOURCE_DIR "${PROJECTS_DIR}")
+get_filename_component (PROJECTS_SOURCE_DIR "${PROJECTS_DIR}" ABSOLUTE)
 set (PROJECTS_BINARY_DIR "${CMAKE_BINARY_DIR}/projects")
 
 set (BOOST_SOURCE_DIR ${SOURCE_DIR}/3rdParty/boost)
