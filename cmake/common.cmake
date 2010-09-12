@@ -14,11 +14,7 @@
 
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
-get_filename_component (PROJECT_SRC_DIR "${PROJECTS_DIR}" ABSOLUTE)
 
-set(PROJECTS_DIR "${CMAKE_DIR}/../projects" CACHE STRING "Location to search for project directories")
-
-set (PROJECT_ROOT "${CMAKE_BINARY_DIR}/projects")
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
 if (WIN32)
@@ -33,11 +29,11 @@ elseif(UNIX)
     include(${CMAKE_DIR}/X11.cmake)
 endif()
 
-# Get the project paths
-include(${CMAKE_DIR}/paths.cmake)
-
 # include file with build options
 include(${CMAKE_DIR}/options.cmake)
+
+# Get the project paths
+include(${CMAKE_DIR}/paths.cmake)
 
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)

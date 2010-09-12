@@ -26,8 +26,8 @@ if (APPLE)
     clear_xcode_patches()
 endif()
 
-if (NOT EXISTS ${PROJECT_SRC_DIR})
-    message(FATAL_ERROR "The specified project directory ${PROJECT_SRC_DIR} is not found")
+if (NOT EXISTS ${PROJECTS_SOURCE_DIR})
+    message(FATAL_ERROR "The specified project directory ${PROJECTS_SOURCE_DIR} is not found")
 endif()
 
 if (VERBOSE)
@@ -41,11 +41,11 @@ add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 
-    ${PROJECT_SRC_DIR}/[^.]*
+    ${PROJECTS_SOURCE_DIR}/[^.]*
     )
 
 if (VERBOSE)
-    message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
+    message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
 endif()
 
 # loop through the found directories and add any with a CMakeLists.txt as a subproject
@@ -53,11 +53,11 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
     if (EXISTS "${CURPROJECT}/CMakeLists.txt")
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
-      configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
+      configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECTS_BINARY_DIR}/${PROJNAME}/projectConfig.cmake COPYONLY)
       if (VERBOSE)
-          message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
+          message("Configuring plugin project ${CURPROJECT} in ${PROJECTS_BINARY_DIR}/${PROJNAME}")
       endif()
-      add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
+      add_subdirectory("${CURPROJECT}" "${PROJECTS_BINARY_DIR}/${PROJNAME}")
     else()
         message("Could not find ${CURPROJECT}/CMakeLists.txt")
     endif()
@@ -69,6 +69,6 @@ add_subdirectory(${NPAPIHOST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiHost)
 add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
 
 if (NOT FOUND_PROJECTS)
-    MESSAGE("No projects found in ${PROJECT_SRC_DIR}/.")
+    MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
     MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
 endif()
