@@ -1,8 +1,6 @@
 #/**********************************************************\ 
-# 
 # Auto-generated Windows project definition file for the
 # @{PLUGIN.name} project
-# 
 #\**********************************************************/
 
 # Windows template platform definition CMake file
@@ -51,6 +49,7 @@ set(WIX_HEAT_FLAGS
     -cg PluginDLLGroup  # Set the Component group name
     -dr INSTALLDIR      # Set the directory ID to put the files in
     )
+
 add_wix_installer( ${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/@{PLUGIN.ident}Installer.wxs
     PluginDLLGroup

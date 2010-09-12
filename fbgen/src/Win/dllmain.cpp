@@ -14,7 +14,6 @@
 #include "axutil.h"
 
 STDAPI DllRegisterServer(void);
-
 HINSTANCE gInstance(NULL);
 std::string g_dllPath;
 
@@ -31,4 +30,3 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
     }
     return _AtlModule.DllMain(dwReason, lpReserved);
 }
-

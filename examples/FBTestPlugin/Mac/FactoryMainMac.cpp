@@ -16,7 +16,7 @@
 #include "Mac/PluginWindowMacCocoaCA.h"
 #include "NpapiBrowserHost.h"
 
-FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr &host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
 {
     return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginMac(host));
 }
