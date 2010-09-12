@@ -34,5 +34,4 @@ set (PLUGINCORE_SOURCE_DIR "${SOURCE_DIR}/PluginCore")
 set (PLUGINWINDOW_SOURCE_DIR "${SOURCE_DIR}/PluginWindow")
 
 set (UNITTEST_FW_SOURCE_DIR "${SOURCE_DIR}/unittest-cpp/UnitTest++")
-set (UNITTEST_FW_BINARY_DIR "${PROJECTS_BINARY_DIR}/UnitTest++")
 

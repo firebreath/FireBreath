@@ -36,8 +36,8 @@ endif()
 
 # Common core projects -- projects that don't have any plugin specific code,
 # but are required before any plugins are loaded
-add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCore)
-add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
+add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
+add_subdirectory(${PLUGINCORE_SOURCE_DIR})
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 
@@ -64,9 +64,9 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
 endforeach()
 
 # Common projects -- projects that don't have any plugin specific code
-add_subdirectory(${UNITTEST_FW_SOURCE_DIR} ${UNITTEST_FW_BINARY_DIR})
-add_subdirectory(${NPAPIHOST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiHost)
-add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
+add_subdirectory(${UNITTEST_FW_SOURCE_DIR})
+add_subdirectory(${NPAPIHOST_SOURCE_DIR})
+add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR})
 
 if (NOT FOUND_PROJECTS)
     MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
