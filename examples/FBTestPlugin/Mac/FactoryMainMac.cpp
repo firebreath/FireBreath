@@ -22,19 +22,25 @@ FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
 }
 
 #if FBMAC_USE_CARBON
-#if FBMAC_USE_COREGRAPHICS
+# if FBMAC_USE_QUICKDRAW
+FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, int y)
+{
+    return new FB::PluginWindowMacCarbonQD(port, x, y);
+}
+# endif
+# if FBMAC_USE_COREGRAPHICS
 FB::PluginWindowCarbonCG *_createPluginWindow(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCarbonCG(context);
 }
-#endif
+# endif
 #endif
 
 #if FBMAC_USE_COCOA
-#if FBMAC_USE_COREGRAPHICS
+# if FBMAC_USE_COREGRAPHICS
 FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCocoaCG(context);
 }
-#endif
+# endif
 #endif
