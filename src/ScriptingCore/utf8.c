@@ -15,6 +15,7 @@
  */
 #ifndef _WIN32
 
+#include <arpa/inet.h>
 #include <sys/types.h>
 
 #include <wchar.h>
