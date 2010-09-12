@@ -25,8 +25,8 @@ class BasicMediaPlayer : public FB::JSAPIAuto
 {
     typedef std::vector<std::string> PlayList;
 public:
+    BasicMediaPlayer(FB::BrowserHost host);
     virtual ~BasicMediaPlayer();
-    BasicMediaPlayer(FB::BrowserHostWrapper *host);
 
     // methods exposed to script
 

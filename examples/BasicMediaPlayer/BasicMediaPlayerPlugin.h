@@ -34,7 +34,7 @@ public:
     virtual ~BasicMediaPlayerPlugin();
 
 public:
-    virtual FB::JSAPI* createJSAPI();
+    virtual FB::JSAPIPtr createJSAPI();
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()
@@ -52,7 +52,9 @@ public:
     virtual bool onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow*);
 
 private:
-    FB::shared_ptr<BasicMediaPlayer> m_player;
+    typedef boost::shared_ptr<BasicMediaPlayer> BasicMediaPlayerPtr;
+
+    BasicMediaPlayerPtr m_player;
     FB::PluginWindow* m_window;
 };
 

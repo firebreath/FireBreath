@@ -21,7 +21,7 @@ Copyright 2009 Georg Fritzsche,
 #include "variant_list.h"
 
 
-BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHostWrapper *host) 
+BasicMediaPlayer::BasicMediaPlayer(FB::BrowserHost host) 
   : m_host(host)
   , m_player()
   , m_valid(false)
