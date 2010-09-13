@@ -54,6 +54,7 @@ NPObject *NpapiPlugin::getScriptableObject()
      */
     if (m_retainReturnedNPObject)
         m_npHost->RetainObject(m_obj);
+    
     return m_obj;
 }
 

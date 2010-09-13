@@ -138,7 +138,6 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         if (!plugin) {
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
-        host->setBrowserFuncs(&(npnFuncs));
 
         plugin->init(pluginType, argc, argn, argv);
 

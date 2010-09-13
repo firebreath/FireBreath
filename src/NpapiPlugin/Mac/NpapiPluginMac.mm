@@ -486,7 +486,6 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window) {
             }
     }
 
-    setReady();
     return NPERR_GENERIC_ERROR;
 }
 
@@ -546,7 +545,12 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
         }
     } 
 #endif
-    return NpapiPlugin::GetValue(variable, value);
+    int16_t res = NpapiPlugin::GetValue(variable, value);
+    if (res == NPERR_NO_ERROR && variable == NPPVpluginScriptableNPObject) {
+        // Ready state means that we are ready to interact with Javascript;
+        setReady();
+    }
+    return res;
 }
 
 void NpapiPluginMac::HandleCocoaTimerEvent() {
