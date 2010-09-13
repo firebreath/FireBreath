@@ -28,7 +28,6 @@ IDispatchAPI::~IDispatchAPI(void)
 
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
-    USES_CONVERSION;
     HRESULT hr;
     DISPID dispid;
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
@@ -63,15 +62,15 @@ size_t IDispatchAPI::getMemberCount()
     return count;
 }
 
-DISPID IDispatchAPI::getIDForName(const std::string& name)
+DISPID IDispatchAPI::getIDForName(const std::wstring& name)
 {
     if (name.empty())
         return DISPID_VALUE;
-    USES_CONVERSION;
-    CA2W wStr(name.c_str());
-    OLECHAR *oleStr = wStr;
     DISPID dispId(-1);
+    CW2W wcharName(name.c_str());
+    OLECHAR *oleStr = wcharName;
 
+    std::wstring wName(name);
     HRESULT hr = E_NOTIMPL;
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     if (dispex.p != NULL) {
@@ -90,31 +89,50 @@ DISPID IDispatchAPI::getIDForName(const std::string& name)
     }
 }
 
-bool IDispatchAPI::HasMethod(const std::string& methodName)
+bool IDispatchAPI::HasMethod(const std::wstring& methodName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(methodName) != -1;
 }
 
-bool IDispatchAPI::HasProperty(const std::string& propertyName)
+bool IDispatchAPI::HasMethod(const std::string& methodName)
+{
+    // This will actually just return true if the specified member exists; IDispatch doesn't really
+    // differentiate further than that
+    return getIDForName(FB::utf8_to_wstring(methodName)) != -1;
+}
+
+bool IDispatchAPI::HasProperty(const std::wstring& propertyName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(propertyName) != -1;
 }
 
+bool IDispatchAPI::HasProperty(const std::string& propertyName)
+{
+    // This will actually just return true if the specified member exists; IDispatch doesn't really
+    // differentiate further than that
+    return getIDForName(FB::utf8_to_wstring(propertyName)) != -1;
+}
+
 bool IDispatchAPI::HasProperty(int idx)
 {
     FB::variant name(idx);
-    return getIDForName(name.convert_cast<std::string>()) != -1;
+    return getIDForName(name.convert_cast<std::wstring>()) != -1;
+}
+
+bool IDispatchAPI::HasEvent(const std::wstring& eventName)
+{
+    return getIDForName(eventName) != -1;
 }
 
 bool IDispatchAPI::HasEvent(const std::string& eventName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
-    return getIDForName(eventName) != -1;
+    return getIDForName(FB::utf8_to_wstring(eventName)) != -1;
 }
 
 
@@ -131,10 +149,10 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
     HRESULT hr = E_NOTIMPL;
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     if (dispex.p) {
-        hr = dispex->InvokeEx(getIDForName(propertyName), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
+        hr = dispex->InvokeEx(getIDForName(FB::utf8_to_wstring(propertyName)), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
             &res, &eInfo, NULL);
     } else {
-        hr = m_obj->Invoke(getIDForName(propertyName), IID_NULL, LOCALE_USER_DEFAULT,
+        hr = m_obj->Invoke(getIDForName(FB::utf8_to_wstring(propertyName)), IID_NULL, LOCALE_USER_DEFAULT,
             DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
     }
     if (SUCCEEDED(hr)) {
@@ -161,7 +179,7 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     namedArg[0] = DISPID_PROPERTYPUT;
 
     HRESULT hr = E_NOTIMPL;
-    DISPID id(getIDForName(propertyName));
+    DISPID id(getIDForName(FB::utf8_to_wstring(propertyName)));
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     if (dispex.p) {
         hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
@@ -203,7 +221,7 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         m_browser->getComVariant(&comArgs[args.size() - 1 - i], args[i]);
     }
 
-    HRESULT hr = m_obj->Invoke(getIDForName(methodName), IID_NULL, LOCALE_USER_DEFAULT,
+    HRESULT hr = m_obj->Invoke(getIDForName(FB::utf8_to_wstring(methodName)), IID_NULL, LOCALE_USER_DEFAULT,
         DISPATCH_METHOD, &params, &res, NULL, NULL);
 
     if (SUCCEEDED(hr)) {

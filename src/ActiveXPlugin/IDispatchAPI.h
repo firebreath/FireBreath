@@ -44,14 +44,17 @@ protected:
 
 protected:
     // Utility functions
-    DISPID getIDForName(const std::string& name);
+    DISPID getIDForName(const std::wstring& name);
 
 public:
     // Methods to query existance of members on the API
     bool HasMethod(const std::string& methodName);
+    bool HasMethod(const std::wstring& methodName);
     bool HasProperty(const std::string& propertyName);
+    bool HasProperty(const std::wstring& propertyName);
     bool HasProperty(int idx);
     bool HasEvent(const std::string& eventName);
+    bool HasEvent(const std::wstring& eventName);
 
     // Methods to manage properties on the API
     FB::variant GetProperty(const std::string& propertyName);
