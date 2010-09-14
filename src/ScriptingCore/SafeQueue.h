@@ -13,6 +13,8 @@
 #Copyright 2008
 #\**********************************************************/
 
+#ifndef H_FB_SafeQueue
+#define H_FB_SafeQueue
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/condition_variable.hpp>
@@ -69,3 +71,4 @@ namespace FB {
     };
 };
 
+#endif //H_FB_SafeQueue
