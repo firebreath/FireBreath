@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/thread.hpp>
 
 namespace FB
 {
@@ -37,7 +38,7 @@ namespace FB
     class BrowserHostWrapper : public boost::enable_shared_from_this<BrowserHostWrapper>
     {
     public:
-        BrowserHostWrapper() { }
+        BrowserHostWrapper() : m_threadId(boost::this_thread::get_id()) { }
         virtual ~BrowserHostWrapper() { }
 
     public:
@@ -53,6 +54,8 @@ namespace FB
         
         // Methods for accessing the DOM
     public:
+        void assertMainThread();
+        bool isMainThread();
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
@@ -62,6 +65,9 @@ namespace FB
         {
             return shared_from_this();
         }
+
+    protected:
+        boost::thread::id m_threadId;
     };
 }
 

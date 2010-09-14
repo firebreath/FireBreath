@@ -1,7 +1,7 @@
 /**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
-Created:    Oct 22, 2009
+Created:    Sep 14, 2010
 License:    Dual license model; choose one of two:
             New BSD License
             http://www.opensource.org/licenses/bsd-license.php
@@ -12,25 +12,26 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_ASYNCBROWSERCALL
-#define H_FB_ASYNCBROWSERCALL
+#ifndef H_FB_SYNCBROWSERCALL
+#define H_FB_SYNCBROWSERCALL
 
 #include <vector>
 #include <string>
+#include <boost/thread/condition_variable.hpp>
+#include <boost/thread/mutex.hpp>
 #include "APITypes.h"
 #include "BrowserObjectAPI.h"
 
 namespace FB {
 
-    class AsyncBrowserCall
+    class SyncBrowserCall
     {
     public:
-        virtual ~AsyncBrowserCall(void);
-        static void CallMethod(JSObject obj, const std::string& method,
+        static variant CallMethod(JSObject obj, const std::string& method,
             const std::vector<variant> &inParams);
 
     protected:
-        AsyncBrowserCall(JSObject obj, const std::string& method,
+        SyncBrowserCall(JSObject obj, const std::string& method,
             const std::vector<variant> &inParams);
 
         static void asyncCallback(void *userData);
@@ -38,8 +39,13 @@ namespace FB {
         JSObject m_obj;
         std::vector<variant> m_params;
         std::string m_methodName;
+        variant m_result;
+        bool m_returned;
+
+        boost::condition_variable m_cond;
+        boost::mutex m_mutex;
     };
 
 };
 
-#endif
+#endif // H_FB_SYNCBROWSERCALL

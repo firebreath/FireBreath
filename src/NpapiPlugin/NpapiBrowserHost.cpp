@@ -63,6 +63,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 {
+    assertMainThread();
     if (!m_htmlDoc)
         throw std::runtime_error("Cannot find HTML document");
 
@@ -71,6 +72,7 @@ FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 
 FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 {
+    assertMainThread();
     if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
@@ -79,6 +81,7 @@ FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 
 void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
 {
+    assertMainThread();
     NPVariant retVal;
     NPVariant tmp;
 
@@ -138,6 +141,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 
 void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 {
+    assertMainThread();
     if (var.get_type() == typeid(FB::Npapi::NpapiNull)) {
         dst->type = NPVariantType_Null;
 
@@ -240,6 +244,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData)
 {
+    assertMainThread();
     if (NPNFuncs.geturlnotify != NULL) {
         return NPNFuncs.geturlnotify(m_npp, url, target, notifyData);
     } else {
@@ -249,6 +254,7 @@ NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void
 
 NPError NpapiBrowserHost::GetURL(const char* url, const char* target)
 {
+    assertMainThread();
     if (NPNFuncs.geturl != NULL) {
         return NPNFuncs.geturl(m_npp, url, target);
     } else {
@@ -259,6 +265,7 @@ NPError NpapiBrowserHost::GetURL(const char* url, const char* target)
 NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uint32_t len,
                                         const char* buf, NPBool file, void* notifyData)
 {
+    assertMainThread();
     if (NPNFuncs.posturlnotify != NULL) {
         return NPNFuncs.posturlnotify(m_npp, url, target, len, buf, file, notifyData);
     } else {
@@ -269,6 +276,7 @@ NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uin
 NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32_t len,
                                   const char* buf, NPBool file)
 {
+    assertMainThread();
     if (NPNFuncs.posturl != NULL) {
         return NPNFuncs.posturl(m_npp, url, target, len, buf, file);
     } else {
@@ -278,6 +286,7 @@ NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32_t 
 
 NPError NpapiBrowserHost::RequestRead(NPStream* stream, NPByteRange* rangeList)
 {
+    assertMainThread();
     if (NPNFuncs.requestread != NULL) {
         return NPNFuncs.requestread(stream, rangeList);
     } else {
@@ -287,6 +296,7 @@ NPError NpapiBrowserHost::RequestRead(NPStream* stream, NPByteRange* rangeList)
 
 NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStream** stream)
 {
+    assertMainThread();
     if (NPNFuncs.newstream != NULL) {
         return NPNFuncs.newstream(m_npp, type, target, stream);
     } else {
@@ -296,6 +306,7 @@ NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStrea
 
 int32_t NpapiBrowserHost::Write(NPStream* stream, int32_t len, void* buffer)
 {
+    assertMainThread();
     if (NPNFuncs.write != NULL) {
         return NPNFuncs.write(m_npp, stream, len, buffer);
     } else {
@@ -305,6 +316,7 @@ int32_t NpapiBrowserHost::Write(NPStream* stream, int32_t len, void* buffer)
 
 NPError NpapiBrowserHost::DestroyStream(NPStream* stream, NPReason reason)
 {
+    assertMainThread();
     if (NPNFuncs.destroystream != NULL) {
         return NPNFuncs.destroystream(m_npp, stream, reason);
     } else {
@@ -327,49 +339,60 @@ uint32_t NpapiBrowserHost::MemFlush(uint32_t size)
 
 NPObject *NpapiBrowserHost::RetainObject(NPObject *npobj)
 {
+    assertMainThread();
     return module->RetainObject(npobj);
 }
 void NpapiBrowserHost::ReleaseObject(NPObject *npobj)
 {
+    assertMainThread();
     return module->ReleaseObject(npobj);
 }
 void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant)
 {
+    assertMainThread();
     return module->ReleaseVariantValue(variant);
 }
 
 NPIdentifier NpapiBrowserHost::GetStringIdentifier(const NPUTF8 *name)
 {
+    assertMainThread();
     return module->GetStringIdentifier(name);
 }
 void NpapiBrowserHost::GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
 {
+    assertMainThread();
     return module->GetStringIdentifiers(names, nameCount, identifiers);
 }
 NPIdentifier NpapiBrowserHost::GetIntIdentifier(int32_t intid)
 {
+    assertMainThread();
     return module->GetIntIdentifier(intid);
 }
 bool NpapiBrowserHost::IdentifierIsString(NPIdentifier identifier)
 {
+    assertMainThread();
     return module->IdentifierIsString(identifier);
 }
 NPUTF8 *NpapiBrowserHost::UTF8FromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     return module->UTF8FromIdentifier(identifier);
 }
 std::string NpapiBrowserHost::StringFromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     return module->StringFromIdentifier(identifier);
 }
 int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     return module->IntFromIdentifier(identifier);
 }
 
 
 void NpapiBrowserHost::SetStatus(const char* message)
 {
+    assertMainThread();
     if (NPNFuncs.status != NULL) {
         NPNFuncs.status(m_npp, message);
     }
@@ -377,6 +400,7 @@ void NpapiBrowserHost::SetStatus(const char* message)
 
 const char* NpapiBrowserHost::UserAgent()
 {
+    assertMainThread();
     if (NPNFuncs.uagent != NULL) {
         return NPNFuncs.uagent(m_npp);
     } else {
@@ -386,6 +410,7 @@ const char* NpapiBrowserHost::UserAgent()
 
 NPError NpapiBrowserHost::GetValue(NPNVariable variable, void *value)
 {
+    assertMainThread();
     if (NPNFuncs.getvalue != NULL) {
         return NPNFuncs.getvalue(m_npp, variable, value);
     } else {
@@ -395,6 +420,7 @@ NPError NpapiBrowserHost::GetValue(NPNVariable variable, void *value)
 
 NPError NpapiBrowserHost::SetValue(NPPVariable variable, void *value)
 {
+    assertMainThread();
     if (NPNFuncs.setvalue != NULL) {
         return NPNFuncs.setvalue(m_npp, variable, value);
     } else {
@@ -404,6 +430,7 @@ NPError NpapiBrowserHost::SetValue(NPPVariable variable, void *value)
 
 void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect)
 {
+    assertMainThread();
     if (NPNFuncs.invalidaterect != NULL) {
         NPNFuncs.invalidaterect(m_npp, invalidRect);
     }
@@ -411,6 +438,7 @@ void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect)
 
 void NpapiBrowserHost::InvalidateRegion(NPRegion invalidRegion)
 {
+    assertMainThread();
     if (NPNFuncs.invalidateregion != NULL) {
         NPNFuncs.invalidateregion(m_npp, invalidRegion);
     }
@@ -418,6 +446,7 @@ void NpapiBrowserHost::InvalidateRegion(NPRegion invalidRegion)
 
 void NpapiBrowserHost::ForceRedraw()
 {
+    assertMainThread();
     if (NPNFuncs.forceredraw != NULL) {
         NPNFuncs.forceredraw(m_npp);
     }
@@ -425,6 +454,7 @@ void NpapiBrowserHost::ForceRedraw()
 
 void NpapiBrowserHost::PushPopupsEnabledState(NPBool enabled)
 {
+    assertMainThread();
     if (NPNFuncs.pushpopupsenabledstate != NULL) {
         NPNFuncs.pushpopupsenabledstate(m_npp, enabled);
     }
@@ -432,6 +462,7 @@ void NpapiBrowserHost::PushPopupsEnabledState(NPBool enabled)
 
 void NpapiBrowserHost::PopPopupsEnabledState()
 {
+    assertMainThread();
     if (NPNFuncs.poppopupsenabledstate != NULL) {
         NPNFuncs.poppopupsenabledstate(m_npp);
     }
@@ -447,6 +478,7 @@ void NpapiBrowserHost::PluginThreadAsyncCall(void (*func) (void *), void *userDa
 /* npruntime.h definitions */
 NPObject *NpapiBrowserHost::CreateObject(NPClass *aClass)
 {
+    assertMainThread();
     if (NPNFuncs.createobject != NULL) {
         return NPNFuncs.createobject(m_npp, aClass);
     } else {
@@ -457,6 +489,7 @@ NPObject *NpapiBrowserHost::CreateObject(NPClass *aClass)
 bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args,
                               uint32_t argCount, NPVariant *result)
 {
+    assertMainThread();
     if (NPNFuncs.invoke != NULL) {
         return NPNFuncs.invoke(m_npp, npobj, methodName, args, argCount, result);
     } else {
@@ -467,6 +500,7 @@ bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NP
 bool NpapiBrowserHost::InvokeDefault(NPObject *npobj, const NPVariant *args,
                                      uint32_t argCount, NPVariant *result)
 {
+    assertMainThread();
     if (NPNFuncs.invokeDefault != NULL) {
         return NPNFuncs.invokeDefault(m_npp, npobj, args, argCount, result);
     } else {
@@ -477,6 +511,7 @@ bool NpapiBrowserHost::InvokeDefault(NPObject *npobj, const NPVariant *args,
 bool NpapiBrowserHost::Evaluate(NPObject *npobj, NPString *script,
                                 NPVariant *result)
 {
+    assertMainThread();
     if (NPNFuncs.evaluate != NULL) {
         return NPNFuncs.evaluate(m_npp, npobj, script, result);
     } else {
@@ -487,6 +522,7 @@ bool NpapiBrowserHost::Evaluate(NPObject *npobj, NPString *script,
 bool NpapiBrowserHost::GetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    NPVariant *result)
 {
+    assertMainThread();
     if (NPNFuncs.getproperty != NULL) {
         return NPNFuncs.getproperty(m_npp, npobj, propertyName, result);
     } else {
@@ -497,6 +533,7 @@ bool NpapiBrowserHost::GetProperty(NPObject *npobj, NPIdentifier propertyName,
 bool NpapiBrowserHost::SetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    const NPVariant *value)
 {
+    assertMainThread();
     if (NPNFuncs.setproperty != NULL) {
         return NPNFuncs.setproperty(m_npp, npobj, propertyName, value);
     } else {
@@ -506,6 +543,7 @@ bool NpapiBrowserHost::SetProperty(NPObject *npobj, NPIdentifier propertyName,
 
 bool NpapiBrowserHost::RemoveProperty(NPObject *npobj, NPIdentifier propertyName)
 {
+    assertMainThread();
     if (NPNFuncs.removeproperty != NULL) {
         return NPNFuncs.removeproperty(m_npp, npobj, propertyName);
     } else {
@@ -515,6 +553,7 @@ bool NpapiBrowserHost::RemoveProperty(NPObject *npobj, NPIdentifier propertyName
 
 bool NpapiBrowserHost::HasProperty(NPObject *npobj, NPIdentifier propertyName)
 {
+    assertMainThread();
     if (NPNFuncs.hasproperty != NULL) {
         return NPNFuncs.hasproperty(m_npp, npobj, propertyName);
     } else {
@@ -524,6 +563,7 @@ bool NpapiBrowserHost::HasProperty(NPObject *npobj, NPIdentifier propertyName)
 
 bool NpapiBrowserHost::HasMethod(NPObject *npobj, NPIdentifier methodName)
 {
+    assertMainThread();
     if (NPNFuncs.hasmethod != NULL) {
         return NPNFuncs.hasmethod(m_npp, npobj, methodName);
     } else {
@@ -534,6 +574,7 @@ bool NpapiBrowserHost::HasMethod(NPObject *npobj, NPIdentifier methodName)
 bool NpapiBrowserHost::Enumerate(NPObject *npobj, NPIdentifier **identifier,
                                  uint32_t *count)
 {
+    assertMainThread();
     if (NPNFuncs.enumerate != NULL) {
         return NPNFuncs.enumerate(m_npp, npobj, identifier, count);
     } else {
@@ -544,6 +585,7 @@ bool NpapiBrowserHost::Enumerate(NPObject *npobj, NPIdentifier **identifier,
 bool NpapiBrowserHost::Construct(NPObject *npobj, const NPVariant *args,
                                  uint32_t argCount, NPVariant *result)
 {
+    assertMainThread();
     if (NPNFuncs.construct != NULL) {
         return NPNFuncs.construct(m_npp, npobj, args, argCount, result);
     } else {
@@ -553,6 +595,7 @@ bool NpapiBrowserHost::Construct(NPObject *npobj, const NPVariant *args,
 
 void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message)
 {
+    assertMainThread();
     if (NPNFuncs.setexception != NULL) {
         NPNFuncs.setexception(npobj, message);
     }
@@ -577,6 +620,7 @@ void NpapiBrowserHost::UnscheduleTimer(int timerId)
 FB::BrowserStream* NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
                                     bool cache, bool seekable, size_t internalBufferSize )
 {
+    assertMainThread();
     std::auto_ptr<NpapiStream> stream( new NpapiStream( url, cache, seekable, internalBufferSize, this ) );
     stream->AttachObserver( callback );
 

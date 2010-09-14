@@ -210,6 +210,10 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 // Methods to manage methods on the API
 FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
+    if (!host->isMainThread()) {
+        return InvokeMainThread(methodName, args);
+    }
+
     CComVariant *comArgs = new CComVariant[args.size()];
     DISPPARAMS params;
     params.cArgs = args.size();

@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <cstdio>
+#include <cassert>
 #include "BrowserObjectAPI.h"
 #include "DOM/JSAPI_DOMWindow.h"
 #include "variant_list.h"
@@ -40,4 +41,16 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
         return;
     }
     delete req;
+}
+
+void FB::BrowserHostWrapper::assertMainThread()
+{
+#ifdef _DEBUG
+    assert(isMainThread());
+#endif
+}
+
+bool FB::BrowserHostWrapper::isMainThread()
+{
+    return m_threadId == boost::this_thread::get_id();
 }

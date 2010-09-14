@@ -32,6 +32,10 @@ namespace FB
 
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
 
+    protected:
+        virtual variant InvokeMainThread(const std::string& methodName, const std::vector<variant>& args);
+
+    public:
         // TODO: Find a better place for this conversion method.
         //       Gotcha to watch out for: has to be included after variant.h
         //       and everywhere where variant::convert_cast<SomeContainer>()

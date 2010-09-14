@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "NpapiTypes.h"
+#include <boost/thread.hpp>
 
 namespace FB { 
     namespace Npapi {
@@ -37,9 +38,11 @@ namespace FB {
 
             NPNetscapeFuncs NPNFuncs;
 
+        protected:
+            boost::thread::id m_threadId;
+
         public:
-            FB::variant getVariant(NPVariant *npVar);
-            void getNPVariant(NPVariant *dst, FB::variant &var);
+            void assertMainThread();
 
         public:
             // These are the NPN_ functions that don't require a NPP
