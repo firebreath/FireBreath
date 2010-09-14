@@ -63,7 +63,6 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 
 FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 {
-    assertMainThread();
     if (!m_htmlDoc)
         throw std::runtime_error("Cannot find HTML document");
 
@@ -72,7 +71,6 @@ FB::JSAPI_DOMDocument NpapiBrowserHost::getDOMDocument()
 
 FB::JSAPI_DOMWindow NpapiBrowserHost::getDOMWindow()
 {
-    assertMainThread();
     if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
