@@ -38,6 +38,9 @@ endif()
 # but are required before any plugins are loaded
 add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
 add_subdirectory(${PLUGINCORE_SOURCE_DIR})
+if (NOT WITH_SYSTEM_BOOST)
+    add_subdirectory(${BOOST_THREAD_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/boost_thread)
+endif()
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 
