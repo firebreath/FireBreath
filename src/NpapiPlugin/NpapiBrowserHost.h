@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiTypes.h"
 #include "BrowserHostWrapper.h"
+#include <boost/thread.hpp>
 
 namespace FB { namespace Npapi {
 

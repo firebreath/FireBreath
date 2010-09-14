@@ -113,6 +113,10 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
 {
     NPVariant retVal;
 
+    if (!host->isMainThread()) {
+        return InvokeMainThread(methodName, args);
+    }
+
     // Convert the arguments to NPVariants
     NPVariant *npargs = new NPVariant[args.size()];
     for (unsigned int i = 0; i < args.size(); i++) {
