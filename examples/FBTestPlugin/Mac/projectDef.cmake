@@ -36,7 +36,3 @@ message("Linking ${PROJNAME} to ${PLUGIN_INTERNAL_DEPS}")
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     )
-
-add_dependencies(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )

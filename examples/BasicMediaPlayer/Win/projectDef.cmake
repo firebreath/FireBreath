@@ -46,10 +46,6 @@ target_link_libraries(${PROJNAME}
     Strmiids.lib
     )
 
-add_dependencies(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
-
 set(WIX_HEAT_FLAGS
     -gg                 # Generate GUIDs
     -srd                # Suppress Root Dir

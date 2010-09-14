@@ -35,7 +35,3 @@ add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     )
-
-add_dependencies(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
