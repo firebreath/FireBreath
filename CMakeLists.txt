@@ -34,13 +34,18 @@ if (VERBOSE)
     message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
 endif()
 
+if (WITH_SYSTEM_BOOST)
+    find_package(Boost COMPONENTS thread REQUIRED)
+else()
+    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
+    set(Boost_LIBRARIES boost_thread)
+    add_subdirectory(${BOOST_THREAD_SOURCE_DIR})
+endif()
+
 # Common core projects -- projects that don't have any plugin specific code,
 # but are required before any plugins are loaded
 add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
 add_subdirectory(${PLUGINCORE_SOURCE_DIR})
-if (NOT WITH_SYSTEM_BOOST)
-    add_subdirectory(${BOOST_THREAD_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/boost_thread)
-endif()
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 

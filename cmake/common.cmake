@@ -42,12 +42,6 @@ if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
 endif()
 
-if (WITH_SYSTEM_BOOST)
-    find_package(Boost REQUIRED)
-else()
-    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
-endif()
-
 if (NOT GEN_DIR)
     get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/../gen" ABSOLUTE)
 endif()
