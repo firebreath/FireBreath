@@ -98,23 +98,14 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 
 FB::variant NPObjectAPI::GetProperty(int idx)
 {
-    NPVariant retVal;
-    if (!browser->GetProperty(obj, browser->GetIntIdentifier(idx), &retVal)) {
-        throw script_error("Error getting property by index");
-    } else {
-        FB::variant ret = browser->getVariant(&retVal);
-        browser->ReleaseVariantValue(&retVal);
-        return ret;
-    }
+    std::string strIdx(FB::variant(idx).convert_cast<std::string>());
+    return GetProperty(strIdx);
 }
 
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
-    NPVariant val;
-    browser->getNPVariant(&val, value);
-    if (!browser->GetProperty(obj, browser->GetIntIdentifier(idx), &val)) {
-        throw script_error("Error setting property by index");
-    }
+    std::string strIdx(FB::variant(idx).convert_cast<std::string>());
+    SetProperty(strIdx, value);
 }
 
 // Methods to manage methods on the API

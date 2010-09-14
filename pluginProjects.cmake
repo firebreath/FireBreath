@@ -20,4 +20,7 @@ endif(WIN32)
 add_subdirectory(${NPAPIPLUGIN_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiPlugin)
 add_subdirectory(${NPAPIPLUGINTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiPluginTest)
 add_subdirectory(${PLUGINWINDOW_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginWindow)
+if (NOT WITH_SYSTEM_BOOST)
+    add_subdirectory(${BOOST_THREAD_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/boost_thread)
+endif()
 

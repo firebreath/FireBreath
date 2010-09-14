@@ -59,6 +59,12 @@ set(PLUGIN_INTERNAL_DEPS
     PluginCore
     )
 
+if (NOT WITH_SYSTEM_BOOST)
+    list(APPEND PLUGIN_INTERNAL_DEPS
+        boost_thread
+    )
+endif()
+
 if (WIN32)
     set (PLUGIN_INTERNAL_DEPS
         ${PLUGIN_PREFIX}_ActiveXPlugin

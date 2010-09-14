@@ -18,6 +18,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPlugin.h"
 #include "NpapiFactoryDefinitions.h"
 #include "NpapiBrowserHost.h"
+#include <boost/shared_ptr.hpp>
+#include "AsyncFunctionCall.h"
+#include "SafeQueue.h"
 
 #ifdef _WINDOWS_
 #  include "Win/NpapiBrowserHostAsyncWin.h"
@@ -83,6 +86,7 @@ namespace FB { namespace Npapi {
     {
         NpapiBrowserHostPtr host;
         boost::shared_ptr<NpapiPlugin> plugin;
+        FB::SafeQueue< FB::AsyncFunctionCallPtr > asyncFunctionQueue;
 
         NpapiPDataHolder(NpapiBrowserHostPtr host, boost::shared_ptr<NpapiPlugin> plugin)
           : host(host), plugin(plugin) {}
@@ -108,7 +112,25 @@ namespace FB { namespace Npapi {
     {
         return instance != NULL && instance->pdata != NULL;
     }
+    
+    void asyncCallbackFunction(NPP npp, uint32_t timerID)
+    {
+        boost::shared_ptr<FB::AsyncFunctionCall> evt;
+        NpapiPDataHolder *holder = getHolder(npp);
+        while (holder->asyncFunctionQueue.try_pop(evt)) {
+            evt->func(evt->userData);
+        }
+    }
+    
 } }
+
+
+// This is used on mac snow leopard safari
+void NpapiPluginModule::scheduleAsyncCallback(NPP npp, void (*func)(void *), void *userData)
+{
+    getHolder(npp)->asyncFunctionQueue.push(FB::AsyncFunctionCallPtr(new FB::AsyncFunctionCall(func, userData)));
+    getHost(npp)->ScheduleTimer(0, false, &FB::Npapi::asyncCallbackFunction);
+}
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
 

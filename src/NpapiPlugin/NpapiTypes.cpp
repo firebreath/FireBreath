@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <cstring>
 #include "NpapiTypes.h"
+#include "NpapiPluginModule.h"
 
 #ifdef min
 #  undef min
@@ -65,9 +66,11 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
     dstFuncs->releasevariantvalue = srcFuncs->releasevariantvalue;
     dstFuncs->setexception = srcFuncs->setexception;
     dstFuncs->construct = srcFuncs->construct;
-    dstFuncs->scheduletimer = srcFuncs->scheduletimer;
-    dstFuncs->unscheduletimer = srcFuncs->unscheduletimer;
     
+    if (srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS) { // 23
+        dstFuncs->scheduletimer = srcFuncs->scheduletimer;
+        dstFuncs->unscheduletimer = srcFuncs->unscheduletimer;
+    }
 
     if(srcFuncs->version >= NPVERS_HAS_STREAMOUTPUT) { // 8
         // ?
@@ -104,7 +107,16 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
         dstFuncs->enumerate = srcFuncs->enumerate;
     }
     if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
-        dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
+#ifdef __LP64__
+        if (srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
+            && srcFuncs->scheduletimer) {
+            dstFuncs->pluginthreadasynccall = &FB::Npapi::NpapiPluginModule::scheduleAsyncCallback;
+        } else {
+#else
+        {
+#endif
+            dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
+        }
     }
     if(srcFuncs->version >= NPVERS_HAS_ALL_NETWORK_STREAMS) { // 20
         // ?
