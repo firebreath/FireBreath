@@ -85,7 +85,7 @@ void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
 
     this->getNPVariant(&tmp, FB::variant(script));
 
-    if (m_htmlWin)
+    if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
 
