@@ -82,3 +82,7 @@ set (SOURCES
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})
+target_link_libraries(${PROJNAME}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    )

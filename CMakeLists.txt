@@ -34,6 +34,8 @@ if (VERBOSE)
     message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
 endif()
 
+find_package(Threads REQUIRED)
+
 if (WITH_SYSTEM_BOOST)
     find_package(Boost COMPONENTS thread REQUIRED)
 else()
