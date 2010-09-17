@@ -4,10 +4,11 @@ GEN='Xcode'
 
 source ${0%/*}/common.sh "$@"
 
-ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
+SDK=-DCMAKE_OSX_SYSROOT="/Developer/SDKs/MacOSX10.5.sdk"
+ARCH=-DCMAKE_OSX_ARCHITECTURES="i386"
 
 pushd "$BUILDDIR"
-cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" ${ARCH} "$@" "${FB_ROOT}"
+cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" ${ARCH} ${SDK} "$@" "${FB_ROOT}"
 if [ "$?" -ne 0 ]; then
     echo "CMake failed. Please check error messages"
     popd > /dev/null

@@ -25,9 +25,10 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
-#include "Mac/PluginWindowMacCocoaCA.h"
-#include "Mac/PluginWindowMacCocoaCG.h"
 #include "Mac/PluginWindowMacCocoa.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
+#include "Mac/PluginWindowMacCocoaCA.h"
+#include "Mac/PluginWindowMacCocoaICA.h"
 
 using namespace FB::Npapi;
 
@@ -217,8 +218,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHost *host)
     PluginCore::setPlatform("Mac", "NPAPI");
     // TODO: Get the path to the bundle
     //setFSPath();
-    
-    if(enableCoreAnimation(host)) {
+
+    if(enableInvalidatingCoreAnimation) {
+        m_eventModel = EventModelCocoa;
+        m_drawingModel = DrawingModelInvalidatingCoreAnimation;
+    } else if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
 #if FBMAC_USE_COCOA
