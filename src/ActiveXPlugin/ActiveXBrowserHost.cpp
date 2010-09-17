@@ -30,6 +30,10 @@ ActiveXBrowserHost::ActiveXBrowserHost(IHTMLDocument2 *doc)
     if (m_htmlDoc.p != NULL) {
         m_htmlDoc->get_parentWindow(&m_htmlWin);
         m_htmlWinDisp = m_htmlWin;
+        CComBSTR bstr;
+        CComQIPtr<IHTMLLocation> loc;
+        m_htmlDoc->get_location(&loc);
+        m_location = FB::wstring_to_utf8(std::wstring(bstr.m_str));
     }
 }
 
