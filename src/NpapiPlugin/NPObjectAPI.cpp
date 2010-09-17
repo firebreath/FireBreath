@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <boost/lexical_cast.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
 
@@ -98,13 +99,13 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 
 FB::variant NPObjectAPI::GetProperty(int idx)
 {
-    std::string strIdx(FB::variant(idx).convert_cast<std::string>());
+    std::string strIdx(boost::lexical_cast<std::string>(idx));
     return GetProperty(strIdx);
 }
 
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
-    std::string strIdx(FB::variant(idx).convert_cast<std::string>());
+    std::string strIdx(boost::lexical_cast<std::string>(idx));
     SetProperty(strIdx, value);
 }
 
