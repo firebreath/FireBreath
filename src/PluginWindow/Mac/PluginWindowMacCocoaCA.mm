@@ -43,5 +43,5 @@ void PluginWindowMacCocoaCA::setLayer(void* layer) {
 
 void PluginWindowMacCocoaCA::InvalidateWindow() {
     // Force a drawInContext message to be passed to the window's CALayer
-    [m_layer setNeedsDisplay];
+    [(CALayer*)m_layer setNeedsDisplay];
 }

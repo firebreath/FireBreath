@@ -22,10 +22,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Mac/FactoryDefinitionsMac.h"
 
 namespace FB {
-    class PluginWindowMacCarbonQD;
-    class PluginWindowMacCarbonCG;
-    class PluginWindowMacCocoaCG;
-    class PluginWindowMacCocoaCA;
+    class PluginWindowMacCarbonQD; // Carbon & QuickDraw (really deprecated)
+    class PluginWindowMacCarbonCG; // Carbon & CoreGraphics
+    class PluginWindowMacCocoaCG; // Cocoa & CoreGraphics
+    class PluginWindowMacCocoaCA; // Cocoa & CoreAnimation
+    class PluginWindowMacCocoaICA; // Cocoa & InvalidatingCoreAnimation
     
     namespace Npapi {
 
@@ -42,7 +43,8 @@ namespace FB {
         {
             DrawingModelQuickDraw,
             DrawingModelCoreGraphics,
-            DrawingModelCoreAnimation
+            DrawingModelCoreAnimation,
+            DrawingModelInvalidatingCoreAnimation
         };
         
     public:
@@ -70,6 +72,7 @@ namespace FB {
         NPError SetWindowCarbonCG(NPWindow*);
         NPError SetWindowCocoaCG(NPWindow*);
         NPError SetWindowCocoaCA(NPWindow*);
+        NPError SetWindowCocoaICA(NPWindow*);
         int16_t HandleEventCarbon(void* event);
         int16_t HandleEventCocoa(void* event);
         int16_t GetValue(NPPVariable variable, void* value);
