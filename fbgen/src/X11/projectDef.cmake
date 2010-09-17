@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # Auto-generated X11 project definition file for the
-# @{PLUGIN.name} project
+# @{PLUGIN_name} project
 #\**********************************************************/
 
 # X11 template platform definition CMake file

@@ -1,10 +1,31 @@
 #!/usr/bin/env python
-import os, re, sys, uuid
+import os, re, string, sys, uuid
 
 class AttrDictSimple(dict):
     def __getattr__(self, attr): return self[attr]
     def __setattr__(self, attr, value): self[attr] = value
     def __delattr__(self, attr): del self[attr]
+
+
+class Template(string.Template):
+    delimiter = "@"
+
+    def __init__(self, filename):
+        if not os.path.isfile(filename):
+            raise ValueError('Unable to read file with name %s' % filename)
+        super(self.__class__, self).__init__(open(filename).read())
+
+    def process(self, *args):
+        params = AttrDictSimple()
+        for arg in args:
+            params.update(self.generateReplacementDict(arg))
+        return self.substitute(params)
+
+    def generateReplacementDict(self, obj):
+        if isinstance(obj, dict):
+            return obj
+        assert isinstance(obj, Base), "Must provide a base FBGen class"
+        return AttrDictSimple([("%s_%s" % (obj.__class__.__name__.upper(), k), obj[k]) for k in obj.keys.keys() if hasattr(obj, k)])
 
 
 class Base(object):

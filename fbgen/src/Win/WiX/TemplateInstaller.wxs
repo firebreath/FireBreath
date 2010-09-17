@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="{@{GUID.generate("INSTPROD")}}" Name="${PLUGIN_NAME}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="@{GUID.generate("INSTUPGR")}">
+    <Product Id="{@{GUIDS_INSTPROD}}" Name="${PLUGIN_NAME}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="@{GUIDS_INSTUPGR}">
         <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${PLUGIN_NAME} plugin" InstallScope="perUser" />
         <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="AppDataFolder">
                 <Directory Id="CompanyDir" Name="${COMPANY_NAME}">
-                    <Component Id="CompanyDirComp" Guid="{@{GUID.generate("companydircomp")}}">
+                    <Component Id="CompanyDirComp" Guid="{@{GUIDS_companydircomp}}">
                         <RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
                     </Component>
                     <Directory Id="INSTALLDIR" Name="${PLUGIN_NAME}">
-                        <Component Id="InstallDirComp" Guid="{@{GUID.generate("installdircomp")}}">
+                        <Component Id="InstallDirComp" Guid="{@{GUIDS_installdircomp}}">
                             <RemoveFolder Id="RemoveInstallDir" On="uninstall" />
                             <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
                         </Component>
