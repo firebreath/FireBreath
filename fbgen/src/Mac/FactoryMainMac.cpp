@@ -43,4 +43,9 @@ FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
     return new FB::PluginWindowMacCocoaCG(context);
 }
 # endif
+# if FBMAC_USE_COREANIMATION
+FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA() {
+    return new FB::PluginWindowMacCocoaCA();
+}
+# endif
 #endif
