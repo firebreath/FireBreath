@@ -79,9 +79,7 @@ namespace
             return NpapiBrowserHostPtr();
         }
     }
-}
 
-namespace FB { namespace Npapi {
     struct NpapiPDataHolder
     {
         NpapiBrowserHostPtr host;
@@ -93,22 +91,19 @@ namespace FB { namespace Npapi {
         ~NpapiPDataHolder() {}
     };
 
-    inline NpapiPlugin *getPlugin(NPP instance)
-    {
-        return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
-    }
+    
 
-    inline NpapiPDataHolder* getHolder(NPP instance)
+    NpapiPDataHolder* getHolder(NPP instance)
     {   
         return static_cast<NpapiPDataHolder*>(instance->pdata);
     }
 
-    inline NpapiBrowserHostPtr getHost(NPP instance)
+    NpapiBrowserHostPtr getHost(NPP instance)
     {
         return static_cast<NpapiPDataHolder*>(instance->pdata)->host;
     }
 
-    inline bool validInstance(NPP instance)
+    bool validInstance(NPP instance)
     {
         return instance != NULL && instance->pdata != NULL;
     }
@@ -120,16 +115,20 @@ namespace FB { namespace Npapi {
         while (holder->asyncFunctionQueue.try_pop(evt)) {
             evt->func(evt->userData);
         }
-    }
-    
-} }
+    }    
+}
+
+NpapiPlugin *FB::Npapi::getPlugin(NPP instance)
+{
+    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
+}
 
 
 // This is used on mac snow leopard safari
 void NpapiPluginModule::scheduleAsyncCallback(NPP npp, void (*func)(void *), void *userData)
 {
     getHolder(npp)->asyncFunctionQueue.push(FB::AsyncFunctionCallPtr(new FB::AsyncFunctionCall(func, userData)));
-    getHost(npp)->ScheduleTimer(0, false, &FB::Npapi::asyncCallbackFunction);
+    getHost(npp)->ScheduleTimer(0, false, &asyncCallbackFunction);
 }
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
