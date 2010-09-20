@@ -35,7 +35,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
         throw FB::script_error("Cannot enumerate members; IDispatchEx not supported");
     }
     hr = dispex->GetNextDispID(fdexEnumAll, DISPID_STARTENUM, &dispid);
-    while (SUCCEEDED(hr)) {
+    while (SUCCEEDED(hr) && dispid > -1) {
         CComBSTR curName;
         hr = dispex->GetMemberName(dispid, &curName);
         std::wstring wStr(curName);
