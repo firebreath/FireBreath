@@ -73,3 +73,35 @@ if (WIN32)
 
 endif(WIN32)
 
+if (APPLE)
+    if (FBMAC_USE_CARBON)
+        find_library(CARBON_FRAMEWORK Carbon) 
+        set (PLUGIN_INTERNAL_DEPS
+            ${CARBON_FRAMEWORK}
+            ${PLUGIN_INTERNAL_DEPS})
+    endif (FBMAC_USE_CARBON)
+
+    if (FBMAC_USE_COCOA)
+        find_library(COCOA_FRAMEWORK Cocoa)
+        set (PLUGIN_INTERNAL_DEPS
+            ${COCOA_FRAMEWORK}
+            ${PLUGIN_INTERNAL_DEPS})
+    endif (FBMAC_USE_COCOA)
+
+    if (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS)
+        find_library(FOUNDATION_FRAMEWORK Foundation)
+        find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
+        set (PLUGIN_INTERNAL_DEPS
+            ${FOUNDATION_FRAMEWORK}
+            ${APPLICATIONSERVICES_FRAMEWORK}
+            ${PLUGIN_INTERNAL_DEPS})
+    endif (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS)
+   
+    if (FBMAC_USE_COREANIMATION)
+        find_library(QUARTZCORE_FRAMEWORK QuartzCore)
+        set (PLUGIN_INTERNAL_DEPS
+            ${QUARTZCORE_FRAMEWORK}
+            ${PLUGIN_INTERNAL_DEPS})
+    endif (FBMAC_USE_COREANIMATION)
+endif (APPLE)
+
