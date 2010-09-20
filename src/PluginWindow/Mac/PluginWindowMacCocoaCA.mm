@@ -19,14 +19,23 @@
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowMacCocoaCA.h"
 
+#import <QuartzCore/CALayer.h>
+
 using namespace FB;
 
-PluginWindowMacCocoaCA::PluginWindowMacCocoaCA() {
+struct FB::PluginWindowMacCocoaCA::Impl
+{
+    CALayer *layer;
+    Impl(CALayer *layer) : layer(layer) {}
+};
+
+PluginWindowMacCocoaCA::PluginWindowMacCocoaCA()
+  : m_impl(new Impl([CALayer new]))
+{
     m_x = 0;
     m_y = 0;
     m_width = 0;
-    m_height = 0;
-    m_layer = [CALayer new];
+    m_height = 0; 
 }
 
 PluginWindowMacCocoaCA::~PluginWindowMacCocoaCA() {
@@ -37,11 +46,16 @@ void PluginWindowMacCocoaCA::clearWindow() {
     // TODO
 }
 
+void* PluginWindowMacCocoaCA::getLayer() const
+{
+    return static_cast<void*>(m_impl->layer);
+}
+
 void PluginWindowMacCocoaCA::setLayer(void* layer) {
-    m_layer = layer;
+    m_impl->layer = static_cast<CALayer*>(layer);
 }
 
 void PluginWindowMacCocoaCA::InvalidateWindow() {
     // Force a drawInContext message to be passed to the window's CALayer
-    [m_layer setNeedsDisplay];
+    [m_impl->layer setNeedsDisplay];
 }
