@@ -18,6 +18,9 @@ add_definitions(
     
 )
 
+find_library(COCOA_FRAMEWORK Cocoa)
+find_library(CARBON_FRAMEWORK Carbon)
+
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
 set (SOURCES
@@ -34,4 +37,6 @@ add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
+    ${COCOA_FRAMEWORK}
+    ${CARBON_FRAMEWORK}
     )

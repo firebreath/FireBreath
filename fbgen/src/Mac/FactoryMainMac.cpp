@@ -29,7 +29,7 @@ FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, i
 }
 # endif
 # if FBMAC_USE_COREGRAPHICS
-FB::PluginWindowCarbonCG *_createPluginWindow(NP_CGContext* context)
+FB::PluginWindowMacCarbonCG *_createPluginWindowCarbonCG(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCarbonCG(context);
 }
