@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "COM_config.h"
 #include "config.h"
 #include <atlctl.h>
+#include <ShlGuid.h>
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
 #include "DOM/JSAPI_DOMWindow.h"
@@ -65,6 +66,8 @@ public:
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
+    CComQIPtr<IServiceProvider> m_serviceProvider;
+    CComQIPtr<IWebBrowser2> m_webBrowser;
 
     ActiveXBrowserHostPtr m_host;
 
@@ -85,17 +88,21 @@ public:
         if (!pClientSite)
             return hr;
 
-        CComPtr<IOleContainer> container;
+        //CComPtr<IOleContainer> container;
+        m_serviceProvider = pClientSite;
+        if (!m_serviceProvider)
+            return E_FAIL;
+        m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
-        if (m_spClientSite.p)
-            m_spClientSite->GetContainer(&container);
-        if (container.p) {
-            m_htmlDoc = container;
+        //if (m_spClientSite.p)
+        //    m_spClientSite->GetContainer(&container);
+        if (m_webBrowser.p) {
+            m_htmlDoc = m_webBrowser;
             m_propNotify = m_spClientSite;
-            m_htmlDocIDisp = container;
+            m_htmlDocIDisp = m_webBrowser;
         }
 
-        m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_htmlDoc));
+        m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
         pluginMain->SetHost(as_BrowserHost(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);

@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  Auto-generated @{PLUGIN.ident}API.cpp
+  Auto-generated @{PLUGIN_ident}API.cpp
 
 \**********************************************************/
 
@@ -8,55 +8,55 @@
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
 
-#include "@{PLUGIN.ident}API.h"
+#include "@{PLUGIN_ident}API.h"
 
-@{PLUGIN.ident}API::@{PLUGIN.ident}API(FB::BrowserHost host) : m_host(host)
+@{PLUGIN_ident}API::@{PLUGIN_ident}API(FB::BrowserHost host) : m_host(host)
 {
-    registerMethod("echo",      make_method(this, &@{PLUGIN.ident}API::echo));
-    registerMethod("testEvent", make_method(this, &@{PLUGIN.ident}API::testEvent));
+    registerMethod("echo",      make_method(this, &@{PLUGIN_ident}API::echo));
+    registerMethod("testEvent", make_method(this, &@{PLUGIN_ident}API::testEvent));
 
     // Read-write property
     registerProperty("testString",
                      make_property(this,
-                        &@{PLUGIN.ident}API::get_testString,
-                        &@{PLUGIN.ident}API::set_testString));
+                        &@{PLUGIN_ident}API::get_testString,
+                        &@{PLUGIN_ident}API::set_testString));
 
     // Read-only property
     registerProperty("version",
                      make_property(this,
-                        &@{PLUGIN.ident}API::get_version));
+                        &@{PLUGIN_ident}API::get_version));
     
     
     registerEvent("onfired");    
 }
 
-@{PLUGIN.ident}API::~@{PLUGIN.ident}API()
+@{PLUGIN_ident}API::~@{PLUGIN_ident}API()
 {
 }
 
 // Read/Write property testString
-std::string @{PLUGIN.ident}API::get_testString()
+std::string @{PLUGIN_ident}API::get_testString()
 {
     return m_testString;
 }
-void @{PLUGIN.ident}API::set_testString(const std::string& val)
+void @{PLUGIN_ident}API::set_testString(const std::string& val)
 {
     m_testString = val;
 }
 
 // Read-only property version
-std::string @{PLUGIN.ident}API::get_version()
+std::string @{PLUGIN_ident}API::get_version()
 {
     return "CURRENT_VERSION";
 }
 
 // Method echo
-FB::variant @{PLUGIN.ident}API::echo(const FB::variant& msg)
+FB::variant @{PLUGIN_ident}API::echo(const FB::variant& msg)
 {
     return msg;
 }
 
-void @{PLUGIN.ident}API::testEvent(const FB::variant& var)
+void @{PLUGIN_ident}API::testEvent(const FB::variant& var)
 {
     FireEvent("onfired", FB::variant_list_of(var));
 }

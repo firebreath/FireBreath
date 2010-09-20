@@ -59,8 +59,10 @@ namespace FB
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
+        virtual std::string getLocation() { return m_location; }
         virtual void htmlLog(const std::string& str);
 
+    protected:
         BrowserHost shared_ptr()
         {
             return shared_from_this();
@@ -68,6 +70,7 @@ namespace FB
 
     protected:
         boost::thread::id m_threadId;
+        std::string m_location;
     };
 }
 

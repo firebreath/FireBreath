@@ -29,7 +29,7 @@ FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, i
 }
 # endif
 # if FBMAC_USE_COREGRAPHICS
-FB::PluginWindowMacCarbonCG *_createPluginWindow(NP_CGContext* context)
+FB::PluginWindowMacCarbonCG *_createPluginWindowCarbonCG(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCarbonCG(context);
 }
@@ -41,6 +41,11 @@ FB::PluginWindowMacCarbonCG *_createPluginWindow(NP_CGContext* context)
 FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
 {
     return new FB::PluginWindowMacCocoaCG(context);
+}
+# endif
+# if FBMAC_USE_COREANIMATION
+FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA() {
+    return new FB::PluginWindowMacCocoaCA();
 }
 # endif
 #endif

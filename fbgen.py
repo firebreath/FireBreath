@@ -14,7 +14,7 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 Packet Pass, Inc. and the Firebreath development team
 """
-import os, re, sys, uuid
+import os, re, sys, time, uuid
 from fbgen.gen_templates import *
 from optparse import OptionParser
 from ConfigParser import SafeConfigParser
@@ -58,12 +58,6 @@ def Main():
     """
     Parse the commandline and execute the appropriate actions.
     """
-    # Make sure Cheetah is available
-    try:
-        from Cheetah.Template import Template
-    except:
-        print "This utility requires a working install of the Cheetah template system (http://www.cheetahtemplate.org)"
-        sys.exit(1)
 
     # Define the command-line interface via OptionParser
     usage = "usage: %prog [options]"
@@ -102,6 +96,23 @@ def Main():
     plugin.updateCfg(cfgFile)
     company.updateCfg(cfgFile)
     guid = GUID(ident = plugin.ident, domain = company.domain)
+
+    # Generate the guids needed by the templates
+    generatedGuids = AttrDictSimple()
+    generatedGuids.GUIDS_TYPELIB        = guid.generate("TYPELIB")
+    generatedGuids.GUIDS_CONTROLIF      = guid.generate("CONTROLIF")
+    generatedGuids.GUIDS_CONTROL        = guid.generate("CONTROL")
+    generatedGuids.GUIDS_JSIF           = guid.generate("JSIF")
+    generatedGuids.GUIDS_JSOBJ          = guid.generate("JSOBJ")
+    generatedGuids.GUIDS_EVTSRC         = guid.generate("EVTSRC")
+    generatedGuids.GUIDS_INSTPROD       = guid.generate("INSTPROD")
+    generatedGuids.GUIDS_INSTUPGR       = guid.generate("INSTUPGR")
+    generatedGuids.GUIDS_companydircomp = guid.generate("companydircomp")
+    generatedGuids.GUIDS_installdircomp = guid.generate("installdircomp")
+
+    # Time-related values used in templates
+    templateTime = AttrDictSimple(YEAR = time.strftime("%Y"))
+
     # Save configuration for another go
     cfgFile.write(open(cfgFilename, "wb") )
 
@@ -136,9 +147,6 @@ def Main():
     srcDir = os.path.join(scriptDir, "fbgen", "src")
     srcDirLen = len(srcDir) + len(os.path.sep)
     templateFiles = getTemplateFiles(srcDir)
-    # we need to use some special delimiters for Cheetah so the specific changes are done here and applied to all templates processed.
-    # please do NOT put Cheetah compiler directives into the templates directly. Any changes from the default settings should be done here.
-    templateCompilerSettings = {"cheetahVarStartToken": "@", "directiveStartToken": "<##", "directiveEndToken": "##>"}
     for tpl in templateFiles:
         try:
             tplPath, tplFilename = os.path.split(tpl)
@@ -153,10 +161,9 @@ def Main():
                 createDir(dirname)
             tplFile = os.path.join("fbgen", "src", tpl)
             print tplFile
-            template = Template(file = tplFile, searchList = [{"PLUGIN": plugin, "COMPANY": company,
-                "GUID": guid}], compilerSettings=templateCompilerSettings)
+            template = Template(tplFile)
             f = open(filename, "wb")
-            f.write("%s" % template)
+            f.write(template.process(plugin, company, guid, generatedGuids, templateTime))
             print "  Processed", tpl
         except:
             print "  Error processing", tpl

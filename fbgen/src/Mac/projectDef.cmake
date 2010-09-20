@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # Auto-generated Mac project definition file for the
-# @{PLUGIN.name} project
+# @{PLUGIN_name} project
 #\**********************************************************/
 
 # Mac template platform definition CMake file
@@ -19,6 +19,7 @@ add_definitions(
 )
 
 find_library(COCOA_FRAMEWORK Cocoa)
+find_library(CARBON_FRAMEWORK Carbon)
 
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
@@ -37,4 +38,5 @@ add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 target_link_libraries(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     ${COCOA_FRAMEWORK}
+    ${CARBON_FRAMEWORK}
     )
