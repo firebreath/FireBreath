@@ -221,8 +221,7 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
     if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
-#if FBMAC_USE_COCOA
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_COCOA && FBMAC_USE_COREANIMATION
         // This hack exists to allow the plugin to call setLayer() on 
         // the newly created PluginWindowMacCocoaCA window. This must
         // be done before SetWindowCA() since the browser will call
@@ -231,7 +230,6 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
         this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
         pluginWinCA->setNpHost(m_npHost);
         pluginMain->SetWindow(pluginWinCA);
-#endif
 #endif
     } else if(enableCoreGraphicsCarbon(host)) {
         m_eventModel   = EventModelCarbon;
@@ -257,13 +255,11 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
 
 NpapiPluginMac::~NpapiPluginMac()
 {
-#if FBMAC_USE_COCOA
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_COCOA && FBMAC_USE_COREANIMATION
     PluginWindowMacCocoaCA* win = dynamic_cast<PluginWindowMacCocoaCA*>(pluginWin);
     if(win != NULL) {
         [(CALayer*)win->getLayer() release];
     }
-#endif
 #endif
     delete pluginWin; pluginWin = NULL;
 }
@@ -326,13 +322,9 @@ NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
 }
 
 NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
-#if !FBMAC_USE_COREGRAPHICS
-#if !FBMAC_USE_CARBON
+#if !FBMAC_USE_COREGRAPHICS || !FBMAC_USE_CARBON
     return NPERR_GENERIC_ERROR;
-#endif
-#endif
-#if FBMAC_USE_COREGRAPHICS
-#if FBMAC_USE_CARBON
+#else
     // SetWindow provides us with the window that our plugin should draw to.
     // In the Cocoa event model the window.window is null in the passed NPWindow
 
@@ -372,19 +364,14 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
         return NPERR_GENERIC_ERROR;
     }
 
-#endif
-#endif
     return NPERR_NO_ERROR;
+#endif    
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
-#if !FBMAC_USE_COREGRAPHICS
-#if !FBMAC_USE_COCOA
+#if !FBMAC_USE_COREGRAPHICS || !FBMAC_USE_COCOA
     return NPERR_GENERIC_ERROR;
-#endif
-#endif
-#if FBMAC_USE_COREGRAPHICS
-#if FBMAC_USE_COCOA
+#else
     PluginWindowMacCocoaCG* pluginWinCG = static_cast<PluginWindowMacCocoaCG*>(pluginWin);
 
     if (window != NULL) {
@@ -422,18 +409,12 @@ NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
 
     return NPERR_NO_ERROR;
 #endif
-#endif
 }
 
 NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
-#if !FBMAC_USE_COREANIMATION
-#if !FBMAC_USE_COCOA
+#if !FBMAC_USE_COREANIMATION || !FBMAC_USE_COCOA
     return NPERR_GENERIC_ERROR;
-#endif
-#endif
-#if FBMAC_USE_COREANIMATION
-#if FBMAC_USE_COCOA
-
+#else
     PluginWindowMacCocoaCA* pluginWinCA = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
     
     if (window != NULL) {
@@ -460,9 +441,9 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
         delete pluginWin;
         pluginWin = NULL;
     }
-#endif    
-#endif
+    
     return NPERR_NO_ERROR;
+#endif    
 }
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
