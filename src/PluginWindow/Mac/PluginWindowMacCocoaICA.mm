@@ -1,9 +1,11 @@
 #include "PluginWindowMacCocoaICA.h"
 
+using namespace FB;
+
 PluginWindowMacCocoaICA::PluginWindowMacCocoaICA() {}
 
-PluginWindowMacCocoaICA::~PluginWindowMacCocoaIC() {}
+PluginWindowMacCocoaICA::~PluginWindowMacCocoaICA() {}
 
-PluginWindowMacCocoaICA::InvalidateWindow() {
-    m_host->InvalidateRect(getWindowPosition()); 
+void PluginWindowMacCocoaICA::InvalidateWindow() {
+    m_npHost->InvalidateRect(&getWindowPosition()); 
 }

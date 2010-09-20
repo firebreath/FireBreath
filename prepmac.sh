@@ -5,7 +5,7 @@ GEN='Xcode'
 source ${0%/*}/common.sh "$@"
 
 SDK=-DCMAKE_OSX_SYSROOT="/Developer/SDKs/MacOSX10.5.sdk"
-ARCH=-DCMAKE_OSX_ARCHITECTURES="i386"
+#ARCH=-DCMAKE_OSX_ARCHITECTURES="i386"
 
 pushd "$BUILDDIR"
 cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" ${ARCH} ${SDK} "$@" "${FB_ROOT}"

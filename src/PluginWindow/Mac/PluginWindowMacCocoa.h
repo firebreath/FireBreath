@@ -61,7 +61,7 @@ namespace FB {
         protected:
             int m_x, m_y, m_width, m_height;
             int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
-            FB::Npapi::NpapiBrowserHostPtr  m_npHost;
+            Npapi::NpapiBrowserHostPtr m_npHost;
     };
 };
 

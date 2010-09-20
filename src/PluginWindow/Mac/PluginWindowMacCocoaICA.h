@@ -15,7 +15,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #ifndef H_PLUGINWINDOWMAC_COCOAINVALIDATINGCA_H__
 #define H_PLUGINWINDOWMAC_COCOAINVALIDATINGCA_H__
 
-#include "PluginWindowMacCocoa.h"
+#include "PluginWindowMacCocoaCA.h"
 
 // This class implements the modifications to the CoreAnimation
 // drawing model in order to implement the InvalidatingCoreAnimation 
@@ -23,12 +23,14 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 //
 // MDC: https://wiki.mozilla.org/NPAPI:InvalidatingCoreAnimation
 
-class PluginWindowMacCocoaICA : PluginWindowMacCocoaCA {
-    public:
-        PluginWindowMacCocoaICA();
-        ~PluginWindowMacCocoaICA();
+namespace FB {
+    class PluginWindowMacCocoaICA : public PluginWindowMacCocoaCA {
+        public:
+            PluginWindowMacCocoaICA();
+            ~PluginWindowMacCocoaICA();
 
-        void InvalidateWindow();
+            void InvalidateWindow();
+    };
 };
 
 #endif

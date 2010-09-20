@@ -23,7 +23,6 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include <map>
 
 namespace FB {
-    
     class PluginWindowMacCocoaCA: public PluginWindowMacCocoa
     {
     public:
