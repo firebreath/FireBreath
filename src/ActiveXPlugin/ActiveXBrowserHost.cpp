@@ -24,15 +24,16 @@ using boost::assign::list_of;
 
 using namespace FB;
 
-ActiveXBrowserHost::ActiveXBrowserHost(IHTMLDocument2 *doc)
-    : m_hWnd(NULL), m_htmlDoc(doc), m_htmlDocDisp(doc)
+ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
+    : m_hWnd(NULL), m_webBrowser(doc)
 {
-    if (m_htmlDoc.p != NULL) {
+    if (m_webBrowser.p) {
+        m_webBrowser->get_Document(&m_htmlDocDisp);
+        m_htmlDoc = m_htmlDocDisp;
         m_htmlDoc->get_parentWindow(&m_htmlWin);
         m_htmlWinDisp = m_htmlWin;
         CComBSTR bstr;
-        CComQIPtr<IHTMLLocation> loc;
-        m_htmlDoc->get_location(&loc);
+        m_webBrowser->get_LocationURL(&bstr);
         m_location = FB::wstring_to_utf8(std::wstring(bstr.m_str));
     }
 }

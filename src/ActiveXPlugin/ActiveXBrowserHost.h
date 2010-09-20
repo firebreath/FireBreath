@@ -32,7 +32,7 @@ class ActiveXBrowserHost :
     public FB::BrowserHostWrapper
 {
 public:
-    ActiveXBrowserHost(IHTMLDocument2 *doc);
+    ActiveXBrowserHost(IWebBrowser2 *doc);
     virtual ~ActiveXBrowserHost(void);
     virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
 
@@ -54,6 +54,7 @@ protected:
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
     CComPtr<IHTMLWindow2> m_htmlWin;
+    CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
 
 public:
@@ -62,4 +63,3 @@ public:
 };
 
 #endif // H_ACTIVEXBROWSERHOST
-
