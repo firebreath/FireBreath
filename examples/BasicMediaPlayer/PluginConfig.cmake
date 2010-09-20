@@ -49,3 +49,10 @@ set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "FireBreath BasicMediaPlayer Plugin")
 set(FBSTRING_MIMEType "application/x-vnd.FBBasicMediaPlayer")
 
+# mac settings
+set (FBMAC_USE_CARBON        0)
+set (FBMAC_USE_COCOA         1)
+set (FBMAC_USE_QUICKDRAW     0)
+set (FBMAC_USE_COREGRAPHICS  0)
+set (FBMAC_USE_COREANIMATION 1)
+
