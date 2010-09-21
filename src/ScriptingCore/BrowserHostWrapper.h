@@ -59,8 +59,14 @@ namespace FB
         virtual JSAPI_DOMDocument getDOMDocument() = 0;
         virtual JSAPI_DOMWindow getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
+        virtual void evaluateJavaScript(const std::wstring &script);
         virtual std::string getLocation() { return m_location; }
         virtual void htmlLog(const std::string& str);
+
+    public:
+        // Helper methods to get around scripting
+        virtual std::vector<FB::JSObject> getElementsByTagName(std::string tagName) = 0;
+        virtual std::vector<FB::JSObject> getElementsByTagName(std::wstring tagName);
 
     protected:
         BrowserHost shared_ptr()

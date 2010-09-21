@@ -48,6 +48,7 @@ public:
     FB::JSAPI_DOMDocument getDOMDocument();
     FB::JSAPI_DOMWindow getDOMWindow();
     void evaluateJavaScript(const std::string &script);
+    std::vector<FB::JSObject> getElementsByTagName(std::string tagName);
 
 protected:
     HWND m_hWnd;

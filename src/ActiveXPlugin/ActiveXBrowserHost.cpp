@@ -91,6 +91,24 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
     }
 }
 
+std::vector<FB::JSObject> ActiveXBrowserHost::getElementsByTagName(std::string tagName)
+{
+    CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
+    CComPtr<IHTMLElementCollection> list;
+    std::vector<FB::JSObject> tagList;
+    doc->getElementsByTagName(CComBSTR(FB::utf8_to_wstring(tagName).c_str()), &list);
+    long length(0);
+    if (SUCCEEDED(list->get_length(&length))) {
+        for (long i = 0; i < length; i++) {
+            CComPtr<IDispatch> dispObj;
+            CComVariant idx(i);
+            list->item(idx, idx, &dispObj);
+            tagList.push_back(FB::JSObject(new IDispatchAPI(dispObj.p, as_ActiveXBrowserHost(shared_ptr()))));
+        }
+    }
+    return tagList;
+}
+
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 {
     CComVariant converted;

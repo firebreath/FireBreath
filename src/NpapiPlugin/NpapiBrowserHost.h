@@ -48,6 +48,7 @@ namespace FB { namespace Npapi {
         FB::JSAPI_DOMDocument getDOMDocument();
         FB::JSAPI_DOMWindow getDOMWindow();
         void evaluateJavaScript(const std::string &script);
+        std::vector<FB::JSObject> getElementsByTagName(std::string tagName);
 
     public:
         FB::variant getVariant(const NPVariant *npVar);

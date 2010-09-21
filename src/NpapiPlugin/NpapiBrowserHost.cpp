@@ -104,6 +104,13 @@ void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
     }
 }
 
+std::vector<FB::JSObject> NpapiBrowserHost::getElementsByTagName(std::string tagName)
+{
+    FB::JSAPI_DOMDocument doc(getDOMDocument());
+    std::vector<FB::JSObject> tagList = doc.callMethod<std::vector<FB::JSObject>>("getElementsByTagName", FB::variant_list_of(tagName));
+    return tagList;
+}
+
 FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 {
     FB::variant retVal;

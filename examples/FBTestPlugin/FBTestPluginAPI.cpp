@@ -35,6 +35,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
+    registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
 
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
@@ -190,6 +191,15 @@ FB::VariantMap FBTestPluginAPI::getUserData()
 FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
+}
+
+FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
+{
+    std::vector<FB::JSObject> tagList = m_host->getElementsByTagName(tagName);
+    if (!tagList.size()) {
+        return "No matching tags found";
+    }
+    return tagList[idx]->GetProperty(attribute);
 }
 
 
