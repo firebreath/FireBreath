@@ -12,34 +12,38 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMDOCUMENT
-#define H_FB_JSAPI_DOMDOCUMENT
+#ifndef H_FB_DOM_WINDOW
+#define H_FB_DOM_WINDOW
 
 #include <string>
-#include "BrowserObjectAPI.h"
-#include "JSAPI_DOMElement.h"
+#include <boost/shared_ptr.hpp>
+#include "Node.h"
+#include "Document.h"
 
-namespace FB {
+namespace FB { namespace DOM {
 
-    class JSAPI_DOMWindow;
+    class BrowserObjectAPI;
     /**
-     * JSAPI_DOMElement
+     * Window
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class JSAPI_DOMDocument : public JSAPI_DOMElement
+    class WindowImpl;
+    typedef boost::shared_ptr<WindowImpl> Window;
+    class WindowImpl : public NodeImpl
     {
     public:
-        JSAPI_DOMDocument(const JSObject &element);
-        JSAPI_DOMDocument(const JSAPI_DOMDocument &rhs);
-        JSAPI_DOMDocument(const JSAPI_DOMNode &rhs);
-        virtual ~JSAPI_DOMDocument();
+        WindowImpl(const JSObject& element);
+        virtual ~WindowImpl();
+        Window window() { return boost::dynamic_pointer_cast<WindowImpl>(node()); }
 
     public:
-        JSAPI_DOMWindow getWindow();
-        JSAPI_DOMElement getElementById(const std::string& elem_id);
+        virtual Document getDocument();
+        virtual void alert(const std::string& str);
+        virtual Node createArray();
+        virtual Node createMap();
     };
 
-};
+} };
 
-#endif // H_FB_JSAPI_DOMDOCUMENT
+#endif // H_FB_DOM_WINDOW

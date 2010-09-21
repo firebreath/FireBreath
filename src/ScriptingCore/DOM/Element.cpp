@@ -12,62 +12,58 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "JSAPI_DOMElement.h"
+#include "Element.h"
 
-using namespace FB;
+using namespace FB::DOM;
 
-JSAPI_DOMElement::JSAPI_DOMElement(const JSObject& element) : JSAPI_DOMNode(element)
+ElementImpl::ElementImpl(const FB::JSObject& element) : NodeImpl(element)
 {
 }
 
-JSAPI_DOMElement::JSAPI_DOMElement(const JSAPI_DOMElement& rhs) : JSAPI_DOMNode(rhs)
+ElementImpl::~ElementImpl()
 {
 }
 
-JSAPI_DOMElement::~JSAPI_DOMElement()
-{
-}
-
-std::string JSAPI_DOMElement::getInnerHTML()
+std::string ElementImpl::getInnerHTML()
 {
     return getProperty<std::string>("innerHTML");
 }
-void JSAPI_DOMElement::setInnerHTML(const std::string& html)
+void ElementImpl::setInnerHTML(const std::string& html)
 {
     setProperty("innerHTML", html);
 }
 
-int JSAPI_DOMElement::getWidth()
+int ElementImpl::getWidth()
 {
     return getProperty<int>("width");
 }
-void JSAPI_DOMElement::setWidth(int width)
+void ElementImpl::setWidth(int width)
 {
     setProperty("width", width);
 }
 
-int JSAPI_DOMElement::getHeight()
+int ElementImpl::getHeight()
 {
     return getProperty<int>("height");
 }
-void JSAPI_DOMElement::setHeight(int height)
+void ElementImpl::setHeight(int height)
 {
     setProperty("height", height);
 }
 
-int JSAPI_DOMElement::getChildNodeCount()
+int ElementImpl::getChildNodeCount()
 {
-    return getNode("childNodes").getProperty<int>("length");
+    return getNode("childNodes")->getProperty<int>("length");
 }
 
-JSAPI_DOMElement JSAPI_DOMElement::getChildNode(int idx)
+Element ElementImpl::getChildNode(int idx)
 {
-    JSAPI_DOMElement retVal(getElement("childNodes").getElement(idx));
+    Element retVal(getElement("childNodes")->getElement(idx));
     return retVal;
 }
 
-JSAPI_DOMElement JSAPI_DOMElement::getParentNode()
+Element ElementImpl::getParentNode()
 {
-    JSAPI_DOMElement retVal(getElement("parentNode"));
+    Element retVal(getElement("parentNode"));
     return retVal;
 }

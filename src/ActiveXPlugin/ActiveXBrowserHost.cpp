@@ -15,8 +15,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ActiveXBrowserHost.h"
 #include "axstream.h"
 #include "COMJavascriptObject.h"
-#include "DOM/JSAPI_DOMDocument.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "AsyncFunctionCall.h"
 #include <boost/assign.hpp>
 using boost::assign::list_of;
@@ -60,16 +60,16 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
-FB::JSAPI_DOMDocument ActiveXBrowserHost::getDOMDocument()
+FB::DOM::Document ActiveXBrowserHost::getDOMDocument()
 {
     FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::JSAPI_DOMDocument(retObj);
+    return FB::DOM::Document(new FB::DOM::DocumentImpl(retObj));
 }
 
-FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
+FB::DOM::Window ActiveXBrowserHost::getDOMWindow()
 {
     FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::JSAPI_DOMWindow(retObj);
+    return FB::DOM::Window(new FB::DOM::WindowImpl(retObj));
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -202,24 +202,24 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         outVar = bStr;
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
+        DOM::Node outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             FB::VariantList vl = list_of(*it);
-            outArr.callMethod<void>("push", vl);
+            outArr->callMethod<void>("push", vl);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(outArr.getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(outArr->getJSObject());
         if (api) {
             outVar = api->getIDispatch();
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        JSAPI_DOMNode out = this->getDOMWindow().createMap();
+        DOM::Node out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out.setProperty(it->first, it->second);
+            out->setProperty(it->first, it->second);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(out.getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(out->getJSObject());
         if (api) {
             outVar = api->getIDispatch();
         }

@@ -12,25 +12,30 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMNODE
-#define H_FB_JSAPI_DOMNODE
+#ifndef H_FB_DOM_NODE
+#define H_FB_DOM_NODE
 
 #include <string>
+#include <boost/enable_shared_from_this.hpp>
 #include "BrowserObjectAPI.h"
-namespace FB {
+
+namespace FB { namespace DOM {
     /**
-     * JSAPI_DOMNode
+     * NodeImpl (used as Node, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM node
      **/
-    class JSAPI_DOMNode
+    class NodeImpl;
+    typedef boost::shared_ptr<NodeImpl> Node;
+
+    class NodeImpl : public boost::enable_shared_from_this<NodeImpl>
     {
     public:
-        JSAPI_DOMNode(const JSObject& element) : m_element(element) { }
-        JSAPI_DOMNode(const JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
-        virtual ~JSAPI_DOMNode() { }
+        NodeImpl(const JSObject& element) : m_element(element) { }
+        virtual ~NodeImpl() { }
 
-        JSObject getJSObject() { return m_element; }
+        virtual FB::JSObject getJSObject() { return m_element; }
+        Node node() { return shared_from_this(); }
 
     public:
         template <class T>
@@ -44,7 +49,6 @@ namespace FB {
         {
             return callMethod<T>(FB::wstring_to_utf8(name), args); 
         }
-
         template <class T>
         T getProperty(const std::wstring& name)
         {
@@ -64,20 +68,20 @@ namespace FB {
             return tmp.convert_cast<T>();
         }
 
-        JSAPI_DOMNode getNode(const std::wstring& name);
-        JSAPI_DOMNode getNode(const std::string& name);
+        virtual Node getNode(const std::wstring& name);
+        virtual Node getNode(const std::string& name);
 
-        JSAPI_DOMNode getNode(int idx);
+        virtual Node getNode(int idx);
 
-        void setProperty(const std::wstring& name, const variant& val);
-        void setProperty(const std::string& name, const variant& val);
+        virtual void setProperty(const std::wstring& name, const variant& val);
+        virtual void setProperty(const std::string& name, const variant& val);
 
-        void setProperty(int idx, const variant& val);
+        virtual void setProperty(int idx, const variant& val);
 
     protected:
         JSObject m_element;
     };
 
-};
+}; };
 
-#endif // H_FB_JSAPI_DOMNODE
+#endif // H_FB_DOM_NODE

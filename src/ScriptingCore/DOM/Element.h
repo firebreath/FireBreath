@@ -12,27 +12,29 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMELEMENT
-#define H_FB_JSAPI_DOMELEMENT
+#ifndef H_FB_DOM_ELEMENT
+#define H_FB_DOM_ELEMENT
 
 #include <string>
 #include "BrowserObjectAPI.h"
-#include "JSAPI_DOMNode.h"
+#include "Node.h"
 
-namespace FB {
+namespace FB { namespace DOM {
 
     /**
-     * JSAPI_DOMElement
+     * ElementImpl (used as Element, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class JSAPI_DOMElement : public JSAPI_DOMNode
+    class ElementImpl;
+    typedef boost::shared_ptr<ElementImpl> Element;
+    class ElementImpl : public NodeImpl
     {
     public:
-        JSAPI_DOMElement(const JSObject& element);
-        JSAPI_DOMElement(const JSAPI_DOMElement &rhs);
+        ElementImpl(const FB::JSObject& element);
 
-        virtual ~JSAPI_DOMElement();
+        virtual ~ElementImpl();
+        Element element() { return boost::dynamic_pointer_cast<ElementImpl>(node()); }
 
     public:
         virtual std::string getInnerHTML();
@@ -44,24 +46,24 @@ namespace FB {
         virtual void setHeight(int);
 
         virtual int getChildNodeCount();
-        virtual JSAPI_DOMElement getChildNode(int idx);
-        virtual JSAPI_DOMElement getParentNode();
+        virtual Element getChildNode(int idx);
+        virtual Element getParentNode();
 
-        JSAPI_DOMElement getElement(const std::string& name)
+        virtual Element getElement(const std::string& name)
         {
-            JSObject api = getProperty<JSObject>(name);
-            JSAPI_DOMElement retVal(api);
+            JSObject api = getProperty<FB::JSObject>(name);
+            Element retVal(new ElementImpl(api));
             return retVal;
         }
 
-        JSAPI_DOMElement getElement(int idx)
+        virtual Element getElement(int idx)
         {
-            JSObject api = getProperty<JSObject>(idx);
-            JSAPI_DOMElement retVal(api);
+            JSObject api = getProperty<FB::JSObject>(idx);
+            Element retVal(new ElementImpl(api));
             return retVal;
         }
     };
 
-};
+}; };
 
-#endif // H_FB_JSAPI_DOMELEMENT
+#endif // H_FB_DOM_ELEMENT

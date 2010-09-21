@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cstdio>
 #include <cassert>
 #include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "variant_list.h"
 
 #include "BrowserHostWrapper.h"
@@ -30,9 +30,9 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
 {
     FB::AsyncLogRequest *req = (FB::AsyncLogRequest*)logReq;
     try {
-        FB::JSAPI_DOMWindow window = req->m_host->getDOMWindow();
+        FB::DOM::Window window = req->m_host->getDOMWindow();
 
-        FB::JSObject obj = window.getProperty<FB::JSObject>("console");
+        FB::JSObject obj = window->getProperty<FB::JSObject>("console");
         printf("Logging: %s\n", req->m_msg.c_str());
         obj->Invoke("log", FB::variant_list_of(req->m_msg));
     } catch (const std::exception &e) {

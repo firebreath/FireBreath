@@ -13,35 +13,31 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "variant_list.h"
-#include "JSAPI_DOMWindow.h"
+#include "Window.h"
 
-#include "JSAPI_DOMDocument.h"
+#include "Document.h"
 
-using namespace FB;
+using namespace FB::DOM;
 
-JSAPI_DOMDocument::JSAPI_DOMDocument(const JSObject& element) : JSAPI_DOMElement(element)
+DocumentImpl::DocumentImpl(const FB::JSObject& element) : ElementImpl(element)
 {
 }
 
-JSAPI_DOMDocument::JSAPI_DOMDocument(const JSAPI_DOMDocument& rhs) : JSAPI_DOMElement(rhs)
+DocumentImpl::~DocumentImpl()
 {
 }
 
-JSAPI_DOMDocument::~JSAPI_DOMDocument()
+Window DocumentImpl::getWindow()
 {
-}
-
-JSAPI_DOMWindow JSAPI_DOMDocument::getWindow()
-{
-    JSObject api = getProperty<JSObject>("window");
-    JSAPI_DOMWindow retVal(api);
+    JSObject api = getProperty<FB::JSObject>("window");
+    Window retVal(new WindowImpl(api));
     return retVal;
 }
 
-JSAPI_DOMElement JSAPI_DOMDocument::getElementById(const std::string& id)
+Element DocumentImpl::getElementById(const std::string& id)
 {
     JSObject api =
         callMethod<JSObject>("getElementById", FB::VariantList(variant_list_of(id)));
-    JSAPI_DOMElement retVal(api);
+    Element retVal(new ElementImpl(api));
     return retVal;
 }

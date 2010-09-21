@@ -13,43 +13,41 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "variant_list.h"
+#include "Node.h"
+#include "Element.h"
+#include "Document.h"
 
-#include "JSAPI_DOMWindow.h"
-#include "JSAPI_DOMDocument.h"
+#include "Window.h"
 
-using namespace FB;
+using namespace FB::DOM;
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(const JSObject& element) : JSAPI_DOMNode(element)
+WindowImpl::WindowImpl(const FB::JSObject& element) : NodeImpl(element)
 {
 }
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(const JSAPI_DOMWindow &rhs) : JSAPI_DOMNode(rhs)
+WindowImpl::~WindowImpl()
 {
 }
 
-JSAPI_DOMWindow::~JSAPI_DOMWindow()
-{
-}
-
-JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
+Document WindowImpl::getDocument()
 {
     JSObject api = getProperty<JSObject>("document");
-    return JSAPI_DOMDocument(api);
+    return Document(new DocumentImpl(api));
 }
 
-void JSAPI_DOMWindow::alert(const std::string& str)
+void WindowImpl::alert(const std::string& str)
 {
     callMethod<void>("alert", variant_list_of(str));
 }
 
-JSAPI_DOMNode JSAPI_DOMWindow::createArray()
+Node WindowImpl::createArray()
 {
     JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
-    return JSAPI_DOMNode(arr);
+    return Node(new NodeImpl(arr));
 }
 
-JSAPI_DOMNode JSAPI_DOMWindow::createMap()
+Node WindowImpl::createMap()
 {
     JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
-    return JSAPI_DOMNode(arr);
+    return Node(new NodeImpl(arr));
 }

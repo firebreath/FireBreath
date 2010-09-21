@@ -24,8 +24,12 @@ namespace FB
     class BrowserStream;
     class PluginEventSink;
     class BrowserObjectAPI;
-    class JSAPI_DOMDocument;
-    class JSAPI_DOMWindow;
+    namespace DOM {
+        class WindowImpl;
+        class DocumentImpl;
+        typedef boost::shared_ptr<WindowImpl> Window;
+        typedef boost::shared_ptr<DocumentImpl> Document;
+    };
 
     struct AsyncLogRequest
     {
@@ -56,8 +60,8 @@ namespace FB
     public:
         void assertMainThread();
         bool isMainThread();
-        virtual JSAPI_DOMDocument getDOMDocument() = 0;
-        virtual JSAPI_DOMWindow getDOMWindow() = 0;
+        virtual DOM::Document getDOMDocument() = 0;
+        virtual DOM::Window getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
         virtual void evaluateJavaScript(const std::wstring &script);
         virtual std::string getLocation() { return m_location; }

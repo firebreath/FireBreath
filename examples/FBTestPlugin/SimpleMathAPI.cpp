@@ -15,7 +15,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "BrowserObjectAPI.h"
 #include <boost/assign.hpp>
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
 using boost::assign::list_of;
 
 #include "SimpleMathAPI.h"

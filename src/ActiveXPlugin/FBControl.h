@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <ShlGuid.h>
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "Win/FactoryDefinitionsWin.h"
 
 #include "BrowserPlugin.h"

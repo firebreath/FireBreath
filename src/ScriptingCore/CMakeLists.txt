@@ -32,6 +32,7 @@ include_directories(
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    DOM.h
     DOM/[^.]*
 )
 

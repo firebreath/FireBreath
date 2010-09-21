@@ -17,7 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "variant_list.h"
 #include "FactoryDefinitions.h"
 #include "BrowserHostWrapper.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 
 #include "PluginCore.h"
 
@@ -98,7 +98,7 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
             if (key.substr(0, 2) == "on") {
                 FB::JSObject tmp;
                 tmp = m_host->getDOMWindow()
-                    .getProperty<FB::JSObject>(value);
+                    ->getProperty<FB::JSObject>(value);
 
                 m_params[key] = tmp;
             }
