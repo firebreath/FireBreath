@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # Auto-generated Mac project definition file for the
-# @{PLUGIN_name} project
+# BasicMediaPlayer project
 #\**********************************************************/
 
 # Mac template platform definition CMake file
@@ -17,7 +17,6 @@ file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 add_definitions(
     
 )
-
 
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
