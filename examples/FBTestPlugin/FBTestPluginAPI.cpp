@@ -195,11 +195,11 @@ FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 
 FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
 {
-    std::vector<FB::JSObject> tagList = m_host->getElementsByTagName(tagName);
+    std::vector<FB::DOM::Element> tagList = m_host->getDOMDocument()->getElementsByTagName(tagName);
     if (!tagList.size()) {
         return "No matching tags found";
     }
-    return tagList[idx]->GetProperty(attribute);
+    return tagList[idx]->getJSObject()->GetProperty(attribute);
 }
 
 

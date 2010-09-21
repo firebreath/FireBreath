@@ -41,3 +41,20 @@ Element DocumentImpl::getElementById(const std::string& id)
     Element retVal(new ElementImpl(api));
     return retVal;
 }
+
+std::vector<Element> DocumentImpl::getElementsByTagName(const std::wstring& tagName)
+{
+    return getElementsByTagName(FB::wstring_to_utf8(tagName));
+}
+
+std::vector<Element> DocumentImpl::getElementsByTagName(const std::string& tagName)
+{
+    std::vector<FB::JSObject> tagList = callMethod<std::vector<FB::JSObject>>("getElementsByTagName", FB::variant_list_of(tagName));
+    std::vector<FB::JSObject>::iterator it;
+    std::vector<Element> outList;
+    for (it = tagList.begin(); it != tagList.end(); it++)
+    {
+        outList.push_back(FB::DOM::Element(new ElementImpl(*it)));
+    }
+    return outList;
+}

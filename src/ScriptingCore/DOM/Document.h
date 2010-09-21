@@ -39,6 +39,8 @@ namespace FB { namespace DOM {
     public:
         virtual Window getWindow();
         virtual Element getElementById(const std::string& elem_id);
+        virtual std::vector<Element> getElementsByTagName(const std::string& tagName);
+        virtual std::vector<Element> getElementsByTagName(const std::wstring& tagName);
     };
 
 }; };

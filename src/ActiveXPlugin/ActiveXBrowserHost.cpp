@@ -19,6 +19,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "DOM/Window.h"
 #include "AsyncFunctionCall.h"
 #include <boost/assign.hpp>
+#include "AXDOM/Window.h"
+#include "AXDOM/Document.h"
 using boost::assign::list_of;
 
 #include "Win/PluginWindowWin.h"
@@ -60,16 +62,26 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
+void ActiveXBrowserHost::initDOMObjects()
+{
+    if (!m_window) {
+        m_window = FB::DOM::Window(
+            new AXDOM::WindowImpl(IDispatchAPIPtr(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr()))), m_webBrowser));
+        m_document = FB::DOM::Document(
+            new AXDOM::DocumentImpl(IDispatchAPIPtr(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr()))), m_window, m_htmlDoc));
+    }
+}
+
 FB::DOM::Document ActiveXBrowserHost::getDOMDocument()
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::DOM::Document(new FB::DOM::DocumentImpl(retObj));
+    initDOMObjects();
+    return m_document;
 }
 
 FB::DOM::Window ActiveXBrowserHost::getDOMWindow()
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::DOM::Window(new FB::DOM::WindowImpl(retObj));
+    initDOMObjects();
+    return m_window;
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -89,24 +101,6 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
     } else {
         throw FB::script_error("Error executing JavaScript code");
     }
-}
-
-std::vector<FB::JSObject> ActiveXBrowserHost::getElementsByTagName(std::string tagName)
-{
-    CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
-    CComPtr<IHTMLElementCollection> list;
-    std::vector<FB::JSObject> tagList;
-    doc->getElementsByTagName(CComBSTR(FB::utf8_to_wstring(tagName).c_str()), &list);
-    long length(0);
-    if (SUCCEEDED(list->get_length(&length))) {
-        for (long i = 0; i < length; i++) {
-            CComPtr<IDispatch> dispObj;
-            CComVariant idx(i);
-            list->item(idx, idx, &dispObj);
-            tagList.push_back(FB::JSObject(new IDispatchAPI(dispObj.p, as_ActiveXBrowserHost(shared_ptr()))));
-        }
-    }
-    return tagList;
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)

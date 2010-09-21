@@ -48,12 +48,6 @@ void FB::BrowserHostWrapper::evaluateJavaScript(const std::wstring &script)
     evaluateJavaScript(FB::wstring_to_utf8(script));
 }
 
-std::vector<FB::JSObject> FB::BrowserHostWrapper::getElementsByTagName(std::wstring tagName)
-{
-    return getElementsByTagName(FB::wstring_to_utf8(tagName));
-}
-
-
 void FB::BrowserHostWrapper::assertMainThread()
 {
 #ifdef _DEBUG

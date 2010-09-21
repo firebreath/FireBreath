@@ -35,6 +35,11 @@ Document WindowImpl::getDocument()
     return Document(new DocumentImpl(api));
 }
 
+void WindowImpl::alert(const std::wstring& str)
+{
+    alert(FB::wstring_to_utf8(str));
+}
+
 void WindowImpl::alert(const std::string& str)
 {
     callMethod<void>("alert", variant_list_of(str));

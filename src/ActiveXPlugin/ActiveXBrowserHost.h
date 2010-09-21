@@ -48,15 +48,17 @@ public:
     FB::DOM::Document getDOMDocument();
     FB::DOM::Window getDOMWindow();
     void evaluateJavaScript(const std::string &script);
-    std::vector<FB::JSObject> getElementsByTagName(std::string tagName);
 
 protected:
+    void initDOMObjects();
     HWND m_hWnd;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
     CComPtr<IHTMLWindow2> m_htmlWin;
     CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
+    FB::DOM::Window m_window;
+    FB::DOM::Document m_document;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);
