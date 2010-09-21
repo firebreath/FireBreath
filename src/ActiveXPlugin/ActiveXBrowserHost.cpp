@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "COMJavascriptObject.h"
 #include "DOM/JSAPI_DOMDocument.h"
 #include "DOM/JSAPI_DOMWindow.h"
+#include "AsyncFunctionCall.h"
 #include <boost/assign.hpp>
 using boost::assign::list_of;
 
@@ -25,7 +26,7 @@ using boost::assign::list_of;
 using namespace FB;
 
 ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
-    : m_hWnd(NULL), m_webBrowser(doc)
+    : m_webBrowser(doc)
 {
     if (m_webBrowser.p) {
         m_webBrowser->get_Document(&m_htmlDocDisp);
@@ -44,9 +45,9 @@ ActiveXBrowserHost::~ActiveXBrowserHost(void)
 
 void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
-    if (m_hWnd != NULL) 
+    if (m_hWnd != NULL)
         ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
-            (LPARAM)new FB::WINDOWS_ASYNC_EVENT(func, userData));
+            (LPARAM)new FB::AsyncFunctionCall(func, userData));
 }
 
 void *ActiveXBrowserHost::getContextID()

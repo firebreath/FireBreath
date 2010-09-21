@@ -63,6 +63,8 @@ class ATL_NO_VTABLE CFBControl :
     public FB::BrowserPlugin
 {
 public:
+    HWND m_messageWin;
+
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
@@ -71,13 +73,21 @@ public:
 
     ActiveXBrowserHostPtr m_host;
 
+    void createMessageWindow();
+
     // The methods in this class are positioned in this file in the
     // rough order that they will be called in.
-    CFBControl() : pluginWin(NULL)
+    CFBControl() : pluginWin(NULL), m_messageWin(NULL)
     {
         FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
+    }
+
+    ~CFBControl()
+    {
+        if (m_messageWin)
+            ::DestroyWindow(m_messageWin);
     }
 
     // Note that the window has not been created yet; this is where we get
@@ -88,14 +98,11 @@ public:
         if (!pClientSite)
             return hr;
 
-        //CComPtr<IOleContainer> container;
         m_serviceProvider = pClientSite;
         if (!m_serviceProvider)
             return E_FAIL;
         m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
-        //if (m_spClientSite.p)
-        //    m_spClientSite->GetContainer(&container);
         if (m_webBrowser.p) {
             m_htmlDoc = m_webBrowser;
             m_propNotify = m_spClientSite;
@@ -103,6 +110,8 @@ public:
         }
 
         m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
+        m_messageWin = FB::PluginWindowWin::createMessageWindow();
+        m_host->setWindow(m_messageWin);
         pluginMain->SetHost(as_BrowserHost(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);
@@ -139,7 +148,6 @@ public:
     // Now the window has been created and we're going to call setReady on the PluginCore object
     LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
     {
-        m_host->setWindow(m_hWnd);
         pluginWin = _createPluginWindow(m_hWnd);
         pluginWin->setCallOldWinProc(true);
         pluginMain->SetWindow(pluginWin);
