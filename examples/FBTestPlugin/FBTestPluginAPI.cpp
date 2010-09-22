@@ -67,7 +67,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
-    return L"вот, я говорю \"" + val + L"\"";
+    return L"Ð²Ð¾Ñ, Ñ Ð³Ð¾Ð²Ð¾ÑÑ \"" + val + L"\"";
 }
 
 // Read/Write property someInt
