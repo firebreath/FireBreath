@@ -25,10 +25,14 @@ namespace FB
     class PluginEventSink;
     class BrowserObjectAPI;
     namespace DOM {
-        class WindowImpl;
-        class DocumentImpl;
-        typedef boost::shared_ptr<WindowImpl> Window;
-        typedef boost::shared_ptr<DocumentImpl> Document;
+        class Window;
+        class Document;
+        class Element;
+        class Node;
+        typedef boost::shared_ptr<Window> WindowPtr;
+        typedef boost::shared_ptr<Document> DocumentPtr;
+        typedef boost::shared_ptr<Element> ElementPtr;
+        typedef boost::shared_ptr<Node> NodePtr;
     };
 
     struct AsyncLogRequest
@@ -60,12 +64,20 @@ namespace FB
     public:
         void assertMainThread();
         bool isMainThread();
-        virtual DOM::Document getDOMDocument() = 0;
-        virtual DOM::Window getDOMWindow() = 0;
+        virtual DOM::DocumentPtr getDOMDocument() = 0;
+        virtual DOM::WindowPtr getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
         virtual void evaluateJavaScript(const std::wstring &script);
-        virtual std::string getLocation() { return m_location; }
         virtual void htmlLog(const std::string& str);
+
+public:
+    // These methods are pseudo-public; they shouldn't be
+    // called directly.  Call the ::create method on the 
+    // DOM object you want
+    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
+    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
+    virtual FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
+    virtual FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
 
     protected:
         BrowserHost shared_ptr()

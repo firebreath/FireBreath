@@ -21,21 +21,22 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB { namespace DOM {
     /**
-     * NodeImpl (used as Node, a shared_ptr)
+     * Node (used as NodePtr, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM node
      **/
-    class NodeImpl;
-    typedef boost::shared_ptr<NodeImpl> Node;
+    class Node;
+    typedef boost::shared_ptr<Node> NodePtr;
 
-    class NodeImpl : public boost::enable_shared_from_this<NodeImpl>
+    class Node : public boost::enable_shared_from_this<Node>
     {
     public:
-        NodeImpl(const JSObject& element) : m_element(element) { }
-        virtual ~NodeImpl() { }
+        Node(const JSObject& element) : m_element(element) { }
+        virtual ~Node() { }
 
         virtual FB::JSObject getJSObject() { return m_element; }
-        Node node() { return shared_from_this(); }
+        NodePtr node() { return shared_from_this(); }
+        static NodePtr create(FB::JSObject &api) { return api->host->_createNode(api); }
 
     public:
         template <class T>
@@ -68,10 +69,10 @@ namespace FB { namespace DOM {
             return tmp.convert_cast<T>();
         }
 
-        virtual Node getNode(const std::wstring& name);
-        virtual Node getNode(const std::string& name);
+        virtual NodePtr getNode(const std::wstring& name);
+        virtual NodePtr getNode(const std::string& name);
 
-        virtual Node getNode(int idx);
+        virtual NodePtr getNode(int idx);
 
         virtual void setProperty(const std::wstring& name, const variant& val);
         virtual void setProperty(const std::string& name, const variant& val);

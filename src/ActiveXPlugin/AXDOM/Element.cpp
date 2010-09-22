@@ -16,11 +16,14 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 using namespace AXDOM;
 
-ElementImpl::ElementImpl(const FB::JSObject& element, IHTMLElement *el)
-    : FB::DOM::ElementImpl(element), m_axElement(el)
+Element::Element(const FB::JSObject& element, IWebBrowser *web)
+    : FB::DOM::Element(element), m_axElement(as_IDispatchAPI(element)->getIDispatch()),
+      m_webBrowser(web)
 {
+    if (!m_axElement)
+        throw std::bad_cast("This is not a valid Element");
 }
 
-ElementImpl::~ElementImpl()
+Element::~Element()
 {
 }

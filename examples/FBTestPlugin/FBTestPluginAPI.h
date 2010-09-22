@@ -56,6 +56,8 @@ public:
     // Method to test getting a tag from the page
     FB::variant getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute);
 
+    std::string getPageLocation();
+
 private:
     FB::BrowserHost m_host;
     FB::JSAPIPtr m_simpleMath;

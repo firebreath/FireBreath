@@ -45,9 +45,18 @@ public:
     void setWindow(HWND wnd);
 
 public:
-    FB::DOM::Document getDOMDocument();
-    FB::DOM::Window getDOMWindow();
+    FB::DOM::DocumentPtr getDOMDocument();
+    FB::DOM::WindowPtr getDOMWindow();
     void evaluateJavaScript(const std::string &script);
+
+public:
+    // These methods are pseudo-public; they shouldn't be
+    // called directly.  Call the ::create method on the 
+    // DOM object you want
+    FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
+    FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
+    FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
+    FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
 
 protected:
     void initDOMObjects();
@@ -57,8 +66,8 @@ protected:
     CComPtr<IHTMLWindow2> m_htmlWin;
     CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
-    FB::DOM::Window m_window;
-    FB::DOM::Document m_document;
+    FB::DOM::WindowPtr m_window;
+    FB::DOM::DocumentPtr m_document;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);

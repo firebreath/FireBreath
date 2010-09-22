@@ -28,21 +28,23 @@ namespace FB { namespace DOM {
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class WindowImpl;
-    typedef boost::shared_ptr<WindowImpl> Window;
-    class WindowImpl : public NodeImpl
+    class Window;
+    typedef boost::shared_ptr<Window> WindowPtr;
+    class Window : public Node
     {
     public:
-        WindowImpl(const JSObject& element);
-        virtual ~WindowImpl();
-        Window window() { return boost::dynamic_pointer_cast<WindowImpl>(node()); }
+        Window(const JSObject& element);
+        virtual ~Window();
+        WindowPtr window() { return boost::dynamic_pointer_cast<Window>(node()); }
+        static WindowPtr create(FB::JSObject &api) { return api->host->_createWindow(api); }
 
     public:
-        virtual Document getDocument();
+        virtual DocumentPtr getDocument();
         virtual void alert(const std::string& str);
         virtual void alert(const std::wstring& str);
-        virtual Node createArray();
-        virtual Node createMap();
+        virtual NodePtr createArray();
+        virtual NodePtr createMap();
+        virtual std::string getLocation();
     };
 
 } };

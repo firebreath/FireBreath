@@ -45,8 +45,8 @@ namespace FB { namespace Npapi {
         virtual void *getContextID() { return (void *)m_npp; }
 
     public:
-        FB::DOM::Document getDOMDocument();
-        FB::DOM::Window getDOMWindow();
+        FB::DOM::DocumentPtr getDOMDocument();
+        FB::DOM::WindowPtr getDOMWindow();
         void evaluateJavaScript(const std::string &script);
 
     public:

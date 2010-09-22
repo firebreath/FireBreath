@@ -21,38 +21,43 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-WindowImpl::WindowImpl(const FB::JSObject& element) : NodeImpl(element)
+Window::Window(const FB::JSObject& element) : Node(element)
 {
 }
 
-WindowImpl::~WindowImpl()
+Window::~Window()
 {
 }
 
-Document WindowImpl::getDocument()
+DocumentPtr Window::getDocument()
 {
     JSObject api = getProperty<JSObject>("document");
-    return Document(new DocumentImpl(api));
+    return Document::create(api);
 }
 
-void WindowImpl::alert(const std::wstring& str)
+void Window::alert(const std::wstring& str)
 {
     alert(FB::wstring_to_utf8(str));
 }
 
-void WindowImpl::alert(const std::string& str)
+void Window::alert(const std::string& str)
 {
     callMethod<void>("alert", variant_list_of(str));
 }
 
-Node WindowImpl::createArray()
+NodePtr Window::createArray()
 {
     JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
-    return Node(new NodeImpl(arr));
+    return Node::create(arr);
 }
 
-Node WindowImpl::createMap()
+NodePtr Window::createMap()
 {
     JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
-    return Node(new NodeImpl(arr));
+    return Node::create(arr);
+}
+
+std::string Window::getLocation()
+{
+    return getNode("location")->getProperty<std::string>("href");
 }

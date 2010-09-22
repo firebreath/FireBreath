@@ -16,54 +16,54 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-ElementImpl::ElementImpl(const FB::JSObject& element) : NodeImpl(element)
+Element::Element(const FB::JSObject& element) : Node(element)
 {
 }
 
-ElementImpl::~ElementImpl()
+Element::~Element()
 {
 }
 
-std::string ElementImpl::getInnerHTML()
+std::string Element::getInnerHTML()
 {
     return getProperty<std::string>("innerHTML");
 }
-void ElementImpl::setInnerHTML(const std::string& html)
+void Element::setInnerHTML(const std::string& html)
 {
     setProperty("innerHTML", html);
 }
 
-int ElementImpl::getWidth()
+int Element::getWidth()
 {
     return getProperty<int>("width");
 }
-void ElementImpl::setWidth(int width)
+void Element::setWidth(int width)
 {
     setProperty("width", width);
 }
 
-int ElementImpl::getHeight()
+int Element::getHeight()
 {
     return getProperty<int>("height");
 }
-void ElementImpl::setHeight(int height)
+void Element::setHeight(int height)
 {
     setProperty("height", height);
 }
 
-int ElementImpl::getChildNodeCount()
+int Element::getChildNodeCount()
 {
     return getNode("childNodes")->getProperty<int>("length");
 }
 
-Element ElementImpl::getChildNode(int idx)
+ElementPtr Element::getChildNode(int idx)
 {
-    Element retVal(getElement("childNodes")->getElement(idx));
+    ElementPtr retVal(getElement("childNodes")->getElement(idx));
     return retVal;
 }
 
-Element ElementImpl::getParentNode()
+ElementPtr Element::getParentNode()
 {
-    Element retVal(getElement("parentNode"));
+    ElementPtr retVal(getElement("parentNode"));
     return retVal;
 }

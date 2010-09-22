@@ -65,20 +65,20 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     }
 }
 
-FB::DOM::Document NpapiBrowserHost::getDOMDocument()
+FB::DOM::DocumentPtr NpapiBrowserHost::getDOMDocument()
 {
     if (!m_htmlDoc)
         throw std::runtime_error("Cannot find HTML document");
 
-    return FB::DOM::Document(new FB::DOM::DocumentImpl(m_htmlDoc));
+    return FB::DOM::DocumentPtr(new FB::DOM::Document(m_htmlDoc));
 }
 
-FB::DOM::Window NpapiBrowserHost::getDOMWindow()
+FB::DOM::WindowPtr NpapiBrowserHost::getDOMWindow()
 {
     if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
-    return FB::DOM::Window(new FB::DOM::WindowImpl(m_htmlWin));
+    return FB::DOM::WindowPtr(new FB::DOM::Window(m_htmlWin));
 }
 
 void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
@@ -186,7 +186,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         dst->value.stringValue.UTF8Length = str.size();
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        DOM::Node outArr = this->getDOMWindow()->createArray();
+        DOM::NodePtr outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             outArr->callMethod<void>("push", variant_list_of(*it));
@@ -199,7 +199,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        DOM::Node out = this->getDOMWindow()->createMap();
+        DOM::NodePtr out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
             out->setProperty(it->first, it->second);

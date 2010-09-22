@@ -19,42 +19,40 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-DocumentImpl::DocumentImpl(const FB::JSObject& element) : ElementImpl(element)
+Document::Document(const FB::JSObject& element) : Element(element)
 {
 }
 
-DocumentImpl::~DocumentImpl()
+Document::~Document()
 {
 }
 
-Window DocumentImpl::getWindow()
+WindowPtr Document::getWindow()
 {
     JSObject api = getProperty<FB::JSObject>("window");
-    Window retVal(new WindowImpl(api));
-    return retVal;
+    return Window::create(api);
 }
 
-Element DocumentImpl::getElementById(const std::string& id)
+ElementPtr Document::getElementById(const std::string& id)
 {
     JSObject api =
         callMethod<JSObject>("getElementById", FB::VariantList(variant_list_of(id)));
-    Element retVal(new ElementImpl(api));
-    return retVal;
+    return Element::create(api);
 }
 
-std::vector<Element> DocumentImpl::getElementsByTagName(const std::wstring& tagName)
+std::vector<ElementPtr> Document::getElementsByTagName(const std::wstring& tagName)
 {
     return getElementsByTagName(FB::wstring_to_utf8(tagName));
 }
 
-std::vector<Element> DocumentImpl::getElementsByTagName(const std::string& tagName)
+std::vector<ElementPtr> Document::getElementsByTagName(const std::string& tagName)
 {
     std::vector<FB::JSObject> tagList = callMethod<std::vector<FB::JSObject>>("getElementsByTagName", FB::variant_list_of(tagName));
     std::vector<FB::JSObject>::iterator it;
-    std::vector<Element> outList;
+    std::vector<ElementPtr> outList;
     for (it = tagList.begin(); it != tagList.end(); it++)
     {
-        outList.push_back(FB::DOM::Element(new ElementImpl(*it)));
+        outList.push_back(Element::create(*it));
     }
     return outList;
 }

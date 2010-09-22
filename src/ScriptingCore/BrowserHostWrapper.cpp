@@ -30,7 +30,7 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
 {
     FB::AsyncLogRequest *req = (FB::AsyncLogRequest*)logReq;
     try {
-        FB::DOM::Window window = req->m_host->getDOMWindow();
+        FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
         FB::JSObject obj = window->getProperty<FB::JSObject>("console");
         printf("Logging: %s\n", req->m_msg.c_str());
@@ -47,6 +47,27 @@ void FB::BrowserHostWrapper::evaluateJavaScript(const std::wstring &script)
 {
     evaluateJavaScript(FB::wstring_to_utf8(script));
 }
+
+FB::DOM::WindowPtr FB::BrowserHostWrapper::_createWindow(const FB::JSObject& obj)
+{
+    return FB::DOM::WindowPtr(new FB::DOM::Window(obj));
+}
+
+FB::DOM::DocumentPtr FB::BrowserHostWrapper::_createDocument(const FB::JSObject& obj)
+{
+    return FB::DOM::DocumentPtr(new FB::DOM::Document(obj));
+}
+
+FB::DOM::ElementPtr FB::BrowserHostWrapper::_createElement(const FB::JSObject& obj)
+{
+    return FB::DOM::ElementPtr(new FB::DOM::Element(obj));
+}
+
+FB::DOM::NodePtr FB::BrowserHostWrapper::_createNode(const FB::JSObject& obj)
+{
+    return FB::DOM::NodePtr(new FB::DOM::Node(obj));
+}
+
 
 void FB::BrowserHostWrapper::assertMainThread()
 {

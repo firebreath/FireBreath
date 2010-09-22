@@ -21,6 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/assign.hpp>
 #include "AXDOM/Window.h"
 #include "AXDOM/Document.h"
+#include "AXDOM/Element.h"
+#include "AXDOM/Node.h"
 using boost::assign::list_of;
 
 #include "Win/PluginWindowWin.h"
@@ -35,9 +37,6 @@ ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
         m_htmlDoc = m_htmlDocDisp;
         m_htmlDoc->get_parentWindow(&m_htmlWin);
         m_htmlWinDisp = m_htmlWin;
-        CComBSTR bstr;
-        m_webBrowser->get_LocationURL(&bstr);
-        m_location = FB::wstring_to_utf8(std::wstring(bstr.m_str));
     }
 }
 
@@ -62,23 +61,41 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
+FB::DOM::WindowPtr ActiveXBrowserHost::_createWindow(const FB::JSObject& obj)
+{
+    return FB::DOM::WindowPtr(new AXDOM::Window(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+FB::DOM::DocumentPtr ActiveXBrowserHost::_createDocument(const FB::JSObject& obj)
+{
+    return FB::DOM::DocumentPtr(new AXDOM::Document(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObject& obj)
+{
+    return FB::DOM::ElementPtr(new AXDOM::Element(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObject& obj)
+{
+    return FB::DOM::NodePtr(new AXDOM::Node(as_IDispatchAPI(obj), m_webBrowser));
+}
+
 void ActiveXBrowserHost::initDOMObjects()
 {
     if (!m_window) {
-        m_window = FB::DOM::Window(
-            new AXDOM::WindowImpl(IDispatchAPIPtr(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr()))), m_webBrowser));
-        m_document = FB::DOM::Document(
-            new AXDOM::DocumentImpl(IDispatchAPIPtr(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr()))), m_window, m_htmlDoc));
+        m_window = DOM::Window::create(FB::JSObject(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr()))));
+        m_document = DOM::Document::create(FB::JSObject(IDispatchAPIPtr(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())))));
     }
 }
 
-FB::DOM::Document ActiveXBrowserHost::getDOMDocument()
+FB::DOM::DocumentPtr ActiveXBrowserHost::getDOMDocument()
 {
     initDOMObjects();
     return m_document;
 }
 
-FB::DOM::Window ActiveXBrowserHost::getDOMWindow()
+FB::DOM::WindowPtr ActiveXBrowserHost::getDOMWindow()
 {
     initDOMObjects();
     return m_window;
@@ -196,7 +213,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         outVar = bStr;
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        DOM::Node outArr = this->getDOMWindow()->createArray();
+        DOM::NodePtr outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             FB::VariantList vl = list_of(*it);
@@ -208,7 +225,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        DOM::Node out = this->getDOMWindow()->createMap();
+        DOM::NodePtr out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
             out->setProperty(it->first, it->second);

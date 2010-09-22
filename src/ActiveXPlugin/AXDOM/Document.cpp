@@ -13,26 +13,33 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "IDispatchAPI.h"
+#include "DOM/Window.h"
+#include "DOM/Element.h"
+
 #include "Document.h"
-#include "Element.h"
 
 using namespace AXDOM;
 
-DocumentImpl::DocumentImpl(const FB::JSObject& obj, FB::DOM::Window &win, IHTMLDocument2 *doc)
-    : m_htmlDoc(doc), m_win(win), FB::DOM::DocumentImpl(obj)
+Document::Document(const FB::JSObject& obj, IWebBrowser2 *web)
+    : m_htmlDoc(as_IDispatchAPI(obj)->getIDispatch()), m_webBrowser(web), FB::DOM::Document(obj)
 {
 }
 
-DocumentImpl::~DocumentImpl()
+Document::~Document()
 {
 }
 
-FB::DOM::Window DocumentImpl::getWindow()
+FB::DOM::WindowPtr Document::getWindow()
 {
-    return m_win;
+    CComQIPtr<IHTMLWindow2> htmlWin;
+    m_htmlDoc->get_parentWindow(&htmlWin);
+    CComQIPtr<IDispatch> windowDisp(htmlWin);
+    FB::JSObject api(new IDispatchAPI(htmlWin.p, as_ActiveXBrowserHost(m_element->host)));
+
+    return FB::DOM::Window::create(api);
 }
 
-FB::DOM::Element DocumentImpl::getElementById(const std::string& elem_id)
+FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id)
 {
     CComQIPtr<IHTMLDocument3> doc3(m_htmlDoc);
     if (!doc3) {
@@ -41,16 +48,15 @@ FB::DOM::Element DocumentImpl::getElementById(const std::string& elem_id)
     CComPtr<IHTMLElement> el(NULL);
     doc3->getElementById(CComBSTR(FB::utf8_to_wstring(elem_id).c_str()), &el);
     CComQIPtr<IDispatch> disp(el);
-    IDispatchAPIPtr ptr(new IDispatchAPI(disp.p, as_ActiveXBrowserHost(this->m_element->host)));
-    FB::DOM::Element element(new AXDOM::ElementImpl(ptr, el));
-    return element;
+    FB::JSObject ptr(new IDispatchAPI(disp.p, as_ActiveXBrowserHost(this->m_element->host)));
+    return FB::DOM::Element::create(ptr);
 }
 
-std::vector<FB::DOM::Element> DocumentImpl::getElementsByTagName(const std::string& tagName)
+std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::string& tagName)
 {
     CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
     CComPtr<IHTMLElementCollection> list;
-    std::vector<FB::DOM::Element> tagList;
+    std::vector<FB::DOM::ElementPtr> tagList;
     doc->getElementsByTagName(CComBSTR(FB::utf8_to_wstring(tagName).c_str()), &list);
     long length(0);
     if (SUCCEEDED(list->get_length(&length))) {
@@ -59,8 +65,7 @@ std::vector<FB::DOM::Element> DocumentImpl::getElementsByTagName(const std::stri
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
             FB::JSObject obj(new IDispatchAPI(dispObj.p, as_ActiveXBrowserHost(this->m_element->host)));
-            CComQIPtr<IHTMLElement> el(dispObj);
-            tagList.push_back(FB::DOM::Element(new AXDOM::ElementImpl(obj, el)));
+            tagList.push_back(FB::DOM::Element::create(obj));
         }
     }
     return tagList;

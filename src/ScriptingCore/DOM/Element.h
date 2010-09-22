@@ -22,19 +22,20 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 namespace FB { namespace DOM {
 
     /**
-     * ElementImpl (used as Element, a shared_ptr)
+     * Element (used as ElementPtr, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class ElementImpl;
-    typedef boost::shared_ptr<ElementImpl> Element;
-    class ElementImpl : public NodeImpl
+    class Element;
+    typedef boost::shared_ptr<Element> ElementPtr;
+    class Element : public Node
     {
     public:
-        ElementImpl(const FB::JSObject& element);
+        Element(const FB::JSObject& element);
 
-        virtual ~ElementImpl();
-        Element element() { return boost::dynamic_pointer_cast<ElementImpl>(node()); }
+        virtual ~Element();
+        ElementPtr element() { return boost::dynamic_pointer_cast<Element>(node()); }
+        static ElementPtr create(FB::JSObject &api) { return api->host->_createElement(api); }
 
     public:
         virtual std::string getInnerHTML();
@@ -46,20 +47,20 @@ namespace FB { namespace DOM {
         virtual void setHeight(int);
 
         virtual int getChildNodeCount();
-        virtual Element getChildNode(int idx);
-        virtual Element getParentNode();
+        virtual ElementPtr getChildNode(int idx);
+        virtual ElementPtr getParentNode();
 
-        virtual Element getElement(const std::string& name)
+        virtual ElementPtr getElement(const std::string& name)
         {
             JSObject api = getProperty<FB::JSObject>(name);
-            Element retVal(new ElementImpl(api));
+            ElementPtr retVal(new Element(api));
             return retVal;
         }
 
-        virtual Element getElement(int idx)
+        virtual ElementPtr getElement(int idx)
         {
             JSObject api = getProperty<FB::JSObject>(idx);
-            Element retVal(new ElementImpl(api));
+            ElementPtr retVal(new Element(api));
             return retVal;
         }
     };

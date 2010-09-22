@@ -16,34 +16,32 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "Node.h"
 
-FB::DOM::Node FB::DOM::NodeImpl::getNode(const std::wstring& name)
+FB::DOM::NodePtr FB::DOM::Node::getNode(const std::wstring& name)
 {
     return getNode(FB::wstring_to_utf8(name));
 }
-FB::DOM::Node FB::DOM::NodeImpl::getNode(const std::string& name)
+FB::DOM::NodePtr FB::DOM::Node::getNode(const std::string& name)
 {
     FB::JSObject api = getProperty<FB::JSObject>(name);
-    FB::DOM::Node retVal(new NodeImpl(api));
-    return retVal;
+    return Node::create(api);
 }
 
-FB::DOM::Node FB::DOM::NodeImpl::getNode(int idx)
+FB::DOM::NodePtr FB::DOM::Node::getNode(int idx)
 {
     FB::JSObject api = getProperty<JSObject>(idx);
-    FB::DOM::Node retVal(new NodeImpl(api));
-    return retVal;
+    return Node::create(api);
 }
 
-void FB::DOM::NodeImpl::setProperty(const std::wstring& name, const FB::variant& val)
+void FB::DOM::Node::setProperty(const std::wstring& name, const FB::variant& val)
 {
     setProperty(FB::wstring_to_utf8(name), val);
 }
-void FB::DOM::NodeImpl::setProperty(const std::string& name, const FB::variant& val)
+void FB::DOM::Node::setProperty(const std::string& name, const FB::variant& val)
 {
     m_element->SetProperty(name, val);
 }
 
-void FB::DOM::NodeImpl::setProperty(int idx, const FB::variant& val)
+void FB::DOM::Node::setProperty(int idx, const FB::variant& val)
 {
     m_element->SetProperty(idx, val);
 }

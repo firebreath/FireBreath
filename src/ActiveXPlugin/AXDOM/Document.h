@@ -25,23 +25,23 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 namespace AXDOM {
 
     /**
-     * DocumentImpl - used as Document (which is a shared_ptr)
+     * Document - used as Document (which is a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM document
      **/
-    class DocumentImpl : public FB::DOM::DocumentImpl
+    class Document : public FB::DOM::Document
     {
     public:
-        DocumentImpl(const FB::JSObject &element, FB::DOM::Window &win, IHTMLDocument2 *doc);
-        virtual ~DocumentImpl();
+        Document(const FB::JSObject &element, IWebBrowser2 *web);
+        virtual ~Document();
 
     public:
-        virtual FB::DOM::Window getWindow();
-        virtual FB::DOM::Element getElementById(const std::string& elem_id);
-        virtual std::vector<FB::DOM::Element> getElementsByTagName(const std::string& tagName);
+        virtual FB::DOM::WindowPtr getWindow();
+        virtual FB::DOM::ElementPtr getElementById(const std::string& elem_id);
+        virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(const std::string& tagName);
 
     protected:
-        FB::DOM::Window m_win;
+        CComQIPtr<IWebBrowser> m_webBrowser;
         CComQIPtr<IHTMLDocument2> m_htmlDoc;
     };
 

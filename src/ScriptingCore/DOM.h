@@ -19,15 +19,15 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 namespace FB { namespace DOM {
 
-    class WindowImpl;
-    class DocumentImpl;
-    class ElementImpl;
-    class NodeImpl;
+    class Window;
+    class Document;
+    class Element;
+    class Node;
 
-    typedef boost::shared_ptr<WindowImpl> Window;
-    typedef boost::shared_ptr<DocumentImpl> Document;
-    typedef boost::shared_ptr<ElementImpl> Element;
-    typedef boost::shared_ptr<NodeImpl> Node;
+    typedef boost::shared_ptr<Window> WindowPtr;
+    typedef boost::shared_ptr<Document> DocumentPtr;
+    typedef boost::shared_ptr<Element> ElementPtr;
+    typedef boost::shared_ptr<Node> NodePtr;
 
 }; };
 

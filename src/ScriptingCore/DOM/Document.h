@@ -22,25 +22,26 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 namespace FB { namespace DOM {
 
     /**
-     * DocumentImpl - used as Document (which is a shared_ptr)
+     * Document - used as DocumentPtr (which is a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM document
      **/
-    class DocumentImpl;
-    typedef boost::shared_ptr<DocumentImpl> Document;
+    class Document;
+    typedef boost::shared_ptr<Document> DocumentPtr;
 
-    class DocumentImpl : public ElementImpl
+    class Document : public Element
     {
     public:
-        DocumentImpl(const FB::JSObject &element);
-        virtual ~DocumentImpl();
-        Document document() { return boost::dynamic_pointer_cast<DocumentImpl>(node()); }
+        Document(const FB::JSObject &element);
+        virtual ~Document();
+        DocumentPtr document() { return boost::dynamic_pointer_cast<Document>(node()); }
+        static DocumentPtr create(FB::JSObject &api) { return api->host->_createDocument(api); }
 
     public:
-        virtual Window getWindow();
-        virtual Element getElementById(const std::string& elem_id);
-        virtual std::vector<Element> getElementsByTagName(const std::string& tagName);
-        virtual std::vector<Element> getElementsByTagName(const std::wstring& tagName);
+        virtual WindowPtr getWindow();
+        virtual ElementPtr getElementById(const std::string& elem_id);
+        virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName);
+        virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName);
     };
 
 }; };

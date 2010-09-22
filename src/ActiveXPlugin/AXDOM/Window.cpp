@@ -19,25 +19,38 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace AXDOM;
 
-WindowImpl::WindowImpl(FB::JSObject obj, IWebBrowser2 *web)
-    : m_webBrowser(web), FB::DOM::WindowImpl(obj)
+Window::Window(FB::JSObject obj, IWebBrowser2 *web)
+    : m_webBrowser(web), m_htmlWin(as_IDispatchAPI(obj)->getIDispatch()), FB::DOM::Window(obj)
 {
-    m_webBrowser->get_Document(&m_htmlDocDisp);
-    m_htmlDoc = m_htmlDocDisp;
-    m_htmlDoc->get_parentWindow(&m_htmlWin);
+    if (!m_htmlWin) {
+        throw new std::bad_cast("This is not a valid Window object");
+    }
 }
 
-WindowImpl::~WindowImpl()
+Window::~Window()
 {
 }
 
-FB::DOM::Document WindowImpl::getDocument()
+FB::DOM::DocumentPtr Window::getDocument()
 {
-    IDispatchAPIPtr docAPI(new IDispatchAPI(m_htmlDocDisp, as_ActiveXBrowserHost(this->m_element->host)));
-    return FB::DOM::Document(new DocumentImpl(docAPI, window(), m_htmlDoc));
+    CComPtr<IHTMLDocument2> htmlDoc;
+    m_htmlWin->get_document(&htmlDoc);
+    CComQIPtr<IDispatch> htmlDocDisp(htmlDoc);
+    FB::JSObject docAPI(new IDispatchAPI(htmlDocDisp, as_ActiveXBrowserHost(this->m_element->host)));
+    return FB::DOM::Document::create(docAPI);
 }
 
-void WindowImpl::alert(const std::string& str)
+void Window::alert(const std::string& str)
 {
     m_htmlWin->alert(CComBSTR(FB::utf8_to_wstring(str).c_str()));
+}
+
+std::string Window::getLocation()
+{
+    CComBSTR bstr;
+    //m_webBrowser->get_LocationURL(&bstr);
+    CComPtr<IHTMLLocation> location;
+    m_htmlWin->get_location(&location);
+    location->get_href(&bstr);
+    return FB::wstring_to_utf8(std::wstring(bstr.m_str));
 }

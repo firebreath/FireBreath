@@ -28,20 +28,19 @@ namespace AXDOM {
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class WindowImpl : public FB::DOM::WindowImpl
+    class Window : public FB::DOM::Window
     {
     public:
-        WindowImpl(FB::JSObject obj, IWebBrowser2 *web);
-        virtual ~WindowImpl();
+        Window(FB::JSObject obj, IWebBrowser2 *web);
+        virtual ~Window();
 
     public:
-        virtual FB::DOM::Document getDocument();
+        virtual FB::DOM::DocumentPtr getDocument();
         virtual void alert(const std::string& str);
+        virtual std::string getLocation();
 
     protected:
-        CComPtr<IHTMLWindow2> m_htmlWin;
-        CComPtr<IHTMLDocument2> m_htmlDoc;
-        CComPtr<IDispatch> m_htmlDocDisp;
+        CComQIPtr<IHTMLWindow2> m_htmlWin;
         CComPtr<IWebBrowser2> m_webBrowser;
     };
 

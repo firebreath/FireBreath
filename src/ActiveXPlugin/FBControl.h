@@ -73,8 +73,6 @@ public:
 
     ActiveXBrowserHostPtr m_host;
 
-    void createMessageWindow();
-
     // The methods in this class are positioned in this file in the
     // rough order that they will be called in.
     CFBControl() : pluginWin(NULL), m_messageWin(NULL)
