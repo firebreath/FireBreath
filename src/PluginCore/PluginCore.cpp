@@ -103,7 +103,6 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 m_params[key] = tmp;
             }
         } catch (std::exception &ex) {
-            printf(ex.what());
         }
     }
 }
