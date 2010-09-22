@@ -23,14 +23,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define WM_ASYNCTHREADINVOKE    WM_USER + 1
 
 namespace FB {
-    struct WINDOWS_ASYNC_EVENT
-    {
-        WINDOWS_ASYNC_EVENT(void (*f)(void *), void *ud) 
-            : func(f), userData(ud) { }
-        void (*func)(void *);
-        void *userData;
-    };
-
 
     class PluginWindowWin : public PluginWindow
     {
@@ -48,6 +40,8 @@ namespace FB {
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
         virtual void InvalidateWindow();
+
+        static HWND createMessageWindow();
 
     protected:
         static PluginWindowMap m_windowMap;

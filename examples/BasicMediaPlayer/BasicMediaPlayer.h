@@ -56,6 +56,10 @@ public:
 
 private:
     typedef boost::shared_ptr<MediaPlayer> MediaPlayerPtr;
+    
+    bool play();
+    bool play(const std::string&);
+    bool play(long);
 
     void firePlaylistChanged();
     void fireCurrentItemChanged();

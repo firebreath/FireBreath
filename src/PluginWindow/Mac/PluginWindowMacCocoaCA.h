@@ -33,10 +33,11 @@ namespace FB {
         void clearWindow();
         void InvalidateWindow();
         void setLayer(void* layer);
-        void* getLayer() { return m_layer; }
+        void* getLayer() const;
 
     private:
-        void* m_layer;
+        struct Impl;
+        std::auto_ptr<Impl> m_impl;
     };
 };
 #endif // H_PLUGINWINDOWMAC_COCOA_CA

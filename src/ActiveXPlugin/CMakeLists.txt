@@ -73,6 +73,12 @@ add_custom_command(
     DEPENDS ${IDL_FILE}
     )
 
+file (GLOB AXDOM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    ./AXDOM/*
+)
+
+source_group(AXDOM FILES ${AXDOM})
+
 file (GLOB ACTIVEX_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./FBControl.*
     ./FireBreathWin.*
@@ -98,6 +104,7 @@ set (SOURCES
     ${JSAPI_OBJECTS}
     ${GENERAL}
     ${GENERATED_IDL}
+    ${AXDOM}
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})

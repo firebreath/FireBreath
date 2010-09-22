@@ -15,21 +15,45 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lexical_cast.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
+#include <cassert>
 
 using namespace FB::Npapi;
+
+#define RETAIN_COUNT 10
+#define REFCOUNT_CUTOFF_MULT 7
 
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
     : BrowserObjectAPI(h), browser(h), obj(o)
 {
-    if (browser && o != NULL) {
-        browser->RetainObject(obj);
+    assert(browser);
+    if (o != NULL) {
+        /*
+         * This may look kinda hackish, but some browsers seem to have a bug with reference counting;
+         * somehow they get released more times than they should.  This isn't a perfect fix, but it helps.
+         * (see ~NPObjectAPI for the rest of the fix)
+         */
+        for (int i = 0; i < RETAIN_COUNT; i++) {
+            browser->RetainObject(obj);
+        }
     }
 }
 
 NPObjectAPI::~NPObjectAPI(void)
 {
-    if (browser && obj != NULL) {
-        browser->ReleaseObject(obj);
+    if (obj != NULL) {
+        /**
+         * Okay, this is far from perfect, but if the reference count
+         * is less then RETAIN_COUNT or is higher than
+         * RETAIN_COUNT * REFCOUNT_CUTTOFF_MULT then something
+         * is really off; to be safe, we'll just avoid doing any releases on 
+         * this object; this will absolutely cause a memory leak; however,
+         * that's better than a crash.
+         **/
+        if (obj->referenceCount >= RETAIN_COUNT && obj->referenceCount < (RETAIN_COUNT * REFCOUNT_CUTOFF_MULT)) {
+            for (int i = 0; i < RETAIN_COUNT; i++) {
+                browser->ReleaseObject(obj);
+            }
+        }
     }
 }
 

@@ -14,6 +14,7 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "NpapiBrowserHostAsyncWin.h"
+#include "AsyncFunctionCall.h"
 #include "Win/PluginWindowWin.h"
 
 using namespace FB::Npapi;
@@ -46,5 +47,5 @@ void NpapiBrowserHostAsyncWin::ScheduleAsyncCall(void (*func)(void*), void* user
         return;
     
     ::PostMessage(m_hwnd, WM_ASYNCTHREADINVOKE, NULL, 
-                  (LPARAM)new FB::WINDOWS_ASYNC_EVENT(func, userData));
+                  (LPARAM)new FB::AsyncFunctionCall(func, userData));
 }
