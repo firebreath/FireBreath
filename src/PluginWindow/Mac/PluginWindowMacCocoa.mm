@@ -21,51 +21,6 @@ PluginWindowMacCocoa::PluginWindowMacCocoa() {}
 
 PluginWindowMacCocoa::~PluginWindowMacCocoa() {}
 
-/*
-char mapCharacter(char character) {
-    switch(character) {
-    case 18:
-        return '1';    
-    case 19:
-        return '2';
-    case 20:
-        return '3';
-    case 21:
-        return '4';
-    case 23:
-        return '5';
-    case 22:
-        return '6';
-    case 26:
-        return '7';
-    case 28:
-        return '8';
-    case 25:
-        return '9';
-    case 29:
-        return '0';
-    case 27:
-        return '-';
-    case 24:
-        return '+';
-    case 44:
-        return '/';
-    case 36: 
-        // enter
-        return 0xd;
-    case 51:
-        // backspace
-        return 0x08;
-    case 123:
-        return 0x1c;
-    case 124:
-        return 0x1d;
-    default: 
-        return 0;
-    }
-}
-*/
-
 int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     // Let the plugin handle the event if it wants
     MacEventCocoa* macEv = new MacEventCocoa(evt);

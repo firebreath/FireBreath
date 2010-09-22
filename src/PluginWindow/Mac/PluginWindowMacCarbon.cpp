@@ -47,7 +47,7 @@ NPRect PluginWindowMacCarbon::getWindowPosition() {
     windRect.left = m_x;
     windRect.top = m_y;
     windRect.right = m_x + m_width;
-    windRect.bottom = m_y - m_height;
+    windRect.bottom = m_y + m_height;
     return windRect;
 }
 
