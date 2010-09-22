@@ -3,60 +3,41 @@
 RUN_FROM=`pwd`
 FB_ROOT_REL=${0%/*}
 FB_ROOT=`cd $FB_ROOT_REL; pwd`
-BUILDDIR=""
-PROJDIR=""
-USED_ARGS=0
 
-function print_usage()
-{
-    echo "usage: $0 [<project dir> [<build dir>]] [<params ...>]"
-}
-
-function check_proj_dir()
-{
-    if [ ! -d $1 ]; then
-        echo "ERROR: Project directory $1 does not exist."
-        print_usage
-        exit 1
-    fi
-}
-
-if [[ "$1" != "" && ! ( "$1" =~ ^- ) ]]; then 
-# $1 not empty and doesn't start with '-'
-    check_proj_dir "$1"
-    PROJDIR="$1"
-    USED_ARGS=1
-    if [[ "$2" != "" && ! ( "$2" =~ ^- ) ]]; then
-    # $2 not empty and doesn't start with '-'
-        BUILDDIR="$2"
-        USED_ARGS=2
-    fi
-fi
-
-if [ "$PROJDIR" = "" ]; then
-# PROJDIR not set
-    PROJDIR="${RUN_FROM}/projects"
-fi
-
-if [ "$BUILDDIR" = "" ]; then
-# BUILDIR not set
-    if [ "$PROJDIR" = "examples" ]; then
+if [ "$1" = "" ]; then
+    BUILDDIR=${RUN_FROM}/build
+    PROJDIR=${RUN_FROM}/projects
+elif [ "$2" = "" ]; then
+    if [ "$1" = "examples" ]; then
         BUILDDIR=${RUN_FROM}/buildex
     else
         BUILDDIR=${RUN_FROM}/build
     fi
+    if [ -d "$1" ]; then
+        PROJDIR=`cd $1; pwd`
+    else
+        PROJDIR=$1
+    fi
+else
+    if [ -d "$1" ]; then
+        PROJDIR=`cd $1; pwd`
+    else
+        PROJDIR=$1
+    fi
+    mkdir -p "$2"
+    BUILDDIR=`cd $2; pwd`
 fi
 
-check_proj_dir "$PROJDIR"
-PROJDIR=`cd $PROJDIR; pwd`
+if [ ! -d "$PROJDIR" ]; then
+    echo ERROR: Project directory "$PROJDIR" does not exist.  usage: $0 \<project dir\> \<build dir\>
+    exit
+fi
 
 mkdir -p "$BUILDDIR"
-BUILDDIR=`cd $BUILDDIR; pwd`
 
 echo Using projects in: $PROJDIR
 echo Generating build files in: $BUILDDIR
 echo NOTE: The build files in $BUILDDIR should *NEVER* be modified directly.  Make changes in cmake and re-run this script.
 
-# remove consumed arguments
-shift $USED_ARGS
-
+# Remove the first two arguments; the remainder are cmake arguments
+shift 2
