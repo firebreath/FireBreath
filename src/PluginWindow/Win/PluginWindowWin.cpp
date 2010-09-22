@@ -171,30 +171,30 @@ void PluginWindowWin::InvalidateWindow()
 HWND PluginWindowWin::createMessageWindow() {
     WNDCLASSEX wc;
     DWORD err(0);
+    static ATOM clsAtom(NULL);
 
     wchar_t *wszWinName = L"FireBreathEventWindow";
     wchar_t *wszClassName = L"FBEventWindow";
 
-    //Step 1: Registering the Window Class
-    wc.cbSize        = sizeof(WNDCLASSEX);
-    wc.style         = 0;
-    wc.lpfnWndProc   = FB::PluginWindowWin::_WinProc;
-    wc.cbClsExtra    = 0;
-    wc.cbWndExtra    = 0;
-    wc.hInstance     = gInstance;
-    wc.lpszMenuName  = NULL;
-    wc.lpszClassName = wszClassName;
-    wc.hIcon = NULL;
-    wc.hCursor = NULL;
-    wc.hIconSm = NULL;
-    wc.hbrBackground = NULL;
+    if (!clsAtom) {
+        //Step 1: Registering the Window Class
+        wc.cbSize        = sizeof(WNDCLASSEX);
+        wc.style         = 0;
+        wc.lpfnWndProc   = FB::PluginWindowWin::_WinProc;
+        wc.cbClsExtra    = 0;
+        wc.cbWndExtra    = 0;
+        wc.hInstance     = gInstance;
+        wc.lpszMenuName  = NULL;
+        wc.lpszClassName = wszClassName;
+        wc.hIcon = NULL;
+        wc.hCursor = NULL;
+        wc.hIconSm = NULL;
+        wc.hbrBackground = NULL;
     
-    ATOM clsAtom;
-    
-    if (!(clsAtom = ::RegisterClassEx(&wc))) {
-        err = ::GetLastError();    
+        if (!(clsAtom = ::RegisterClassEx(&wc))) {
+            err = ::GetLastError();    
+        }
     }
-
     // Step 2: Creating the Window
     HWND messageWin = CreateWindowEx(
         WS_OVERLAPPED,
