@@ -47,7 +47,7 @@ std::vector<ElementPtr> Document::getElementsByTagName(const std::wstring& tagNa
 
 std::vector<ElementPtr> Document::getElementsByTagName(const std::string& tagName)
 {
-    std::vector<FB::JSObject> tagList = callMethod<std::vector<FB::JSObject>>("getElementsByTagName", FB::variant_list_of(tagName));
+    std::vector<FB::JSObject> tagList = callMethod<std::vector<FB::JSObject> >("getElementsByTagName", FB::variant_list_of(tagName));
     std::vector<FB::JSObject>::iterator it;
     std::vector<ElementPtr> outList;
     for (it = tagList.begin(); it != tagList.end(); it++)
