@@ -1,20 +1,21 @@
 /**********************************************************\
- Original Author: Georg Fritzsche
- 
- Created:    Mar 26, 2010
- License:    Dual license model; choose one of two:
- Eclipse Public License - Version 1.0
- http://www.eclipse.org/legal/epl-v10.html
- - or -
- GNU Lesser General Public License, version 2.1
- http://www.gnu.org/licenses/lgpl-2.1.html
- 
- Copyright 2010 Georg Fritzsche, Firebreath development team
- \**********************************************************/
+Original Author: Anson MacKeracher 
+
+Created:    Mar 26, 2010
+License:    Dual license model; choose one of two:
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2010 Anson MacKeracher, Firebreath development team
+\**********************************************************/
 
 #include "PluginWindowMacCocoa.h"
+#include <Foundation/NSString.h>
 
-using namespace FB;
+using namespace FB; using namespace std;
 
 PluginWindowMacCocoa::PluginWindowMacCocoa() {}
 
@@ -99,21 +100,28 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         }
 
         case NPCocoaEventMouseDragged: {
+            double x = evt->data.mouse.pluginX;
+            double y = evt->data.mouse.pluginY;
+            y = m_height - y; // Reposition origin to bottom left
+            MouseMoveEvent ev(x, y);
+            return SendEvent(&ev);
             break;
         }
 
         case NPCocoaEventKeyDown: {
             int key = (int)evt->data.key.keyCode;
-            // TODO: map key to FBKey
-            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
-            return SendEvent(&ev);
+            NSString* str = (NSString *)evt->data.key.characters;
+            char character = [str characterAtIndex:0];
+            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), character);
+            bool rtn = SendEvent(&ev);
+            return rtn;
             break;
         }
 
         case NPCocoaEventKeyUp: {
             int key = (int)evt->data.key.keyCode;
-            // TODO: map key to FBKey
-            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
+            //char character = mapCharacter(key);
+            KeyUpEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
             return SendEvent(&ev);
             break;
         }
