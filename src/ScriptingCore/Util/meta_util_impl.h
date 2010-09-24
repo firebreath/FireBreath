@@ -22,40 +22,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/mpl/contains.hpp>
 #include <boost/type_traits.hpp>
 
-#define FB_PORTABLE_META // comment out to get previous behaviour
-
 namespace FB { namespace meta { namespace detail
 {
-#ifndef FB_PORTABLE_META
-    template<typename C>
-    struct is_container_impl
-    {
-        typedef char yes;
-        typedef char (&no)[2];
-
-        template<typename U, size_t (U::*)(const int&) const> struct sfinae {};
-        template<typename U> static yes test(typename U::const_iterator = U().begin());
-        template<typename U> static no  test(...);
-
-        enum { value = (sizeof(test<C>()) == sizeof(yes)) };
-        typedef boost::mpl::bool_<value> type;
-    };
-
-    template<typename C>
-    struct is_assoc_impl
-    {
-        typedef char yes;
-        typedef char (&no)[2];
-
-        template<typename U, size_t (U::*)(const int&) const> struct sfinae {};
-        template<typename U> static yes test(typename U::key_type = U::key_type());
-        template<typename U> static no  test(...);
-
-        enum { value = (sizeof(test<C>()) == sizeof(yes)) };
-        typedef boost::mpl::bool_<value> type;
-    };
-#else // #ifndef FB_PORTABLE_META
-
     class yes { char c;   };
     class no  { yes y[2]; };
 
@@ -213,7 +181,6 @@ namespace FB { namespace meta { namespace detail
         static const bool value = value_type_is_pair;
         typedef boost::mpl::bool_<value> type;
     };
-#endif
 
     typedef boost::mpl::vector
     <

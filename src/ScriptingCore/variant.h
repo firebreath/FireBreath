@@ -331,24 +331,18 @@ namespace FB
         }
 
         template<typename T>        
-#ifdef FB_PORTABLE_META
         typename FB::meta::disable_for_containers<T, const T>::type
-#else
-        const T
-#endif
         convert_cast() const
         {
             return convert_cast_impl<T>();
         }
 
-#ifdef FB_PORTABLE_META
         template<class Cont>
         typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
         convert_cast() const;        
         template<class Dict>
         typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
         convert_cast() const;
-#endif
 
         // implicit casting is disabled by default for compatibility with boost::any 
 #ifdef ANY_IMPLICIT_CASTING

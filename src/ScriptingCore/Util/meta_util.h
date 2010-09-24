@@ -28,7 +28,6 @@ namespace FB { namespace meta
     // STL style container classification
     //   T - the type to compare
 
-#ifdef FB_PORTABLE_META
     template<class T>
     struct is_container 
         : FB::meta::detail::is_container<T> {};
@@ -85,7 +84,6 @@ namespace FB { namespace meta
     template<class T, typename R=void>
     struct disable_for_non_assoc_containers 
         : FB::meta::detail::disable_for_non_assoc_containers_impl<T,R> {};
-#endif
 }; };
 
 
