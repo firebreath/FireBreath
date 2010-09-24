@@ -58,20 +58,6 @@
 #define CONVERT_ENTRY_COMPLEX_END() \
     } else
 
-#define CONVERT_ENTRY_TOSTRING(_srctype_)             \
-    CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, __varname) \
-    std::stringstream sstr;                           \
-    sstr << __varname;                                \
-    return sstr.str();                                \
-    CONVERT_ENTRY_COMPLEX_END()
-
-#define CONVERT_ENTRY_TOWSTRING(_srctype_)             \
-    CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, __varname) \
-    std::wstringstream sstr;                           \
-    sstr << __varname;                                \
-    return sstr.str();                                \
-    CONVERT_ENTRY_COMPLEX_END()
-
 #define CONVERT_ENTRY_NUMERIC(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         try { \
@@ -80,6 +66,32 @@
             throw bad_variant_cast(get_type(), typeid(_type_)); \
         } \
     } else
+
+#define CONVERT_ENTRY_FROM_STRING(_type_, _srctype_) \
+    if (*type == typeid(_srctype_)) { \
+        typedef _srctype_::value_type char_type; \
+        std::basic_istringstream<char_type> iss(cast<_srctype_>()); \
+        _type_ to; \
+        if (iss >> to) { \
+            return to; \
+        } else { \
+            throw bad_variant_cast(get_type(), typeid(_type_)); \
+        } \
+    } else
+
+#define CONVERT_ENTRY_TO_STRING_TYPE(_type_, _srctype_) \
+    if (*type == typeid(_srctype_)) { \
+        typedef _type_::value_type char_type; \
+        std::basic_ostringstream<char_type> oss; \
+        if (oss << cast<_srctype_>()) { \
+            return oss.str(); \
+        } else { \
+            throw bad_variant_cast(get_type(), typeid(_type_)); \
+        } \
+    } else
+
+#define CONVERT_ENTRY_TO_STRING(_srctype_)  CONVERT_ENTRY_TO_STRING_TYPE(std::string , _srctype_)
+#define CONVERT_ENTRY_TO_WSTRING(_srctype_) CONVERT_ENTRY_TO_STRING_TYPE(std::wstring, _srctype_)
 
 namespace FB
 {
@@ -451,18 +463,8 @@ namespace FB
         CONVERT_ENTRY_NUMERIC(T, float)
         CONVERT_ENTRY_NUMERIC(T, double)
         CONVERT_ENTRY_NUMERIC(T, bool)
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-        std::istringstream iss(str);
-        T t;
-        iss >> t;
-        return t;
-        CONVERT_ENTRY_COMPLEX_END()
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str)
-        std::wistringstream iss(str);
-        T t;
-        iss >> t;
-        return t;
-        CONVERT_ENTRY_COMPLEX_END()
+        CONVERT_ENTRY_FROM_STRING(T, std::string)
+        CONVERT_ENTRY_FROM_STRING(T, std::wstring)
         END_CONVERT_MAP(T)
     }
     
@@ -544,43 +546,43 @@ namespace FB
     
     template<> inline const std::string variant::convert_cast_impl<std::string>() const {
         BEGIN_CONVERT_MAP(std::string);
-        CONVERT_ENTRY_TOSTRING(double);
-        CONVERT_ENTRY_TOSTRING(float);
-        CONVERT_ENTRY_TOSTRING(int);
-        CONVERT_ENTRY_TOSTRING(unsigned int);
+        CONVERT_ENTRY_TO_STRING(double);
+        CONVERT_ENTRY_TO_STRING(float);
+        CONVERT_ENTRY_TO_STRING(int);
+        CONVERT_ENTRY_TO_STRING(unsigned int);
         CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
         return bval ? "true" : "false";
         CONVERT_ENTRY_COMPLEX_END();
         CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
         return wstring_to_utf8(str);
         CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_TOSTRING(long);
-        CONVERT_ENTRY_TOSTRING(unsigned long);
-        CONVERT_ENTRY_TOSTRING(short);
-        CONVERT_ENTRY_TOSTRING(unsigned short);
-        CONVERT_ENTRY_TOSTRING(char);
-        CONVERT_ENTRY_TOSTRING(unsigned char);
+        CONVERT_ENTRY_TO_STRING(long);
+        CONVERT_ENTRY_TO_STRING(unsigned long);
+        CONVERT_ENTRY_TO_STRING(short);
+        CONVERT_ENTRY_TO_STRING(unsigned short);
+        CONVERT_ENTRY_TO_STRING(char);
+        CONVERT_ENTRY_TO_STRING(unsigned char);
         END_CONVERT_MAP(std::string);
     }
 
     template<> inline const std::wstring variant::convert_cast_impl<std::wstring>() const {
         BEGIN_CONVERT_MAP(std::wstring);
-        CONVERT_ENTRY_TOWSTRING(double);
-        CONVERT_ENTRY_TOWSTRING(float);
-        CONVERT_ENTRY_TOWSTRING(int);
-        CONVERT_ENTRY_TOWSTRING(unsigned int);
+        CONVERT_ENTRY_TO_WSTRING(double);
+        CONVERT_ENTRY_TO_WSTRING(float);
+        CONVERT_ENTRY_TO_WSTRING(int);
+        CONVERT_ENTRY_TO_WSTRING(unsigned int);
         CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
         return bval ? L"true" : L"false";
         CONVERT_ENTRY_COMPLEX_END();
         CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
         return utf8_to_wstring(str);
         CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_TOWSTRING(long);
-        CONVERT_ENTRY_TOWSTRING(unsigned long);
-        CONVERT_ENTRY_TOWSTRING(short);
-        CONVERT_ENTRY_TOWSTRING(unsigned short);
-        CONVERT_ENTRY_TOWSTRING(char);
-        CONVERT_ENTRY_TOWSTRING(unsigned char);
+        CONVERT_ENTRY_TO_WSTRING(long);
+        CONVERT_ENTRY_TO_WSTRING(unsigned long);
+        CONVERT_ENTRY_TO_WSTRING(short);
+        CONVERT_ENTRY_TO_WSTRING(unsigned short);
+        CONVERT_ENTRY_TO_WSTRING(char);
+        CONVERT_ENTRY_TO_WSTRING(unsigned char);
         END_CONVERT_MAP(std::wstring);
     }
     
