@@ -20,6 +20,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/and.hpp>
 #include <boost/type_traits.hpp>
 
 namespace FB { namespace meta { namespace detail
@@ -238,7 +239,7 @@ namespace FB { namespace meta { namespace detail
       : is_assoc_container_helper<boost::is_class<T>::value, T>
     {};
 
-    //////////////////////
+    ///////////////////////////
     // is_pair_assoc_container
 
     template<bool isClass, class T>
@@ -277,12 +278,35 @@ namespace FB { namespace meta { namespace detail
     struct is_non_assoc_container
       : is_non_assoc_container_helper<boost::is_class<T>::value, T>
     {};
+    
+    ////////////////////////////////////////////////
+    // is number - we consider bool as a non-number
+    
+    template<class T>
+    struct is_number
+      : boost::mpl::and_<
+          boost::is_arithmetic<T>,
+          boost::mpl::not_<
+            boost::is_same<T, bool> 
+          >
+        >
+    {};
 
     ///////////////////////////////////////////////////////////////////////////
     // enable_if helpers:
     //   T - the type to compare
     //   R - the return type
 
+    template<class T, typename R>
+    struct enable_for_numbers_impl
+        : boost::enable_if<is_number<T>, R>
+    {};
+    
+    template<class T, typename R>
+    struct disable_for_numbers_impl 
+        : boost::disable_if<is_number<T>, R>
+    {};
+    
     template<class T, typename R>
     struct enable_for_containers_impl
         : boost::enable_if<is_container<T>, R>
@@ -291,6 +315,28 @@ namespace FB { namespace meta { namespace detail
     template<class T, typename R>
     struct disable_for_containers_impl 
         : boost::disable_if<is_container<T>, R>
+    {};
+    
+    template<class T, typename R>
+    struct enable_for_containers_and_numbers_impl 
+        : boost::enable_if<
+            boost::mpl::or_<
+              is_container<T>,
+              is_number<T> 
+            >,
+            R
+          >
+    {};
+    
+    template<class T, typename R>
+    struct disable_for_containers_and_numbers_impl 
+        : boost::disable_if<
+            boost::mpl::or_<
+              is_container<T>,
+              is_number<T> 
+            >,
+            R
+          >
     {};
 
     template<class T, typename R>

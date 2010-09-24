@@ -24,6 +24,9 @@
 #include <sstream>
 #include <string>
 
+#include <boost/numeric/conversion/cast.hpp>
+#include <boost/lexical_cast.hpp>
+
 #include "APITypes.h"
 #include "Util/meta_util.h"
 #include "utf8_tools.h"
@@ -68,6 +71,15 @@
     sstr << __varname;                                \
     return sstr.str();                                \
     CONVERT_ENTRY_COMPLEX_END()
+
+#define CONVERT_ENTRY_NUMERIC(_type_, _srctype_) \
+    if (*type == typeid(_srctype_)) { \
+        try { \
+            return boost::numeric_cast<_type_>(cast<_srctype_>());\
+        } catch (const boost::numeric::bad_numeric_cast& e) { \
+            throw bad_variant_cast(get_type(), typeid(_type_)); \
+        } \
+    } else
 
 namespace FB
 {
@@ -329,17 +341,22 @@ namespace FB
                 return *reinterpret_cast<T const*>(object);
             }
         }
-
+        
         template<typename T>        
-        typename FB::meta::disable_for_containers<T, const T>::type
+        typename FB::meta::disable_for_containers_and_numbers<T, const T>::type
         convert_cast() const
         {
             return convert_cast_impl<T>();
         }
 
+        template<class T>
+        typename FB::meta::enable_for_numbers<T, T>::type
+        convert_cast() const;
+        
         template<class Cont>
         typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
-        convert_cast() const;        
+        convert_cast() const;
+        
         template<class Dict>
         typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
         convert_cast() const;
@@ -416,6 +433,41 @@ namespace FB
         return *this;
     }
     
+// testing new numeric converions
+#if 1
+    
+    template<class T>
+    inline typename FB::meta::enable_for_numbers<T, T>::type
+    variant::convert_cast() const {
+        BEGIN_CONVERT_MAP(T)
+        CONVERT_ENTRY_NUMERIC(T, char)
+        CONVERT_ENTRY_NUMERIC(T, unsigned char)
+        CONVERT_ENTRY_NUMERIC(T, short)
+        CONVERT_ENTRY_NUMERIC(T, unsigned short)
+        CONVERT_ENTRY_NUMERIC(T, int)
+        CONVERT_ENTRY_NUMERIC(T, unsigned int)
+        CONVERT_ENTRY_NUMERIC(T, long)
+        CONVERT_ENTRY_NUMERIC(T, unsigned long)
+        CONVERT_ENTRY_NUMERIC(T, float)
+        CONVERT_ENTRY_NUMERIC(T, double)
+        CONVERT_ENTRY_NUMERIC(T, bool)
+        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
+        std::istringstream iss(str);
+        T t;
+        iss >> t;
+        return t;
+        CONVERT_ENTRY_COMPLEX_END()
+        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str)
+        std::wistringstream iss(str);
+        T t;
+        iss >> t;
+        return t;
+        CONVERT_ENTRY_COMPLEX_END()
+        END_CONVERT_MAP(T)
+    }
+    
+// old-style numeric conversions
+#else
     template<> inline const int variant::convert_cast_impl<int>() const {
         BEGIN_CONVERT_MAP(int)
         CONVERT_ENTRY_SIMPLE(int, double)
@@ -488,6 +540,7 @@ namespace FB
         CONVERT_ENTRY_COMPLEX_END();
         END_CONVERT_MAP(short);
     }
+#endif
     
     template<> inline const std::string variant::convert_cast_impl<std::string>() const {
         BEGIN_CONVERT_MAP(std::string);

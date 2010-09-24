@@ -52,6 +52,22 @@ namespace FB { namespace meta
     // enable_if helpers:
     //   T - the type to compare
     //   R - the return type
+    
+    template<class T, typename R=void>
+    struct enable_for_containers_and_numbers
+        : FB::meta::detail::enable_for_containers_and_numbers_impl<T,R> {};
+    
+    template<class T, typename R=void>
+    struct disable_for_containers_and_numbers
+        : FB::meta::detail::disable_for_containers_and_numbers_impl<T,R> {};
+    
+    template<class T, typename R=void>
+    struct enable_for_numbers
+        : FB::meta::detail::enable_for_numbers_impl<T,R> {};
+    
+    template<class T, typename R=void>
+    struct disable_for_numbers
+        : FB::meta::detail::disable_for_numbers_impl<T,R> {};
 
     template<class T, typename R=void>
     struct enable_for_containers 
