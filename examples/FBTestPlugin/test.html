@@ -1,66 +1,174 @@
-<!--
-    Auto-generated test-site
--->
+<!-- saved from url=(0013)about:internet -->
+<!-- The above comment makes IE treat this as a web page -->
 <html>
 <head>
-<title>atl 8.0 test page for object fbcontrol</title>
-<base href="http://www.google.com/" />
-<script type="text/javascript">
-    function plugin()
-    {
-        return document.getElementById('plugin');
-    }
-    
-    function addEvent(obj, name, func)
-    {
-        if (window.addEventListener) {
-            obj.addEventListener(name, func, false); 
-        } else {
-            obj.attachEvent("on"+name, func);
+    <title>atl 8.0 test page for object fbcontrol</title>
+    <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="Stylesheet" />
+    <style>
+
+        body
+        {
+            padding: 0;
+            margin: 0;
         }
-    }
     
-    function load()
-    {
-        addEvent(plugin(), 'fired', function(x){
-            alert('onfired() from load(): '+x)
-        });
-    }
+        .header 
+        {
+            text-align: center;
+            border: 1px solid black;
+            width: 900px;
+        }
     
-    function addTestEvent()
-    {
-        addEvent(plugin(), 'fired', function(x){
-            alert('onfired(): '+x)
-        });
-    }
+        #pluginContainer
+        {
+            width: 300px;
+            height: 300px;
+            border: 5px dotted gray;
+            text-align: center;
+            margin: 0 auto;
+            float: left;
+        }
     
-    function testEvent()
-    {
-        plugin().testEvent('test stuff');
-    }
+        #testResults
+        {
+            border: 1px dashed gray;
+            width: 600px;
+            height: 300px;
+            float: left;
+        }
     
-    function pluginValid()
-    {
-        alert(plugin().valid);
-    }
+        #testResults ul
+        {
+            border-bottom: 1px solid black;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
     
-    function testStreams()
-    {
-        alert(plugin().testStreams());
-    }
-</script>
+        #testResults ul li
+        {
+            padding-left: 1em;
+            color: Gray;
+        }
+    
+        #testResults ul li.passed
+        {
+            color: Green;
+        }
+
+        #testResults ul li.failed
+        {
+            color: Red;
+        }
+
+    </style>
+
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
+    <script type="text/javascript" language="Javascript">
+        var mimeType = "application/x-fbtestplugin";
+        var pluginCB = null;
+
+        function plugin() {
+            return document.getElementById("testPlugin");
+        }
+
+        function injectPlugin(dest, callback) {
+            pluginCB = callback;
+            var html = '<object id="testPlugin" type="' + mimeType + '" width="100%" height="100%">';
+            html += '<param name="onload" value="pluginCB" />';
+            html += '</object>';
+            dest[0].innerHTML = html;
+        }
+
+        function addTest(id, text) {
+            $("#testResults ul")
+                .append("<li id='" + id + "'>" + text + "...</li>")
+            $("#" + id).attr("text", text);
+        }
+
+        function markPassed(id) {
+            var el = $("#" + id);
+            el.html(el.attr("text") + " passed!").addClass("passed").removeClass("failed");
+        }
+        function markFailed(id) {
+            var el = $("#" + id);
+            el.html(el.attr("text") + " failed!").addClass("failed").removeClass("passed");
+        }
+
+        function pageLoaded() {
+            addTest("loaded", "Plugin onload event");
+            addTest("valid", "Plugin valid test");
+            addTest("echo", "Plugin echo test");
+            addTest("reverse", "Plugin reverse test");
+            addTest("getMap", "Plugin return map test");
+            markFailed("loaded");
+            injectPlugin($("#pluginContainer"), pluginLoaded);
+        }
+
+        function pluginLoaded() {
+            markPassed("loaded");
+            $("#pluginContainer").css("border", "1px solid black");
+            setTimeout(pluginRunTests, 500);
+        }
+
+        function pluginRunTests() {
+            var plugin = window.plugin();
+            if (plugin.valid)
+                markPassed("valid");
+            else
+                markFailed("valid");
+
+            if (plugin.echo("Hello!") == "Hello!"
+                && plugin.echo(1234) == 1234
+                && plugin.echo(12.445) == 12.445
+                && plugin.echo(true) == true) {
+                markPassed("echo");
+            } else {
+                markFailed("echo");
+            }
+
+            var tmp = Array();
+            for (var i = 0; i < 15; i++) {
+                tmp.push(i);
+            }
+            var tmp2 = plugin.reverseArray(tmp);
+            var success = true;
+            for (var i = 0; i < 15; i++) {
+                if (tmp2[i] != 14 - i) {
+                    success = false;
+                    break;
+                }
+            }
+            if (success)
+                markPassed("reverse");
+            else
+                markFailed("reverse");
+
+            var check = plugin.getUserData();
+            if (check.Name != "Richard Bateman"
+                || typeof(check.Kids) != "object"
+                || check.Kids[0] != "Caleb")
+                markFailed("getMap");
+            else
+                markPassed("getMap");
+        }
+
+        $(document).ready(pageLoaded);
+
+    </script>
 </head>
-<body onload="load()">
-
-
-<object id="plugin" type="application/x-fbtestplugin" width="300" height="300"></object><br />
-
-<a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
-
-<a href="#" onclick="javascript:testEvent()">Fire event</a> <br />
-
-<a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />
-<a href="#" onclick="javascript:testStreams()">test streams</a> <br />
+<body>
+    <div class="header">
+        <h1>FBTestPlugin - Test page</h1>
+    </div>
+    <div id="pluginContainer">
+        <br /><br /><br />Plugin will go here!
+    </div>
+    <div id="testResults">
+        <ul>
+        </ul>
+    </div>
 
 </body>
 </html>
