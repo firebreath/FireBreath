@@ -445,9 +445,6 @@ namespace FB
         return *this;
     }
     
-// testing new numeric converions
-#if 1
-    
     template<class T>
     inline typename FB::meta::enable_for_numbers<T, T>::type
     variant::convert_cast() const {
@@ -467,82 +464,6 @@ namespace FB
         CONVERT_ENTRY_FROM_STRING(T, std::wstring)
         END_CONVERT_MAP(T)
     }
-    
-// old-style numeric conversions
-#else
-    template<> inline const int variant::convert_cast_impl<int>() const {
-        BEGIN_CONVERT_MAP(int)
-        CONVERT_ENTRY_SIMPLE(int, double)
-        CONVERT_ENTRY_SIMPLE(int, float)
-        CONVERT_ENTRY_SIMPLE(int, char)
-        CONVERT_ENTRY_SIMPLE(int, unsigned char)
-        CONVERT_ENTRY_SIMPLE(int, short)
-        CONVERT_ENTRY_SIMPLE(int, unsigned short)
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-        return strtol(str.c_str(), NULL, 10);
-        CONVERT_ENTRY_COMPLEX_END()
-        END_CONVERT_MAP(int)
-    }
-    
-    template<> inline const double variant::convert_cast_impl<double>() const {
-        BEGIN_CONVERT_MAP(double);
-        CONVERT_ENTRY_SIMPLE(double, float);
-        CONVERT_ENTRY_SIMPLE(double, char);
-        CONVERT_ENTRY_SIMPLE(double, unsigned char);
-        CONVERT_ENTRY_SIMPLE(double, short);
-        CONVERT_ENTRY_SIMPLE(double, unsigned short);
-        CONVERT_ENTRY_SIMPLE(double, int);
-        CONVERT_ENTRY_SIMPLE(double, unsigned int);
-        CONVERT_ENTRY_SIMPLE(double, long);
-        CONVERT_ENTRY_SIMPLE(double, unsigned long);
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-        return strtod(str.c_str(), NULL);
-        CONVERT_ENTRY_COMPLEX_END()
-        END_CONVERT_MAP(double);
-    }
-    
-    template<> inline const float variant::convert_cast_impl<float>() const {
-        BEGIN_CONVERT_MAP(float);
-        CONVERT_ENTRY_SIMPLE(float, char);
-        CONVERT_ENTRY_SIMPLE(float, unsigned char);
-        CONVERT_ENTRY_SIMPLE(float, short);
-        CONVERT_ENTRY_SIMPLE(float, unsigned short);
-        CONVERT_ENTRY_SIMPLE(float, int);
-        CONVERT_ENTRY_SIMPLE(float, unsigned int);
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-        return static_cast<float>(strtod(str.c_str(), NULL));
-        CONVERT_ENTRY_COMPLEX_END()
-        END_CONVERT_MAP(double);
-    }
-    
-    template<> inline const long variant::convert_cast_impl<long>() const {
-        BEGIN_CONVERT_MAP(long);
-        CONVERT_ENTRY_SIMPLE(long, double);
-        CONVERT_ENTRY_SIMPLE(long, float);
-        CONVERT_ENTRY_SIMPLE(long, char);
-        CONVERT_ENTRY_SIMPLE(long, unsigned char);
-        CONVERT_ENTRY_SIMPLE(long, short);
-        CONVERT_ENTRY_SIMPLE(long, unsigned short);
-        CONVERT_ENTRY_SIMPLE(long, int);
-        CONVERT_ENTRY_SIMPLE(long, unsigned int);
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str)
-        return strtol(str.c_str(), NULL, 10);
-        CONVERT_ENTRY_COMPLEX_END()
-        END_CONVERT_MAP(long);
-    }
-    
-    template<> inline const short variant::convert_cast_impl<short>() const {
-        BEGIN_CONVERT_MAP(short);
-        CONVERT_ENTRY_SIMPLE(short, double);
-        CONVERT_ENTRY_SIMPLE(short, float);
-        CONVERT_ENTRY_SIMPLE(short, char);
-        CONVERT_ENTRY_SIMPLE(short, unsigned char);
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
-        return static_cast<short>(strtol(str.c_str(), NULL, 10));
-        CONVERT_ENTRY_COMPLEX_END();
-        END_CONVERT_MAP(short);
-    }
-#endif
     
     template<> inline const std::string variant::convert_cast_impl<std::string>() const {
         BEGIN_CONVERT_MAP(std::string);
