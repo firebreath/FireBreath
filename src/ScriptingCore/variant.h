@@ -45,6 +45,7 @@
     } else
 
 #define END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
+#define END_CONVERT_MAP_NO_THROW(_type_) {}
 
 #define CONVERT_ENTRY_SIMPLE(_type_, _srctype_)             \
     if ( *type == typeid( _srctype_ ) ) {              \
@@ -79,7 +80,7 @@
         } \
     } else
 
-#define CONVERT_ENTRY_TO_STRING_TYPE(_type_, _srctype_) \
+#define CONVERT_ENTRY_FROM_STRING_TYPE(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         typedef _type_::value_type char_type; \
         std::basic_ostringstream<char_type> oss; \
@@ -90,8 +91,8 @@
         } \
     } else
 
-#define CONVERT_ENTRY_TO_STRING(_srctype_)  CONVERT_ENTRY_TO_STRING_TYPE(std::string , _srctype_)
-#define CONVERT_ENTRY_TO_WSTRING(_srctype_) CONVERT_ENTRY_TO_STRING_TYPE(std::wstring, _srctype_)
+#define CONVERT_ENTRY_TO_STRING(_srctype_)  CONVERT_ENTRY_FROM_STRING_TYPE(std::string , _srctype_)
+#define CONVERT_ENTRY_TO_WSTRING(_srctype_) CONVERT_ENTRY_FROM_STRING_TYPE(std::wstring, _srctype_)
 
 namespace FB
 {
@@ -509,15 +510,17 @@ namespace FB
     
     template<> inline const bool variant::convert_cast_impl<bool>() const {
         BEGIN_CONVERT_MAP(bool);
-        CONVERT_ENTRY_SIMPLE(bool, double);
-        CONVERT_ENTRY_SIMPLE(bool, float);
-        CONVERT_ENTRY_SIMPLE(bool, char);
-        CONVERT_ENTRY_SIMPLE(bool, unsigned char);
         CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
         transform(str.begin(), str.end(), str.begin(), ::tolower); 
         return (str == "y" || str == "1" || str == "yes" || str == "true" || str == "t");
         CONVERT_ENTRY_COMPLEX_END();
-        END_CONVERT_MAP(short);
+        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
+        transform(str.begin(), str.end(), str.begin(), ::tolower); 
+        return (str == L"y" || str == L"1" || str == L"yes" || str == L"true" || str == L"t");
+        CONVERT_ENTRY_COMPLEX_END();
+        END_CONVERT_MAP_NO_THROW(short);
+        
+        return convert_cast_impl<long>();
     }
 }
 
