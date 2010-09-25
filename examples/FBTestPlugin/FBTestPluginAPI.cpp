@@ -14,7 +14,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "variant_list.h"
 #include "SimpleMathAPI.h"
 
@@ -37,7 +38,8 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
     registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
-
+    registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
+     
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
     // Read-write property
@@ -66,7 +68,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
-    return L"вот, я говорю \"" + val + L"\"";
+    return L"Ð²Ð¾Ñ, Ñ Ð³Ð¾Ð²Ð¾ÑÑ \"" + val + L"\"";
 }
 
 // Read/Write property someInt
@@ -225,13 +227,17 @@ FB::JSOutObject FBTestPluginAPI::get_simpleMath()
 
 FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
 {
-    std::vector<FB::JSObject> tagList = m_host->getElementsByTagName(tagName);
+    std::vector<FB::DOM::ElementPtr> tagList = m_host->getDOMDocument()->getElementsByTagName(tagName);
     if (!tagList.size()) {
         return "No matching tags found";
     }
-    return tagList[idx]->GetProperty(attribute);
+    return tagList[idx]->getJSObject()->GetProperty(attribute);
 }
 
+std::string FBTestPluginAPI::getPageLocation()
+{
+    return m_host->getDOMWindow()->getLocation();
+}
 
 #include "SimpleStreams.h"
 

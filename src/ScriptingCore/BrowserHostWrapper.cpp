@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cstdio>
 #include <cassert>
 #include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "variant_list.h"
 
 #include "BrowserHostWrapper.h"
@@ -30,9 +30,9 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
 {
     FB::AsyncLogRequest *req = (FB::AsyncLogRequest*)logReq;
     try {
-        FB::JSAPI_DOMWindow window = req->m_host->getDOMWindow();
+        FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
-        FB::JSObject obj = window.getProperty<FB::JSObject>("console");
+        FB::JSObject obj = window->getProperty<FB::JSObject>("console");
         printf("Logging: %s\n", req->m_msg.c_str());
         obj->Invoke("log", FB::variant_list_of(req->m_msg));
     } catch (const std::exception &e) {
@@ -48,9 +48,24 @@ void FB::BrowserHostWrapper::evaluateJavaScript(const std::wstring &script)
     evaluateJavaScript(FB::wstring_to_utf8(script));
 }
 
-std::vector<FB::JSObject> FB::BrowserHostWrapper::getElementsByTagName(std::wstring tagName)
+FB::DOM::WindowPtr FB::BrowserHostWrapper::_createWindow(const FB::JSObject& obj)
 {
-    return getElementsByTagName(FB::wstring_to_utf8(tagName));
+    return FB::DOM::WindowPtr(new FB::DOM::Window(obj));
+}
+
+FB::DOM::DocumentPtr FB::BrowserHostWrapper::_createDocument(const FB::JSObject& obj)
+{
+    return FB::DOM::DocumentPtr(new FB::DOM::Document(obj));
+}
+
+FB::DOM::ElementPtr FB::BrowserHostWrapper::_createElement(const FB::JSObject& obj)
+{
+    return FB::DOM::ElementPtr(new FB::DOM::Element(obj));
+}
+
+FB::DOM::NodePtr FB::BrowserHostWrapper::_createNode(const FB::JSObject& obj)
+{
+    return FB::DOM::NodePtr(new FB::DOM::Node(obj));
 }
 
 

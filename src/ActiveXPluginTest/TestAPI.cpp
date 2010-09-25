@@ -15,7 +15,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
 #include "variant_list.h"
 
 #include "TestAPI.h"

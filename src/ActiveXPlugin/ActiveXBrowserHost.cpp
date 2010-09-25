@@ -15,10 +15,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ActiveXBrowserHost.h"
 #include "axstream.h"
 #include "COMJavascriptObject.h"
-#include "DOM/JSAPI_DOMDocument.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "AsyncFunctionCall.h"
 #include <boost/assign.hpp>
+#include "AXDOM/Window.h"
+#include "AXDOM/Document.h"
+#include "AXDOM/Element.h"
+#include "AXDOM/Node.h"
 using boost::assign::list_of;
 
 #include "Win/PluginWindowWin.h"
@@ -33,9 +37,6 @@ ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
         m_htmlDoc = m_htmlDocDisp;
         m_htmlDoc->get_parentWindow(&m_htmlWin);
         m_htmlWinDisp = m_htmlWin;
-        CComBSTR bstr;
-        m_webBrowser->get_LocationURL(&bstr);
-        m_location = FB::wstring_to_utf8(std::wstring(bstr.m_str));
     }
 }
 
@@ -60,16 +61,44 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
-FB::JSAPI_DOMDocument ActiveXBrowserHost::getDOMDocument()
+FB::DOM::WindowPtr ActiveXBrowserHost::_createWindow(const FB::JSObject& obj)
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::JSAPI_DOMDocument(retObj);
+    return FB::DOM::WindowPtr(new AXDOM::Window(as_IDispatchAPI(obj), m_webBrowser));
 }
 
-FB::JSAPI_DOMWindow ActiveXBrowserHost::getDOMWindow()
+FB::DOM::DocumentPtr ActiveXBrowserHost::_createDocument(const FB::JSObject& obj)
 {
-    FB::JSObject retObj(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr())));
-    return FB::JSAPI_DOMWindow(retObj);
+    return FB::DOM::DocumentPtr(new AXDOM::Document(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObject& obj)
+{
+    return FB::DOM::ElementPtr(new AXDOM::Element(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObject& obj)
+{
+    return FB::DOM::NodePtr(new AXDOM::Node(as_IDispatchAPI(obj), m_webBrowser));
+}
+
+void ActiveXBrowserHost::initDOMObjects()
+{
+    if (!m_window) {
+        m_window = DOM::Window::create(FB::JSObject(new IDispatchAPI(m_htmlWin.p, as_ActiveXBrowserHost(shared_ptr()))));
+        m_document = DOM::Document::create(FB::JSObject(IDispatchAPIPtr(new IDispatchAPI(m_htmlDocDisp.p, as_ActiveXBrowserHost(shared_ptr())))));
+    }
+}
+
+FB::DOM::DocumentPtr ActiveXBrowserHost::getDOMDocument()
+{
+    initDOMObjects();
+    return m_document;
+}
+
+FB::DOM::WindowPtr ActiveXBrowserHost::getDOMWindow()
+{
+    initDOMObjects();
+    return m_window;
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -89,24 +118,6 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
     } else {
         throw FB::script_error("Error executing JavaScript code");
     }
-}
-
-std::vector<FB::JSObject> ActiveXBrowserHost::getElementsByTagName(std::string tagName)
-{
-    CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
-    CComPtr<IHTMLElementCollection> list;
-    std::vector<FB::JSObject> tagList;
-    doc->getElementsByTagName(CComBSTR(FB::utf8_to_wstring(tagName).c_str()), &list);
-    long length(0);
-    if (SUCCEEDED(list->get_length(&length))) {
-        for (long i = 0; i < length; i++) {
-            CComPtr<IDispatch> dispObj;
-            CComVariant idx(i);
-            list->item(idx, idx, &dispObj);
-            tagList.push_back(FB::JSObject(new IDispatchAPI(dispObj.p, as_ActiveXBrowserHost(shared_ptr()))));
-        }
-    }
-    return tagList;
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
@@ -202,24 +213,24 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         outVar = bStr;
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        JSAPI_DOMNode outArr = this->getDOMWindow().createArray();
+        DOM::NodePtr outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             FB::VariantList vl = list_of(*it);
-            outArr.callMethod<void>("push", vl);
+            outArr->callMethod<void>("push", vl);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(outArr.getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(outArr->getJSObject());
         if (api) {
             outVar = api->getIDispatch();
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        JSAPI_DOMNode out = this->getDOMWindow().createMap();
+        DOM::NodePtr out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out.setProperty(it->first, it->second);
+            out->setProperty(it->first, it->second);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(out.getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(out->getJSObject());
         if (api) {
             outVar = api->getIDispatch();
         }

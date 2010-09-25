@@ -16,7 +16,7 @@ Copyright 2009 Georg Fritzsche,
 #include <boost/assign.hpp>
 #include "BasicMediaPlayer.h"
 #include "MediaPlayer.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "Util/JSArray.h"
 #include "variant_list.h"
 
