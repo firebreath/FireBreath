@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits/is_base_of.hpp>
-#include <boost/mpl/assert.hpp>
+#include <boost/static_assert.hpp>
 
 namespace FB
 {
@@ -123,13 +123,11 @@ namespace FB
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
     {
-        enum { allowed = 
-            boost::is_base_of<JSAPI, T>::value
-            || boost::is_base_of<BrowserHostWrapper, T>::value
+        enum { base_is_firebreath_class = 
+                       boost::is_base_of<JSAPI, T>::value
+                    || boost::is_base_of<BrowserHostWrapper, T>::value
         };
-        BOOST_MPL_ASSERT_MSG(  allowed
-                             , DONT_USE_WITH_NON_FB_CLASSES
-                             , (T));
+        BOOST_STATIC_ASSERT(base_is_firebreath_class);
         return boost::dynamic_pointer_cast<T>(r);
     }
 }
