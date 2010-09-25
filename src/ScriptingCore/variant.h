@@ -460,8 +460,8 @@ namespace FB
         CONVERT_ENTRY_NUMERIC(T, unsigned long)
         CONVERT_ENTRY_NUMERIC(T, float)
         CONVERT_ENTRY_NUMERIC(T, double)
-        //CONVERT_ENTRY_NUMERIC(T, bool)
         CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+            // we handle bool here specifically because the numeric_cast produces warnings
             return static_cast<T>(bval ? 1 : 0);
         CONVERT_ENTRY_COMPLEX_END();
         CONVERT_ENTRY_FROM_STRING(T, std::string)
