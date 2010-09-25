@@ -186,12 +186,12 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         dst->value.stringValue.UTF8Length = str.size();
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        DOM::NodePtr outArr = this->getDOMWindow()->createArray();
+        FB::JSObject outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr->callMethod<void>("push", variant_list_of(*it));
+            outArr->Invoke("push", variant_list_of(*it));
         }
-        NPObjectAPIPtr api = as_NPObjectAPI(outArr->getJSObject());
+        NPObjectAPIPtr api = as_NPObjectAPI(outArr);
         if (api) {
             dst->type = NPVariantType_Object;
             dst->value.objectValue = api->getNPObject();
@@ -199,12 +199,12 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        DOM::NodePtr out = this->getDOMWindow()->createMap();
+        FB::JSObject out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out->setProperty(it->first, it->second);
+            out->SetProperty(it->first, it->second);
         }
-        NPObjectAPIPtr api = as_NPObjectAPI(out->getJSObject());
+        NPObjectAPIPtr api = as_NPObjectAPI(out);
         if (api) {
             dst->type = NPVariantType_Object;
             dst->value.objectValue = api->getNPObject();

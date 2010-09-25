@@ -63,7 +63,7 @@
     if (*type == typeid(_srctype_)) { \
         try { \
             return boost::numeric_cast<_type_>(cast<_srctype_>());\
-        } catch (const boost::numeric::bad_numeric_cast& e) { \
+        } catch (const boost::numeric::bad_numeric_cast& ) { \
             throw bad_variant_cast(get_type(), typeid(_type_)); \
         } \
     } else

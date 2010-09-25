@@ -42,8 +42,8 @@ namespace FB { namespace DOM {
         virtual DocumentPtr getDocument();
         virtual void alert(const std::string& str);
         virtual void alert(const std::wstring& str);
-        virtual NodePtr createArray();
-        virtual NodePtr createMap();
+        virtual FB::JSObject createArray();
+        virtual FB::JSObject createMap();
         virtual std::string getLocation();
     };
 
