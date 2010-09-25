@@ -127,6 +127,7 @@ namespace FB
                        boost::is_base_of<JSAPI, T>::value
                     || boost::is_base_of<BrowserHostWrapper, T>::value
         };
+        // This should only be used with FireBreath' and derived classes
         BOOST_STATIC_ASSERT(base_is_firebreath_class);
         return boost::dynamic_pointer_cast<T>(r);
     }

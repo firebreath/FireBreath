@@ -63,7 +63,7 @@
     if (*type == typeid(_srctype_)) { \
         try { \
             return boost::numeric_cast<_type_>(cast<_srctype_>());\
-        } catch (const boost::numeric::bad_numeric_cast& e) { \
+        } catch (const boost::numeric::bad_numeric_cast&) { \
             throw bad_variant_cast(get_type(), typeid(_type_)); \
         } \
     } else
@@ -460,7 +460,10 @@ namespace FB
         CONVERT_ENTRY_NUMERIC(T, unsigned long)
         CONVERT_ENTRY_NUMERIC(T, float)
         CONVERT_ENTRY_NUMERIC(T, double)
-        CONVERT_ENTRY_NUMERIC(T, bool)
+        //CONVERT_ENTRY_NUMERIC(T, bool)
+        CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+            return static_cast<T>(bval ? 1 : 0);
+        CONVERT_ENTRY_COMPLEX_END();
         CONVERT_ENTRY_FROM_STRING(T, std::string)
         CONVERT_ENTRY_FROM_STRING(T, std::wstring)
         END_CONVERT_MAP(T)
