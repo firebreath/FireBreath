@@ -182,7 +182,7 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     DISPID id(getIDForName(FB::utf8_to_wstring(propertyName)));
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     if (dispex.p) {
-        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
+        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUTREF, &params,
             &res, &eInfo, NULL);
     } else {
         hr = m_obj->Invoke(id, IID_NULL, LOCALE_USER_DEFAULT,

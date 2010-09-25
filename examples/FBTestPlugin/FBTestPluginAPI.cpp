@@ -31,6 +31,7 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
     registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
+    registerMethod("getUserArray",  make_method(this, &FBTestPluginAPI::getUserArray));
     registerMethod("getObjectKeys",  make_method(this, &FBTestPluginAPI::getObjectKeys));
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
@@ -173,6 +174,28 @@ std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
     return outStr;
 }
 
+FB::VariantList FBTestPluginAPI::getUserArray()
+{
+    FB::VariantList map;
+    map.push_back("Richard Bateman");
+    map.push_back("Somewhere in Utah");
+    map.push_back("Hazel");
+    map.push_back("Brown");
+    FB::VariantList kids;
+    kids.push_back("Caleb");
+    kids.push_back("Unknown");
+    kids.push_back("Ok, I only have one, but I'm filling space");
+    FB::VariantMap innerMap;
+    innerMap["test"] = 12;
+    innerMap["test2"] = true;
+    innerMap["test3"] = 12.4;
+    innerMap["test4"] = "asdf";
+    map.push_back(innerMap);
+    kids.push_back(innerMap);
+    map.push_back(kids);
+    return map;
+}
+
 FB::VariantMap FBTestPluginAPI::getUserData()
 {
     FB::VariantMap map;
@@ -184,6 +207,13 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     kids.push_back("Caleb");
     kids.push_back("Unknown");
     kids.push_back("Ok, I only have one, but I'm filling space");
+    FB::VariantMap innerMap;
+    innerMap["test"] = 12;
+    innerMap["test2"] = true;
+    innerMap["test3"] = 12.4;
+    innerMap["test4"] = "asdf";
+    map["inner"] = innerMap;
+    kids.push_back(innerMap);
     map["Kids"] = kids;
     return map;
 }

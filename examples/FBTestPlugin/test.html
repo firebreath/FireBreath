@@ -148,7 +148,11 @@
             var check = plugin.getUserData();
             if (check.Name != "Richard Bateman"
                 || typeof(check.Kids) != "object"
-                || check.Kids[0] != "Caleb")
+                || check.Kids[0] != "Caleb"
+                || typeof (check.inner) != "object"
+                || check.inner.test3 != 12.4
+                || check.inner.test != 12
+                || check.Kids[3].test4 != "asdf")
                 markFailed("getMap");
             else
                 markPassed("getMap");

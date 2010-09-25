@@ -45,6 +45,7 @@ public:
     FB::VariantList getObjectKeys(const FB::JSObject& arr);
     FB::VariantList getObjectValues(const FB::JSObject& arr);
     FB::VariantMap getUserData();
+    FB::VariantList getUserArray();
 
     // Method add
     long add(long a, long b);
