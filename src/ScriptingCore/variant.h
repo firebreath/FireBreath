@@ -38,28 +38,28 @@
 #pragma warning( disable : 4800 )
 #endif
 
-#define BEGIN_CONVERT_MAP(_type_) \
+#define FB_BEGIN_CONVERT_MAP(_type_) \
     const std::type_info *type(&get_type()); \
     if (*type == typeid(_type_)) { \
     return cast< _type_ >(); \
     } else
 
-#define END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
-#define END_CONVERT_MAP_NO_THROW(_type_) {}
+#define FB_END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
+#define FB_END_CONVERT_MAP_NO_THROW(_type_) {}
 
-#define CONVERT_ENTRY_SIMPLE(_type_, _srctype_)             \
+#define FB_CONVERT_ENTRY_SIMPLE(_type_, _srctype_)             \
     if ( *type == typeid( _srctype_ ) ) {              \
     return static_cast< _type_ >( cast< _srctype_ >() );\
     } else
 
-#define CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, _var_) \
+#define FB_CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, _var_) \
     if (*type == typeid(_srctype_)) { \
     _srctype_ _var_ = cast<_srctype_>();
 
-#define CONVERT_ENTRY_COMPLEX_END() \
+#define FB_CONVERT_ENTRY_COMPLEX_END() \
     } else
 
-#define CONVERT_ENTRY_NUMERIC(_type_, _srctype_) \
+#define FB_CONVERT_ENTRY_NUMERIC(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         try { \
             return boost::numeric_cast<_type_>(cast<_srctype_>());\
@@ -68,7 +68,7 @@
         } \
     } else
 
-#define CONVERT_ENTRY_FROM_STRING(_type_, _srctype_) \
+#define FB_CONVERT_ENTRY_FROM_STRING(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         typedef _srctype_::value_type char_type; \
         std::basic_istringstream<char_type> iss(cast<_srctype_>()); \
@@ -80,7 +80,7 @@
         } \
     } else
 
-#define CONVERT_ENTRY_FROM_STRING_TYPE(_type_, _srctype_) \
+#define FB_CONVERT_ENTRY_FROM_STRING_TYPE(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         typedef _type_::value_type char_type; \
         std::basic_ostringstream<char_type> oss; \
@@ -91,8 +91,8 @@
         } \
     } else
 
-#define CONVERT_ENTRY_TO_STRING(_srctype_)  CONVERT_ENTRY_FROM_STRING_TYPE(std::string , _srctype_)
-#define CONVERT_ENTRY_TO_WSTRING(_srctype_) CONVERT_ENTRY_FROM_STRING_TYPE(std::wstring, _srctype_)
+#define FB_CONVERT_ENTRY_TO_STRING(_srctype_)  FB_CONVERT_ENTRY_FROM_STRING_TYPE(std::string , _srctype_)
+#define FB_CONVERT_ENTRY_TO_WSTRING(_srctype_) FB_CONVERT_ENTRY_FROM_STRING_TYPE(std::wstring, _srctype_)
 
 namespace FB
 {
@@ -449,79 +449,94 @@ namespace FB
     template<class T>
     inline typename FB::meta::enable_for_numbers<T, T>::type
     variant::convert_cast() const {
-        BEGIN_CONVERT_MAP(T)
-        CONVERT_ENTRY_NUMERIC(T, char)
-        CONVERT_ENTRY_NUMERIC(T, unsigned char)
-        CONVERT_ENTRY_NUMERIC(T, short)
-        CONVERT_ENTRY_NUMERIC(T, unsigned short)
-        CONVERT_ENTRY_NUMERIC(T, int)
-        CONVERT_ENTRY_NUMERIC(T, unsigned int)
-        CONVERT_ENTRY_NUMERIC(T, long)
-        CONVERT_ENTRY_NUMERIC(T, unsigned long)
-        CONVERT_ENTRY_NUMERIC(T, float)
-        CONVERT_ENTRY_NUMERIC(T, double)
-        CONVERT_ENTRY_NUMERIC(T, bool)
-        CONVERT_ENTRY_FROM_STRING(T, std::string)
-        CONVERT_ENTRY_FROM_STRING(T, std::wstring)
-        END_CONVERT_MAP(T)
+        FB_BEGIN_CONVERT_MAP(T)
+        FB_CONVERT_ENTRY_NUMERIC(T, char)
+        FB_CONVERT_ENTRY_NUMERIC(T, unsigned char)
+        FB_CONVERT_ENTRY_NUMERIC(T, short)
+        FB_CONVERT_ENTRY_NUMERIC(T, unsigned short)
+        FB_CONVERT_ENTRY_NUMERIC(T, int)
+        FB_CONVERT_ENTRY_NUMERIC(T, unsigned int)
+        FB_CONVERT_ENTRY_NUMERIC(T, long)
+        FB_CONVERT_ENTRY_NUMERIC(T, unsigned long)
+        FB_CONVERT_ENTRY_NUMERIC(T, float)
+        FB_CONVERT_ENTRY_NUMERIC(T, double)
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+            // we handle bool here specifically because the numeric_cast produces warnings
+            return static_cast<T>(bval ? 1 : 0);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_FROM_STRING(T, std::string)
+        FB_CONVERT_ENTRY_FROM_STRING(T, std::wstring)
+        FB_END_CONVERT_MAP(T)
     }
     
     template<> inline const std::string variant::convert_cast_impl<std::string>() const {
-        BEGIN_CONVERT_MAP(std::string);
-        CONVERT_ENTRY_TO_STRING(double);
-        CONVERT_ENTRY_TO_STRING(float);
-        CONVERT_ENTRY_TO_STRING(int);
-        CONVERT_ENTRY_TO_STRING(unsigned int);
-        CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+        FB_BEGIN_CONVERT_MAP(std::string);
+        FB_CONVERT_ENTRY_TO_STRING(double);
+        FB_CONVERT_ENTRY_TO_STRING(float);
+        FB_CONVERT_ENTRY_TO_STRING(int);
+        FB_CONVERT_ENTRY_TO_STRING(unsigned int);
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
         return bval ? "true" : "false";
-        CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
         return wstring_to_utf8(str);
-        CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_TO_STRING(long);
-        CONVERT_ENTRY_TO_STRING(unsigned long);
-        CONVERT_ENTRY_TO_STRING(short);
-        CONVERT_ENTRY_TO_STRING(unsigned short);
-        CONVERT_ENTRY_TO_STRING(char);
-        CONVERT_ENTRY_TO_STRING(unsigned char);
-        END_CONVERT_MAP(std::string);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_TO_STRING(long);
+        FB_CONVERT_ENTRY_TO_STRING(unsigned long);
+        FB_CONVERT_ENTRY_TO_STRING(short);
+        FB_CONVERT_ENTRY_TO_STRING(unsigned short);
+        FB_CONVERT_ENTRY_TO_STRING(char);
+        FB_CONVERT_ENTRY_TO_STRING(unsigned char);
+        FB_END_CONVERT_MAP(std::string);
     }
 
     template<> inline const std::wstring variant::convert_cast_impl<std::wstring>() const {
-        BEGIN_CONVERT_MAP(std::wstring);
-        CONVERT_ENTRY_TO_WSTRING(double);
-        CONVERT_ENTRY_TO_WSTRING(float);
-        CONVERT_ENTRY_TO_WSTRING(int);
-        CONVERT_ENTRY_TO_WSTRING(unsigned int);
-        CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+        FB_BEGIN_CONVERT_MAP(std::wstring);
+        FB_CONVERT_ENTRY_TO_WSTRING(double);
+        FB_CONVERT_ENTRY_TO_WSTRING(float);
+        FB_CONVERT_ENTRY_TO_WSTRING(int);
+        FB_CONVERT_ENTRY_TO_WSTRING(unsigned int);
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
         return bval ? L"true" : L"false";
-        CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
         return utf8_to_wstring(str);
-        CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_TO_WSTRING(long);
-        CONVERT_ENTRY_TO_WSTRING(unsigned long);
-        CONVERT_ENTRY_TO_WSTRING(short);
-        CONVERT_ENTRY_TO_WSTRING(unsigned short);
-        CONVERT_ENTRY_TO_WSTRING(char);
-        CONVERT_ENTRY_TO_WSTRING(unsigned char);
-        END_CONVERT_MAP(std::wstring);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_TO_WSTRING(long);
+        FB_CONVERT_ENTRY_TO_WSTRING(unsigned long);
+        FB_CONVERT_ENTRY_TO_WSTRING(short);
+        FB_CONVERT_ENTRY_TO_WSTRING(unsigned short);
+        FB_CONVERT_ENTRY_TO_WSTRING(char);
+        FB_CONVERT_ENTRY_TO_WSTRING(unsigned char);
+        FB_END_CONVERT_MAP(std::wstring);
     }
     
     template<> inline const bool variant::convert_cast_impl<bool>() const {
-        BEGIN_CONVERT_MAP(bool);
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
-        transform(str.begin(), str.end(), str.begin(), ::tolower); 
+        FB_BEGIN_CONVERT_MAP(bool);
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower); 
         return (str == "y" || str == "1" || str == "yes" || str == "true" || str == "t");
-        CONVERT_ENTRY_COMPLEX_END();
-        CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
-        transform(str.begin(), str.end(), str.begin(), ::tolower); 
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_CONVERT_ENTRY_COMPLEX_BEGIN(std::wstring, str);
+        std::transform(str.begin(), str.end(), str.begin(), ::tolower); 
         return (str == L"y" || str == L"1" || str == L"yes" || str == L"true" || str == L"t");
-        CONVERT_ENTRY_COMPLEX_END();
-        END_CONVERT_MAP_NO_THROW(short);
+        FB_CONVERT_ENTRY_COMPLEX_END();
+        FB_END_CONVERT_MAP_NO_THROW(short);
         
         return convert_cast_impl<long>();
     }
 }
+
+#undef FB_BEGIN_CONVERT_MAP
+#undef FB_END_CONVERT_MAP
+#undef FB_END_CONVERT_MAP_NO_THROW
+#undef FB_CONVERT_ENTRY_SIMPLE
+#undef FB_CONVERT_ENTRY_NUMERIC
+#undef FB_CONVERT_ENTRY_TO_STRING
+#undef FB_CONVERT_ENTRY_TO_WSTRING
+#undef FB_CONVERT_ENTRY_FROM_STRING
+#undef FB_CONVERT_ENTRY_FROM_STRING_TYPE
+#undef FB_CONVERT_ENTRY_COMPLEX_BEGIN
+#undef FB_CONVERT_ENTRY_COMPLEX_END
 
 #endif // CDIGGINS_ANY_HPP
