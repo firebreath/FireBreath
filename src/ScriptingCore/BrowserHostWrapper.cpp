@@ -36,7 +36,7 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
         printf("Logging: %s\n", req->m_msg.c_str());
         obj->Invoke("log", FB::variant_list_of(req->m_msg));
     } catch (const std::exception &e) {
-        printf("Exception: %s\n", e.what());
+        // printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
         return;
     }

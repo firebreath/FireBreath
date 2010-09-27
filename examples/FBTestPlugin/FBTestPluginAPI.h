@@ -32,7 +32,7 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    FB::JSOutObject get_simpleMath();
+    FB::JSAPIPtr get_simpleMath();
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);

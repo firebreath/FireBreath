@@ -68,7 +68,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
-    return L"Ð²Ð¾Ñ, Ñ Ð³Ð¾Ð²Ð¾ÑÑ \"" + val + L"\"";
+    return L"вот, я говорю \"" + val + L"\"";
 }
 
 // Read/Write property someInt
@@ -220,7 +220,7 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     return map;
 }
 
-FB::JSOutObject FBTestPluginAPI::get_simpleMath()
+FB::JSAPIPtr FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }
