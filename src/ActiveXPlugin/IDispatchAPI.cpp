@@ -112,9 +112,31 @@ bool IDispatchAPI::HasProperty(const std::wstring& propertyName)
 
 bool IDispatchAPI::HasProperty(const std::string& propertyName)
 {
-    // This will actually just return true if the specified member exists; IDispatch doesn't really
-    // differentiate further than that
-    return getIDForName(FB::utf8_to_wstring(propertyName)) != -1;
+    DISPPARAMS params;
+    params.cArgs = 0;
+    params.cNamedArgs = 0;
+
+    VARIANT res;
+    EXCEPINFO eInfo;
+
+    HRESULT hr = E_NOTIMPL;
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    DISPID id = getIDForName(FB::utf8_to_wstring(propertyName));
+    if (id == -1 && propertyName != "toString")
+        return false;
+    // The only way to find out if the property actually exists or not is to try to get it; 
+    if (dispex.p) {
+        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
+            &res, &eInfo, NULL);
+    } else {
+        hr = m_obj->Invoke(getIDForName(FB::utf8_to_wstring(propertyName)), IID_NULL, LOCALE_USER_DEFAULT,
+            DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
+    }
+    if (SUCCEEDED(hr)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool IDispatchAPI::HasProperty(int idx)

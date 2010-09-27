@@ -32,9 +32,11 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
     try {
         FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
-        FB::JSObject obj = window->getProperty<FB::JSObject>("console");
-        printf("Logging: %s\n", req->m_msg.c_str());
-        obj->Invoke("log", FB::variant_list_of(req->m_msg));
+        if (window->getJSObject()->HasProperty("console")) {
+            FB::JSObject obj = window->getProperty<FB::JSObject>("console");
+            printf("Logging: %s\n", req->m_msg.c_str());
+            obj->Invoke("log", FB::variant_list_of(req->m_msg));
+        }
     } catch (const std::exception &e) {
         // printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
