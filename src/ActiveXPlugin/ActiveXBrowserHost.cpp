@@ -213,24 +213,24 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         outVar = bStr;
 
     } else if (var.get_type() == typeid(FB::VariantList)) {
-        DOM::NodePtr outArr = this->getDOMWindow()->createArray();
+        FB::JSObject outArr = this->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
         for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
             FB::VariantList vl = list_of(*it);
-            outArr->callMethod<void>("push", vl);
+            outArr->Invoke("push", vl);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(outArr->getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(outArr);
         if (api) {
             outVar = api->getIDispatch();
         }
 
     } else if (var.get_type() == typeid(FB::VariantMap)) {
-        DOM::NodePtr out = this->getDOMWindow()->createMap();
+        FB::JSObject out = this->getDOMWindow()->createMap();
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out->setProperty(it->first, it->second);
+            out->SetProperty(it->first, it->second);
         }
-        IDispatchAPIPtr api = as_IDispatchAPI(out->getJSObject());
+        IDispatchAPIPtr api = as_IDispatchAPI(out);
         if (api) {
             outVar = api->getIDispatch();
         }

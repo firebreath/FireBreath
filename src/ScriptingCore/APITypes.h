@@ -21,6 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#include <boost/static_assert.hpp>
 
 namespace FB
 {
@@ -35,16 +37,21 @@ namespace FB
     typedef std::vector<variant> VariantList;
     typedef std::map<std::string, variant> VariantMap;
     typedef std::set<std::string> StringSet;
-
-#define as_JSAPIPtr(x) boost::dynamic_pointer_cast<FB::JSAPI>(x)
-#define as_JSObject(x) boost::dynamic_pointer_cast<FB::BrowserObjectAPI>(x)
+    
+    // FB pointer types
+    
     typedef boost::shared_ptr<FB::JSAPI> JSOutObject; // Deprecated
     typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
     typedef boost::shared_ptr<FB::BrowserObjectAPI> JSObject;
-
-#define as_BrowserHost(x) boost::dynamic_pointer_cast<FB::BrowserHostWrapper>(x)
     typedef boost::shared_ptr<FB::BrowserHostWrapper> BrowserHost;
+    
+    // dynamically cast a FB pointer
+    
+    template<class T, class U> 
+    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
 
+    // helper type to allow JSAPIAuto catching of a list of variant arguments
+    
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
@@ -110,6 +117,20 @@ namespace FB
     typedef std::multimap<std::string, FB::JSObject> EventMultiMap;
     typedef std::map<void*, FB::JSObject> EventIFaceMap;
     typedef std::map<std::string, FB::JSObject> EventSingleMap;
+    
+    // implementation details
+    
+    template<class T, class U> 
+    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
+    {
+        enum { base_is_firebreath_class = 
+                       boost::is_base_of<JSAPI, T>::value
+                    || boost::is_base_of<BrowserHostWrapper, T>::value
+        };
+        // This should only be used with FireBreath' and derived classes
+        BOOST_STATIC_ASSERT(base_is_firebreath_class);
+        return boost::dynamic_pointer_cast<T>(r);
+    }
 }
 
 // This needs to be included after all our classes are defined because it relies on types defined in this file

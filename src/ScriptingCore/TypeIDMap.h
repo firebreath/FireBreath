@@ -110,7 +110,7 @@ namespace FB {
             typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
-                T retVal = (*it).second.template cast<T>();
+                T retVal = (*it).second.template convert_cast<T>();
                 return retVal;
             } else {
                 throw FB::bad_variant_cast(typeid(void), typeid(T));

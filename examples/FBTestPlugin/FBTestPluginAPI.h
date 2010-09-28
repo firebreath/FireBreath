@@ -32,7 +32,7 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    FB::JSOutObject get_simpleMath();
+    FB::JSAPIPtr get_simpleMath();
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
@@ -45,6 +45,7 @@ public:
     FB::VariantList getObjectKeys(const FB::JSObject& arr);
     FB::VariantList getObjectValues(const FB::JSObject& arr);
     FB::VariantMap getUserData();
+    FB::VariantList getUserArray();
 
     // Method add
     long add(long a, long b);

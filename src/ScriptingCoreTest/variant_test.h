@@ -76,7 +76,7 @@ TEST(VariantTest)
         FB::VariantList values = variant_list_of("1")(2)(3.0);
         boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(values));
         
-        variant varJsArr = as_JSObject(jsarr);
+        variant varJsArr = ptr_cast<BrowserObjectAPI>(jsarr);
         StringVec vs1 = varJsArr.convert_cast<StringVec>();
         StringVec vs2 = FB::convert_variant_list<StringVec>(values);
         
@@ -92,7 +92,7 @@ TEST(VariantTest)
 
         VariantMap values = variant_map_of<std::string>("a","a")("b","b")("c","c");
         boost::shared_ptr<FakeJsMap> jsmap(new FakeJsMap(values));
-        variant varJsMap = as_JSObject(jsmap);
+        variant varJsMap = ptr_cast<BrowserObjectAPI>(jsmap);
         VariantMap result = varJsMap.convert_cast<VariantMap>();
 
         VariantMap::const_iterator itval = values.begin();

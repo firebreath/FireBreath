@@ -24,7 +24,6 @@ namespace FB { namespace Npapi {
     class NpapiPluginModule;
     class NPObjectAPI;
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
-#define as_NPObjectAPI(x) boost::dynamic_pointer_cast<FB::Npapi::NPObjectAPI>(x)
 
     class NpapiBrowserHost :
         public FB::BrowserHostWrapper
@@ -124,7 +123,6 @@ namespace FB { namespace Npapi {
     };
 
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-#define as_NpapiBrowserHost(x) boost::dynamic_pointer_cast<FB::Npapi::NpapiBrowserHost>(x)
 }; };
 
 #endif

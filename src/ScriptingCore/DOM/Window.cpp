@@ -45,16 +45,16 @@ void Window::alert(const std::string& str)
     callMethod<void>("alert", variant_list_of(str));
 }
 
-NodePtr Window::createArray()
+FB::JSObject Window::createArray()
 {
     JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
-    return Node::create(arr);
+    return arr;
 }
 
-NodePtr Window::createMap()
+FB::JSObject Window::createMap()
 {
     JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
-    return Node::create(arr);
+    return arr;
 }
 
 std::string Window::getLocation()

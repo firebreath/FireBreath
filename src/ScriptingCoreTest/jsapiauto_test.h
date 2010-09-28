@@ -120,7 +120,7 @@ TEST(JSAPIAuto_Methods)
         for(unsigned i=2; i<=max_args; ++i)
         {
             boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
-            FB::VariantList params = variant_list_of(strings.front())(as_JSObject(jsarr));
+            FB::VariantList params = variant_list_of(strings.front())(ptr_cast<BrowserObjectAPI>(jsarr));
             FB::variant ret = test->Invoke(method, params);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
             const std::string result   = ret.cast<std::string>();

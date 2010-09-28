@@ -30,10 +30,10 @@ BrowserObjectAPI::~BrowserObjectAPI(void)
 variant BrowserObjectAPI::InvokeMainThread(const std::string& methodName, const std::vector<variant>& args)
 {
     assert(!host->isMainThread());
-    return FB::SyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
+    return FB::SyncBrowserCall::CallMethod(ptr_cast<BrowserObjectAPI>(shared_ptr()), methodName, args);
 }
 
 void BrowserObjectAPI::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
+    FB::AsyncBrowserCall::CallMethod(ptr_cast<BrowserObjectAPI>(shared_ptr()), methodName, args);
 }
