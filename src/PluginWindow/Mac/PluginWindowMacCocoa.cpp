@@ -31,7 +31,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
             // TODO
-            printf("MADE IT HERE\n");
             break;
         }
 
