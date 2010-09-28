@@ -44,7 +44,7 @@ FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, i
 
 FB::PluginWindowMacCarbonCG* _createPluginWindowCarbonCG(NP_CGContext* context);
 
-FB::PluginWindowMacCocoaCG* _createPluginWindowCocoaCG(NP_CGContext* context);
+FB::PluginWindowMacCocoaCG* _createPluginWindowCocoaCG();
 
 FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA();
 

@@ -26,13 +26,17 @@ namespace FB {
     class PluginWindowMacCocoaCG : public PluginWindowMacCocoa
     {
     public:
-        PluginWindowMacCocoaCG(NP_CGContext* context);
+        PluginWindowMacCocoaCG();
         ~PluginWindowMacCocoaCG();
 
     public:
         void clearWindow();
-        int16_t HandleEvent(NPCocoaEvent* event);
-        NP_CGContext* getContext() { return m_context; }
+
+        virtual int16_t HandleEvent(NPCocoaEvent* evt);
+
+        // Handle the CoreGraphics drawing contexts
+        void setContext(CGContextRef context);
+        CGContextRef getContext() { return m_context; }
         
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
@@ -40,7 +44,7 @@ namespace FB {
         NPRect getWindowClipping();
 
     protected:
-        NP_CGContext* m_context;
+        CGContextRef m_context;
         int m_x;
         int m_y;
         int m_width;

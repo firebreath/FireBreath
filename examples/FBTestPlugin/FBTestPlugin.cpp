@@ -10,6 +10,7 @@
 #include <sstream>
 #include "NpapiTypes.h"
 #include "FBTestPluginAPI.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
 
 #include "FBTestPlugin.h"
 
@@ -38,6 +39,11 @@ FB::JSAPIPtr FBTestPlugin::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
     return FB::JSAPIPtr(new FBTestPluginAPI(m_host));
+}
+
+bool FBTestPlugin::onRefreshEvent(FB::RefreshEvent *evt, FB::PluginWindow* window)
+{
+    FB::PluginWindowMacCocoaCG* win = dynamic_cast<FB::PluginWindowMacCocoaCG*>(window);
 }
 
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)

@@ -21,12 +21,31 @@
 
 using namespace FB;
 
-PluginWindowMacCocoaCG::PluginWindowMacCocoaCG(NP_CGContext* context) {
-    m_context = context;
-}
+PluginWindowMacCocoaCG::PluginWindowMacCocoaCG() {}
 
 PluginWindowMacCocoaCG::~PluginWindowMacCocoaCG() {
     this->clearWindow();
+}
+
+int16_t PluginWindowMacCocoaCG::HandleEvent(NPCocoaEvent* evt) {
+    // In almost all cases forward the event to our parent class,
+    // except drawing events where we must scrape the CGContextRef 
+    switch(evt->type) {
+        case NPCocoaEventDrawRect: {
+            setContext(evt->data.draw.context);
+            break;
+        }
+
+        default:
+            break;
+    }
+
+    // Forward event to parent class
+    return PluginWindowMacCocoa::HandleEvent(evt);
+}
+
+void PluginWindowMacCocoaCG::setContext(CGContextRef context) {
+    m_context = context;
 }
 
 void PluginWindowMacCocoaCG::clearWindow() {
@@ -45,10 +64,6 @@ void PluginWindowMacCocoaCG::setWindowClipping(uint16_t top, uint16_t left, uint
     m_clipLeft = left;
     m_clipBottom = bottom;
     m_clipRight = right;
-}
-
-int16_t PluginWindowMacCocoaCG::HandleEvent(NPCocoaEvent* event) {
-    return PluginWindowMacCocoa::HandleEvent(event);
 }
 
 NPRect PluginWindowMacCocoaCG::getWindowPosition() {

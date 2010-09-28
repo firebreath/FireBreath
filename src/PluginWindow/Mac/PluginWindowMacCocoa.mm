@@ -31,7 +31,8 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
-            // TODO
+            RefreshEvent ev;
+            return SendEvent(&ev);
             break;
         }
 

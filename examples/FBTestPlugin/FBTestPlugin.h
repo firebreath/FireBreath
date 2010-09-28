@@ -10,6 +10,7 @@
 #define H_TEMPLATEPLUGIN
 
 #include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/DrawingEvents.h"
 
 #include "PluginCore.h"
 #include "PluginWindow.h"
@@ -29,12 +30,14 @@ public:
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()
+        EVENTTYPE_CASE(FB::RefreshEvent, onRefreshEvent, FB::PluginWindow)
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
     END_PLUGIN_EVENT_MAP()
 
     /** BEGIN EVENTDEF -- DON'T CHANGE THIS LINE **/
+    virtual bool onRefreshEvent(FB::RefreshEvent *evt, FB::PluginWindow* window);
     virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*);
     virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*);
     virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
