@@ -20,20 +20,20 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserHostWrapper.h"
 
-void FB::BrowserHostWrapper::htmlLog(const std::string& str)
+void FB::BrowserHost::htmlLog(const std::string& str)
 {
-    this->ScheduleAsyncCall(&FB::BrowserHostWrapper::AsyncHtmlLog,
+    this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
             new FB::AsyncLogRequest(shared_ptr(), str));
 }
 
-void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
+void FB::BrowserHost::AsyncHtmlLog(void *logReq)
 {
     FB::AsyncLogRequest *req = (FB::AsyncLogRequest*)logReq;
     try {
         FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
         if (window->getJSObject()->HasProperty("console")) {
-            FB::JSObject obj = window->getProperty<FB::JSObject>("console");
+            FB::JSObjectPtr obj = window->getProperty<FB::JSObjectPtr>("console");
             printf("Logging: %s\n", req->m_msg.c_str());
             obj->Invoke("log", FB::variant_list_of(req->m_msg));
         }
@@ -45,40 +45,40 @@ void FB::BrowserHostWrapper::AsyncHtmlLog(void *logReq)
     delete req;
 }
 
-void FB::BrowserHostWrapper::evaluateJavaScript(const std::wstring &script)
+void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
 {
     evaluateJavaScript(FB::wstring_to_utf8(script));
 }
 
-FB::DOM::WindowPtr FB::BrowserHostWrapper::_createWindow(const FB::JSObject& obj)
+FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj)
 {
     return FB::DOM::WindowPtr(new FB::DOM::Window(obj));
 }
 
-FB::DOM::DocumentPtr FB::BrowserHostWrapper::_createDocument(const FB::JSObject& obj)
+FB::DOM::DocumentPtr FB::BrowserHost::_createDocument(const FB::JSObjectPtr& obj)
 {
     return FB::DOM::DocumentPtr(new FB::DOM::Document(obj));
 }
 
-FB::DOM::ElementPtr FB::BrowserHostWrapper::_createElement(const FB::JSObject& obj)
+FB::DOM::ElementPtr FB::BrowserHost::_createElement(const FB::JSObjectPtr& obj)
 {
     return FB::DOM::ElementPtr(new FB::DOM::Element(obj));
 }
 
-FB::DOM::NodePtr FB::BrowserHostWrapper::_createNode(const FB::JSObject& obj)
+FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj)
 {
     return FB::DOM::NodePtr(new FB::DOM::Node(obj));
 }
 
 
-void FB::BrowserHostWrapper::assertMainThread()
+void FB::BrowserHost::assertMainThread()
 {
 #ifdef _DEBUG
     assert(isMainThread());
 #endif
 }
 
-bool FB::BrowserHostWrapper::isMainThread()
+bool FB::BrowserHost::isMainThread()
 {
     return m_threadId == boost::this_thread::get_id();
 }

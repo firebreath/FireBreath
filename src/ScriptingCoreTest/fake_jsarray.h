@@ -17,11 +17,11 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 #include "BrowserObjectAPI.h"
 
-class FakeJsArray : public FB::BrowserObjectAPI
+class FakeJsArray : public FB::JSObject
 {
 public:
     FakeJsArray(const FB::VariantList& values)
-      : FB::BrowserObjectAPI(FB::BrowserHost()), m_values(values)
+      : FB::JSObject(FB::BrowserHostPtr()), m_values(values)
     {
     }
 

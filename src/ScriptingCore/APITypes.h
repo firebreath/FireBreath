@@ -26,12 +26,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class BrowserObjectAPI;
-    class BrowserHostWrapper;
+    class BrowserHost;
     class JSAPI;
-    class BrowserObjectAPI;
+    class JSObject;
     class variant;
-
+    
     // Variant list
 
     typedef std::vector<variant> VariantList;
@@ -40,10 +39,15 @@ namespace FB
     
     // FB pointer types
     
-    typedef boost::shared_ptr<FB::JSAPI> JSOutObject; // Deprecated
     typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
-    typedef boost::shared_ptr<FB::BrowserObjectAPI> JSObject;
-    typedef boost::shared_ptr<FB::BrowserHostWrapper> BrowserHost;
+    typedef boost::shared_ptr<FB::JSObject> JSObjectPtr;
+    typedef boost::shared_ptr<FB::BrowserHost> BrowserHostPtr;
+    
+    // backwards compability typedefs
+    
+    typedef BrowserHost BrowserHostWrapper;
+    typedef JSObject BrowserObjectAPI;
+    typedef JSAPIPtr JSOutObject;
     
     // dynamically cast a FB pointer
     
@@ -113,10 +117,10 @@ namespace FB
 
     // JSAPI event handlers
 
-    typedef std::pair<std::string, FB::JSObject> EventPair;
-    typedef std::multimap<std::string, FB::JSObject> EventMultiMap;
-    typedef std::map<void*, FB::JSObject> EventIFaceMap;
-    typedef std::map<std::string, FB::JSObject> EventSingleMap;
+    typedef std::pair<std::string, FB::JSObjectPtr> EventPair;
+    typedef std::multimap<std::string, FB::JSObjectPtr> EventMultiMap;
+    typedef std::map<void*, FB::JSObjectPtr> EventIFaceMap;
+    typedef std::map<std::string, FB::JSObjectPtr> EventSingleMap;
     
     // implementation details
     
@@ -125,7 +129,7 @@ namespace FB
     {
         enum { base_is_firebreath_class = 
                        boost::is_base_of<JSAPI, T>::value
-                    || boost::is_base_of<BrowserHostWrapper, T>::value
+                    || boost::is_base_of<BrowserHost, T>::value
         };
         // This should only be used with FireBreath' and derived classes
         BOOST_STATIC_ASSERT(base_is_firebreath_class);

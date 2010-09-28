@@ -26,7 +26,7 @@ namespace FB { namespace Npapi {
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
 
     class NpapiBrowserHost :
-        public FB::BrowserHostWrapper
+        public FB::BrowserHost
     {
     public:
         NpapiBrowserHost(NpapiPluginModule *module, NPP npp);

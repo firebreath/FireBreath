@@ -26,16 +26,16 @@ namespace FB {
     {
     public:
         virtual ~AsyncBrowserCall(void);
-        static void CallMethod(JSObject obj, const std::string& method,
+        static void CallMethod(JSObjectPtr obj, const std::string& method,
             const std::vector<variant> &inParams);
 
     protected:
-        AsyncBrowserCall(JSObject obj, const std::string& method,
+        AsyncBrowserCall(JSObjectPtr obj, const std::string& method,
             const std::vector<variant> &inParams);
 
         static void asyncCallback(void *userData);
 
-        JSObject m_obj;
+        JSObjectPtr m_obj;
         std::vector<variant> m_params;
         std::string m_methodName;
     };

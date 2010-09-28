@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
+FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
@@ -137,7 +137,7 @@ FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& ar
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -149,7 +149,7 @@ FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;

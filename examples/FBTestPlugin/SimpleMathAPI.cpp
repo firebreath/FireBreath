@@ -20,7 +20,7 @@ using boost::assign::list_of;
 
 #include "SimpleMathAPI.h"
 
-SimpleMathAPI::SimpleMathAPI(FB::BrowserHost host) : m_host(host)
+SimpleMathAPI::SimpleMathAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &SimpleMathAPI::add));
     registerMethod("sub",  make_method(this, &SimpleMathAPI::sub));

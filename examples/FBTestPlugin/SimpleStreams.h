@@ -18,10 +18,10 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class StreamsTest
 {
 public:
-    StreamsTest( FB::BrowserHost host );
+    StreamsTest( FB::BrowserHostPtr host );
 
     bool run();
 
 protected:
-    FB::BrowserHost host;
+    FB::BrowserHostPtr host;
 };

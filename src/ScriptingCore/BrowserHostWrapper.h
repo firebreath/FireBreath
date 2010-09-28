@@ -23,7 +23,7 @@ namespace FB
 {
     class BrowserStream;
     class PluginEventSink;
-    class BrowserObjectAPI;
+    class JSObject;
     namespace DOM {
         class Window;
         class Document;
@@ -37,17 +37,17 @@ namespace FB
 
     struct AsyncLogRequest
     {
-        AsyncLogRequest(BrowserHost host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(BrowserHostPtr host, const std::string& message) : m_host(host), m_msg(message) { }
 
-        BrowserHost m_host;
+        BrowserHostPtr m_host;
         std::string m_msg;
     };
 
-    class BrowserHostWrapper : public boost::enable_shared_from_this<BrowserHostWrapper>
+    class BrowserHost : public boost::enable_shared_from_this<BrowserHost>
     {
     public:
-        BrowserHostWrapper() : m_threadId(boost::this_thread::get_id()) { }
-        virtual ~BrowserHostWrapper() { }
+        BrowserHost() : m_threadId(boost::this_thread::get_id()) { }
+        virtual ~BrowserHost() { }
 
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
@@ -74,13 +74,13 @@ public:
     // These methods are pseudo-public; they shouldn't be
     // called directly.  Call the ::create method on the 
     // DOM object you want
-    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
-    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
-    virtual FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
-    virtual FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
+    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
 
     protected:
-        BrowserHost shared_ptr()
+        BrowserHostPtr shared_ptr()
         {
             return shared_from_this();
         }

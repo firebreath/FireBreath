@@ -24,7 +24,7 @@ namespace FB { namespace DOM {
     /**
      * Document - used as DocumentPtr (which is a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM document
+     * Provides a wrapper around a JSObject * that represents a DOM document
      **/
     class Document;
     typedef boost::shared_ptr<Document> DocumentPtr;
@@ -32,10 +32,10 @@ namespace FB { namespace DOM {
     class Document : public Element
     {
     public:
-        Document(const FB::JSObject &element);
+        Document(const FB::JSObjectPtr &element);
         virtual ~Document();
         DocumentPtr document() { return boost::dynamic_pointer_cast<Document>(node()); }
-        static DocumentPtr create(FB::JSObject &api) { return api->host->_createDocument(api); }
+        static DocumentPtr create(FB::JSObjectPtr &api) { return api->host->_createDocument(api); }
 
     public:
         virtual WindowPtr getWindow();

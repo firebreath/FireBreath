@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_BrowserObjectAPI
-#define H_FB_BrowserObjectAPI
+#ifndef H_FB_JSObject
+#define H_FB_JSObject
 
 #include "JSAPI.h"
 #include "BrowserHostWrapper.h"
@@ -21,11 +21,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class BrowserObjectAPI : public FB::JSAPI
+    class JSObject : public FB::JSAPI
     {
     public:
-        BrowserObjectAPI(BrowserHost h);
-        virtual ~BrowserObjectAPI();
+        JSObject(BrowserHostPtr h);
+        virtual ~JSObject();
 
         virtual void *getEventId() { return NULL; }
         virtual void *getEventContext() { return NULL; }
@@ -41,17 +41,17 @@ namespace FB
         //       and everywhere where variant::convert_cast<SomeContainer>()
         //       is used.
         template<class Cont>
-        static void GetArrayValues(const FB::JSObject& src, Cont& dst);
+        static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst);
         
         template<class Dict>
-        static void GetObjectValues(const FB::JSObject& src, Dict& dst);
+        static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst);
 
     public:
-        BrowserHost host;
+        BrowserHostPtr host;
     };
 
     template<class Cont>
-    void BrowserObjectAPI::GetArrayValues(const FB::JSObject& src, Cont& dst)
+    void JSObject::GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
     {
         try
         {
@@ -71,7 +71,7 @@ namespace FB
     }
 
     template<class Dict>
-    void BrowserObjectAPI::GetObjectValues(const FB::JSObject& src, Dict& dst)
+    void JSObject::GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
     {
         typedef typename Dict::key_type KeyType;
         typedef typename Dict::mapped_type MappedType;
@@ -101,7 +101,7 @@ namespace FB
     typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
     variant::convert_cast() const
     {
-        typedef FB::JSObject JsObject;
+        typedef FB::JSObjectPtr JsObject;
         
         // if the held data is of type Cont just return it
 
@@ -116,7 +116,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Cont cont;
-        FB::BrowserObjectAPI::GetArrayValues(cast<JsObject>(), cont);
+        FB::JSObject::GetArrayValues(cast<JsObject>(), cont);
         return cont;
     }
 
@@ -125,7 +125,7 @@ namespace FB
     typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
     variant::convert_cast() const
     {
-        typedef FB::JSObject JsObject;
+        typedef FB::JSObjectPtr JsObject;
         
         // if the held data is of type Dict just return it
 
@@ -140,7 +140,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Dict dict;
-        FB::BrowserObjectAPI::GetObjectValues(cast<JsObject>(), dict);
+        FB::JSObject::GetObjectValues(cast<JsObject>(), dict);
         return dict;
     }
 };

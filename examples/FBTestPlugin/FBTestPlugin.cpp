@@ -37,7 +37,7 @@ FBTestPlugin::~FBTestPlugin()
 
 FB::JSAPIPtr FBTestPlugin::createJSAPI()
 {
-    // m_host is the BrowserHostWrapper
+    // m_host is the BrowserHost
     return FB::JSAPIPtr(new FBTestPluginAPI(m_host));
 }
 

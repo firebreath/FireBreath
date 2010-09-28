@@ -23,7 +23,7 @@ namespace FB { namespace DOM {
     /**
      * Node (used as NodePtr, a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM node
+     * Provides a wrapper around a JSObject * that represents a DOM node
      **/
     class Node;
     typedef boost::shared_ptr<Node> NodePtr;
@@ -31,12 +31,12 @@ namespace FB { namespace DOM {
     class Node : public boost::enable_shared_from_this<Node>
     {
     public:
-        Node(const JSObject& element) : m_element(element) { }
+        Node(const JSObjectPtr& element) : m_element(element) { }
         virtual ~Node() { }
 
-        virtual FB::JSObject getJSObject() { return m_element; }
+        virtual FB::JSObjectPtr getJSObject() { return m_element; }
         NodePtr node() { return shared_from_this(); }
-        static NodePtr create(FB::JSObject &api) { return api->host->_createNode(api); }
+        static NodePtr create(FB::JSObjectPtr &api) { return api->host->_createNode(api); }
 
     public:
         template <class T>
@@ -80,7 +80,7 @@ namespace FB { namespace DOM {
         virtual void setProperty(int idx, const variant& val);
 
     protected:
-        JSObject m_element;
+        JSObjectPtr m_element;
     };
 
 }; };

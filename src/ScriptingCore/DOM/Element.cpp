@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-Element::Element(const FB::JSObject& element) : Node(element)
+Element::Element(const FB::JSObjectPtr& element) : Node(element)
 {
 }
 

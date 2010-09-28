@@ -22,13 +22,13 @@ FB::DOM::NodePtr FB::DOM::Node::getNode(const std::wstring& name)
 }
 FB::DOM::NodePtr FB::DOM::Node::getNode(const std::string& name)
 {
-    FB::JSObject api = getProperty<FB::JSObject>(name);
+    FB::JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
     return Node::create(api);
 }
 
 FB::DOM::NodePtr FB::DOM::Node::getNode(int idx)
 {
-    FB::JSObject api = getProperty<JSObject>(idx);
+    FB::JSObjectPtr api = getProperty<JSObjectPtr>(idx);
     return Node::create(api);
 }
 

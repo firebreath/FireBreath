@@ -21,7 +21,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-Window::Window(const FB::JSObject& element) : Node(element)
+Window::Window(const FB::JSObjectPtr& element) : Node(element)
 {
 }
 
@@ -31,7 +31,7 @@ Window::~Window()
 
 DocumentPtr Window::getDocument()
 {
-    JSObject api = getProperty<JSObject>("document");
+    JSObjectPtr api = getProperty<JSObjectPtr>("document");
     return Document::create(api);
 }
 
@@ -45,15 +45,15 @@ void Window::alert(const std::string& str)
     callMethod<void>("alert", variant_list_of(str));
 }
 
-FB::JSObject Window::createArray()
+FB::JSObjectPtr Window::createArray()
 {
-    JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
+    JSObjectPtr arr = this->callMethod<JSObjectPtr>("Array", FB::VariantList());
     return arr;
 }
 
-FB::JSObject Window::createMap()
+FB::JSObjectPtr Window::createMap()
 {
-    JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
+    JSObjectPtr arr = this->callMethod<JSObjectPtr>("Object", FB::VariantList());
     return arr;
 }
 

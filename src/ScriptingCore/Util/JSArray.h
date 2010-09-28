@@ -24,7 +24,7 @@ namespace FB
     {
     public:
         JSArray();
-        explicit JSArray(const FB::JSObject& obj);
+        explicit JSArray(const FB::JSObjectPtr& obj);
         explicit JSArray(const FB::VariantList& values);
 
         FB::variant GetProperty(int index);
@@ -39,7 +39,7 @@ namespace FB
 
     private:
         void RegisterMethods();
-        void ExtractList(const FB::JSObject&);
+        void ExtractList(const FB::JSObjectPtr&);
 
         FB::VariantList m_values;
     };

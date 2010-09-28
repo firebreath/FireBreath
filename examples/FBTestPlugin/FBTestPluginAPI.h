@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(FB::BrowserHost host);
+    FBTestPluginAPI(FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
 
     std::wstring say(const std::wstring& val);
@@ -42,8 +42,8 @@ public:
 
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
-    FB::VariantList getObjectKeys(const FB::JSObject& arr);
-    FB::VariantList getObjectValues(const FB::JSObject& arr);
+    FB::VariantList getObjectKeys(const FB::JSObjectPtr& arr);
+    FB::VariantList getObjectValues(const FB::JSObjectPtr& arr);
     FB::VariantMap getUserData();
     FB::VariantList getUserArray();
 
@@ -60,7 +60,7 @@ public:
     std::string getPageLocation();
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
     FB::JSAPIPtr m_simpleMath;
 
     std::string m_testString;

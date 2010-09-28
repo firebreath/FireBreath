@@ -96,7 +96,7 @@
 
 namespace FB
 {
-    class BrowserObjectAPI;
+    class JSObject;
     struct bad_variant_cast : std::bad_cast {
         bad_variant_cast(const std::type_info& src, const std::type_info& dest)
             : from(src.name()), to(dest.name())

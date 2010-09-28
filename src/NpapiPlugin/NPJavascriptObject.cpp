@@ -61,12 +61,12 @@ bool NPJavascriptObject::callSetEventListener(const std::vector<FB::variant> &ar
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(JSObject)) {
+         || args[1].get_type() != typeid(JSObjectPtr)) {
         throw invalid_arguments();
     }
 
     std::string evtName = "on" + args[0].convert_cast<std::string>();
-    FB::JSObject method(args[1].convert_cast<JSObject>());
+    FB::JSObjectPtr method(args[1].convert_cast<JSObjectPtr>());
     if (add) {
         m_api->registerEventMethod(evtName, method);
     } else {
@@ -124,7 +124,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-                FB::JSObject tmp(m_api->getDefaultEventMethod(sName));
+                FB::JSObjectPtr tmp(m_api->getDefaultEventMethod(sName));
                 if (tmp != NULL)
                     res = tmp;
             } else {
@@ -150,10 +150,10 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
                 if(value->type == NPVariantType_Null) {
-                    FB::JSObject nullEvent;
+                    FB::JSObjectPtr nullEvent;
                     m_api->setDefaultEventMethod(sName, nullEvent);
                 } else if(value->type == NPVariantType_Object) {
-                    FB::JSObject tmp(arg.cast<FB::JSObject>());
+                    FB::JSObjectPtr tmp(arg.cast<FB::JSObjectPtr>());
                     m_api->setDefaultEventMethod(sName, tmp);
                 }
             } else {
@@ -175,7 +175,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
             if (m_api->HasEvent(sName)) {
-                FB::JSObject nullEvent;
+                FB::JSObjectPtr nullEvent;
                 m_api->setDefaultEventMethod(sName, nullEvent);
             }
         }

@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB { namespace Npapi {
 
     class NPObjectAPI :
-        public FB::BrowserObjectAPI
+        public FB::JSObject
     {
     public:
         NPObjectAPI(NPObject *, NpapiBrowserHostPtr);
