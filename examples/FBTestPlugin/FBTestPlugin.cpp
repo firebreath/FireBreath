@@ -41,11 +41,6 @@ FB::JSAPIPtr FBTestPlugin::createJSAPI()
     return FB::JSAPIPtr(new FBTestPluginAPI(m_host));
 }
 
-bool FBTestPlugin::onRefreshEvent(FB::RefreshEvent *evt, FB::PluginWindow* window)
-{
-    FB::PluginWindowMacCocoaCG* win = dynamic_cast<FB::PluginWindowMacCocoaCG*>(window);
-}
-
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
 {
     std::ostringstream oStr;
