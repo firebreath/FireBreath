@@ -31,6 +31,7 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
             // TODO
+            printf("MADE IT HERE\n");
             break;
         }
 
@@ -202,8 +203,8 @@ void PluginWindowMacCocoa::unscheduleTimer(int timerId) {
 }
 
 void PluginWindowMacCocoa::InvalidateWindow() {
-    //NPRect rect = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
-    NPRect rect = { m_y, m_x, m_y + m_height, m_x + m_width };
+    // These coordinates are plugin-centric. This invalidates the whole plugin window
+    NPRect rect = { 0, 0, m_width, m_height };
     m_npHost->InvalidateRect(&rect);
 }
 
