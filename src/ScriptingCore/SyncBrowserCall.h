@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/mutex.hpp>
 #include "APITypes.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
 namespace FB {
 

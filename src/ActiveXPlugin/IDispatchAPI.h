@@ -17,14 +17,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "JSAPI.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "ActiveXBrowserHost.h"
 #include <atlctl.h>
 #include <vector>
 #include <string>
 
 class IDispatchAPI :
-    public FB::BrowserObjectAPI
+    public FB::JSObject
 {
 public:
     IDispatchAPI(IDispatch *, ActiveXBrowserHostPtr);

@@ -110,7 +110,7 @@ public:
         m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
         m_messageWin = FB::PluginWindowWin::createMessageWindow();
         m_host->setWindow(m_messageWin);
-        pluginMain->SetHost(FB::ptr_cast<FB::BrowserHostWrapper>(m_host));
+        pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);

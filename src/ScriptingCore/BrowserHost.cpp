@@ -14,11 +14,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <cstdio>
 #include <cassert>
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
 
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {

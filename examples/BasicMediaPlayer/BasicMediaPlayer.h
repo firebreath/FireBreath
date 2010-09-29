@@ -15,8 +15,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include <boost/shared_ptr.hpp>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
-#include "BrowserObjectAPI.h"
+#include "BrowserHost.h"
+#include "JSObject.h"
 
 namespace FB { class PluginWindow; };
 class MediaPlayer;

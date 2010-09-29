@@ -15,7 +15,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_FAKE_JS_MAP
 #define H_FAKE_JS_MAP
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include <iterator>
 
 class FakeJsMap : public FB::JSObject

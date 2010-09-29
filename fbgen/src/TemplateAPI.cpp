@@ -4,7 +4,7 @@
 
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "variant_list.h"
 #include "DOM/JSAPI_DOMDocument.h"
 

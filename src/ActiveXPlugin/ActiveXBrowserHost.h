@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "Win/win_common.h"
 #include "COM_config.h"
 #include <atlctl.h>
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "APITypes.h"
 
 class ActiveXBrowserHost;
@@ -29,7 +29,7 @@ typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
 #define as_IDispatchAPI(x) boost::dynamic_pointer_cast<IDispatchAPI>(x)
 
 class ActiveXBrowserHost :
-    public FB::BrowserHostWrapper
+    public FB::BrowserHost
 {
 public:
     ActiveXBrowserHost(IWebBrowser2 *doc);

@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiStream.h"
 #include "FactoryDefinitions.h"
 #include "PluginCore.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "config.h"
 
 using namespace FB::Npapi;

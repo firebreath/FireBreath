@@ -15,7 +15,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_JSARRAY
 #define H_JSARRAY
 
-#include "../BrowserObjectAPI.h"
+#include "../JSObject.h"
 #include "../JSAPIAuto.h"
 
 namespace FB

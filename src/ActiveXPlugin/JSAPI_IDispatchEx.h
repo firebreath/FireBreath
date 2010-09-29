@@ -171,7 +171,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCo
         IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
         m_connPtMap[(DWORD)obj.get()] = obj;
         *pdwCookie = (DWORD)obj.get();
-        m_api->registerEventInterface(FB::ptr_cast<FB::BrowserObjectAPI>(obj));
+        m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));
         return S_OK;
     } else {
         return CONNECT_E_CANNOTCONNECT;
@@ -185,7 +185,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Unadvise(DWORD dwCookie)
     if (fnd == m_connPtMap.end()) {
         return E_UNEXPECTED;
     } else {
-        m_api->registerEventInterface(FB::ptr_cast<FB::BrowserObjectAPI>(fnd->second));
+        m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(fnd->second));
         m_connPtMap.erase(fnd);
         return S_OK;
     }

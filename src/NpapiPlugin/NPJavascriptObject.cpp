@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "NPJavascriptObject.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
 using namespace FB::Npapi;
 

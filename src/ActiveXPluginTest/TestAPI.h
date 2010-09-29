@@ -16,7 +16,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 class TestAPI : public FB::JSAPIAuto
 {

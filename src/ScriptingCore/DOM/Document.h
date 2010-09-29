@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_DOM_DOCUMENT
 
 #include <string>
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "Element.h"
 
 namespace FB { namespace DOM {

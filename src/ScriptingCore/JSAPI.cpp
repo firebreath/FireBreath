@@ -14,8 +14,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI.h"
 #include <boost/bind.hpp>
-#include "BrowserHostWrapper.h"
-#include "BrowserObjectAPI.h"
+#include "BrowserHost.h"
+#include "JSObject.h"
 #include "utf8_tools.h"
 
 using namespace FB;

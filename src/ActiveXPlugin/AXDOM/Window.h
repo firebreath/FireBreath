@@ -26,12 +26,12 @@ namespace AXDOM {
     /**
      * Window
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
+     * Provides a wrapper around a JSObject * that represents a DOM element
      **/
     class Window : public FB::DOM::Window
     {
     public:
-        Window(FB::JSObject obj, IWebBrowser2 *web);
+        Window(FB::JSObjectPtr obj, IWebBrowser2 *web);
         virtual ~Window();
 
     public:

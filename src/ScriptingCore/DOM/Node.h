@@ -17,7 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <string>
 #include <boost/enable_shared_from_this.hpp>
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
 namespace FB { namespace DOM {
     /**

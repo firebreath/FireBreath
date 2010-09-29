@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "JSAPI.h"
 #include "variant_list.h"
 #include "FactoryDefinitions.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "DOM/Window.h"
 
 #include "PluginCore.h"

@@ -13,7 +13,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 class StreamsTest
 {

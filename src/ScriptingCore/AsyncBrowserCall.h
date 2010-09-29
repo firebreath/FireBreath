@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <string>
 #include "APITypes.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
 namespace FB {
 

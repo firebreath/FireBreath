@@ -13,7 +13,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
 #include "variant_list.h"

@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiTypes.h"
 #include "npruntime.h"
 #include "JSAPI.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "NpapiBrowserHost.h"
 
 namespace FB { namespace Npapi {

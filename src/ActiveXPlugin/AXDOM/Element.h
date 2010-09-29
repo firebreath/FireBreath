@@ -20,20 +20,20 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include <string>
 #include <boost/lexical_cast.hpp>
 #include "IDispatchAPI.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Element.h"
 
 namespace AXDOM {
 
     /**
-     * Element (used as Element, a shared_ptr)
+     * Element (used as ElementPtr, a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
+     * Provides a wrapper around a JSObject * that represents a DOM element
      **/
     class Element : public FB::DOM::Element
     {
     public:
-        Element(const FB::JSObject& element, IWebBrowser *web);
+        Element(const FB::JSObjectPtr& element, IWebBrowser *web);
         virtual ~Element();
 
     public:

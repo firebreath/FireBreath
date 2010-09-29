@@ -13,7 +13,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include <boost/assign.hpp>
 #include "DOM/Document.h"
 using boost::assign::list_of;
