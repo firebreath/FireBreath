@@ -7,5 +7,6 @@ PluginWindowMacCocoaICA::PluginWindowMacCocoaICA() {}
 PluginWindowMacCocoaICA::~PluginWindowMacCocoaICA() {}
 
 void PluginWindowMacCocoaICA::InvalidateWindow() {
-    m_npHost->InvalidateRect(&getWindowPosition()); 
+    NPRect rect = getWindowPosition();
+    m_npHost->InvalidateRect(&rect); 
 }
