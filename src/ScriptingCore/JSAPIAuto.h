@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef JSAPIAUTO_H
 #define JSAPIAUTO_H
 

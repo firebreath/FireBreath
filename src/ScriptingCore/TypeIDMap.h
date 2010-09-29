@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_STRINGIDMAP
 #define H_FB_STRINGIDMAP
 
@@ -110,7 +111,7 @@ namespace FB {
             typename IdVariantMap::iterator it = m_idVariant.find(idt);
 
             if (it != m_idVariant.end()) {
-                T retVal = (*it).second.template cast<T>();
+                T retVal = (*it).second.template convert_cast<T>();
                 return retVal;
             } else {
                 throw FB::bad_variant_cast(typeid(void), typeid(T));

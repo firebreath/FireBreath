@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_APITYPES
 #define H_FB_APITYPES
 
@@ -21,30 +22,54 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/type_traits/is_base_of.hpp>
+#include <boost/static_assert.hpp>
+
+// get rid of "unused variable" warnings
+#define FB_UNUSED_VARIABLE(x) ((void)(x))
 
 namespace FB
 {
-    class BrowserObjectAPI;
-    class BrowserHostWrapper;
+    class BrowserHost;
     class JSAPI;
-    class BrowserObjectAPI;
+    class JSObject;
     class variant;
-
+    
     // Variant list
 
     typedef std::vector<variant> VariantList;
     typedef std::map<std::string, variant> VariantMap;
     typedef std::set<std::string> StringSet;
-
-#define as_JSAPIPtr(x) boost::dynamic_pointer_cast<FB::JSAPI>(x)
-#define as_JSObject(x) boost::dynamic_pointer_cast<FB::BrowserObjectAPI>(x)
-    typedef boost::shared_ptr<FB::JSAPI> JSOutObject; // Deprecated
+    
+    // FB pointer types
+    
     typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
-    typedef boost::shared_ptr<FB::BrowserObjectAPI> JSObject;
+    typedef boost::shared_ptr<FB::JSObject> JSObjectPtr;
+    typedef boost::shared_ptr<FB::BrowserHost> BrowserHostPtr;
+    
+    // backwards compability typedefs
+    
+    typedef BrowserHost BrowserHostWrapper;
+    typedef JSObject BrowserObjectAPI;
+    typedef JSAPIPtr JSOutObject;
+    
+    // deprecation warnings
+    
+#if defined(_MSC_VER)
+#  pragma deprecated(BrowserHostWrapper, BrowserObjectAPI, JSOutObject)
+#elif defined(__GNUC__)
+    typedef BrowserHost BrowserHostWrapper __attribute__((deprecated));
+    typedef JSObject BrowserObjectAPI __attribute__((deprecated));
+    typedef JSAPIPtr JSOutObject __attribute__((deprecated));
+#endif
+    
+    // dynamically cast a FB pointer
+    
+    template<class T, class U> 
+    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
 
-#define as_BrowserHost(x) boost::dynamic_pointer_cast<FB::BrowserHostWrapper>(x)
-    typedef boost::shared_ptr<FB::BrowserHostWrapper> BrowserHost;
-
+    // helper type to allow JSAPIAuto catching of a list of variant arguments
+    
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
@@ -106,10 +131,24 @@ namespace FB
 
     // JSAPI event handlers
 
-    typedef std::pair<std::string, FB::JSObject> EventPair;
-    typedef std::multimap<std::string, FB::JSObject> EventMultiMap;
-    typedef std::map<void*, FB::JSObject> EventIFaceMap;
-    typedef std::map<std::string, FB::JSObject> EventSingleMap;
+    typedef std::pair<std::string, FB::JSObjectPtr> EventPair;
+    typedef std::multimap<std::string, FB::JSObjectPtr> EventMultiMap;
+    typedef std::map<void*, FB::JSObjectPtr> EventIFaceMap;
+    typedef std::map<std::string, FB::JSObjectPtr> EventSingleMap;
+    
+    // implementation details
+    
+    template<class T, class U> 
+    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
+    {
+        enum { base_is_firebreath_class = 
+                       boost::is_base_of<JSAPI, T>::value
+                    || boost::is_base_of<BrowserHost, T>::value
+        };
+        // This should only be used with FireBreath' and derived classes
+        BOOST_STATIC_ASSERT(base_is_firebreath_class);
+        return boost::dynamic_pointer_cast<T>(r);
+    }
 }
 
 // This needs to be included after all our classes are defined because it relies on types defined in this file

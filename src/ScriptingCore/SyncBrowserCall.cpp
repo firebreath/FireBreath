@@ -16,13 +16,13 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-SyncBrowserCall::SyncBrowserCall(JSObject obj, const std::string& method,
+SyncBrowserCall::SyncBrowserCall(JSObjectPtr obj, const std::string& method,
                                    const std::vector<variant> &inParams) :
     m_obj(obj), m_params(inParams), m_methodName(method), m_returned(false)
 {
 }
 
-variant SyncBrowserCall::CallMethod(JSObject obj, const std::string& method,
+variant SyncBrowserCall::CallMethod(JSObjectPtr obj, const std::string& method,
             const std::vector<variant> &inParams)
 {
     variant result;

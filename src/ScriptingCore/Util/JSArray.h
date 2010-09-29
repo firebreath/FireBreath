@@ -12,10 +12,11 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_JSARRAY
 #define H_JSARRAY
 
-#include "../BrowserObjectAPI.h"
+#include "../JSObject.h"
 #include "../JSAPIAuto.h"
 
 namespace FB
@@ -24,7 +25,7 @@ namespace FB
     {
     public:
         JSArray();
-        explicit JSArray(const FB::JSObject& obj);
+        explicit JSArray(const FB::JSObjectPtr& obj);
         explicit JSArray(const FB::VariantList& values);
 
         FB::variant GetProperty(int index);
@@ -39,7 +40,7 @@ namespace FB
 
     private:
         void RegisterMethods();
-        void ExtractList(const FB::JSObject&);
+        void ExtractList(const FB::JSObjectPtr&);
 
         FB::VariantList m_values;
     };

@@ -57,7 +57,7 @@ FireBreathWin.cpp - This contains some important DLL entrypoints for
 IDispatchAPI.cpp/.h - This is the inverse of COMJavascriptObject; it
     is a JSAPI object that wraps a IDispatch object.  You shouldn't
     need to deal with this directly, as you will normally use the
-    BrowserObjectAPI object from ScriptingCore that this extends.
+    JSObject object from ScriptingCore that this extends.
 
 JSAPI_IDispatchEx.h - This is the base class for COMJavascriptObject
     and FBControl.  It implements IDispatchEx and wraps a JSAPI

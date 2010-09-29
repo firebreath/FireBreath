@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 // FBControl.h : Declaration of the CFBControl
+#pragma once
 #ifndef H_FBCONTROL
 #define H_FBCONTROL
 
@@ -24,7 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <ShlGuid.h>
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "Win/FactoryDefinitionsWin.h"
 
 #include "BrowserPlugin.h"
@@ -73,8 +74,6 @@ public:
 
     ActiveXBrowserHostPtr m_host;
 
-    void createMessageWindow();
-
     // The methods in this class are positioned in this file in the
     // rough order that they will be called in.
     CFBControl() : pluginWin(NULL), m_messageWin(NULL)
@@ -112,7 +111,7 @@ public:
         m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
         m_messageWin = FB::PluginWindowWin::createMessageWindow();
         m_host->setWindow(m_messageWin);
-        pluginMain->SetHost(as_BrowserHost(m_host));
+        pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);

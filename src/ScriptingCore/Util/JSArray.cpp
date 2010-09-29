@@ -21,7 +21,7 @@ FB::JSArray::JSArray()
     RegisterMethods();
 }
 
-FB::JSArray::JSArray(const FB::JSObject& obj)
+FB::JSArray::JSArray(const FB::JSObjectPtr& obj)
   : m_values()
 {
     if(!obj->HasProperty("length"))
@@ -42,7 +42,7 @@ void FB::JSArray::RegisterMethods()
     registerProperty("length", make_property(this, &JSArray::GetLength));
 }
 
-void FB::JSArray::ExtractList(const FB::JSObject& obj)
+void FB::JSArray::ExtractList(const FB::JSObjectPtr& obj)
 {
     try
     {

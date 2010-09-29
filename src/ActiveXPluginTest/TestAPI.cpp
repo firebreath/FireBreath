@@ -14,13 +14,13 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "JSObject.h"
+#include "DOM/Document.h"
 #include "variant_list.h"
 
 #include "TestAPI.h"
 
-TestAPI::TestAPI(FB::BrowserHost host) : m_host(host)
+TestAPI::TestAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &TestAPI::add));
     registerMethod("echo",  make_method(this, &TestAPI::echo));
@@ -119,7 +119,7 @@ FB::VariantList TestAPI::reverseArray(const std::vector<std::string>& arr)
     return outArr;
 }
 
-FB::VariantList TestAPI::getObjectKeys(const FB::JSObject& arr)
+FB::VariantList TestAPI::getObjectKeys(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -131,7 +131,7 @@ FB::VariantList TestAPI::getObjectKeys(const FB::JSObject& arr)
     return outArr;
 }
 
-FB::VariantList TestAPI::getObjectValues(const FB::JSObject& arr)
+FB::VariantList TestAPI::getObjectValues(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
