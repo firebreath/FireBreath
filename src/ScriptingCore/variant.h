@@ -12,6 +12,7 @@
 * time.
 */
 
+#pragma once
 #ifndef CDIGGINS_ANY_HPP
 #define CDIGGINS_ANY_HPP
 

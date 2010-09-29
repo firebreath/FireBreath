@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 // FBControl.h : Declaration of the CFBControl
+#pragma once
 #ifndef H_FBCONTROL
 #define H_FBCONTROL
 

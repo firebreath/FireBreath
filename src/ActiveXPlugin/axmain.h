@@ -14,12 +14,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 // dllmain.h : Declaration of module class.
 
+#pragma once
+#ifndef H_AXMAIN
+#define H_AXMAIN
+
 #include "FireBreathWin_i.h"
 #include "TypeIDMap.h"
 #include "resource.h"
-
-#ifndef H_AXMAIN
-#define H_AXMAIN
 
 class CFireBreathWinModule : public CAtlDllModuleT< CFireBreathWinModule >
 {

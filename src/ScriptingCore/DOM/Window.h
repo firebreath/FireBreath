@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_DOM_WINDOW
 #define H_FB_DOM_WINDOW
 

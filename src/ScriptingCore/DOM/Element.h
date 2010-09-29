@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_DOM_ELEMENT
 #define H_FB_DOM_ELEMENT
 
