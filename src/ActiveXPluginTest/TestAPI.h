@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class TestAPI : public FB::JSAPIAuto
 {
 public:
-    TestAPI(FB::BrowserHost host);
+    TestAPI(FB::BrowserHostPtr host);
     virtual ~TestAPI();
 
     // Read/Write property testString
@@ -40,8 +40,8 @@ public:
 
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
-    FB::VariantList getObjectKeys(const FB::JSObject& arr);
-    FB::VariantList getObjectValues(const FB::JSObject& arr);
+    FB::VariantList getObjectKeys(const FB::JSObjectPtr& arr);
+    FB::VariantList getObjectValues(const FB::JSObjectPtr& arr);
     FB::VariantMap getUserData();
 
     // Method add
@@ -49,7 +49,7 @@ public:
     void testEvent(const std::string& param);
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
     FB::JSOutObject m_simpleMath;
 
     std::string m_testString;

@@ -265,7 +265,7 @@ bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB:
     }
 
     std::string evtName = args[0].convert_cast<std::string>();
-    FB::JSObject method(args[1].convert_cast<FB::JSObject>());
+    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
     if (add) {
         m_api->registerEventMethod(evtName, method);
     } else {
@@ -321,9 +321,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             if (newVal.empty()) {
-                m_api->setDefaultEventMethod(wsName, FB::JSObject());
+                m_api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
             } else {
-                FB::JSObject method(newVal.cast<FB::JSObject>());
+                FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
                 m_api->setDefaultEventMethod(wsName, method);
             }
 

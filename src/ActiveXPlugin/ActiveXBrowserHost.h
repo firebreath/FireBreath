@@ -53,10 +53,10 @@ public:
     // These methods are pseudo-public; they shouldn't be
     // called directly.  Call the ::create method on the 
     // DOM object you want
-    FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
-    FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
-    FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
-    FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
+    FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
+    FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
+    FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
+    FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
 
 protected:
     void initDOMObjects();
