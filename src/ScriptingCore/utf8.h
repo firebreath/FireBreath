@@ -17,6 +17,7 @@
 /*
  * utf8: implementation of UTF-8 charset encoding (RFC3629).
  */
+#pragma once
 #ifndef _UTF8_H_
 #define _UTF8_H_
 

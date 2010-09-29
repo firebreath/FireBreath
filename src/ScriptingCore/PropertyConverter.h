@@ -11,7 +11,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-
+#pragma once
 #ifndef PROPERTY_CONVERTER_H
 #define PROPERTY_CONVERTER_H
 

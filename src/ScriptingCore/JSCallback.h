@@ -12,6 +12,7 @@
  Copyright 2010 Georg Fritzsche, Firebreath development team
  \**********************************************************/
 
+#pragma once
 #ifndef JSCALLBACK_H
 #define JSCALLBACK_H
 

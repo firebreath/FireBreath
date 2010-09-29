@@ -6,11 +6,11 @@
 
 #include "JSObject.h"
 #include "variant_list.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
 
 #include "@{PLUGIN_ident}API.h"
 
-@{PLUGIN_ident}API::@{PLUGIN_ident}API(FB::BrowserHost host) : m_host(host)
+@{PLUGIN_ident}API::@{PLUGIN_ident}API(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("echo",      make_method(this, &@{PLUGIN_ident}API::echo));
     registerMethod("testEvent", make_method(this, &@{PLUGIN_ident}API::testEvent));

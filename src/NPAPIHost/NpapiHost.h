@@ -22,6 +22,7 @@ The implementation for this file is split into 4 files:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPAPIHOST
 #define H_NPAPIHOST
 

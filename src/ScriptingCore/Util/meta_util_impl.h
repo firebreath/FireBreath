@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_META_UTIL_IMPL_22122009
 #define H_META_UTIL_IMPL_22122009
 

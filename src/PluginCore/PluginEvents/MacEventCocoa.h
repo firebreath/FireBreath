@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_EVENTS_MACEVENTCOCOA
 #define H_FB_EVENTS_MACEVENTCOCOA
 
