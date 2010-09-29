@@ -47,6 +47,11 @@ void PluginWindowMacCarbonCG::setContext(NP_CGContext* context) {
 int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     // Give the plugin a chance to handle the event itself if desired
     MacEventCarbon macEvent(evt);
+    if (SendEvent(&macEvent)) {
+        return true;
+    }
+
+    // Otherwise process the event into FireBreath platform-agnostic events
     switch (evt->what) {
         case mouseDown:
         {
@@ -94,7 +99,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             return SendEvent(&ev);
         }
 
-        case nullEvent:
+        case nullEvent: // This is totally a hack
         {
             //TODO: Figure out more efficient timing mechanism
             // Get mouse coordinates and fire an event to the plugin

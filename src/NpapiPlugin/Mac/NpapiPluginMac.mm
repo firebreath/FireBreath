@@ -338,9 +338,6 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 #if !FBMAC_USE_COREGRAPHICS || !FBMAC_USE_CARBON
     return NPERR_GENERIC_ERROR;
 #else
-    // SetWindow provides us with the window that our plugin should draw to.
-    // In the Cocoa event model the window.window is null in the passed NPWindow
-
     PluginWindowMacCarbonCG* pluginWinCG = static_cast<PluginWindowMacCarbonCG*>(pluginWin);
 
     if (window != NULL) {
