@@ -10,7 +10,6 @@
 #include <sstream>
 #include "NpapiTypes.h"
 #include "FBTestPluginAPI.h"
-#include "Mac/PluginWindowMacCocoaCG.h"
 
 #include "FBTestPlugin.h"
 
