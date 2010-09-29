@@ -12,28 +12,28 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "AsyncBrowserCall.h"
 #include "SyncBrowserCall.h"
 
 using namespace FB;
 
-BrowserObjectAPI::BrowserObjectAPI(BrowserHost h) :
+JSObject::JSObject(BrowserHostPtr h) :
     host(h)
 {
 }
 
-BrowserObjectAPI::~BrowserObjectAPI(void)
+JSObject::~JSObject(void)
 {
 }
 
-variant BrowserObjectAPI::InvokeMainThread(const std::string& methodName, const std::vector<variant>& args)
+variant JSObject::InvokeMainThread(const std::string& methodName, const std::vector<variant>& args)
 {
     assert(!host->isMainThread());
-    return FB::SyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
+    return FB::SyncBrowserCall::CallMethod(ptr_cast<JSObject>(shared_ptr()), methodName, args);
 }
 
-void BrowserObjectAPI::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
+    FB::AsyncBrowserCall::CallMethod(ptr_cast<JSObject>(shared_ptr()), methodName, args);
 }

@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_BROWSERSTREAM
 #define H_FB_BROWSERSTREAM
 
@@ -30,7 +31,7 @@ namespace FB {
      * A BrowserStream is used to download and upload data via the browser host.
      *
      * The different hosts (NPAPI, ActiveX) derive from this class and provide an implementation.
-     * Instances are created by the factory method BrowserHostWrapper::CreateStream( ... parameters ... ).
+     * Instances are created by the factory method BrowserHost::CreateStream( ... parameters ... ).
      * Sends various events when the stream is created, destroyed or data in response to a read
      *  request arrived.
      **/

@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_JSAPI
 #define H_FB_JSAPI
 
@@ -21,8 +22,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
-    class BrowserObjectAPI;
-    class BrowserHostWrapper;
+    class JSObject;
+    class BrowserHost;
     struct script_error : std::exception
     {
         script_error(const std::string& error)
@@ -85,16 +86,16 @@ namespace FB
     public:
         virtual void registerEvent(const std::string& name);
         virtual void registerEvent(const std::wstring& name);
-        virtual void registerEventMethod(const std::string& name, JSObject& event);
-        virtual void registerEventMethod(const std::wstring& name, JSObject& event);
-        virtual void unregisterEventMethod(const std::string& name, JSObject& event);
-        virtual void unregisterEventMethod(const std::wstring& name, JSObject& event);
-        virtual void registerEventInterface(JSObject& event);
-        virtual void unregisterEventInterface(JSObject& event);
-        virtual JSObject getDefaultEventMethod(const std::wstring& name);
-        virtual JSObject getDefaultEventMethod(const std::string& name);
-        virtual void setDefaultEventMethod(const std::string& name, JSObject event);
-        virtual void setDefaultEventMethod(const std::wstring& name, JSObject event);
+        virtual void registerEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event);
+        virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event);
+        virtual void registerEventInterface(JSObjectPtr& event);
+        virtual void unregisterEventInterface(JSObjectPtr& event);
+        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name);
+        virtual JSObjectPtr getDefaultEventMethod(const std::string& name);
+        virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event);
+        virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event);
 
         // Methods for enumeration
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);

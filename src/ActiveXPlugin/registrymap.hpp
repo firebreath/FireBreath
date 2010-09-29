@@ -5,6 +5,7 @@
   * Not licensed with the rest of this project, we don't own the copyright
   */
 
+#pragma once
 #ifndef COMLIB_REGISTRYMAP_HPP
 #define COMLIB_REGISTRYMAP_HPP
 

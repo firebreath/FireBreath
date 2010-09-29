@@ -1,19 +1,19 @@
+/**********************************************************\
+Original Author: Anson MacKeracher 
+
+Created:    May 5, 2010
+License:    Dual license model; choose one of two:
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2010 Anson MacKeracher, Firebreath development team
+\**********************************************************/
+
 #ifndef H_PLUGINWINDOWMAC_COCOA_CG
 #define H_PLUGINWINDOWMAC_COCOA_CG
-
-/**********************************************************\
- Original Author: Anson MacKeracher
- 
- Created:    May 5, 2010
- License:    Dual license model; choose one of two:
- Eclipse Public License - Version 1.0
- http://www.eclipse.org/legal/epl-v10.html
- - or -
- GNU Lesser General Public License, version 2.1
- http://www.gnu.org/licenses/lgpl-2.1.html
- 
- Copyright 2010 Anson MacKeracher, Firebreath development team
- \**********************************************************/
 
 #include "PluginWindowMacCocoa.h"
 #include "PluginEvents/MacEventCocoa.h"
@@ -26,13 +26,17 @@ namespace FB {
     class PluginWindowMacCocoaCG : public PluginWindowMacCocoa
     {
     public:
-        PluginWindowMacCocoaCG(NP_CGContext* context);
+        PluginWindowMacCocoaCG();
         ~PluginWindowMacCocoaCG();
 
     public:
         void clearWindow();
-        int16_t HandleEvent(NPCocoaEvent* event);
-        NP_CGContext* getContext() { return m_context; }
+
+        virtual int16_t HandleEvent(NPCocoaEvent* evt);
+
+        // Handle the CoreGraphics drawing contexts
+        void setContext(CGContextRef context);
+        CGContextRef getContext() { return m_context; }
         
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
@@ -40,7 +44,7 @@ namespace FB {
         NPRect getWindowClipping();
 
     protected:
-        NP_CGContext* m_context;
+        CGContextRef m_context;
         int m_x;
         int m_y;
         int m_width;

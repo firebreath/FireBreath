@@ -13,6 +13,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPAPIBROWSERHOSTASYNCWIN
 #define H_NPAPIBROWSERHOSTASYNCWIN
 

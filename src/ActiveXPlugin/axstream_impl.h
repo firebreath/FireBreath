@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_ACTIVEXSTREAM_IMPL
 #define H_ACTIVEXSTREAM_IMPL
 

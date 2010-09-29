@@ -12,19 +12,20 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPOBJECTAPI
 #define H_NPOBJECTAPI
 
 #include "NpapiTypes.h"
 #include "npruntime.h"
 #include "JSAPI.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "NpapiBrowserHost.h"
 
 namespace FB { namespace Npapi {
 
     class NPObjectAPI :
-        public FB::BrowserObjectAPI
+        public FB::JSObject
     {
     public:
         NPObjectAPI(NPObject *, NpapiBrowserHostPtr);

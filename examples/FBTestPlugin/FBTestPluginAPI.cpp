@@ -13,14 +13,15 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "JSObject.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "variant_list.h"
 #include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
+FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
@@ -37,7 +38,8 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
     registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
-
+    registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
+     
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
     // Read-write property
@@ -66,7 +68,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
-    return L"вот, я говорю \"" + val + L"\"";
+    return L"вот, я говорю \"" + val + L"\"";
 }
 
 // Read/Write property someInt
@@ -135,7 +137,7 @@ FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& ar
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -147,7 +149,7 @@ FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -218,20 +220,24 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     return map;
 }
 
-FB::JSOutObject FBTestPluginAPI::get_simpleMath()
+FB::JSAPIPtr FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }
 
 FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
 {
-    std::vector<FB::JSObject> tagList = m_host->getElementsByTagName(tagName);
+    std::vector<FB::DOM::ElementPtr> tagList = m_host->getDOMDocument()->getElementsByTagName(tagName);
     if (!tagList.size()) {
         return "No matching tags found";
     }
-    return tagList[idx]->GetProperty(attribute);
+    return tagList[idx]->getJSObject()->GetProperty(attribute);
 }
 
+std::string FBTestPluginAPI::getPageLocation()
+{
+    return m_host->getDOMWindow()->getLocation();
+}
 
 #include "SimpleStreams.h"
 

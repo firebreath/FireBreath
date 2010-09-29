@@ -17,9 +17,6 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "config.h"
 #include "BasicMediaPlayerPlugin.h"
 
-static const char *pluginName = FBSTRING_PluginName;
-static const char *pluginDesc = FBSTRING_FileDescription;
-
 FB::PluginCore *_getMainPlugin()
 {
     return new BasicMediaPlayerPlugin();
