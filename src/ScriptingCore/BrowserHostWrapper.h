@@ -15,6 +15,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_BROWSERHOSTWRAPPER
 #define H_FB_BROWSERHOSTWRAPPER
 
+#warning "This header is deprecated - include BrowserHost.h instead."
+
 // backwards compability header
 #include "BrowserHost.h"
 
