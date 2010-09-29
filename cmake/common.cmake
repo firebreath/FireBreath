@@ -68,3 +68,10 @@ function (include_platform)
 
 endfunction(include_platform)
 
+function (add_boost_library BOOST_LIB)
+
+    if (NOT TARGET boost_${BOOST_LIB})
+        add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
+    endif()
+
+endfunction(add_boost_library)
