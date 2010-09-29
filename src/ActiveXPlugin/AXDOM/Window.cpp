@@ -20,7 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 using namespace AXDOM;
 
 Window::Window(FB::JSObjectPtr obj, IWebBrowser2 *web)
-    : m_webBrowser(web), m_htmlWin(as_IDispatchAPI(obj)->getIDispatch()), FB::DOM::Window(obj)
+    : m_webBrowser(web), m_htmlWin(FB::ptr_cast<IDispatchAPI>(obj)->getIDispatch()), FB::DOM::Window(obj)
 {
     if (!m_htmlWin) {
         throw new std::bad_cast("This is not a valid Window object");
@@ -36,7 +36,7 @@ FB::DOM::DocumentPtr Window::getDocument()
     CComPtr<IHTMLDocument2> htmlDoc;
     m_htmlWin->get_document(&htmlDoc);
     CComQIPtr<IDispatch> htmlDocDisp(htmlDoc);
-    FB::JSObjectPtr docAPI(new IDispatchAPI(htmlDocDisp, as_ActiveXBrowserHost(this->m_element->host)));
+    FB::JSObjectPtr docAPI(new IDispatchAPI(htmlDocDisp, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->host)));
     return FB::DOM::Document::create(docAPI);
 }
 

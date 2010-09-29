@@ -35,7 +35,7 @@ namespace AXDOM {
     {
     public:
         Node(const FB::JSObjectPtr& element, IWebBrowser *web)
-            : m_axNode(as_IDispatchAPI(element)->getIDispatch()),
+            : m_axNode(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
               m_webBrowser(web), FB::DOM::Node(element)
         {
             if (!m_axNode)
