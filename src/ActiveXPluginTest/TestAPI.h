@@ -50,7 +50,7 @@ public:
 
 private:
     FB::BrowserHostPtr m_host;
-    FB::JSOutObject m_simpleMath;
+    FB::JSAPIPtr m_simpleMath;
 
     std::string m_testString;
 };
