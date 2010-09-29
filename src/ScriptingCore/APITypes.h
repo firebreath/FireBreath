@@ -52,6 +52,16 @@ namespace FB
     typedef JSObject BrowserObjectAPI;
     typedef JSAPIPtr JSOutObject;
     
+    // deprecation warnings
+    
+#if defined(_MSC_VER)
+#  pragma deprecated(BrowserHostWrapper, BrowserObjectAPI, JSOutObject)
+#elif defined(__GNUC__)
+    typedef BrowserHost BrowserHostWrapper __attribute__((deprecated));
+    typedef JSObject BrowserObjectAPI __attribute__((deprecated));
+    typedef JSAPIPtr JSOutObject __attribute__((deprecated));
+#endif
+    
     // dynamically cast a FB pointer
     
     template<class T, class U> 
