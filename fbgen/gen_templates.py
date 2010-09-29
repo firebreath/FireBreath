@@ -177,10 +177,13 @@ class Plugin(Base):
             self.mimetype = self.mimetype.lower()
 
     def promptValues(self):
+        name = self.name
+        ident = self.ident
+
         self.name     = self.getValue("name", self.name)
         self.ident    = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.ident or self.name))
-        self.prefix   = self.getValue("prefix", self.prefix or self.makeDefaultPrefix(self.name))
-        self.mimetype = self.getValue("mimetype", self.mimetype or "application/x-%s" % self.ident.lower()).lower()
+        self.prefix   = self.getValue("prefix", self.prefix if name == self.name else self.makeDefaultPrefix(self.name))
+        self.mimetype = self.getValue("mimetype", self.mimetype if ident == self.ident else "application/x-%s" % self.ident.lower()).lower()
         self.desc     = self.getValue("desc", self.desc)
 
     def readCfg(self, cfg):
