@@ -24,6 +24,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/static_assert.hpp>
 
+// get rid of "unused variable" warnings
+#define FB_UNUSED_VARIABLE(x) ((void)(x))
+
 namespace FB
 {
     class BrowserHost;
