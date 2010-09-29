@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_SYNCBROWSERCALL
 #define H_FB_SYNCBROWSERCALL
 
@@ -20,23 +21,23 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/mutex.hpp>
 #include "APITypes.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
 namespace FB {
 
     class SyncBrowserCall
     {
     public:
-        static variant CallMethod(JSObject obj, const std::string& method,
+        static variant CallMethod(JSObjectPtr obj, const std::string& method,
             const std::vector<variant> &inParams);
 
     protected:
-        SyncBrowserCall(JSObject obj, const std::string& method,
+        SyncBrowserCall(JSObjectPtr obj, const std::string& method,
             const std::vector<variant> &inParams);
 
         static void asyncCallback(void *userData);
 
-        JSObject m_obj;
+        JSObjectPtr m_obj;
         std::vector<variant> m_params;
         std::string m_methodName;
         variant m_result;

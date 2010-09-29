@@ -12,6 +12,10 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
+#ifndef H_AXUTIL
+#define H_AXUTIL
+
 #include "Win/win_common.h"
 
 class FbPerUserRegistration
@@ -25,3 +29,5 @@ private:
     HKEY m_hkey;
 #endif
 };
+
+#endif

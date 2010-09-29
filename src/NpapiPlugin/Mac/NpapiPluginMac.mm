@@ -24,19 +24,18 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <QuartzCore/CoreAnimation.h>
 #endif
 
+#include "Mac/FactoryDefinitionsMac.h"
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
-#include "Mac/PluginWindowMacCocoaCA.h"
-#include "Mac/PluginWindowMacCocoaCG.h"
 #include "Mac/PluginWindowMacCocoa.h"
-#include "Mac/FactoryDefinitionsMac.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
+#include "Mac/PluginWindowMacCocoaCA.h"
+#include "Mac/PluginWindowMacCocoaICA.h"
 
 using namespace FB::Npapi;
 
-namespace 
-{
-    bool supports(FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what)
-    {
+namespace {
+    bool supports(FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
         NPBool value;        
         NPError err;
         
@@ -68,8 +67,7 @@ namespace
         return value;
     }
 
-    bool set(FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, void* value)
-    {
+    bool set(FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, void* value) {
         NPError err = host->SetValue(what, value);
         void* model = value;
 
@@ -97,8 +95,7 @@ namespace
         return true;
     }
     
-    bool enableQuickDraw(FB::Npapi::NpapiBrowserHostPtr &host)
-    {
+    bool enableQuickDraw(FB::Npapi::NpapiBrowserHostPtr &host) {
 #ifdef __LP64__
         // QuickDraw does not exist for 64 bit 
         return false;
@@ -126,8 +123,7 @@ namespace
 #endif   
     }
 
-    bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHostPtr &host)
-    {
+    bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHostPtr &host) {
 #ifdef __LP64__
         // Carbon does not exist for 64 bit
         return false;
@@ -158,8 +154,7 @@ namespace
 #endif
     }
 
-    bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHostPtr &host)
-    {
+    bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHostPtr &host) {
 #if !FBMAC_USE_COREGRAPHICS
         printf("CoreGraphics not supported\n");
         return false;
@@ -183,8 +178,7 @@ namespace
 #endif
     }
     
-    bool enableCoreAnimation(FB::Npapi::NpapiBrowserHostPtr &host)
-    {
+    bool enableCoreAnimation(FB::Npapi::NpapiBrowserHostPtr &host) {
 #if !FBMAC_USE_COREANIMATION
         printf("enableCoreAnimation() - 0\n");
         return false;  
@@ -192,9 +186,9 @@ namespace
         printf("enableCoreAnimation() - 1\n");
         
         if(!supports(host, NPNVsupportsCocoaBool))
-           return false;           
+            return false;           
         if(!supports(host, NPNVsupportsCoreAnimationBool))
-           return false;
+            return false;
         if(!set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
             return false;
         if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreAnimation))
@@ -203,22 +197,41 @@ namespace
         return true;
 #endif
     }
+
+    bool enableInvalidatingCoreAnimation(FB::Npapi::NpapiBrowserHostPtr &host) {
+#if !FBMAC_USE_COREANIMATION
+        printf("enableCoreAnimation() - 0\n");
+        return false;  
+#else
+        printf("enableCoreAnimation() - 1\n");
+        
+        if(!supports(host, NPNVsupportsCocoaBool))
+            return false;
+        if(!supports(host, NPNVsupportsInvalidatingCoreAnimationBool))
+            return false;
+        if(!set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
+            return false;
+        if(!set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelInvalidatingCoreAnimation))
+            return false;
+        
+        return true;
+#endif
+    }
 }
 
 NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
-  : NpapiPlugin(host)   
-  , pluginWin(NULL)
-  , m_eventModel()
-  , m_drawingModel()
-{
+  : NpapiPlugin(host), pluginWin(NULL), m_eventModel(), m_drawingModel() {
     // If you receive a BAD_ACCESS error here you probably have something
-    // wrong in your FactoryMain.cpp in your projects folder
+    // wrong in your FactoryMain.cpp in your plugin project's folder
 
     PluginCore::setPlatform("Mac", "NPAPI");
     // TODO: Get the path to the bundle
     //setFSPath();
-    
-    if(enableCoreAnimation(host)) {
+
+    if(enableInvalidatingCoreAnimation(host)) {
+        m_eventModel = EventModelCocoa;
+        m_drawingModel = DrawingModelInvalidatingCoreAnimation;
+    } else if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
 #if FBMAC_USE_COCOA && FBMAC_USE_COREANIMATION
@@ -376,17 +389,15 @@ NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
 
     if (window != NULL) {
         if (pluginWin != NULL) {
-            if(pluginWinCG->getContext() != (NP_CGContext*)window->window) {
-                pluginMain->ClearWindow(); // Kill old window
-                delete pluginWin;
-                pluginWin = NULL;
-            }
+            pluginMain->ClearWindow(); // Kill old window
+            delete pluginWin;
+            pluginWin = NULL;
         }
 
         if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
-            pluginWinCG = _createPluginWindowCocoaCG((NP_CGContext*)window->window);
+            pluginWinCG = _createPluginWindowCocoaCG();
             pluginWinCG->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
             // Initialize window position & clipping 
@@ -446,6 +457,40 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
 #endif    
 }
 
+NPError NpapiPluginMac::SetWindowCocoaICA(NPWindow* window) {
+#if !FBMAC_USE_COREANIMATION || !FBMAC_USE_COCOA
+    return NPERR_GENERIC_ERROR;
+#else
+    PluginWindowMacCocoaICA* pluginWinICA = static_cast<PluginWindowMacCocoaICA*>(pluginWin);
+    
+    if (window != NULL) {
+        if (pluginWin == NULL) {
+            // No window associated with this plugin object.
+            // Make a new window and associate with the object.
+            pluginWinICA = _createPluginWindowCocoaICA();
+            pluginWinICA->setNpHost(m_npHost);
+            pluginWin = static_cast<PluginWindow*>(pluginWinICA);
+            // Initialize window position & clipping 
+            pluginWinICA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinICA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
+            pluginMain->SetWindow(pluginWin);
+        } else {
+            // Update window position & clipping 
+            pluginWinICA->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWinICA->setWindowClipping(window->clipRect.top, window->clipRect.left, 
+                                        window->clipRect.bottom, window->clipRect.right);
+        }
+    } else if (pluginWin != NULL) {
+        // Our window is gone, we should stop using it
+        pluginMain->ClearWindow();
+        delete pluginWin;
+        pluginWin = NULL;
+    }
+#endif    
+    return NPERR_NO_ERROR;
+}
+
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
     // Forward the SetWindow call to the appropriate SetWindow*() function
     switch(m_drawingModel) {
@@ -461,10 +506,12 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window) {
                 }
             }
         }
-        case DrawingModelCoreAnimation:
-            {
-                return SetWindowCocoaCA(window);
-            }
+        case DrawingModelCoreAnimation: {
+            return SetWindowCocoaCA(window);
+        }
+        case DrawingModelInvalidatingCoreAnimation:{
+            return SetWindowCocoaICA(window);
+        }
     }
 
     return NPERR_GENERIC_ERROR;

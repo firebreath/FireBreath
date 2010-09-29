@@ -14,6 +14,7 @@
 #include "Mac/PluginWindowMacCarbonCG.h"
 #include "Mac/PluginWindowMacCocoaCG.h"
 #include "Mac/PluginWindowMacCocoaCA.h"
+#include "Mac/PluginWindowMacCocoaICA.h"
 #include "NpapiBrowserHost.h"
 
 FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
@@ -44,8 +45,14 @@ FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
 }
 # endif
 #if FBMAC_USE_COREANIMATION
+// Normal CoreAnimation
 FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA() {
     return new FB::PluginWindowMacCocoaCA();
+}
+
+// InvalidatingCoreAnimation
+FB::PluginWindowMacCocoaICA* _createPluginWindowCocoaICA() {
+    return new FB::PluginWindowMacCocoaICA();
 }
 #endif // FBMAC_USE_COREANIMATION
 #endif

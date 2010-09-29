@@ -32,6 +32,7 @@ include_directories(
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    DOM.h
     DOM/[^.]*
 )
 
@@ -54,8 +55,8 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     JSAPI*
-    BrowserHostWrapper.*
-    BrowserObjectAPI.*
+    BrowserHost.*
+    JSObject.*
     AsyncBrowser*
     AsyncFunction*
     SyncBrowser*

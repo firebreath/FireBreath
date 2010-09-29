@@ -13,9 +13,9 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Dan Weatherford, Facebook inc
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_UTF8
 #define H_FB_UTF8
-#pragma once
 
 #include <string>
 
