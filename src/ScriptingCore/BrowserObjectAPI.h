@@ -15,6 +15,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_BrowserObjectAPI
 #define H_FB_BrowserObjectAPI
 
+#warning "This header is deprecated - include JSObject.h instead."
+
 // Backwards compability header
 #include "JSObject.h"
 
