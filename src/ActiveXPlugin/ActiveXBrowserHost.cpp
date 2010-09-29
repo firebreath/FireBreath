@@ -236,19 +236,19 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         }
 
     } else if (var.get_type() == typeid(FB::JSObject)) {
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(var.cast<JSOutObject>());
+        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(var.cast<JSAPIPtr>());
         if (api) {
             outVar = api->getIDispatch();
         } else {
             outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<FB::JSObjectPtr>());
         }
 
-    } else if (var.get_type() == typeid(JSOutObject)) {
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(var.cast<JSOutObject>());
+    } else if (var.get_type() == typeid(JSAPIPtr)) {
+        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(var.cast<JSAPIPtr>());
         if (api) {
             outVar = api->getIDispatch();
         } else {
-            outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<JSOutObject>());
+            outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<JSAPIPtr>());
         }
     }
 

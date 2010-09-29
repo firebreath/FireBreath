@@ -213,7 +213,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 
     } else if (var.get_type() == typeid(FB::JSAPIPtr)) {
         NPObject *outObj = NULL;
-        FB::JSOutObject obj = var.cast<FB::JSAPIPtr>();
+        FB::JSAPIPtr obj = var.cast<FB::JSAPIPtr>();
         NPObjectAPIPtr tmpObj = ptr_cast<NPObjectAPI>(obj);
 
         if (tmpObj == NULL) {
