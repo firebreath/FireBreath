@@ -12,24 +12,23 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_ACTIVEXBROWSERHOST
 #define H_ACTIVEXBROWSERHOST
 
 #include "Win/win_common.h"
 #include "COM_config.h"
 #include <atlctl.h>
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "APITypes.h"
 
 class ActiveXBrowserHost;
 class IDispatchAPI;
 typedef boost::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
-#define as_ActiveXBrowserHost(x) boost::dynamic_pointer_cast<ActiveXBrowserHost>(x)
 typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
-#define as_IDispatchAPI(x) boost::dynamic_pointer_cast<IDispatchAPI>(x)
 
 class ActiveXBrowserHost :
-    public FB::BrowserHostWrapper
+    public FB::BrowserHost
 {
 public:
     ActiveXBrowserHost(IWebBrowser2 *doc);
@@ -45,18 +44,29 @@ public:
     void setWindow(HWND wnd);
 
 public:
-    FB::JSAPI_DOMDocument getDOMDocument();
-    FB::JSAPI_DOMWindow getDOMWindow();
+    FB::DOM::DocumentPtr getDOMDocument();
+    FB::DOM::WindowPtr getDOMWindow();
     void evaluateJavaScript(const std::string &script);
-    std::vector<FB::JSObject> getElementsByTagName(std::string tagName);
+
+public:
+    // These methods are pseudo-public; they shouldn't be
+    // called directly.  Call the ::create method on the 
+    // DOM object you want
+    FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
+    FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
+    FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
+    FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
 
 protected:
+    void initDOMObjects();
     HWND m_hWnd;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
     CComPtr<IHTMLWindow2> m_htmlWin;
     CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
+    FB::DOM::WindowPtr m_window;
+    FB::DOM::DocumentPtr m_document;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);

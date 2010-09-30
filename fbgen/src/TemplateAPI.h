@@ -7,7 +7,7 @@
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 #ifndef H_@{PLUGIN_ident}API
 #define H_@{PLUGIN_ident}API
@@ -15,7 +15,7 @@
 class @{PLUGIN_ident}API : public FB::JSAPIAuto
 {
 public:
-    @{PLUGIN_ident}API(FB::BrowserHost host);
+    @{PLUGIN_ident}API(FB::BrowserHostPtr host);
     virtual ~@{PLUGIN_ident}API();
 
     // Read/Write property ${PROPERTY.ident}
@@ -32,7 +32,7 @@ public:
     void testEvent(const FB::variant& s);
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
 
     std::string m_testString;
 };

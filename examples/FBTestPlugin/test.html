@@ -102,6 +102,8 @@
             addTest("echo", "Plugin echo test");
             addTest("reverse", "Plugin reverse test");
             addTest("getMap", "Plugin return map test");
+            addTest("mathAPI", "Plugin return JSAPI object test");
+            addTest("location", "Get page location test");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -156,6 +158,19 @@
                 markFailed("getMap");
             else
                 markPassed("getMap");
+
+            var math = plugin.simpleMath;
+            if (math.add(34, 43) != 77
+                || math.sub(10, 5) != 5) {
+                markFailed("mathAPI");
+            } else {
+                markPassed("mathAPI");
+            }
+
+            if (plugin.getPageLocation() != window.location.href)
+                markFailed("location");
+            else
+                markPassed("location");
         }
 
         $(document).ready(pageLoaded);

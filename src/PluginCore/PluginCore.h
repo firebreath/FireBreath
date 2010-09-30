@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_PLUGINCORE
 #define H_FB_PLUGINCORE
 
@@ -28,7 +29,7 @@ namespace FB {
     class PluginWindow;
     class PluginEvent;
     class JSAPI;
-    class BrowserHostWrapper;
+    class BrowserHost;
     /**
      * PluginCore
      *
@@ -51,7 +52,7 @@ namespace FB {
         virtual ~PluginCore();
 
         void initDefaultParams();
-        virtual void SetHost(FB::BrowserHost);
+        virtual void SetHost(FB::BrowserHostPtr);
         virtual PluginWindow* GetWindow() const;
         virtual void SetWindow(PluginWindow *);
         virtual void ClearWindow();
@@ -73,7 +74,7 @@ namespace FB {
     protected:
         PluginWindow *m_Window;
         JSAPIPtr m_api;
-        BrowserHost m_host;
+        BrowserHostPtr m_host;
         std::string m_filesystemPath;
         StringSet m_supportedParamSet;
         bool m_paramsSet;

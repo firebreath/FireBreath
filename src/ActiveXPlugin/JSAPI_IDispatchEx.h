@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_JSAPI_IDISPATCHEX
 #define H_JSAPI_IDISPATCHEX
 
@@ -171,7 +172,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCo
         IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
         m_connPtMap[(DWORD)obj.get()] = obj;
         *pdwCookie = (DWORD)obj.get();
-        m_api->registerEventInterface(as_JSObject(obj));
+        m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));
         return S_OK;
     } else {
         return CONNECT_E_CANNOTCONNECT;
@@ -185,7 +186,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Unadvise(DWORD dwCookie)
     if (fnd == m_connPtMap.end()) {
         return E_UNEXPECTED;
     } else {
-        m_api->registerEventInterface(as_JSObject(fnd->second));
+        m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(fnd->second));
         m_connPtMap.erase(fnd);
         return S_OK;
     }
@@ -265,7 +266,7 @@ bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB:
     }
 
     std::string evtName = args[0].convert_cast<std::string>();
-    FB::JSObject method(args[1].convert_cast<FB::JSObject>());
+    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
     if (add) {
         m_api->registerEventMethod(evtName, method);
     } else {
@@ -321,9 +322,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             if (newVal.empty()) {
-                m_api->setDefaultEventMethod(wsName, FB::JSObject());
+                m_api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
             } else {
-                FB::JSObject method(newVal.cast<FB::JSObject>());
+                FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
                 m_api->setDefaultEventMethod(wsName, method);
             }
 

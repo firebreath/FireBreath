@@ -23,7 +23,7 @@ using namespace FB::Npapi;
 #define REFCOUNT_CUTOFF_MULT 7
 
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
-    : BrowserObjectAPI(h), browser(h), obj(o)
+    : JSObject(h), browser(h), obj(o)
 {
     assert(browser);
     if (o != NULL) {

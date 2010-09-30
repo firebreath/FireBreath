@@ -15,8 +15,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include <boost/shared_ptr.hpp>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
-#include "BrowserObjectAPI.h"
+#include "BrowserHost.h"
+#include "JSObject.h"
 
 namespace FB { class PluginWindow; };
 class MediaPlayer;
@@ -25,7 +25,7 @@ class BasicMediaPlayer : public FB::JSAPIAuto
 {
     typedef std::vector<std::string> PlayList;
 public:
-    BasicMediaPlayer(FB::BrowserHost host);
+    BasicMediaPlayer(FB::BrowserHostPtr host);
     virtual ~BasicMediaPlayer();
 
     // methods exposed to script
@@ -64,7 +64,7 @@ private:
     void firePlaylistChanged();
     void fireCurrentItemChanged();
 
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
     MediaPlayerPtr m_player;
     bool m_valid;
 

@@ -15,10 +15,10 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_FAKE_JS_MAP
 #define H_FAKE_JS_MAP
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include <iterator>
 
-class FakeJsMap : public FB::BrowserObjectAPI
+class FakeJsMap : public FB::JSObject
 {
     typedef std::vector<std::string> StringVec;
     typedef FB::VariantMap::value_type OutPair;
@@ -32,7 +32,7 @@ class FakeJsMap : public FB::BrowserObjectAPI
     };
 public:
     FakeJsMap(const FB::VariantMap& values)
-      : FB::BrowserObjectAPI(FB::BrowserHost()), m_values(values)
+      : FB::JSObject(FB::BrowserHostPtr()), m_values(values)
     {
         std::for_each(m_values.begin(), m_values.end(), GrabKeys(m_names));
     }

@@ -13,14 +13,14 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include <boost/assign.hpp>
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
 using boost::assign::list_of;
 
 #include "SimpleMathAPI.h"
 
-SimpleMathAPI::SimpleMathAPI(FB::BrowserHost host) : m_host(host)
+SimpleMathAPI::SimpleMathAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &SimpleMathAPI::add));
     registerMethod("sub",  make_method(this, &SimpleMathAPI::sub));

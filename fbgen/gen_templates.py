@@ -177,11 +177,14 @@ class Plugin(Base):
             self.mimetype = self.mimetype.lower()
 
     def promptValues(self):
+        name = self.name
+        ident = self.ident
+
         self.name     = self.getValue("name", self.name)
-        self.ident    = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
-        self.prefix   = self.getValue("prefix", self.makeDefaultPrefix(self.name))
-        self.mimetype = self.getValue("mimetype", "application/x-%s" % self.ident.lower()).lower()
-        self.desc     = self.desc or self.getValue("desc", self.desc)
+        self.ident    = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.ident or self.name))
+        self.prefix   = self.getValue("prefix", self.prefix if name == self.name else self.makeDefaultPrefix(self.name))
+        self.mimetype = self.getValue("mimetype", self.mimetype if ident == self.ident else "application/x-%s" % self.ident.lower()).lower()
+        self.desc     = self.getValue("desc", self.desc)
 
     def readCfg(self, cfg):
         if not cfg.has_section("plugin"):
@@ -215,8 +218,8 @@ class Company(Base):
 
     def promptValues(self):
         self.name   = self.getValue("name", self.name)
-        self.ident  = self.getValue("ident", re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
-        self.domain = self.getValue("domain", "%s.com" % self.ident.lower())
+        self.ident  = self.getValue("ident", self.ident or re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
+        self.domain = self.getValue("domain", self.domain or "%s.com" % self.ident.lower())
 
     def readCfg(self, cfg):
         if not cfg.has_section("company"):

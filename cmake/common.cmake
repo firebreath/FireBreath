@@ -68,3 +68,28 @@ function (include_platform)
 
 endfunction(include_platform)
 
+function (link_boost_library PROJECT BOOST_LIB)
+    add_boost_library(${BOOST_LIB})
+    if (NOT WITH_SYSTEM_BOOST)
+        target_link_libraries(${PROJECT} boost_${BOOST_LIB})
+    endif()
+endfunction(link_boost_library)
+
+function (add_boost_library BOOST_LIB)
+
+    if (WITH_SYSTEM_BOOST)
+        find_package(Boost COMPONENTS thread REQUIRED)
+    else()
+	list(APPEND Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
+	list(REMOVE_DUPLICATES Boost_INCLUDE_DIRS)
+        set(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
+	
+        list(APPEND Boost_LIBRARIES boost_thread)
+	list(REMOVE_DUPLICATES Boost_LIBRARIES)
+        set(Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
+        if (NOT TARGET boost_${BOOST_LIB})
+            add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
+        endif()
+    endif()
+
+endfunction(add_boost_library)

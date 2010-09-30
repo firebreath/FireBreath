@@ -35,14 +35,7 @@ if (VERBOSE)
 endif()
 
 find_package(Threads REQUIRED)
-
-if (WITH_SYSTEM_BOOST)
-    find_package(Boost COMPONENTS thread REQUIRED)
-else()
-    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
-    set(Boost_LIBRARIES boost_thread)
-    add_subdirectory(${BOOST_THREAD_SOURCE_DIR})
-endif()
+add_boost_library(thread)
 
 # Common core projects -- projects that don't have any plugin specific code,
 # but are required before any plugins are loaded
