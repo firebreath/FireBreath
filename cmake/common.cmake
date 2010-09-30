@@ -68,12 +68,12 @@ function (include_platform)
 
 endfunction(include_platform)
 
-function (link_boost_library PROJECT BOOST_LIB)
+macro (link_boost_library PROJECT BOOST_LIB)
     add_boost_library(${BOOST_LIB})
     if (NOT WITH_SYSTEM_BOOST)
         target_link_libraries(${PROJECT} boost_${BOOST_LIB})
     endif()
-endfunction(link_boost_library)
+endmacro(link_boost_library)
 
 function (add_boost_library BOOST_LIB)
 
@@ -84,7 +84,7 @@ function (add_boost_library BOOST_LIB)
 	list(REMOVE_DUPLICATES Boost_INCLUDE_DIRS)
         set(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
 	
-        list(APPEND Boost_LIBRARIES boost_thread)
+        list(APPEND Boost_LIBRARIES boost_${BOOST_LIB})
 	list(REMOVE_DUPLICATES Boost_LIBRARIES)
         set(Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
         if (NOT TARGET boost_${BOOST_LIB})

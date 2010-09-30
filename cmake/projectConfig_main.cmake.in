@@ -35,7 +35,6 @@ include_directories(
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     )
-message("boost include: ${Boost_INCLUDE_DIRS}")
 
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
@@ -54,6 +53,7 @@ foreach(TemplateFile ${TEMPLATELIST})
 endforeach()
 
 set(PLUGIN_INTERNAL_DEPS
+    ${Boost_LIBRARIES}
     ${PLUGIN_PREFIX}_NpapiPlugin
     ${PLUGIN_PREFIX}_PluginWindow
     ScriptingCore
