@@ -38,6 +38,8 @@ include(${CMAKE_DIR}/paths.cmake)
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)
 
+set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
+
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
 endif()
@@ -68,10 +70,22 @@ function (include_platform)
 
 endfunction(include_platform)
 
+function (link_boost_library PROJECT BOOST_LIB)
+    add_boost_library(${BOOST_LIB})
+    if (NOT WITH_SYSTEM_BOOST)
+        target_link_libraries(${PROJECT} boost_${BOOST_LIB})
+    endif()
+endfunction(link_boost_library)
+
 function (add_boost_library BOOST_LIB)
 
-    if (NOT TARGET boost_${BOOST_LIB})
-        add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
+    if (WITH_SYSTEM_BOOST)
+        find_package(Boost COMPONENTS thread REQUIRED)
+    else()
+        list(APPEND Boost_LIBRARIES boost_thread)
+        if (NOT TARGET boost_${BOOST_LIB})
+            add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
+        endif()
     endif()
 
 endfunction(add_boost_library)
