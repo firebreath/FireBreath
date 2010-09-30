@@ -39,8 +39,22 @@ file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     src/*.cpp
     )
 
+if (TARGET boost_log OR (WITH_SYSTEM_BOOST AND USE_BOOST_LOG) )
+    file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        src/boost/*.cpp
+        src/boost/*.h
+    )
+    SOURCE_GROUP(BoostLog ${LOGGER})
+elseif(NOT CUSTOM_LOGGING)
+    file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+        src/null/*.cpp
+        src/null/*.h
+    )
+endif()
+
 set (SOURCES
     ${COMMON}
+    ${LOGGER}
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})
