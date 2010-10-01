@@ -27,6 +27,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI_IDispatchEx.h"
 #include "DOM/Window.h"
 #include "Win/FactoryDefinitionsWin.h"
+#include "logging.h"
 
 #include "BrowserPlugin.h"
 #include "PluginCore.h"
@@ -74,10 +75,17 @@ public:
 
     ActiveXBrowserHostPtr m_host;
 
+private:
+    static int _REFCOUNT; // This must only be accessed from the main thread
+
+public:
     // The methods in this class are positioned in this file in the
     // rough order that they will be called in.
     CFBControl() : pluginWin(NULL), m_messageWin(NULL)
     {
+        if (_REFCOUNT++ == 0) {
+            FB::Log::initLogging();
+        }
         FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
@@ -85,6 +93,9 @@ public:
 
     ~CFBControl()
     {
+        if (--_REFCOUNT == 0) {
+            FB::Log::stopLogging();
+        }
         if (m_messageWin)
             ::DestroyWindow(m_messageWin);
     }

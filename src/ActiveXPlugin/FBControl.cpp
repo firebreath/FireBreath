@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // FBControl.cpp : Implementation of CFBControl
 #include "FBControl.h"
 
+int CFBControl::_REFCOUNT(0); // This must only be accessed from the main thread
 // CFBControl
 BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)
 {

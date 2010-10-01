@@ -28,6 +28,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${FIREBREATH_CONFIG_DIR}
+    ${PLUGINCOMMON_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     )
 

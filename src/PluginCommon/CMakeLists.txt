@@ -35,20 +35,20 @@ include_directories(
     )
 
 file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    src/*.h
-    src/*.cpp
+    *.h
+    *.cpp
     )
 
-if (TARGET boost_log OR (WITH_SYSTEM_BOOST AND USE_BOOST_LOG) )
+if (TARGET log4cplus)
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        src/boost/*.cpp
-        src/boost/*.h
+        log4cplus/*.cpp
+        log4cplus/*.h
     )
     SOURCE_GROUP(BoostLog ${LOGGER})
 elseif(NOT CUSTOM_LOGGING)
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        src/null/*.cpp
-        src/null/*.h
+        null/*.cpp
+        null/*.h
     )
 endif()
 

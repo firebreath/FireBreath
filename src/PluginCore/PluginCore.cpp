@@ -18,6 +18,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "FactoryDefinitions.h"
 #include "BrowserHost.h"
 #include "DOM/Window.h"
+#include "logging.h"
 
 #include "PluginCore.h"
 
@@ -35,6 +36,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
+    FBLOG_INFO("FB::PluginCore", std::string("os: " + os + "; browser: " + browser).c_str());
 }
 
 /***************************\
@@ -43,6 +45,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 
 PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
 {
+    FB::Log::initLogging();
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
@@ -100,9 +103,12 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 tmp = m_host->getDOMWindow()
                     ->getProperty<FB::JSObjectPtr>(value);
 
+                FBLOG_TRACE("PluginCore", std::string("Found <param> event handler: " + key).c_str());
+
                 m_params[key] = tmp;
             }
-        } catch (const std::exception&) {
+        } catch (const std::exception &ex) {
+            FBLOG_WARN("PluginCore", std::string("Exception processing <param> " + key + ": " + ex.what()).c_str());
         }
     }
 }
@@ -128,6 +134,7 @@ PluginWindow* PluginCore::GetWindow() const
 
 void PluginCore::SetWindow(PluginWindow *wind)
 {
+    FBLOG_TRACE("PluginCore", "Window Set");
     if (m_Window && m_Window != wind) {
         ClearWindow();
     }
@@ -137,6 +144,7 @@ void PluginCore::SetWindow(PluginWindow *wind)
 
 void PluginCore::ClearWindow()
 {
+    FBLOG_TRACE("PluginCore", "Window Cleared");
     if (m_Window) {
         m_Window->DetachObserver(this);
         m_Window = NULL;
@@ -147,6 +155,7 @@ void PluginCore::ClearWindow()
 // to indicate that we're done.
 void PluginCore::setReady()
 {
+    FBLOG_INFO("PluginCore", "Plugin Ready");
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {

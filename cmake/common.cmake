@@ -16,6 +16,7 @@ get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
 
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
+set (FIREBREATH YES INTERNAL)
 
 if (WIN32)
     set (PLATFORM_NAME "Win")
@@ -75,7 +76,7 @@ macro (link_boost_library PROJECT BOOST_LIB)
     endif()
 endmacro(link_boost_library)
 
-function (add_boost_library BOOST_LIB)
+macro (add_boost_library BOOST_LIB)
 
     if (WITH_SYSTEM_BOOST)
         find_package(Boost COMPONENTS thread REQUIRED)
@@ -89,7 +90,16 @@ function (add_boost_library BOOST_LIB)
             add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
         endif()
     endif()
-    set(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
-    set(Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
 
-endfunction(add_boost_library)
+endmacro (add_boost_library)
+
+macro (add_firebreath_library project_name)
+
+    list(APPEND FBLIB_INCLUDE_DIRS, ${FBLIBS_DIR}/${project_name})
+    if (NOT TARGET ${project_name})
+        add_subdirectory(${FBLIBS_DIR}/${project_name} ${CMAKE_BINARY_DIR}/fblibs/${project_name})
+    endif()
+    list(APPEND FBLIB_LIBRARIES ${project_name})
+    list(REMOVE_DUPLICATES FBLIB_LIBRARIES)
+
+endmacro(add_firebreath_library)
