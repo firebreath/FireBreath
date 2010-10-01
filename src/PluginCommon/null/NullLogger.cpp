@@ -21,7 +21,7 @@ void FB::Log::stopLogging() {};
 void FB::Log::trace(const char *, const char *, const char *file, int line) {}
 void FB::Log::debug(const char *, const char *, const char *file, int line) {}
 void FB::Log::info(const char *, const char *, const char *file, int line) {}
-void FB::Log::warning(const char *, const char *, const char *file, int line) {}
+void FB::Log::warn(const char *, const char *, const char *file, int line) {}
 void FB::Log::error(const char *, const char *, const char *file, int line) {}
 void FB::Log::fatal(const char *, const char *, const char *file, int line) {}
 
