@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-pragma once
+#pragma once
 #ifndef H_PLUGINWINDOWMAC
 #define H_PLUGINWINDOWMAC
 
