@@ -68,7 +68,7 @@ void FB::Log::info(const char *, const char *msg, const char *file, int line)
 {
     LOG4CPLUS_INFO(log4cplus::Logger::getInstance(L"FireBreath"), file << "(" << line << "): " << msg);
 }
-void FB::Log::warning(const char *, const char *msg, const char *file, int line)
+void FB::Log::warn(const char *, const char *msg, const char *file, int line)
 {
     LOG4CPLUS_WARN(log4cplus::Logger::getInstance(L"FireBreath"), file << "(" << line << "): " << msg);
 }
