@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lexical_cast.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
+#include "logging.h"
 #include <cassert>
 
 using namespace FB::Npapi;
@@ -53,6 +54,8 @@ NPObjectAPI::~NPObjectAPI(void)
             for (int i = 0; i < RETAIN_COUNT; i++) {
                 browser->ReleaseObject(obj);
             }
+        } else {
+            FBLOG_ERROR("NPObjectAPI", std::string("Invalid reference count found on NPObject!" + obj->referenceCount).c_str());
         }
     }
 }
