@@ -68,8 +68,12 @@ namespace FB
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
 
+    // Helpers to make cross-thread calls
+    typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
+    typedef void (JSAPI::*SetPropertyType)(const std::string&, const std::vector<variant>&);
+    typedef variant (JSAPI::*GetPropertyType)(const std::string&);
+
     // helper type to allow JSAPIAuto catching of a list of variant arguments
-    
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;

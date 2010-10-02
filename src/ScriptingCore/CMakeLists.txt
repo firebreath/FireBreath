@@ -59,6 +59,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     BrowserHost.*
     JSObject.*
     AsyncBrowser*
+    Cross*
     AsyncFunction*
     SyncBrowser*
     *Converter.*

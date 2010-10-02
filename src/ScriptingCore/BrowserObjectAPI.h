@@ -15,9 +15,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_BrowserObjectAPI
 #define H_FB_BrowserObjectAPI
 
+#if defined(__GNUC__)
 #warning "This header is deprecated - include JSObject.h instead."
+#endif
 
-// Backwards compability header
+// Include the correct header
 #include "JSObject.h"
 
 #endif

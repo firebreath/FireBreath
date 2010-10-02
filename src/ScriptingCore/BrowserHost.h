@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
+#include "CrossThreadCall.h"
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread.hpp>
 
@@ -52,6 +53,12 @@ namespace FB
 
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
+
+        template<class C, class Functor>
+        typename Functor::result_type MainThreadFunctor(Functor func);
+
+        template<class C, class Functor>
+        void ScheduleAsyncFunctor(C obj, Functor func);
 
         static void AsyncHtmlLog(void *);
 
@@ -90,6 +97,18 @@ public:
         boost::thread::id m_threadId;
         std::string m_location;
     };
-}
+
+    template <class C, class Functor>
+    typename Functor::result_type BrowserHost::MainThreadFunctor(Functor func)
+    {
+        return CrossThreadCall::syncCall(shared_ptr(), obj, func);
+    }
+
+    template <class C, class Functor>
+    void BrowserHost::ScheduleAsyncFunctor(C obj, Functor func)
+    {
+        CrossThreadCall::asyncCall(shared_ptr(), obj, func);
+    }
+};
 
 #endif

@@ -42,6 +42,7 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
     } catch (const std::exception &) {
         // printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
+        FBLOG_TRACE("BrowserHost", "Logging to browser console failed");
         return;
     }
     delete req;

@@ -35,5 +35,5 @@ variant JSObject::InvokeMainThread(const std::string& methodName, const std::vec
 
 void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(ptr_cast<JSObject>(shared_ptr()), methodName, args);
+    host->ScheduleAsyncFunctor(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
 }
