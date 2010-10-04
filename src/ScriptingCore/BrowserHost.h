@@ -54,7 +54,7 @@ namespace FB
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
-        template<class C, class Functor>
+        template<class Functor>
         typename Functor::result_type MainThreadFunctor(Functor func);
 
         template<class C, class Functor>
@@ -98,10 +98,10 @@ public:
         std::string m_location;
     };
 
-    template <class C, class Functor>
+    template <class Functor>
     typename Functor::result_type BrowserHost::MainThreadFunctor(Functor func)
     {
-        return CrossThreadCall::syncCall(shared_ptr(), obj, func);
+        return CrossThreadCall::syncCall(shared_ptr(), func);
     }
 
     template <class C, class Functor>

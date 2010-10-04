@@ -62,6 +62,9 @@ NPObjectAPI::~NPObjectAPI(void)
 
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
+    if (!host->isMainThread()) {
+        return host->MainThreadFunctor(boost::bind(&NPObjectAPI::getMemberNames, this, nameVector));
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
 
@@ -74,6 +77,9 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
 
 size_t NPObjectAPI::getMemberCount()
 {
+    if (!host->isMainThread()) {
+        return host->MainThreadFunctor(boost::bind(&NPObjectAPI::getMemberCount, this));
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
     browser->Enumerate(obj, &idArray, &count);
@@ -83,11 +89,19 @@ size_t NPObjectAPI::getMemberCount()
 
 bool NPObjectAPI::HasMethod(const std::string& methodName)
 {
+    if (!host->isMainThread()) {
+        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        return host->MainThreadFunctor(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
+    }
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
 bool NPObjectAPI::HasProperty(const std::string& propertyName)
 {
+    if (!host->isMainThread()) {
+        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        return host->MainThreadFunctor(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
+    }
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
 
@@ -105,6 +119,9 @@ bool NPObjectAPI::HasEvent(const std::string& eventName)
 // Methods to manage properties on the API
 FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
+    if (!host->isMainThread()) {
+        return host->MainThreadFunctor(boost::bind((FB::GetPropertyType)&NPObjectAPI::GetProperty, this, propertyName));
+    }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
         throw script_error(propertyName.c_str());
@@ -117,6 +134,9 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 
 void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
+    if (!host->isMainThread()) {
+        return host->MainThreadFunctor(boost::bind((FB::SetPropertyType)&NPObjectAPI::SetProperty, this, propertyName, value));
+    }
     NPVariant val;
     browser->getNPVariant(&val, value);
     if (!browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val)) {
@@ -139,6 +159,9 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 // Methods to manage methods on the API
 FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
+    if (!host->isMainThread()) {
+        return host->MainThreadFunctor(boost::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
+    }
     NPVariant retVal;
 
     if (!host->isMainThread()) {

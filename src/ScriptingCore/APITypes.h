@@ -70,7 +70,7 @@ namespace FB
 
     // Helpers to make cross-thread calls
     typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
-    typedef void (JSAPI::*SetPropertyType)(const std::string&, const std::vector<variant>&);
+    typedef void (JSAPI::*SetPropertyType)(const std::string&, const variant&);
     typedef variant (JSAPI::*GetPropertyType)(const std::string&);
 
     // helper type to allow JSAPIAuto catching of a list of variant arguments
