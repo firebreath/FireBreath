@@ -141,13 +141,14 @@ namespace FB
     typedef std::map<std::string, FB::JSObjectPtr> EventSingleMap;
     
     // implementation details
-    
+    class PluginEventSink;
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
     {
         enum { base_is_firebreath_class = 
                        boost::is_base_of<JSAPI, T>::value
                     || boost::is_base_of<BrowserHost, T>::value
+                    || boost::is_base_of<PluginEventSink, T>::value
         };
         // This should only be used with FireBreath' and derived classes
         BOOST_STATIC_ASSERT(base_is_firebreath_class);

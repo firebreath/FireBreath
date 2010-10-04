@@ -17,12 +17,17 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <sstream>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
+#include <boost/weak_ptr.hpp>
+
+class FBTestPlugin;
 
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(FB::BrowserHostPtr host);
+    FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
+
+    boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
 
     std::wstring say(const std::wstring& val);
     // Read/Write property testString
@@ -62,6 +67,7 @@ public:
 private:
     FB::BrowserHostPtr m_host;
     FB::JSAPIPtr m_simpleMath;
+    boost::weak_ptr<FBTestPlugin> m_pluginWeak;
 
     std::string m_testString;
 };

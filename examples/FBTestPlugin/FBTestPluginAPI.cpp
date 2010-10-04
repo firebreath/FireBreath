@@ -17,11 +17,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "DOM/Document.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
+#include "FBTestPlugin.h"
 #include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHostPtr host) : m_host(host)
+FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
