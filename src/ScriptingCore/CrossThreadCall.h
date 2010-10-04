@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include "JSObject.h"
 #include "BrowserHost.h"
+#include <boost/weak_ptr.hpp>
 
 namespace FB {
 
@@ -36,12 +37,19 @@ namespace FB {
     class FunctorCallImpl : public FunctorCall
     {
     public:
-        FunctorCallImpl(C &cls, Functor &func) : reference(cls), func(func) { }
-        void call() { retVal = func(); }
+        FunctorCallImpl(boost::shared_ptr<C> &cls, Functor &func) : reference(cls), func(func), ref(true) { }
+        FunctorCallImpl(Functor &func) : func(func), ref(false) {}
+        void call() {
+            boost::shared_ptr<C> tmp;
+            if (ref) tmp = reference.lock();
+            if (!ref || tmp)
+                retVal = func();
+        }
         RT getResult() { return retVal; }
 
     protected:
-        C reference;
+        bool ref;
+        boost::weak_ptr<C> reference;
         Functor func;
         RT retVal;
 
@@ -52,11 +60,18 @@ namespace FB {
     class FunctorCallImpl<Functor, C, void> : public FunctorCall
     {
     public:
-        FunctorCallImpl(C &cls, Functor &func) : reference(cls), func(func) { }
-        void call() { func(); }
+        FunctorCallImpl(boost::shared_ptr<C> &cls, Functor &func) : reference(cls), func(func), ref(true) { }
+        FunctorCallImpl(Functor &func) : func(func), ref(false) {}
+        void call() {
+            boost::shared_ptr<C> tmp;
+            if (ref) tmp = reference.lock();
+            if (!ref || tmp)
+                func();
+        }
 
     protected:
-        C reference;
+        bool ref;
+        boost::weak_ptr<C> reference;
         Functor func;
 
         friend class SyncBrowserCall;
@@ -74,7 +89,7 @@ namespace FB {
         static typename Functor::result_type syncCallHelper(FB::BrowserHostPtr &host, Functor func, boost::false_type /* is void */);
 
         template<class C, class Functor>
-        static void asyncCall(FB::BrowserHostPtr &host, C obj, Functor func);
+        static void asyncCall(FB::BrowserHostPtr &host, boost::shared_ptr<C> obj, Functor func);
 
     protected:
         CrossThreadCall(FunctorCall* funct) : funct(funct), m_returned(false) { }
@@ -91,7 +106,7 @@ namespace FB {
     };
 
     template<class C, class Functor>
-    static void CrossThreadCall::asyncCall(FB::BrowserHostPtr &host, C obj, Functor func)
+    static void CrossThreadCall::asyncCall(FB::BrowserHostPtr &host, boost::shared_ptr<C> obj, Functor func)
     {
         FunctorCallImpl<Functor, C> *funct = new FunctorCallImpl<Functor, C>(obj, func);
         CrossThreadCall *call = new CrossThreadCall(funct);
@@ -111,7 +126,7 @@ namespace FB {
         FB::variant varResult;
 
         bool tmp(false);
-        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(tmp, func);
+        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(func);
         if (!host->isMainThread())
         {
             CrossThreadCall *call = new CrossThreadCall(funct);
@@ -141,7 +156,7 @@ namespace FB {
         FB::variant varResult;
 
         bool tmp(false);
-        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(tmp, func);
+        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(func);
         if (!host->isMainThread())
         {
             CrossThreadCall *call = new CrossThreadCall(funct);

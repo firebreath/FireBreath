@@ -58,7 +58,7 @@ namespace FB
         typename Functor::result_type CallOnMainThread(Functor func);
 
         template<class C, class Functor>
-        void ScheduleOnMainThread(C obj, Functor func);
+        void ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func);
 
         static void AsyncHtmlLog(void *);
 
@@ -105,7 +105,7 @@ public:
     }
 
     template <class C, class Functor>
-    void BrowserHost::ScheduleOnMainThread(C obj, Functor func)
+    void BrowserHost::ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func)
     {
         CrossThreadCall::asyncCall(shared_ptr(), obj, func);
     }
