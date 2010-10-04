@@ -40,6 +40,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
     registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
     registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
+    registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 

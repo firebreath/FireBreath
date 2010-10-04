@@ -18,6 +18,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
+#include "ThreadRunnerAPI.h"
 
 class FBTestPlugin;
 
@@ -28,6 +29,8 @@ public:
     virtual ~FBTestPluginAPI();
 
     boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
+
+    FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
 
     std::wstring say(const std::wstring& val);
     // Read/Write property testString

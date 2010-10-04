@@ -30,6 +30,7 @@ void CrossThreadCall::syncCallbackFunctor(void *userData)
         {
             call->m_result = new FB::script_error(e.what());
         }
+        call->m_returned = true;
         call->m_cond.notify_one();
     }
 }

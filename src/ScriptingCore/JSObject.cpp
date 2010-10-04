@@ -25,7 +25,12 @@ JSObject::~JSObject(void)
 {
 }
 
+void JSObject::SetPropertyAsync(const std::string& propertyName, const variant& value)
+{
+    host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+}
+
 void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    host->ScheduleAsyncFunctor(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
+    host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
 }

@@ -55,10 +55,10 @@ namespace FB
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
         template<class Functor>
-        typename Functor::result_type MainThreadFunctor(Functor func);
+        typename Functor::result_type CallOnMainThread(Functor func);
 
         template<class C, class Functor>
-        void ScheduleAsyncFunctor(C obj, Functor func);
+        void ScheduleOnMainThread(C obj, Functor func);
 
         static void AsyncHtmlLog(void *);
 
@@ -99,13 +99,13 @@ public:
     };
 
     template <class Functor>
-    typename Functor::result_type BrowserHost::MainThreadFunctor(Functor func)
+    typename Functor::result_type BrowserHost::CallOnMainThread(Functor func)
     {
         return CrossThreadCall::syncCall(shared_ptr(), func);
     }
 
     template <class C, class Functor>
-    void BrowserHost::ScheduleAsyncFunctor(C obj, Functor func)
+    void BrowserHost::ScheduleOnMainThread(C obj, Functor func)
     {
         CrossThreadCall::asyncCall(shared_ptr(), obj, func);
     }

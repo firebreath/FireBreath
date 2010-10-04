@@ -16,7 +16,9 @@ Copyright 2010 Facebook Inc, Firebreath development team
 
 ThreadRunnerAPI::ThreadRunnerAPI(FB::BrowserHostPtr host) : m_host(host)
 {
-    m_thread = boost::thread(this, &ThreadRunnerAPI::threadRun);
+    registerMethod("addMethod", make_method(this, &ThreadRunnerAPI::addMethod));
+
+    m_thread = boost::thread(&ThreadRunnerAPI::threadRun, this);
 }
 
 void ThreadRunnerAPI::threadRun()
@@ -38,5 +40,11 @@ void ThreadRunnerAPI::threadRun()
 
 ThreadRunnerAPI::~ThreadRunnerAPI()
 {
-    
+    m_thread.interrupt();
+    m_thread.join();
+}
+
+void ThreadRunnerAPI::addMethod(FB::JSObjectPtr &obj)
+{
+    m_queue.push(obj);
 }

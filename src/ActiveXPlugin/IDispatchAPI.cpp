@@ -29,7 +29,7 @@ IDispatchAPI::~IDispatchAPI(void)
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
     if (!host->isMainThread()) {
-        host->MainThreadFunctor(boost::bind(&IDispatchAPI::getMemberNames, this, nameVector));
+        host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberNames, this, nameVector));
         return;
     }
     HRESULT hr;
@@ -51,7 +51,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 size_t IDispatchAPI::getMemberCount()
 {
     if (!host->isMainThread()) {
-        return host->MainThreadFunctor(boost::bind(&IDispatchAPI::getMemberCount, this));
+        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
     }
     HRESULT hr;
     DISPID dispid;
@@ -72,7 +72,7 @@ size_t IDispatchAPI::getMemberCount()
 DISPID IDispatchAPI::getIDForName(const std::wstring& name)
 {
     if (!host->isMainThread()) {
-        return host->MainThreadFunctor(boost::bind(&IDispatchAPI::getIDForName, this, name));
+        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
     }
     if (name.empty())
         return DISPID_VALUE;
@@ -122,7 +122,7 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName)
 {
     if (!host->isMainThread()) {
         typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&);
-        return host->MainThreadFunctor(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
+        return host->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
     }
 
     DISPPARAMS params;
@@ -167,7 +167,7 @@ bool IDispatchAPI::HasEvent(const std::string& eventName)
 {
     if (!host->isMainThread()) {
         typedef bool (IDispatchAPI::*HasEventType)(const std::string&);
-        return host->MainThreadFunctor(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
+        return host->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
     }
 
     // This will actually just return true if the specified member exists; IDispatch doesn't really
@@ -180,7 +180,7 @@ bool IDispatchAPI::HasEvent(const std::string& eventName)
 FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {
     if (!host->isMainThread()) {
-        return host->MainThreadFunctor(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
+        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
     }
 
     DISPPARAMS params;
@@ -209,7 +209,7 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
     if (!host->isMainThread()) {
-        host->MainThreadFunctor(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
+        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
         return;
     }
 
@@ -260,7 +260,7 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     if (!host->isMainThread()) {
-        return host->MainThreadFunctor(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
+        return host->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
     CComVariant *comArgs = new CComVariant[args.size()];
