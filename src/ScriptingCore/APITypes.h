@@ -25,6 +25,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/type_traits/is_base_of.hpp>
 #include <boost/static_assert.hpp>
 
+#include "../PluginCore/PluginEventSink.h"
+
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))
 
@@ -149,6 +151,9 @@ namespace FB
                        boost::is_base_of<JSAPI, T>::value
                     || boost::is_base_of<BrowserHost, T>::value
                     || boost::is_base_of<PluginEventSink, T>::value
+                    || boost::is_base_of<T, JSAPI>::value
+                    || boost::is_base_of<T, BrowserHost>::value
+                    || boost::is_base_of<T, PluginEventSink>::value
         };
         // This should only be used with FireBreath' and derived classes
         BOOST_STATIC_ASSERT(base_is_firebreath_class);
