@@ -20,7 +20,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "TestJSAPIAuto.h"
 #include "fake_jsarray.h"
 #include "variant_list.h"
-#include "BrowserHostWrapper.h"
 
 namespace helper
 {
