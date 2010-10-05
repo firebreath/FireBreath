@@ -29,7 +29,7 @@ public:
     ThreadRunnerAPI(FB::BrowserHostPtr host);
     virtual ~ThreadRunnerAPI();
 
-    void addMethod(FB::JSObjectPtr &);
+    void addMethod(const FB::JSObjectPtr &);
 protected:
     void threadRun();
 
