@@ -15,10 +15,12 @@ if [ "$?" -ne 0 ]; then
 else
     popd
 
-    if [ -f "cmake/patch_xcode.py" ]; then
+    if [ -f "${FB_ROOT}/cmake/patch_xcode.py" ]; then
         while read target proj
         do
-            python cmake/patch_xcode.py -f "$proj" -t "$target"
+            python ${FB_ROOT}/cmake/patch_xcode.py -f "$proj" -t "$target"
         done < $BUILDDIR/xcode_patch_desc.txt
+    else
+        echo "Could not find patch_xcode at ${FB_ROOT}/cmake/patch_xcode.py!  Project will not work!"
     fi
 fi
