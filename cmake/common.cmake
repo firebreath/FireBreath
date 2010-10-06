@@ -16,6 +16,7 @@ get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
 
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
+set (FIREBREATH YES INTERNAL)
 
 if (WIN32)
     set (PLATFORM_NAME "Win")
@@ -68,28 +69,37 @@ function (include_platform)
 
 endfunction(include_platform)
 
-function (link_boost_library PROJECT BOOST_LIB)
+macro (link_boost_library PROJECT BOOST_LIB)
     add_boost_library(${BOOST_LIB})
     if (NOT WITH_SYSTEM_BOOST)
         target_link_libraries(${PROJECT} boost_${BOOST_LIB})
     endif()
-endfunction(link_boost_library)
+endmacro(link_boost_library)
 
-function (add_boost_library BOOST_LIB)
+macro (add_boost_library BOOST_LIB)
 
     if (WITH_SYSTEM_BOOST)
         find_package(Boost COMPONENTS thread REQUIRED)
     else()
 	list(APPEND Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
 	list(REMOVE_DUPLICATES Boost_INCLUDE_DIRS)
-        set(Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
 	
-        list(APPEND Boost_LIBRARIES boost_thread)
+        list(APPEND Boost_LIBRARIES boost_${BOOST_LIB})
 	list(REMOVE_DUPLICATES Boost_LIBRARIES)
-        set(Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
         if (NOT TARGET boost_${BOOST_LIB})
             add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
         endif()
     endif()
 
-endfunction(add_boost_library)
+endmacro (add_boost_library)
+
+macro (add_firebreath_library project_name)
+
+    list(APPEND FBLIB_INCLUDE_DIRS, ${FBLIBS_DIR}/${project_name})
+    if (NOT TARGET ${project_name})
+        add_subdirectory(${FBLIBS_DIR}/${project_name} ${CMAKE_BINARY_DIR}/fblibs/${project_name})
+    endif()
+    list(APPEND FBLIB_LIBRARIES ${project_name})
+    list(REMOVE_DUPLICATES FBLIB_LIBRARIES)
+
+endmacro(add_firebreath_library)

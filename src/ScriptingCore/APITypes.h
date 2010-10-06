@@ -22,8 +22,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/static_assert.hpp>
 
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))
@@ -68,8 +66,12 @@ namespace FB
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
 
+    // Helpers to make cross-thread calls
+    typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
+    typedef void (JSAPI::*SetPropertyType)(const std::string&, const variant&);
+    typedef variant (JSAPI::*GetPropertyType)(const std::string&);
+
     // helper type to allow JSAPIAuto catching of a list of variant arguments
-    
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
@@ -141,12 +143,6 @@ namespace FB
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
     {
-        enum { base_is_firebreath_class = 
-                       boost::is_base_of<JSAPI, T>::value
-                    || boost::is_base_of<BrowserHost, T>::value
-        };
-        // This should only be used with FireBreath' and derived classes
-        BOOST_STATIC_ASSERT(base_is_firebreath_class);
         return boost::dynamic_pointer_cast<T>(r);
     }
 }

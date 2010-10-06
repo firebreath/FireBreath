@@ -13,8 +13,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "JSObject.h"
-#include "AsyncBrowserCall.h"
-#include "SyncBrowserCall.h"
 
 using namespace FB;
 
@@ -27,13 +25,12 @@ JSObject::~JSObject(void)
 {
 }
 
-variant JSObject::InvokeMainThread(const std::string& methodName, const std::vector<variant>& args)
+void JSObject::SetPropertyAsync(const std::string& propertyName, const variant& value)
 {
-    assert(!host->isMainThread());
-    return FB::SyncBrowserCall::CallMethod(ptr_cast<JSObject>(shared_ptr()), methodName, args);
+    host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
 }
 
 void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(ptr_cast<JSObject>(shared_ptr()), methodName, args);
+    host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
 }

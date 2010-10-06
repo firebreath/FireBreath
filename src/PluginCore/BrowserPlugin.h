@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "JSAPI.h"
-#include <boost/scoped_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 
 namespace FB {
 
@@ -36,7 +36,9 @@ namespace FB {
 
     protected:
         std::string m_filesystemPath;
-        boost::scoped_ptr<FB::PluginCore> pluginMain;
+        // Even though this is a shared pointer, don't ever hold onto a reference to it except
+        // as a weak_ptr, and then don't keep it locked longer than needed.
+        boost::shared_ptr<FB::PluginCore> pluginMain;
     };
 
 };

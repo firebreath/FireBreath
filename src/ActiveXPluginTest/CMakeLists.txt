@@ -52,6 +52,7 @@ source_group(Tests FILES ${TESTS})
 
 set (SOURCES
     ${GENERAL}
+    ${PLUGINCOMMON_SOURCE_DIR}/null/NullLogger.cpp
     )
 
 add_executable(${PROJNAME} ${SOURCES})
