@@ -120,7 +120,7 @@ bool NPObjectAPI::HasEvent(const std::string& eventName)
 FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
     if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&NPObjectAPI::GetProperty, this, propertyName));
+        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
     }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
@@ -135,7 +135,8 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
     if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::SetPropertyType)&NPObjectAPI::SetProperty, this, propertyName, value));
+        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+        return;
     }
     NPVariant val;
     browser->getNPVariant(&val, value);

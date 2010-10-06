@@ -22,8 +22,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
-#include <boost/type_traits/is_base_of.hpp>
-#include <boost/static_assert.hpp>
 
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))
@@ -141,17 +139,10 @@ namespace FB
     typedef std::map<std::string, FB::JSObjectPtr> EventSingleMap;
     
     // implementation details
-    class PluginEventSink;
+    
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
     {
-        enum { base_is_firebreath_class = 
-                       boost::is_base_of<JSAPI, T>::value
-                    || boost::is_base_of<BrowserHost, T>::value
-                    || boost::is_base_of<PluginEventSink, T>::value
-        };
-        // This should only be used with FireBreath' and derived classes
-        BOOST_STATIC_ASSERT(base_is_firebreath_class);
         return boost::dynamic_pointer_cast<T>(r);
     }
 }

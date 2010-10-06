@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
-#include "CrossThreadCall.h"
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread.hpp>
 
@@ -98,17 +97,11 @@ public:
         std::string m_location;
     };
 
-    template <class Functor>
-    typename Functor::result_type BrowserHost::CallOnMainThread(Functor func)
-    {
-        return CrossThreadCall::syncCall(shared_ptr(), func);
-    }
-
-    template <class C, class Functor>
-    void BrowserHost::ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func)
-    {
-        CrossThreadCall::asyncCall(shared_ptr(), obj, func);
-    }
+    
+    // Due to interdependency issues, the implementation for ScheduleAsyncCall and CallOnMainThread are found in
+    // CrossThreadCall.h
 };
+
+#include "CrossThreadCall.h"
 
 #endif

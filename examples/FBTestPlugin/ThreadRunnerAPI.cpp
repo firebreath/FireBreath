@@ -44,7 +44,7 @@ ThreadRunnerAPI::~ThreadRunnerAPI()
     m_thread.join();
 }
 
-void ThreadRunnerAPI::addMethod(FB::JSObjectPtr &obj)
+void ThreadRunnerAPI::addMethod(const FB::JSObjectPtr &obj)
 {
     m_queue.push(obj);
 }
