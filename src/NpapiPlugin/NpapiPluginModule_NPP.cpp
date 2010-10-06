@@ -160,10 +160,10 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
             return NPERR_OUT_OF_MEMORY_ERROR;
         }
 
-        plugin->init(pluginType, argc, argn, argv);
-
         NpapiPDataHolder* holder = new NpapiPDataHolder(host, plugin);
         instance->pdata = static_cast<void*>(holder);
+
+        plugin->init(pluginType, argc, argn, argv);
     } 
     catch (const PluginCreateError &e) 
     {

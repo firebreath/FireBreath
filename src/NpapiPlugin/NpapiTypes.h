@@ -38,7 +38,7 @@ namespace FB { namespace Npapi {
     typedef NPError (*NPGetEntryPointsFuncPtr)(NPPluginFuncs* pFuncs);
 #endif
 
-    void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs);
+    void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs, NPP instance = NULL);
 
     typedef FB::variant_detail::empty NpapiNull;
 
