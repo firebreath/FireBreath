@@ -12,27 +12,30 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMELEMENT
-#define H_FB_JSAPI_DOMELEMENT
+#ifndef H_FB_DOM_ELEMENT
+#define H_FB_DOM_ELEMENT
 
 #include <string>
 #include "BrowserObjectAPI.h"
-#include "JSAPI_DOMNode.h"
+#include "Node.h"
 
-namespace FB {
+namespace FB { namespace DOM {
 
     /**
-     * JSAPI_DOMElement
+     * Element (used as ElementPtr, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class JSAPI_DOMElement : public JSAPI_DOMNode
+    class Element;
+    typedef boost::shared_ptr<Element> ElementPtr;
+    class Element : public Node
     {
     public:
-        JSAPI_DOMElement(const JSObject& element);
-        JSAPI_DOMElement(const JSAPI_DOMElement &rhs);
+        Element(const FB::JSObject& element);
 
-        virtual ~JSAPI_DOMElement();
+        virtual ~Element();
+        ElementPtr element() { return boost::dynamic_pointer_cast<Element>(node()); }
+        static ElementPtr create(FB::JSObject &api) { return api->host->_createElement(api); }
 
     public:
         virtual std::string getInnerHTML();
@@ -44,24 +47,24 @@ namespace FB {
         virtual void setHeight(int);
 
         virtual int getChildNodeCount();
-        virtual JSAPI_DOMElement getChildNode(int idx);
-        virtual JSAPI_DOMElement getParentNode();
+        virtual ElementPtr getChildNode(int idx);
+        virtual ElementPtr getParentNode();
 
-        JSAPI_DOMElement getElement(const std::string& name)
+        virtual ElementPtr getElement(const std::string& name)
         {
-            JSObject api = getProperty<JSObject>(name);
-            JSAPI_DOMElement retVal(api);
+            JSObject api = getProperty<FB::JSObject>(name);
+            ElementPtr retVal(new Element(api));
             return retVal;
         }
 
-        JSAPI_DOMElement getElement(int idx)
+        virtual ElementPtr getElement(int idx)
         {
-            JSObject api = getProperty<JSObject>(idx);
-            JSAPI_DOMElement retVal(api);
+            JSObject api = getProperty<FB::JSObject>(idx);
+            ElementPtr retVal(new Element(api));
             return retVal;
         }
     };
 
-};
+}; };
 
-#endif // H_FB_JSAPI_DOMELEMENT
+#endif // H_FB_DOM_ELEMENT

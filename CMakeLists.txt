@@ -26,32 +26,59 @@ if (APPLE)
     clear_xcode_patches()
 endif()
 
-message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
+if (NOT EXISTS ${PROJECTS_SOURCE_DIR})
+    message(FATAL_ERROR "The specified project directory ${PROJECTS_SOURCE_DIR} is not found")
+endif()
 
-# Common projects -- projects that don't have any plugin specific code
-add_subdirectory(${UNITTEST_FW_SOURCE_DIR} ${UNITTEST_FW_BINARY_DIR})
-add_subdirectory(${NPAPIHOST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiHost)
-add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCore)
-add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
-add_subdirectory(${PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
+if (VERBOSE)
+    message("Firebreath solution dir: " ${PROJECT_BINARY_DIR})
+endif()
 
-file (GLOB PLUGIN_PROJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PROJECT_SRC_DIR}/[^.]*
+find_package(Threads REQUIRED)
+
+if (WITH_SYSTEM_BOOST)
+    find_package(Boost COMPONENTS thread REQUIRED)
+else()
+    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
+    set(Boost_LIBRARIES boost_thread)
+    add_subdirectory(${BOOST_THREAD_SOURCE_DIR})
+endif()
+
+# Common core projects -- projects that don't have any plugin specific code,
+# but are required before any plugins are loaded
+add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
+add_subdirectory(${PLUGINCORE_SOURCE_DIR})
+
+# search the project src dir for plugin project directories
+file (GLOB PLUGIN_PROJECTS 
+    ${PROJECTS_SOURCE_DIR}/[^.]*
     )
 
-message("Searching ${PROJECT_SRC_DIR}/*: found ${PLUGIN_PROJECTS}")
+if (VERBOSE)
+    message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
+endif()
+
+# loop through the found directories and add any with a CMakeLists.txt as a subproject
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
-    if (EXISTS "${FB_ROOT_DIR}/${CURPROJECT}/CMakeLists.txt")
+    if (EXISTS "${CURPROJECT}/CMakeLists.txt")
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
-      configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECT_ROOT}/${PROJNAME}/projectConfig.cmake COPYONLY)
-  
-      message("Configuring plugin project ${CURPROJECT} in ${PROJECT_ROOT}/${PROJNAME}")
-      add_subdirectory("${CURPROJECT}" "${PROJECT_ROOT}/${PROJNAME}")
+      configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECTS_BINARY_DIR}/${PROJNAME}/projectConfig.cmake COPYONLY)
+      if (VERBOSE)
+          message("Configuring plugin project ${CURPROJECT} in ${PROJECTS_BINARY_DIR}/${PROJNAME}")
+      endif()
+      add_subdirectory("${CURPROJECT}" "${PROJECTS_BINARY_DIR}/${PROJNAME}")
+    else()
+        message("Could not find ${CURPROJECT}/CMakeLists.txt")
     endif()
 endforeach()
 
+# Common projects -- projects that don't have any plugin specific code
+add_subdirectory(${UNITTEST_FW_SOURCE_DIR})
+add_subdirectory(${NPAPIHOST_SOURCE_DIR})
+add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR})
+
 if (NOT FOUND_PROJECTS)
-    MESSAGE("No projects found in ${PROJECT_SRC_DIR}/.")
+    MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
     MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
 endif()

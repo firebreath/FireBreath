@@ -33,6 +33,7 @@ namespace FB {
         void getWindowPosition(int &x, int &y, int &w, int &h);
         void setWindowClipping(int t, int l, int b, int r);
         void getWindowClipping(int &t, int &l, int &b, int &r);
+        void InvalidateWindow() {}
         CGrafPtr getPort() { return m_port; }
     protected:
         CGrafPtr m_port;

@@ -12,25 +12,31 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMNODE
-#define H_FB_JSAPI_DOMNODE
+#ifndef H_FB_DOM_NODE
+#define H_FB_DOM_NODE
 
 #include <string>
+#include <boost/enable_shared_from_this.hpp>
 #include "BrowserObjectAPI.h"
-namespace FB {
+
+namespace FB { namespace DOM {
     /**
-     * JSAPI_DOMNode
+     * Node (used as NodePtr, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM node
      **/
-    class JSAPI_DOMNode
+    class Node;
+    typedef boost::shared_ptr<Node> NodePtr;
+
+    class Node : public boost::enable_shared_from_this<Node>
     {
     public:
-        JSAPI_DOMNode(const JSObject& element) : m_element(element) { }
-        JSAPI_DOMNode(const JSAPI_DOMNode &rhs) : m_element(rhs.m_element) { }
-        virtual ~JSAPI_DOMNode() { }
+        Node(const JSObject& element) : m_element(element) { }
+        virtual ~Node() { }
 
-        JSObject getJSObject() { return m_element; }
+        virtual FB::JSObject getJSObject() { return m_element; }
+        NodePtr node() { return shared_from_this(); }
+        static NodePtr create(FB::JSObject &api) { return api->host->_createNode(api); }
 
     public:
         template <class T>
@@ -39,7 +45,16 @@ namespace FB {
             FB::variant tmp = m_element->Invoke(name, args);
             return tmp.convert_cast<T>();
         }
-
+        template <class T>
+        T callMethod(const std::wstring& name, const VariantList& args)
+        {
+            return callMethod<T>(FB::wstring_to_utf8(name), args); 
+        }
+        template <class T>
+        T getProperty(const std::wstring& name)
+        {
+            return getProperty<T>(FB::wstring_to_utf8(name));
+        }
         template <class T>
         T getProperty(const std::string& name)
         {
@@ -54,18 +69,20 @@ namespace FB {
             return tmp.convert_cast<T>();
         }
 
-        JSAPI_DOMNode getNode(const std::string& name);
+        virtual NodePtr getNode(const std::wstring& name);
+        virtual NodePtr getNode(const std::string& name);
 
-        JSAPI_DOMNode getNode(int idx);
+        virtual NodePtr getNode(int idx);
 
-        void setProperty(const std::string& name, const variant& val);
+        virtual void setProperty(const std::wstring& name, const variant& val);
+        virtual void setProperty(const std::string& name, const variant& val);
 
-        void setProperty(int idx, const variant& val);
+        virtual void setProperty(int idx, const variant& val);
 
     protected:
         JSObject m_element;
     };
 
-};
+}; };
 
-#endif // H_FB_JSAPI_DOMNODE
+#endif // H_FB_DOM_NODE

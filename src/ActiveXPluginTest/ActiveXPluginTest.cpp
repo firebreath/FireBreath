@@ -25,6 +25,7 @@ using namespace std;
 namespace FB { namespace Npapi {
     class NpapiPlugin;
     class NpapiBrowserHost;
+    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
 }; };
 
 int main()
@@ -52,7 +53,7 @@ FB::JSAPI *_getRootJSAPI()
     return new FB::JSAPISimple();
 }
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
 {
     return NULL;
     //return new FB::Npapi::NpapiPlugin(host);

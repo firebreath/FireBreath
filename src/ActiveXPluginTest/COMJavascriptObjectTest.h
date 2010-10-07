@@ -16,7 +16,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <string>
 
 #include "APITypes.h"
-#include "AutoPtr.h"
 #include "variant_list.h"
 #include "COMJavascriptObject.h"
 #include "ActiveXBrowserHost.h"
@@ -58,10 +57,10 @@ TEST (COMJavascriptObject_CreateTest)
 {
     PRINT_TESTNAME;
 
-    FB::AutoPtr<ActiveXBrowserHost> host = new ActiveXBrowserHost(NULL);
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
 
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
-    CComPtr<IDispatchEx> obj = COMJavascriptObject::NewObject(host, testIf);
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
+    CComPtr<IDispatchEx> obj(COMJavascriptObject::NewObject(host, testIf));
 
     CHECK (true);
 }
@@ -70,9 +69,9 @@ TEST(COMJavascriptObject_Methods)
 {
     PRINT_TESTNAME;
 
-    FB::AutoPtr<ActiveXBrowserHost> host = new ActiveXBrowserHost(NULL);
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
 
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj = COMJavascriptObject::NewObject(host, testIf);
 
     HRESULT hr = S_OK;
@@ -155,12 +154,12 @@ TEST(COMJavascriptObject_Properties)
     //NpapiHost testHost(NULL, NULL, NULL);
     //module.setNetscapeFuncs(testHost.getBrowserFuncs());
 
-    //FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(&module, testHost.getPluginInstance());
+    //NpapiBrowserHostPtr host = new NpapiBrowserHost(&module, testHost.getPluginInstance());
     //host->setBrowserFuncs(testHost.getBrowserFuncs());
 
     //NPVariant res;
     //NPVariant oneParam;
-    //FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    //boost::shared_ptr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
     //NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
     //// Test setting and getting many different datatypes with properties

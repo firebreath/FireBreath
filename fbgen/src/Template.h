@@ -1,13 +1,13 @@
 /**********************************************************\
 
-  Auto-generated @{PLUGIN.ident}.cpp
+  Auto-generated @{PLUGIN_ident}.cpp
 
   This file contains the auto-generated main plugin object
-  implementation for the @{PLUGIN.name} project
+  implementation for the @{PLUGIN_name} project
 
 \**********************************************************/
-#ifndef H_@{PLUGIN.ident}PLUGIN
-#define H_@{PLUGIN.ident}PLUGIN
+#ifndef H_@{PLUGIN_ident}PLUGIN
+#define H_@{PLUGIN_ident}PLUGIN
 
 #include "PluginWindow.h"
 #include "PluginEvents/MouseEvents.h"
@@ -15,18 +15,18 @@
 
 #include "PluginCore.h"
 
-class @{PLUGIN.ident} : public FB::PluginCore
+class @{PLUGIN_ident} : public FB::PluginCore
 {
 public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
 public:
-    @{PLUGIN.ident}();
-    virtual ~@{PLUGIN.ident}();
+    @{PLUGIN_ident}();
+    virtual ~@{PLUGIN_ident}();
 
 public:
-    virtual FB::JSAPI* createJSAPI();
+    virtual FB::JSAPIPtr createJSAPI();
     virtual bool IsWindowless() { return false; }
 
     BEGIN_PLUGIN_EVENT_MAP()

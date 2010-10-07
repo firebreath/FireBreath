@@ -14,7 +14,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "BrowserObjectAPI.h"
-#include "DOM/JSAPI_DOMDocument.h"
+#include "DOM/Document.h"
+#include "DOM/Window.h"
 #include "variant_list.h"
 #include "SimpleMathAPI.h"
 
@@ -23,10 +24,10 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
-    registerMethod("echo",  make_method(this, &FBTestPluginAPI::echo));
-    registerMethod("asString",  make_method(this, &FBTestPluginAPI::asString));
-    registerMethod("asBool",  make_method(this, &FBTestPluginAPI::asBool));
-    registerMethod("asInt",  make_method(this, &FBTestPluginAPI::asInt));
+    registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
+    registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));
+    registerMethod(L"asBool",  make_method(this, &FBTestPluginAPI::asBool));
+    registerMethod(L"asInt",  make_method(this, &FBTestPluginAPI::asInt));
     registerMethod("asDouble",  make_method(this, &FBTestPluginAPI::asDouble));
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
@@ -35,6 +36,10 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
+    registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
+    registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
+     
+    registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
     // Read-write property
     registerProperty("testString",
@@ -52,12 +57,17 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
 
     registerEvent("onfired");
 
-    m_simpleMath = new SimpleMathAPI(m_host);
+    m_simpleMath = FB::JSAPIPtr(new SimpleMathAPI(m_host));
 }
 
 FBTestPluginAPI::~FBTestPluginAPI()
 {
     //std::map<int,int>::capacity()
+}
+
+std::wstring FBTestPluginAPI::say(const std::wstring& val)
+{
+    return L"Ð²Ð¾Ñ, Ñ Ð³Ð¾Ð²Ð¾ÑÑ \"" + val + L"\"";
 }
 
 // Read/Write property someInt
@@ -185,6 +195,19 @@ FB::JSOutObject FBTestPluginAPI::get_simpleMath()
     return m_simpleMath;
 }
 
+FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
+{
+    std::vector<FB::DOM::ElementPtr> tagList = m_host->getDOMDocument()->getElementsByTagName(tagName);
+    if (!tagList.size()) {
+        return "No matching tags found";
+    }
+    return tagList[idx]->getJSObject()->GetProperty(attribute);
+}
+
+std::string FBTestPluginAPI::getPageLocation()
+{
+    return m_host->getDOMWindow()->getLocation();
+}
 
 #include "SimpleStreams.h"
 

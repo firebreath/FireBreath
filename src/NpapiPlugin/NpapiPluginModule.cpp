@@ -15,16 +15,25 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <stdexcept>
 
 #include "NpapiPluginModule.h"
+#include <cassert>
+#include <boost/thread.hpp>
 
 using namespace FB::Npapi;
 
-NpapiPluginModule::NpapiPluginModule(void)
+NpapiPluginModule::NpapiPluginModule(void) : m_threadId(boost::this_thread::get_id())
 {
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
 
 NpapiPluginModule::~NpapiPluginModule(void)
 {
+}
+
+void NpapiPluginModule::assertMainThread()
+{
+#ifdef _DEBUG
+    assert(m_threadId == boost::this_thread::get_id());
+#endif
 }
 
 void NpapiPluginModule::setNetscapeFuncs(NPNetscapeFuncs *npnFuncs)
@@ -77,6 +86,7 @@ void NpapiPluginModule::MemFree(void* ptr)
 
 uint32_t NpapiPluginModule::MemFlush(uint32_t size)
 {
+    assertMainThread();
     if (NPNFuncs.memflush != NULL) {
         return NPNFuncs.memflush(size);
     } else {
@@ -86,6 +96,7 @@ uint32_t NpapiPluginModule::MemFlush(uint32_t size)
 
 void NpapiPluginModule::ReloadPlugins(NPBool reloadPages)
 {
+    assertMainThread();
     if (NPNFuncs.reloadplugins != NULL) {
         NPNFuncs.reloadplugins(reloadPages);
     }
@@ -93,6 +104,7 @@ void NpapiPluginModule::ReloadPlugins(NPBool reloadPages)
 
 void NpapiPluginModule::ReleaseVariantValue(NPVariant *variant)
 {
+    assertMainThread();
     if (NPNFuncs.releasevariantvalue != NULL) {
         NPNFuncs.releasevariantvalue(variant);
     }
@@ -100,6 +112,7 @@ void NpapiPluginModule::ReleaseVariantValue(NPVariant *variant)
 
 NPIdentifier NpapiPluginModule::GetStringIdentifier(const NPUTF8 *name)
 {
+    assertMainThread();
     if (NPNFuncs.getstringidentifier != NULL) {
         return NPNFuncs.getstringidentifier(name);
     } else {
@@ -109,6 +122,7 @@ NPIdentifier NpapiPluginModule::GetStringIdentifier(const NPUTF8 *name)
 
 void NpapiPluginModule::GetStringIdentifiers(const NPUTF8 **names, int32_t nameCount, NPIdentifier *identifiers)
 {
+    assertMainThread();
     if (NPNFuncs.getstringidentifiers != NULL) {
         NPNFuncs.getstringidentifiers(names, nameCount, identifiers);
     }
@@ -116,6 +130,7 @@ void NpapiPluginModule::GetStringIdentifiers(const NPUTF8 **names, int32_t nameC
 
 NPIdentifier NpapiPluginModule::GetIntIdentifier(int32_t intid)
 {
+    assertMainThread();
     if (NPNFuncs.getintidentifier != NULL) {
         return NPNFuncs.getintidentifier(intid);
     } else {
@@ -125,6 +140,7 @@ NPIdentifier NpapiPluginModule::GetIntIdentifier(int32_t intid)
 
 bool NpapiPluginModule::IdentifierIsString(NPIdentifier identifier)
 {
+    assertMainThread();
     if (NPNFuncs.identifierisstring != NULL) {
         return NPNFuncs.identifierisstring(identifier);
     } else {
@@ -134,6 +150,7 @@ bool NpapiPluginModule::IdentifierIsString(NPIdentifier identifier)
 
 NPUTF8 *NpapiPluginModule::UTF8FromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     if (NPNFuncs.utf8fromidentifier != NULL) {
         return NPNFuncs.utf8fromidentifier(identifier);
     } else {
@@ -145,6 +162,7 @@ NPUTF8 *NpapiPluginModule::UTF8FromIdentifier(NPIdentifier identifier)
 // don't have to worry about cleaning it up =]
 std::string NpapiPluginModule::StringFromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     NPUTF8* idStr = UTF8FromIdentifier(identifier);
     std::string str;
     if (idStr != NULL)
@@ -155,6 +173,7 @@ std::string NpapiPluginModule::StringFromIdentifier(NPIdentifier identifier)
 
 int32_t NpapiPluginModule::IntFromIdentifier(NPIdentifier identifier)
 {
+    assertMainThread();
     if (NPNFuncs.intfromidentifier != NULL) {
         return NPNFuncs.intfromidentifier(identifier);
     } else {
@@ -164,6 +183,7 @@ int32_t NpapiPluginModule::IntFromIdentifier(NPIdentifier identifier)
 
 NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 {
+    assertMainThread();
     if (NPNFuncs.retainobject != NULL) {
         return NPNFuncs.retainobject(npobj);
     } else {
@@ -173,6 +193,7 @@ NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 
 void NpapiPluginModule::ReleaseObject(NPObject *npobj)
 {
+    assertMainThread();
     if (NPNFuncs.releaseobject != NULL) {
         NPNFuncs.releaseobject(npobj);
     }

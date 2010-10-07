@@ -1,7 +1,7 @@
 /**********************************************************\ 
 Original Author: Richard Bateman (taxilian)
 
-Created:    Dec 9, 2009
+Created:    Sep 21, 2010
 License:    Dual license model; choose one of two:
             New BSD License
             http://www.opensource.org/licenses/bsd-license.php
@@ -9,37 +9,39 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 PacketPass, Inc and the Firebreath development team
+Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_JSAPI_DOMDOCUMENT
-#define H_FB_JSAPI_DOMDOCUMENT
+#ifndef H_AXDOM_ELEMENT
+#define H_AXDOM_ELEMENT
 
+#include "Win/win_common.h"
+#include <atlctl.h>
 #include <string>
+#include <boost/lexical_cast.hpp>
+#include "IDispatchAPI.h"
 #include "BrowserObjectAPI.h"
-#include "JSAPI_DOMElement.h"
+#include "DOM/Element.h"
 
-namespace FB {
+namespace AXDOM {
 
-    class JSAPI_DOMWindow;
     /**
-     * JSAPI_DOMElement
+     * Element (used as Element, a shared_ptr)
      *
      * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
      **/
-    class JSAPI_DOMDocument : public JSAPI_DOMElement
+    class Element : public FB::DOM::Element
     {
     public:
-        JSAPI_DOMDocument(const JSObject &element);
-        JSAPI_DOMDocument(const JSAPI_DOMDocument &rhs);
-        JSAPI_DOMDocument(const JSAPI_DOMNode &rhs);
-        virtual ~JSAPI_DOMDocument();
+        Element(const FB::JSObject& element, IWebBrowser *web);
+        virtual ~Element();
 
     public:
-        JSAPI_DOMWindow getWindow();
-        JSAPI_DOMElement getElementById(const std::string& elem_id);
+
+        CComQIPtr<IHTMLElement> m_axElement;
+        CComPtr<IWebBrowser> m_webBrowser;
     };
 
 };
 
-#endif // H_FB_JSAPI_DOMDOCUMENT
+#endif // H_AXDOM_ELEMENT

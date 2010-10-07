@@ -1,6 +1,6 @@
 /**********************************************************\
 
-  Auto-generated @{PLUGIN.ident}API.h
+  Auto-generated @{PLUGIN_ident}API.h
 
 \**********************************************************/
 
@@ -9,14 +9,14 @@
 #include "JSAPIAuto.h"
 #include "BrowserHostWrapper.h"
 
-#ifndef H_@{PLUGIN.ident}API
-#define H_@{PLUGIN.ident}API
+#ifndef H_@{PLUGIN_ident}API
+#define H_@{PLUGIN_ident}API
 
-class @{PLUGIN.ident}API : public FB::JSAPIAuto
+class @{PLUGIN_ident}API : public FB::JSAPIAuto
 {
 public:
-    @{PLUGIN.ident}API(FB::BrowserHostWrapper *host);
-    virtual ~@{PLUGIN.ident}API();
+    @{PLUGIN_ident}API(FB::BrowserHost host);
+    virtual ~@{PLUGIN_ident}API();
 
     // Read/Write property ${PROPERTY.ident}
     std::string get_testString();
@@ -32,9 +32,9 @@ public:
     void testEvent(const FB::variant& s);
 
 private:
-    FB::AutoPtr<FB::BrowserHostWrapper> m_host;
+    FB::BrowserHost m_host;
 
     std::string m_testString;
 };
 
-#endif // H_@{PLUGIN.ident}API
+#endif // H_@{PLUGIN_ident}API

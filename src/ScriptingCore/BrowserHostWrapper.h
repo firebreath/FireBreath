@@ -16,28 +16,37 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
-#include "AutoPtr.h"
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/thread.hpp>
 
 namespace FB
 {
     class BrowserStream;
     class PluginEventSink;
     class BrowserObjectAPI;
-    class JSAPI_DOMDocument;
-    class JSAPI_DOMWindow;
+    namespace DOM {
+        class Window;
+        class Document;
+        class Element;
+        class Node;
+        typedef boost::shared_ptr<Window> WindowPtr;
+        typedef boost::shared_ptr<Document> DocumentPtr;
+        typedef boost::shared_ptr<Element> ElementPtr;
+        typedef boost::shared_ptr<Node> NodePtr;
+    };
 
     struct AsyncLogRequest
     {
-        AsyncLogRequest(BrowserHostWrapper *host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(BrowserHost host, const std::string& message) : m_host(host), m_msg(message) { }
 
         BrowserHost m_host;
         std::string m_msg;
     };
 
-    class BrowserHostWrapper
+    class BrowserHostWrapper : public boost::enable_shared_from_this<BrowserHostWrapper>
     {
     public:
-        BrowserHostWrapper() : refCount(0) { }
+        BrowserHostWrapper() : m_threadId(boost::this_thread::get_id()) { }
         virtual ~BrowserHostWrapper() { }
 
     public:
@@ -53,23 +62,32 @@ namespace FB
         
         // Methods for accessing the DOM
     public:
-        virtual JSAPI_DOMDocument getDOMDocument() = 0;
-        virtual JSAPI_DOMWindow getDOMWindow() = 0;
+        void assertMainThread();
+        bool isMainThread();
+        virtual DOM::DocumentPtr getDOMDocument() = 0;
+        virtual DOM::WindowPtr getDOMWindow() = 0;
         virtual void evaluateJavaScript(const std::string &script) = 0;
+        virtual void evaluateJavaScript(const std::wstring &script);
         virtual void htmlLog(const std::string& str);
 
+public:
+    // These methods are pseudo-public; they shouldn't be
+    // called directly.  Call the ::create method on the 
+    // DOM object you want
+    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
+    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
+    virtual FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
+    virtual FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
+
     protected:
-        unsigned int refCount;
-    public:
-        void AddRef() { refCount++; }
-        unsigned int Release()
+        BrowserHost shared_ptr()
         {
-            if (--refCount == 0) {
-                delete this;
-                return 0;
-            }
-            return refCount;
+            return shared_from_this();
         }
+
+    protected:
+        boost::thread::id m_threadId;
+        std::string m_location;
     };
 }
 

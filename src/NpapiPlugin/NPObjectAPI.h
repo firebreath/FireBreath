@@ -18,7 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiTypes.h"
 #include "npruntime.h"
 #include "JSAPI.h"
-#include "AutoPtr.h"
 #include "BrowserObjectAPI.h"
 #include "NpapiBrowserHost.h"
 
@@ -28,7 +27,7 @@ namespace FB { namespace Npapi {
         public FB::BrowserObjectAPI
     {
     public:
-        NPObjectAPI(NPObject *, NpapiBrowserHost *);
+        NPObjectAPI(NPObject *, NpapiBrowserHostPtr);
         virtual ~NPObjectAPI(void);
 
         void *getEventId() { return (void*)obj; }
@@ -39,7 +38,7 @@ namespace FB { namespace Npapi {
         void getMemberNames(std::vector<std::string> &nameVector);
         size_t getMemberCount();
     protected:
-        FB::AutoPtr<NpapiBrowserHost> browser;
+        NpapiBrowserHostPtr browser;
         NPObject *obj;
 
     public:

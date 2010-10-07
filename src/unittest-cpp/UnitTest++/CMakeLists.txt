@@ -19,7 +19,9 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 include(${CMAKE_DIR}/common.cmake)
 
 project (UnitTest++)
-message ("Generating project ${PROJECT_NAME}")
+if (VERBOSE)
+    message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}/src

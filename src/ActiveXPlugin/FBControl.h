@@ -21,9 +21,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "COM_config.h"
 #include "config.h"
 #include <atlctl.h>
+#include <ShlGuid.h>
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
-#include "DOM/JSAPI_DOMWindow.h"
+#include "DOM/Window.h"
 #include "Win/FactoryDefinitionsWin.h"
 
 #include "BrowserPlugin.h"
@@ -62,53 +63,55 @@ class ATL_NO_VTABLE CFBControl :
     public FB::BrowserPlugin
 {
 public:
+    HWND m_messageWin;
+
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
+    CComQIPtr<IServiceProvider> m_serviceProvider;
+    CComQIPtr<IWebBrowser2> m_webBrowser;
 
-    FB::AutoPtr<ActiveXBrowserHost> m_host;
+    ActiveXBrowserHostPtr m_host;
 
-    CFBControl() : pluginWin(NULL)
+    // The methods in this class are positioned in this file in the
+    // rough order that they will be called in.
+    CFBControl() : pluginWin(NULL), m_messageWin(NULL)
     {
         FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
         m_bWindowOnly = TRUE;
     }
 
-    void shutdown()
+    ~CFBControl()
     {
-        delete pluginWin; pluginWin = NULL;
+        if (m_messageWin)
+            ::DestroyWindow(m_messageWin);
     }
 
-
-    LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
-    {
-        m_host->setWindow(m_hWnd);
-        pluginWin = _createPluginWindow(m_hWnd);
-        pluginMain->SetWindow(pluginWin);
-        return S_OK;
-    }
-
+    // Note that the window has not been created yet; this is where we get
+    // access to the DOM Document and Window
     STDMETHOD(SetClientSite)(IOleClientSite *pClientSite)
     {
         HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
         if (!pClientSite)
             return hr;
 
-        CComPtr<IOleContainer> container;
+        m_serviceProvider = pClientSite;
+        if (!m_serviceProvider)
+            return E_FAIL;
+        m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
-        if (m_spClientSite.p)
-            m_spClientSite->GetContainer(&container);
-        if (container.p) {
-            m_htmlDoc = container;
+        if (m_webBrowser.p) {
+            m_htmlDoc = m_webBrowser;
             m_propNotify = m_spClientSite;
-            m_htmlDocIDisp = container;
+            m_htmlDocIDisp = m_webBrowser;
         }
 
-        m_host = new ActiveXBrowserHost(m_htmlDoc);
-        pluginMain->SetHost(m_host.ptr());
+        m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
+        m_messageWin = FB::PluginWindowWin::createMessageWindow();
+        m_host->setWindow(m_messageWin);
+        pluginMain->SetHost(as_BrowserHost(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
-        setReadyState(READYSTATE_COMPLETE);
         //InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);
 
@@ -116,52 +119,62 @@ public:
     }
 
     /* IPersistPropertyBag calls */
-    // This will be called once when the browser initializes the property bag (PARAM tags)
+    // This will be called once when the browser initializes the property bag (PARAM tags) 
+    // Often (always?) this is only called if there are no items in the property bag
     STDMETHOD(InitNew)()
     {
         return S_OK;
     }
-
+    
+    // When this is called, we load any <param> tag values there are
     STDMETHOD(Load)(IPropertyBag *pPropBag, IErrorLog *pErrorLog)
     {
         FB::VariantMap paramMap;
         FB::StringSet *paramList = this->pluginMain->getSupportedParams();
         for (FB::StringSet::iterator it = paramList->begin(); it != paramList->end(); it++) {
             CComVariant val;
-            pPropBag->Read(CA2W(it->c_str()), &val, pErrorLog);
+            pPropBag->Read(FB::utf8_to_wstring(*it).c_str(), &val, pErrorLog);
             if (val.vt) {
                 FB::variant varval = m_host->getVariant(&val);
-                if (it->substr(0, 2) == "on") {
-                    val.ChangeType(VT_BSTR);
-
-                    FB::JSObject tmp;
-                    try {
-                        tmp = m_host->getDOMWindow()
-                            .getProperty<FB::JSObject>(varval.convert_cast<std::string>());
-
-                        paramMap[it->c_str()] = tmp;
-                    } catch (...) {
-                        paramMap[it->c_str()] = varval;
-                    }
-                } else {
-                    paramMap[it->c_str()] = varval;
-                }
+                paramMap[it->c_str()] = varval;
             }
         }
         pluginMain->setParams(paramMap);
         return S_OK;
     }
 
-    STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties)
+    // Now the window has been created and we're going to call setReady on the PluginCore object
+    LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
     {
+        pluginWin = _createPluginWindow(m_hWnd);
+        pluginWin->setCallOldWinProc(true);
+        pluginMain->SetWindow(pluginWin);
+
+        // This is when we can consider the plugin "ready".  It is the last of the startup lifecycle to occur.
+        pluginMain->setReady();
+        setReadyState(READYSTATE_COMPLETE);
         return S_OK;
     }
 
+    // This is called on shutdown
+    void shutdown()
+    {
+        delete pluginWin; pluginWin = NULL;
+    }
+
+    // This is part of the event system
     STDMETHOD(GetClassID)(CLSID *pClassID)
     {
         if (pClassID == NULL)
             return E_POINTER;
         *pClassID = GetObjectCLSID();
+        return S_OK;
+    }
+
+    // This is a required method for implementing IPersistPropertyBag, but it shouldn't
+    // ever get called
+    STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties)
+    {
         return S_OK;
     }
 

@@ -16,10 +16,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/bind.hpp>
 #include "BrowserHostWrapper.h"
 #include "BrowserObjectAPI.h"
+#include "utf8_tools.h"
 
 using namespace FB;
 
-JSAPI::JSAPI(void) : m_refCount(0), m_valid(true)
+JSAPI::JSAPI(void) : m_valid(true)
 {
     registerEvent("onload");
 }
@@ -28,27 +29,17 @@ JSAPI::~JSAPI(void)
 {
 }
 
-void JSAPI::AddRef()
-{
-    ++m_refCount;
-}
-
-unsigned int JSAPI::Release()
-{
-    if (--m_refCount == 0) {
-        delete this;
-        return 0;
-    } else {
-        return m_refCount;
-    }
-}
-
 void JSAPI::invalidate()
 {
     m_valid = false;
 }
 
-void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::variant>& args)
+void JSAPI::FireEvent(const std::wstring& eventName, const std::vector<variant>& args)
+{
+    FireEvent(wstring_to_utf8(eventName), args);
+}
+
+void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& args)
 {
     if (!m_valid)   // When invalidated, do nothing more
         return;
@@ -59,7 +50,7 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::varian
         eventIt->second->InvokeAsync("", args);
     }
     EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end() && fnd->second.ptr() != NULL && fnd->second->getEventId() != NULL) {
+    if (fnd != m_defEventMap.end() && fnd->second != NULL && fnd->second->getEventId() != NULL) {
         fnd->second->InvokeAsync("", args);
     }
 
@@ -67,6 +58,11 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<FB::varian
     for (EventIFaceMap::iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
         ifaceIt->second->InvokeAsync(eventName, args);
     }
+}
+
+bool JSAPI::HasEvent(const std::wstring& eventName)
+{
+    return HasEvent(wstring_to_utf8(eventName));
 }
 
 bool JSAPI::HasEvent(const std::string& eventName)
@@ -79,7 +75,12 @@ bool JSAPI::HasEvent(const std::string& eventName)
     }
 }
 
-void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event)
+void JSAPI::registerEventMethod(const std::wstring& name, JSObject &event)
+{
+    registerEventMethod(wstring_to_utf8(name), event);
+}
+
+void JSAPI::registerEventMethod(const std::string& name, JSObject &event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -91,7 +92,12 @@ void JSAPI::registerEventMethod(const std::string& name, BrowserObjectAPI *event
     m_eventMap.insert(EventPair(name, event));
 }
 
-void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *event)
+void JSAPI::unregisterEventMethod(const std::wstring& name, JSObject &event)
+{
+    unregisterEventMethod(wstring_to_utf8(name), event);
+}
+
+void JSAPI::unregisterEventMethod(const std::string& name, JSObject &event)
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
@@ -103,27 +109,37 @@ void JSAPI::unregisterEventMethod(const std::string& name, BrowserObjectAPI *eve
     }
 }
 
-void JSAPI::registerEventInterface(BrowserObjectAPI *event)
+void JSAPI::registerEventInterface(JSObject& event)
 {
-    m_evtIfaces[static_cast<void*>(event)] = event;
+    m_evtIfaces[static_cast<void*>(event.get())] = event;
 }
 
-void JSAPI::unregisterEventInterface(BrowserObjectAPI *event)
+void JSAPI::unregisterEventInterface(JSObject& event)
 {
-    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event));
+    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
     m_evtIfaces.erase(fnd);
 }
 
-BrowserObjectAPI *JSAPI::getDefaultEventMethod(const std::string& name)
+JSObject JSAPI::getDefaultEventMethod(const std::wstring& name)
+{
+    return getDefaultEventMethod(wstring_to_utf8(name));
+}
+
+JSObject JSAPI::getDefaultEventMethod(const std::string& name)
 {
     EventSingleMap::iterator fnd = m_defEventMap.find(name);
     if (fnd != m_defEventMap.end()) {
-        return fnd->second.ptr();
+        return fnd->second;
     }
-    return NULL;
+    return JSObject();
 }
 
-void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj)
+void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObject obj)
+{
+    setDefaultEventMethod(wstring_to_utf8(name), obj);
+}
+
+void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObject obj)
 {
     if(obj == NULL)
         m_defEventMap.erase(name);
@@ -131,8 +147,50 @@ void JSAPI::setDefaultEventMethod(const std::string& name, BrowserObjectAPI *obj
         m_defEventMap[name] = obj;
 }
 
+void JSAPI::registerEvent(const std::wstring &name)
+{
+    registerEvent(wstring_to_utf8(name));
+}
+
 void JSAPI::registerEvent(const std::string &name)
 {
     if(m_defEventMap.find(name) == m_defEventMap.end())
-        m_defEventMap[name] = 0;
+        m_defEventMap[name] = JSObject();
+}
+
+void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector)
+{
+    nameVector.clear();
+    std::vector<std::string> utf8Vector;
+    getMemberNames(utf8Vector);
+    for (std::vector<std::string>::iterator it = utf8Vector.begin();
+            it != utf8Vector.end(); ++it) {
+        std::wstring wStrVal(utf8_to_wstring(*it));
+        nameVector.push_back(wStrVal);
+    }
+}
+
+bool JSAPI::HasMethod(const std::wstring& methodName)
+{
+    return HasMethod(wstring_to_utf8(methodName));
+}
+
+bool JSAPI::HasProperty(const std::wstring& propertyName)
+{
+    return HasProperty(wstring_to_utf8(propertyName));
+}
+
+variant JSAPI::GetProperty(const std::wstring& propertyName)
+{
+    return GetProperty(wstring_to_utf8(propertyName));
+}
+
+void JSAPI::SetProperty(const std::wstring& propertyName, const variant& value)
+{
+    SetProperty(wstring_to_utf8(propertyName), value);
+}
+
+variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+{
+    return Invoke(wstring_to_utf8(methodName), args);
 }

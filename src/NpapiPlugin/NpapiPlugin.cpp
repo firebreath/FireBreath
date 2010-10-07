@@ -21,10 +21,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiPlugin::NpapiPlugin(NpapiBrowserHost *host)
-    : m_obj(NULL), m_npHost(host)
+NpapiPlugin::NpapiPlugin(NpapiBrowserHostPtr host)
+    : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true), m_isReady(false)
 {
-    pluginMain->SetHost(host);
+    pluginMain->SetHost(as_BrowserHost(host));
 }
 
 NpapiPlugin::~NpapiPlugin(void)
@@ -34,32 +34,57 @@ NpapiPlugin::~NpapiPlugin(void)
     }
 }
 
+void NpapiPlugin::setReady()
+{
+    if (!m_isReady) {
+        pluginMain->setReady();
+        m_isReady = true;
+    }
+}
+
 NPObject *NpapiPlugin::getScriptableObject()
 {
     if (m_obj == NULL) {
         m_obj = NPJavascriptObject::NewObject(m_npHost, pluginMain->getRootJSAPI());
     }
-    m_npHost->RetainObject(m_obj);
+    /* Bugfix from Facebook: Certain older versions of webkit do a retain when
+     * you return an NPObject from NPP_GetValue instead of assuming that we do
+     * it before returninglike the NPAPI spec instructs; this results in a memory
+     * leak if we don't fix it.   
+     */
+    if (m_retainReturnedNPObject)
+        m_npHost->RetainObject(m_obj);
+    
     return m_obj;
 }
 
 void NpapiPlugin::shutdown(void)
 {
     pluginMain->ClearWindow();
-    delete pluginMain; pluginMain = NULL;
 }
 
 void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[])
 {
     FB::VariantMap paramList;
     for (int16_t i = 0; i < argc; i++) {
-        paramList[argn[i]] = argv[i];
+        if (argv[i] != NULL) {
+            paramList[argn[i]] = std::string(argv[i]);
+        }
     }
     pluginMain->setParams(paramList);
+    if(pluginMain->isWindowless()) {
+       /* Windowless plugins require negotiation with the browser. 
+        * If the plugin does not set this value it is assumed to be 
+        * a windowed plugin.
+        * See: https://developer.mozilla.org/en/Gecko_Plugin_API_Reference/Drawing_and_Event_Handling
+        */
+        m_npHost->SetValue(NPPVpluginWindowBool, false);
+    } 
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
+    setReady();
     return NPERR_NO_ERROR;
 }
 

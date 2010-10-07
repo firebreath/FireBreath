@@ -12,9 +12,9 @@
 #include "X11/PluginWindowX11.h"
 #include "X11/NpapiPluginX11.h"
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
 {
-    return new FB::Npapi::NpapiPluginX11(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginX11(host));
 }
 
 FB::PluginWindowX11 *_createPluginWindow(GdkNativeWindow win)

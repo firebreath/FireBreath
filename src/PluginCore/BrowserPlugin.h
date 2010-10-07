@@ -16,8 +16,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERPLUGIN
 
 #include "APITypes.h"
-#include "AutoPtr.h"
 #include "JSAPI.h"
+#include <boost/scoped_ptr.hpp>
 
 namespace FB {
 
@@ -35,7 +35,7 @@ namespace FB {
 
     protected:
         std::string m_filesystemPath;
-        FB::PluginCore *pluginMain;
+        boost::scoped_ptr<FB::PluginCore> pluginMain;
     };
 
 };

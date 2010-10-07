@@ -25,7 +25,6 @@ BrowserPlugin::BrowserPlugin() :
 
 BrowserPlugin::~BrowserPlugin()
 {
-    delete pluginMain; pluginMain = NULL;
 }
 
 void BrowserPlugin::setFSPath(const std::string& path)

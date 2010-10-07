@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 22, 2009
@@ -12,13 +12,12 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_FB_NPAPI_ASYNCBROWSERCALL
-#define H_FB_NPAPI_ASYNCBROWSERCALL
+#ifndef H_FB_ASYNCBROWSERCALL
+#define H_FB_ASYNCBROWSERCALL
 
 #include <vector>
 #include <string>
 #include "APITypes.h"
-#include "AutoPtr.h"
 #include "BrowserObjectAPI.h"
 
 namespace FB {
@@ -27,11 +26,11 @@ namespace FB {
     {
     public:
         virtual ~AsyncBrowserCall(void);
-        static void CallMethod(BrowserObjectAPI *obj, const std::string& method,
+        static void CallMethod(JSObject obj, const std::string& method,
             const std::vector<variant> &inParams);
 
     protected:
-        AsyncBrowserCall(BrowserObjectAPI *obj, const std::string& method,
+        AsyncBrowserCall(JSObject obj, const std::string& method,
             const std::vector<variant> &inParams);
 
         static void asyncCallback(void *userData);

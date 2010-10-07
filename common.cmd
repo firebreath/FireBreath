@@ -1,6 +1,6 @@
 @echo off
 
-set FB_ROOT=%~d0%~p0
+set FB_ROOT=%~dp0
 set RUN_FROM=%CD%
 
 IF /I "%1"=="" goto defaults
@@ -25,9 +25,23 @@ goto finish
 set BUILDDIR=%RUN_FROM%\buildex
 
 :finish
+IF EXIST %PROJDIR% GOTO direxists
+echo ERROR: Project directory %PROJDIR% does not exist.  usage: prep[ver].cmd [project dir] [build dir]
+exit 1
+
+:direxists
+REM We need the full path of the directories
+REM This is a hack, but it works
+pushd %PROJDIR%
+set PROJDIR=%CD%
+popd
+mkdir %BUILDDIR% > NUL
+pushd %BUILDDIR%
+set BUILDDIR=%CD%
+popd
+
 echo Using projects in: %PROJDIR%
 echo Generating build files in: %BUILDDIR%
 echo NOTE: The build files in %BUILDDIR% should *NEVER* be modified directly.
 echo Make project changes in cmake and re-run this script.
 
-mkdir %BUILDDIR% > NUL

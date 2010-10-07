@@ -12,7 +12,12 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
+get_filename_component (PROJECTS_SOURCE_DIR "${PROJECTS_DIR}" ABSOLUTE)
+set (PROJECTS_BINARY_DIR "${CMAKE_BINARY_DIR}/projects")
+
 set (BOOST_SOURCE_DIR ${SOURCE_DIR}/3rdParty/boost)
+set (BOOST_THREAD_SOURCE_DIR ${BOOST_SOURCE_DIR}/libs/thread)
+
 set (GECKOSDK_SOURCE_DIR ${SOURCE_DIR}/3rdParty/gecko-sdk/includes)
 
 set (ACTIVEXPLUGIN_SOURCE_DIR "${SOURCE_DIR}/ActiveXPlugin")
@@ -31,5 +36,4 @@ set (PLUGINCORE_SOURCE_DIR "${SOURCE_DIR}/PluginCore")
 set (PLUGINWINDOW_SOURCE_DIR "${SOURCE_DIR}/PluginWindow")
 
 set (UNITTEST_FW_SOURCE_DIR "${SOURCE_DIR}/unittest-cpp/UnitTest++")
-set (UNITTEST_FW_BINARY_DIR "${PROJECT_ROOT}/UnitTest++")
 

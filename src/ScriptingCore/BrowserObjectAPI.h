@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI.h"
 #include "BrowserHostWrapper.h"
-#include "AutoPtr.h"
 #include <iterator>
 
 namespace FB
@@ -25,7 +24,7 @@ namespace FB
     class BrowserObjectAPI : public FB::JSAPI
     {
     public:
-        BrowserObjectAPI(BrowserHostWrapper *h);
+        BrowserObjectAPI(BrowserHost h);
         virtual ~BrowserObjectAPI();
 
         virtual void *getEventId() { return NULL; }
@@ -33,6 +32,10 @@ namespace FB
 
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
 
+    protected:
+        virtual variant InvokeMainThread(const std::string& methodName, const std::vector<variant>& args);
+
+    public:
         // TODO: Find a better place for this conversion method.
         //       Gotcha to watch out for: has to be included after variant.h
         //       and everywhere where variant::convert_cast<SomeContainer>()
@@ -44,7 +47,7 @@ namespace FB
         static void GetObjectValues(const FB::JSObject& src, Dict& dst);
 
     public:
-        AutoPtr<BrowserHostWrapper> host;
+        BrowserHost host;
     };
 
     template<class Cont>
@@ -114,7 +117,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Cont cont;
-        FB::BrowserObjectAPI::GetArrayValues(*reinterpret_cast<JsObject const*>(&object), cont);
+        FB::BrowserObjectAPI::GetArrayValues(cast<JsObject>(), cont);
         return cont;
     }
 
@@ -138,7 +141,7 @@ namespace FB
         // if it is a JavaScript object try to treat it as an array
 
         Dict dict;
-        FB::BrowserObjectAPI::GetObjectValues(*reinterpret_cast<JsObject const*>(&object), dict);
+        FB::BrowserObjectAPI::GetObjectValues(cast<JsObject>(), dict);
         return dict;
     }
 #endif

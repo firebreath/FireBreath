@@ -17,9 +17,9 @@ Copyright 2009 Georg Fritzsche,
 #include "Win/NpapiPluginWin.h"
 #include "Win/PluginWindowWin.h"
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
 {
-    return new FB::Npapi::NpapiPluginWin(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginWin(host));
 }
 
 FB::PluginWindowWin *_createPluginWindow(HWND hWnd)

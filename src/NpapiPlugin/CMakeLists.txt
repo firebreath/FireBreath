@@ -21,7 +21,9 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
 set (PROJNAME ${PLUGIN_PREFIX}_NpapiPlugin)
 Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+if (VERBOSE)
+    message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
@@ -45,6 +47,7 @@ file (GLOB PLUGIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     NpapiPlugin*.h
     NpapiStream.*
     NpapiTypes.*
+    NpapiFactory*
     )
 
 SOURCE_GROUP(NpapiScripting FILES ${SCRIPTING})
@@ -68,6 +71,7 @@ SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/[^.]*.h
     Mac/[^.]*.cpp
+    Mac/[^.]*.mm
     )
 
 SOURCE_GROUP(Mac FILES ${MAC_SOURCES})
@@ -93,3 +97,7 @@ set (SOURCES
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})
+target_link_libraries(${PROJNAME}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    )

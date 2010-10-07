@@ -13,43 +13,51 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "variant_list.h"
+#include "Node.h"
+#include "Element.h"
+#include "Document.h"
 
-#include "JSAPI_DOMWindow.h"
-#include "JSAPI_DOMDocument.h"
+#include "Window.h"
 
-using namespace FB;
+using namespace FB::DOM;
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(const JSObject& element) : JSAPI_DOMNode(element)
+Window::Window(const FB::JSObject& element) : Node(element)
 {
 }
 
-JSAPI_DOMWindow::JSAPI_DOMWindow(const JSAPI_DOMWindow &rhs) : JSAPI_DOMNode(rhs)
+Window::~Window()
 {
 }
 
-JSAPI_DOMWindow::~JSAPI_DOMWindow()
-{
-}
-
-JSAPI_DOMElement JSAPI_DOMWindow::getDocument()
+DocumentPtr Window::getDocument()
 {
     JSObject api = getProperty<JSObject>("document");
-    return JSAPI_DOMDocument(api.ptr());
+    return Document::create(api);
 }
 
-void JSAPI_DOMWindow::alert(const std::string& str)
+void Window::alert(const std::wstring& str)
+{
+    alert(FB::wstring_to_utf8(str));
+}
+
+void Window::alert(const std::string& str)
 {
     callMethod<void>("alert", variant_list_of(str));
 }
 
-JSAPI_DOMNode JSAPI_DOMWindow::createArray()
+NodePtr Window::createArray()
 {
     JSObject arr = this->callMethod<JSObject>("Array", FB::VariantList());
-    return JSAPI_DOMNode(arr);
+    return Node::create(arr);
 }
 
-JSAPI_DOMNode JSAPI_DOMWindow::createMap()
+NodePtr Window::createMap()
 {
     JSObject arr = this->callMethod<JSObject>("Object", FB::VariantList());
-    return JSAPI_DOMNode(arr);
+    return Node::create(arr);
+}
+
+std::string Window::getLocation()
+{
+    return getNode("location")->getProperty<std::string>("href");
 }

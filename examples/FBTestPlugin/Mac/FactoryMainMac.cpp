@@ -8,15 +8,39 @@
 \**********************************************************/
 
 #include "NpapiPlugin.h"
-#include "Mac/PluginWindowMacQuickDraw.h"
+#include "config.h"
 #include "Mac/NpapiPluginMac.h"
+#include "Mac/PluginWindowMacCarbonQD.h"
+#include "Mac/PluginWindowMacCarbonCG.h"
+#include "Mac/PluginWindowMacCocoaCG.h"
+#include "Mac/PluginWindowMacCocoaCA.h"
+#include "NpapiBrowserHost.h"
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHost *host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr& host)
 {
-    return new FB::Npapi::NpapiPluginMac(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPluginMac(host));
 }
 
-FB::PluginWindowMacQuickDraw *_createPluginWindow(CGrafPtr port, int x, int y)
+#if FBMAC_USE_CARBON
+# if FBMAC_USE_QUICKDRAW
+FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, int y)
 {
-    return new FB::PluginWindowMacQuickDraw(port, x, y);
+    return new FB::PluginWindowMacCarbonQD(port, x, y);
 }
+# endif
+# if FBMAC_USE_COREGRAPHICS
+FB::PluginWindowCarbonCG *_createPluginWindow(NP_CGContext* context)
+{
+    return new FB::PluginWindowMacCarbonCG(context);
+}
+# endif
+#endif
+
+#if FBMAC_USE_COCOA
+# if FBMAC_USE_COREGRAPHICS
+FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
+{
+    return new FB::PluginWindowMacCocoaCG(context);
+}
+# endif
+#endif

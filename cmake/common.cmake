@@ -14,9 +14,7 @@
 
 get_filename_component (FB_ROOT_DIR "${CMAKE_DIR}/.." ABSOLUTE)
 get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
-set(PROJECT_SRC_DIR ${PROJECTS_DIR})
 
-set (PROJECT_ROOT "${CMAKE_BINARY_DIR}/projects")
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 
 if (WIN32)
@@ -31,23 +29,17 @@ elseif(UNIX)
     include(${CMAKE_DIR}/X11.cmake)
 endif()
 
-# Get the project paths
-include(${CMAKE_DIR}/paths.cmake)
-
 # include file with build options
 include(${CMAKE_DIR}/options.cmake)
+
+# Get the project paths
+include(${CMAKE_DIR}/paths.cmake)
 
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)
 
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
     include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
-endif()
-
-if (WITH_SYSTEM_BOOST)
-    find_package(Boost REQUIRED)
-else()
-    set(Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
 endif()
 
 if (NOT GEN_DIR)
@@ -59,7 +51,9 @@ function (browserplugin_project PLUGIN_NAME)
     Project (${PLUGIN_NAME})
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 
-    include(${FB_ROOT_DIR}/pluginProjects.cmake)
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
+        include(${FB_ROOT_DIR}/pluginProjects.cmake)
+    endif()
 
 endfunction(browserplugin_project)
 

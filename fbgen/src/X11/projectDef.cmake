@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # Auto-generated X11 project definition file for the
-# @{PLUGIN.name} project
+# @{PLUGIN_name} project
 #\**********************************************************/
 
 # X11 template platform definition CMake file
@@ -28,9 +28,5 @@ add_x11_plugin(${PROJNAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
-
-add_dependencies(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     )

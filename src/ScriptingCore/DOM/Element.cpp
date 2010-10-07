@@ -12,62 +12,58 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "JSAPI_DOMElement.h"
+#include "Element.h"
 
-using namespace FB;
+using namespace FB::DOM;
 
-JSAPI_DOMElement::JSAPI_DOMElement(const JSObject& element) : JSAPI_DOMNode(element)
+Element::Element(const FB::JSObject& element) : Node(element)
 {
 }
 
-JSAPI_DOMElement::JSAPI_DOMElement(const JSAPI_DOMElement& rhs) : JSAPI_DOMNode(rhs)
+Element::~Element()
 {
 }
 
-JSAPI_DOMElement::~JSAPI_DOMElement()
-{
-}
-
-std::string JSAPI_DOMElement::getInnerHTML()
+std::string Element::getInnerHTML()
 {
     return getProperty<std::string>("innerHTML");
 }
-void JSAPI_DOMElement::setInnerHTML(const std::string& html)
+void Element::setInnerHTML(const std::string& html)
 {
     setProperty("innerHTML", html);
 }
 
-int JSAPI_DOMElement::getWidth()
+int Element::getWidth()
 {
     return getProperty<int>("width");
 }
-void JSAPI_DOMElement::setWidth(int width)
+void Element::setWidth(int width)
 {
     setProperty("width", width);
 }
 
-int JSAPI_DOMElement::getHeight()
+int Element::getHeight()
 {
     return getProperty<int>("height");
 }
-void JSAPI_DOMElement::setHeight(int height)
+void Element::setHeight(int height)
 {
     setProperty("height", height);
 }
 
-int JSAPI_DOMElement::getChildNodeCount()
+int Element::getChildNodeCount()
 {
-    return getNode("childNodes").getProperty<int>("length");
+    return getNode("childNodes")->getProperty<int>("length");
 }
 
-JSAPI_DOMElement JSAPI_DOMElement::getChildNode(int idx)
+ElementPtr Element::getChildNode(int idx)
 {
-    JSAPI_DOMElement retVal(getElement("childNodes").getElement(idx));
+    ElementPtr retVal(getElement("childNodes")->getElement(idx));
     return retVal;
 }
 
-JSAPI_DOMElement JSAPI_DOMElement::getParentNode()
+ElementPtr Element::getParentNode()
 {
-    JSAPI_DOMElement retVal(getElement("parentNode"));
+    ElementPtr retVal(getElement("parentNode"));
     return retVal;
 }

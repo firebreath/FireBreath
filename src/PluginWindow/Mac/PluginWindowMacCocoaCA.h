@@ -1,3 +1,6 @@
+#ifndef H_PLUGINWINDOWMAC_COCOA_CA
+#define H_PLUGINWINDOWMAC_COCOA_CA
+
 /**********************************************************\
  Original Author: Anson MacKeracher
  
@@ -12,17 +15,16 @@
  Copyright 2010 Georg Fritzsche, Firebreath development team
  \**********************************************************/
 
-#ifndef H_PLUGINWINDOWMAC_COCOA_CA
-#define H_PLUGINWINDOWMAC_COCOA_CA
+#include <QuartzCore/CoreAnimation.h>
 
-#include "PluginWindow.h"
+#include "Mac/PluginWindowMacCocoa.h"
 #include "PluginEvents/MacEventCocoa.h"
 #include "NpapiTypes.h"
 #include <map>
 
 namespace FB {
     
-    class PluginWindowMacCocoaCA: public PluginWindow
+    class PluginWindowMacCocoaCA: public PluginWindowMacCocoa
     {
     public:
         PluginWindowMacCocoaCA();
@@ -30,22 +32,13 @@ namespace FB {
 
     public:
         void clearWindow();
-        void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
-        void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
-        int16_t HandleEvent(NPCocoaEvent* event);
-        Rect getWindowPosition();
-        Rect getWindowClipping();
+        void InvalidateWindow();
+        void setLayer(void* layer);
+        void* getLayer() const;
 
-    protected:
-        int m_x;
-        int m_y;
-        int m_width;
-        int m_height;
-        
-        int m_clipLeft;
-        int m_clipRight;
-        int m_clipTop;
-        int m_clipBottom;
+    private:
+        struct Impl;
+        std::auto_ptr<Impl> m_impl;
     };
 };
 #endif // H_PLUGINWINDOWMAC_COCOA_CA

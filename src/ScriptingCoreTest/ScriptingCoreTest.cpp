@@ -21,7 +21,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "variant_test.h"
 #include "variant_list_test.h"
 #include "variant_map_test.h"
-#include "autoptr_test.h"
 // preferred to comment that out rather then 
 // fixing as JSAPISimple is deprecated anyway
 //#include "jsapi_test.h" 

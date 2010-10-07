@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <string>
 
 #include "APITypes.h"
-#include "AutoPtr.h"
 #include "variant_list.h"
 #include "NPJavascriptObject.h"
 #include "NpapiHost.h"
@@ -29,7 +28,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-inline NPVariant *getNPVariantParams(NpapiBrowserHost *host, std::vector<FB::variant> src)
+inline NPVariant *getNPVariantParams(NpapiBrowserHostPtr host, std::vector<FB::variant> src)
 {
     NPVariant *tmp = new NPVariant[src.size()];
     for (unsigned int i = 0; i < src.size(); i++) {
@@ -38,7 +37,7 @@ inline NPVariant *getNPVariantParams(NpapiBrowserHost *host, std::vector<FB::var
     return tmp;
 }
 
-inline void freeNPVariantParams(NpapiBrowserHost *host, NPVariant *params, unsigned int count)
+inline void freeNPVariantParams(NpapiBrowserHostPtr host, NPVariant *params, unsigned int count)
 {
     for (unsigned int i = 0; i < count; i++) {
         host->ReleaseVariantValue(&params[i]);
@@ -54,10 +53,10 @@ TEST (NPJavascriptObject_CreateTest)
     NpapiHost testHost(NULL, NULL, NULL);
     module.setNetscapeFuncs(testHost.getBrowserFuncs());
 
-    FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(&module, testHost.getPluginInstance());
+    NpapiBrowserHostPtr host(new NpapiBrowserHost(&module, testHost.getPluginInstance()));
     host->setBrowserFuncs(testHost.getBrowserFuncs());
 
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
     host->ReleaseObject(obj);
@@ -74,12 +73,12 @@ TEST(NPJavascriptObject_Methods)
     NpapiHost testHost(NULL, NULL, NULL);
     module.setNetscapeFuncs(testHost.getBrowserFuncs());
 
-    FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(&module, testHost.getPluginInstance());
+    NpapiBrowserHostPtr host(new NpapiBrowserHost(&module, testHost.getPluginInstance()));
     host->setBrowserFuncs(testHost.getBrowserFuncs());
 
     NPVariant res;
     NPVariant oneParam;
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
     NPVariant *params = getNPVariantParams(host, variant_list_of(0)("This is a test"));
@@ -142,12 +141,12 @@ TEST(NPJavascriptObject_Properties)
     NpapiHost testHost(NULL, NULL, NULL);
     module.setNetscapeFuncs(testHost.getBrowserFuncs());
 
-    FB::AutoPtr<NpapiBrowserHost> host = new NpapiBrowserHost(&module, testHost.getPluginInstance());
+    NpapiBrowserHostPtr host(new NpapiBrowserHost(&module, testHost.getPluginInstance()));
     host->setBrowserFuncs(testHost.getBrowserFuncs());
 
     NPVariant res;
     NPVariant oneParam;
-    FB::AutoPtr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
     // Test setting and getting many different datatypes with properties

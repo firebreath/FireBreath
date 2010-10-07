@@ -10,59 +10,49 @@
  GNU Lesser General Public License, version 2.1
  http://www.gnu.org/licenses/lgpl-2.1.html
  
- Copyright 2010 Georg Fritzsche, Firebreath development team
+ Copyright 2010 Anson MacKeracher, Firebreath development team
  \**********************************************************/
 
 #include "PluginEvents/MacEventCocoa.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
-#include "PluginWindowMacCocoaCA.h"
+#include "PluginWindowMacCocoaCG.h"
 
 using namespace FB;
 
-PluginWindowMacCocoaCA::PluginWindowMacCocoaCA() {
-
+PluginWindowMacCocoaCG::PluginWindowMacCocoaCG(NP_CGContext* context) {
+    m_context = context;
 }
 
-PluginWindowMacCocoaCA::~PluginWindowMacCocoaCA() {
+PluginWindowMacCocoaCG::~PluginWindowMacCocoaCG() {
     this->clearWindow();
 }
 
-void PluginWindowMacCocoaCA::clearWindow() {
+void PluginWindowMacCocoaCG::clearWindow() {
     // TODO
 }
 
-void PluginWindowMacCocoaCA::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
+void PluginWindowMacCocoaCG::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
     m_x = x;
     m_y = y;
     m_width = width;
     m_height = height;
 }
 
-void PluginWindowMacCocoaCA::setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right) {
+void PluginWindowMacCocoaCG::setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right) {
     m_clipTop = top;
     m_clipLeft = left;
     m_clipBottom = bottom;
     m_clipRight = right;
 }
 
-int16_t PluginWindowMacCocoaCA::HandleEvent(NPCocoaEvent* event) {
-    // Let the plugin handle the event if it wants
-    //MacEventCocoa macEv(event);
-    MacEventCocoa* macEv = new MacEventCocoa(event);
-    if (SendEvent(macEv)) {
-        return true;
-    }
-
-    // Otherwise deal with the event here
-    // TODO: Implement this
-    //          - see TopHatPlugin.cpp for a hints
-    return false;
+int16_t PluginWindowMacCocoaCG::HandleEvent(NPCocoaEvent* event) {
+    return PluginWindowMacCocoa::HandleEvent(event);
 }
 
-Rect PluginWindowMacCocoaCA::getWindowPosition() {
-    Rect windRect;
+NPRect PluginWindowMacCocoaCG::getWindowPosition() {
+    NPRect windRect;
     windRect.left = m_x;
     windRect.top = m_y;
     windRect.right = m_x + m_width;
@@ -70,8 +60,8 @@ Rect PluginWindowMacCocoaCA::getWindowPosition() {
     return windRect;
 }
 
-Rect PluginWindowMacCocoaCA::getWindowClipping() {
-    Rect clipRect;
+NPRect PluginWindowMacCocoaCG::getWindowClipping() {
+    NPRect clipRect;
     clipRect.left = m_clipLeft;
     clipRect.right = m_clipRight;
     clipRect.top = m_clipTop;

@@ -26,6 +26,10 @@
                 alert('onfired() from load(): '+x)
             });
         }
+
+        function pluginLoaded() {
+            alert("Plugin loaded!");
+        }
         
         function addTestEvent()
         {
@@ -47,7 +51,9 @@
 <body onload="load()">
 
 
-<object id="plugin" type="${FBSTRING_MIMEType}" width="300" height="300"></object><br />
+<object id="plugin" type="${FBSTRING_MIMEType}" width="300" height="300">
+    <param name="onload" value="pluginLoaded" />
+</object><br />
 
 <a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
 

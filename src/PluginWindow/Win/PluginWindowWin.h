@@ -17,20 +17,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "PluginWindow.h"
+#include "NpapiBrowserHost.h"
 
 #include <map>
 
 #define WM_ASYNCTHREADINVOKE    WM_USER + 1
 
 namespace FB {
-    struct WINDOWS_ASYNC_EVENT
-    {
-        WINDOWS_ASYNC_EVENT(void (*f)(void *), void *ud) 
-            : func(f), userData(ud) { }
-        void (*func)(void *);
-        void *userData;
-    };
-
 
     class PluginWindowWin : public PluginWindow
     {
@@ -43,16 +36,22 @@ namespace FB {
 
         void setBrowserHWND(HWND hWnd) { m_browserhWnd = hWnd; }
         HWND getBrowserHWND() { return m_browserhWnd; }
+        void setCallOldWinProc(bool callOld) { m_callOldWinProc = callOld; }
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
+        // Windowed plugins get OS events directly through their window
+        int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
+
+        static HWND createMessageWindow();
 
     protected:
         static PluginWindowMap m_windowMap;
 
         bool WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParamm, LRESULT & lRes);
         WNDPROC lpOldWinProc;
+        bool m_callOldWinProc;
         HWND m_hWnd;
         HWND m_browserhWnd;
 

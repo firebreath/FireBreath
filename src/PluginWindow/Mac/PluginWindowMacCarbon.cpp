@@ -38,10 +38,12 @@ void PluginWindowMacCarbon::setWindowClipping(uint16_t top, uint16_t left, uint1
     m_clipLeft = left;
     m_clipBottom = bottom;
     m_clipRight = right;
+    ClipChangedEvent ev;
+    SendEvent(&ev);
 }
 
-Rect PluginWindowMacCarbon::getWindowPosition() {
-    Rect windRect;
+NPRect PluginWindowMacCarbon::getWindowPosition() {
+    NPRect windRect;
     windRect.left = m_x;
     windRect.top = m_y;
     windRect.right = m_x + m_width;
@@ -49,8 +51,8 @@ Rect PluginWindowMacCarbon::getWindowPosition() {
     return windRect;
 }
 
-Rect PluginWindowMacCarbon::getWindowClipping() {
-    Rect clipRect;
+NPRect PluginWindowMacCarbon::getWindowClipping() {
+    NPRect clipRect;
     clipRect.left = m_clipLeft;
     clipRect.right = m_clipRight;
     clipRect.top = m_clipTop;

@@ -148,3 +148,14 @@ void NP_LOADDS NpapiHost::NH_SetException(NPObject *obj, const NPUTF8 *message)
 {
     
 }
+
+/* NPN_ScheduleTimer */
+uint32_t NP_LOADDS NpapiHost::NH_ScheduleTimer(NPP npp, uint32_t interval, NPBool repeat, 
+                                void (*timerFunc)(NPP npp, uint32_t timerID)) {
+    return 0;
+}
+
+/* NPN_UnscheduleTimer */
+void NP_LOADDS NpapiHost::NH_UnscheduleTimer(NPP npp, uint32_t timerID) {
+
+}

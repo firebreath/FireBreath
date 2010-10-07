@@ -14,10 +14,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserObjectAPI.h"
 #include "AsyncBrowserCall.h"
+#include "SyncBrowserCall.h"
 
 using namespace FB;
 
-BrowserObjectAPI::BrowserObjectAPI(BrowserHostWrapper *h) :
+BrowserObjectAPI::BrowserObjectAPI(BrowserHost h) :
     host(h)
 {
 }
@@ -26,7 +27,13 @@ BrowserObjectAPI::~BrowserObjectAPI(void)
 {
 }
 
+variant BrowserObjectAPI::InvokeMainThread(const std::string& methodName, const std::vector<variant>& args)
+{
+    assert(!host->isMainThread());
+    return FB::SyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
+}
+
 void BrowserObjectAPI::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
 {
-    FB::AsyncBrowserCall::CallMethod(this, methodName, args);
+    FB::AsyncBrowserCall::CallMethod(as_JSObject(shared_ptr()), methodName, args);
 }

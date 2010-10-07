@@ -19,7 +19,7 @@ Copyright 2010 PacketPass Inc, Georg Fritzsche,
 
 using namespace FB;
 
-StreamsTest::StreamsTest( BrowserHostWrapper* Host ) : host(Host)
+StreamsTest::StreamsTest( BrowserHost Host ) : host(Host)
 {
 }
 
@@ -38,7 +38,7 @@ public:
 class MyStreamHandler2 : public FB::DefaultBrowserStreamHandler
 {
 public:
-    MyStreamHandler2( BrowserHostWrapper* Host ) : host(Host)
+    MyStreamHandler2( BrowserHost Host ) : host(Host)
     {}
 
     virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *)
@@ -72,7 +72,7 @@ public:
         return true;
     }
 
-    BrowserHostWrapper* host;
+    BrowserHost host;
 };
 
 

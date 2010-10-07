@@ -12,23 +12,48 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <boost/lexical_cast.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
+#include <cassert>
 
 using namespace FB::Npapi;
 
-NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHost *h)
+#define RETAIN_COUNT 10
+#define REFCOUNT_CUTOFF_MULT 7
+
+NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
     : BrowserObjectAPI(h), browser(h), obj(o)
 {
-    if (h != NULL && o != NULL) {
-        browser->RetainObject(obj);
+    assert(browser);
+    if (o != NULL) {
+        /*
+         * This may look kinda hackish, but some browsers seem to have a bug with reference counting;
+         * somehow they get released more times than they should.  This isn't a perfect fix, but it helps.
+         * (see ~NPObjectAPI for the rest of the fix)
+         */
+        for (int i = 0; i < RETAIN_COUNT; i++) {
+            browser->RetainObject(obj);
+        }
     }
 }
 
 NPObjectAPI::~NPObjectAPI(void)
 {
-    if (browser.ptr() != NULL && obj != NULL) {
-        browser->ReleaseObject(obj);
+    if (obj != NULL) {
+        /**
+         * Okay, this is far from perfect, but if the reference count
+         * is less then RETAIN_COUNT or is higher than
+         * RETAIN_COUNT * REFCOUNT_CUTTOFF_MULT then something
+         * is really off; to be safe, we'll just avoid doing any releases on 
+         * this object; this will absolutely cause a memory leak; however,
+         * that's better than a crash.
+         **/
+        if (obj->referenceCount >= RETAIN_COUNT && obj->referenceCount < (RETAIN_COUNT * REFCOUNT_CUTOFF_MULT)) {
+            for (int i = 0; i < RETAIN_COUNT; i++) {
+                browser->ReleaseObject(obj);
+            }
+        }
     }
 }
 
@@ -98,29 +123,24 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 
 FB::variant NPObjectAPI::GetProperty(int idx)
 {
-    NPVariant retVal;
-    if (!browser->GetProperty(obj, browser->GetIntIdentifier(idx), &retVal)) {
-        throw script_error("Error getting property by index");
-    } else {
-        FB::variant ret = browser->getVariant(&retVal);
-        browser->ReleaseVariantValue(&retVal);
-        return ret;
-    }
+    std::string strIdx(boost::lexical_cast<std::string>(idx));
+    return GetProperty(strIdx);
 }
 
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
-    NPVariant val;
-    browser->getNPVariant(&val, value);
-    if (!browser->GetProperty(obj, browser->GetIntIdentifier(idx), &val)) {
-        throw script_error("Error setting property by index");
-    }
+    std::string strIdx(boost::lexical_cast<std::string>(idx));
+    SetProperty(strIdx, value);
 }
 
 // Methods to manage methods on the API
 FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     NPVariant retVal;
+
+    if (!host->isMainThread()) {
+        return InvokeMainThread(methodName, args);
+    }
 
     // Convert the arguments to NPVariants
     NPVariant *npargs = new NPVariant[args.size()];

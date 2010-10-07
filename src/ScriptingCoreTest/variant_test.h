@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 21, 2009
@@ -74,9 +74,9 @@ TEST(VariantTest)
     {
         typedef std::vector<std::string> StringVec;
         FB::VariantList values = variant_list_of("1")(2)(3.0);
-        FB::AutoPtr<FakeJsArray> jsarr(new FakeJsArray(values));
+        boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(values));
         
-        variant varJsArr = FB::AutoPtr<BrowserObjectAPI>(jsarr);
+        variant varJsArr = as_JSObject(jsarr);
         StringVec vs1 = varJsArr.convert_cast<StringVec>();
         StringVec vs2 = FB::convert_variant_list<StringVec>(values);
         
@@ -91,8 +91,8 @@ TEST(VariantTest)
         typedef std::map<std::string, std::string> StringStringMap;
 
         VariantMap values = variant_map_of<std::string>("a","a")("b","b")("c","c");
-        FB::AutoPtr<FakeJsMap> jsmap(new FakeJsMap(values));
-        variant varJsMap = FB::AutoPtr<BrowserObjectAPI>(jsmap);
+        boost::shared_ptr<FakeJsMap> jsmap(new FakeJsMap(values));
+        variant varJsMap = as_JSObject(jsmap);
         VariantMap result = varJsMap.convert_cast<VariantMap>();
 
         VariantMap::const_iterator itval = values.begin();
@@ -106,6 +106,47 @@ TEST(VariantTest)
             CHECK(value.first == result.first);
             CHECK(value.second.convert_cast<std::string>() == result.second.convert_cast<std::string>());
         }
+    }
+
+    // wstring type handling and conversion
+    {
+        variant wstr1 = L"This is a test string";
+        CHECK(wstr1.convert_cast<std::wstring>() == L"This is a test string");
+        CHECK(wstr1.convert_cast<std::string>() == "This is a test string");
+        variant str1 = "This is a single byte string";
+        CHECK(str1.convert_cast<std::wstring>() == L"This is a single byte string");
+
+        // Check another language
+        variant wstr2 = L"это работает?";
+        CHECK(wstr2.convert_cast<std::wstring>() == L"это работает?");
+
+        // Try it when wide data accidently gets stuck in a single byte string
+        variant str2 = "это работает?";
+        CHECK(wstr2.convert_cast<std::wstring>() == L"это работает?");
+
+        std::wstring lstr(L"скажи");
+        variant str4(lstr);
+        std::string tmp = str4.convert_cast<std::string>();
+
+        // Check it with UTF8 source data
+        /*unsigned char utf8str[] = {0xc3, 0x91,
+                          0xc2, 0x81,
+                          0xc3, 0x90,
+                          0xc2, 0xba,
+                          0xc3, 0x90,
+                          0xc2, 0xb0,
+                          0xc3, 0x90,
+                          0xc2, 0xb6,
+                          0xc3, 0x90,
+                          0xc2, 0xb8,
+                          0x00, 0x00};
+        std::string tmpstr((char *)utf8str);
+
+        CHECK(tmpstr == tmp);
+
+        variant str3(tmpstr);
+        std::wstring widestr( str3.convert_cast<std::wstring>() );
+        CHECK(widestr == lstr);*/
     }
 
     // is_of_type<>()

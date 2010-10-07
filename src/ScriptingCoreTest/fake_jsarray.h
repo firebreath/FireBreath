@@ -21,7 +21,7 @@ class FakeJsArray : public FB::BrowserObjectAPI
 {
 public:
     FakeJsArray(const FB::VariantList& values)
-      : FB::BrowserObjectAPI(0), m_values(values)
+      : FB::BrowserObjectAPI(FB::BrowserHost()), m_values(values)
     {
     }
 

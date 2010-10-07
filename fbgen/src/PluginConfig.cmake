@@ -1,45 +1,50 @@
 #/**********************************************************\ 
 #
 # Auto-Generated Plugin Configuration file
-# for @{PLUGIN.name}
+# for @{PLUGIN_name}
 #
 #\**********************************************************/
 
-set(PLUGIN_NAME "@{PLUGIN.ident}")
-set(PLUGIN_PREFIX "@{PLUGIN.prefix}")
-set(COMPANY_NAME "@{COMPANY.ident}")
+set(PLUGIN_NAME "@{PLUGIN_ident}")
+set(PLUGIN_PREFIX "@{PLUGIN_prefix}")
+set(COMPANY_NAME "@{COMPANY_ident}")
 
 # ActiveX constants:
-set(FBTYPELIB_NAME @{PLUGIN.ident}Lib)
-set(FBTYPELIB_DESC "@{PLUGIN.ident} 1.0 Type Library")
-set(IFBControl_DESC "@{PLUGIN.ident} Control Interface")
-set(FBControl_DESC "@{PLUGIN.ident} Control Class")
-set(IFBComJavascriptObject_DESC "@{PLUGIN.ident} IComJavascriptObject Interface")
-set(FBComJavascriptObject_DESC "@{PLUGIN.ident} ComJavascriptObject Class")
-set(IFBComEventSource_DESC "@{PLUGIN.ident} IFBComEventSource Interface")
+set(FBTYPELIB_NAME @{PLUGIN_ident}Lib)
+set(FBTYPELIB_DESC "@{PLUGIN_ident} 1.0 Type Library")
+set(IFBControl_DESC "@{PLUGIN_ident} Control Interface")
+set(FBControl_DESC "@{PLUGIN_ident} Control Class")
+set(IFBComJavascriptObject_DESC "@{PLUGIN_ident} IComJavascriptObject Interface")
+set(FBComJavascriptObject_DESC "@{PLUGIN_ident} ComJavascriptObject Class")
+set(IFBComEventSource_DESC "@{PLUGIN_ident} IFBComEventSource Interface")
 set(AXVERSION_NUM "1")
 
 # NOTE: THESE GUIDS *MUST* BE UNIQUE TO YOUR PLUGIN/ACTIVEX CONTROL!  YES, ALL OF THEM!
-set(FBTYPELIB_GUID @{GUID.generate("TYPELIB")})
-set(IFBControl_GUID @{GUID.generate("CONTROLIF")})
-set(FBControl_GUID @{GUID.generate("CONTROL")})
-set(IFBComJavascriptObject_GUID @{GUID.generate("JSIF")})
-set(FBComJavascriptObject_GUID @{GUID.generate("JSOBJ")})
-set(IFBComEventSource_GUID @{GUID.generate("EVTSRC")})
+set(FBTYPELIB_GUID @{GUIDS_TYPELIB})
+set(IFBControl_GUID @{GUIDS_CONTROLIF})
+set(FBControl_GUID @{GUIDS_CONTROL})
+set(IFBComJavascriptObject_GUID @{GUIDS_JSIF})
+set(FBComJavascriptObject_GUID @{GUIDS_JSOBJ})
+set(IFBComEventSource_GUID @{GUIDS_EVTSRC})
 
 # these are the pieces that are relevant to using it from Javascript
-set(ACTIVEX_PROGID "@{COMPANY.ident}.@{PLUGIN.ident}")
-set(MOZILLA_PLUGINID "@{COMPANY.domain}/@{PLUGIN.ident}")
+set(ACTIVEX_PROGID "@{COMPANY_ident}.@{PLUGIN_ident}")
+set(MOZILLA_PLUGINID "@{COMPANY_domain}/@{PLUGIN_ident}")
 
 # strings
-set(FBSTRING_CompanyName "@{COMPANY.name}")
-set(FBSTRING_FileDescription "@{PLUGIN.desc}")
+set(FBSTRING_CompanyName "@{COMPANY_name}")
+set(FBSTRING_FileDescription "@{PLUGIN_desc}")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
-<##import time ##>   
-set(FBSTRING_LegalCopyright "Copyright @{time.strftime("%Y")} @{COMPANY.name}")
+set(FBSTRING_LegalCopyright "Copyright @{YEAR} @{COMPANY_name}")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
-set(FBSTRING_ProductName "@{PLUGIN.name}")
+set(FBSTRING_ProductName "@{PLUGIN_name}")
 set(FBSTRING_FileExtents "")
-set(FBSTRING_PluginName "@{PLUGIN.name}")
-set(FBSTRING_MIMEType "@{PLUGIN.mimetype}")
+set(FBSTRING_PluginName "@{PLUGIN_name}")
+set(FBSTRING_MIMEType "@{PLUGIN_mimetype}")
 
+# Mac plugin settings
+set(FBMAC_USE_QUICKDRAW 0)
+set(FBMAC_USE_CARBON 1)
+set(FBMAC_USE_COCOA 1)
+set(FBMAC_USE_COREGRAPHICS 1)
+set(FBMAC_USE_COREANIMATION 0)

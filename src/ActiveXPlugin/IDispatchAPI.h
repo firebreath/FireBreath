@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "JSAPI.h"
-#include "AutoPtr.h"
 #include "BrowserObjectAPI.h"
 #include "ActiveXBrowserHost.h"
 #include <atlctl.h>
@@ -28,7 +27,7 @@ class IDispatchAPI :
     public FB::BrowserObjectAPI
 {
 public:
-    IDispatchAPI(IDispatch *, ActiveXBrowserHost *);
+    IDispatchAPI(IDispatch *, ActiveXBrowserHostPtr);
     virtual ~IDispatchAPI(void);
 
     void *getEventId() { return (void*)m_obj; }
@@ -40,19 +39,22 @@ public:
     size_t getMemberCount();
 
 protected:
-    FB::AutoPtr<ActiveXBrowserHost> m_browser;
+    ActiveXBrowserHostPtr m_browser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
 
 protected:
     // Utility functions
-    DISPID getIDForName(const std::string& name);
+    DISPID getIDForName(const std::wstring& name);
 
 public:
     // Methods to query existance of members on the API
     bool HasMethod(const std::string& methodName);
+    bool HasMethod(const std::wstring& methodName);
     bool HasProperty(const std::string& propertyName);
+    bool HasProperty(const std::wstring& propertyName);
     bool HasProperty(int idx);
     bool HasEvent(const std::string& eventName);
+    bool HasEvent(const std::wstring& eventName);
 
     // Methods to manage properties on the API
     FB::variant GetProperty(const std::string& propertyName);

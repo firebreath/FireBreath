@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), \
     m_details.testName); fflush(stdout)
 
+#include "TestPlugin.h"
 #include "NPJavascriptObjectTest.h"
 #include "NpapiPlugin.h"
 
@@ -47,7 +48,22 @@ FB::JSAPI *_getRootJSAPI()
     return new FB::JSAPISimple();
 }
 
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(NpapiBrowserHost *host)
+FB::Npapi::NpapiPluginPtr _getNpapiPlugin(NpapiBrowserHostPtr &host)
 {
-    return new FB::Npapi::NpapiPlugin(host);
+    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPlugin(host));
+}
+
+FB::PluginCore *_getMainPlugin()
+{
+    return new TestPlugin();
+}
+
+void GlobalPluginInitialize()
+{
+    TestPlugin::StaticInitialize();
+}
+
+void GlobalPluginDeinitialize()
+{
+    TestPlugin::StaticDeinitialize();
 }

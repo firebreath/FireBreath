@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # Auto-generated Mac project definition file for the
-# @{PLUGIN.name} project
+# @{PLUGIN_name} project
 #\**********************************************************/
 
 # Mac template platform definition CMake file
@@ -18,6 +18,7 @@ add_definitions(
     
 )
 
+
 SOURCE_GROUP(Mac FILES ${PLATFORM})
 
 set (SOURCES
@@ -30,12 +31,8 @@ set(STRINGS "Mac/bundle_template/InfoPlist.strings")
 set(LOCALIZED "Mac/bundle_template/Localized.r")
 
 add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
-    
+
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}
-    ${PLUGIN_INTERNAL_DEPS}
-    )
-
-add_dependencies(${PROJNAME}
     ${PLUGIN_INTERNAL_DEPS}
     )

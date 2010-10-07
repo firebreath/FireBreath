@@ -20,7 +20,9 @@ include(${CMAKE_DIR}/common.cmake)
 
 set (PROJNAME ScriptingCore)
 Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+if (VERBOSE)
+    message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -30,6 +32,7 @@ include_directories(
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    DOM.h
     DOM/[^.]*
 )
 
@@ -43,11 +46,11 @@ SOURCE_GROUP(Util FILES ${UTILTYPES})
 
 file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     APITypes.*
-    AutoPtr.*
     variant.*
     variant_list.*
     variant_map.*
     TypeIDMap.*
+    utf8*
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -55,6 +58,8 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     BrowserHostWrapper.*
     BrowserObjectAPI.*
     AsyncBrowser*
+    AsyncFunction*
+    SyncBrowser*
     *Converter.*
     JSCallback*
     )
@@ -79,3 +84,7 @@ set (SOURCES
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})
+target_link_libraries(${PROJNAME}
+    ${Boost_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
+    )

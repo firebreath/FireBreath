@@ -1,6 +1,6 @@
 #/**********************************************************\ 
 # 
-# Auto-generated CMakeLists.txt for the @{PLUGIN.name} project
+# Auto-generated CMakeLists.txt for the @{PLUGIN_name} project
 #
 #\**********************************************************/
 

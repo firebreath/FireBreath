@@ -1,7 +1,7 @@
-/**********************************************************\ 
+/**********************************************************\
   Default auto-generated np_winmain.cpp
 
-  This file contains the entrypoints for a windows NPAPI
+  This file contains the entrypoints for a Mac NPAPI
   plugin.  Don't change this unless you know what you're
   doing!
 \**********************************************************/
@@ -20,7 +20,7 @@ extern "C" {
     NPError NP_Initialize(NPNetscapeFuncs *browserFuncs);
     NPError NP_GetEntryPoints(NPPluginFuncs *pluginFuncs);
     NPError NP_Shutdown(void);
-    
+
 #ifndef _NO_MAIN
     // For compatibility with CFM browsers.
     int main(NPNetscapeFuncs *browserFuncs, NPPluginFuncs *pluginFuncs, NPP_ShutdownProcPtr *shutdown);
@@ -67,5 +67,6 @@ NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
 NPError OSCALL NP_Shutdown()
 {
     delete module;
+    module = NULL;
     return NPERR_NO_ERROR;
 }

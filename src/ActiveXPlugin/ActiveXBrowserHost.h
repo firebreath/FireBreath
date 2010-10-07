@@ -21,11 +21,18 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHostWrapper.h"
 #include "APITypes.h"
 
+class ActiveXBrowserHost;
+class IDispatchAPI;
+typedef boost::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
+#define as_ActiveXBrowserHost(x) boost::dynamic_pointer_cast<ActiveXBrowserHost>(x)
+typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
+#define as_IDispatchAPI(x) boost::dynamic_pointer_cast<IDispatchAPI>(x)
+
 class ActiveXBrowserHost :
     public FB::BrowserHostWrapper
 {
 public:
-    ActiveXBrowserHost(IHTMLDocument2 *doc);
+    ActiveXBrowserHost(IWebBrowser2 *doc);
     virtual ~ActiveXBrowserHost(void);
     virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
 
@@ -38,16 +45,29 @@ public:
     void setWindow(HWND wnd);
 
 public:
-    FB::JSAPI_DOMDocument getDOMDocument();
-    FB::JSAPI_DOMWindow getDOMWindow();
+    FB::DOM::DocumentPtr getDOMDocument();
+    FB::DOM::WindowPtr getDOMWindow();
     void evaluateJavaScript(const std::string &script);
 
+public:
+    // These methods are pseudo-public; they shouldn't be
+    // called directly.  Call the ::create method on the 
+    // DOM object you want
+    FB::DOM::WindowPtr _createWindow(const FB::JSObject& obj);
+    FB::DOM::DocumentPtr _createDocument(const FB::JSObject& obj);
+    FB::DOM::ElementPtr _createElement(const FB::JSObject& obj);
+    FB::DOM::NodePtr _createNode(const FB::JSObject& obj);
+
 protected:
+    void initDOMObjects();
     HWND m_hWnd;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
     CComPtr<IHTMLWindow2> m_htmlWin;
+    CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
+    FB::DOM::WindowPtr m_window;
+    FB::DOM::DocumentPtr m_document;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);
@@ -55,4 +75,3 @@ public:
 };
 
 #endif // H_ACTIVEXBROWSERHOST
-

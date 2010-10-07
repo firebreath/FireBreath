@@ -32,7 +32,7 @@ class FakeJsMap : public FB::BrowserObjectAPI
     };
 public:
     FakeJsMap(const FB::VariantMap& values)
-      : FB::BrowserObjectAPI(0), m_values(values)
+      : FB::BrowserObjectAPI(FB::BrowserHost()), m_values(values)
     {
         std::for_each(m_values.begin(), m_values.end(), GrabKeys(m_names));
     }

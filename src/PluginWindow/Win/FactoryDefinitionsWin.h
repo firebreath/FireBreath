@@ -21,6 +21,7 @@ namespace FB {
     class JSAPI;
     class PluginCore;
     class PluginWindowWin;
+    class PluginWindowlessWin;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -33,5 +34,7 @@ namespace FB {
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
 FB::PluginWindowWin *_createPluginWindow(HWND hWnd);
+
+FB::PluginWindowlessWin *_createPluginWindowless(HDC hdc);
 
 #endif

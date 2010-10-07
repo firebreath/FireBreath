@@ -21,7 +21,9 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
 set (PROJNAME ${PLUGIN_PREFIX}_ActiveXPlugin)
 Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+if (VERBOSE)
+    message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -71,6 +73,12 @@ add_custom_command(
     DEPENDS ${IDL_FILE}
     )
 
+file (GLOB AXDOM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    ./AXDOM/*
+)
+
+source_group(AXDOM FILES ${AXDOM})
+
 file (GLOB ACTIVEX_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./FBControl.*
     ./FireBreathWin.*
@@ -96,6 +104,7 @@ set (SOURCES
     ${JSAPI_OBJECTS}
     ${GENERAL}
     ${GENERATED_IDL}
+    ${AXDOM}
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})

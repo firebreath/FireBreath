@@ -16,6 +16,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     *.h
     *.cmake
+    *.html
     )
 
 # Generated files are stored in ${GENERATED} by the project configuration

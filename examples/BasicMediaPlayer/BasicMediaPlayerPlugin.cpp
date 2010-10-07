@@ -53,12 +53,12 @@ BasicMediaPlayerPlugin::~BasicMediaPlayerPlugin()
 {
 }
 
-FB::JSAPI* BasicMediaPlayerPlugin::createJSAPI()
+FB::JSAPIPtr BasicMediaPlayerPlugin::createJSAPI()
 {
     // m_host is the BrowserHostWrapper
-    m_player = new BasicMediaPlayer(m_host);
+    m_player = BasicMediaPlayerPtr(new BasicMediaPlayer(m_host));
     m_player->setWindow(m_window);
-    return m_player.ptr();
+    return m_player;
 }
 
 bool BasicMediaPlayerPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)

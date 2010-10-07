@@ -19,24 +19,27 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiPlugin.h"
 
 namespace FB { 
+    class PluginWindow;
     class PluginWindowWin;
+    class PluginWindowlessWin;
+
     namespace Npapi {
 
     class NpapiPluginWin : public NpapiPlugin
     {
     public:
-        NpapiPluginWin(NpapiBrowserHost *host);
+        NpapiPluginWin(NpapiBrowserHostPtr host);
         virtual ~NpapiPluginWin(void);
 
     protected:
-        FB::PluginWindowWin *pluginWin;
+        FB::PluginWindow *pluginWin;
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance
         NPError SetWindow(NPWindow* window);
-        //int16_t HandleEvent(void* event);
+        int16_t HandleEvent(void* event);
     };
 
 }; }; // FB::Npapi

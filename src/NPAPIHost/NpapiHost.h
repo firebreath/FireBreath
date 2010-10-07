@@ -88,6 +88,9 @@ namespace FB { namespace Npapi {
         static void     NP_LOADDS NH_PluginThreadAsyncCall(NPP instance, void (*func)(void *), void *userData);
         static bool     NP_LOADDS NH_Evaluate(NPP npp, NPObject *obj, NPString *script, NPVariant *result);
         static void     NP_LOADDS NH_SetException(NPObject *obj, const NPUTF8 *message);
+        static uint32_t NP_LOADDS NH_ScheduleTimer(NPP npp, uint32_t interval, NPBool repeat, 
+                                                   void (*timerFunc)(NPP npp, uint32_t timerID));
+        static void     NP_LOADDS NH_UnscheduleTimer(NPP npp, uint32_t timerID);
 
     public:
         // NpResourceHostFuncs

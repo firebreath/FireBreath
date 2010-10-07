@@ -24,6 +24,7 @@ public:
     FBTestPluginAPI(FB::BrowserHost host);
     virtual ~FBTestPluginAPI();
 
+    std::wstring say(const std::wstring& val);
     // Read/Write property testString
     std::string get_testString();
     void set_testString(const std::string& val);
@@ -52,9 +53,14 @@ public:
     // Method to start the streams test
     bool testStreams();
 
+    // Method to test getting a tag from the page
+    FB::variant getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute);
+
+    std::string getPageLocation();
+
 private:
     FB::BrowserHost m_host;
-    FB::JSOutObject m_simpleMath;
+    FB::JSAPIPtr m_simpleMath;
 
     std::string m_testString;
 };

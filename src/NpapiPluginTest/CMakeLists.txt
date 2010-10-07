@@ -21,7 +21,9 @@ include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
 set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_NpapiPlugin)
 Project (${PROJNAME})
-message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+if (VERBOSE)
+    message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
+endif()
 
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
@@ -43,16 +45,20 @@ set (SOURCES
     ${GENERAL}
     )
 
-add_library(${PROJNAME} STATIC ${SOURCES})
+add_executable(${PROJNAME} ${SOURCES})
 
 add_dependencies(${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
+    ScriptingCore
+    PluginCore
     NPAPIHost
     UnitTest++
     )
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
+    ScriptingCore
+    PluginCore
     NPAPIHost
     UnitTest++
     )
