@@ -134,7 +134,9 @@ void PluginWindowlessWin::setWindowClipping(NPRect clip) {
 
 HWND PluginWindowlessWin::getHWND() {
     if(m_npHost != NULL) {
-        return m_npHost->GetValue(NPNVnetscapeWindow, (void*)&hwnd);
+        HWND hwnd;
+        m_npHost->GetValue(NPNVnetscapeWindow, (void*)&hwnd);
+        return hwnd;
     }
     return NULL;
 }
