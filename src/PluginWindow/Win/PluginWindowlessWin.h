@@ -1,3 +1,6 @@
+#ifndef H_PLUGINWINDOWLESSWIN
+#define H_PLUGINWINDOWLESSWIN
+
 /**********************************************************\ 
 Original Author: Anson MacKeracher (amackera) 
 
@@ -12,8 +15,6 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Anson MacKeracher, Firebreath development team
 \**********************************************************/
 
-#ifndef H_PLUGINWINDOWLESSWIN
-#define H_PLUGINWINDOWLESSWIN
 #include "Win/win_common.h"
 #include "PluginWindow.h"
 
