@@ -51,7 +51,7 @@ void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 
 void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 {
-    copyNPBrowserFuncs(&NPNFuncs, pFuncs);
+    copyNPBrowserFuncs(&NPNFuncs, pFuncs, m_npp);
 
     NPObject *window(NULL);
     GetValue(NPNVWindowNPObject, (void**)&window);

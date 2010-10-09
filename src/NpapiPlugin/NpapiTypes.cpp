@@ -8,7 +8,7 @@ License:    Dual license model; choose one of two:
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
-
+1
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
@@ -23,7 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #  undef max
 #endif
 
-void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs)
+void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs, NPP instance)
 {
     dstFuncs->size = srcFuncs->size;
     dstFuncs->version = srcFuncs->version;
@@ -106,15 +106,29 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
     if(srcFuncs->version >= NPVERS_HAS_NPOBJECT_ENUM) { // 18
         dstFuncs->enumerate = srcFuncs->enumerate;
     }
+    bool isWebKit = false;
+#ifdef XP_MACOSX
+    if (instance) {
+        const char* const webKitVersionPrefix = " AppleWebKit/";
+        const char *userAgent = srcFuncs->uagent(instance);
+        if (userAgent) {
+            isWebKit = (strstr(userAgent, webKitVersionPrefix) != NULL);
+        }
+    }
+    if (isWebKit)
+        srcFuncs->pluginthreadasynccall = NULL;
+#endif
     if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
+
 #ifdef __LP64__
         if (srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
             && srcFuncs->scheduletimer) {
+#else
+        if (!srcFuncs->pluginthreadasynccall && srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
+            && srcFuncs->scheduletimer ) {
+#endif
             dstFuncs->pluginthreadasynccall = &FB::Npapi::NpapiPluginModule::scheduleAsyncCallback;
         } else {
-#else
-        {
-#endif
             dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
         }
     }

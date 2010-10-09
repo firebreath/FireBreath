@@ -72,6 +72,7 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         }
     }
     pluginMain->setParams(paramList);
+    setReady();
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
