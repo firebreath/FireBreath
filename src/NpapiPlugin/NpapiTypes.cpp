@@ -106,8 +106,8 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
     if(srcFuncs->version >= NPVERS_HAS_NPOBJECT_ENUM) { // 18
         dstFuncs->enumerate = srcFuncs->enumerate;
     }
-    bool isWebKit = false;
 #ifdef XP_MACOSX
+    bool isWebKit = false;
     if (instance) {
         const char* const webKitVersionPrefix = " AppleWebKit/";
         const char *userAgent = srcFuncs->uagent(instance);
