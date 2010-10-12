@@ -16,6 +16,7 @@ Copyright 2010 Facebook, Inc
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
 
+#include "log4cplus/config/defines.hxx"
 #include "log4cplus/logger.h"
 #include "log4cplus/loglevel.h"
 #include "log4cplus/layout.h"

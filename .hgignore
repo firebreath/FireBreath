@@ -35,3 +35,4 @@ buildex/
 buildex/*
 projects/*
 tags
+src/libs/log4cplus/include/log4cplus/config/defines.hxx
