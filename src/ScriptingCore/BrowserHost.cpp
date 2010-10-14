@@ -17,11 +17,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
+#include "logging.h"
 
 #include "BrowserHost.h"
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
+    FBLOG_INFO("BrowserHost", std::string("Logging to HTML: " + str).c_str());
     this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
             new FB::AsyncLogRequest(shared_ptr(), str));
 }
@@ -40,6 +42,7 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
     } catch (const std::exception &) {
         // printf("Exception: %s\n", e.what());
         // Fail silently; logging should not require success.
+        FBLOG_TRACE("BrowserHost", "Logging to browser console failed");
         return;
     }
     delete req;
@@ -74,6 +77,9 @@ FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj)
 void FB::BrowserHost::assertMainThread()
 {
 #ifdef _DEBUG
+    if (!isMainThread()) {
+        FBLOG_FATAL("BrowserHost", "Trying to call something from the wrong thread!");
+    }
     assert(isMainThread());
 #endif
 }

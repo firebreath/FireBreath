@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_BROWSERHOSTWRAPPER
 #define H_FB_BROWSERHOSTWRAPPER
 
@@ -52,6 +53,12 @@ namespace FB
     public:
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
+        template<class Functor>
+        typename Functor::result_type CallOnMainThread(Functor func);
+
+        template<class C, class Functor>
+        void ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func);
+
         static void AsyncHtmlLog(void *);
 
         virtual void *getContextID() = 0;
@@ -89,6 +96,12 @@ public:
         boost::thread::id m_threadId;
         std::string m_location;
     };
-}
+
+    
+    // Due to interdependency issues, the implementation for ScheduleAsyncCall and CallOnMainThread are found in
+    // CrossThreadCall.h
+};
+
+#include "CrossThreadCall.h"
 
 #endif

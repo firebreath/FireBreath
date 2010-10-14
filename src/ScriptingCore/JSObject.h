@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_JSObject
 #define H_FB_JSObject
 
@@ -31,9 +32,7 @@ namespace FB
         virtual void *getEventContext() { return NULL; }
 
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
-
-    protected:
-        virtual variant InvokeMainThread(const std::string& methodName, const std::vector<variant>& args);
+        virtual void SetPropertyAsync(const std::string& propertyName, const variant& value);
 
     public:
         // TODO: Find a better place for this conversion method.

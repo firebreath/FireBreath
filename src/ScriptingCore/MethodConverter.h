@@ -12,7 +12,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 
-#if !defined(METHOD_CONVERTER_H)
+#pragma once
+#ifndef METHOD_CONVERTER_H
 #define METHOD_CONVERTER_H
 
 #if defined(_MSC_VER)

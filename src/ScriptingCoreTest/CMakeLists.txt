@@ -27,6 +27,7 @@ endif()
 include_directories(
 	${CMAKE_CURRENT_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
+    ${PLUGINCOMMON_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
     ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
@@ -40,6 +41,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 set (SOURCES
     ${GENERAL}
+    ${PLUGINCOMMON_SOURCE_DIR}/null/NullLogger.cpp
     )
 
 add_executable(${PROJNAME} ${SOURCES})
