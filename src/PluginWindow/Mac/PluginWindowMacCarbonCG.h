@@ -24,21 +24,24 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include <map>
 
 namespace FB {
-    
-    class PluginWindowMacCarbonCG : public PluginWindowMacCarbon
-    {
+    class PluginWindowMacCarbonCG : public PluginWindowMacCarbon {
     public:
         PluginWindowMacCarbonCG(NP_CGContext* context);
         virtual ~PluginWindowMacCarbonCG();
 
     public:
-        NP_CGContext* getContext();
+        NP_CGContext* getNPCGContext() { return m_npCGContext; }
+        CGContextRef getCGContext() { return m_cgContext; }
+        WindowRef getWindowRef() { return m_winRef; }
+
         void setContext(NP_CGContext* context);
         int16_t HandleEvent(EventRecord* evt);
+        void InvalidateWindow();
 
     public:
-        NP_CGContext* cgContext;
-        AGLContext aglContext;
+        NP_CGContext* m_npCGContext;
+        CGContextRef m_cgContext;
+        WindowRef m_winRef;
     };
 };
 
