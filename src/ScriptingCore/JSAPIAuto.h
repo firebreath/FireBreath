@@ -61,8 +61,8 @@ namespace FB {
     /// If arguments are passed that cannot be converted to an int, a javascript exception will be
     /// thrown.
     /// 
-    /// @seealso JSAPI
-    /// @seealso PluginCore
+    /// @see JSAPI
+    /// @see PluginCore
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPIAuto : public JSAPI
     {
