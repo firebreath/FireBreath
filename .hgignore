@@ -1,6 +1,7 @@
 syntax: glob
 */Debug/*
 Debug/*
+docs/*
 */Release/*
 Release/*
 *.suo
