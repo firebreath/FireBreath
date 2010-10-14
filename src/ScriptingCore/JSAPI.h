@@ -134,56 +134,353 @@ namespace FB
         virtual ~JSAPI(void);
 
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn JSAPIPtr :::shared_ptr()
+        ///
+        /// @brief  Gets the shared pointer for "this"
+        ///
+        /// @return JSAPIPtr for "this"
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         JSAPIPtr shared_ptr()
         {
             return shared_from_this();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void :::invalidate()
+        ///
+        /// @brief  Invalidates this object.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void invalidate();
 
     protected:
-        // Used to fire an event to the listeners attached to this JSAPI
-        virtual void FireEvent(const std::wstring& eventName, const std::vector<variant>&);
-        virtual void FireEvent(const std::string& eventName, const std::vector<variant>&);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
+        ///
+        /// @brief  Fires an event into javascript asynchronously
+        ///
+        /// @param  eventName   Name of the event.  This event must start with "on"
+        /// @param  args        The arguments that should be sent to each attached event handler
+        /// 					
+        /// @seealso virtual void :::FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::FireEvent(const std::string& eventName, const std::vector<variant> &args)
+        ///
+        /// @brief  Fires an event into javascript asynchronously
+        /// 		
+        /// This fires an event to all handlers attached to the given event in javascript.
+        /// 
+        /// IE:
+        /// @code
+        ///      document.getElementByID("plugin").attachEvent("onload", function() { alert("loaded!"); });
+        /// @endcode
+        /// Firefox/Safari/Chrome/Opera:
+        /// @code
+        /// 	 // Note that the convention used by these browsers is that "on" is implied
+        /// 	 document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
+        /// @endcode
+        ///
+        /// You can then fire the event -- from any thread -- from the JSAPI object like so:
+        /// @code
+        /// 	 FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        /// @endcode
+        /// 		
+        /// Also note that registerEvent must be called from the constructor to register the event.
+        /// @code
+        /// 	 registerEvent("onload");
+        /// @endcode
+        /// 
+        /// @param  eventName   Name of the event.  This event must start with "on"
+        /// @param  args        The arguments that should be sent to each attached event handler
+        ///
+        /// @seealso registerEvent
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args);
 
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::registerEvent(const std::string& name)
+        ///
+        /// @brief  Register event so that event listeners can be added/attached from javascript
+        ///
+        /// @param  name    The name of the event to register.  This event must start with "on"
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEvent(const std::string& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::registerEvent(const std::wstring& name)
+        ///
+        /// @brief  Register event so that event listeners with a wide string name can be added/attached
+        /// 		from javascript
+        ///
+        /// @param  name    The name of the event to register.  This event must start with "on"
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEvent(const std::wstring& name);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::registerEventMethod(const std::string& name, JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to register an event handler method
+        ///
+        /// @param  name            The name. 
+        /// @param  event           The event handler method. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventMethod(const std::string& name, JSObjectPtr& event);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::registerEventMethod(const std::wstring& name, JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to register an event handler method with a wide string name
+        ///
+        /// @param  name            The name. 
+        /// @param  event           The event handler method. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::unregisterEventMethod(const std::string& name, JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to unregister an event handler method
+        ///
+        /// @param  name            The name. 
+        /// @param  event           The event handler method to unregister. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to unregister an event handler method
+        ///
+        /// @param  name            The name. 
+        /// @param  event           The event handler method to unregister. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::registerEventInterface(JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to register a JSObject interface that handles events.  This is
+        /// 		primarily used by IE.  Objects provided to this method are called when events are fired
+        /// 		by calling a method of the event name on the event interface
+        ///
+        /// @param  event   The JSAPI interface 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(JSObjectPtr& event);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::unregisterEventInterface(JSObjectPtr& event)
+        ///
+        /// @brief  Called by the browser to unregister a JSObject interface that handles events.  
+        ///
+        /// @param  event   The JSAPI interface
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventInterface(JSObjectPtr& event);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual JSObjectPtr :::getDefaultEventMethod(const std::wstring& name)
+        ///
+        /// @brief  Called by the browser to get the default event handler method for an event.
+        /// 		
+        /// This is called when the following occurs iff onload is a registered event:
+        /// @code
+        /// 	 var handler = document.getElementByID("plugin").onload;
+        /// @endcode
+        /// 		
+        /// @param  name    The event name. 
+        ///
+        /// @return The default event method. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name);
         virtual JSObjectPtr getDefaultEventMethod(const std::string& name);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::setDefaultEventMethod(const std::string& name, JSObjectPtr event)
+        ///
+        /// @brief  Called by the browser to set the default event handler method for an event.
+        ///
+        /// This is called when the following occurs iff onload is a registered event:
+        /// @code
+        /// 	 document.getElementByID("plugin").onload = function() { alert("loaded"); };
+        /// @endcode
+        ///
+        /// @param  name    The event name
+        /// @param  event   The event handler method. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event);
         virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event);
 
-        // Methods for enumeration
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::getMemberNames(std::vector<std::string> &nameVector) = 0
+        ///
+        /// @brief  Called by the browser to enumerate the members of this JSAPI object
+        /// 		
+        /// This must be implemented by anything extending JSAPI directly.  JSAPIAuto implements this
+        /// for you.
+        ///
+        /// @param [out] nameVector  The name vector. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void getMemberNames(std::vector<std::string> &nameVector) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual size_t :::getMemberCount() = 0
+        ///
+        /// @brief  Gets the member count. 
+        ///
+        /// @return The member count. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual size_t getMemberCount() = 0;
 
-        // Methods to query existance of members on the API
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool :::HasMethod(const std::wstring& methodName)
+        ///
+        /// @brief  Query if the JSAPI object has the 'methodName' method. 
+        ///
+        /// @param  methodName  Name of the method. 
+        ///
+        /// @return true if method exists, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::wstring& methodName);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool :::HasMethod(const std::string& methodName) = 0
+        ///
+        /// @brief  Query if the JSAPI object has the 'methodName' method. 
+        ///
+        /// @param  methodName  Name of the method. 
+        ///
+        /// @return true if method exists, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::string& methodName) = 0;
+
         virtual bool HasProperty(const std::wstring& propertyName);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool :::HasProperty(const std::string& propertyName)
+        ///
+        /// @brief  Query if 'propertyName' is a valid property. 
+        ///
+        /// @param  propertyName    Name of the property. 
+        ///
+        /// @return true if property exists, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::string& propertyName) = 0;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool :::HasProperty(int idx) = 0
+        ///
+        /// @brief  Query if the property at "idx" exists.
+        /// 	
+        /// This can be used for providing array-style access on your object.  For example, the following
+        /// will result in a call to HasProperty with idx = 12:
+        /// @code
+        /// 	  document.getElementById("plugin")[12];
+        /// @endcode 
+        ///
+        /// @param  idx Zero-based index of the property to check for
+        ///
+        /// @return true if property exists, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(int idx) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool :::HasEvent(const std::string& eventName)
+        ///
+        /// @brief  Query if the event 'eventName' has been registered
+        ///
+        /// @param  eventName   Name of the event. 
+        ///
+        /// @return true if event registered, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasEvent(const std::string& eventName);
         virtual bool HasEvent(const std::wstring& eventName);
 
-        // Methods to manage properties on the API
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant :::GetProperty(const std::wstring& propertyName)
+        ///
+        /// @brief  Gets a property value. 
+        ///
+        /// @param  propertyName    Name of the property. 
+        ///
+        /// @return The property value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(const std::wstring& propertyName);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant :::GetProperty(const std::string& propertyName) = 0
+        ///
+        /// @brief  Gets a property value
+        ///
+        /// @param  propertyName    Name of the property. 
+        ///
+        /// @return The property value 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(const std::string& propertyName) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::SetProperty(const std::wstring& propertyName, const variant& value)
+        ///
+        /// @brief  Sets the value of a property. 
+        ///
+        /// @param  propertyName    Name of the property. 
+        /// @param  value           The value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(const std::wstring& propertyName, const variant& value);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::SetProperty(const std::string& propertyName, const variant& value) = 0
+        ///
+        /// @brief  Sets the value of a property. 
+        ///
+        /// @param  propertyName    Name of the property. 
+        /// @param  value           The value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(const std::string& propertyName, const variant& value) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant :::GetProperty(int idx) = 0
+        ///
+        /// @brief  Gets the value of an indexed property. 
+        ///
+        /// This can be used for providing array-style access on your object.  For example, the following
+        /// will result in a call to GetProperty with idx = 12:
+        /// @code
+        /// 	  var i = document.getElementById("plugin")[12];
+        /// @endcode 
+        ///
+        /// @param  idx Zero-based index of the property to get the value of. 
+        ///
+        /// @return The property value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(int idx) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::SetProperty(int idx, const variant& value) = 0
+        ///
+        /// @brief  Sets the value of an indexed property. 
+        ///
+        /// This can be used for providing array-style access on your object.  For example, the following
+        /// will result in a call to SetProperty with idx = 12:
+        /// @code
+        /// 	  document.getElementById("plugin")[12] = "property value";
+        /// @endcode 
+        ///
+        /// @param  idx     Zero-based index of the property to set the value of. 
+        /// @param  value   The new property value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(int idx, const variant& value) = 0;
 
-        // Methods to manage methods on the API
         virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant :::Invoke(const std::string& methodName,
+        /// const std::vector<variant>& args) = 0
+        ///
+        /// @brief  Called by the browser to invoke a method on the JSAPI object.
+        ///
+        /// @param  methodName  Name of the method. 
+        /// @param  args        The arguments. 
+        ///
+        /// @return result of method call 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
 
     protected:
