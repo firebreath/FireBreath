@@ -32,9 +32,9 @@ namespace FB {
     class BrowserHost;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// \class  PluginCore
+    /// @class  PluginCore
     ///
-    /// \brief  Base class for all FireBreath Plugins 
+    /// @brief  Base class for all FireBreath Plugins 
     ///
     /// This class should be extended by all FireBreath plugin classes.  Each &lt;object&gt; tag in
     /// the web page corresponds to an instance of a class which extends PluginCore, and the
@@ -44,8 +44,7 @@ namespace FB {
     /// All classes extending PluginCore must implement the createJSAPI() method, which creates an
     /// instance of the JSAPI-derived type which handles interaction with Javascript for this plugin.
     /// 
-    /// \author Richard Bateman
-    /// \date   10/19/2009
+    /// @author Richard Bateman
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginCore : public PluginEventSink
     {
@@ -57,76 +56,76 @@ namespace FB {
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn static void PluginCore::setPlatform(const std::string& os, const std::string& browser)
+        /// @fn static void PluginCore::setPlatform(const std::string& os, const std::string& browser)
         ///
-        /// \brief  Called by the browser when the Operating System and Browser are known.
+        /// @brief  Called by the browser when the Operating System and Browser are known.
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param  os      The operating system. 
-        /// \param  browser The browser. 
+        /// @param  os      The operating system. 
+        /// @param  browser The browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static void setPlatform(const std::string& os, const std::string& browser);
 
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn PluginCore::PluginCore()
+        /// @fn PluginCore::PluginCore()
         ///
-        /// \brief  Default constructor. 
+        /// @brief  Default constructor. 
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         PluginCore();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn PluginCore::PluginCore(const std::set<std::string>& params)
+        /// @fn PluginCore::PluginCore(const std::set<std::string>& params)
         ///
-        /// \brief  Constructor with names of &lt;param&gt;s that should be accepted
+        /// @brief  Constructor with names of &lt;param&gt;s that should be accepted
         ///
         /// If your plugin needs the option of accepting &lt;param&gt; tags from the containing web page, you
         /// should provide a set of strings with the name of each param you wish to accept.
         /// 
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param  params  std::set of std::strings of the names of the params you wish to accept 
+        /// @param  params  std::set of std::strings of the names of the params you wish to accept 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         PluginCore(const std::set<std::string>& params);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual PluginCore::~PluginCore()
+        /// @fn virtual PluginCore::~PluginCore()
         ///
-        /// \brief  Finaliser. 
+        /// @brief  Finaliser. 
         ///
-        /// \author Richard Bateman
-        /// \date   10/13/2010
+        /// @author Richard Bateman
+        /// @date   10/13/2010
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~PluginCore();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::initDefaultParams()
+        /// @fn virtual void PluginCore::initDefaultParams()
         ///
-        /// \brief  Initialises the default "param" names supported
+        /// @brief  Initialises the default "param" names supported
         /// 		
         /// As an alternative to passing in a set of "param" names to the constructor of PluginCore,
         /// you can override this function and use calls like the following:
         ///
-        /// \code
+        /// @code
         ///     m_supportedParamSet.insert("onload");
         ///     m_supportedParamSet.insert("starturl");
         ///     m_supportedParamSet.insert("paramlist");
-        /// \endcode
+        /// @endcode
         /// 
         /// You will then be able to access param values set in your HTML with &lt;param&gt; tags inside your
         /// object tag, like so:
         /// 
-        /// \code
+        /// @code
         ///     <object ....>
         ///       <param name="onload" value="onpluginloaded" />
         ///       <param name="starturl" value="http://wiki.firebreath.org" />
         ///       <param name="paramlist" value="width=100;height=100" />
         ///     </object>
-        /// \endcode
+        /// @endcode
         /// 		
         /// Then from within your plugin class, you can access the value like so:
         /// 
@@ -140,102 +139,101 @@ namespace FB {
         /// To get the function from an "onstart" param, you could use the following code:
         /// FB::JSObjectPtr func = m_params["onstart"].cast&lt;FB::JSObjectPtr&gt;();
         /// 
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void initDefaultParams();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::SetHost(FB::BrowserHostPtr)
+        /// @fn virtual void PluginCore::SetHost(FB::BrowserHostPtr)
         ///
-        /// \brief  Called by the browser during startup to provide a Browser Host object. 
+        /// @brief  Called by the browser during startup to provide a Browser Host object. 
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param  host    The boost::shared_ptr<BrowserHost> to the BrowserHost object for the current
+        /// @param  host    The boost::shared_ptr<BrowserHost> to the BrowserHost object for the current
         /// 			    browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetHost(FB::BrowserHostPtr);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual PluginWindow* PluginCore::GetWindow() const
+        /// @fn virtual PluginWindow* PluginCore::GetWindow() const
         ///
-        /// \brief  Gets the PluginWindow instance currently provided by the browser, or NULL if none
+        /// @brief  Gets the PluginWindow instance currently provided by the browser, or NULL if none
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \return null if it fails, else the window. 
+        /// @return null if it fails, else the window. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindow* GetWindow() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::SetWindow(PluginWindow *)
+        /// @fn virtual void PluginCore::SetWindow(PluginWindow *)
         ///
-        /// \brief  Called by the browser to set the window.  The default implementation fires the 
+        /// @brief  Called by the browser to set the window.  The default implementation fires the 
         /// 		WindowAttached event in response to this.
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param  win The new window
+        /// @param  win The new window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetWindow(PluginWindow *);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::ClearWindow()
+        /// @fn virtual void PluginCore::ClearWindow()
         ///
-        /// \brief  Called by the browser to indicate that the window is no longer valid.  The default
+        /// @brief  Called by the browser to indicate that the window is no longer valid.  The default
         /// 		implementation fires the WindowDetached event in response to this.
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void ClearWindow();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::setReady()
+        /// @fn virtual void PluginCore::setReady()
         ///
-        /// \brief  Called by the browser to indicate that the basic initialization is complete and the
+        /// @brief  Called by the browser to indicate that the basic initialization is complete and the
         /// 		plugin is now ready to interact with the Browser via Javascript.  This may or may not
         /// 		occur before the Window (if any) is set.
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setReady();
 
     protected:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual JSAPIPtr PluginCore::createJSAPI() = 0
+        /// @fn virtual JSAPIPtr PluginCore::createJSAPI() = 0
         ///
-        /// \brief  Called the first time something calls getRootJSAPI() to get the Root JSAPI instance. 
+        /// @brief  Called the first time something calls getRootJSAPI() to get the Root JSAPI instance. 
         ///
         /// This must be implemented by each class extending PluginCore.  The JSAPI object returned from
         /// this function in a FB::JSAPIPtr (boost::shared_ptr&lt;JSAPI&gt;) provides the primary interface
         /// with javascript for calls made on the plugin &lt;object&gt; tag.
         /// 
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \return FB::JSAPIPtr to the default JSAPI implementation for this plugin.
+        /// @return FB::JSAPIPtr to the default JSAPI implementation for this plugin.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual JSAPIPtr createJSAPI() = 0;
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual JSAPIPtr PluginCore::getRootJSAPI()
+        /// @fn virtual JSAPIPtr PluginCore::getRootJSAPI()
         ///
-        /// \brief  Gets the root JSAPI object.  It is not recommended to call this from the constructor
+        /// @brief  Gets the root JSAPI object.  It is not recommended to call this from the constructor
         /// 		or before setHost is called, as many JSAPI objects need the BrowserHost and a weak_ptr
         /// 		to the Plugin class to function correctly.
         ///
-        /// \author Richard Bateman
-        /// \date   10/13/2010
+        /// @author Richard Bateman
         ///
-        /// \return The root jsapi. 
+        /// @return The root jsapi. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual JSAPIPtr getRootJSAPI();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual bool PluginCore::IsWindowless() = 0
+        /// @fn virtual bool PluginCore::IsWindowless() = 0
         ///
-        /// \brief  Called by the browser to query if this plugin should be windowless. 
+        /// @brief  Called by the browser to query if this plugin should be windowless. 
         ///
         /// This method *must* be implemented by all classes extending PluginCore.  It should determine
         /// whether or not the plugin should be started in Windowless mode and return true or false 
@@ -244,27 +242,27 @@ namespace FB {
         /// One of the more common methods for doing this is to support a "windowless" param and check
         /// m_params["windowless"] in this function.
         /// 
-        /// \author amackera
+        /// @author amackera
         ///
-        /// \return true if windowless, false if not. 
+        /// @return true if windowless, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool IsWindowless() = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual bool PluginCore::HandleEvent(PluginEvent *event, PluginEventSource *source) = 0
+        /// @fn virtual bool PluginCore::HandleEvent(PluginEvent *event, PluginEventSource *source) = 0
         ///
-        /// \brief  Called by the browser when a system event needs to be handled, such as a mouse event,
+        /// @brief  Called by the browser when a system event needs to be handled, such as a mouse event,
         /// 		a keyboard event, or a drawing event.
         ///
         /// The recommended way to implement HandleEvent is with the PLUGINEVENT_TYPE macros, like so:
         /// 
-        /// \code
+        /// @code
         ///     BEGIN_PLUGIN_EVENT_MAP()
         ///         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
         ///         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
         ///         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
         ///     END_PLUGIN_EVENT_MAP()
-        /// \endcode
+        /// @endcode
         /// - BEGIN_PLUGIN_EVENT_MAP() will open the HandleEvent function
         /// - END_PLUGIN_EVENT_MAP() will close the HandleEvent function
         /// 
@@ -274,63 +272,62 @@ namespace FB {
         /// If you use these macros, you must also create the matching methods in your class.  For
         /// example, the methods needed for the map above are:
         /// 
-        /// \code
+        /// @code
         ///     virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*);
         ///     virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*);
         ///     virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
-        /// \endcode
+        /// @endcode
         /// 		
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param event PluginEvent to handle
-        /// \param source The PluginEventSource that the event originated from
+        /// @param event PluginEvent to handle
+        /// @param source The PluginEventSource that the event originated from
         ///
-        /// \return true if the event was handled, false if not. 
+        /// @return true if the event was handled, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HandleEvent(PluginEvent *event, PluginEventSource *source) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::setFSPath(const std::string& path)
+        /// @fn virtual void PluginCore::setFSPath(const std::string& path)
         ///
-        /// \brief  Called by the browser to set the file system path of the plugin module. 
+        /// @brief  Called by the browser to set the file system path of the plugin module. 
         ///
         /// This is currently only supported on Windows.  The path and filename of the currently loaded
         /// plugin is stored in m_filesystemPath;
         /// 
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \param  path    Full pathname of the file. 
+        /// @param  path    Full pathname of the file. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setFSPath(const std::string& path) { m_filesystemPath = path; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual StringSet* PluginCore::getSupportedParams()
+        /// @fn virtual StringSet* PluginCore::getSupportedParams()
         ///
-        /// \brief  Called by the browser to get a list of supported param tags
+        /// @brief  Called by the browser to get a list of supported param tags
         /// 		
         /// This is the third and final way to override which param tags the plugin will query the HTML
         /// page for.  For more information, see initDefaultParams() in this class
         ///
-        /// \author Richard Bateman
+        /// @author Richard Bateman
         ///
-        /// \return StringSet of supported param tag names. 
+        /// @return StringSet of supported param tag names. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual StringSet* getSupportedParams();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// \fn virtual void PluginCore::setParams(const FB::VariantMap& inParams)
+        /// @fn virtual void PluginCore::setParams(const FB::VariantMap& inParams)
         ///
-        /// \brief  Called by the browser to store the values provided in param tags in m_params
+        /// @brief  Called by the browser to store the values provided in param tags in m_params
         /// 		
         /// This function is called once the &lt;param&gt; tag values from the HTML are available.  After this
         /// function is called they can be accessed through m_params.
         /// 
         /// See initDefaultParams() for more information
         ///
-        /// \author Richard Bateman
-        /// \date   10/13/2010
+        /// @author Richard Bateman
         ///
-        /// \param  inParams    Options for controlling the in. 
+        /// @param  inParams    Options for controlling the in. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         virtual void setParams(const FB::VariantMap& inParams);

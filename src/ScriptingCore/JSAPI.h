@@ -24,6 +24,15 @@ namespace FB
 {
     class JSObject;
     class BrowserHost;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @struct script_error
+    ///
+    /// @brief  Exception type; when thrown in a JSAPI method, a javascript exception will be thrown. 
+    ///
+    /// @author Richard Bateman
+    /// @date   10/14/2010
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct script_error : std::exception
     {
         script_error(const std::string& error)
@@ -36,6 +45,16 @@ namespace FB
         std::string m_error;
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @struct invalid_arguments
+    ///
+    /// @brief  Thrown by a JSAPI object when the argument(s) provided to a SetProperty or Invoke
+    ///         call are found to be invalid.  JSAPIAuto will throw this automatically if the argument
+    ///         cannot be convert_cast to the type expected by the function.
+    ///
+    /// @author Richard Bateman
+    /// @date   10/14/2010
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct invalid_arguments : script_error
     {
         invalid_arguments()
@@ -48,6 +67,19 @@ namespace FB
         { }
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @struct object_invalidated
+    ///
+    /// @brief  Thrown by a JSAPI object when a call is made on it after the object has been
+    ///         invalidated.
+    ///         
+    /// This is particularly useful when you want to invalidate the object
+    /// when the plugin gets released, as the PluginCore-derived Plugin object will usually get
+    /// released before the JSAPI object
+    ///
+    /// @author Richard Bateman
+    /// @date   10/14/2010
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct object_invalidated : script_error
     {
         object_invalidated()
@@ -55,7 +87,16 @@ namespace FB
         { }
         ~object_invalidated() throw() { }
     };
-    
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @struct invalid_member
+    ///
+    /// @brief  Thrown when an Invoke, SetProperty, or GetProperty call is made for a member that is
+    ///         invalid (does not exist, not accessible, only supports Get or Set, etc) 
+    ///
+    /// @author Richard Bateman
+    /// @date   10/14/2010
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct invalid_member : script_error
     {
         invalid_member(const std::string& memberName)
@@ -64,6 +105,28 @@ namespace FB
         ~invalid_member() throw() { }
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  JSAPI
+    ///
+    /// @brief  JavaScript API class -- provides a javascript interface that can be exposed to the
+    ///         browser.
+    /// 
+    /// JSAPI is the core class for all interaction with javascript.  All PluginCore-derived Plugin
+    /// objects must provide a JSAPI object to provide the javascript interface for their &lt;object&gt;
+    /// tag, and methods or properties of that object can return other JSAPI objects.
+    /// 
+    /// Important things to know about JSAPI objects:
+    ///   - Unless you have unusual needs, you will most likely want to extend FB::JSAPIAuto instead
+    ///     of extending JSAPI directly.
+    ///   - Any time you work with a JSAPI object you should use it with a boost::shared_ptr. 
+    ///     FB::JSAPIPtr is a typedef for a boost::shared_ptr<JSAPI> which may be useful.
+    ///     -  From inside the object you can use the shared_ptr() method to get a shared_ptr for
+    ///        "this"
+    ///   - Objects passed in from javascript, including functions, will be passed in as FB::JSObject
+    ///     objects which extend JSAPI.
+    ///
+    /// @author Richard Bateman
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPI : public boost::enable_shared_from_this<JSAPI>
     {
     public:
