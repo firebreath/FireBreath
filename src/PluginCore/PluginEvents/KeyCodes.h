@@ -12,6 +12,7 @@ http://www.gnu.org/licenses/lgpl-2.1.html
 Copyright 2010 Dan Groom and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_PLUGINEVENTS_KEYCODES
 #define H_FB_PLUGINEVENTS_KEYCODES
 

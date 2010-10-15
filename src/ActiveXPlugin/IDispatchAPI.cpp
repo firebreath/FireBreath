@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "utf8_tools.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
-    m_obj(obj), m_browser(host), FB::BrowserObjectAPI(host)
+    m_obj(obj), m_browser(host), FB::JSObject(host)
 {
 }
 
@@ -28,6 +28,10 @@ IDispatchAPI::~IDispatchAPI(void)
 
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
+    if (!host->isMainThread()) {
+        host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberNames, this, nameVector));
+        return;
+    }
     HRESULT hr;
     DISPID dispid;
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
@@ -46,6 +50,9 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 
 size_t IDispatchAPI::getMemberCount()
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
+    }
     HRESULT hr;
     DISPID dispid;
     size_t count(0);
@@ -64,6 +71,9 @@ size_t IDispatchAPI::getMemberCount()
 
 DISPID IDispatchAPI::getIDForName(const std::wstring& name)
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
+    }
     if (name.empty())
         return DISPID_VALUE;
     DISPID dispId(-1);
@@ -100,21 +110,46 @@ bool IDispatchAPI::HasMethod(const std::string& methodName)
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
-    return getIDForName(FB::utf8_to_wstring(methodName)) != -1;
+    return getIDForName(FB::utf8_to_wstring(methodName)) != -1 && !HasProperty(methodName);
 }
 
 bool IDispatchAPI::HasProperty(const std::wstring& propertyName)
 {
-    // This will actually just return true if the specified member exists; IDispatch doesn't really
-    // differentiate further than that
-    return getIDForName(propertyName) != -1;
+    return HasProperty(FB::wstring_to_utf8(propertyName));
 }
 
 bool IDispatchAPI::HasProperty(const std::string& propertyName)
 {
-    // This will actually just return true if the specified member exists; IDispatch doesn't really
-    // differentiate further than that
-    return getIDForName(FB::utf8_to_wstring(propertyName)) != -1;
+    if (!host->isMainThread()) {
+        typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&);
+        return host->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
+    }
+
+    DISPPARAMS params;
+    params.cArgs = 0;
+    params.cNamedArgs = 0;
+
+    VARIANT res;
+    EXCEPINFO eInfo;
+
+    HRESULT hr = E_NOTIMPL;
+    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    DISPID id = getIDForName(FB::utf8_to_wstring(propertyName));
+    if (id == -1 && propertyName != "toString")
+        return false;
+    // The only way to find out if the property actually exists or not is to try to get it; 
+    if (dispex.p) {
+        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
+            &res, &eInfo, NULL);
+    } else {
+        hr = m_obj->Invoke(getIDForName(FB::utf8_to_wstring(propertyName)), IID_NULL, LOCALE_USER_DEFAULT,
+            DISPATCH_PROPERTYGET, &params, &res, NULL, NULL);
+    }
+    if (SUCCEEDED(hr)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 bool IDispatchAPI::HasProperty(int idx)
@@ -130,6 +165,11 @@ bool IDispatchAPI::HasEvent(const std::wstring& eventName)
 
 bool IDispatchAPI::HasEvent(const std::string& eventName)
 {
+    if (!host->isMainThread()) {
+        typedef bool (IDispatchAPI::*HasEventType)(const std::string&);
+        return host->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
+    }
+
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(FB::utf8_to_wstring(eventName)) != -1;
@@ -139,6 +179,10 @@ bool IDispatchAPI::HasEvent(const std::string& eventName)
 // Methods to manage properties on the API
 FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
+    }
+
     DISPPARAMS params;
     params.cArgs = 0;
     params.cNamedArgs = 0;
@@ -164,6 +208,11 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 
 void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
+    if (!host->isMainThread()) {
+        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
+        return;
+    }
+
     CComVariant arg[1];
     DISPID namedArg[1];
     DISPPARAMS params;
@@ -182,7 +231,7 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     DISPID id(getIDForName(FB::utf8_to_wstring(propertyName)));
     CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     if (dispex.p) {
-        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
+        hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUTREF, &params,
             &res, &eInfo, NULL);
     } else {
         hr = m_obj->Invoke(id, IID_NULL, LOCALE_USER_DEFAULT,
@@ -211,7 +260,7 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     if (!host->isMainThread()) {
-        return InvokeMainThread(methodName, args);
+        return host->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
     CComVariant *comArgs = new CComVariant[args.size()];

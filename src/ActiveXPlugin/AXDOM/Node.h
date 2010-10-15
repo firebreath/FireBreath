@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_AXDOM_NODE
 #define H_AXDOM_NODE
 
@@ -19,14 +20,14 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "Win/win_common.h"
 #include <atlctl.h>
 #include "IDispatchAPI.h"
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Node.h"
 
 namespace AXDOM {
     /**
      * Node (used as NodePtr, a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM node
+     * Provides a wrapper around a JSObject * that represents a DOM node
      **/
     class Node;
     typedef boost::shared_ptr<Node> NodePtr;
@@ -34,8 +35,8 @@ namespace AXDOM {
     class Node : public FB::DOM::Node
     {
     public:
-        Node(const FB::JSObject& element, IWebBrowser *web)
-            : m_axNode(as_IDispatchAPI(element)->getIDispatch()),
+        Node(const FB::JSObjectPtr& element, IWebBrowser *web)
+            : m_axNode(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
               m_webBrowser(web), FB::DOM::Node(element)
         {
             if (!m_axNode)

@@ -10,6 +10,7 @@
 #define H_TEMPLATEPLUGIN
 
 #include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/DrawingEvents.h"
 
 #include "PluginCore.h"
 #include "PluginWindow.h"

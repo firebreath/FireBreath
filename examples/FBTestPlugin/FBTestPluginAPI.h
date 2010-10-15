@@ -16,13 +16,21 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <string>
 #include <sstream>
 #include "JSAPIAuto.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
+#include <boost/weak_ptr.hpp>
+#include "ThreadRunnerAPI.h"
+
+class FBTestPlugin;
 
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(FB::BrowserHost host);
+    FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
+
+    boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
+
+    FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
 
     std::wstring say(const std::wstring& val);
     // Read/Write property testString
@@ -32,7 +40,7 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    FB::JSOutObject get_simpleMath();
+    FB::JSAPIPtr get_simpleMath();
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
@@ -42,9 +50,10 @@ public:
 
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
-    FB::VariantList getObjectKeys(const FB::JSObject& arr);
-    FB::VariantList getObjectValues(const FB::JSObject& arr);
+    FB::VariantList getObjectKeys(const FB::JSObjectPtr& arr);
+    FB::VariantList getObjectValues(const FB::JSObjectPtr& arr);
     FB::VariantMap getUserData();
+    FB::VariantList getUserArray();
 
     // Method add
     long add(long a, long b);
@@ -59,8 +68,9 @@ public:
     std::string getPageLocation();
 
 private:
-    FB::BrowserHost m_host;
+    FB::BrowserHostPtr m_host;
     FB::JSAPIPtr m_simpleMath;
+    boost::weak_ptr<FBTestPlugin> m_pluginWeak;
 
     std::string m_testString;
 };

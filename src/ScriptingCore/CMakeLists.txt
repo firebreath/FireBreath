@@ -28,6 +28,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${FIREBREATH_CONFIG_DIR}
+    ${PLUGINCOMMON_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     )
 
@@ -51,13 +52,15 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     variant_map.*
     TypeIDMap.*
     utf8*
+    SafeQueue*
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     JSAPI*
-    BrowserHostWrapper.*
-    BrowserObjectAPI.*
+    BrowserHost.*
+    JSObject.*
     AsyncBrowser*
+    Cross*
     AsyncFunction*
     SyncBrowser*
     *Converter.*

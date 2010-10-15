@@ -15,13 +15,13 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_FAKE_JS_ARRAY
 #define H_FAKE_JS_ARRAY
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 
-class FakeJsArray : public FB::BrowserObjectAPI
+class FakeJsArray : public FB::JSObject
 {
 public:
     FakeJsArray(const FB::VariantList& values)
-      : FB::BrowserObjectAPI(FB::BrowserHost()), m_values(values)
+      : FB::JSObject(FB::BrowserHostPtr()), m_values(values)
     {
     }
 

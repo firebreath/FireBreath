@@ -16,8 +16,9 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "JSAPI.h"
 #include "variant_list.h"
 #include "FactoryDefinitions.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include "DOM/Window.h"
+#include "logging.h"
 
 #include "PluginCore.h"
 
@@ -35,6 +36,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
+    FBLOG_INFO("FB::PluginCore", std::string("os: " + os + "; browser: " + browser).c_str());
 }
 
 /***************************\
@@ -43,6 +45,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 
 PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
 {
+    FB::Log::initLogging();
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
@@ -96,18 +99,21 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
         try {
             std::string value(it->second.convert_cast<std::string>());
             if (key.substr(0, 2) == "on") {
-                FB::JSObject tmp;
+                FB::JSObjectPtr tmp;
                 tmp = m_host->getDOMWindow()
-                    ->getProperty<FB::JSObject>(value);
+                    ->getProperty<FB::JSObjectPtr>(value);
+
+                FBLOG_TRACE("PluginCore", std::string("Found <param> event handler: " + key).c_str());
 
                 m_params[key] = tmp;
             }
-        } catch (std::exception &ex) {
+        } catch (const std::exception &ex) {
+            FBLOG_WARN("PluginCore", std::string("Exception processing <param> " + key + ": " + ex.what()).c_str());
         }
     }
 }
 
-void PluginCore::SetHost(FB::BrowserHost host)
+void PluginCore::SetHost(FB::BrowserHostPtr host)
 {
     m_host = host;
 }
@@ -126,17 +132,19 @@ PluginWindow* PluginCore::GetWindow() const
     return m_Window;
 }
 
-void PluginCore::SetWindow(PluginWindow *wind)
+void PluginCore::SetWindow(PluginWindow *win)
 {
-    if (m_Window && m_Window != wind) {
+    FBLOG_TRACE("PluginCore", "Window Set");
+    if (m_Window && m_Window != win) {
         ClearWindow();
     }
-    m_Window = wind;
-    wind->AttachObserver(this);
+    m_Window = win;
+    win->AttachObserver(this);
 }
 
 void PluginCore::ClearWindow()
 {
+    FBLOG_TRACE("PluginCore", "Window Cleared");
     if (m_Window) {
         m_Window->DetachObserver(this);
         m_Window = NULL;
@@ -147,14 +155,15 @@ void PluginCore::ClearWindow()
 // to indicate that we're done.
 void PluginCore::setReady()
 {
+    FBLOG_INFO("PluginCore", "Plugin Ready");
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
-            FB::JSObject method = fnd->second.convert_cast<FB::JSObject>();
+            FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
             method->InvokeAsync("", FB::variant_list_of(getRootJSAPI()));
         }
     } catch(...) {
-        // Usually this would be if it isn't a JSObject or the object can't be called
+        // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
 }
 

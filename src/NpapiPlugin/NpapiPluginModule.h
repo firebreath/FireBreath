@@ -13,6 +13,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPAPIPLUGINMODULE
 #define H_NPAPIPLUGINMODULE
 

@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::DOM;
 
-Document::Document(const FB::JSObject& element) : Element(element)
+Document::Document(const FB::JSObjectPtr& element) : Element(element)
 {
 }
 
@@ -29,14 +29,14 @@ Document::~Document()
 
 WindowPtr Document::getWindow()
 {
-    JSObject api = getProperty<FB::JSObject>("window");
+    JSObjectPtr api = getProperty<FB::JSObjectPtr>("window");
     return Window::create(api);
 }
 
 ElementPtr Document::getElementById(const std::string& id)
 {
-    JSObject api =
-        callMethod<JSObject>("getElementById", FB::VariantList(variant_list_of(id)));
+    JSObjectPtr api =
+        callMethod<JSObjectPtr>("getElementById", FB::VariantList(variant_list_of(id)));
     return Element::create(api);
 }
 
@@ -47,8 +47,8 @@ std::vector<ElementPtr> Document::getElementsByTagName(const std::wstring& tagNa
 
 std::vector<ElementPtr> Document::getElementsByTagName(const std::string& tagName)
 {
-    std::vector<FB::JSObject> tagList = callMethod<std::vector<FB::JSObject> >("getElementsByTagName", FB::variant_list_of(tagName));
-    std::vector<FB::JSObject>::iterator it;
+    std::vector<FB::JSObjectPtr> tagList = callMethod<std::vector<FB::JSObjectPtr> >("getElementsByTagName", FB::variant_list_of(tagName));
+    std::vector<FB::JSObjectPtr>::iterator it;
     std::vector<ElementPtr> outList;
     for (it = tagList.begin(); it != tagList.end(); it++)
     {

@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_META_UTIL_IMPL_22122009
 #define H_META_UTIL_IMPL_22122009
 
@@ -20,42 +21,11 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/mpl/contains.hpp>
+#include <boost/mpl/and.hpp>
 #include <boost/type_traits.hpp>
-
-#define FB_PORTABLE_META // comment out to get previous behaviour
 
 namespace FB { namespace meta { namespace detail
 {
-#ifndef FB_PORTABLE_META
-    template<typename C>
-    struct is_container_impl
-    {
-        typedef char yes;
-        typedef char (&no)[2];
-
-        template<typename U, size_t (U::*)(const int&) const> struct sfinae {};
-        template<typename U> static yes test(typename U::const_iterator = U().begin());
-        template<typename U> static no  test(...);
-
-        enum { value = (sizeof(test<C>()) == sizeof(yes)) };
-        typedef boost::mpl::bool_<value> type;
-    };
-
-    template<typename C>
-    struct is_assoc_impl
-    {
-        typedef char yes;
-        typedef char (&no)[2];
-
-        template<typename U, size_t (U::*)(const int&) const> struct sfinae {};
-        template<typename U> static yes test(typename U::key_type = U::key_type());
-        template<typename U> static no  test(...);
-
-        enum { value = (sizeof(test<C>()) == sizeof(yes)) };
-        typedef boost::mpl::bool_<value> type;
-    };
-#else // #ifndef FB_PORTABLE_META
-
     class yes { char c;   };
     class no  { yes y[2]; };
 
@@ -213,7 +183,6 @@ namespace FB { namespace meta { namespace detail
         static const bool value = value_type_is_pair;
         typedef boost::mpl::bool_<value> type;
     };
-#endif
 
     typedef boost::mpl::vector
     <
@@ -271,7 +240,7 @@ namespace FB { namespace meta { namespace detail
       : is_assoc_container_helper<boost::is_class<T>::value, T>
     {};
 
-    //////////////////////
+    ///////////////////////////
     // is_pair_assoc_container
 
     template<bool isClass, class T>
@@ -310,12 +279,35 @@ namespace FB { namespace meta { namespace detail
     struct is_non_assoc_container
       : is_non_assoc_container_helper<boost::is_class<T>::value, T>
     {};
+    
+    ////////////////////////////////////////////////
+    // is number - we consider bool as a non-number
+    
+    template<class T>
+    struct is_number
+      : boost::mpl::and_<
+          boost::is_arithmetic<T>,
+          boost::mpl::not_<
+            boost::is_same<T, bool> 
+          >
+        >
+    {};
 
     ///////////////////////////////////////////////////////////////////////////
     // enable_if helpers:
     //   T - the type to compare
     //   R - the return type
 
+    template<class T, typename R>
+    struct enable_for_numbers_impl
+        : boost::enable_if<is_number<T>, R>
+    {};
+    
+    template<class T, typename R>
+    struct disable_for_numbers_impl 
+        : boost::disable_if<is_number<T>, R>
+    {};
+    
     template<class T, typename R>
     struct enable_for_containers_impl
         : boost::enable_if<is_container<T>, R>
@@ -324,6 +316,28 @@ namespace FB { namespace meta { namespace detail
     template<class T, typename R>
     struct disable_for_containers_impl 
         : boost::disable_if<is_container<T>, R>
+    {};
+    
+    template<class T, typename R>
+    struct enable_for_containers_and_numbers_impl 
+        : boost::enable_if<
+            boost::mpl::or_<
+              is_container<T>,
+              is_number<T> 
+            >,
+            R
+          >
+    {};
+    
+    template<class T, typename R>
+    struct disable_for_containers_and_numbers_impl 
+        : boost::disable_if<
+            boost::mpl::or_<
+              is_container<T>,
+              is_number<T> 
+            >,
+            R
+          >
     {};
 
     template<class T, typename R>

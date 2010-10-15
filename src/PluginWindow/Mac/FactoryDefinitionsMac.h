@@ -26,8 +26,9 @@ namespace FB {
     class PluginCore;
     class PluginWindowMacCarbonQD;
     class PluginWindowMacCarbonCG;
-    class PluginWindowMacCocoaCA;
     class PluginWindowMacCocoaCG;
+    class PluginWindowMacCocoaCA;
+    class PluginWindowMacCocoaICA;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -43,8 +44,10 @@ FB::PluginWindowMacCarbonQD* _createPluginWindowCarbonQD(CGrafPtr port, int x, i
 
 FB::PluginWindowMacCarbonCG* _createPluginWindowCarbonCG(NP_CGContext* context);
 
-FB::PluginWindowMacCocoaCG* _createPluginWindowCocoaCG(NP_CGContext* context);
+FB::PluginWindowMacCocoaCG* _createPluginWindowCocoaCG();
 
 FB::PluginWindowMacCocoaCA* _createPluginWindowCocoaCA();
+
+FB::PluginWindowMacCocoaICA* _createPluginWindowCocoaICA();
 
 #endif

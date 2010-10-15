@@ -55,7 +55,7 @@ BasicMediaPlayerPlugin::~BasicMediaPlayerPlugin()
 
 FB::JSAPIPtr BasicMediaPlayerPlugin::createJSAPI()
 {
-    // m_host is the BrowserHostWrapper
+    // m_host is the BrowserHost
     m_player = BasicMediaPlayerPtr(new BasicMediaPlayer(m_host));
     m_player->setWindow(m_window);
     return m_player;

@@ -15,11 +15,11 @@ Copyright 2010 PacketPass Inc, Georg Fritzsche,
 
 #include "SimpleStreams.h"
 #include "BrowserStream.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 
 using namespace FB;
 
-StreamsTest::StreamsTest( BrowserHost Host ) : host(Host)
+StreamsTest::StreamsTest( BrowserHostPtr Host ) : host(Host)
 {
 }
 
@@ -38,7 +38,7 @@ public:
 class MyStreamHandler2 : public FB::DefaultBrowserStreamHandler
 {
 public:
-    MyStreamHandler2( BrowserHost Host ) : host(Host)
+    MyStreamHandler2( BrowserHostPtr Host ) : host(Host)
     {}
 
     virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *)
@@ -69,10 +69,11 @@ public:
     virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *)
     {
         size_t end = evt->getDataPosition() + evt->getLength();
+        FB_UNUSED_VARIABLE(end);
         return true;
     }
 
-    BrowserHost host;
+    BrowserHostPtr host;
 };
 
 
@@ -87,14 +88,17 @@ bool StreamsTest::run()
     // create a sequential, cached stream (the default if you omit the parameters)
     FB::PluginEventSink* streamHandler1 = new MyStreamHandler1;
     FB::BrowserStream* testStream1 = host->createStream( "http://colonelpanic.net/", streamHandler1, true, false );
+    FB_UNUSED_VARIABLE(testStream1);
 
     // create a seekable, non-cached stream
     FB::PluginEventSink* streamHandler2 = new MyStreamHandler2( host );
     FB::BrowserStream* testStream2 = host->createStream( "http://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Wikipedia-logo.png/100px-Wikipedia-logo.png", streamHandler2, false, true );
+    FB_UNUSED_VARIABLE(testStream2);
  
     // try to access a page which does not exists (e.g. 404 or dns fails)
     FB::PluginEventSink* streamHandler3 = new MyStreamHandler3;
     FB::BrowserStream* testStream3 = host->createStream( "http://www.idontexist.invalid/index.html", streamHandler3, true, false );
+    FB_UNUSED_VARIABLE(testStream3);
 
     return true;
 }

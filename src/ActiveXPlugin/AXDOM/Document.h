@@ -12,27 +12,28 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_AXDOM_DOCUMENT
 #define H_AXDOM_DOCUMENT
 
 #include <string>
 #include "Win/win_common.h"
 #include <atlctl.h>
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Document.h"
 #include "DOM/Element.h"
 
 namespace AXDOM {
 
     /**
-     * Document - used as Document (which is a shared_ptr)
+     * Document - used as DocumentPtr (which is a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM document
+     * Provides a wrapper around a JSObject * that represents a DOM document
      **/
     class Document : public FB::DOM::Document
     {
     public:
-        Document(const FB::JSObject &element, IWebBrowser2 *web);
+        Document(const FB::JSObjectPtr &element, IWebBrowser2 *web);
         virtual ~Document();
 
     public:

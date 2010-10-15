@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lexical_cast.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
+#include "logging.h"
 #include <cassert>
 
 using namespace FB::Npapi;
@@ -23,7 +24,7 @@ using namespace FB::Npapi;
 #define REFCOUNT_CUTOFF_MULT 7
 
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
-    : BrowserObjectAPI(h), browser(h), obj(o)
+    : JSObject(h), browser(h), obj(o)
 {
     assert(browser);
     if (o != NULL) {
@@ -53,12 +54,17 @@ NPObjectAPI::~NPObjectAPI(void)
             for (int i = 0; i < RETAIN_COUNT; i++) {
                 browser->ReleaseObject(obj);
             }
+        } else {
+            FBLOG_ERROR("NPObjectAPI", std::string("Invalid reference count found on NPObject!" + obj->referenceCount).c_str());
         }
     }
 }
 
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberNames, this, nameVector));
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
 
@@ -71,6 +77,9 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
 
 size_t NPObjectAPI::getMemberCount()
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberCount, this));
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
     browser->Enumerate(obj, &idArray, &count);
@@ -80,11 +89,19 @@ size_t NPObjectAPI::getMemberCount()
 
 bool NPObjectAPI::HasMethod(const std::string& methodName)
 {
+    if (!host->isMainThread()) {
+        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
+    }
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
 bool NPObjectAPI::HasProperty(const std::string& propertyName)
 {
+    if (!host->isMainThread()) {
+        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
+    }
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
 
@@ -102,6 +119,9 @@ bool NPObjectAPI::HasEvent(const std::string& eventName)
 // Methods to manage properties on the API
 FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
+    if (!host->isMainThread()) {
+        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
+    }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
         throw script_error(propertyName.c_str());
@@ -114,6 +134,10 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 
 void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
+    if (!host->isMainThread()) {
+        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+        return;
+    }
     NPVariant val;
     browser->getNPVariant(&val, value);
     if (!browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val)) {
@@ -136,11 +160,10 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 // Methods to manage methods on the API
 FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
-    NPVariant retVal;
-
     if (!host->isMainThread()) {
-        return InvokeMainThread(methodName, args);
+        return host->CallOnMainThread(boost::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
     }
+    NPVariant retVal;
 
     // Convert the arguments to NPVariants
     NPVariant *npargs = new NPVariant[args.size()];

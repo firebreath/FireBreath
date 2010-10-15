@@ -16,8 +16,8 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 using namespace AXDOM;
 
-Element::Element(const FB::JSObject& element, IWebBrowser *web)
-    : FB::DOM::Element(element), m_axElement(as_IDispatchAPI(element)->getIDispatch()),
+Element::Element(const FB::JSObjectPtr& element, IWebBrowser *web)
+    : FB::DOM::Element(element), m_axElement(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
       m_webBrowser(web)
 {
     if (!m_axElement)

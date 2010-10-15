@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_DOM_WINDOW
 #define H_FB_DOM_WINDOW
 
@@ -22,28 +23,28 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 namespace FB { namespace DOM {
 
-    class BrowserObjectAPI;
+    class JSObject;
     /**
      * Window
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
+     * Provides a wrapper around a JSObject * that represents a DOM element
      **/
     class Window;
     typedef boost::shared_ptr<Window> WindowPtr;
     class Window : public Node
     {
     public:
-        Window(const JSObject& element);
+        Window(const JSObjectPtr& element);
         virtual ~Window();
         WindowPtr window() { return boost::dynamic_pointer_cast<Window>(node()); }
-        static WindowPtr create(FB::JSObject &api) { return api->host->_createWindow(api); }
+        static WindowPtr create(FB::JSObjectPtr &api) { return api->host->_createWindow(api); }
 
     public:
         virtual DocumentPtr getDocument();
         virtual void alert(const std::string& str);
         virtual void alert(const std::wstring& str);
-        virtual NodePtr createArray();
-        virtual NodePtr createMap();
+        virtual FB::JSObjectPtr createArray();
+        virtual FB::JSObjectPtr createMap();
         virtual std::string getLocation();
     };
 

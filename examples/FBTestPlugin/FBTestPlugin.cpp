@@ -36,8 +36,8 @@ FBTestPlugin::~FBTestPlugin()
 
 FB::JSAPIPtr FBTestPlugin::createJSAPI()
 {
-    // m_host is the BrowserHostWrapper
-    return FB::JSAPIPtr(new FBTestPluginAPI(m_host));
+    // m_host is the BrowserHost
+    return FB::JSAPIPtr(new FBTestPluginAPI(FB::ptr_cast<FBTestPlugin>(shared_ptr()), m_host));
 }
 
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)

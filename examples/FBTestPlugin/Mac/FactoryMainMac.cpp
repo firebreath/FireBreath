@@ -38,9 +38,9 @@ FB::PluginWindowCarbonCG *_createPluginWindow(NP_CGContext* context)
 
 #if FBMAC_USE_COCOA
 # if FBMAC_USE_COREGRAPHICS
-FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG(NP_CGContext* context)
+FB::PluginWindowMacCocoaCG *_createPluginWindowCocoaCG()
 {
-    return new FB::PluginWindowMacCocoaCG(context);
+    return new FB::PluginWindowMacCocoaCG();
 }
 # endif
 #endif

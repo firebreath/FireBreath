@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPAPITYPES
 #define H_NPAPITYPES
 
@@ -37,7 +38,7 @@ namespace FB { namespace Npapi {
     typedef NPError (*NPGetEntryPointsFuncPtr)(NPPluginFuncs* pFuncs);
 #endif
 
-    void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs);
+    void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs, NPP instance = NULL);
 
     typedef FB::variant_detail::empty NpapiNull;
 

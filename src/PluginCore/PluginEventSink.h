@@ -12,10 +12,13 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_PLUGINEVENTSINK
 #define H_FB_PLUGINEVENTSINK
 
 #include "PluginEventSource.h"
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/shared_ptr.hpp>
 #include <string>
 
 namespace FB {
@@ -26,11 +29,12 @@ namespace FB {
      *
      * This is the base class for the main plugin class of a user-defined Plugin
      **/
-    class PluginEventSink
+    class PluginEventSink : public boost::enable_shared_from_this<PluginEventSink>
     {
     public:
         PluginEventSink() { };
         virtual ~PluginEventSink() { };
+        boost::shared_ptr<PluginEventSink> shared_ptr() { return shared_from_this(); }
 
     public:
         virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;

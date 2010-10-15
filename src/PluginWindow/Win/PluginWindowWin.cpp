@@ -110,6 +110,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 // Release the device context
                 EndPaint(m_hWnd, &ps);
             }
+            break;
         }
         case WM_TIMER:
         {

@@ -34,13 +34,16 @@ include_directories(
     ${PLUGINWINDOW_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
+    ${FBLIB_INCLUDE_DIRS}
     )
 
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
-    #    message("Configuring ${CURFILE}")
+    if (VERBOSE)
+        message("Configuring ${CURFILE}")
+    endif()
     configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
@@ -53,8 +56,11 @@ foreach(TemplateFile ${TEMPLATELIST})
 endforeach()
 
 set(PLUGIN_INTERNAL_DEPS
+    ${Boost_LIBRARIES}
     ${PLUGIN_PREFIX}_NpapiPlugin
     ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
+    ${FBLIB_LIBRARIES}
     ScriptingCore
     PluginCore
     )

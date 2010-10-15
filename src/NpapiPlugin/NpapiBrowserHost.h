@@ -12,11 +12,12 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_NPAPIBROWSERHOST
 #define H_NPAPIBROWSERHOST
 
 #include "NpapiTypes.h"
-#include "BrowserHostWrapper.h"
+#include "BrowserHost.h"
 #include <boost/thread.hpp>
 
 namespace FB { namespace Npapi {
@@ -24,10 +25,9 @@ namespace FB { namespace Npapi {
     class NpapiPluginModule;
     class NPObjectAPI;
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
-#define as_NPObjectAPI(x) boost::dynamic_pointer_cast<FB::Npapi::NPObjectAPI>(x)
 
     class NpapiBrowserHost :
-        public FB::BrowserHostWrapper
+        public FB::BrowserHost
     {
     public:
         NpapiBrowserHost(NpapiPluginModule *module, NPP npp);
@@ -124,7 +124,6 @@ namespace FB { namespace Npapi {
     };
 
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-#define as_NpapiBrowserHost(x) boost::dynamic_pointer_cast<FB::Npapi::NpapiBrowserHost>(x)
 }; };
 
 #endif

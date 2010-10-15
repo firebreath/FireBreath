@@ -119,7 +119,10 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
                         this->m_old_y = py;
                         // Mouse event happened inside the plugin's window
                         MouseMoveEvent mmEvt(px, py);
-                        SendEvent(&mmEvt);
+                        if(SendEvent(&mmEvt)) {
+                            // Event was handled
+                            return true;
+                        }
                     }
                 }
             }

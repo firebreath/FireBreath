@@ -20,8 +20,8 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 using namespace AXDOM;
 
-Document::Document(const FB::JSObject& obj, IWebBrowser2 *web)
-    : m_htmlDoc(as_IDispatchAPI(obj)->getIDispatch()), m_webBrowser(web), FB::DOM::Document(obj)
+Document::Document(const FB::JSObjectPtr& obj, IWebBrowser2 *web)
+    : m_htmlDoc(FB::ptr_cast<IDispatchAPI>(obj)->getIDispatch()), m_webBrowser(web), FB::DOM::Document(obj)
 {
 }
 
@@ -34,7 +34,7 @@ FB::DOM::WindowPtr Document::getWindow()
     CComQIPtr<IHTMLWindow2> htmlWin;
     m_htmlDoc->get_parentWindow(&htmlWin);
     CComQIPtr<IDispatch> windowDisp(htmlWin);
-    FB::JSObject api(new IDispatchAPI(htmlWin.p, as_ActiveXBrowserHost(m_element->host)));
+    FB::JSObjectPtr api(new IDispatchAPI(htmlWin.p, FB::ptr_cast<ActiveXBrowserHost>(m_element->host)));
 
     return FB::DOM::Window::create(api);
 }
@@ -48,7 +48,7 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id)
     CComPtr<IHTMLElement> el(NULL);
     doc3->getElementById(CComBSTR(FB::utf8_to_wstring(elem_id).c_str()), &el);
     CComQIPtr<IDispatch> disp(el);
-    FB::JSObject ptr(new IDispatchAPI(disp.p, as_ActiveXBrowserHost(this->m_element->host)));
+    FB::JSObjectPtr ptr(new IDispatchAPI(disp.p, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->host)));
     return FB::DOM::Element::create(ptr);
 }
 
@@ -64,7 +64,7 @@ std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::strin
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-            FB::JSObject obj(new IDispatchAPI(dispObj.p, as_ActiveXBrowserHost(this->m_element->host)));
+            FB::JSObjectPtr obj(new IDispatchAPI(dispObj.p, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->host)));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }

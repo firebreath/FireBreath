@@ -12,11 +12,12 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#pragma once
 #ifndef H_FB_DOM_ELEMENT
 #define H_FB_DOM_ELEMENT
 
 #include <string>
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "Node.h"
 
 namespace FB { namespace DOM {
@@ -24,18 +25,18 @@ namespace FB { namespace DOM {
     /**
      * Element (used as ElementPtr, a shared_ptr)
      *
-     * Provides a wrapper around a BrowserObjectAPI * that represents a DOM element
+     * Provides a wrapper around a JSObject * that represents a DOM element
      **/
     class Element;
     typedef boost::shared_ptr<Element> ElementPtr;
     class Element : public Node
     {
     public:
-        Element(const FB::JSObject& element);
+        Element(const FB::JSObjectPtr& element);
 
         virtual ~Element();
         ElementPtr element() { return boost::dynamic_pointer_cast<Element>(node()); }
-        static ElementPtr create(FB::JSObject &api) { return api->host->_createElement(api); }
+        static ElementPtr create(FB::JSObjectPtr &api) { return api->host->_createElement(api); }
 
     public:
         virtual std::string getInnerHTML();
@@ -52,14 +53,14 @@ namespace FB { namespace DOM {
 
         virtual ElementPtr getElement(const std::string& name)
         {
-            JSObject api = getProperty<FB::JSObject>(name);
+            JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
             ElementPtr retVal(new Element(api));
             return retVal;
         }
 
         virtual ElementPtr getElement(int idx)
         {
-            JSObject api = getProperty<FB::JSObject>(idx);
+            JSObjectPtr api = getProperty<FB::JSObjectPtr>(idx);
             ElementPtr retVal(new Element(api));
             return retVal;
         }

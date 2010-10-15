@@ -13,15 +13,16 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
-#include "BrowserObjectAPI.h"
+#include "JSObject.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
+#include "FBTestPlugin.h"
 #include "SimpleMathAPI.h"
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
+FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
@@ -32,12 +33,14 @@ FBTestPluginAPI::FBTestPluginAPI(FB::BrowserHost host) : m_host(host)
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
     registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
+    registerMethod("getUserArray",  make_method(this, &FBTestPluginAPI::getUserArray));
     registerMethod("getObjectKeys",  make_method(this, &FBTestPluginAPI::getObjectKeys));
     registerMethod("getObjectValues",  make_method(this, &FBTestPluginAPI::getObjectValues));
     registerMethod("testEvent",  make_method(this, &FBTestPluginAPI::testEvent));
     registerMethod("testStreams",  make_method(this, &FBTestPluginAPI::testStreams));
     registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
     registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
+    registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
@@ -67,7 +70,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
-    return L"Ð²Ð¾Ñ, Ñ Ð³Ð¾Ð²Ð¾ÑÑ \"" + val + L"\"";
+    return L"вот, я говорю \"" + val + L"\"";
 }
 
 // Read/Write property someInt
@@ -136,7 +139,7 @@ FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& ar
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -148,7 +151,7 @@ FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObject& arr)
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObject& arr)
+FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
 {
     FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
@@ -175,6 +178,28 @@ std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
     return outStr;
 }
 
+FB::VariantList FBTestPluginAPI::getUserArray()
+{
+    FB::VariantList map;
+    map.push_back("Richard Bateman");
+    map.push_back("Somewhere in Utah");
+    map.push_back("Hazel");
+    map.push_back("Brown");
+    FB::VariantList kids;
+    kids.push_back("Caleb");
+    kids.push_back("Unknown");
+    kids.push_back("Ok, I only have one, but I'm filling space");
+    FB::VariantMap innerMap;
+    innerMap["test"] = 12;
+    innerMap["test2"] = true;
+    innerMap["test3"] = 12.4;
+    innerMap["test4"] = "asdf";
+    map.push_back(innerMap);
+    kids.push_back(innerMap);
+    map.push_back(kids);
+    return map;
+}
+
 FB::VariantMap FBTestPluginAPI::getUserData()
 {
     FB::VariantMap map;
@@ -186,11 +211,18 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     kids.push_back("Caleb");
     kids.push_back("Unknown");
     kids.push_back("Ok, I only have one, but I'm filling space");
+    FB::VariantMap innerMap;
+    innerMap["test"] = 12;
+    innerMap["test2"] = true;
+    innerMap["test3"] = 12.4;
+    innerMap["test4"] = "asdf";
+    map["inner"] = innerMap;
+    kids.push_back(innerMap);
     map["Kids"] = kids;
     return map;
 }
 
-FB::JSOutObject FBTestPluginAPI::get_simpleMath()
+FB::JSAPIPtr FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }
