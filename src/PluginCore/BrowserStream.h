@@ -73,7 +73,7 @@ namespace FB {
         virtual ~BrowserStream();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool BrowserHost::readRange( size_t start, size_t end )
+        /// @fn virtual bool BrowserStream::readRange( size_t start, size_t end )
         ///
         /// @brief  Performs a read range request, returns the bytes in the range [start, end). 
         ///
