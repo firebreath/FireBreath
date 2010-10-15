@@ -24,21 +24,60 @@ namespace FB {
     class PluginEventSink;
     class PluginEvent;
 
-    /**
-     * PluginWindow
-     *
-     * This is the base class for the window of a user-defined Plugin
-     **/
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginEventSource
+    ///
+    /// @brief  Base class for any object, such as BrowserStream or PluginWindow, that needs to fire
+    /// 		events to a PluginEventSink object (such as a PluginCore derived plugin class) 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginEventSource
     {
     public:
         PluginEventSource();
         virtual ~PluginEventSource();
 
-        virtual void AttachObserver(PluginEventSink*);
-        virtual void DetachObserver(PluginEventSink*);
-        virtual bool SendEvent(PluginEvent*);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void PluginEventSource::AttachObserver(PluginEventSink*)
+        ///
+        /// @brief  Attach a PluginEventSink to receive events
+        ///
+        /// @param  sink PluginEventSink to attach
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void AttachObserver(PluginEventSink* sink);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void PluginEventSource::DetachObserver(PluginEventSink* sink)
+        ///
+        /// @brief  Detach a PluginEventSink so it no longer receives events from this source
+        ///
+        /// @param  sink PluginEventSink to attach
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void DetachObserver(PluginEventSink* sink);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool PluginEventSource::SendEvent(PluginEvent* evt)
+        ///
+        /// @brief  Sends an event to all attached sinks
+        ///
+        /// @param  evt The event to send
+        ///
+        /// @return true if the event was handled, false if it was not
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool SendEvent(PluginEvent* evt);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <class T> T* PluginEventSource::get_as()
+        ///
+        /// @brief  Templated convenience function for performing a dynamic cast of this object
+        /// 		
+        /// @code
+        /// 	 PluginWindow* wnd = evtSource->get_as<PluginWindow>();
+        /// @endcode
+        ///
+        /// @exception  std::bad_cast   Thrown when bad cast. 
+        ///
+        /// @return null if it fails, else T* 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T* get_as()
         {
@@ -49,8 +88,14 @@ namespace FB {
         }
 
     protected:
-        typedef std::vector<PluginEventSink*> ObserverMap;
-        ObserverMap m_observers;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @typedef    std::vector<PluginEventSink*> ObserverMap
+        ///
+        /// @brief  Defines an alias representing the observer .
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        typedef std::vector<PluginEventSink*> ObserverMap; 
+        ObserverMap m_observers; /// List of attached observers
     };
 };
 

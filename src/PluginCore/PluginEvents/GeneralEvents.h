@@ -20,6 +20,12 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  TimerEvent
+    ///
+    /// @brief  Fired when a timer event is received; currently this only works on windows and is
+    /// 		fired when WM_TIMER is received.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class TimerEvent : public PluginEvent
     {
     public:
@@ -28,8 +34,8 @@ namespace FB {
         { }
 
     public:
-        unsigned int timerId;
-        void *opaquePointer;
+        unsigned int timerId;   // The ID of the timer
+        void *opaquePointer;    // The opaque pointer associated with the timer
     };
 };
 
