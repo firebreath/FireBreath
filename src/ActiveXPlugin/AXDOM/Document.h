@@ -25,11 +25,11 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 namespace AXDOM {
 
-    /**
-     * Document - used as DocumentPtr (which is a shared_ptr)
-     *
-     * Provides a wrapper around a JSObject * that represents a DOM document
-     **/
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Document
+    ///
+    /// @brief  ActiveX specific implementation of DOM::Document
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Document : public FB::DOM::Document
     {
     public:

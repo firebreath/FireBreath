@@ -26,11 +26,11 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 namespace AXDOM {
 
-    /**
-     * Element (used as ElementPtr, a shared_ptr)
-     *
-     * Provides a wrapper around a JSObject * that represents a DOM element
-     **/
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Element
+    ///
+    /// @brief  ActiveX specific implementation of DOM::Element
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Element : public FB::DOM::Element
     {
     public:
