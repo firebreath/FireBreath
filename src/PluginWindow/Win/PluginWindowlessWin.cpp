@@ -53,6 +53,10 @@ int16_t PluginWindowlessWin::HandleEvent(NPEvent* evt)
         case WM_PAINT:
         {
             NPRect* r = (NPRect*)evt->lParam;
+            HDC dc = (HDC)evt->wParam;
+            if(dc != m_hdc) {
+                setHDC(dc);
+            }
             RefreshEvent ev;
             SendEvent(&ev);
             return 0;
@@ -99,7 +103,7 @@ NPRect PluginWindowlessWin::getWindowPosition() {
     return r;
 }
 
-void PluginWindowlessWin::setWindowPosition(int x, int y, int height, int width) {
+void PluginWindowlessWin::setWindowPosition(int x, int y, int width, int height) {
     m_x = x;
     m_y = y;
     m_height = height;

@@ -53,11 +53,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
     // the plugin is windowed or windowless.
     if(pluginMain->isWindowless()) { 
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
-        // Check to see if we've received a new HDC (new drawable)
-        if(win != NULL && win->getHDC() != (HDC)window->window) {
-            pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL; 
-        }
 
         if(win == NULL && pluginWin != NULL) {
             // We've received a window of a different type than the 
@@ -77,11 +72,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             pluginMain->SetWindow(win);
             setReady();
             pluginWin = win;
-        } else {
-            win->setWindowPosition(window->x, window->y, window->width, window->height);
-            win->setWindowClipping(window->clipRect.top, window->clipRect.left,
-                                   window->clipRect.bottom, window->clipRect.right);
-        }
+        } 
     } else { 
         PluginWindowWin* win = dynamic_cast<PluginWindowWin*>(pluginWin);
         // Check to see if we've received a new HWND (new window)
