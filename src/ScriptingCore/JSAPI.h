@@ -29,9 +29,6 @@ namespace FB
     /// @exception script_error
     ///
     /// @brief  Exception type; when thrown in a JSAPI method, a javascript exception will be thrown. 
-    ///
-    /// @author Richard Bateman
-    /// @date   10/14/2010
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct script_error : std::exception
     {
@@ -51,9 +48,6 @@ namespace FB
     /// @brief  Thrown by a JSAPI object when the argument(s) provided to a SetProperty or Invoke
     ///         call are found to be invalid.  JSAPIAuto will throw this automatically if the argument
     ///         cannot be convert_cast to the type expected by the function.
-    ///
-    /// @author Richard Bateman
-    /// @date   10/14/2010
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct invalid_arguments : script_error
     {
@@ -76,9 +70,6 @@ namespace FB
     /// This is particularly useful when you want to invalidate the object
     /// when the plugin gets released, as the PluginCore-derived Plugin object will usually get
     /// released before the JSAPI object
-    ///
-    /// @author Richard Bateman
-    /// @date   10/14/2010
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct object_invalidated : script_error
     {
@@ -93,9 +84,6 @@ namespace FB
     ///
     /// @brief  Thrown when an Invoke, SetProperty, or GetProperty call is made for a member that is
     ///         invalid (does not exist, not accessible, only supports Get or Set, etc) 
-    ///
-    /// @author Richard Bateman
-    /// @date   10/14/2010
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct invalid_member : script_error
     {
