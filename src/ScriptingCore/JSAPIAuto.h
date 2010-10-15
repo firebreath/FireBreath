@@ -44,9 +44,11 @@ namespace FB {
     /// @code
     /// 	 registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished, &MyPluginAPI::set_IsFinished));
     /// @endcode
-    /// To register a property that is read- or write-only, simply provide "NULL" for the getter or
-    /// setter function when registering the property.
-    /// 
+    /// To register a property that is read--only, use the second form:
+    /// @code
+    ///      registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished));
+    /// @endcode 
+    ///
     /// Similarly, to provide a method called "add" that accepts two integers and returns an integer,
     /// you need one method on your class:
     /// @code
