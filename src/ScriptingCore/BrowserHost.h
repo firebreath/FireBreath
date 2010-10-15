@@ -266,10 +266,10 @@ namespace FB
         virtual void htmlLog(const std::string& str);
 
 public:
-    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);     /// Helper function, use FB::DOM::Window::create()
-    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj); /// Helper function, use FB::DOM::Document::create()
-    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);   /// Helper function, use FB::DOM::Element::create()
-    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);         /// Helper function, use FB::DOM::Node::create()
+    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
 
     protected:
 

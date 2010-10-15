@@ -45,7 +45,7 @@ namespace FB
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn :::JSObject(BrowserHostPtr h)
+        /// @fn JSObject(BrowserHostPtr h)
         ///
         /// @brief  Constructor
         ///
@@ -54,7 +54,7 @@ namespace FB
         JSObject(BrowserHostPtr h);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual :::~JSObject()
+        /// @fn virtual ~JSObject()
         ///
         /// @brief  Finaliser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,7 @@ namespace FB
         virtual void *getEventContext() { return NULL; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void :::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+        /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         ///
         /// @brief  Just like Invoke, but works asynchronously.  Useful for javascript callbacks and events.
         /// 		Can be safely called from any thread
@@ -76,7 +76,7 @@ namespace FB
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void :::SetPropertyAsync(const std::string& propertyName, const variant& value)
+        /// @fn virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
         ///
         /// @brief  Just like SetProperty, but works asynchronously.  Useful if you are running on another
         /// 		thread and don't need to wait to be sure it worked.
@@ -88,7 +88,7 @@ namespace FB
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class Cont> static void :::GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
+        /// @fn template<class Cont> static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
         ///
         /// @brief  Gets Array values out of src and adds them to the STL container dst 
         ///
@@ -103,7 +103,7 @@ namespace FB
         static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class Dict> static void :::GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
+        /// @fn template<class Dict> static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
         ///
         /// @brief  Gets object values out of the javscript object src and adds them to the STL Dict
         /// 		container dst
