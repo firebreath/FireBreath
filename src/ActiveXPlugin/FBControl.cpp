@@ -16,7 +16,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FBControl.h"
 
 int CFBControl::_REFCOUNT(0); // This must only be accessed from the main thread
-// CFBControl
 BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)
 {
     if (uMsg == WM_CREATE) {

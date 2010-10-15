@@ -1,4 +1,4 @@
-/** \file comlib/registrymap.hpp
+/** \file registrymap.hpp
   * Defines a 'registry' map for adding variables to rgs files.
   * Copyright 2001-2003 Michael Geddes.  All rights reserved.
   * Found here: http://www.codeproject.com/KB/atl/RegistryMap.aspx
