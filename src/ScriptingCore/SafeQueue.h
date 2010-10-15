@@ -21,6 +21,12 @@
 #include <queue>
 
 namespace FB {
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  SafeQueue
+    ///
+    /// @brief  Basic thread-safe queue class
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     template<typename Data>
     class SafeQueue
     {
@@ -29,6 +35,14 @@ namespace FB {
         mutable boost::mutex the_mutex;
         boost::condition_variable the_condition_variable;
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void SafeQueue::push(Data const& data)
+        ///
+        /// @brief  Pushes an object onto the end of the queue.
+        ///
+        /// @param  data    The data. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void push(Data const& data)
         {
             boost::mutex::scoped_lock lock(the_mutex);
@@ -37,12 +51,28 @@ namespace FB {
             the_condition_variable.notify_one();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool SafeQueue::empty() const
+        ///
+        /// @brief  Queries if the queue is empty 
+        ///
+        /// @return true if the Queue is empty, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool empty() const
         {
             boost::mutex::scoped_lock lock(the_mutex);
             return the_queue.empty();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool SafeQueue::try_pop(Data& popped_value)
+        ///
+        /// @brief  Try to pop a value off the front of the queue; if the queue is empty returns false
+        ///
+        /// @param [out] popped_value    The popped value. 
+        ///
+        /// @return true if a value is returned, false if the queue was empty
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool try_pop(Data& popped_value)
         {
             boost::mutex::scoped_lock lock(the_mutex);
@@ -56,6 +86,14 @@ namespace FB {
             return true;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void SafeQueue::wait_and_pop(Data& popped_value)
+        ///
+        /// @brief  Tries to pop a value off the front of the queue; if the queue is empty it will wait
+        /// 		indefinitely until something is pushed onto the back of the queue by another thread.
+        ///
+        /// @param [out] popped_value    The popped value. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void wait_and_pop(Data& popped_value)
         {
             boost::mutex::scoped_lock lock(the_mutex);
