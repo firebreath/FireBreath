@@ -27,6 +27,14 @@ class IDispatchAPI;
 typedef boost::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
 typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @class  ActiveXBrowserHost
+///
+/// @brief  Provides a BrowserHost implementation for ActiveX
+///
+/// @author Richard Bateman
+/// @date   10/15/2010
+////////////////////////////////////////////////////////////////////////////////////////////////////
 class ActiveXBrowserHost :
     public FB::BrowserHost
 {
@@ -49,9 +57,6 @@ public:
     void evaluateJavaScript(const std::string &script);
 
 public:
-    // These methods are pseudo-public; they shouldn't be
-    // called directly.  Call the ::create method on the 
-    // DOM object you want
     FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
     FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
     FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);

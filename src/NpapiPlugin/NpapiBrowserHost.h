@@ -26,6 +26,11 @@ namespace FB { namespace Npapi {
     class NPObjectAPI;
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  NpapiBrowserHost
+    ///
+    /// @brief  Provides a FB::BrowserHost implementation for Npapi
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class NpapiBrowserHost :
         public FB::BrowserHost
     {
@@ -62,7 +67,6 @@ namespace FB { namespace Npapi {
         NPObjectAPIPtr m_htmlWin;
 
     public:
-        /* These are proxied to the module */
         void* MemAlloc(uint32_t size);
         void MemFree(void* ptr);
         uint32_t MemFlush(uint32_t size);
