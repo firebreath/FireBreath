@@ -141,7 +141,7 @@ void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObjectPtr even
 
 void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObjectPtr event)
 {
-    if(obj == NULL)
+    if(event == NULL)
         m_defEventMap.erase(name);
     else 
         m_defEventMap[name] = event;

@@ -25,6 +25,12 @@ namespace FB
     class BrowserStream;
     class PluginEventSink;
     class JSObject;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @namespace  DOM {
+///
+/// @brief  .
+////////////////////////////////////////////////////////////////////////////////////////////////////
     namespace DOM {
         class Window;
         class Document;
@@ -36,6 +42,11 @@ namespace FB
         typedef boost::shared_ptr<Node> NodePtr;
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @struct AsyncLogRequest
+    ///
+    /// @brief  This class is used by BrowserHost for the BrowserHost::AsyncHtmlLog method
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct AsyncLogRequest
     {
         AsyncLogRequest(BrowserHostPtr host, const std::string& message) : m_host(host), m_msg(message) { }
@@ -44,13 +55,57 @@ namespace FB
         std::string m_msg;
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  BrowserHost
+    ///
+    /// @brief  Browser host base class
+    ///
+    /// In actual use, this class will be used as either a NpapiBrowserHost or a ActiveXBrowserHost.
+    /// This class provides APIs for making calls to the browser of any kind.  It is also used for
+    /// making calls on the primary thread.
+    /// @see NpapiBrowserHost
+    /// @see ActiveXBrowserHost
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class BrowserHost : public boost::enable_shared_from_this<BrowserHost>
     {
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn BrowserHost() : m_threadId(boost::this_thread::get_id())
+        ///
+        /// @brief  Default constructor. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         BrowserHost() : m_threadId(boost::this_thread::get_id()) { }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual ~BrowserHost()
+        ///
+        /// @brief  Finaliser. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~BrowserHost() { }
 
     public:
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void :::ScheduleAsyncCall(void (*func)(void *), void *userData) = 0
+        ///
+        /// @brief  Schedule asynchronous call to be executed on the main thread. 
+        ///
+        /// This acts exactly the same way that NPN_PluginThreadAsyncCall would in NPAPI (and in most
+        /// cases calls that function on NPAPI browsers).  It accepts a function of the type:
+        /// @code
+        ///     void funcName(void *userData)
+        /// @endcode
+        ///
+        /// The provided function will be called with the userData on the main thread.
+        /// 
+        /// NOTE: This is a low level call; it is almost always easier to use ScheduleOnMainThread
+        /// 
+        /// @param  func     The function to call. 
+        /// @param  userData The userData to pass to the function.
+        /// 				 
+        /// @see ScheduleOnMainThread
+        /// @see CallOnMainThread
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
 
         template<class Functor>
