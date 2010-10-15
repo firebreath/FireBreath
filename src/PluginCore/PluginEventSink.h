@@ -53,7 +53,7 @@ namespace FB {
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool PluginCore::HandleEvent(PluginEvent *event, PluginEventSource *source) = 0
+        /// @fn virtual bool HandleEvent(PluginEvent *event, PluginEventSource *source) = 0
         ///
         /// @brief  Called by the browser when a system event needs to be handled, such as a mouse event,
         /// 		a keyboard event, or a drawing event.
@@ -93,12 +93,50 @@ namespace FB {
     };
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @macro    BEGIN_PLUGIN_EVENT_MAP
+/// PluginEventSource *win)
+///
+/// @brief  Begins a plugin event map.
+/// 		
+/// This will create an implementation of the HandleEvent function.  It must be matched with
+/// a END_PLUGIN_EVENT_MAP() call
+///
+/// @remarks    Richard Bateman, 10/15/2010. 
+/// @see EVENTTYPE_CASE
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #define BEGIN_PLUGIN_EVENT_MAP() virtual bool HandleEvent(FB::PluginEvent *evt, FB::PluginEventSource *win) { \
                                           if (0) { }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @macro    EVENTTYPE_CASE(eventType, methodName, winType)
+///
+/// @brief  Dispatches events to the given event handler, does typecasting as needed
+///
+/// @remarks    Richard Bateman, 10/15/2010. 
+///
+/// Note that methodName must be a valid method in the class that accepts an eventType* and 
+/// a winType* as arguments
+/// 
+/// @param  eventType   Type of the event to dispatch
+/// @param  methodName  Name of the event handler method
+/// @param  winType     Type of the PluginEventSource
+/// 
+/// @see PluginEventSink::HandleEvent
+/// @see BEGIN_PLUGIN_EVENT_MAP
+/// @see END_PLUGIN_EVENT_MAP
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #define EVENTTYPE_CASE(eventType, methodName, winType) else if (evt->validType<eventType>()) { \
                                                 return methodName(evt->get<eventType>(), win->get_as<winType>()); }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @def    END_PLUGIN_EVENT_MAP()
+///
+/// @brief  Ends a plugin event map started with BEGIN_PLUGIN_EVENT_MAP
+///
+/// @remarks    Richard Bateman, 10/15/2010. 
+/// @see EVENTTYPE_CASE
+////////////////////////////////////////////////////////////////////////////////////////////////////
 #define END_PLUGIN_EVENT_MAP() return false; }
 
 #endif
