@@ -132,14 +132,14 @@ PluginWindow* PluginCore::GetWindow() const
     return m_Window;
 }
 
-void PluginCore::SetWindow(PluginWindow *wind)
+void PluginCore::SetWindow(PluginWindow *win)
 {
     FBLOG_TRACE("PluginCore", "Window Set");
-    if (m_Window && m_Window != wind) {
+    if (m_Window && m_Window != win) {
         ClearWindow();
     }
-    m_Window = wind;
-    wind->AttachObserver(this);
+    m_Window = win;
+    win->AttachObserver(this);
 }
 
 void PluginCore::ClearWindow()

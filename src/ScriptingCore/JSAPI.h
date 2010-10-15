@@ -26,7 +26,7 @@ namespace FB
     class BrowserHost;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @struct script_error
+    /// @exception script_error
     ///
     /// @brief  Exception type; when thrown in a JSAPI method, a javascript exception will be thrown. 
     ///
@@ -46,7 +46,7 @@ namespace FB
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @struct invalid_arguments
+    /// @exception invalid_arguments
     ///
     /// @brief  Thrown by a JSAPI object when the argument(s) provided to a SetProperty or Invoke
     ///         call are found to be invalid.  JSAPIAuto will throw this automatically if the argument
@@ -68,7 +68,7 @@ namespace FB
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @struct object_invalidated
+    /// @exception object_invalidated
     ///
     /// @brief  Thrown by a JSAPI object when a call is made on it after the object has been
     ///         invalidated.
@@ -89,7 +89,7 @@ namespace FB
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @struct invalid_member
+    /// @exception invalid_member
     ///
     /// @brief  Thrown when an Invoke, SetProperty, or GetProperty call is made for a member that is
     ///         invalid (does not exist, not accessible, only supports Get or Set, etc) 
@@ -168,14 +168,7 @@ namespace FB
 
     protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
-        ///
-        /// @brief  Fires an event into javascript asynchronously
-        ///
-        /// @param  eventName   Name of the event.  This event must start with "on"
-        /// @param  args        The arguments that should be sent to each attached event handler
-        /// 					
-        /// @see virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
+        /// @overload virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args);
         
@@ -224,12 +217,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEvent(const std::string& name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEvent(const std::wstring& name)
-        ///
-        /// @brief  Register event so that event listeners with a wide string name can be added/attached
-        /// 		from javascript
-        ///
-        /// @param  name    The name of the event to register.  This event must start with "on"
+        /// @overload virtual void registerEvent(const std::wstring& name)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEvent(const std::wstring& name);
 
@@ -243,12 +231,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventMethod(const std::string& name, JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
-        ///
-        /// @brief  Called by the browser to register an event handler method with a wide string name
-        ///
-        /// @param  name            The name. 
-        /// @param  event           The event handler method. 
+        /// @overload virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event);
         
@@ -262,12 +245,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
-        ///
-        /// @brief  Called by the browser to unregister an event handler method
-        ///
-        /// @param  name            The name. 
-        /// @param  event           The event handler method to unregister. 
+        /// @overload virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event);
 
@@ -291,7 +269,11 @@ namespace FB
         virtual void unregisterEventInterface(JSObjectPtr& event);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name)
+        /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name)
         ///
         /// @brief  Called by the browser to get the default event handler method for an event.
         /// 		
@@ -304,7 +286,6 @@ namespace FB
         ///
         /// @return The default event method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name);
         virtual JSObjectPtr getDefaultEventMethod(const std::string& name);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -321,6 +302,9 @@ namespace FB
         /// @param  event   The event handler method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event);
 
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);
@@ -346,13 +330,7 @@ namespace FB
         virtual size_t getMemberCount() = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasMethod(const std::wstring& methodName)
-        ///
-        /// @brief  Query if the JSAPI object has the 'methodName' method. 
-        ///
-        /// @param  methodName  Name of the method. 
-        ///
-        /// @return true if method exists, false if not. 
+        /// @overload virtual bool HasMethod(const std::wstring& methodName)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::wstring& methodName);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -366,6 +344,9 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::string& methodName) = 0;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual bool HasProperty(const std::wstring& propertyName)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::wstring& propertyName);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasProperty(const std::string& propertyName)
@@ -404,16 +385,13 @@ namespace FB
         /// @return true if event registered, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasEvent(const std::string& eventName);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual bool HasEvent(const std::wstring& eventName)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasEvent(const std::wstring& eventName);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant GetProperty(const std::wstring& propertyName)
-        ///
-        /// @brief  Gets a property value. 
-        ///
-        /// @param  propertyName    Name of the property. 
-        ///
-        /// @return The property value. 
+        /// @overload virtual variant GetProperty(const std::wstring& propertyName)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(const std::wstring& propertyName);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -428,15 +406,9 @@ namespace FB
         virtual variant GetProperty(const std::string& propertyName) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void SetProperty(const std::wstring& propertyName, const variant& value)
-        ///
-        /// @brief  Sets the value of a property. 
-        ///
-        /// @param  propertyName    Name of the property. 
-        /// @param  value           The value. 
+        /// @overload virtual void SetProperty(const std::wstring& propertyName, const variant& value)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(const std::wstring& propertyName, const variant& value);
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetProperty(const std::string& propertyName, const variant& value) = 0
         ///
@@ -480,8 +452,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(int idx, const variant& value) = 0;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant Invoke(const std::string& methodName,
         /// const std::vector<variant>& args) = 0
@@ -496,11 +470,11 @@ namespace FB
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
 
     protected:
-        EventMultiMap m_eventMap;
-        EventSingleMap m_defEventMap;
-        EventIFaceMap m_evtIfaces;
+        EventMultiMap m_eventMap;       // Stores event handlers
+        EventSingleMap m_defEventMap;   // Stores event-as-property event handlers
+        EventIFaceMap m_evtIfaces;      // Stores event interfaces
                 
-        bool m_valid;
+        bool m_valid;                   // Tracks if this object has been invalidated
     };
 
 };
