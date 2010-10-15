@@ -21,7 +21,8 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "Node.h"
 #include "Document.h"
 
-namespace FB { namespace DOM {
+namespace FB { 
+    namespace DOM {
 
     class JSObject;
     /**
@@ -30,21 +31,119 @@ namespace FB { namespace DOM {
      * Provides a wrapper around a JSObject * that represents a DOM element
      **/
     class Window;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @typedef    boost::shared_ptr<Window> WindowPtr
+    ///
+    /// @brief  Defines an alias representing a pointer to a DOM::Window
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef boost::shared_ptr<Window> WindowPtr;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Window
+    ///
+    /// @brief  DOM Window abstraction for manipulating and accessing the javascript window object that
+    /// 		the plugin is contained in
+    /// @since 1.3
+    /// Most of the time you will want to call BrowserHost::getDOMWindow() to get the reference to
+    /// the containing window
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Window : public Node
     {
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn Window::Window(const JSObjectPtr& element)
+        ///
+        /// @brief  Constructor. DO NOT USE
+        ///
+        /// Instead of using this constructor, use Window::create(FB::JSObjectPtr &api).  This way it will
+        /// create the correct type.  In IE an AXDOM::Window object which extends this one is created
+        /// to handle some special cases in ActiveX.
+        ///
+        /// @param  element The element. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         Window(const JSObjectPtr& element);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual Window::~Window()
+        ///
+        /// @brief  Finaliser. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~Window();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn WindowPtr Window::window()
+        ///
+        /// @brief  Gets the shared_ptr for the window (FB::DOM::WindowPtr) 
+        ///
+        /// @return shared_ptr<FB::DOM::Window> (alias as FB::DOM::WindowPtr)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         WindowPtr window() { return boost::dynamic_pointer_cast<Window>(node()); }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn static WindowPtr Window::create(FB::JSObjectPtr &api)
+        ///
+        /// @brief  Creates a FB::DOM::Window object from a JSObjectPtr representing a DOM object.  This
+        /// 		will probably throw an exception and definitely not work right if the DOM object
+        /// 		represented is not a window
+        ///
+        /// @param  api The FB::JSObjectAPI object containing the window to wrap
+        ///
+        /// @return WindowPtr of the new Window
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         static WindowPtr create(FB::JSObjectPtr &api) { return api->host->_createWindow(api); }
 
     public:
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual DocumentPtr Window::getDocument()
+        ///
+        /// @brief  Gets the DOM Document contained in this window
+        ///
+        /// @return The document. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual DocumentPtr getDocument();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void Window::alert(const std::string& str)
+        ///
+        /// @brief  Pop up a JS alert box
+        ///
+        /// @param  str The alert string
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void alert(const std::string& str);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual void Window::alert(const std::wstring& str)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void alert(const std::wstring& str);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual FB::JSObjectPtr Window::createArray()
+        ///
+        /// @brief  Creates a javascript array object and returns it
+        ///
+        /// @return new empty javascript array
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::JSObjectPtr createArray();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual FB::JSObjectPtr Window::createMap()
+        ///
+        /// @brief  Creates a javascript object and returns it
+        ///
+        /// @return new empty javascript object
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::JSObjectPtr createMap();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual std::string Window::getLocation()
+        ///
+        /// @brief  Returns window.location for the containing page
+        ///
+        /// @return The location as a strin
+        /// 		g. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual std::string getLocation();
     };
 

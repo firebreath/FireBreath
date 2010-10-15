@@ -22,13 +22,15 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
-    /**
-     * PluginEvent
-     *
-     * This is the base class for all OS events that are used in the plugin;
-     * generally these come from the PluginWindow class (or a specialization
-     * thereof)
-     **/
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginEvent
+    ///
+    /// @brief  Plugin event base class. 
+    ///
+    /// This is the base class for all system (non-js) events that are used in the plugin.  Most of
+    /// these come from the PluginWindow, but BrowserStream uses these as well, and in the future other
+    /// functionality might.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginEvent
     {
     public:
@@ -37,6 +39,20 @@ namespace FB {
 
     public:
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<class T> T* PluginEvent::get()
+        ///
+        /// @brief  Dynamic cast the pluginEvent to the specified type and throw an exception if it is not
+        /// 		a subtype of the specified type
+        /// 		
+        /// @code
+        /// 	 AttachedEvent *atevt = evt->get<AttachedEvent>();
+        /// @endcode
+        ///
+        /// @exception  std::invalid_argument   Thrown when invalid argument. 
+        ///
+        /// @return null if it fails, else a T* 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class T>
         T* get()
         {
@@ -47,6 +63,13 @@ namespace FB {
             return out;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<class T> bool PluginEvent::validType()
+        ///
+        /// @brief  Returns true if the object can be cast to the specified type
+        ///
+        /// @return true if the type is valid, false if not 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class T>
         bool validType()
         {

@@ -184,36 +184,17 @@ namespace FB
         ///
         /// @brief  Creates a BrowserStream. 
         ///
-        /// If you want to download data from a url, use this method. It returns a BrowserStream instance on
-        /// success. Streams work asyncronously, this function should return immediately. Any downloaded data 
-        /// is given to you via the callback's StreamDataArrivedEvent.
-        /// 
-        /// If you specify a non-seekable stream data download starts immediately. If you use a seekable
-        /// stream the server has to support byte range requests. You can use the stream's readRange() functions
-        /// to request the desired data ranges in this case.
-        ///
-        /// The stream sends a number of events during its lifetime:
-        ///
-        /// StreamCreatedEvent, StreamDestroyedEvent, StreamDataArrivedEvent, StreamFailedOpenEvent, 
-        /// StreamOpenedEvent, StreamCompletedEvent
-        /// 
-        /// Uploading of data is not supported properly yet.
+        /// @todo   Document this better
         ///
         /// @param  url                 URL of the document to request. 
-        /// @param  callback            PluginEventSink to send stream status updates to (e.g. a
-        ///                             DefaultBrowserStreamHandler or your custom stream event handler).
+        /// @param  callback            PluginEventSink to send status updates to (usually your Plugin class
+        /// 							derived from PluginCore)
         /// @param  cache               true to cache. 
-        /// @param  seekable            true if the Stream should be seekable (byte-range requests). If
-        ///                             the actual stream returned by the server is not seekable, this
-        ///                             will trigger a StreamFailedOpen event.
-        /// @param  internalBufferSize  Size of the internal buffer. Increase to get bigger chunks of data
-        ///                             in less StreamDataArrived events. Decrease to get more events with
-        ///                             less data in each.
+        /// @param  seekable            true if the Stream should be seekable. 
+        /// @param  internalBufferSize  Size of the internal buffer. 
         ///
         /// @return null if it fails, else BrowserStream object
         /// @todo this should probably be a shared_ptr instead of a normal ptr
-        /// @see BrowserStream, DefaultBrowserStreamHandler, StreamEvent, StreamCreatedEvent, StreamDestroyedEvent
-        ///      StreamDataArrivedEvent, StreamFailedOpenEvent, StreamOpenedEvent, StreamCompletedEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
                                             bool cache = true, bool seekable = false, 
@@ -279,8 +260,7 @@ namespace FB
         ///
         /// @brief  Sends a log message to the containing web page using Console.log (firebug)
         ///
-        /// @param  str The log message to send to the browse
-        /// 			r. 
+        /// @param  str The log message to send to the browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void htmlLog(const std::string& str);
 
