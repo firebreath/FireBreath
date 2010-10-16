@@ -17,6 +17,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <numeric>
 #include <boost/assign.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 #include "TestJSAPIAuto.h"
 #include "fake_jsarray.h"
 #include "variant_list.h"
@@ -186,5 +187,12 @@ TEST(JSAPIAuto_Methods)
         LongVec orig   = FB::convert_variant_list<LongVec>(values);
         LongVec result = FB::convert_variant_list<LongVec>(var.convert_cast<FB::VariantList>());        
         CHECK(orig == result);
+    }
+    
+    {
+        const std::string description = "asdf123541234mlkasdf";
+        boost::shared_ptr<FB::JSAPIAuto> x = boost::make_shared<FB::JSAPIAuto>(description);
+        CHECK_EQUAL(description, x->ToString());
+        CHECK_EQUAL(description, x->Invoke("toString", FB::VariantList()).convert_cast<std::string>());
     }
 }

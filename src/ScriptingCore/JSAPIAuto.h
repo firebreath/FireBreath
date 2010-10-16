@@ -72,7 +72,8 @@ namespace FB {
     class JSAPIAuto : public JSAPI
     {
     public:
-        JSAPIAuto();
+        /// @brief Use description for ToString().
+        JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
         ~JSAPIAuto();
 
         void getMemberNames(std::vector<std::string> &nameVector);
@@ -167,6 +168,8 @@ namespace FB {
     private:
         MethodFunctorMap m_methodFunctorMap;        // Stores the methods exposed to JS
         PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
+        
+        const std::string m_description;
     };
 };
 
