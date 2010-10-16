@@ -294,13 +294,20 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
 
     protected:
-        PluginWindow *m_Window;         /// Don't use directly; use GetWindow() 
-        JSAPIPtr m_api;                 /// Don't use directly; use getRootJSAPI()
-        BrowserHostPtr m_host;          /// The BrowserHost object for the current session
-        std::string m_filesystemPath;   /// Stores the value passed into setFSPath()
-        StringSet m_supportedParamSet;  /// Stores the list of params returned by getSupportedParams()
-        bool m_paramsSet;               /// Boolean value indicates if the browser has called setParams() yet or not
-        FB::VariantMap m_params;        /// Sotres the list of params provided by the browser to setParams()
+        /// Don't use directly; use GetWindow() 
+        PluginWindow *m_Window;         
+        /// Don't use directly; use getRootJSAPI()
+        JSAPIPtr m_api;                 
+        /// The BrowserHost object for the current session
+        BrowserHostPtr m_host;          
+        /// Stores the value passed into setFSPath()
+        std::string m_filesystemPath;   
+        /// Stores the list of params returned by getSupportedParams()
+        StringSet m_supportedParamSet;  
+        /// Boolean value indicates if the browser has called setParams() yet or not
+        bool m_paramsSet;               
+        /// Sotres the list of params provided by the browser to setParams()
+        FB::VariantMap m_params;        
     };
 };
 
