@@ -42,7 +42,10 @@ namespace FB {
     /// Then in the constructor of your class that extends JSAPIAuto (we'll call it MyPluginAPI),
     /// you register it like so:
     /// @code
-    /// 	 registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished, &MyPluginAPI::set_IsFinished));
+    /// 	 registerProperty("IsFinished", 
+    ///                       make_property(this, 
+    ///                                     &MyPluginAPI::get_IsFinished, 
+    ///                                     &MyPluginAPI::set_IsFinished));
     /// @endcode
     /// To register a property that is read--only, use the second form:
     /// @code
@@ -146,7 +149,7 @@ namespace FB {
         /// @fn virtual std::string JSAPIAuto::ToString()
         ///
         /// @brief  Default method called when a string value is requested for the plugin object.
-        /// 		Override this to provide your own.  Default returns "&lt;JSAPI-Auto driven Javascript Object&gt;"
+        /// 		Override this to provide your own.  Default returns "<JSAPI-Auto driven Javascript Object>"
         /// 		
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
