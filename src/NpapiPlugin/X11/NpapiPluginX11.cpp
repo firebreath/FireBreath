@@ -12,9 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#if 0
 #include <dlfcn.h>
-#endif
 
 #include "NpapiTypes.h"
 #include "PluginCore.h"
@@ -30,7 +28,6 @@ inline GdkNativeWindow getGdkWindow(void *in)
     return (char*)in - (char*)0;
 }
 
-#if 0
 namespace 
 {
     std::string getPluginPath() 
@@ -43,18 +40,15 @@ namespace
         }
     }
 }
-#endif
 
 NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");
     
-    // TODO: Get the path to the shared lib
+    // Get the path to the shared lib
     
-#if 0
     static const std::string pluginPath = getPluginPath(); 
     setFSPath(pluginPath);
-#endif
 }
 
 NpapiPluginX11::~NpapiPluginX11()
