@@ -150,7 +150,7 @@ TEST(JSAPIAuto_Methods)
     {
         // Test variant parameter type
         const std::string method("getType");
-        CHECK(test->HasMethod(method));
+        CHECK(test->HasMethod(method)); 
         
         FB::variant ret = test->Invoke(method, FB::variant_list_of((long)12));
         CHECK(ret.cast<std::string>() == typeid(long).name());
