@@ -19,6 +19,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "variant_list.h"
 #include "FBTestPlugin.h"
 #include "SimpleMathAPI.h"
+#include "SimpleStreams.h"
 
 #include "FBTestPluginAPI.h"
 
@@ -57,6 +58,8 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerProperty("someInt",
                      make_property(this,
                         &FBTestPluginAPI::get_someInt));
+    registerProperty("pluginPath",
+                     make_property(this, &FBTestPluginAPI::get_pluginPath));
 
     registerEvent("onfired");
 
@@ -241,11 +244,14 @@ std::string FBTestPluginAPI::getPageLocation()
     return m_host->getDOMWindow()->getLocation();
 }
 
-#include "SimpleStreams.h"
-
 // test streams
 bool FBTestPluginAPI::testStreams()
 {
     StreamsTest test( m_host );
     return test.run();
+}
+
+std::string FBTestPluginAPI::get_pluginPath()
+{
+    return getPlugin()->getPluginPath();
 }

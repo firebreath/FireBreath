@@ -12,6 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#include <dlfcn.h>
+
 #include "NpapiTypes.h"
 #include "PluginCore.h"
 #include "X11/PluginWindowX11.h"
@@ -26,14 +28,38 @@ inline GdkNativeWindow getGdkWindow(void *in)
     return (char*)in - (char*)0;
 }
 
+namespace 
+{
+    std::string getPluginPath() 
+    {
+        Dl_info dlinfo; 
+        if (::dladdr(::NP_Initialize, &dlinfo) != 0) { 
+            return dlinfo.dli_fname; 
+        }
+    }
+}
+
+namespace 
+{
+    std::string getPluginPath() 
+    {
+        ::Dl_info dlinfo; 
+        if (::dladdr((void*)::NP_Initialize, &dlinfo) != 0) { 
+            return dlinfo.dli_fname; 
+        } else {
+            return "";
+        }
+    }
+}
+
 NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");
-    // TODO: Get the path to the shared lib
-    //   --- why?  Richard P
-    //   --- 'cause sometimes we need to know it; in case we need to find other resource files. Richard B
-    //setFSPath();
-
+    
+    // Get the path to the shared lib
+    
+    static const std::string pluginPath = getPluginPath(); 
+    setFSPath(pluginPath);
 }
 
 NpapiPluginX11::~NpapiPluginX11()

@@ -111,6 +111,7 @@
         function pluginLoaded() {
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
+            $("#pluginPath").text(plugin().pluginPath);
             setTimeout(pluginRunTests, 500);
         }
 
@@ -180,6 +181,7 @@
 <body>
     <div class="header">
         <h1>FBTestPlugin - Test page</h1>
+        <small>Plugin path: <span id="pluginPath">?</span></small>
     </div>
     <div id="pluginContainer">
         <br /><br /><br />Plugin will go here!
@@ -188,6 +190,5 @@
         <ul>
         </ul>
     </div>
-
 </body>
 </html>
