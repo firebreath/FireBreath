@@ -32,17 +32,6 @@ namespace
 {
     std::string getPluginPath() 
     {
-        Dl_info dlinfo; 
-        if (::dladdr(::NP_Initialize, &dlinfo) != 0) { 
-            return dlinfo.dli_fname; 
-        }
-    }
-}
-
-namespace 
-{
-    std::string getPluginPath() 
-    {
         ::Dl_info dlinfo; 
         if (::dladdr((void*)::NP_Initialize, &dlinfo) != 0) { 
             return dlinfo.dli_fname; 
