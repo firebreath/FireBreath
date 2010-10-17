@@ -29,7 +29,7 @@ public:
     virtual ~FBTestPluginAPI();
 
     boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
-
+    
     FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
 
     std::wstring say(const std::wstring& val);
@@ -66,6 +66,8 @@ public:
     FB::variant getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute);
 
     std::string getPageLocation();
+    
+    std::string get_pluginPath();
 
 private:
     FB::BrowserHostPtr m_host;
