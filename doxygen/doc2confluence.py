@@ -51,12 +51,15 @@ def Main():
         refid = com.getAttribute("refid")
         kind = com.getAttribute("kind")
         compoundName = com.getElementsByTagName("name")[0].firstChild.wholeText
-        if os.path.exists(os.path.join(inputHtmlPath, refid + ".html")):
+        realName = getName("%s %s" % (kind, compoundName.replace("::", " ")))
+        if os.path.exists(os.path.join(inputHtmlPath, "%s-members.html" % refid)):
+            refidMap["%s-members.html" % refid] = baseUrl % (realName + " Members")
+        if os.path.exists(os.path.join(inputHtmlPath, "%s.html" % refid)):
             Info[refid] = {}
             Info[refid]["kind"] = kind
-            Info[refid]["name"] = getName("%s %s" % (kind, compoundName.replace("::", " ")))
+            Info[refid]["name"] = realName
             Info[refid]["members"] = {}
-            refidMap["%s.html" % refid] = baseUrl % getName(compoundName.replace("::", "+"))
+            refidMap["%s.html" % refid] = baseUrl % realName
             for mem in com.getElementsByTagName("member"):
                 memName = mem.getElementsByTagName("name")[0].firstChild.wholeText
                 memRefId = mem.getAttribute("refid")
@@ -65,7 +68,7 @@ def Main():
 
                 if (os.path.exists(os.path.join(inputHtmlPath, memRefId + ".html"))):
                     localName = getName(Info[refid]["name"] + " " + memName)
-                    refidMap["%s.html" % memRefId] = baseUrl % localName.replace(" ", "+")
+                    refidMap["%s.html" % memRefId] = baseUrl % localName
                     Info[refid][memRefId] = {}
                     Info[refid][memRefId]["kind"] = memKind
                     Info[refid][memRefId]["name"] = localName
@@ -77,8 +80,9 @@ def Main():
         fileText = f.read()
         f.close()
         for id, url in izip(refidMap.keys(), refidMap.values()):
-            print "Changing %s to %s" % (id, url)
+            #print "Changing %s to %s" % (id, url)
             fileText = fileText.replace(id, url)
+        fileText = fileText.replace(r'img src="', r'img src="http://classdocs.firebreath.org/')
 
         nf = open(os.path.join(outputHtmlPath, "%s.html" % refid), "w")
         nf.write(fileText)
