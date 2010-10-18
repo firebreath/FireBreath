@@ -16,24 +16,49 @@ Copyright 2010 Facebook, Inc
 #ifndef H_FB_LOGGING
 #define H_FB_LOGGING
 
-#define FBLOG_TRACE(src, msg) FB::Log::trace(src, msg, __FILE__, __LINE__)
-#define FBLOG_DEBUG(src, msg) FB::Log::debug(src, msg, __FILE__, __LINE__)
-#define FBLOG_INFO(src, msg) FB::Log::info(src, msg, __FILE__, __LINE__)
-#define FBLOG_WARN(src, msg) FB::Log::warn(src, msg, __FILE__, __LINE__)
-#define FBLOG_ERROR(src, msg) FB::Log::error(src, msg, __FILE__, __LINE__)
-#define FBLOG_FATAL(src, msg) FB::Log::fatal(src, msg, __FILE__, __LINE__)
+#if !FB_NO_LOGGING_MACROS
+#  if defined(__GNUC__)
+#    define FBLOG_FUNCTION() __PRETTY_FUNCTION__
+#  elif defined(_MSC_VER)
+#    define FBLOG_FUNCTION() __FUNCTION__
+#  else
+#    define FBLOG_FUNCTION() __func__
+#  endif
+#  define FBLOG_LOG_BODY(type, src, msg) \
+    do { \
+        std::ostringstream os; \
+        os << msg; \
+        FB::Log:: type (src, os.str(), __FILE__, __LINE__, FBLOG_FUNCTION()); \
+    } while(0)
+#endif
+
+#if !FB_NO_LOGGING_MACROS
+#  define FBLOG_TRACE(src, msg) FBLOG_LOG_BODY(trace, src, msg)
+#  define FBLOG_DEBUG(src, msg) FBLOG_LOG_BODY(debug, src, msg)
+#  define FBLOG_INFO(src, msg) FBLOG_LOG_BODY(info, src, msg)
+#  define FBLOG_WARN(src, msg) FBLOG_LOG_BODY(warn, src, msg)
+#  define FBLOG_ERROR(src, msg) FBLOG_LOG_BODY(error, src, msg)
+#  define FBLOG_FATAL(src, msg) FBLOG_LOG_BODY(fatal, src, msg)
+#else 
+#  define FBLOG_TRACE(src, msg) 
+#  define FBLOG_DEBUG(src, msg)
+#  define FBLOG_INFO(src, msg)
+#  define FBLOG_WARN(src, msg)
+#  define FBLOG_ERROR(src, msg)
+#  define FBLOG_FATAL(src, msg)
+#endif
 
 namespace FB { namespace Log {
 
     void initLogging();
     void stopLogging();
 
-    void trace(const char *, const char *, const char *file, int line);
-    void debug(const char *, const char *, const char *file, int line);
-    void info(const char *, const char *, const char *file, int line);
-    void warn(const char *, const char *, const char *file, int line);
-    void error(const char *, const char *, const char *file, int line);
-    void fatal(const char *, const char *, const char *file, int line);
+    void trace(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void debug(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void  info(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void  warn(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void error(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void fatal(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
 
     std::wstring getLogFilename();
 
