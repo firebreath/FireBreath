@@ -18,11 +18,11 @@ Copyright 2010 Facebook, Inc
 void FB::Log::initLogging() {};
 void FB::Log::stopLogging() {};
 
-void FB::Log::trace(const char *, const char *, const char *file, int line) {}
-void FB::Log::debug(const char *, const char *, const char *file, int line) {}
-void FB::Log::info(const char *, const char *, const char *file, int line) {}
-void FB::Log::warn(const char *, const char *, const char *file, int line) {}
-void FB::Log::error(const char *, const char *, const char *file, int line) {}
-void FB::Log::fatal(const char *, const char *, const char *file, int line) {}
+void FB::Log::trace(const std::string&, const std::string&, const char *file, int line, const char*) {}
+void FB::Log::debug(const std::string&, const std::string&, const char *file, int line, const char*) {}
+void FB::Log::info(const std::string&, const std::string&, const char *file, int line, const char*) {}
+void FB::Log::warn(const std::string&, const std::string&, const char *file, int line, const char*) {}
+void FB::Log::error(const std::string&, const std::string&, const char *file, int line, const char*) {}
+void FB::Log::fatal(const std::string&, const std::string&, const char *file, int line, const char*) {}
 
 std::wstring getLogFilename();

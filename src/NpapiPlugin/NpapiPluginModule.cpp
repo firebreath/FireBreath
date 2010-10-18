@@ -187,7 +187,7 @@ int32_t NpapiPluginModule::IntFromIdentifier(NPIdentifier identifier)
 NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 {
     assertMainThread();
-    FBLOG_DEBUG("Npapi", std::string("Retaining object at " + boost::lexical_cast<std::string>(npobj)).c_str());
+    FBLOG_DEBUG("Npapi", "Retaining object at " << boost::lexical_cast<std::string>(npobj));
     if (NPNFuncs.retainobject != NULL) {
         return NPNFuncs.retainobject(npobj);
     } else {
@@ -198,7 +198,7 @@ NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 void NpapiPluginModule::ReleaseObject(NPObject *npobj)
 {
     assertMainThread();
-    FBLOG_DEBUG("Npapi", std::string("Retaining object at " + boost::lexical_cast<std::string>(npobj)).c_str());
+    FBLOG_DEBUG("Npapi", "Retaining object at " << boost::lexical_cast<std::string>(npobj));
     if (NPNFuncs.releaseobject != NULL) {
         NPNFuncs.releaseobject(npobj);
     }

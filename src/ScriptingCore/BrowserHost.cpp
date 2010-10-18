@@ -23,7 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
-    FBLOG_INFO("BrowserHost", std::string("Logging to HTML: " + str).c_str());
+    FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
     this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
             new FB::AsyncLogRequest(shared_ptr(), str));
 }
