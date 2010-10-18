@@ -16,6 +16,8 @@ Copyright 2010 Facebook, Inc
 #ifndef H_FB_LOGGING
 #define H_FB_LOGGING
 
+#include <sstream>
+
 #if !FB_NO_LOGGING_MACROS
 #  if defined(__GNUC__)
 #    define FBLOG_FUNCTION() __PRETTY_FUNCTION__
