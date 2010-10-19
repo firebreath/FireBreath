@@ -23,8 +23,17 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB {
 
     class PluginCore;
-    // This class represents an instance of a browser plugin
-    // (an individual object tag, for example)
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  BrowserPlugin
+    ///
+    /// @brief  Browser-specific plugin base class
+    /// 		
+    /// This object is the base class for FBControl and NpapiPlugin, which are the browser-specific
+    /// plugin classes that contain a PluginCore derived plugin object.
+    /// 
+    /// Unless you are working on the core you shouldn't need to worry about this.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class BrowserPlugin
     {
     public:
