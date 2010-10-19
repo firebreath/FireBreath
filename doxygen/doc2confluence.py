@@ -14,7 +14,7 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 the Firebreath development team
 """
-import os, sys
+import os, sys, xmlrpclib
 from xml.dom import minidom
 from itertools import izip
 
@@ -32,33 +32,62 @@ class Doxygen2Confluence:
     rpc = server.confluence1
     token = ""
     space = "ClassDocs"
+    topPages = {
+            "class" : "1279494",
+            "struct" : "1279496",
+            "namespace" : "1278039",
+            "file" : "1279498",
+            }
+    parents = {}
+    createdPages = []
 
     def __init__(self, username, password):
         self.token = self.rpc.login(username, password)
 
     def getName(self, name):
         count = 1
-        retVal = name
+        retVal = name.replace("::", " ")
         if name in self.nameCount:
             count = self.nameCount[name]
             count = count + 1
             retVal = "%s (%s)" % (name, count)
 
         self.nameCount[name] = count
-        return retVal
+        return retVal.replace("<", "(").replace(">", ")").replace("/", " ")
 
 
-    def exportToConfluence(self, refId):
-        pageName = self.inputList[refId]["name"]
+    def exportToConfluence(self, refId, pageName, kind):
         try:
             page = self.rpc.getPage(self.token, self.space, pageName)
         except:
             page = {"space": self.space, "title": pageName}
 
-        page["content"] = "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s.html}" % refId
+        page["parentId"] = self.parents[refId]
+        if kind == "file":
+            filename = "%s_source.html" % refId
+        else:
+            filename = "%s.html" % refId
+        page["content"] = "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename
 
-        self.rpc.storePage(self.token, page)
+        while True:
+            try:
+                page = self.rpc.storePage(self.token, page)
+                self.createdPages.append(page["id"])
+                pass
+            except:
+                pass
+            break
 
+        return page["id"]
+
+    def cleanConfluence(self):
+        for kind, id in self.topPages.items():
+            print "Scanning pages for %s (id %s)" % (kind, id)
+            pages = self.rpc.getDescendents(self.token, id)
+            for page in pages:
+                if (page["id"] not in self.createdPages) and (page["id"] not in self.topPages.values()):
+                    print "Removing defunct page: %s (%s)" % (page["title"], page["id"])
+                    self.rpc.removePage(self.token, page["id"])
 
     def processDirectory(self, path):
         xml = minidom.parse("docs/xml/index.xml")
@@ -73,12 +102,18 @@ class Doxygen2Confluence:
             realName = self.getName("%s %s" % (kind, compoundName.replace("::", " ")))
             if os.path.exists(os.path.join(path, "%s-members.html" % refid)):
                 refidMap["%s-members.html" % refid] = self.baseUrl % (realName + " Members")
-            if os.path.exists(os.path.join(path, "%s.html" % refid)):
+            filename = "%s.html" % refid
+            if kind == "file":
+                filename = "%s_source.html" % refid
+            if os.path.exists(os.path.join(path, filename)):
                 Info[refid] = {}
                 Info[refid]["kind"] = kind
                 Info[refid]["name"] = realName
                 Info[refid]["members"] = {}
-                refidMap["%s.html" % refid] = self.baseUrl % realName
+                refidMap[filename] = self.baseUrl % realName
+                if kind == "file":
+                    print "%s => %s" % (filename, self.baseUrl % realName)
+                    continue
                 for mem in com.getElementsByTagName("member"):
                     memName = mem.getElementsByTagName("name")[0].firstChild.wholeText
                     memRefId = mem.getAttribute("refid")
@@ -114,24 +149,43 @@ class Doxygen2Confluence:
 
         # Now we're going to load the files, process them, and write them to the output directory
         for refid, item in self.inputList.items():
-            print "Opening file %s.html" % refid
-            self.processFile("%s.html" % refid, inPath, outPath)
+            filename = "%s.html" % refid
+            if item["kind"] == "file":
+                filename = "%s_source.html" % refid
+            #print "Opening file %s" % filename
+            self.processFile(filename, inPath, outPath)
             for memid, mem in item["members"].items():
-                print "Member: %s" % memid
+                #print "Member: %s" % memid
                 self.processFile("%s.html" % memid, inPath, outPath)
 
 
-    def begin(self, username, password):
+    def begin(self):
         self.processDirectory(self.inputHtmlPath)
         self.writeNewFiles(self.inputHtmlPath, self.outputHtmlPath)
+
+        for refid, item in self.inputList.items():
+            parentId = None
+            if item["kind"] in self.topPages:
+                parentId = self.topPages[item["kind"]]
+            else:
+                print "Could not find %s in " % item["kind"], self.topPages
+                continue
+            self.parents[refid] = parentId
+            print "Exporting %s to confluence..." % item["name"]
+            pageId = self.exportToConfluence(refid, item["name"], item["kind"])
+            for memid, mem in item["members"].items():
+                #print "Exporting %s to confluence..." % mem["name"]
+                self.parents[memid] = pageId
+                self.exportToConfluence(memid, mem["name"], mem["kind"])
+        self.cleanConfluence()
 
 
 def Main():
     """
     Parse the commandline and execute the appropriate actions.
     """
-    a = Doxygen2Confluence()
-    a.begin(sys.argv[1], sys.argv[2])
+    a = Doxygen2Confluence(sys.argv[1], sys.argv[2])
+    a.begin()
 
 if __name__ == "__main__":
     Main()
