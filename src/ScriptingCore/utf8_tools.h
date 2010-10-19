@@ -26,9 +26,37 @@ namespace FB {
     void throw_GetLastError(const char* fnname);
 #endif
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn std::string wstring_to_utf8(const std::wstring& src)
+    ///
+    /// @brief  Accepts a std::wstring and returns a UTF8-encoded std::string
+    ///
+    /// @param  src Source string 
+    ///
+    /// @return UTF8-encoded std::string
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     std::string wstring_to_utf8(const std::wstring& src);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn std::wstring utf8_to_wstring(const std::string& src)
+    ///
+    /// @brief  Accepts a UTF8-encoded std::string and returns a std::wstring
+    ///
+    /// @param  src Source string
+    ///
+    /// @return std::wstring representation
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     std::wstring utf8_to_wstring(const std::string& src);
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn std::wstring wstring_tolower(const std::wstring& src)
+    ///
+    /// @brief  Converts a std::wstring to lowercase
+    ///
+    /// @param  src Source string
+    ///
+    /// @return lowercase version of the source string
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     std::wstring wstring_tolower(const std::wstring& src);
 
 };
