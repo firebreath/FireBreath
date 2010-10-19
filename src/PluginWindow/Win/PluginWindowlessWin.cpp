@@ -6,53 +6,75 @@ PluginWindowlessWin::PluginWindowlessWin(HDC hdc) : m_hdc(hdc) {}
 
 PluginWindowlessWin::~PluginWindowlessWin() {}
 
+void PluginWindowlessWin::translateWindowToPlugin(int &x, int &y) {
+    int tempX, tempY;
+    tempX = x - m_x;
+    tempY = y - m_y;
+    x = tempX;
+    y = tempY;
+}
+
 int16_t PluginWindowlessWin::HandleEvent(NPEvent* evt) 
 {
     switch(evt->event) {
         case WM_LBUTTONDOWN: 
         {
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, 
-                              GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
             return SendEvent(&ev);
         }
         case WM_RBUTTONDOWN:
         {
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
-                              GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
             return SendEvent(&ev);
         }
         case WM_MBUTTONDOWN:
         {
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle,
-                              GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
             return SendEvent(&ev);
         }
         case WM_LBUTTONUP: 
         {
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
-                            GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
             return SendEvent(&ev);
         }
         case WM_RBUTTONUP:
         {
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Right,
-                            GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
             return SendEvent(&ev);
         }
         case WM_MBUTTONUP:
         {
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle,
-                            GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
             return SendEvent(&ev);
         }
         case WM_MOUSEMOVE:
         {
-            MouseMoveEvent ev(GET_X_LPARAM(evt->lParam), GET_Y_LPARAM(evt->lParam));
+            int x = GET_X_LPARAM(evt->lParam);
+            int y = GET_Y_LPARAM(evt->lParam);
+            translateWindowToPlugin(x, y);
+            MouseMoveEvent ev(x, y);
             return SendEvent(&ev);
         }
         case WM_PAINT:
         {
-            NPRect* r = (NPRect*)evt->lParam;
             HDC dc = (HDC)evt->wParam;
             if(dc != m_hdc) {
                 setHDC(dc);

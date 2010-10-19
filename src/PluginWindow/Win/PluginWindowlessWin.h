@@ -65,6 +65,9 @@ namespace FB {
             int getWindowWidth() { return m_width; }
             int getWindowHeight() { return m_height; }
 
+            // Converts window-space coordinates into plugin-place coordinates
+            void translateWindowToPlugin(int &x, int &y);
+
             // Handle event given to us from NPAPI (windowless plugins don't intercept raw Windows events)
             int16_t HandleEvent(NPEvent* evt);
 

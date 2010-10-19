@@ -72,7 +72,11 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             pluginMain->SetWindow(win);
             setReady();
             pluginWin = win;
-        } 
+        } else {
+            win->setWindowPosition(window->x, window->y, window->width, window->height);
+            win->setWindowClipping(window->clipRect.top, window->clipRect.left,
+                                   window->clipRect.bottom, window->clipRect.right);
+        }
     } else { 
         PluginWindowWin* win = dynamic_cast<PluginWindowWin*>(pluginWin);
         // Check to see if we've received a new HWND (new window)
