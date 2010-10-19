@@ -26,17 +26,17 @@ class Doxygen2Confluence:
     outputHtmlPath = os.path.join("docs", "patched")
     inputList = {}
     pathMap = {}
-    baseUrl = "/display/ClassDocs/%s"
+    baseUrl = "/display/documentation/%s"
     classDocsUrl = "http://classdocs.firebreath.org/"
     server = xmlrpclib.ServerProxy("http://firebreath.org/rpc/xmlrpc")
     rpc = server.confluence1
     token = ""
-    space = "ClassDocs"
+    space = "documentation"
     topPages = {
-            "class" : "1279494",
-            "struct" : "1279496",
-            "namespace" : "1278039",
-            "file" : "1279498",
+            "class" : "1280302",
+            "struct" : "1280302",
+            "namespace" : "1280313",
+            "file" : "1280310",
             }
     parents = {}
     createdPages = []
@@ -55,6 +55,11 @@ class Doxygen2Confluence:
         self.nameCount[name] = count
         return retVal.replace("<", "(").replace(">", ")").replace("/", " ")
 
+    def makeFirstPageInConfluence(self, pageId, targetPageId):
+        children = self.rpc.getChildren(self.token, pageId)
+        if children[0]["id"] != targetPageId:
+            print "Moving %s to before %s" % (targetPageId, children[0]["id"])
+            self.rpc.movePage(self.token, targetPageId, children[0]["id"], "above")
 
     def exportToConfluence(self, refId, pageName, kind):
         try:
@@ -69,14 +74,16 @@ class Doxygen2Confluence:
             filename = "%s.html" % refId
         page["content"] = "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename
 
-        while True:
+        n = 0
+        while n < 10:
             try:
                 page = self.rpc.storePage(self.token, page)
                 self.createdPages.append(page["id"])
-                pass
+                self.rpc.setContentPermissions(self.token, page["id"], "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
+                break;
             except:
+                n = n + 1
                 pass
-            break
 
         return page["id"]
 
@@ -147,11 +154,18 @@ class Doxygen2Confluence:
         if not os.path.exists(outPath):
             os.mkdir(outPath)
 
+        self.processFile("annotated.html", inPath, outPath)
+        self.processFile("hierarchy.html", inPath, outPath)
+        self.processFile("files.html", inPath, outPath)
+        self.processFile("namespaces.html", inPath, outPath)
+        self.processFile("classes.html", inPath, outPath)
         # Now we're going to load the files, process them, and write them to the output directory
         for refid, item in self.inputList.items():
             filename = "%s.html" % refid
             if item["kind"] == "file":
                 filename = "%s_source.html" % refid
+            if os.path.exists(os.path.join(inPath, "%s-members.html" % refid)):
+                self.processFile("%s-members.html" % refid, inPath, outPath)
             #print "Opening file %s" % filename
             self.processFile(filename, inPath, outPath)
             for memid, mem in item["members"].items():
@@ -177,6 +191,10 @@ class Doxygen2Confluence:
                 #print "Exporting %s to confluence..." % mem["name"]
                 self.parents[memid] = pageId
                 self.exportToConfluence(memid, mem["name"], mem["kind"])
+            if os.path.exists(os.path.join(self.inputHtmlPath, "%s-members.html" % refid)):
+                self.parents["%s-members" % refid] = pageId
+                membersPageId = self.exportToConfluence("%s-members" % refid, "%s Members" % item["name"], "members")
+                self.makeFirstPageInConfluence(pageId, membersPageId)
         self.cleanConfluence()
 
 
