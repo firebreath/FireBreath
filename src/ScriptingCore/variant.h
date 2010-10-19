@@ -541,6 +541,13 @@ namespace FB
         }
 #endif // implicit casting
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool variant::empty() const
+        ///
+        /// @brief  Returns true if the variant is empty (has not been assigned a value or has been reset)
+        ///
+        /// @return true if empty, false if not 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool empty() const {
             //return object == NULL;
             return table == variant_detail::get_table<variant_detail::empty>::get();
@@ -549,7 +556,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void variant::reset()
         ///
-        /// @brief  Frees any value assigned and resets the variant to initial state
+        /// @brief  Frees any value assigned and resets the variant to empty state
         ///
         /// @author Richard Bateman
         /// @date   10/15/2010
