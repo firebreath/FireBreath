@@ -94,7 +94,7 @@ namespace FB {
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @macro    BEGIN_PLUGIN_EVENT_MAP
+/// @def    BEGIN_PLUGIN_EVENT_MAP
 /// PluginEventSource *win)
 ///
 /// @brief  Begins a plugin event map.
@@ -109,7 +109,7 @@ namespace FB {
                                           if (0) { }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @macro    EVENTTYPE_CASE(eventType, methodName, winType)
+/// @def    EVENTTYPE_CASE(eventType, methodName, winType)
 ///
 /// @brief  Dispatches events to the given event handler, does typecasting as needed
 ///
