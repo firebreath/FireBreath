@@ -15,9 +15,10 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "JSAPIAuto.h"
 #include "utf8_tools.h"
 
-FB::JSAPIAuto::JSAPIAuto()
+FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : m_methodFunctorMap(),
-    m_propertyFunctorsMap()
+    m_propertyFunctorsMap(),
+    m_description(description)
 {
     registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
     
@@ -32,7 +33,7 @@ FB::JSAPIAuto::~JSAPIAuto()
 
 std::string FB::JSAPIAuto::ToString()
 {
-    return "<JSAPI-Auto driven Javascript Object>";
+    return m_description;
 }
 
 bool FB::JSAPIAuto::get_valid()

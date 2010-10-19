@@ -31,7 +31,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 ///
 /// @brief  Primary location of FireBreath classes and utility functions.
 /// 		
-/// The fuve most important classes to understand when implementing a FireBreath plugin are:
+/// The five most important classes to understand when implementing a FireBreath plugin are:
 ///   - FB::PluginCore
 ///   - FB::JSAPI / FB::JSAPIAuto
 ///   - FB::BrowserHost
@@ -48,21 +48,21 @@ namespace FB
     // Variant list
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    std::vector<variant> VariantList
+    /// @typedef    FB::VariantList
     ///
     /// @brief  Defines an alias representing list of variants.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::vector<variant> VariantList;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    std::map<std::string, variant> VariantMap
+    /// @typedef    FB::VariantMap
     ///
     /// @brief  Defines an alias representing a string -> variant map.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::map<std::string, variant> VariantMap;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    std::set<std::string> StringSet
+    /// @typedef    FB::StringSet
     ///
     /// @brief  Defines an alias representing a set of std::strings
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -71,14 +71,14 @@ namespace FB
     // FB pointer types
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    boost::shared_ptr<FB::JSAPI> JSAPIPtr
+    /// @typedef    FB::JSAPIPtr
     ///
     /// @brief  Defines an alias for a JSAPI shared_ptr (you should never use a JSAPI* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    boost::shared_ptr<FB::JSObject> JSObjectPtr
+    /// @typedef    FB::JSObjectPtr
     ///
     /// @brief  Defines an alias representing a JSObject shared_ptr (you should never use a 
     /// 		JSObject* directly)
@@ -86,7 +86,7 @@ namespace FB
     typedef boost::shared_ptr<FB::JSObject> JSObjectPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    boost::shared_ptr<FB::BrowserHost> BrowserHostPtr
+    /// @typedef    FB::BrowserHostPtr
     ///
     /// @brief  Defines an alias representing a BrowserHost shared_ptr (you should never use a 
     /// 		BrowserHost* directly)
@@ -96,26 +96,26 @@ namespace FB
     // backwards compability typedefs
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    BrowserHost BrowserHostWrapper
+    /// @typedef    FB::BrowserHostWrapper
     ///
     /// @brief  Defines a alias for backwards compatibility
-    /// @deprecated
+    /// @deprecated 1.3
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef BrowserHost BrowserHostWrapper;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    JSObject BrowserObjectAPI
+    /// @typedef    FB::BrowserObjectAPI
     ///
     /// @brief  Defines a alias for backwards compatibility
-    /// @deprecated
+    /// @deprecated 1.3
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef JSObject BrowserObjectAPI;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    JSAPIPtr JSOutObject
+    /// @typedef    FB::JSOutObject
     ///
     /// @brief  Defines an alias for JSOutObject -> JSAPIPtr
-    /// @deprecated
+    /// @deprecated 1.2
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef JSAPIPtr JSOutObject;
     
@@ -145,9 +145,11 @@ namespace FB
     template<class T, class U> 
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
 
-    // Helpers to make cross-thread calls
+    /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
+    /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
     typedef void (JSAPI::*SetPropertyType)(const std::string&, const variant&);
+    /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
     typedef variant (JSAPI::*GetPropertyType)(const std::string&);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +169,9 @@ namespace FB
     // JSAPI methods
 
     class JSAPI;
+    /// @brief  Defines an alias representing a function ptr for a method on a FB::JSAPISimple object
     typedef variant (JSAPI::*CallMethodPtr)(const std::vector<variant>&);
+    /// @brief Used by FB::JSAPISimple to store information about a method
     struct MethodInfo {
         MethodInfo() : callFunc(NULL) { }
         MethodInfo(CallMethodPtr callFunc) : callFunc(callFunc) { }
@@ -175,13 +179,17 @@ namespace FB
         CallMethodPtr callFunc;
     };
 
-
+    /// @brief  Defines an alias representing a map of methods used by FB::JSAPISimple
     typedef std::map<std::string, MethodInfo> MethodMap;
 
     // JSAPI properties
 
+
+    /// @brief  Defines an alias representing a function pointer for a property getter on a FB::JSAPISimple object
     typedef variant (JSAPI::*GetPropPtr)();
+    /// @brief  Defines an alias representing a function pointer for a property setter on a FB::JSAPISimple object
     typedef void (JSAPI::*SetPropPtr)(const variant& value);
+    /// @brief Used by FB::JSAPISimple to store information about a property
     struct PropertyInfo {
         PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }
@@ -190,17 +198,23 @@ namespace FB
         SetPropPtr setFunc;
     };
 
+    /// @brief  Defines an alias representing a map of properties used by FB::JSAPISimple
     typedef std::map<std::string, PropertyInfo> PropertyMap;
 
     // new style JSAPI methods
 
+    /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto
     typedef boost::function<variant (const std::vector<variant>&)> CallMethodFunctor;
+    /// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
     typedef std::map<std::string, CallMethodFunctor> MethodFunctorMap;
 
     // new style JSAPI properties
 
+    /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
     typedef boost::function<FB::variant ()> GetPropFunctor;
+    /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
     typedef boost::function<void (const FB::variant&)> SetPropFunctor;
+    /// @brief  used by FB::JSAPIAuto to store property implementation details
     struct PropertyFunctors
     {
         GetPropFunctor get;
@@ -216,6 +230,7 @@ namespace FB
             return *this;
         }
     };
+    /// @brief  Defines an alias representing a map of property functors used by FB::JSAPIAuto
     typedef std::map<std::string, PropertyFunctors> PropertyFunctorsMap;
 
     // JSAPI event handlers

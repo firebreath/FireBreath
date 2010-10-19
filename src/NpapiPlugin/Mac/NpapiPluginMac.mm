@@ -15,6 +15,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <dlfcn.h>
+
 #include "Mac/NpapiPluginMac.h"
 #include "NpapiBrowserHost.h"
 #include "PluginCore.h"
@@ -219,14 +221,30 @@ namespace {
     }
 }
 
+namespace 
+{
+    std::string getPluginPath() 
+    {
+        ::Dl_info dlinfo; 
+        if (::dladdr((void*)::NP_Initialize, &dlinfo) != 0) { 
+            return dlinfo.dli_fname; 
+        } else {
+            return "";
+        }
+    }
+}
+
 NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
   : NpapiPlugin(host), pluginWin(NULL), m_eventModel(), m_drawingModel() {
     // If you receive a BAD_ACCESS error here you probably have something
     // wrong in your FactoryMain.cpp in your plugin project's folder
 
     PluginCore::setPlatform("Mac", "NPAPI");
-    // TODO: Get the path to the bundle
-    //setFSPath();
+    
+    // Get the path to the bundle
+    
+    static const std::string pluginPath = getPluginPath();      
+    setFSPath(pluginPath);
 
     if(enableInvalidatingCoreAnimation(host)) {
         m_eventModel = EventModelCocoa;

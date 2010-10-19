@@ -29,33 +29,101 @@ namespace FB { namespace DOM {
     class Node;
     typedef boost::shared_ptr<Node> NodePtr;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Node
+    ///
+    /// @brief  DOM Node wrapper
+    ///
+    /// This class should not be created directly; instead, use the Node::create method
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Node : public boost::enable_shared_from_this<Node>
     {
     public:
         Node(const JSObjectPtr& element) : m_element(element) { }
         virtual ~Node() { }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual FB::JSObjectPtr getJSObject()
+        ///
+        /// @brief  Returns the FB::JSObjectPtr that this object is wrapping
+        ///
+        /// @return The js object. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::JSObjectPtr getJSObject() { return m_element; }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn NodePtr node()
+        ///
+        /// @brief  Gets the NodePtr for the current node
+        ///
+        /// @return NodePtr
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         NodePtr node() { return shared_from_this(); }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn static NodePtr create(FB::JSObjectPtr &api)
+        ///
+        /// @brief  Creates a FB::DOM::Node object from a JSObjectPtr representing a DOM node.  This
+        /// 		will probably throw an exception and definitely not work right if the js object
+        /// 		represented is not a node
+        /// 		
+        /// @param  api The FB::JSObjectAPI object containing the node to wrap
+        ///
+        /// @return FB::DOM::NodePtr to the created Node object
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         static NodePtr create(FB::JSObjectPtr &api) { return api->host->_createNode(api); }
 
     public:
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <class T> T callMethod(const std::string& name, const VariantList& args)
+        ///
+        /// @brief  Templated function, calls a method on the node of the given name, casts the result to
+        ///         type T, and returns it
+        ///
+        /// @code
+        ///      double tmp = node.callMethod<double>("pow", FB::variant_list_of(3)(2));
+        /// @endcode
+        /// 		
+        /// @param  name the name of the method to call
+        /// @param  args a VariantList of arguments to pass ot the method
+        ///
+        /// @return result of calling the method cast as type T
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T callMethod(const std::string& name, const VariantList& args)
         {
             FB::variant tmp = m_element->Invoke(name, args);
             return tmp.convert_cast<T>();
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload template <class T> T callMethod(const std::wstring& name, const VariantList& args)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T callMethod(const std::wstring& name, const VariantList& args)
         {
             return callMethod<T>(FB::wstring_to_utf8(name), args); 
         }
+        
+        /// @overload
         template <class T>
         T getProperty(const std::wstring& name)
         {
             return getProperty<T>(FB::wstring_to_utf8(name));
         }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <class T> T getProperty(const std::string& name)
+        ///
+        /// @brief  Templated function, gets the specified prooerty and returns it cast as the specified
+        ///         type
+        /// 
+        /// @code
+        ///     int width = docNode.getProperty<int>("offsetWdith");
+        /// @endcode
+        /// 
+        /// @param  name the name of the property to get
+        ///
+        /// @return value of the requested property cast as type T
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T getProperty(const std::string& name)
         {
@@ -63,6 +131,16 @@ namespace FB { namespace DOM {
             return tmp.convert_cast<T>();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <class T> T getProperty(int idx)
+        ///
+        /// @brief  Templated function, gets the specified prooerty by index and returns it cast as the
+        ///         specified type
+        ///	
+        /// @param  idx the index of the property to get
+        ///
+        /// @return result of calling the method cast as type T
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T getProperty(int idx)
         {
@@ -70,18 +148,49 @@ namespace FB { namespace DOM {
             return tmp.convert_cast<T>();
         }
 
+        /// @overload
         virtual NodePtr getNode(const std::wstring& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual NodePtr getNode(const std::string& name)
+        ///
+        /// @brief  Gets a child node of the specified name
+        /// 		
+        /// @param  name the name of the child node to fetch
+        ///
+        /// @return child node
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual NodePtr getNode(const std::string& name);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual NodePtr getNode(int idx)
+        ///
+        /// @brief  Gets a child node of the specified name by index
+        /// 		
+        /// @param  idx the index of the child node to fetch
+        ///
+        /// @return child node
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual NodePtr getNode(int idx);
 
+        /// @overload
         virtual void setProperty(const std::wstring& name, const variant& val);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void setProperty(const std::string& name, const variant& val)
+        ///
+        /// @brief  Sets a property on the node to a given value
+        /// 		
+        /// @param  name the name of the property to set
+        /// @param  val the new value for the property
+        ///
+        /// @return result of calling the method cast as type T
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setProperty(const std::string& name, const variant& val);
 
+        /// @overload
         virtual void setProperty(int idx, const variant& val);
 
     protected:
-        JSObjectPtr m_element;
+        JSObjectPtr m_element; // The JSObject that this object wraps
     };
 
 }; };

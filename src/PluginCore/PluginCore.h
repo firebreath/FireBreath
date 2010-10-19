@@ -250,45 +250,6 @@ namespace FB {
         virtual bool IsWindowless() = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool PluginCore::HandleEvent(PluginEvent *event, PluginEventSource *source) = 0
-        ///
-        /// @brief  Called by the browser when a system event needs to be handled, such as a mouse event,
-        /// 		a keyboard event, or a drawing event.
-        ///
-        /// The recommended way to implement HandleEvent is with the PLUGINEVENT_TYPE macros, like so:
-        /// 
-        /// @code
-        ///     BEGIN_PLUGIN_EVENT_MAP()
-        ///         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
-        ///         EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindow)
-        ///         EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindow)
-        ///     END_PLUGIN_EVENT_MAP()
-        /// @endcode
-        /// - BEGIN_PLUGIN_EVENT_MAP() will open the HandleEvent function
-        /// - END_PLUGIN_EVENT_MAP() will close the HandleEvent function
-        /// 
-        /// - EVENTTYPE_CASE(eventType, function, eventSourceType) dispatches events of type "eventType"
-        ///   and calls "function" on the current object.  The EventSource is casted as "eventSourceType".
-        /// 
-        /// If you use these macros, you must also create the matching methods in your class.  For
-        /// example, the methods needed for the map above are:
-        /// 
-        /// @code
-        ///     virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*);
-        ///     virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*);
-        ///     virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*);
-        /// @endcode
-        /// 		
-        /// @author Richard Bateman
-        ///
-        /// @param event PluginEvent to handle
-        /// @param source The PluginEventSource that the event originated from
-        ///
-        /// @return true if the event was handled, false if not. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HandleEvent(PluginEvent *event, PluginEventSource *source) = 0;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::setFSPath(const std::string& path)
         ///
         /// @brief  Called by the browser to set the file system path of the plugin module. 
@@ -334,13 +295,20 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
 
     protected:
-        PluginWindow *m_Window;         /// Don't use directly; use GetWindow() 
-        JSAPIPtr m_api;                 /// Don't use directly; use getRootJSAPI()
-        BrowserHostPtr m_host;          /// The BrowserHost object for the current session
-        std::string m_filesystemPath;   /// Stores the value passed into setFSPath()
-        StringSet m_supportedParamSet;  /// Stores the list of params returned by getSupportedParams()
-        bool m_paramsSet;               /// Boolean value indicates if the browser has called setParams() yet or not
-        FB::VariantMap m_params;        /// Sotres the list of params provided by the browser to setParams()
+        /// Don't use directly; use GetWindow() 
+        PluginWindow *m_Window;         
+        /// Don't use directly; use getRootJSAPI()
+        JSAPIPtr m_api;                 
+        /// The BrowserHost object for the current session
+        BrowserHostPtr m_host;          
+        /// Stores the value passed into setFSPath()
+        std::string m_filesystemPath;   
+        /// Stores the list of params returned by getSupportedParams()
+        StringSet m_supportedParamSet;  
+        /// Boolean value indicates if the browser has called setParams() yet or not
+        bool m_paramsSet;               
+        /// Sotres the list of params provided by the browser to setParams()
+        FB::VariantMap m_params;        
     };
 };
 

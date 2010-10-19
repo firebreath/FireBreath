@@ -24,6 +24,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <string>
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @class  IDispatchAPI
+///
+/// @brief  Provide a JSObject implementation to wrap a IDispatch ActiveX object
+////////////////////////////////////////////////////////////////////////////////////////////////////
 class IDispatchAPI :
     public FB::JSObject
 {
@@ -44,11 +49,9 @@ protected:
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
 
 protected:
-    // Utility functions
     DISPID getIDForName(const std::wstring& name);
 
 public:
-    // Methods to query existance of members on the API
     bool HasMethod(const std::string& methodName);
     bool HasMethod(const std::wstring& methodName);
     bool HasProperty(const std::string& propertyName);
@@ -57,13 +60,11 @@ public:
     bool HasEvent(const std::string& eventName);
     bool HasEvent(const std::wstring& eventName);
 
-    // Methods to manage properties on the API
     FB::variant GetProperty(const std::string& propertyName);
     void SetProperty(const std::string& propertyName, const FB::variant& value);
     FB::variant GetProperty(int idx);
     void SetProperty(int idx, const FB::variant& value);
 
-    // Methods to manage methods on the API
     FB::variant Invoke(const std::string& methodName, const std::vector<FB::variant>& args);
 };
 

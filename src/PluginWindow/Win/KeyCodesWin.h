@@ -16,6 +16,15 @@ Copyright 2010 Dan Groom and the Firebreath development team
 
 namespace FB {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn FBKeyCode WinKeyCodeToFBKeyCode( unsigned int wparam )
+    ///
+    /// @brief  Converts a windows key code to a FireBreath key code. 
+    ///
+    /// @param  wparam  The wparam. 
+    ///
+    /// @return FireBreath keycode
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     FBKeyCode WinKeyCodeToFBKeyCode( unsigned int wparam );
 
 }

@@ -21,18 +21,26 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
-    /** 
-     * PluginWindow
-     *
-     * This is the base class for the window of a user-defined Plugin
-     * This class is responsible for firing system events to the PluginCore
-     **/
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginWindow
+    ///
+    /// @brief  PluginWindow is the base class for all PluginWindow objects.
+    /// 		
+    /// A PluginWindow object is platform specific and contains everything you need to perform
+    /// drawing operations as well as being the source of system events such as MouseEvent or
+    /// KeyEvent.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindow : public PluginEventSource
     {
     public:
         PluginWindow() { };
         virtual ~PluginWindow() { };
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void PluginWindow::InvalidateWindow() = 0
+        ///
+        /// @brief  Invalidate window.  This should tell the OS to send a REFRESH event.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void InvalidateWindow() = 0;
     };
 };

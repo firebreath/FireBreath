@@ -36,7 +36,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
-    FBLOG_INFO("FB::PluginCore", std::string("os: " + os + "; browser: " + browser).c_str());
+    FBLOG_INFO("FB::PluginCore", "os: " << os << "; browser: " << browser);
 }
 
 /***************************\
@@ -103,12 +103,12 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 tmp = m_host->getDOMWindow()
                     ->getProperty<FB::JSObjectPtr>(value);
 
-                FBLOG_TRACE("PluginCore", std::string("Found <param> event handler: " + key).c_str());
+                FBLOG_TRACE("PluginCore", "Found <param> event handler: " << key);
 
                 m_params[key] = tmp;
             }
         } catch (const std::exception &ex) {
-            FBLOG_WARN("PluginCore", std::string("Exception processing <param> " + key + ": " + ex.what()).c_str());
+            FBLOG_WARN("PluginCore", "Exception processing <param> " << key << ": " << ex.what());
         }
     }
 }

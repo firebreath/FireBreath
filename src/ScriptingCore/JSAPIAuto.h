@@ -42,11 +42,16 @@ namespace FB {
     /// Then in the constructor of your class that extends JSAPIAuto (we'll call it MyPluginAPI),
     /// you register it like so:
     /// @code
-    /// 	 registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished, &MyPluginAPI::set_IsFinished));
+    /// 	 registerProperty("IsFinished", 
+    ///                       make_property(this, 
+    ///                                     &MyPluginAPI::get_IsFinished, 
+    ///                                     &MyPluginAPI::set_IsFinished));
     /// @endcode
-    /// To register a property that is read- or write-only, simply provide "NULL" for the getter or
-    /// setter function when registering the property.
-    /// 
+    /// To register a property that is read--only, use the second form:
+    /// @code
+    ///      registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished));
+    /// @endcode 
+    ///
     /// Similarly, to provide a method called "add" that accepts two integers and returns an integer,
     /// you need one method on your class:
     /// @code
@@ -67,7 +72,8 @@ namespace FB {
     class JSAPIAuto : public JSAPI
     {
     public:
-        JSAPIAuto();
+        /// @brief Use description for ToString().
+        JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
         ~JSAPIAuto();
 
         void getMemberNames(std::vector<std::string> &nameVector);
@@ -144,7 +150,7 @@ namespace FB {
         /// @fn virtual std::string JSAPIAuto::ToString()
         ///
         /// @brief  Default method called when a string value is requested for the plugin object.
-        /// 		Override this to provide your own.  Default returns "&lt;JSAPI-Auto driven Javascript Object&gt;"
+        /// 		Override this to provide your own.  Default returns "<JSAPI-Auto driven Javascript Object>"
         /// 		
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -162,6 +168,8 @@ namespace FB {
     private:
         MethodFunctorMap m_methodFunctorMap;        // Stores the methods exposed to JS
         PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
+        
+        const std::string m_description;
     };
 };
 
