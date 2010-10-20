@@ -98,7 +98,13 @@ set (SOURCES
     )
 
 add_library(${PROJNAME} STATIC ${SOURCES})
+
+if (UNIX)
+    # Link with libdl on Mac and X11
+    set(LIBDL_LIBRARIES dl)
+endif()
 target_link_libraries(${PROJNAME}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
+    ${LIBDL_LIBRARIES}
     )
