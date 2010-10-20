@@ -157,8 +157,25 @@ namespace FB
     ///
     /// @brief  When used as a parameter on a JSAPIAuto function this matches 0 or more variants
     /// 		-- in other words, all other parameters from this point on regardless of type.
+    /// 
+    /// This helper struct allows your scriptable methods to receive 0 or more parameters in addition
+    /// to some fixed ones. E.g. given the following scriptable method:
+    /// @code
+    /// long howManyParams(long a, const std::string& b, const FB::CatchAll& more) {
+    ///     const FB::VariantList& values = more.value;
+    ///     long paramCount = 2 + values.size();
+    ///     return paramCount;
+    /// }
+    /// @endcode
+    /// The following calls would result in:
+    /// @code
+    /// > obj.howManyParams(42, "moo");
+    /// => returns 2
+    /// > obj.howManyParams(42, "moo", 1.0, "meh");
+    /// => returns 4
+    /// @endcode
     ///
-    /// @author Richard Bateman
+    /// @author Georg Fritzsche
     /// @date   10/15/2010
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct CatchAll {
@@ -203,7 +220,7 @@ namespace FB
 
     // new style JSAPI methods
 
-    /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto
+    /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
     typedef boost::function<variant (const std::vector<variant>&)> CallMethodFunctor;
     /// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
     typedef std::map<std::string, CallMethodFunctor> MethodFunctorMap;
@@ -214,7 +231,7 @@ namespace FB
     typedef boost::function<FB::variant ()> GetPropFunctor;
     /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
     typedef boost::function<void (const FB::variant&)> SetPropFunctor;
-    /// @brief  used by FB::JSAPIAuto to store property implementation details
+    /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
     struct PropertyFunctors
     {
         GetPropFunctor get;

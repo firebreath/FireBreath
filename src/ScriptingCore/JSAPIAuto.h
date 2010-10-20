@@ -23,6 +23,20 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <string>
 
 namespace FB {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())
+    /// @brief Overload of FB::make_method() for methods taking 0 arguments. 
+    ///
+    /// This is used with registerMethod() of FB::JSAPIAuto and there are currently overloads for methods
+    /// taking up to 10 arguments:
+    /// @code
+    /// struct X : FB::JSAPIAuto {
+    ///     long add(long a, long b) { return a+b; }
+    ///     X() { registerMethod("add", FB::make_method(this, &MyClass::add)); }
+    /// };
+    /// @endcode
+    /// @see FB::JSAPIAuto
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPIAuto
@@ -68,6 +82,7 @@ namespace FB {
     /// 
     /// @see JSAPI
     /// @see PluginCore
+    /// @author Georg Fritzsche
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPIAuto : public JSAPI
     {

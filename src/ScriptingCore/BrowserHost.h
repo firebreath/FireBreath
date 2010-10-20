@@ -27,7 +27,7 @@ namespace FB
     class JSObject;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @namespace  DOM {
+/// @namespace  DOM 
 ///
 /// @brief These are convenience objects used to access and manipulate DOM objects.  They should
 /// 	   never be created directly; instead, get the Window object or the Document object
