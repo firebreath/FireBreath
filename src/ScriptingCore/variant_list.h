@@ -33,9 +33,12 @@ namespace FB
     // declarations
 
     /// @brief Create a FB::VariantList from any STL-style container (i.e. exposes begin() and end())
+    /// @param cont A STL-style container.
+    /// @return A FB::VariantList constructed from the cont.
     template<typename Cont>
-    inline FB::VariantList make_variant_list(const Cont&);
+    inline FB::VariantList make_variant_list(const Cont& cont);
     /// @brief Create a FB::VariantList from the range [begin, end).
+    /// @return A FB::VariantList containing variants constructed from the contents of the range.
     template<class InputIterator>
     inline FB::VariantList make_variant_list(InputIterator begin, InputIterator end);
     /// @brief Fill a FB::VariantList with the contents of the range [begin, end). 
@@ -58,6 +61,7 @@ namespace FB
     inline Cont convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end);
     /// @brief Fills the range [result, result+(end-begin)) with the contents of the range [begin,end), converted to To
+    /// @param result Out parameter, shall be an output iterator.
     template<typename To, class OutputIterator>
     inline void convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end,
@@ -73,6 +77,7 @@ namespace FB
     /// @endcode
     inline FB::detail::VariantListInserter variant_list_of(FB::variant v);
     /// @brief Convenience overload to create an empty FB::VariantList.
+    /// @return An empty FB::VariantList.
     inline FB::VariantList variant_list_of();
 
     ///////////////////////////////////

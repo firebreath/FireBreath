@@ -47,6 +47,7 @@ namespace FB
     FB::detail::VariantMapInserter<T> variant_map_of(const T& t, const FB::variant& v);
     
     /// @brief Convenience overload to create an empty variant map.
+    /// @return An empty variant map.
     template<typename T>
     std::map<T,FB::variant> variant_map_of();
 

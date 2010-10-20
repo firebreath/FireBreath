@@ -87,7 +87,7 @@ namespace FB {
     class JSAPIAuto : public JSAPI
     {
     public:
-        /// @brief Use description for ToString().
+        /// @brief Description is used by ToString().
         JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
         ~JSAPIAuto();
 
@@ -164,8 +164,9 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
         ///
-        /// @brief  Default method called when a string value is requested for the plugin object.
-        /// 		Override this to provide your own.  Default returns "<JSAPI-Auto driven Javascript Object>"
+        /// @brief  Default method called when a string value is requested for the scriptable object.
+        ///
+        ///	Override this to provide your own, otherwise it returns the description passed to the constructor.
         /// 		
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
