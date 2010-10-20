@@ -50,3 +50,5 @@ set (FBMAC_USE_COREGRAPHICS  1)
 set (FBMAC_USE_COREANIMATION 0)
 
 add_firebreath_library(log4cplus)
+
+set (FBWIN_WINDOWLESS 0)

@@ -17,7 +17,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginCore.h"
 #include "Win/PluginWindowWin.h"
 #include "Win/PluginWindowlessWin.h"
-#include "Win/FactoryDefinitionsWin.h"
 
 #include "Win/NpapiPluginWin.h"
 
@@ -52,6 +51,9 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
     if(pluginMain->isWindowless()) { 
+#if !FB_WINDOWLESS
+        return NPERR_GENERIC_ERROR;
+#else
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
 
         if(win == NULL && pluginWin != NULL) {
@@ -77,6 +79,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             win->setWindowClipping(window->clipRect.top, window->clipRect.left,
                                    window->clipRect.bottom, window->clipRect.right);
         }
+#endif
     } else { 
         PluginWindowWin* win = dynamic_cast<PluginWindowWin*>(pluginWin);
         // Check to see if we've received a new HWND (new window)
