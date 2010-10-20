@@ -37,13 +37,25 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
  */
 
 namespace FB {
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginWindowlessWin
+    ///
+    /// @brief  Windows specific implementation of PluginWindow. Uses NPAPI windowless mode.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindowlessWin : public PluginWindow
     {
         public:
             PluginWindowlessWin(HDC hdc);
             ~PluginWindowlessWin();
             
-            // HDC is the "Handle to Device Context" given to us in SetWindow
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn HDC PluginWindowlessWin::getHDC()
+            ///
+            /// @brief  Gets the HDC of the plugin window
+            ///
+            /// @note   The window's HDC is likely to change frequently
+            /// @return The HDC 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             HDC getHDC() { return m_hdc; }
             void setHDC(HDC hdc) { m_hdc = hdc; }
             HWND getHWND(); 
@@ -52,17 +64,44 @@ namespace FB {
             Npapi::NpapiBrowserHostPtr getNpHost() { return m_npHost; }
             void setNpHost(Npapi::NpapiBrowserHostPtr npHost) { m_npHost = npHost; }
 
-            // Returns the plugin's position within the page
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn NPRect PluginWindowlessWin::getWindowPosition()
+            ///
+            /// @brief  Gets the position rect of the window
+            ///
+            /// @return The position rect of the window
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             NPRect getWindowPosition();
             void setWindowPosition(int x, int y, int width, int height);
             void setWindowPosition(NPRect pos);
 
-            // Returns the clipping rect that the plugin is clipped to in the page
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn NPRect PluginWindowlessWin::getWindowClipping()
+            ///
+            /// @brief  Gets the clipping rect of the window
+            ///
+            /// @return The clipping rect of the window
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             NPRect getWindowClipping();
             void setWindowClipping(int top, int left, int bottom, int right);
             void setWindowClipping(NPRect clip);
 
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn int PluginWindowlessWin::getWindowWidth()
+            ///
+            /// @brief  Gets the width of the window
+            ///
+            /// @return The width of the window
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             int getWindowWidth() { return m_width; }
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn int PluginWindowlessWin::getWindowHeight()
+            ///
+            /// @brief  Gets the height of the window
+            ///
+            /// @return The height of the window
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             int getWindowHeight() { return m_height; }
 
             // Converts window-space coordinates into plugin-place coordinates
