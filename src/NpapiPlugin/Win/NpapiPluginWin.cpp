@@ -17,6 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginCore.h"
 #include "Win/PluginWindowWin.h"
 #include "Win/PluginWindowlessWin.h"
+#include "config.h"
 
 #include "Win/NpapiPluginWin.h"
 

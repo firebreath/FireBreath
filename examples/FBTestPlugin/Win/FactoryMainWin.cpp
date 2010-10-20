@@ -26,6 +26,6 @@ FB::PluginWindowWin *_createPluginWindow(HWND hWnd)
 #if FBWIN_WINDOWLESS
 FB::PluginWindowlessWin *_createPluginWindow(HDC hDC)
 {
-    return new FB::PluginWindowlessWin(hdc);
+    return new FB::PluginWindowlessWin(hDC);
 }
 #endif

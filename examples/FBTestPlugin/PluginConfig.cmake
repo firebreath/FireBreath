@@ -51,4 +51,4 @@ set (FBMAC_USE_COREANIMATION 0)
 
 add_firebreath_library(log4cplus)
 
-set (FBWIN_WINDOWLESS 0)
+set (FBWIN_WINDOWLESS 1)
