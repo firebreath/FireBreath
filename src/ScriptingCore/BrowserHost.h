@@ -26,13 +26,6 @@ namespace FB
     class PluginEventSink;
     class JSObject;
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @namespace  DOM 
-///
-/// @brief These are convenience objects used to access and manipulate DOM objects.  They should
-/// 	   never be created directly; instead, get the Window object or the Document object
-/// 	   from the BrowserHost or create it with DOM::Element::create(obj) (or similar)
-////////////////////////////////////////////////////////////////////////////////////////////////////
     namespace DOM {
         class Window;
         class Document;
