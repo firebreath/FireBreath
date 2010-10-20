@@ -20,7 +20,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 
 namespace FB { 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-/// @namespace  FB::DOM {
+/// @namespace  FB::DOM 
 ///
 /// @brief These are convenience objects used to access and manipulate DOM objects.  They should
 /// 	   never be created directly; instead, get the Window object or the Document object
