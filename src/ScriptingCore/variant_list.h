@@ -38,10 +38,14 @@ namespace FB
     template<typename Cont>
     inline FB::VariantList make_variant_list(const Cont& cont);
     /// @brief Create a FB::VariantList from the range [begin, end).
+    /// @param begin the start of the range
+    /// @param end the end of the range
     /// @return A FB::VariantList containing variants constructed from the contents of the range.
     template<class InputIterator>
     inline FB::VariantList make_variant_list(InputIterator begin, InputIterator end);
     /// @brief Fill a FB::VariantList with the contents of the range [begin, end). 
+    /// @param begin the start of the range
+    /// @param end the end of the range
     /// @param result An iterator to the begin of a VariantList range big enough to hold last-first values.
     template<class InputIterator>
     inline void make_variant_list(InputIterator begin, InputIterator end, FB::VariantList::iterator result);
@@ -61,6 +65,8 @@ namespace FB
     inline Cont convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end);
     /// @brief Fills the range [result, result+(end-begin)) with the contents of the range [begin,end), converted to To
+    /// @param begin the start of the range
+    /// @param end the end of the range
     /// @param result Out parameter, shall be an output iterator.
     template<typename To, class OutputIterator>
     inline void convert_variant_list(FB::VariantList::const_iterator begin,
