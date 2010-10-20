@@ -166,3 +166,15 @@ void PluginCore::setReady()
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
 }
+
+bool PluginCore::isWindowless()
+{
+    FB::VariantMap::iterator itr = m_params.find("windowless");
+    if (itr != m_params.end()) {
+        if (itr->second.convert_cast<std::string>().compare("true") == 0) {
+            // Plugin is windowless
+            return true;
+        }
+    }
+    return false;
+}

@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "PluginWindow.h"
+#include "NpapiBrowserHost.h"
 
 #include <map>
 
@@ -68,6 +69,8 @@ namespace FB {
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
+        // Windowed plugins get OS events directly through their window
+        int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

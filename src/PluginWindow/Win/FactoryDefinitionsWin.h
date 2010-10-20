@@ -21,6 +21,7 @@ namespace FB {
     class JSAPI;
     class PluginCore;
     class PluginWindowWin;
+    class PluginWindowlessWin;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -42,5 +43,7 @@ namespace FB {
 /// @return A ptr to your window 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 FB::PluginWindowWin *_createPluginWindow(HWND hWnd);
+
+FB::PluginWindowlessWin *_createPluginWindowless(HDC hdc);
 
 #endif

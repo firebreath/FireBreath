@@ -198,6 +198,7 @@ namespace FB {
         /// @author Richard Bateman
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setReady();
+        virtual bool isWindowless();
 
     protected:
 
