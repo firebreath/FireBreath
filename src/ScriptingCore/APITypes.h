@@ -51,6 +51,9 @@ namespace FB
     /// @typedef    FB::VariantList
     ///
     /// @brief  Defines an alias representing list of variants.
+    /// @see FB::variant_list_of()
+    /// @see FB::make_variant_list()
+    /// @see FB::convert_variant_list()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::vector<variant> VariantList;
 
@@ -58,6 +61,7 @@ namespace FB
     /// @typedef    FB::VariantMap
     ///
     /// @brief  Defines an alias representing a string -> variant map.
+    /// @see FB::variant_map_of()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef std::map<std::string, variant> VariantMap;
 
