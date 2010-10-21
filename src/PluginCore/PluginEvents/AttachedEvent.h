@@ -20,10 +20,22 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  AttachedEvent
+    ///
+    /// @brief  Fired when a PluginEventSink is attached to a PluginEventSource (such as a PluginCore
+    /// 		derived plugin object being attached to a PluginWindow to get events)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class AttachedEvent : public PluginEvent
     {
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  DetachedEvent
+    ///
+    /// @brief  Fired when a PluginEventSink is detached from a PluginEventSource (such as a PluginCore
+    /// 		derived plugin object being detached from a PluginWindow to get events)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class DetachedEvent : public PluginEvent
     {
     };

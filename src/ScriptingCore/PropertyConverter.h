@@ -27,6 +27,39 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB
 {
+    /// @brief Generate read-write property functors for use with registerProperty() of FB::JSAPIAuto.
+    /// @code
+    /// struct X : JSAPIAuto {
+    ///     long m_answer;
+    ///     long get_answer() const { return m_answer; }
+    ///     void set_answer(long answer) { m_answer = answer; }
+    ///     X() : m_answer(42) {
+    ///         registerProperty("answer", 
+    ///             make_property(this, &X::get_answer, &X::set_answer));
+    ///     }
+    /// };
+    /// @endcode
+    /// @see JSAPI
+    template<class C, typename F1, typename F2>
+    inline PropertyFunctors 
+    make_property(C* instance, F1 getter, F2 setter);
+    
+    /// @brief Generate read-only property functors for use with registerProperty() of FB::JSAPIAuto.
+    /// @code
+    /// struct X : JSAPIAuto {
+    ///     long m_state;
+    ///     long get_state() const { return m_state; }
+    ///     X() : m_state(StateReady) {
+    ///         registerProperty("state", 
+    ///             make_property(this, &X::get_state);
+    ///     }
+    /// };
+    /// @endcode
+    /// @see JSAPI
+    template<class C, typename F>
+    inline PropertyFunctors
+    make_property(C* instance, F getter);
+    
     namespace detail { namespace properties 
     {
         template<class C, bool IsConst = false>

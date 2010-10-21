@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "PluginWindow.h"
+#include "NpapiBrowserHost.h"
 
 #include <map>
 
@@ -24,6 +25,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginWindowWin
+    ///
+    /// @brief  Windows specific implementation of PluginWindow
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindowWin : public PluginWindow
     {
     public:
@@ -31,16 +37,49 @@ namespace FB {
         virtual ~PluginWindowWin();
         static LRESULT CALLBACK _WinProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                                                           LPARAM lParam);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn HWND PluginWindowWin::getHWND()
+        ///
+        /// @brief  Gets the HWND of the plugin window
+        ///
+        /// @note   You *must not* attempt to use this HWND after DetachedEvent is fired.
+        /// @return The HWND
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         HWND getHWND() { return m_hWnd; }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void PluginWindowWin::setBrowserHWND(HWND hWnd)
+        ///
+        /// @brief  Called by the browser to store the HWND of the browser window
+        ///
+        /// @param  hWnd    Handle of the browser window. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void setBrowserHWND(HWND hWnd) { m_browserhWnd = hWnd; }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn HWND PluginWindowWin::getBrowserHWND()
+        ///
+        /// @brief  Gets the browser window HWND 
+        ///
+        /// @return The browser HWND 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         HWND getBrowserHWND() { return m_browserhWnd; }
         void setCallOldWinProc(bool callOld) { m_callOldWinProc = callOld; }
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
+        // Windowed plugins get OS events directly through their window
+        int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn static HWND PluginWindowWin::createMessageWindow()
+        ///
+        /// @brief  Creates a message window. Don't touch this if you don't understand what you are doing
+        ///
+        /// @return The handle of the window. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         static HWND createMessageWindow();
 
     protected:

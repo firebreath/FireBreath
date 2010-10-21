@@ -134,17 +134,17 @@ JSObjectPtr JSAPI::getDefaultEventMethod(const std::string& name)
     return JSObjectPtr();
 }
 
-void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObjectPtr obj)
+void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObjectPtr event)
 {
-    setDefaultEventMethod(wstring_to_utf8(name), obj);
+    setDefaultEventMethod(wstring_to_utf8(name), event);
 }
 
-void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObjectPtr obj)
+void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObjectPtr event)
 {
-    if(obj == NULL)
+    if(event == NULL)
         m_defEventMap.erase(name);
     else 
-        m_defEventMap[name] = obj;
+        m_defEventMap[name] = event;
 }
 
 void JSAPI::registerEvent(const std::wstring &name)

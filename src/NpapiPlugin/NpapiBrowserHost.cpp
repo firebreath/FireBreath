@@ -59,9 +59,6 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_ptr())));
     if (m_htmlWin) {
         m_htmlDoc = ptr_cast<NPObjectAPI>(m_htmlWin->GetProperty("document").cast<FB::JSObjectPtr>());
-        m_location = m_htmlWin->GetProperty("location")
-            .convert_cast<FB::JSObjectPtr>()->GetProperty("href")
-            .convert_cast<std::string>();
     }
 }
 

@@ -51,14 +51,6 @@ namespace FB {
             inline
             ArgType convertLastArgument(const FB::VariantList& l, size_t n);
         }
-
-        // check for unsupported arguments
-        template<typename T>
-        struct argument_type_valid
-        {
-            typedef boost::mpl::vector<int, float> invalid;
-            static const bool value = ! boost::mpl::contains<invalid, T>::value;
-        };
     } // namespace detail
 
     // conversion wrapper function
@@ -84,21 +76,6 @@ namespace FB { namespace detail
     template<typename To>
     struct converter<To, FB::variant>
     {
-        // If you see an error occuring here, you have used an unsupported
-        // type like int or float - use long and double instead.
-        // To find out which registerMethod() or registerProperty() call
-        // is responsible you should look at the detailed output for
-        // the last "instantiated from here" line (or similar) in the
-        // error description.
-        //
-        // Background: You might only be getting long or double from the 
-        // browser which could result in silent losses.
-
-        BOOST_MPL_ASSERT_MSG(
-            FB::detail::argument_type_valid<To>::value,
-            INVALID_ARGUMENT_TYPE_USED,
-            (To));
-
         static inline To convert(const FB::variant& from)
         {
             try {

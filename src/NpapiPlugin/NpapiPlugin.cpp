@@ -72,7 +72,15 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         }
     }
     pluginMain->setParams(paramList);
-    setReady();
+    if(pluginMain->isWindowless()) {
+       /* Windowless plugins require negotiation with the browser. 
+        * If the plugin does not set this value it is assumed to be 
+        * a windowed plugin.
+        * See: https://developer.mozilla.org/en/Gecko_Plugin_API_Reference/Drawing_and_Event_Handling
+        */
+        m_npHost->SetValue(NPPVpluginWindowBool, false);
+        m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
+    } 
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)

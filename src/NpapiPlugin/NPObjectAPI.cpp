@@ -55,7 +55,7 @@ NPObjectAPI::~NPObjectAPI(void)
                 browser->ReleaseObject(obj);
             }
         } else {
-            FBLOG_ERROR("NPObjectAPI", std::string("Invalid reference count found on NPObject!" + obj->referenceCount).c_str());
+            FBLOG_ERROR("NPObjectAPI", "Invalid reference count found on NPObject!" << obj->referenceCount);
         }
     }
 }

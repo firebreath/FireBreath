@@ -36,7 +36,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
-    FBLOG_INFO("FB::PluginCore", std::string("os: " + os + "; browser: " + browser).c_str());
+    FBLOG_INFO("FB::PluginCore", "os: " << os << "; browser: " << browser);
 }
 
 /***************************\
@@ -103,12 +103,12 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 tmp = m_host->getDOMWindow()
                     ->getProperty<FB::JSObjectPtr>(value);
 
-                FBLOG_TRACE("PluginCore", std::string("Found <param> event handler: " + key).c_str());
+                FBLOG_TRACE("PluginCore", "Found <param> event handler: " << key);
 
                 m_params[key] = tmp;
             }
         } catch (const std::exception &ex) {
-            FBLOG_WARN("PluginCore", std::string("Exception processing <param> " + key + ": " + ex.what()).c_str());
+            FBLOG_WARN("PluginCore", "Exception processing <param> " << key << ": " << ex.what());
         }
     }
 }
@@ -132,14 +132,14 @@ PluginWindow* PluginCore::GetWindow() const
     return m_Window;
 }
 
-void PluginCore::SetWindow(PluginWindow *wind)
+void PluginCore::SetWindow(PluginWindow *win)
 {
     FBLOG_TRACE("PluginCore", "Window Set");
-    if (m_Window && m_Window != wind) {
+    if (m_Window && m_Window != win) {
         ClearWindow();
     }
-    m_Window = wind;
-    wind->AttachObserver(this);
+    m_Window = win;
+    win->AttachObserver(this);
 }
 
 void PluginCore::ClearWindow()
@@ -165,4 +165,16 @@ void PluginCore::setReady()
     } catch(...) {
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
+}
+
+bool PluginCore::isWindowless()
+{
+    FB::VariantMap::iterator itr = m_params.find("windowless");
+    if (itr != m_params.end()) {
+        if (itr->second.convert_cast<std::string>().compare("true") == 0) {
+            // Plugin is windowless
+            return true;
+        }
+    }
+    return false;
 }

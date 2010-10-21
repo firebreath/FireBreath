@@ -98,6 +98,13 @@
 namespace FB
 {
     class JSObject;
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @exception bad_variant_cast
+    ///
+    /// @brief  Thrown when variant::cast<type> or variant::convert_cast<type> fails because the
+    /// 		type of the value stored in the variant is not compatible with the operation
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct bad_variant_cast : std::bad_cast {
         bad_variant_cast(const std::type_info& src, const std::type_info& dest)
             : from(src.name()), to(dest.name())
@@ -204,10 +211,45 @@ namespace FB
         };
     } // namespace variant_detail
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  variant
+    ///
+    /// @brief  Accepts any datatype, used in all interactions with javascript.  Provides tools for
+    /// 		getting back out the type you put in or for coercing that type into another type
+    /// 		(if possible).
+    ///
+    /// variant is the most versatile and fundamental class in FireBreath.  Any type can be assigned
+    /// to a variant, and you can get that type back out using cast(), like so:
+    /// @code
+    /// 	 variant a = 5;
+    /// 	 int i_a = a.cast<int>();
+    /// @endcode
+    /// 		
+    /// Basic type conversion can be handled using convert_cast(), like so:
+    /// @code
+    /// 	 variant str = "5";
+    /// 	 int i_a = a.convert_cast<int>();
+    /// @endcode
+    /// 
+    /// JSAPIAuto relies heavily on the ability of variant to convert_cast effectively for all type
+    /// conversion.  If the type conversion fails, a FB::bad_variant_cast exception will be thrown.
+    /// 
+    /// @note If you assign a char* to variant it will be automatically converted to a std::string before
+    /// 	  the assignment.
+    /// @note If you assign a wchar_t* to variant it will be automatically converted to a std::wstring
+    /// 	  before the assignment
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class variant
     {
     public:
-        // structors
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <typename T> variant::variant(const T& x)
+        ///
+        /// @brief  Templated constructor to allow any arbitrary type
+        ///
+        /// @param  x   The value 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         variant(const T& x) {
             table = variant_detail::get_table<T>::get();
@@ -219,33 +261,71 @@ namespace FB
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant::variant(const wchar_t *x)
+        ///
+        /// @brief  Constructor with a wide string. 
+        ///
+        /// @param  x   The string value
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant(const wchar_t *x) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
             assign(x);
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant::variant(const char *x)
+        ///
+        /// @brief  Constructor with a string. 
+        ///
+        /// @param  x   The string value
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant(const char *x) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
             assign(x);
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant::variant()
+        ///
+        /// @brief  Default constructor initializes the varient to an empty value
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant() {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
         }
 
-        // Utilize the assignment operator
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant::variant(const variant& x)
+        ///
+        /// @brief  Copy constructor. 
+        ///
+        /// @param  x   The variant to copy 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant(const variant& x) {
             *this = x;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant::~variant()
+        ///
+        /// @brief  Finaliser. Deletes the value from memory as part of cleanup
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         ~variant() {
             table->static_delete(&object);
         }
 
-        // assignment
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant& variant::assign(const variant& x)
+        ///
+        /// @brief  Assigns a new value from another variant
+        ///
+        /// @param  x   The variant to copy. 
+        ///
+        /// @return *this
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant& assign(const variant& x) {
             // are we copying between the same type?
             if (table == x.table) {
@@ -260,14 +340,41 @@ namespace FB
             return *this;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant& variant::assign(const char *x)
+        ///
+        /// @brief  Assigns a string value as a std::string from a const char*
+        ///
+        /// @param  x   The string value 
+        ///
+        /// @return *this
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant& assign(const char *x) {
             return assign(std::string(x));
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn variant& variant::assign(const wchar_t *x)
+        ///
+        /// @brief  Assigns a wide string value as a std::wstring from a const wchar_t*
+        ///
+        /// @param  x   The string value 
+        ///
+        /// @return *this
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant& assign(const wchar_t *x) {
             return assign(std::wstring(x));
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template <typename T> variant& variant::assign(const T& x)
+        ///
+        /// @brief  Assigns a value of arbitrary type
+        ///
+        /// @param  x   The new value 
+        ///
+        /// @return *this
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         variant& assign(const T& x)
         {
@@ -306,6 +413,7 @@ namespace FB
             return assign(x);
         }
 
+        // assignment copy operator
         variant& operator=(variant const& rh) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             return assign(rh);
@@ -324,6 +432,7 @@ namespace FB
             return lessthan(rh);
         }
 
+        // comparison function
         bool lessthan(const variant& rh) const {
             if (get_type() == rh.get_type()) {
                 return table->less(&object, &rh.object);
@@ -334,15 +443,47 @@ namespace FB
             }
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn const std::type_info& variant::get_type() const
+        ///
+        /// @brief  Gets the type of the value stored in variant
+        ///
+        /// @return The type that can be compared with typeid()
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         const std::type_info& get_type() const {
             return table->get_type();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<typename T> bool variant::is_of_type() const
+        ///
+        /// @brief  Query if this object is of a particular type. 
+        /// 		
+        /// Example:
+        /// @code
+        /// 	 if (value.is_of_type<int>())
+        /// 	 {
+        /// 	    // Do something
+        /// 	 }
+        /// @endcode
+        ///
+        /// @return true if of type, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>
         bool is_of_type() const {
             return (get_type() == typeid(T));
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<typename T> const T& variant::cast() const
+        ///
+        /// @brief  returns the value cast as the given type; throws bad_variant_type if that type is
+        /// 		not the type of the value stored in variant
+        ///
+        /// @exception  bad_variant_cast    Thrown when bad variant cast. 
+        ///
+        /// @return value of type T
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>
         const T& cast() const {
             if (get_type() != typeid(T)) {
@@ -355,7 +496,23 @@ namespace FB
                 return *reinterpret_cast<T const*>(object);
             }
         }
-        
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<typename T> typename FB::meta::disable_for_containers_and_numbers<T, const T>::type variant::convert_cast() const
+        ///
+        /// @brief  Converts the stored value to the requested type *if possible* and returns the resulting
+        /// 		value.  If the conversion is not possible, throws bad_variant_cast
+        /// 		
+        /// Supported destination types include:
+        ///   - all numeric types
+        ///   - std::string (stored in UTF8 if needed)
+        ///   - std::wstring (converted from UTF8 if needed)
+        ///   - bool
+        ///   - STL container types (from a FB::JSObjectPtr containing an array javascript object)
+        ///   - STL dict types (from a FB::JSObjectPtr containing a javascript object)
+        ///
+        /// @return converted value of the specified type
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>        
         typename FB::meta::disable_for_containers_and_numbers<T, const T>::type
         convert_cast() const
@@ -384,11 +541,26 @@ namespace FB
         }
 #endif // implicit casting
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool variant::empty() const
+        ///
+        /// @brief  Returns true if the variant is empty (has not been assigned a value or has been reset)
+        ///
+        /// @return true if empty, false if not 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool empty() const {
             //return object == NULL;
             return table == variant_detail::get_table<variant_detail::empty>::get();
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void variant::reset()
+        ///
+        /// @brief  Frees any value assigned and resets the variant to empty state
+        ///
+        /// @author Richard Bateman
+        /// @date   10/15/2010
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void reset()
         {
             if (empty()) return; 

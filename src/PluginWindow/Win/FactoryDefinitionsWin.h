@@ -21,6 +21,7 @@ namespace FB {
     class JSAPI;
     class PluginCore;
     class PluginWindowWin;
+    class PluginWindowlessWin;
     namespace Npapi {
         class NpapiPlugin;
         class NpapiBrowserHost;
@@ -32,6 +33,17 @@ namespace FB {
 // JSAPI object is used as the root JSAPI, what type of Plugin object to use, etc, as well
 // as providing a way for the plugin to find out such information as MIME type, plugin name, etc
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+/// @fn FB::PluginWindowWin *_createPluginWindow(HWND hWnd)
+///
+/// @brief  Creates a PluginWindowWin derived object and returns it
+///
+/// @param  hWnd    Handle of the window. 
+///
+/// @return A ptr to your window 
+////////////////////////////////////////////////////////////////////////////////////////////////////
 FB::PluginWindowWin *_createPluginWindow(HWND hWnd);
+
+FB::PluginWindowlessWin *_createPluginWindowless(HDC hdc);
 
 #endif

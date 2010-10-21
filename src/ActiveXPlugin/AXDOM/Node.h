@@ -24,14 +24,14 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "DOM/Node.h"
 
 namespace AXDOM {
-    /**
-     * Node (used as NodePtr, a shared_ptr)
-     *
-     * Provides a wrapper around a JSObject * that represents a DOM node
-     **/
     class Node;
     typedef boost::shared_ptr<Node> NodePtr;
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Node
+    ///
+    /// @brief  Provides an ActiveX specific implementation of DOM::Node
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Node : public FB::DOM::Node
     {
     public:
