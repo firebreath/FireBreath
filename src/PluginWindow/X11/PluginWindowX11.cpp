@@ -48,8 +48,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0)
 {
-    m_window = win;
-    m_container = gtk_plug_new((GdkNativeWindow)win);
+    m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
     m_canvas = gtk_drawing_area_new();
     GTK_WIDGET_SET_FLAGS (GTK_WIDGET(m_canvas), GTK_CAN_FOCUS);
 

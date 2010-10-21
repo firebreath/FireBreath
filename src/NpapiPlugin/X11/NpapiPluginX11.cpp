@@ -17,7 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiTypes.h"
 #include "PluginCore.h"
 #include "X11/PluginWindowX11.h"
-#include "X11/FactoryDefinitionsX11.h"
+#include "FactoryBase.h"
 
 #include "X11/NpapiPluginX11.h"
 #include "NpapiPluginFactory.h"
@@ -60,7 +60,8 @@ NpapiPluginX11::NpapiPluginX11(const FB::Npapi::NpapiBrowserHostPtr& host) : Npa
 
 NpapiPluginX11::~NpapiPluginX11()
 {
-    delete pluginWin; pluginWin = NULL;
+    delete pluginWin; 
+    pluginWin = NULL;
 }
 
 NPError NpapiPluginX11::GetValue(NPPVariable variable, void *value)
@@ -92,7 +93,8 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
 
         if (pluginWin != NULL && pluginWin->getWindow() != getGdkWindow(window->window)) {
             pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL;
+            delete pluginWin;
+            pluginWin = NULL;
         }
 
         if (pluginWin == NULL) {

@@ -24,7 +24,7 @@ namespace FB
 {
     struct WindowContextX11
     {
-        GdkNativeWindow window
+        GdkNativeWindow window;
         WindowContextX11(GdkNativeWindow window) 
           : window(window)
         {}
