@@ -16,8 +16,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_JSARRAY
 #define H_JSARRAY
 
-#include "../JSObject.h"
-#include "../JSAPIAuto.h"
+#include "JSObject.h"
+#include "JSAPIAuto.h"
 
 namespace FB
 {
@@ -46,11 +46,9 @@ namespace FB
         void Set(const size_t index, const variant& value);
         size_t GetLength() const;
         
-        FB::variant& operator[](size_t index);
-        const FB::variant& operator[](size_t index) const;
+        FB::variant operator[](size_t index);
 
         FB::VariantList& Values();
-        const FB::VariantList& Values() const;
 
         void push(variant value);
 

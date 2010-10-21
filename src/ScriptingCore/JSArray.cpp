@@ -56,7 +56,7 @@ void FB::JSArray::Set(const size_t index, const FB::variant& value)
     m_obj->SetProperty(index, value);
 }
 
-FB::variant& FB::JSArray::operator[](size_t index)
+FB::variant FB::JSArray::operator[](size_t index)
 {
     return m_obj->GetProperty(index);
 }

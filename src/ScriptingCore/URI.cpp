@@ -27,6 +27,8 @@ using std::string;
 using std::vector;
 using FB::URI;
 
+URI::StringStringMap URI::m_lhMap;
+
 std::string URI::url_encode(const std::string& in) {
     std::string res;
     res.reserve(static_cast<size_t>(in.size() * 1.4));
