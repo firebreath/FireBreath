@@ -89,7 +89,7 @@ namespace FB {
         ///
         /// @return true if the event was handled, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HandleEvent(PluginEvent *, PluginEventSource *) = 0;
+        virtual bool HandleEvent(PluginEvent *event, PluginEventSource *source) = 0;
     };
 };
 
@@ -105,7 +105,7 @@ namespace FB {
 /// @remarks    Richard Bateman, 10/15/2010. 
 /// @see EVENTTYPE_CASE
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-#define BEGIN_PLUGIN_EVENT_MAP() virtual bool HandleEvent(FB::PluginEvent *evt, FB::PluginEventSource *win) { \
+#define BEGIN_PLUGIN_EVENT_MAP() virtual bool HandleEvent(FB::PluginEvent *evt, FB::PluginEventSource *src) { \
                                           if (0) { }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -120,14 +120,14 @@ namespace FB {
 /// 
 /// @param  eventType   Type of the event to dispatch
 /// @param  methodName  Name of the event handler method
-/// @param  winType     Type of the PluginEventSource
+/// @param  srcType     Type of the PluginEventSource
 /// 
 /// @see PluginEventSink::HandleEvent
 /// @see BEGIN_PLUGIN_EVENT_MAP
 /// @see END_PLUGIN_EVENT_MAP
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-#define EVENTTYPE_CASE(eventType, methodName, winType) else if (evt->validType<eventType>()) { \
-                                                return methodName(evt->get<eventType>(), win->get_as<winType>()); }
+#define EVENTTYPE_CASE(eventType, methodName, srcType) else if (evt->validType<eventType>() && src->validType<winType>()) { \
+                                                return methodName(evt->get<eventType>(), src->get_as<winType>()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @def    END_PLUGIN_EVENT_MAP()

@@ -87,6 +87,20 @@ namespace FB {
             return tmp;
         }
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<class T> bool PluginEventSource::validType()
+        ///
+        /// @brief  Returns true if the object can be cast to the specified type
+        ///
+        /// @return true if the type is valid, false if not 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        template<class T>
+        bool validType()
+        {
+            T* out(dynamic_cast<T*>(this));
+            return out != NULL;
+        }
+
     protected:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
