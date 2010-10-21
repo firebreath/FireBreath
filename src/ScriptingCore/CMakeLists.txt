@@ -52,6 +52,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     variant_map.*
     TypeIDMap.*
     utf8*
+    URI*
     SafeQueue*
 )
 
@@ -59,6 +60,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     JSAPI*
     BrowserHost.*
     JSObject.*
+    JSArray.*
     AsyncBrowser*
     Cross*
     AsyncFunction*

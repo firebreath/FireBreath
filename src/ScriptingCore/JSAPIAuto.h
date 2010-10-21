@@ -89,10 +89,10 @@ namespace FB {
     public:
         /// @brief Description is used by ToString().
         JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
-        ~JSAPIAuto();
+        virtual ~JSAPIAuto();
 
-        void getMemberNames(std::vector<std::string> &nameVector);
-        size_t getMemberCount();
+        virtual void getMemberNames(std::vector<std::string> &nameVector);
+        virtual size_t getMemberCount();
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
 
