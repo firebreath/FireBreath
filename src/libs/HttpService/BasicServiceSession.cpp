@@ -15,6 +15,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include "BasicService.h"
 #include <boost/algorithm/string.hpp>
 #include "HTTPException.h"
+#include "logging.h"
 
 using namespace boost::algorithm;
 using namespace boost::asio;
@@ -73,7 +74,7 @@ std::string BasicService::build_cookie_header(const std::map<std::string, std::s
 
 void BasicService::Session::handle_request(boost::system::error_code ec) {
     if (ec) {
-        // TODO should we log HTTP session errors?
+        FBLOG_WARN("Http:BasicService", "handle_request error message: " << ec.message());
         return;
     }
 
@@ -106,6 +107,7 @@ void BasicService::Session::handle_request(boost::system::error_code ec) {
         req_data.headers = parse_http_headers(++header_lines.begin(), header_lines.end());
 
         if (req_data.uri.path == "/shutdown") {
+            FBLOG_INFO("Http:BasicServiceSession", "Received shutdown request");
             parent_svc->setDeferShutdown(false);
             resp = new HTTPResponseData;
             resp->code = 200;
@@ -164,9 +166,11 @@ void BasicService::Session::handle_request(boost::system::error_code ec) {
 
     } catch (const HTTPException& e) {
         if (resp) delete resp;
+        FBLOG_INFO("Http:BasicServiceSession", "HTTP exception: " << e.what());
         resp = new HTTPResponseData(new HTTPStringDatablock(e.getResponseHeader() + string("\r\nContent-Type: text/plain\r\n\r\n") + e.what()));
     } catch (const std::exception& e) {
         if (resp) delete resp;
+        FBLOG_INFO("Http:BasicServiceSession", "std::exception: " << e.what());
         resp = new HTTPResponseData(new HTTPStringDatablock(string("HTTP/1.1 500 Internal Server Error\r\nContent-Type: text/plain\r\n\r\n") + e.what()));
     }
     // And write the response datablock list.
