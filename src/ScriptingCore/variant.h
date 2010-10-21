@@ -208,7 +208,7 @@ namespace FB
             {
                 return true;
             }
-        }
+        };
 
         struct empty {
             bool operator<(const empty& rh) const
