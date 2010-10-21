@@ -9,6 +9,8 @@
 
 #ifdef __APPLE__ // Mac byteswap defs
 #include <architecture/byte_order.h>
+#include <stdint.h>
+#include <stddef.h>
 #elif defined(_WIN32) // Windows, which we can safely assume is x86
 #define __LITTLE_ENDIAN__ 1
 #else // Linux
@@ -26,7 +28,6 @@
 #include <stdio.h>
 
 #define ssize_t SSIZE_T
-#define snprintf _snprintf
 #define bzero(ptr, size) memset(ptr, 0, size);
 
 #if ((__WORDSIZE == 64) || defined(__amd64__) || defined(__x86_64__) || defined(__alpha) || defined(__ia64__))

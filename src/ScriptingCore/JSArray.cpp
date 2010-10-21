@@ -61,7 +61,7 @@ FB::variant FB::JSArray::operator[](size_t index)
     return m_obj->GetProperty(index);
 }
 
-FB::VariantList& FB::JSArray::Values()
+FB::VariantList FB::JSArray::Values()
 {
     FB::VariantList output;
     for (size_t i = 0; i < GetLength(); i++) {

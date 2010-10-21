@@ -48,7 +48,7 @@ namespace FB
         
         FB::variant operator[](size_t index);
 
-        FB::VariantList& Values();
+        FB::VariantList Values();
 
         void push(variant value);
 

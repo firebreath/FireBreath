@@ -11,13 +11,12 @@
 #include <ApplicationServices/ApplicationServices.h>
 #include <SystemConfiguration/SystemConfiguration.h>
 #include <SystemConfiguration/SCDynamicStore.h>
-#include "Platform.h"
-#include "PluginJSDict.h"
-#include "FBPlugin.h"
 #include "cf_scoped_ptr.h"
+#include "Platform.h"
 #include "mac_common.h"
 #include <sys/xattr.h>
 #include "utf8.h"
+#include "APITypes.h"
 
 using std::string;
 
@@ -35,7 +34,7 @@ string findUserFolder(OSType folderType) {
 	return string(path);
 }
 
-PluginJSDict* Platform::getLocalBrowseRoots() {
+/*PluginJSDict* Platform::getLocalBrowseRoots() {
 	PluginJSDict* d = new PluginJSDict;
 	
 	// first, grab the user document folders: Pictures and Movies
@@ -75,7 +74,7 @@ PluginJSDict* Platform::getLocalBrowseRoots() {
 			continue;
 		}
 		
-		st = TECConvertText(tec, (ConstTextPtr) volumeName.unicode, volumeName.length*2 /*bytes*/, &realInputLen, 
+		st = TECConvertText(tec, (ConstTextPtr) volumeName.unicode, volumeName.length*2 / *bytes* /, &realInputLen, 
                         (TextPtr) outbuf, 1024, &realOutputLen);
 		
 		TECDisposeConverter(tec);
@@ -92,14 +91,7 @@ PluginJSDict* Platform::getLocalBrowseRoots() {
 		(*d)[string(outbuf)] = new BrowseRoot(volName, string(outbuf), BrowseRoot::PATH_VOLUME_ROOT, BrowseRoot::CONTENT_TYPE_MIXED);
 	}
 	return d;
-}
-
-// registration isn't really required on Mac OS X
-void Platform::unRegisterPlugins() {
-}
-
-void Platform::registerPlugin(const std::string& plugin_path, const Version& version) {
-}
+}*/
 
 bool Platform::pathIsHidden(const boost::filesystem::wpath& path_to_investigate) {
   // Same in Linux and Mac FYI
@@ -110,7 +102,7 @@ bool Platform::pathIsHidden(const boost::filesystem::wpath& path_to_investigate)
 
 // If this directory doesn't have the flag set, try all the parents
 bool Platform::pathIsSystem(const boost::filesystem::wpath& path_to_investigate) {
-  string utf8_file_path = wstring_to_utf8(path_to_investigate.file_string());
+    string utf8_file_path = FB::wstring_to_utf8(path_to_investigate.file_string());
 
   FSRef ref;
   if (FSPathMakeRef(reinterpret_cast<const UInt8*>(utf8_file_path.data()), &ref, NULL) != 0) return false; // path convertion failed?
@@ -164,8 +156,7 @@ HTTPProxyConfig Platform::getSystemProxyConfig() {
   return HTTPProxyConfig();
 }
 
-
-
+/*
 class QuickLookThumbnailGenerator : public VideoThumbnailGenerator {
 public:
 	QuickLookThumbnailGenerator() : qlframework(NULL) {
@@ -208,4 +199,4 @@ protected:
   void* qlframework;
 };
 
-QuickLookThumbnailGenerator _static_qlg;
+QuickLookThumbnailGenerator _static_qlg;*/

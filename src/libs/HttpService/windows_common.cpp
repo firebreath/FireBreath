@@ -4,6 +4,8 @@
  *
  */
 
+#ifdef _WIN32
+
 #include "windows_defs.h"
 #include <windows.h>
 #include <string>
@@ -33,3 +35,5 @@ std::string lastError(const char* fnname) {
 void throw_GetLastError(const char* fnname) {
   throw std::runtime_error(lastError(fnname).c_str());
 }
+
+#endif

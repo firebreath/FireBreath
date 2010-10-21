@@ -69,7 +69,20 @@ list(APPEND SOURCES
 add_library (HttpService STATIC ${SOURCES})
 
 append_firebreath_link_library(HttpService)
-append_firebreath_link_library(Wininet)
+
+if (WIN32)
+    append_firebreath_link_library(Wininet)
+elseif (UNIX)
+    if (APPLE)
+        find_library(CORE_SERVICES CoreServices)
+        append_firebreath_link_library(${CORE_SERVICES})
+        find_library(SYS_CONFIG SystemConfiguration)
+        append_firebreath_link_library(${SYS_CONFIG})
+        message("Found: ${CORE_SERVICES} ${SYS_CONFIG}")
+    else()
+    endif()
+endif()
+
 append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR})
 
 export_project_dependencies()

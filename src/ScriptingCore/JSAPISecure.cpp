@@ -15,7 +15,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "JSAPISecure.h"
 
 FB::JSAPISecure::JSAPISecure(const FB::SecurityZone securityZone, const std::string& description) :
-    m_zone(securityZone), FB::JSAPIAuto(description)
+    FB::JSAPIAuto(description), m_zone(securityZone)
 {
 }
 
