@@ -13,20 +13,20 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #pragma once
-#ifndef H_JSARRAY
-#define H_JSARRAY
+#ifndef H_JSFAKEARRAY
+#define H_JSFAKEARRAY
 
 #include "../JSObject.h"
 #include "../JSAPIAuto.h"
 
 namespace FB
 {
-    class JSArray : public JSAPIAuto
+    class JSFakeArray : public JSAPIAuto
     {
     public:
-        JSArray();
-        explicit JSArray(const FB::JSObjectPtr& obj);
-        explicit JSArray(const FB::VariantList& values);
+        JSFakeArray();
+        explicit JSFakeArray(const FB::JSObjectPtr& obj);
+        explicit JSFakeArray(const FB::VariantList& values);
 
         FB::variant GetProperty(int index);
         using FB::JSAPIAuto::GetProperty; // unhide GetProperty(std::string)
