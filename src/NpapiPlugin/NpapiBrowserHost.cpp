@@ -106,7 +106,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
     FB::variant retVal;
     switch(npVar->type) {
         case NPVariantType_Null:
-            retVal = NpapiNull();
+            retVal = JSObjectPtr();
             break;
 
         case NPVariantType_Bool:
@@ -213,30 +213,36 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         FB::JSAPIPtr obj = var.cast<FB::JSAPIPtr>();
         NPObjectAPIPtr tmpObj = ptr_cast<NPObjectAPI>(obj);
 
-        if (tmpObj == NULL) {
-            outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
+        if (obj) {
+            if (tmpObj == NULL) {
+                outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
+            } else {
+                outObj = tmpObj->getNPObject();
+                this->RetainObject(outObj);
+            }
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = outObj;
         } else {
-            outObj = tmpObj->getNPObject();
-            this->RetainObject(outObj);
+            dst->type = NPVariantType_Null;
         }
-
-        dst->type = NPVariantType_Object;
-        dst->value.objectValue = outObj;
-
     } else if (var.get_type() == typeid(FB::JSObjectPtr)) {
         NPObject *outObj = NULL;
         FB::JSObjectPtr obj = var.cast<JSObjectPtr>();
         NPObjectAPIPtr tmpObj = ptr_cast<NPObjectAPI>(obj);
 
-        if (tmpObj == NULL) {
-            outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
-        } else {
-            outObj = tmpObj->getNPObject();
-            this->RetainObject(outObj);
-        }
+        if (obj) {
+            if (tmpObj == NULL) {
+                outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
+            } else {
+                outObj = tmpObj->getNPObject();
+                this->RetainObject(outObj);
+            }
 
-        dst->type = NPVariantType_Object;
-        dst->value.objectValue = outObj;
+            dst->type = NPVariantType_Object;
+            dst->value.objectValue = outObj;
+        } else {
+            dst->type = NPVariantType_Null;
+        }
     }
     // TODO: implement object types
 }

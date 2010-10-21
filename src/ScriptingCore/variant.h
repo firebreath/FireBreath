@@ -198,6 +198,18 @@ namespace FB
             }
         };
 
+        struct null {
+            bool operator<(const null& rh) const
+            {
+                return false;
+            }
+            template <typename T>
+            bool operator<(const T& rh) const
+            {
+                return true;
+            }
+        }
+
         struct empty {
             bool operator<(const empty& rh) const
             {
@@ -551,6 +563,10 @@ namespace FB
         bool empty() const {
             //return object == NULL;
             return table == variant_detail::get_table<variant_detail::empty>::get();
+        }
+
+        bool is_null() const {
+            return table == variant_detail::get_table<variant_detail::null>::get();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
