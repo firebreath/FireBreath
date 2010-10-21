@@ -126,8 +126,8 @@ namespace FB {
 /// @see BEGIN_PLUGIN_EVENT_MAP
 /// @see END_PLUGIN_EVENT_MAP
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-#define EVENTTYPE_CASE(eventType, methodName, srcType) else if (evt->validType<eventType>() && src->validType<winType>()) { \
-                                                return methodName(evt->get<eventType>(), src->get_as<winType>()); }
+#define EVENTTYPE_CASE(eventType, methodName, srcType) else if (evt->validType<eventType>() && src->validType<srcType>()) { \
+                                                return methodName(evt->get<eventType>(), src->get_as<srcType>()); }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @def    END_PLUGIN_EVENT_MAP()
