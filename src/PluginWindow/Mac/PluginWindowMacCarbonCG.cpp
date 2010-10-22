@@ -22,6 +22,12 @@
 using namespace FB;
 
 PluginWindowMacCarbonCG::PluginWindowMacCarbonCG(NP_CGContext* context) {
+    if(context == NULL) {
+        m_npCGContext = NULL;
+        m_cgContext = NULL;
+        m_winRef = NULL;
+        return;
+    }
     m_npCGContext = context; 
     m_cgContext = context->context;
     m_winRef = (WindowRef) context->window;

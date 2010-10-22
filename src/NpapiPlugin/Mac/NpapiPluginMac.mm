@@ -359,6 +359,9 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
     PluginWindowMacCarbonCG* pluginWinCG = static_cast<PluginWindowMacCarbonCG*>(pluginWin);
 
     if (window != NULL) {
+        if(window->window == NULL) {
+            return NPERR_NO_ERROR;
+        }
         if (pluginWin != NULL) {
             if (pluginWinCG->getNPCGContext() != (NP_CGContext*) window->window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
