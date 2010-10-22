@@ -26,13 +26,13 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <vector>
 #include <map>
 #include "Countable.h"
-#include "Tiger.h"
+#include "../HTTPCommon/Tiger.h"
 #include "URI.h"
-#include "HTTPDatablock.h"
-#include "HTTPService.h"
+#include "../HTTPCommon/HTTPDatablock.h"
+#include "../HTTPService.h"
 #include "HTTPHandler.h"
-#include "HTTPRequestData.h"
-#include "HTTPResponseData.h"
+#include "../HTTPCommon/HTTPRequestData.h"
+#include "../HTTPCommon/HTTPResponseData.h"
 
 namespace HTTP {
     class BasicService : public HTTPService {
