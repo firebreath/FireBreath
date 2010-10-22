@@ -10,9 +10,9 @@
 #include "FactoryDefinitions.h"
 #include "FBTestPlugin.h"
 
-FB::PluginCore *_getMainPlugin()
+boost::shared_ptr<FB::PluginCore> _getMainPlugin(std::string mimetype)
 {
-    return new FBTestPlugin();
+    return boost::shared_ptr<FB::PluginCore>(new FBTestPlugin());
 }
 
 void GlobalPluginInitialize()
