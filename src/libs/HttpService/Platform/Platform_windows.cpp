@@ -22,7 +22,7 @@
 #include <vector>
 #include <boost/algorithm/string.hpp>
 #include <atlbase.h>
-#include "HTTPProxyConfig.h"
+#include "../HTTPCommon/HTTPProxyConfig.h"
 using std::string;
 using namespace boost::algorithm;
 

@@ -16,9 +16,9 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #ifndef H_HTTPHANDLER
 #define H_HTTPHANDLER
 
-#include "HTTPDatablock.h"
-#include "HTTPResponseData.h"
-#include "HTTPRequestData.h"
+#include "../HTTPCommon/HTTPDatablock.h"
+#include "../HTTPCommon/HTTPResponseData.h"
+#include "../HTTPCommon/HTTPRequestData.h"
 
 namespace HTTP {
     class HTTPHandler {

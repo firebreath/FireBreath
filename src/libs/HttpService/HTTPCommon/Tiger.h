@@ -12,6 +12,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #elif defined(_WIN32) // Windows, which we can safely assume is x86
+#include "../Platform/windows_defs.h"
 #define __LITTLE_ENDIAN__ 1
 #else // Linux
 #include <endian.h>

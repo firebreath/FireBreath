@@ -21,7 +21,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <list>
 #include "URI.h"
 #include "HTTPDatablock.h"
-#include "HTTPCommon.h"
+#include "HTTPFileEntry.h"
 
 namespace HTTP {
 

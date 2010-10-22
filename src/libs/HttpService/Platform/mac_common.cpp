@@ -6,6 +6,8 @@
 
 #include "mac_common.h"
 
+#ifdef XP_MACOSX
+
 std::string conv_cfstring(CFStringRef s) {
   size_t l = (CFStringGetLength(s) * 2) + 1;
   char* q = new char[l];
@@ -23,3 +25,5 @@ int cfnumber_to_int(CFNumberRef n) {
   CFNumberGetValue(n, kCFNumberIntType, &nn);
   return nn;
 }
+
+#endif

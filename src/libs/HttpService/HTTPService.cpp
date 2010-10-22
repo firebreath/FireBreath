@@ -14,7 +14,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
 #include "HTTPService.h"
-#include "BasicService.h"
+#include "HTTPService/BasicService.h"
 #include "logging.h"
 
 using namespace HTTP;

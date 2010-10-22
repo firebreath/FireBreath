@@ -22,7 +22,6 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include "URI.h"
 
 #include "HTTPDatablock.h"
-#include "HttpCommon.h"
 
 namespace HTTP {
     class HTTPResponseData {

@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
-#include "base64.h"
+#include "../Common/base64.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <vector>
