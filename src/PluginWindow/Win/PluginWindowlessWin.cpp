@@ -121,7 +121,13 @@ void PluginWindowlessWin::AsyncInvalidateWindow() {
 }
 
 NPRect PluginWindowlessWin::getWindowPosition() {
-    NPRect r = { m_y, m_x, m_y + m_height, m_x + m_width };
+    int top = m_y;
+    int left = m_x;
+    int bottom = m_y + m_height;
+    int right = m_x + m_width;
+    if(top < 0) { top = 0; }
+    if(left < 0) { left = 0; }
+    NPRect r = { top, left, bottom, right };
     return r;
 }
 
