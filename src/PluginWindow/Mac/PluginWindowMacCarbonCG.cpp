@@ -22,24 +22,24 @@
 using namespace FB;
 
 PluginWindowMacCarbonCG::PluginWindowMacCarbonCG(NP_CGContext* context) {
-    this->cgContext = context;
+    if(context == NULL) {
+        m_npCGContext = NULL;
+        m_cgContext = NULL;
+        m_winRef = NULL;
+        return;
+    }
+    m_npCGContext = context; 
+    m_cgContext = context->context;
+    m_winRef = (WindowRef) context->window;
 }
 
 PluginWindowMacCarbonCG::~PluginWindowMacCarbonCG() {
-    this->clearWindow();
-}
-
-NP_CGContext* PluginWindowMacCarbonCG::getContext() {
-    if (this->cgContext != NULL) {
-        return this->cgContext;
-    } else {
-        // TODO: error
-        return 0;
-    }
+    clearWindow();
 }
 
 void PluginWindowMacCarbonCG::setContext(NP_CGContext* context) {
-    cgContext = context;
+    m_cgContext = context->context;
+    m_winRef = (WindowRef) context->window;
 }
 
 // Intercepting Carbon events probably should happen in PluginWindowMacCarbon,
@@ -47,17 +47,28 @@ void PluginWindowMacCarbonCG::setContext(NP_CGContext* context) {
 int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     // Give the plugin a chance to handle the event itself if desired
     MacEventCarbon macEvent(evt);
+    if (SendEvent(&macEvent)) {
+        if(evt->what != nullEvent) {
+            // Only return on success if the event is NOT a nullEvent.
+            // This is because we use nullEvents to check for mouse
+            // movement (which is not an event type in Carbon).
+            return true;
+        }
+    }
+
+    // Otherwise process the event into FireBreath platform-agnostic events
     switch (evt->what) {
         case mouseDown:
         {
             HIPoint* point = new HIPoint();
             point->x = evt->where.h;
             point->y = evt->where.v;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
 
             int x_0 = point->x - m_x;
             int y_0 = m_height - (point->y - m_y);
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);                               
+            delete point;
             return SendEvent(&ev);
         }
 
@@ -66,11 +77,12 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPoint* point = new HIPoint();
             point->x = evt->where.h;
             point->y = evt->where.v;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
 
             int x_0 = point->x - m_x;
             int y_0 = m_height - (point->y - m_y);
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);
+            delete point;
             return SendEvent(&ev);
         }
 
@@ -94,7 +106,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             return SendEvent(&ev);
         }
 
-        case nullEvent:
+        case nullEvent: // This is totally a hack
         {
             //TODO: Figure out more efficient timing mechanism
             // Get mouse coordinates and fire an event to the plugin
@@ -103,16 +115,17 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPoint* point = new HIPoint();
             point->x = pointCG.x;
             point->y = pointCG.y;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
             // <hack>
             int px = point->x - m_x;
             int py = m_height - (point->y - m_y);
+            delete point;
             // </hack>
             // px & py have been translated to plugin window's coordinates space
             if((px > 0) && (px < m_width)) {
                 if((py > 0) && (py < m_height)) {
                     if ((px == this->m_old_x) && (py == this->m_old_y)) {
-                        SendEvent(&macEvent);
+                        // Mouse hasn't moved
                         return false;
                     } else {
                         this->m_old_x = px;
@@ -126,9 +139,6 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
                     }
                 }
             }
-
-            // The plugin is still expecting a nullEvent (for drawing)
-            SendEvent(&macEvent);
 
             return false; 
         }
@@ -145,4 +155,9 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             }
     }
     return false;
+}
+
+void PluginWindowMacCarbonCG::InvalidateWindow() {
+    NPRect rect = { 0, 0, m_height, m_width };
+    m_npHost->InvalidateRect(&rect);
 }
