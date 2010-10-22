@@ -5,10 +5,13 @@
  */
 
 #pragma once
-#include "windows_defs.h"
-#include "HTTPService.h"
-#include "HTTPProxyConfig.h"
-#include "PluginJSDict.h"
+#include "../Common/windows_defs.h"
+#include "../Common/HTTPRequestData.h"
+#include "../Common/HTTPResponseData.h"
+#include "../Common/HTTPProxyConfig.h"
+#include <boost/thread.hpp>
+
+//#include "PluginJSDict.h"
 
 #undef ERROR // windows...
 #undef Status // unix!
@@ -37,7 +40,7 @@ class HTTPRequest : public boost::noncopyable {
         void awaitCompletion();
 
         struct Status {
-            PluginJSDict* asDict() const;
+            //PluginJSDict* asDict() const;
             enum State {
                 CANCELLED = -2,
                 ERROR = -1,

@@ -10,7 +10,7 @@
 #include "windows_defs.h"
 #include <string>
 #include <list>
-#include "HTTPProxyConfig.h"
+#include "../HTTPCommon/HTTPProxyConfig.h"
 #include <boost/scoped_array.hpp>
 #include <boost/filesystem/path.hpp>
 
