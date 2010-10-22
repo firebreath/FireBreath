@@ -71,7 +71,7 @@ FBTestPluginAPI::~FBTestPluginAPI()
     //std::map<int,int>::capacity()
 }
 
-boost::shared_ptr<FBTestPlugin> getPlugin()
+boost::shared_ptr<FBTestPlugin> FBTestPluginAPI::getPlugin()
 {
     boost::shared_ptr<FBTestPlugin> plugin = m_pluginWeak.lock();
     if (!plugin)
