@@ -38,3 +38,4 @@ private:
 };
 
 #endif // H_@{PLUGIN_ident}API
+
