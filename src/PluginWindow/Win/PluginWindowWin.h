@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "PluginWindow.h"
+#include "WindowContextWin.h"
 
 #include <map>
 
@@ -32,7 +33,7 @@ namespace FB {
     class PluginWindowWin : public PluginWindow
     {
     public:
-        PluginWindowWin(HWND hWnd);
+        PluginWindowWin(const WindowContextWin&);
         virtual ~PluginWindowWin();
         static LRESULT CALLBACK _WinProc(HWND hWnd, UINT uMsg, WPARAM wParam,
                                                           LPARAM lParam);

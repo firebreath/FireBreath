@@ -47,6 +47,9 @@ if (WIN32)
 	        endif()
 	    endforeach(flag_var)
 	endif()
+
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_WIN=1")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} -DFB_WIN=1")
 endif()
 
 # We define preprocessor flags here in addition to other flags
@@ -58,6 +61,8 @@ if(UNIX)
     if(APPLE)
         # In addition, Gecko SDK on Mac OS X needs XP_MACOSX
         set(gecko_defs "${gecko_defs} -DXP_MACOSX")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_MACOSX=1")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} -DFB_MACOSX=1")
     endif()
 
     if(NOT APPLE)
@@ -68,6 +73,8 @@ if(UNIX)
         # (as opposed to an executable), we need to build static libs with -fPIC
         # too.
         set(fPIC_flag "-fPIC")
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_X11=1")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} -DFB_X11=1")
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${gecko_defs} ${fPIC_flag}")

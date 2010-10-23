@@ -23,14 +23,27 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/KeyboardEvents.h"
 #include "PluginWindowWin.h"
-    
+
+#include "ConstructDefaultPluginWindows.h"
+
+#define WM_ASYNCTHREADINVOKE    WM_USER + 1
+
 using namespace FB;
 
 extern HINSTANCE gInstance;
 
 PluginWindowWin::PluginWindowMap FB::PluginWindowWin::m_windowMap;
 
-PluginWindowWin::PluginWindowWin(HWND hWnd) : m_hWnd(hWnd), m_browserhWnd(NULL), lpOldWinProc(NULL), m_callOldWinProc(false)
+FB::PluginWindowWin* createPluginWindowWin(const WindowContextWin& ctx)
+{
+    return new PluginWindowWin(ctx);
+}
+
+PluginWindowWin::PluginWindowWin(const WindowContextWin& ctx)
+  : m_hWnd(ctx.handle)
+  , m_browserhWnd(NULL)
+  , lpOldWinProc(NULL)
+  , m_callOldWinProc(false)
 {
     // subclass window so we can intercept window messages 
     lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);

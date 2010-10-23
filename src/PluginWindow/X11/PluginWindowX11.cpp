@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowX11.h"
+#include "ConstructDefaultPluginWindows.h"
 
 using namespace FB;
 
@@ -29,7 +30,13 @@ gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpo
     return pluginWin->EventCallback(widget, event);
 }
 
-PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
+FB::PluginWindowX11* createPluginWindowX11(const WindowContextX11& ctx)
+{
+    return new PluginWindowX11(ctx);
+}
+
+PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
+  : m_window(ctx.window),
     m_browserWindow(0),
     /* We as C++ programmers do not usually care about initializing integers
      * when it's not actually needed, but it's nice for the code to be clean

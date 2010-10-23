@@ -13,13 +13,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "BrowserPlugin.h"
-#include "FactoryDefinitions.h"
+#include "FactoryBase.h"
 #include "PluginCore.h"
 
 using namespace FB;
 
 BrowserPlugin::BrowserPlugin() :
-    pluginMain(_getMainPlugin())
+    pluginMain(getFactoryInstance()->createPlugin())
 {
 }
 

@@ -20,8 +20,15 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "X11/FactoryDefinitionsX11.h"
 
 #include "X11/NpapiPluginX11.h"
+#include "NpapiPluginFactory.h"
+#include <boost/make_shared.hpp>
 
 using namespace FB::Npapi;
+
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+{
+    return boost::make_shared<NpapiPluginX11>(host);
+}
 
 inline GdkNativeWindow getGdkWindow(void *in)
 {
@@ -41,7 +48,7 @@ namespace
     }
 }
 
-NpapiPluginX11::NpapiPluginX11(FB::Npapi::NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginX11::NpapiPluginX11(const FB::Npapi::NpapiBrowserHostPtr& host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");
     
@@ -92,7 +99,7 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
             GdkNativeWindow browserWindow;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserWindow);
 
-            pluginWin = _createPluginWindow(getGdkWindow(window->window));
+            pluginWin = getFactoryInstance()->createPluginWindowX11(WindowContextX11(getGdkWindow(window->window)));
             pluginWin->setBrowserWindow(browserWindow);
             pluginMain->SetWindow(pluginWin);
         }

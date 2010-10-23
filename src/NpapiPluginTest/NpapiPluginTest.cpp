@@ -20,6 +20,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "TestPlugin.h"
 #include "NPJavascriptObjectTest.h"
 #include "NpapiPlugin.h"
+#include "FactoryBase.h"
+#include <boost/make_shared.hpp>
 
 using namespace std;
 
@@ -33,37 +35,38 @@ int main()
 static const char *pluginName = "UnitTestMockPlugin";
 static const char *pluginDesc = "It's a mock plugin for a unit test";
 
-const char *_getPluginName()
+class TestFactory : public FB::FactoryBase
 {
-    return pluginName;
+public:
+    std::string getPluginName() { return pluginName; }
+    std::string getPluginDesc() { return pluginDesc; }
+    
+    FB::PluginCorePtr createPlugin() { return boost::make_shared<TestPlugin>(); }
+    
+    void globalPluginInitialize() { 
+        TestPlugin::StaticInitialize(); 
+    }
+    
+    void globalPluginDeinitialize() {
+        TestPlugin::StaticDeinitialize();
+    }
+    
+    FB::Npapi::NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host)
+    {
+        return boost::make_shared<FB::Npapi::NpapiPlugin>(host);
+    }
+};
+
+FB::FactoryBasePtr getFactoryInstance()
+{
+    static FB::FactoryBasePtr factory = boost::make_shared<TestFactory>();
+    return factory;
 }
 
-const char *_getPluginDesc()
+// Needed for FSPath on Unix
+#ifndef FB_WIN
+extern "C" NPError NP_Initialize(NPNetscapeFuncs*) 
 {
-    return pluginDesc;
+    return 0;
 }
-
-FB::JSAPI *_getRootJSAPI()
-{
-    return new FB::JSAPISimple();
-}
-
-FB::Npapi::NpapiPluginPtr _getNpapiPlugin(NpapiBrowserHostPtr &host)
-{
-    return FB::Npapi::NpapiPluginPtr(new FB::Npapi::NpapiPlugin(host));
-}
-
-FB::PluginCore *_getMainPlugin()
-{
-    return new TestPlugin();
-}
-
-void GlobalPluginInitialize()
-{
-    TestPlugin::StaticInitialize();
-}
-
-void GlobalPluginDeinitialize()
-{
-    TestPlugin::StaticDeinitialize();
-}
+#endif

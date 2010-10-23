@@ -54,8 +54,27 @@ add_dependencies(${PROJNAME}
     ScriptingCore
     PluginCore
     NPAPIHost
+    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
     UnitTest++
     )
+
+if (APPLE)
+    if (FBMAC_USE_CARBON)
+        find_library(CARBON_FRAMEWORK Carbon)
+    endif (FBMAC_USE_CARBON)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(FOUNDATION_FRAMEWORK Foundation)
+    find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
+    find_library(QUARTZCORE_FRAMEWORK QuartzCore)
+    set (OTHER_NPAPITEST_LIBS 
+        ${OTHER_NPAPITEST_LIBS} 
+        ${COCOA_FRAMEWORK}
+        ${FOUNDATION_FRAMEWORK}
+        ${APPLICATIONSERVICES_FRAMEWORK}
+        ${QUARTZCORE_FRAMEWORK}
+        ${CARBON_FRAMEWORK})
+endif (APPLE)
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
@@ -63,4 +82,7 @@ target_link_libraries (${PROJNAME}
     PluginCore
     NPAPIHost
     UnitTest++
+    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
+    ${OTHER_NPAPITEST_LIBS}
     )
