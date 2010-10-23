@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiTypes.h"
 #include "PluginCore.h"
 #include "Win/PluginWindowWin.h"
-#include "Win/FactoryDefinitionsWin.h"
+#include "FactoryBase.h"
 
 #include "Win/NpapiPluginWin.h"
 #include "NpapiPluginFactory.h"
@@ -56,7 +56,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             HWND browserHWND;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND);
 
-            pluginWin = _createPluginWindow((HWND)window->window);
+            pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin((HWND)window->window));
             pluginWin->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(pluginWin);
             setReady();

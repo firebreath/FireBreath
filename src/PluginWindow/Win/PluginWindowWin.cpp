@@ -34,7 +34,7 @@ extern HINSTANCE gInstance;
 
 PluginWindowWin::PluginWindowMap FB::PluginWindowWin::m_windowMap;
 
-FB::PluginWindowWin* createPluginWindowWin(const WindowContextWin& ctx)
+FB::PluginWindowWin* FB::createPluginWindowWin(const FB::WindowContextWin& ctx)
 {
     return new PluginWindowWin(ctx);
 }
