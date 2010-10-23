@@ -50,10 +50,10 @@ set (SOURCES
 add_executable(${PROJNAME} ${SOURCES})
 
 add_dependencies(${PROJNAME}
-    ${PLUGIN_PREFIX}_NpapiPlugin
     ScriptingCore
     PluginCore
     NPAPIHost
+    ${PLUGIN_PREFIX}_NpapiPlugin
     ${PLUGIN_PREFIX}_PluginWindow
     ${PLUGIN_PREFIX}_PluginCommon
     UnitTest++
@@ -86,12 +86,15 @@ elseif (UNIX)
 endif (APPLE)
 
 target_link_libraries (${PROJNAME}
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ScriptingCore
+    ${Boost_LIBRARIES}
     PluginCore
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ${PLUGIN_PREFIX}_PluginWindow
+    PluginCore
+    ScriptingCore
+    ${PLUGIN_PREFIX}_PluginCommon
     NPAPIHost
     UnitTest++
-    ${PLUGIN_PREFIX}_PluginWindow
-    ${PLUGIN_PREFIX}_PluginCommon
+    PluginCore
     ${OTHER_NPAPITEST_LIBS}
     )
