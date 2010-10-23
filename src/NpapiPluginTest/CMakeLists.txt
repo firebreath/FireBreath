@@ -74,9 +74,7 @@ if (APPLE)
         ${APPLICATIONSERVICES_FRAMEWORK}
         ${QUARTZCORE_FRAMEWORK}
         ${CARBON_FRAMEWORK})
-endif (APPLE)
-
-if (UNIX)
+elseif (UNIX)
     if (NOT GTK_INCLUDE_DIRS)
         pkg_check_modules(GTK REQUIRED gtk+-2.0)
         set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
@@ -85,7 +83,7 @@ if (UNIX)
         set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
     endif()
     set (OTHER_NPAPITEST_LIBS ${OTHER_NAPITEST_LIBS} ${GTK_LIBRARIES})
-endif (UNIX)
+endif (APPLE)
 
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_NpapiPlugin
