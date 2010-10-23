@@ -14,7 +14,7 @@
 class PluginFactory : public FB::FactoryBase
 {
 public:
-    FB::PluginCorePtr createPlugin()
+    FB::PluginCorePtr createPlugin(std::string mimetype)
     {
         return boost::make_shared<BasicMediaPlayerPlugin>();
     }
