@@ -35,8 +35,10 @@ int main()
 static const char *pluginName = "UnitTestMockPlugin";
 static const char *pluginDesc = "It's a mock plugin for a unit test";
 
+#ifdef FB_WIN
 HINSTANCE gInstance = NULL;
 std::string g_dllPath = "";
+#endif
 
 class TestFactory : public FB::FactoryBase
 {

@@ -23,12 +23,12 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
 
-using namespace FB::Npapi;
-
 FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
 {
     return boost::make_shared<NpapiPluginX11>(host);
 }
+
+using namespace FB::Npapi;
 
 inline GdkNativeWindow getGdkWindow(void *in)
 {

@@ -87,8 +87,9 @@ FB::PluginWindowMacCocoaICA* FB::FactoryBase::createPluginWindowCocoaICA()
 #endif
 
 #ifdef FB_X11
-FB::PluginWindowX11* FB::FactoryBase::createPluginWindowX11(const WindowContextX11& ctx)
+FB::PluginWindowX11* FB::FactoryBase::createPluginWindowX11(const FB::WindowContextX11& ctx)
 {
     return FB::createPluginWindowX11(ctx);
 }
 #endif
+

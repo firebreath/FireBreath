@@ -19,6 +19,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginWindowX11.h"
 #include "ConstructDefaultPluginWindows.h"
 
+FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
+{
+    return new FB::PluginWindowX11(ctx);
+}
+
 using namespace FB;
 
 gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data)
@@ -28,11 +33,6 @@ gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpo
 
     PluginWindowX11 *pluginWin = (PluginWindowX11 *)user_data;
     return pluginWin->EventCallback(widget, event);
-}
-
-FB::PluginWindowX11* createPluginWindowX11(const WindowContextX11& ctx)
-{
-    return new PluginWindowX11(ctx);
 }
 
 PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
