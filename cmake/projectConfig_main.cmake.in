@@ -22,7 +22,7 @@ get_filename_component(TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
 get_filename_component(TEMPLATE_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/gen" ABSOLUTE)
 message("Generating plugin configuration files in ${TEMPLATE_DEST_DIR}")
 
-message("PluginCommon: ${PLUGINCOMMON_SOURCE_DIR}")
+add_definitions(${FBLIB_DEFINITIONS})
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}

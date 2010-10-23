@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
-#include "../Common/base64.h"
+#include "../HTTPCommon/base64.h"
 #include <stdio.h>
 #include <stdarg.h>
 #include <vector>
@@ -26,11 +26,10 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <boost/make_shared.hpp>
 #include "Platform/Platform.h"
 #include "logging.h"
-#include "HTTPCommon.h"
-#include "HTTPRequestData.h"
-#include "HTTPResponseData.h"
+#include "../HTTPCommon/HTTPRequestData.h"
+#include "../HTTPCommon/HTTPResponseData.h"
 #include "HTTPHandler.h"
-#include "HTTPException.h"
+#include "../HTTPCommon/HTTPException.h"
 #include "HTTPService.h"
 
 #include "BasicService.h"

@@ -21,6 +21,7 @@ include(${CMAKE_DIR}/common.cmake)
 add_boost_library(thread)
 add_boost_library(filesystem)
 add_firebreath_library(openssl)
+add_firebreath_library(curl)
 
 include_directories (
     ${Boost_INCLUDE_DIRS}
@@ -37,18 +38,18 @@ file (GLOB GENERAL_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 file (GLOB HTTP_SERVICE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Service/*.cpp
-    Service/*.h
+    HTTPService/*.cpp
+    HTTPService/*.h
 )
 
 file (GLOB COMMON_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Common/*.cpp
-    Common/*.h
+    HTTPCommon/*.cpp
+    HTTPCommon/*.h
 )
 
 file (GLOB CLIENT_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Client/*.cpp
-    Client/*.h
+    HTTPClient/*.cpp
+    HTTPClient/*.h
 )
 
 SOURCE_GROUP(HttpLibs FILES ${HTTP_SOURCE})
@@ -86,6 +87,8 @@ list(APPEND SOURCES
 )
 
 add_library (HttpService STATIC ${SOURCES})
+
+target_link_libraries(HttpService ${FBLIB_LIBRARIES})
 
 append_firebreath_link_library(HttpService)
 

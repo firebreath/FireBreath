@@ -14,7 +14,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 
 #include "BasicService.h"
 #include <boost/algorithm/string.hpp>
-#include "HTTPException.h"
+#include "../HTTPCommon/HTTPException.h"
 #include "logging.h"
 
 using namespace boost::algorithm;

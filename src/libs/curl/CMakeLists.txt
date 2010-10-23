@@ -42,16 +42,13 @@ elseif( WIN32 )
         else()
             message("No curl libraries found; fetching from FireBreath codebase")
             execute_process(
-                COMMAND ${HG} clone https://curl.firebreath.googlecode.com/hg/ openssl
+                COMMAND ${HG} clone https://curl.firebreath.googlecode.com/hg/ curl
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
         endif()
     endif()
-    list(APPEND FBLIB_LIBRARIES
-        ${CMAKE_CURRENT_SOURCE_DIR}/curl/lib/libcurl.lib
-        )
-    list(APPEND FBLIB_INCLUDE_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/curl/include
-        )
+    append_firebreath_link_library(${CMAKE_CURRENT_SOURCE_DIR}/curl/lib/libcurl.lib)
+    append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR}/curl/include)
+    add_firebreath_definition(-DCURL_STATICLIB)
 else()
     message("Could not find Curl libraries!  Please install curl libraries and try again!" FATAL)
 endif()

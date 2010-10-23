@@ -4,15 +4,22 @@
  *
  */
 
-#include "HTTPRequest.h"
+#ifdef _WIN32
+#include "Win/targetver.h"
+#include "../Platform/windows_defs.h"
+#endif
+
 #include <boost/algorithm/string.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 #include <cassert>
 #include <openssl/ssl.h>
 #include <openssl/x509v3.h>
+#include <boost/asio.hpp>
 #include <curl/curl.h>
+#include "../HTTPService/BasicService.h"
 
+#include "HTTPRequest.h"
 using namespace boost::algorithm;
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -27,6 +34,9 @@ using std::vector;
 using std::map;
 
 static const char* user_agent = "FBPlugin";
+
+using namespace HTTP;
+
 HTTPProxyConfig HTTPRequest::static_proxy_config;
 
 boost::shared_ptr<HTTPResponseData> parse_http_response(boost::asio::streambuf& response_stream);
@@ -38,16 +48,16 @@ boost::shared_ptr<HTTPResponseData> parse_http_response(boost::asio::streambuf& 
 void onStatusChanged_do_nothing(HTTPRequest::Status state) {
 }
 
-PluginJSDict* HTTPRequest::Status::asDict() const {
-	PluginJSDict* d = new PluginJSDict;
-	(*d)["state"] = state;
-	(*d)["bytes_sent"] = bytes_sent;
-	(*d)["send_total"] = send_total;
-	(*d)["bytes_received"] = bytes_received;
-	(*d)["receive_total"] = receive_total;
-	(*d)["bytes_per_second_send"] = bytes_per_second_send;
-	(*d)["bytes_per_second_receive"] = bytes_per_second_receive;
-	if (!last_error.empty()) (*d)["error"] = last_error;
+FB::VariantMap HTTPRequest::Status::asDict() const {
+	FB::VariantMap d;
+	d["state"] = state;
+	d["bytes_sent"] = bytes_sent;
+	d["send_total"] = send_total;
+	d["bytes_received"] = bytes_received;
+	d["receive_total"] = receive_total;
+	d["bytes_per_second_send"] = bytes_per_second_send;
+	d["bytes_per_second_receive"] = bytes_per_second_receive;
+	if (!last_error.empty()) d["error"] = last_error;
 	return d;
 }
 
@@ -275,7 +285,7 @@ void HTTPRequest::startRequest_thread() {
     std::string uri_string; // curl doesn't copy this, so we have to hold onto it
     
     { // We need a copy of the URI without the query data for curl
-      URI bare_uri = request_data->uri;
+      FB::URI bare_uri = request_data->uri;
       bare_uri.query_data.clear();
       uri_string = bare_uri.toString();
     }
@@ -309,7 +319,7 @@ void HTTPRequest::startRequest_thread() {
       curl_easy_setopt(req, CURLOPT_HTTPPOST, formpost);
     }
     
-    std::string cookie_string = build_cookie_header(request_data->cookies);
+    std::string cookie_string = BasicService::build_cookie_header(request_data->cookies);
     curl_easy_setopt(req, CURLOPT_COOKIE, cookie_string.c_str());
     
     for (std::multimap<std::string, std::string>::iterator it = request_data->headers.begin(); it != request_data->headers.end(); ++it) {
@@ -394,15 +404,15 @@ int HTTPRequest::curl_progress(double dltotal, double dlnow, double ultotal, dou
   }
   
   if (ultotal) {
-    last_status.bytes_sent = ulnow;
-    last_status.send_total = ultotal;
+    last_status.bytes_sent = static_cast<size_t>(ulnow);
+    last_status.send_total = static_cast<size_t>(ultotal);
     last_status.state = Status::SEND_REQUEST;
   }
   
   if (dltotal) {
     last_status.state = Status::READ_RESPONSE;
-    last_status.bytes_received = dlnow;
-    last_status.receive_total = dltotal;
+    last_status.bytes_received = static_cast<size_t>(dlnow);
+    last_status.receive_total = static_cast<size_t>(dltotal);
   }
   
   curl_easy_getinfo(req, CURLINFO_SPEED_DOWNLOAD, &last_status.bytes_per_second_receive);
