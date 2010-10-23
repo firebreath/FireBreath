@@ -85,6 +85,8 @@ elseif (UNIX)
     set (OTHER_NPAPITEST_LIBS ${OTHER_NAPITEST_LIBS} ${GTK_LIBRARIES})
 endif (APPLE)
 
+# Repititions in the following are intentional to fix linking errors due to
+# cyclic references on Linux. Don't change without testing on Linux!
 target_link_libraries (${PROJNAME}
     ${Boost_LIBRARIES}
     PluginCore
