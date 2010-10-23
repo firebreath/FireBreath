@@ -70,8 +70,13 @@ FB::FactoryBasePtr getFactoryInstance()
 
 // Needed for FSPath on Unix
 #ifndef FB_WIN
+#  if FB_MACOSX
 extern "C" NPError NP_Initialize(NPNetscapeFuncs*) 
+#  elif FB_X11
+extern "C" NPError NP_Initialize(NPNetscapeFuncs*, NPPluginFuncs*)
+#  endif
 {
     return 0;
 }
 #endif
+
