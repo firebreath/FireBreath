@@ -19,8 +19,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Win/win_common.h"
 #include "NpapiPlugin.h"
 
-#include "Win/FactoryDefinitionsWin.h"
-
 namespace FB { 
     class PluginWindow;
     class PluginWindowWin;
