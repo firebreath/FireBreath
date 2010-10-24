@@ -1,11 +1,11 @@
-**********************************************************\ 
+/**********************************************************\ 
  
- Auto-generated FactoryMain.cpp
+ Auto-generated Factory.cpp
  
  This file contains the auto-generated factory methods 
  for the FBTestPlugin project
  
- \**********************************************************/
+\**********************************************************/
 
 #include "FactoryBase.h"
 #include "FBTestPlugin.h"
