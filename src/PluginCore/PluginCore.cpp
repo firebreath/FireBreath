@@ -156,6 +156,8 @@ void PluginCore::ClearWindow()
 void PluginCore::setReady()
 {
     FBLOG_INFO("PluginCore", "Plugin Ready");
+    // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
+    getRootJSAPI(); 
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
@@ -165,4 +167,5 @@ void PluginCore::setReady()
     } catch(...) {
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
+    onPluginReady();
 }

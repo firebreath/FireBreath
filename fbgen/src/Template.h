@@ -26,6 +26,7 @@ public:
     virtual ~@{PLUGIN_ident}();
 
 public:
+    void onPluginReady();
     virtual FB::JSAPIPtr createJSAPI();
     virtual bool IsWindowless() { return false; }
 
@@ -46,6 +47,9 @@ public:
     virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
 };
+typedef boost::shared_ptr<@{PLUGIN_ident}> @{PLUGIN_ident}Ptr;
+typedef boost::weak_ptr<@{PLUGIN_ident}> @{PLUGIN_ident}WeakPtr;
+
 
 #endif
 

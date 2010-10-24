@@ -6,8 +6,10 @@
 
 #include <string>
 #include <sstream>
+#include <boost/weak_ptr.hpp>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
+#include "@{PLUGIN_ident}.h"
 
 #ifndef H_@{PLUGIN_ident}API
 #define H_@{PLUGIN_ident}API
@@ -15,8 +17,10 @@
 class @{PLUGIN_ident}API : public FB::JSAPIAuto
 {
 public:
-    @{PLUGIN_ident}API(FB::BrowserHostPtr host);
+    @{PLUGIN_ident}API(@{PLUGIN_ident}Ptr plugin, FB::BrowserHostPtr host);
     virtual ~@{PLUGIN_ident}API();
+
+    @{PLUGIN_ident}Ptr getPlugin();
 
     // Read/Write property ${PROPERTY.ident}
     std::string get_testString();
@@ -32,6 +36,7 @@ public:
     void testEvent(const FB::variant& s);
 
 private:
+    @{PLUGIN_ident}WeakPtr m_plugin;
     FB::BrowserHostPtr m_host;
 
     std::string m_testString;
