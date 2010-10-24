@@ -145,7 +145,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginName()
         ///
-        /// @brief  Returns the name of the plugin.  Do not override, instead change this in
+        /// @brief  Returns the name of the plugin.  To change the name of your plugin edit
         /// 		PluginConfig.cmake
         ///
         /// @return The plugin name. 
@@ -154,12 +154,12 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
-        /// @brief  Returns the description of the plugin.  Do not override, instead change this in
+        /// @brief  Returns the description of the plugin.  To change the description of your plugin edit
         /// 		PluginConfig.cmake
         ///
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::string getPluginDesc();
+        std::string getPluginDescription();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
