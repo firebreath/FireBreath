@@ -93,6 +93,11 @@ macro (add_boost_library BOOST_LIB)
 
 endmacro (add_boost_library)
 
+macro (export_boost_dependencies)
+    set (Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
+    set (Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
+endmacro()
+
 macro (add_firebreath_library project_name)
 
     list(APPEND FBLIB_INCLUDE_DIRS, ${FBLIBS_DIR}/${project_name})

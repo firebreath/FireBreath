@@ -71,6 +71,14 @@ FBTestPluginAPI::~FBTestPluginAPI()
     //std::map<int,int>::capacity()
 }
 
+boost::shared_ptr<FBTestPlugin> FBTestPluginAPI::getPlugin()
+{
+    boost::shared_ptr<FBTestPlugin> plugin = m_pluginWeak.lock();
+    if (!plugin)
+        throw FB::script_error("The plugin object has been destroyed");
+    return plugin;
+}
+
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
 {
     return L"вот, я говорю \"" + val + L"\"";

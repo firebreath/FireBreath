@@ -69,6 +69,8 @@ namespace FB {
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
+        // Windowed plugins get OS events directly through their window
+        int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

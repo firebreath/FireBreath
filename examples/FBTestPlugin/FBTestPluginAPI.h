@@ -28,7 +28,7 @@ public:
     FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
 
-    boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
+    boost::shared_ptr<FBTestPlugin> getPlugin();
     
     FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
 
