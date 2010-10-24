@@ -54,7 +54,7 @@ namespace FB
     ///      class PluginFactory : public FB::FactoryBase
     ///      {
     ///      public:
-    ///          FB::PluginCorePtr createPlugin(std::string mimetype)
+    ///          FB::PluginCorePtr createPlugin(const std::string& mimetype)
     ///          {
     ///              return boost::make_shared<MyPluginObject>();
     ///          }
@@ -86,14 +86,14 @@ namespace FB
         virtual ~FactoryBase();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(std::string mimetype) = 0
+        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(const std::string& mimetype) = 0
         ///
         /// @brief  Creates a FB::PluginCore derived user plugin object.  This must be implemented
         /// 		for all plugin projects.
         ///
         /// @code
         /// 	 // Example implementation
-        ///      FB::PluginCorePtr createPlugin(std::string mimetype)
+        ///      FB::PluginCorePtr createPlugin(const std::string& mimetype)
         ///      {
         ///          return boost::make_shared<MyPluginObject>();
         ///      }
@@ -105,7 +105,7 @@ namespace FB
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::PluginCorePtr createPlugin(std::string mimetype = "") = 0;
+        virtual FB::PluginCorePtr createPlugin(const std::string& mimetype = "") = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginInitialize()
