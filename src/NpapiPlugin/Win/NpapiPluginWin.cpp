@@ -16,16 +16,23 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiTypes.h"
 #include "PluginCore.h"
 #include "Win/PluginWindowWin.h"
+#include "FactoryBase.h"
 #include "Win/PluginWindowlessWin.h"
 #include "config.h"
-
 #include "Win/NpapiPluginWin.h"
+#include "NpapiPluginFactory.h"
+#include <boost/make_shared.hpp>
 
 using namespace FB::Npapi;
 
 extern std::string g_dllPath;
 
-NpapiPluginWin::NpapiPluginWin(NpapiBrowserHostPtr host) : NpapiPlugin(host), pluginWin(NULL)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+{
+    return boost::make_shared<NpapiPluginWin>(host);
+}
+
+NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host) : NpapiPlugin(host), pluginWin(NULL)
 {
     PluginCore::setPlatform("Windows", "NPAPI");
     setFSPath(g_dllPath);
@@ -62,7 +69,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             // window we have been using up until now.
             // This is unlikely/impossible, but it's worth checking for.
             pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL; 
+            delete pluginWin; pluginWin = NULL;
         }
 
         if(pluginWin == NULL) {

@@ -58,15 +58,19 @@ foreach(TemplateFile ${TEMPLATELIST})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
+# Repititions in the following are intentional to fix linking errors due to
+# cyclic references on Linux. Don't change without testing on Linux!
 set(PLUGIN_INTERNAL_DEPS
-    ${Boost_LIBRARIES}
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ${PLUGIN_PREFIX}_PluginWindow
-    ${PLUGIN_PREFIX}_PluginCommon
-    ${FBLIB_LIBRARIES}
-    ScriptingCore
-    PluginCore
-    )
+	${Boost_LIBRARIES}
+	PluginCore
+	${PLUGIN_PREFIX}_NpapiPlugin
+	${PLUGIN_PREFIX}_PluginWindow
+	PluginCore
+	ScriptingCore
+	${PLUGIN_PREFIX}_PluginCommon
+	${Boost_LIBRARIES}
+	${FBLIB_LIBRARIES}
+	)
 
 if (WIN32)
     set (PLUGIN_INTERNAL_DEPS

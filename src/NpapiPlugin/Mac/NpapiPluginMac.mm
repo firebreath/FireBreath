@@ -26,7 +26,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <QuartzCore/CoreAnimation.h>
 #endif
 
-#include "Mac/FactoryDefinitionsMac.h"
+#include "FactoryBase.h"
+
 #include "Mac/PluginWindowMacCarbonQD.h"
 #include "Mac/PluginWindowMacCarbonCG.h"
 #include "Mac/PluginWindowMacCocoa.h"
@@ -34,10 +35,18 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Mac/PluginWindowMacCocoaCA.h"
 #include "Mac/PluginWindowMacCocoaICA.h"
 
+#include "NpapiPluginFactory.h"
+#include <boost/make_shared.hpp>
+
 using namespace FB::Npapi;
 
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+{
+    return boost::make_shared<NpapiPluginMac>(host);
+}
+
 namespace {
-    bool supports(FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
+    bool supports(const FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
         NPBool value;        
         NPError err;
         
@@ -69,7 +78,7 @@ namespace {
         return value;
     }
 
-    bool set(FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, void* value) {
+    bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, void* value) {
         NPError err = host->SetValue(what, value);
         void* model = value;
 
@@ -97,7 +106,7 @@ namespace {
         return true;
     }
     
-    bool enableQuickDraw(FB::Npapi::NpapiBrowserHostPtr &host) {
+    bool enableQuickDraw(const FB::Npapi::NpapiBrowserHostPtr &host) {
 #ifdef __LP64__
         // QuickDraw does not exist for 64 bit 
         return false;
@@ -125,7 +134,7 @@ namespace {
 #endif   
     }
 
-    bool enableCoreGraphicsCarbon(FB::Npapi::NpapiBrowserHostPtr &host) {
+    bool enableCoreGraphicsCarbon(const FB::Npapi::NpapiBrowserHostPtr &host) {
 #ifdef __LP64__
         // Carbon does not exist for 64 bit
         return false;
@@ -156,7 +165,7 @@ namespace {
 #endif
     }
 
-    bool enableCoreGraphicsCocoa(FB::Npapi::NpapiBrowserHostPtr &host) {
+    bool enableCoreGraphicsCocoa(const FB::Npapi::NpapiBrowserHostPtr &host) {
 #if !FBMAC_USE_COREGRAPHICS
         printf("CoreGraphics not supported\n");
         return false;
@@ -180,7 +189,7 @@ namespace {
 #endif
     }
     
-    bool enableCoreAnimation(FB::Npapi::NpapiBrowserHostPtr &host) {
+    bool enableCoreAnimation(const FB::Npapi::NpapiBrowserHostPtr &host) {
 #if !FBMAC_USE_COREANIMATION
         printf("enableCoreAnimation() - 0\n");
         return false;  
@@ -200,7 +209,7 @@ namespace {
 #endif
     }
 
-    bool enableInvalidatingCoreAnimation(FB::Npapi::NpapiBrowserHostPtr &host) {
+    bool enableInvalidatingCoreAnimation(const FB::Npapi::NpapiBrowserHostPtr &host) {
 #if !FBMAC_USE_COREANIMATION
         printf("enableCoreAnimation() - 0\n");
         return false;  
@@ -234,7 +243,7 @@ namespace
     }
 }
 
-NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
+NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host)
   : NpapiPlugin(host), pluginWin(NULL), m_eventModel(), m_drawingModel() {
     // If you receive a BAD_ACCESS error here you probably have something
     // wrong in your FactoryMain.cpp in your plugin project's folder
@@ -257,7 +266,7 @@ NpapiPluginMac::NpapiPluginMac(FB::Npapi::NpapiBrowserHostPtr &host)
         // the newly created PluginWindowMacCocoaCA window. This must
         // be done before SetWindowCA() since the browser will call
         // GetValue() for the CALayer before it calls SetWindow.
-        PluginWindowMacCocoaCA* pluginWinCA = _createPluginWindowCocoaCA();
+        PluginWindowMacCocoaCA* pluginWinCA = getFactoryInstance()->createPluginWindowCocoaCA();
         this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
         pluginWinCA->setNpHost(m_npHost);
         pluginMain->SetWindow(pluginWinCA);
@@ -330,7 +339,7 @@ NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
         
         if (pluginWin == NULL) 
         {
-            win = _createPluginWindowCarbonQD((CGrafPtr)prt->port, prt->portx, prt->porty);
+            win = getFactoryInstance()->createPluginWindowCarbonQD(WindowContextQuickDraw((CGrafPtr)prt->port, prt->portx, prt->porty));
             pluginWin = static_cast<PluginWindow*>(win);
             pluginMain->SetWindow(win);
         }
@@ -356,14 +365,14 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 #if !FBMAC_USE_COREGRAPHICS || !FBMAC_USE_CARBON
     return NPERR_GENERIC_ERROR;
 #else
+    // SetWindow provides us with the window that our plugin should draw to.
+    // In the Cocoa event model the window.window is null in the passed NPWindow
+
     PluginWindowMacCarbonCG* pluginWinCG = static_cast<PluginWindowMacCarbonCG*>(pluginWin);
 
     if (window != NULL) {
-        if(window->window == NULL) {
-            return NPERR_NO_ERROR;
-        }
         if (pluginWin != NULL) {
-            if (pluginWinCG->getNPCGContext() != (NP_CGContext*) window->window) {
+            if (pluginWinCG->getContext() != (NP_CGContext*)window->window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
                 delete pluginWin;
                 pluginWin = NULL;
@@ -373,7 +382,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
         if (pluginWin == NULL) {
             // We have no plugin window associated with this plugin object.
             // Make a new plugin window object for FireBreath & our plugin.
-            pluginWinCG = _createPluginWindowCarbonCG((NP_CGContext*)window->window);
+            pluginWinCG = getFactoryInstance()->createPluginWindowCarbonCG(WindowContextCoreGraphics((NP_CGContext*)window->window))
             pluginWinCG->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
             // Initialize the window position & clipping from the newly arrived NPWindow window
@@ -416,7 +425,7 @@ NPError NpapiPluginMac::SetWindowCocoaCG(NPWindow* window) {
         if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
-            pluginWinCG = _createPluginWindowCocoaCG();
+            pluginWinCG = getFactoryInstance()->createPluginWindowCocoaCG();
             pluginWinCG->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
             // Initialize window position & clipping 
@@ -451,7 +460,7 @@ NPError NpapiPluginMac::SetWindowCocoaCA(NPWindow* window) {
         if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
-            pluginWinCA = _createPluginWindowCocoaCA();
+            pluginWinCA = getFactoryInstance()->createPluginWindowCocoaCA();
             pluginWinCA->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCA);
             // Initialize window position & clipping 
@@ -486,7 +495,7 @@ NPError NpapiPluginMac::SetWindowCocoaICA(NPWindow* window) {
         if (pluginWin == NULL) {
             // No window associated with this plugin object.
             // Make a new window and associate with the object.
-            pluginWinICA = _createPluginWindowCocoaICA();
+            pluginWinICA = getFactoryInstance()->createPluginWindowCocoaICA();
             pluginWinICA->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinICA);
             // Initialize window position & clipping 

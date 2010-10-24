@@ -18,13 +18,22 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowMacCarbonQD.h"
 
+#include "ConstructDefaultPluginWindows.h"
+
+
 using namespace FB;
 
-PluginWindowMacCarbonQD::PluginWindowMacCarbonQD(CGrafPtr port, int x, int y)
+FB::PluginWindowMacCarbonQD* FB::createPluginWindowCarbonQD(const FB::WindowContextQuickDraw& ctx)
 {
-    m_port = port;
-    m_x = x;
-    m_y = y;
+    return new PluginWindowMacCarbonQD(ctx);
+}
+
+PluginWindowMacCarbonQD::PluginWindowMacCarbonQD(const WindowContextQuickDraw& ctx)
+  : m_port(ctx.port)
+  , m_x(ctx.x)
+  , m_y(ctx.y)
+{
+
 }
 
 PluginWindowMacCarbonQD::~PluginWindowMacCarbonQD()

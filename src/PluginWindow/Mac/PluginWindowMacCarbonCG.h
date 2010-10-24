@@ -22,11 +22,12 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include <AGL/agl.h>
 #include "NpapiTypes.h"
 #include <map>
+#include "WindowContextMac.h"
 
 namespace FB {
     class PluginWindowMacCarbonCG : public PluginWindowMacCarbon {
     public:
-        PluginWindowMacCarbonCG(NP_CGContext* context);
+        PluginWindowMacCarbonCG(const WindowContextCoreGraphics&);
         virtual ~PluginWindowMacCarbonCG();
 
     public:
