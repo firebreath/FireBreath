@@ -105,7 +105,7 @@ namespace FB
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::PluginCorePtr createPlugin(const std::string& mimetype = "") = 0;
+        virtual FB::PluginCorePtr createPlugin(const std::string& mimetype) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginInitialize()

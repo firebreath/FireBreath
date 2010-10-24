@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB;
 
 BrowserPlugin::BrowserPlugin() :
-    pluginMain(getFactoryInstance()->createPlugin())
+    pluginMain(getFactoryInstance()->createPlugin(""))
 {
 }
 
