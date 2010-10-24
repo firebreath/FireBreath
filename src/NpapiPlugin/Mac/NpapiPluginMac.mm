@@ -372,7 +372,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 
     if (window != NULL) {
         if (pluginWin != NULL) {
-            if (pluginWinCG->getContext() != (NP_CGContext*)window->window) {
+            if (pluginWinCG->getNPCGContext() != (NP_CGContext*)window->window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
                 delete pluginWin;
                 pluginWin = NULL;
@@ -382,8 +382,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
         if (pluginWin == NULL) {
             // We have no plugin window associated with this plugin object.
             // Make a new plugin window object for FireBreath & our plugin.
-            pluginWinCG = getFactoryInstance()->createPluginWindowCarbonCG(WindowContextCoreGraphics((NP_CGContext*)window->window))
-            pluginWinCG->setNpHost(m_npHost);
+            pluginWinCG = getFactoryInstance()->createPluginWindowCarbonCG(WindowContextCoreGraphics((NP_CGContext*)window->window));
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
             // Initialize the window position & clipping from the newly arrived NPWindow window
             pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);

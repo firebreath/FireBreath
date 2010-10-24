@@ -74,7 +74,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
 
         if(pluginWin == NULL) {
             // Create new window
-            win = _createPluginWindowless((HDC)window->window);
+            win = getFactoryInstance()->createPluginWinWindowless(FB::WindowContextWinWindowless((HDC)window->window));
             win->setNpHost(m_npHost);
             win->setWindowPosition(window->x, window->y, window->width, window->height);
             win->setWindowClipping(window->clipRect.top, window->clipRect.left,
@@ -112,7 +112,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             // Create new window
             HWND browserHWND;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND); 
-            win = _createPluginWindow((HWND)window->window);
+            win = getFactoryInstance()->createPluginWindow(FB::WindowContextWin((HWND)window->window));
             win->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(win);
             setReady();
