@@ -76,6 +76,8 @@ namespace FB
     ///          return factory;
     ///      }
     /// @endcode
+    /// 
+    /// @since 1.3 RC2
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class FactoryBase : public boost::noncopyable
     {
