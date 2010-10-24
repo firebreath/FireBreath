@@ -40,6 +40,12 @@ include_directories(
 #    PluginWindow*.h
 #    )
 
+file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    [^.]*.cpp
+    [^.]*.h
+    )
+
+
 # X11 *****************************************************************
 
 file (GLOB X11_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -127,6 +133,7 @@ elseif(UNIX)
 endif()
 
 set (SOURCES
+    ${GENERAL}
     ${PLUGINWINDOW}
     ${WIN_SOURCES}
     ${MAC_SOURCES}

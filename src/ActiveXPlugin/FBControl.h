@@ -26,12 +26,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FireBreathWin_i.h"
 #include "JSAPI_IDispatchEx.h"
 #include "DOM/Window.h"
-#include "Win/FactoryDefinitionsWin.h"
+#include "FactoryBase.h"
 #include "logging.h"
 
 #include "BrowserPlugin.h"
 #include "PluginCore.h"
 #include "Win/PluginWindowWin.h"
+#include "Win/WindowContextWin.h"
 
 #include "registrymap.hpp"
 
@@ -158,7 +159,7 @@ public:
     // Now the window has been created and we're going to call setReady on the PluginCore object
     LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/)
     {
-        pluginWin = _createPluginWindow(m_hWnd);
+        pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
         pluginWin->setCallOldWinProc(true);
         pluginMain->SetWindow(pluginWin);
 

@@ -15,7 +15,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginWindow.h"
 #include "JSAPI.h"
 #include "variant_list.h"
-#include "FactoryDefinitions.h"
+#include "FactoryBase.h"
 #include "BrowserHost.h"
 #include "DOM/Window.h"
 #include "logging.h"
@@ -50,7 +50,7 @@ PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
         // Only on the first initialization
-        GlobalPluginInitialize();
+        getFactoryInstance()->globalPluginInitialize();
     }
 
     initDefaultParams();
@@ -63,7 +63,7 @@ PluginCore::PluginCore(const std::set<std::string>& params)
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
         // Only on the first initialization
-        GlobalPluginInitialize();
+        getFactoryInstance()->globalPluginInitialize();
     }
     initDefaultParams();
 }
@@ -81,7 +81,7 @@ PluginCore::~PluginCore()
     // so there is no need for mutexes here
     if (--PluginCore::ActivePluginCount == 0) {
         // Only on the destruction of the final plugin instance
-        GlobalPluginDeinitialize();
+        getFactoryInstance()->globalPluginDeinitialize();
     }
 }
 
@@ -156,6 +156,8 @@ void PluginCore::ClearWindow()
 void PluginCore::setReady()
 {
     FBLOG_INFO("PluginCore", "Plugin Ready");
+    // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
+    getRootJSAPI(); 
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
@@ -165,6 +167,7 @@ void PluginCore::setReady()
     } catch(...) {
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
+    onPluginReady();
 }
 
 bool PluginCore::isWindowless()

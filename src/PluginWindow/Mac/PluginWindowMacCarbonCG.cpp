@@ -18,20 +18,25 @@
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/KeyboardEvents.h"
 #include "PluginWindowMacCarbonCG.h"
+#include "ConstructDefaultPluginWindows.h"
 
 using namespace FB;
 
-PluginWindowMacCarbonCG::PluginWindowMacCarbonCG(NP_CGContext* context) {
-    if(context == NULL) {
+FB::PluginWindowMacCarbonCG* FB::createPluginWindowCarbonCG(const FB::WindowContextCoreGraphics& ctx)
+{
+    return new PluginWindowMacCarbonCG(ctx);
+}
+
+PluginWindowMacCarbonCG::PluginWindowMacCarbonCG(const WindowContextCoreGraphics& ctx) {
+    if(ctx.context == NULL) {
         m_npCGContext = NULL;
         m_cgContext = NULL;
         m_winRef = NULL;
         return;
     }
-    m_npCGContext = context; 
-    m_cgContext = context->context;
-    m_winRef = (WindowRef) context->window;
-}
+    m_npCGContext = ctx.context; 
+    m_cgContext = ctx.context->context;
+    m_winRef = (WindowRef) ctx.context->window;}
 
 PluginWindowMacCarbonCG::~PluginWindowMacCarbonCG() {
     clearWindow();

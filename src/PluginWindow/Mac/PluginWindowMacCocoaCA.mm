@@ -17,10 +17,16 @@
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowMacCocoaCA.h"
+#include "ConstructDefaultPluginWindows.h"
 
 #import <QuartzCore/CALayer.h>
 
 using namespace FB;
+
+FB::PluginWindowMacCocoaCA* FB::createPluginWindowCocoaCA()
+{
+    return new PluginWindowMacCocoaCA();
+}
 
 struct FB::PluginWindowMacCocoaCA::Impl
 {

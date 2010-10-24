@@ -50,17 +50,53 @@ set (SOURCES
 add_executable(${PROJNAME} ${SOURCES})
 
 add_dependencies(${PROJNAME}
-    ${PLUGIN_PREFIX}_NpapiPlugin
     ScriptingCore
     PluginCore
     NPAPIHost
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
     UnitTest++
     )
 
+if (APPLE)
+    if (FBMAC_USE_CARBON)
+        find_library(CARBON_FRAMEWORK Carbon)
+    endif (FBMAC_USE_CARBON)
+    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(FOUNDATION_FRAMEWORK Foundation)
+    find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
+    find_library(QUARTZCORE_FRAMEWORK QuartzCore)
+    set (OTHER_NPAPITEST_LIBS 
+        ${OTHER_NPAPITEST_LIBS} 
+        ${COCOA_FRAMEWORK}
+        ${FOUNDATION_FRAMEWORK}
+        ${APPLICATIONSERVICES_FRAMEWORK}
+        ${QUARTZCORE_FRAMEWORK}
+        ${CARBON_FRAMEWORK})
+elseif (UNIX)
+    if (NOT GTK_INCLUDE_DIRS)
+        pkg_check_modules(GTK REQUIRED gtk+-2.0)
+        set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
+        set (GTK_LIBRARIES ${GTK_LIBRARIES} CACHE INTERNAL "GTK include dirs")
+        set (GTK_LIBRARY_DIRS ${GTK_LIBRARY_DIRS} CACHE INTERNAL "GTK include dirs")
+        set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
+    endif()
+    set (OTHER_NPAPITEST_LIBS ${OTHER_NAPITEST_LIBS} ${GTK_LIBRARIES})
+endif (APPLE)
+
+# Repititions in the following are intentional to fix linking errors due to
+# cyclic references on Linux. Don't change without testing on Linux!
 target_link_libraries (${PROJNAME}
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ScriptingCore
+    ${Boost_LIBRARIES}
     PluginCore
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ${PLUGIN_PREFIX}_PluginWindow
+    PluginCore
+    ScriptingCore
+    ${PLUGIN_PREFIX}_PluginCommon
     NPAPIHost
     UnitTest++
+    PluginCore
+    ${OTHER_NPAPITEST_LIBS}
     )
