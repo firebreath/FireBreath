@@ -86,7 +86,9 @@ macro (add_boost_library BOOST_LIB)
     
         list(APPEND Boost_LIBRARIES boost_${BOOST_LIB})
         list(REMOVE_DUPLICATES Boost_LIBRARIES)
-        if (NOT TARGET boost_${BOOST_LIB})
+
+        get_target_property(boost_target_exists boost_${BOOST_LIB} TYPE)
+        if (NOT boost_target_exists)
             add_subdirectory(${BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
         endif()
     endif()
@@ -96,7 +98,9 @@ endmacro (add_boost_library)
 macro (add_firebreath_library project_name)
 
     list(APPEND FBLIB_INCLUDE_DIRS, ${FBLIBS_DIR}/${project_name})
-    if (NOT TARGET ${project_name})
+
+    get_target_property(library_target_exists ${project_name} TYPE)
+    if (NOT library_target_exists)
         add_subdirectory(${FBLIBS_DIR}/${project_name} ${CMAKE_BINARY_DIR}/fblibs/${project_name})
     endif()
 
