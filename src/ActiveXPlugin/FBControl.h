@@ -40,7 +40,7 @@ extern std::string g_dllPath;
 
 // CFBControl
 class ATL_NO_VTABLE CFBControl :
-    public CComObjectRootEx<CComMultiThreadModel>,
+    public CComObjectRootEx<CComSingleThreadModel>,
     public CComCoClass<CFBControl, &CLSID_FBControl>,
     public CComControl<CFBControl>,
 

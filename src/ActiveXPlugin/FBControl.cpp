@@ -18,10 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 int CFBControl::_REFCOUNT(0); // This must only be accessed from the main thread
 BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)
 {
-    if (uMsg == WM_CREATE) {
-        int i = 2;
-        i++;
-    }
     BOOL bHandled = FALSE;
     switch(dwMsgMapID)
     {
