@@ -26,7 +26,10 @@ namespace FB
 {
     class FactoryBase;
     class PluginCore;
+    /// @brief  Defines an alias representing a boost::shared_ptr<FactoryBase>
     typedef boost::shared_ptr<FactoryBase> FactoryBasePtr;
+
+    /// @brief  Defines an alias representing a boost::shared_ptr<PluginCore>
     typedef boost::shared_ptr<PluginCore> PluginCorePtr;
     
     namespace Npapi { 
