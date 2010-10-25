@@ -18,6 +18,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <string>
 #include <map>
 #include <set>
+#include <boost/cstdint.hpp>
 #include "APITypes.h"
 
 namespace FB {
@@ -37,7 +38,7 @@ namespace FB {
         std::string protocol;
         std::string login;
         std::string domain;
-        uint16_t port;
+        boost::uint16_t port;
         std::string path;
         std::map<std::string, std::string> query_data;
         std::string fragment;

@@ -112,7 +112,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             // Create new window
             HWND browserHWND;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND); 
-            win = getFactoryInstance()->createPluginWindow(FB::WindowContextWin((HWND)window->window));
+            win = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin((HWND)window->window));
             win->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(win);
             setReady();
