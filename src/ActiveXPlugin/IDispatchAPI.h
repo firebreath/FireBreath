@@ -44,6 +44,12 @@ public:
     void getMemberNames(std::vector<std::string> &nameVector);
     size_t getMemberCount();
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @brief  Releases the object.  Do not call this method, it is used by the destructor, but has
+    /// 		to be public so that it can be forced to run on the main thread.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    void releaseObject();
+
 protected:
     ActiveXBrowserHostPtr m_browser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;

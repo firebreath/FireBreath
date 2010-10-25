@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <boost/bind.hpp>
 #include "IDispatchAPI.h"
 #include "axmain.h"
 #include <dispex.h>
@@ -24,6 +25,12 @@ IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
 
 IDispatchAPI::~IDispatchAPI(void)
 {
+    host->CallOnMainThread(boost::bind(&IDispatchAPI::releaseObject, this));
+}
+
+void IDispatchAPI::releaseObject()
+{
+    m_obj.Release();
 }
 
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)

@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
 #include "logging.h"
@@ -40,6 +41,12 @@ NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
 }
 
 NPObjectAPI::~NPObjectAPI(void)
+{
+    // Force this call to happen on the main thread
+    host->CallOnMainThread(boost::bind(&NPObjectAPI::releaseObject, this, obj));
+}
+
+void NPObjectAPI::releaseObject(NPObject* obj)
 {
     if (obj != NULL) {
         /**
