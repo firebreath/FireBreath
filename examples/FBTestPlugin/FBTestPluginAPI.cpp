@@ -23,8 +23,78 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "FBTestPluginAPI.h"
 
+#include <boost/make_shared.hpp>
+#include "NPJavascriptObject.h"
+#include "NPObjectAPI.h"
+
+template<class API>
+boost::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
+{
+    using FB::Npapi::NPObjectAPI;
+    using FB::Npapi::NPJavascriptObject;
+    typedef boost::shared_ptr<API> APIPtr;
+    
+    if (!jso) {
+        return APIPtr();
+    }
+    
+    if (boost::shared_ptr<NPObjectAPI> npoapi = FB::ptr_cast<NPObjectAPI>(jso)) 
+    {
+        NPObject* npo = npoapi->getNPObject();
+        if (!npo) {
+            return APIPtr();
+        }
+        
+        if (!NPJavascriptObject::isNPJavaScriptObject(npo)) {
+            return APIPtr();
+        }
+         
+        NPJavascriptObject* npjso = static_cast<NPJavascriptObject*>(npo);
+        return FB::ptr_cast<API>(npjso->getAPI());
+    }
+    
+#ifdef FB_WIN
+    // ... do the same for ActiveX
+#endif
+    
+    return boost::shared_ptr<API>();
+}
+
+
+struct Test : FB::JSAPIAuto
+{
+    Test() : FB::JSAPIAuto("Test") {
+        registerMethod("f", FB::make_method(this, &Test::f));
+    }
+    
+    std::string f() {
+        return "Test::f() 42";
+    }
+    
+    std::string g() {
+        return "Test::g() 23";
+    }
+};
+
+FB::JSAPIPtr FBTestPluginAPI::getTestObj()
+{
+    return boost::make_shared<Test>();
+}
+
+std::string FBTestPluginAPI::useTestObj(const FB::JSObjectPtr& jso)
+{
+    if (boost::shared_ptr<Test> t = get_jsapi<Test>(jso)) {
+        return t->g();
+    }
+    
+    return "";
+}
+
 FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {
+    registerMethod("getTestObj", make_method(this, &FBTestPluginAPI::getTestObj));
+    registerMethod("useTestObj", make_method(this, &FBTestPluginAPI::useTestObj));
+    
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
     registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));

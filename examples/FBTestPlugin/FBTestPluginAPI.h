@@ -41,6 +41,10 @@ public:
     long get_someInt();
 
     FB::JSAPIPtr get_simpleMath();
+  
+    FB::JSAPIPtr getTestObj();
+    std::string useTestObj(const FB::JSObjectPtr& obj);
+    
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
