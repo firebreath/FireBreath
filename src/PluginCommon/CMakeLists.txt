@@ -39,7 +39,8 @@ file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
     )
 
-if (TARGET log4cplus)
+get_target_property(log4cplus_target_exists log4cplus TYPE)
+if (log4cplus_target_exists)
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         log4cplus/*.cpp
         log4cplus/*.h
