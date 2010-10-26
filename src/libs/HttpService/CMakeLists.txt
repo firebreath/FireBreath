@@ -21,6 +21,7 @@ include(${CMAKE_DIR}/common.cmake)
 add_boost_library(thread)
 add_boost_library(filesystem)
 add_firebreath_library(openssl)
+add_firebreath_library(curl)
 
 include_directories (
     ${Boost_INCLUDE_DIRS}
@@ -36,9 +37,19 @@ file (GLOB GENERAL_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.h
 )
 
-file (GLOB HTTP_SOURCE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    HTTP*.cpp
-    HTTP*.h
+file (GLOB HTTP_SERVICE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    HTTPService/*.cpp
+    HTTPService/*.h
+)
+
+file (GLOB COMMON_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    HTTPCommon/*.cpp
+    HTTPCommon/*.h
+)
+
+file (GLOB CLIENT_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    HTTPClient/*.cpp
+    HTTPClient/*.h
 )
 
 SOURCE_GROUP(HttpLibs FILES ${HTTP_SOURCE})
@@ -59,14 +70,30 @@ file (GLOB PLATFORM_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Platform/Platform_${platform}.cpp
 )
 
+if (WIN32)
+    list(APPEND PLATFORM_SRC
+        Platform/windows_common.cpp)
+endif()
+
 SOURCE_GROUP(Platform FILES ${PLATFORM_SRC})
+
+SOURCE_GROUP(Common FILES ${COMMON_SRC})
+
+SOURCE_GROUP(Client FILES ${CLIENT_SRC})
+
+SOURCE_GROUP(Service FILES ${HTTP_SERVICE})
 
 list(APPEND SOURCES
     ${GENERAL_SRC}
+    ${HTTP_SERVICE}
     ${PLATFORM_SRC}
+    ${COMMON_SRC}
+    ${CLIENT_SRC}
 )
 
 add_library (HttpService STATIC ${SOURCES})
+
+target_link_libraries(HttpService ${FBLIB_LIBRARIES})
 
 append_firebreath_link_library(HttpService)
 

@@ -22,7 +22,7 @@ get_filename_component(TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
 get_filename_component(TEMPLATE_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/gen" ABSOLUTE)
 message("Generating plugin configuration files in ${TEMPLATE_DEST_DIR}")
 
-message("PluginCommon: ${PLUGINCOMMON_SOURCE_DIR}")
+add_definitions(${FBLIB_DEFINITIONS})
 
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
@@ -44,10 +44,17 @@ include_directories(
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
-    if (VERBOSE)
-        message("Configuring ${CURFILE}")
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE})
+        if (VERBOSE)
+            message("Configuring ${CURFILE} from project source dir")
+        endif()
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+    else()
+        if (VERBOSE)
+            message("Configuring ${CURFILE}")
+        endif()
+        configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
     endif()
-    configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
 # configure project-specific generated files
@@ -58,14 +65,18 @@ foreach(TemplateFile ${TEMPLATELIST})
     configure_file(${CMAKE_CURRENT_SOURCE_DIR}/templates/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
+# Repititions in the following are intentional to fix linking errors due to
+# cyclic references on Linux. Don't change without testing on Linux!
 set(PLUGIN_INTERNAL_DEPS
     ${Boost_LIBRARIES}
+    PluginCore
     ${PLUGIN_PREFIX}_NpapiPlugin
     ${PLUGIN_PREFIX}_PluginWindow
-    ${PLUGIN_PREFIX}_PluginCommon
-    ${FBLIB_LIBRARIES}
-    ScriptingCore
     PluginCore
+    ScriptingCore
+    ${PLUGIN_PREFIX}_PluginCommon
+    ${Boost_LIBRARIES}
+    ${FBLIB_LIBRARIES}
     )
 
 if (WIN32)

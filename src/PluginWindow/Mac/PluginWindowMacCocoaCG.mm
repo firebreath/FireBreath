@@ -18,8 +18,14 @@
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowMacCocoaCG.h"
+#include "ConstructDefaultPluginWindows.h"
 
 using namespace FB;
+
+FB::PluginWindowMacCocoaCG* FB::createPluginWindowCocoaCG()
+{
+    return new PluginWindowMacCocoaCG();
+}
 
 PluginWindowMacCocoaCG::PluginWindowMacCocoaCG() {}
 

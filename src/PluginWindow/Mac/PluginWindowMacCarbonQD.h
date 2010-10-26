@@ -17,15 +17,16 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <Carbon/Carbon.h>
 #include "PluginWindow.h"
+#include "WindowContextMac.h"
 
 #include <map>
 
-namespace FB {
-
+namespace FB 
+{    
     class PluginWindowMacCarbonQD : public PluginWindow
     {
     public:
-        PluginWindowMacCarbonQD(CGrafPtr port, int x, int y);
+        PluginWindowMacCarbonQD(const WindowContextQuickDraw&);
         virtual ~PluginWindowMacCarbonQD();
 
         int16_t HandleEvent(EventRecord* evt);

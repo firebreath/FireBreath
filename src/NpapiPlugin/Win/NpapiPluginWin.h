@@ -19,8 +19,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Win/win_common.h"
 #include "NpapiPlugin.h"
 
-#include "Win/FactoryDefinitionsWin.h"
-
 namespace FB { 
     class PluginWindow;
     class PluginWindowWin;
@@ -31,7 +29,7 @@ namespace FB {
     class NpapiPluginWin : public NpapiPlugin
     {
     public:
-        NpapiPluginWin(NpapiBrowserHostPtr host);
+        NpapiPluginWin(const NpapiBrowserHostPtr& host);
         virtual ~NpapiPluginWin(void);
 
     protected:

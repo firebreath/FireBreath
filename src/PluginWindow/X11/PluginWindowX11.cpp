@@ -17,6 +17,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
 #include "PluginWindowX11.h"
+#include "ConstructDefaultPluginWindows.h"
+
+FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
+{
+    return new FB::PluginWindowX11(ctx);
+}
 
 using namespace FB;
 
@@ -29,7 +35,8 @@ gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpo
     return pluginWin->EventCallback(widget, event);
 }
 
-PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
+PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
+  : m_window(ctx.window),
     m_browserWindow(0),
     /* We as C++ programmers do not usually care about initializing integers
      * when it's not actually needed, but it's nice for the code to be clean
@@ -41,8 +48,7 @@ PluginWindowX11::PluginWindowX11(GdkNativeWindow win) : m_window(win),
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0)
 {
-    m_window = win;
-    m_container = gtk_plug_new((GdkNativeWindow)win);
+    m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
     m_canvas = gtk_drawing_area_new();
     GTK_WIDGET_SET_FLAGS (GTK_WIDGET(m_canvas), GTK_CAN_FOCUS);
 

@@ -20,7 +20,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginWindow.h"
 #include "NpapiTypes.h"
 
-#include "Mac/FactoryDefinitionsMac.h"
 
 namespace FB {
     class PluginWindowMacCarbonQD; // Carbon & QuickDraw (really deprecated)
@@ -49,7 +48,7 @@ namespace FB {
         };
         
     public:
-        NpapiPluginMac(NpapiBrowserHostPtr &host);
+        NpapiPluginMac(const NpapiBrowserHostPtr &host);
         virtual ~NpapiPluginMac(void);
         
         EventModel   getEventModel  () const;

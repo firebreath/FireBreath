@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #include "PluginWindow.h"
+#include "WindowContextX11.h"
 
 #include <map>
 
@@ -26,7 +27,7 @@ namespace FB {
     class PluginWindowX11 : public PluginWindow
     {
     public:
-        PluginWindowX11(GdkNativeWindow);
+        PluginWindowX11(const WindowContextX11&);
         virtual ~PluginWindowX11();
 
 //         int16_t HandleEvent(EventRecord* evt);

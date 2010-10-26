@@ -24,7 +24,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <vector>
 #include <map>
 #include "URI.h"
-#include "HTTPHandler.h"
+#include "HTTPService/HTTPHandler.h"
 
 namespace HTTP {
     class HTTPService : public boost::enable_shared_from_this<HTTPService>

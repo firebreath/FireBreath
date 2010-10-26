@@ -186,6 +186,19 @@ namespace FB {
         virtual void setReady();
         virtual bool isWindowless();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void PluginCore::onPluginReady()
+        ///
+        /// @brief  This is called when the plugin is ready.
+        /// 		
+        /// This may or may not occur before the AttachedEvent is fired to indicate that the plugin
+        /// is available.  Params from the browser will be set and the root JSAPI created before this
+        /// is called.
+        /// 
+        /// @since 1.3 RC2 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void onPluginReady() {};
+
     protected:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
