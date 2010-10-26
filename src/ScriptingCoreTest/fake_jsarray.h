@@ -24,6 +24,8 @@ public:
       : FB::JSObject(FB::BrowserHostPtr()), m_values(values)
     {
     }
+    
+    FB::JSAPIPtr getJSAPI() { return FB::JSAPIPtr(); }
 
     bool HasMethod(const std::string&) { return false; }
     void SetProperty(int, const FB::variant&) {}
@@ -33,7 +35,6 @@ public:
     // Methods for enumeration
     virtual void getMemberNames(std::vector<std::string> &nameVector) { }
     virtual size_t getMemberCount() { return 0; }
-
 
     bool HasProperty(const std::string& s)    
     { 

@@ -113,6 +113,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Dict>
         static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst);
+    
+    public:
+        /// @brief Get associated FB::JSAPI.
+        virtual JSAPIPtr getJSAPI() = 0;
 
     public:
         BrowserHostPtr host;
@@ -210,6 +214,23 @@ namespace FB
         Dict dict;
         FB::JSObject::GetObjectValues(cast<JsObject>(), dict);
         return dict;
+    }
+    
+    // TODO: this doesn't belong here
+    template<class API>
+    boost::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
+    {
+        typedef boost::shared_ptr<API> APIPtr;
+        
+        if (!jso) {
+            return APIPtr();
+        }
+        
+        if (FB::JSAPIPtr jsapi = jso->getJSAPI()) {
+            return FB::ptr_cast<API>(jsapi);
+        }
+        
+        return APIPtr();
     }
 };
 

@@ -72,6 +72,8 @@ public:
     std::string getPageLocation();
     
     std::string get_pluginPath();
+    
+    long addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
 
 private:
     FB::BrowserHostPtr m_host;
