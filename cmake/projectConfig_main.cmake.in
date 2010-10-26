@@ -44,7 +44,7 @@ include_directories(
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
-    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${TemplateFile})
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE})
         if (VERBOSE)
             message("Configuring ${CURFILE} from project source dir")
         endif()
