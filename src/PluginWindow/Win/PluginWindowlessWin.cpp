@@ -1,8 +1,20 @@
 #include "PluginWindowlessWin.h"
+#include "ConstructDefaultPluginWindows.h"
+
+#include "PluginEvents/WindowsEvent.h"
+#include "PluginEvents/GeneralEvents.h"
+#include "PluginEvents/DrawingEvents.h" 
+#include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/KeyboardEvents.h"
 
 using namespace std; using namespace FB;
 
-PluginWindowlessWin::PluginWindowlessWin(HDC hdc) : m_hdc(hdc) {}
+FB::PluginWindowlessWin* FB::createPluginWindowless(const FB::WindowContextWindowless& ctx)
+{
+    return new PluginWindowlessWin(ctx);
+}
+
+PluginWindowlessWin::PluginWindowlessWin(const FB::WindowContextWindowless& ctx) : m_hdc(ctx.drawable) {}
 
 PluginWindowlessWin::~PluginWindowlessWin() {}
 

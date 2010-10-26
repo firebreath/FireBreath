@@ -23,7 +23,9 @@ namespace FB
 {
 #ifdef FB_WIN
     class PluginWindowWin;
+    class PluginWindowlessWin;
     struct WindowContextWin;
+    struct WindowContextWindowless;
 #endif
     
 #ifdef FB_X11

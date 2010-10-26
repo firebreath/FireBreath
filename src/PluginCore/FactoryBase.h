@@ -188,6 +188,17 @@ namespace FB
         /// @return A PluginWindowWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowWin*           createPluginWindowWin(const WindowContextWin&);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual PluginWindowlessWin* FactoryBase::createPluginWindowless(const WindowContextWin&)
+        ///
+        /// @brief  Creates a PluginWindowlessWin derived plugin window object
+        ///
+        /// @param  Platform specific data structure for window context information (including the HDC usually) 
+        ///
+        /// @return A PluginWindowlessWin* to the object that should handle the plugin window
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual PluginWindowlessWin*           createPluginWindowless(const WindowContextWindowless&);
 #endif
       
 #ifdef FB_MACOSX

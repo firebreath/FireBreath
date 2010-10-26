@@ -30,10 +30,10 @@ namespace FB
         {}
     };
     
-    struct WindowContextWindowlessWin
+    struct WindowContextWindowless
     {
         HDC drawable;
-        WindowContextWindowlessWin(HDC drawable) 
+        WindowContextWindowless(HDC drawable) 
           : drawable(drawable)
         {}
     };

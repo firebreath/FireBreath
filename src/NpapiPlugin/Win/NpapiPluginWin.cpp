@@ -74,7 +74,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
 
         if(pluginWin == NULL) {
             // Create new window
-            win = getFactoryInstance()->createPluginWinWindowless(FB::WindowContextWinWindowless((HDC)window->window));
+            win = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless((HDC)window->window));
             win->setNpHost(m_npHost);
             win->setWindowPosition(window->x, window->y, window->width, window->height);
             win->setWindowClipping(window->clipRect.top, window->clipRect.left,

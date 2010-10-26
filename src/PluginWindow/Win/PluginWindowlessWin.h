@@ -22,11 +22,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "NpapiPlugin.h"
 #include "Win/KeyCodesWin.h"
 
-#include "PluginEvents/WindowsEvent.h"
-#include "PluginEvents/GeneralEvents.h"
-#include "PluginEvents/DrawingEvents.h" 
-#include "PluginEvents/MouseEvents.h"
-#include "PluginEvents/KeyboardEvents.h"
+#include "WindowContextWin.h"
 
 /* This class implements the windowless plugin "window" in FireBreath.
  * Windowless plugins are different from windowed plugins in that they
@@ -45,7 +41,7 @@ namespace FB {
     class PluginWindowlessWin : public PluginWindow
     {
         public:
-            PluginWindowlessWin(HDC hdc);
+            PluginWindowlessWin(const WindowContextWindowless&);
             ~PluginWindowlessWin();
             
             ////////////////////////////////////////////////////////////////////////////////////////////////////
