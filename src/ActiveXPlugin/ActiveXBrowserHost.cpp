@@ -171,8 +171,11 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         retVal = (converted.boolVal == VARIANT_TRUE) ? true : false;
         break;
 
-    case VT_EMPTY:
     case VT_NULL:
+        retVal = FB::variant_detail::null();
+        break;
+
+    case VT_EMPTY:
     default:
         // retVal is already empty, leave it such
         break;

@@ -106,7 +106,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
     FB::variant retVal;
     switch(npVar->type) {
         case NPVariantType_Null:
-            retVal = JSObjectPtr();
+            retVal = FB::variant_detail::null();
             break;
 
         case NPVariantType_Bool:

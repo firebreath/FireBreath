@@ -57,7 +57,7 @@ namespace FB
     ///      class PluginFactory : public FB::FactoryBase
     ///      {
     ///      public:
-    ///          FB::PluginCorePtr createPlugin(std::string mimetype)
+    ///          FB::PluginCorePtr createPlugin(const std::string& mimetype)
     ///          {
     ///              return boost::make_shared<MyPluginObject>();
     ///          }
@@ -89,14 +89,14 @@ namespace FB
         virtual ~FactoryBase();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(std::string mimetype) = 0
+        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(const std::string& mimetype) = 0
         ///
         /// @brief  Creates a FB::PluginCore derived user plugin object.  This must be implemented
         /// 		for all plugin projects.
         ///
         /// @code
         /// 	 // Example implementation
-        ///      FB::PluginCorePtr createPlugin(std::string mimetype)
+        ///      FB::PluginCorePtr createPlugin(const std::string& mimetype)
         ///      {
         ///          return boost::make_shared<MyPluginObject>();
         ///      }
@@ -108,7 +108,7 @@ namespace FB
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::PluginCorePtr createPlugin(std::string mimetype = "") = 0;
+        virtual FB::PluginCorePtr createPlugin(const std::string& mimetype) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginInitialize()
@@ -148,7 +148,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginName()
         ///
-        /// @brief  Returns the name of the plugin.  Do not override, instead change this in
+        /// @brief  Returns the name of the plugin.  To change the name of your plugin edit
         /// 		PluginConfig.cmake
         ///
         /// @return The plugin name. 
@@ -157,12 +157,12 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
-        /// @brief  Returns the description of the plugin.  Do not override, instead change this in
+        /// @brief  Returns the description of the plugin.  To change the description of your plugin edit
         /// 		PluginConfig.cmake
         ///
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::string getPluginDesc();
+        std::string getPluginDescription();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)

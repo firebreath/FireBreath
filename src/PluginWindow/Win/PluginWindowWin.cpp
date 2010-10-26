@@ -122,6 +122,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 hdc = BeginPaint(m_hWnd, &ps);
                 // Release the device context
                 EndPaint(m_hWnd, &ps);
+                return true;
             }
             break;
         }
