@@ -52,7 +52,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
     if(pluginMain->isWindowless()) { 
-#if !FB_WINDOWLESS
+#if !FBWIN_WINDOWLESS
         return NPERR_GENERIC_ERROR;
 #else
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
