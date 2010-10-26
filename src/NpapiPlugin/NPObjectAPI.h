@@ -42,6 +42,9 @@ namespace FB { namespace Npapi {
 
         void getMemberNames(std::vector<std::string> &nameVector);
         size_t getMemberCount();
+    public:
+        void releaseObject(NPObject* obj);
+
     protected:
         NpapiBrowserHostPtr browser;
         NPObject *obj;

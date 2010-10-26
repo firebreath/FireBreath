@@ -1,5 +1,5 @@
 /**********************************************************\
-  Default auto-generated np_winmain.cpp
+  Default auto-generated np_macmain.cpp
 
   This file contains the entrypoints for a Mac NPAPI
   plugin.  Don't change this unless you know what you're

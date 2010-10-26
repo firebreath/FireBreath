@@ -15,12 +15,12 @@ class PluginFactory : public FB::FactoryBase
 {
 public:
     ///////////////////////////////////////////////////////////////////////////////
-    /// @@fn FB::PluginCorePtr createPlugin(std::string mimetype)
+    /// @@fn FB::PluginCorePtr createPlugin(const std::string& mimetype)
     ///
     /// @@brief  Creates a plugin object matching the provided mimetype
     ///         If mimetype is empty, returns the default plugin
     ///////////////////////////////////////////////////////////////////////////////
-    FB::PluginCorePtr createPlugin(std::string mimetype)
+    FB::PluginCorePtr createPlugin(const std::string& mimetype)
     {
         return boost::make_shared<@{PLUGIN_ident}>();
     }

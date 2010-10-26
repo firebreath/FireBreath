@@ -32,6 +32,7 @@ include_directories(
     ${NPAPIPLUGIN_SOURCE_DIR}
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
+    ${PLUGINCOMMON_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
     ${PLUGINWINDOW_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
@@ -44,10 +45,17 @@ include_directories(
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
-    if (VERBOSE)
-        message("Configuring ${CURFILE}")
+    if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE})
+        if (VERBOSE)
+            message("Configuring ${CURFILE} from project source dir")
+        endif()
+        configure_file(${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+    else()
+        if (VERBOSE)
+            message("Configuring ${CURFILE}")
+        endif()
+        configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
     endif()
-    configure_file(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
 endforeach()
 
 # configure project-specific generated files
@@ -61,16 +69,16 @@ endforeach()
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
 set(PLUGIN_INTERNAL_DEPS
-	${Boost_LIBRARIES}
-	PluginCore
-	${PLUGIN_PREFIX}_NpapiPlugin
-	${PLUGIN_PREFIX}_PluginWindow
-	PluginCore
-	ScriptingCore
-	${PLUGIN_PREFIX}_PluginCommon
-	${Boost_LIBRARIES}
-	${FBLIB_LIBRARIES}
-	)
+    ${Boost_LIBRARIES}
+    PluginCore
+    ${PLUGIN_PREFIX}_NpapiPlugin
+    ${PLUGIN_PREFIX}_PluginWindow
+    PluginCore
+    ScriptingCore
+    ${PLUGIN_PREFIX}_PluginCommon
+    ${Boost_LIBRARIES}
+    ${FBLIB_LIBRARIES}
+    )
 
 if (WIN32)
     set (PLUGIN_INTERNAL_DEPS

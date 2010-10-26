@@ -93,16 +93,12 @@ macro (add_boost_library BOOST_LIB)
 
 endmacro (add_boost_library)
 
-macro (export_boost_dependencies)
-    set (Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
-    set (Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
-endmacro()
-
 macro (add_firebreath_library project_name)
 
     list(APPEND FBLIB_INCLUDE_DIRS, ${FBLIBS_DIR}/${project_name})
     set(FBLIB_DEFINITIONS)
-    if (NOT TARGET ${project_name})
+    get_target_property(library_target_exists ${project_name} TYPE)
+    if (NOT library_target_exists)
         add_subdirectory(${FBLIBS_DIR}/${project_name} ${CMAKE_BINARY_DIR}/fblibs/${project_name})
     endif()
     if (FBLIB_DEFINITIONS)

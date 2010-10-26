@@ -46,7 +46,7 @@ public:
     std::string getPluginName() { return pluginName; }
     std::string getPluginDesc() { return pluginDesc; }
     
-    FB::PluginCorePtr createPlugin(std::string) { return boost::make_shared<TestPlugin>(); }
+    FB::PluginCorePtr createPlugin(const std::string&) { return boost::make_shared<TestPlugin>(); }
     
     void globalPluginInitialize() { 
         TestPlugin::StaticInitialize(); 

@@ -42,7 +42,7 @@ std::string FB::FactoryBase::getPluginName()
     return FB::getPluginName();
 }
 
-std::string FB::FactoryBase::getPluginDesc()
+std::string FB::FactoryBase::getPluginDescription()
 {
     return FB::getPluginDescription();
 }
