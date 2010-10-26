@@ -67,6 +67,9 @@ bool NPJavascriptObject::callSetEventListener(const std::vector<FB::variant> &ar
 
     std::string evtName = "on" + args[0].convert_cast<std::string>();
     FB::JSObjectPtr method(args[1].convert_cast<JSObjectPtr>());
+    if (!method)
+        throw invalid_arguments();
+
     if (add) {
         m_api->registerEventMethod(evtName, method);
     } else {
