@@ -12,14 +12,17 @@ http://www.gnu.org/licenses/lgpl-2.1.html
 Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
-#include "URI.h"
-
+#ifdef _WIN32
+#include "Win/targetver.h"
+#endif
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/asio.hpp>
 #include <boost/logic/tribool.hpp>
 #include <vector>
+
+#include "URI.h"
 
 using namespace boost::algorithm;
 using namespace boost::logic;

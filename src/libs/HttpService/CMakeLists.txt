@@ -70,6 +70,11 @@ file (GLOB PLATFORM_SRC RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Platform/Platform_${platform}.cpp
 )
 
+if (WIN32)
+    list(APPEND PLATFORM_SRC
+        Platform/windows_common.cpp)
+endif()
+
 SOURCE_GROUP(Platform FILES ${PLATFORM_SRC})
 
 SOURCE_GROUP(Common FILES ${COMMON_SRC})
