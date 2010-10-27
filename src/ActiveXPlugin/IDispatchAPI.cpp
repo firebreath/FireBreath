@@ -16,6 +16,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axmain.h"
 #include <dispex.h>
 #include "utf8_tools.h"
+#include "COMJavascriptObject.h"
+#include "FBControl.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
     m_obj(obj), m_browser(host), FB::JSObject(host)
@@ -283,4 +285,21 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     } else {
         throw FB::script_error("Could not get property");
     }
+}
+
+FB::JSAPIPtr IDispatchAPI::getJSAPI()
+{
+	if (!m_obj) {
+        return FB::JSAPIPtr();
+    }
+    
+	if (COMJavascriptObject* p = dynamic_cast<COMJavascriptObject*>(m_obj.p)) {
+		return p->getAPI();
+	}
+
+	if (CFBControl* p = dynamic_cast<CFBControl*>(m_obj.p)) {
+		return p->getAPI();
+	}
+    
+    return FB::JSAPIPtr();
 }
