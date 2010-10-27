@@ -41,6 +41,10 @@ public:
     long get_someInt();
 
     FB::JSAPIPtr get_simpleMath();
+  
+    FB::JSAPIPtr getTestObj();
+    std::string useTestObj(const FB::JSObjectPtr& obj);
+    
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
@@ -68,6 +72,8 @@ public:
     std::string getPageLocation();
     
     std::string get_pluginPath();
+    
+    long addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
 
 private:
     FB::BrowserHostPtr m_host;
