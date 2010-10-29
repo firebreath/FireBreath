@@ -9,6 +9,6 @@ REM ** shift off the first 2 params so the rest goes to cmake
 shift
 shift
 
-cmake -G %GEN% -DPROJECTS_DIR="%PROJDIR%" %* %FB_ROOT%
+cmake -G %GEN% ""-DPROJECTS_DIR=%PROJDIR%"" %* "%FB_ROOT%"
 
 popd
