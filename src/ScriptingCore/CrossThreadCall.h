@@ -28,6 +28,8 @@ namespace FB {
 
     class FunctorCall
     {
+    public:
+        virtual ~FunctorCall() {}
         virtual void call() = 0;
         friend class CrossThreadCall;
     };
@@ -75,6 +77,7 @@ namespace FB {
     class CrossThreadCall
     {
     public:
+        virtual ~CrossThreadCall() { if (funct) delete funct; }
         template<class Functor>
         static typename Functor::result_type syncCall(const FB::BrowserHostPtr &host, Functor func);
 
