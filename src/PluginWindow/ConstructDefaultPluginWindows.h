@@ -22,6 +22,7 @@ namespace FB
 {
 #ifdef FB_WIN
     FB::PluginWindowWin* createPluginWindowWin(const WindowContextWin&);    
+    FB::PluginWindowlessWin* createPluginWindowless(const WindowContextWindowless&);
 #endif
     
 #ifdef FB_MACOSX
