@@ -2,7 +2,7 @@
 
 GEN='Xcode'
 
-source ${0%/*}/common.sh "$@"
+source "${0%/*}/common.sh" "$@"
 
 ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
 
@@ -18,8 +18,8 @@ else
     if [ -f "${FB_ROOT}/cmake/patch_xcode.py" ]; then
         while read target proj
         do
-            python ${FB_ROOT}/cmake/patch_xcode.py -f "$proj" -t "$target"
-        done < $BUILDDIR/xcode_patch_desc.txt
+            python "${FB_ROOT}/cmake/patch_xcode.py" -f "$proj" -t "$target"
+        done < "$BUILDDIR/xcode_patch_desc.txt"
     else
         echo "Could not find patch_xcode at ${FB_ROOT}/cmake/patch_xcode.py!  Project will not work!"
     fi

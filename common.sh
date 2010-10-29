@@ -41,9 +41,9 @@ fi
 if [ "$BUILDDIR" = "" ]; then
 # BUILDIR not set
     if [ "$PROJDIR" = "examples" ]; then
-        BUILDDIR=${RUN_FROM}/buildex
+        BUILDDIR="${RUN_FROM}/buildex"
     else
-        BUILDDIR=${RUN_FROM}/build
+        BUILDDIR="${RUN_FROM}/build"
     fi
 fi
 
@@ -51,7 +51,7 @@ check_proj_dir "$PROJDIR"
 PROJDIR=`cd $PROJDIR; pwd`
 
 mkdir -p "$BUILDDIR"
-BUILDDIR=`cd $BUILDDIR; pwd`
+BUILDDIR=`cd "$BUILDDIR"; pwd`
 
 echo Using projects in: $PROJDIR
 echo Generating build files in: $BUILDDIR

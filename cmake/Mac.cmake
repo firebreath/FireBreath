@@ -73,23 +73,22 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
 
     add_executable( ${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} )
 
+    string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT_DIR})
     set_target_properties(${PROJECT_NAME} PROPERTIES
         XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
         XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
         XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
+        LINK_FLAGS "\"-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt\"")
 
     set (RCFILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
-    # Compile the resource file
-    find_program(RC_COMPILER Rez NO_DEFAULT_PATHS)
-    message("Found ${RC_COMPILER}")
-    if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/rcgen.sh)
-        configure_file( ${FB_ROOT_DIR}/gen_templates/rcgen.sh.in ${CMAKE_CURRENT_BINARY_DIR}/rcgen.sh )
-    endif()
 
-    add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND /bin/bash ${CMAKE_CURRENT_BINARY_DIR}/rcgen.sh
+    foreach(ARCH ${CMAKE_OSX_ARCHITECTURES})
+        list(APPEND ARCHS -arch ${ARCH})
+    endforeach()
+
+    find_program(RC_COMPILER Rez NO_DEFAULT_PATHS)
+    execute_process(COMMAND
+        ${RC_COMPILER} ${RCFILES} -useDF ${ARCHS} -arch x86_64 -o ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
         )
 
     set_source_Files_properties(
