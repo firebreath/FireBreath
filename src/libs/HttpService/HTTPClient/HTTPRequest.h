@@ -11,6 +11,7 @@
 #include "../HTTPCommon/HTTPRequestData.h"
 #include "../HTTPCommon/HTTPResponseData.h"
 #include "../HTTPCommon/HTTPProxyConfig.h"
+#include "../HTTPCommon/Status.h"
 #include <boost/thread.hpp>
 
 #undef ERROR // windows...
@@ -40,29 +41,6 @@ namespace HTTP {
             void cancel();
             void awaitCompletion();
 
-            struct Status {
-                FB::VariantMap asDict() const;
-                enum State {
-                    CANCELLED = -2,
-                    ERROR = -1,
-                    IDLE = 0,
-                    RESOLVING = 1,
-                    CONNECTING = 2,
-                    SEND_REQUEST = 3,
-                    READ_RESPONSE = 4,
-                    COMPLETE = 5,
-                };
-                State state;
-                size_t bytes_sent;
-                size_t send_total;
-                size_t bytes_received;
-                size_t receive_total;
-                double bytes_per_second_send;
-                double bytes_per_second_receive;
-                std::string last_error;
-
-                Status() : state(IDLE), bytes_sent(0), send_total(0), bytes_received(0), receive_total(0), bytes_per_second_send(0), bytes_per_second_receive(0) {}
-            };
             Status getStatus() const;
             typedef boost::function<void(Status)> callback_fn_t;
             void onStatusChanged(const callback_fn_t& _callback);

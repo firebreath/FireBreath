@@ -1,8 +1,16 @@
-/*
- *  HTTPRequest.cpp
- *  fbplugin
- *
- */
+/**********************************************************\ 
+Original Author: Dan Weatherford
+
+Imported into FireBreath:    Oct 4, 2010
+License:    Dual license model; choose one of two:
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2010 Dan Weatherford and Facebook, Inc
+\**********************************************************/
 
 #ifdef _WIN32
 #include "Win/targetver.h"
@@ -45,28 +53,15 @@ boost::shared_ptr<HTTPResponseData> parse_http_response(boost::asio::streambuf& 
   static_proxy_config = _cfg;
 }
 
-void onStatusChanged_do_nothing(HTTPRequest::Status state) {
-}
-
-FB::VariantMap HTTPRequest::Status::asDict() const {
-	FB::VariantMap d;
-	d["state"] = state;
-	d["bytes_sent"] = bytes_sent;
-	d["send_total"] = send_total;
-	d["bytes_received"] = bytes_received;
-	d["receive_total"] = receive_total;
-	d["bytes_per_second_send"] = bytes_per_second_send;
-	d["bytes_per_second_receive"] = bytes_per_second_receive;
-	if (!last_error.empty()) d["error"] = last_error;
-	return d;
+void onStatusChanged_do_nothing(HTTP::Status state) {
 }
 
 /*static*/ HTTPRequest* HTTPRequest::create() {
   return new HTTPRequest();
 }
 
-static void asyncrequest_status_handler(HTTPRequest* req, HTTPRequest::Status status) {
-  if (status.state == HTTPRequest::Status::ERROR || status.state == HTTPRequest::Status::CANCELLED || status.state == HTTPRequest::Status::COMPLETE) {
+static void asyncrequest_status_handler(HTTPRequest* req, HTTP::Status status) {
+  if (status.state == HTTP::Status::HTTP_ERROR || status.state == HTTP::Status::CANCELLED || status.state == HTTP::Status::COMPLETE) {
     req->threadSafeDestroy();
   }
 }
@@ -193,7 +188,7 @@ HTTPRequest::HTTPRequest() : req(NULL), cancellation_requested(false), status_ca
 HTTPRequest::~HTTPRequest() {
   if (worker_thread) {
     if (! cancellation_requested) {
-      if (!(last_status.state == Status::IDLE || last_status.state == Status::COMPLETE || last_status.state == Status::ERROR)) {
+      if (!(last_status.state == Status::IDLE || last_status.state == Status::COMPLETE || last_status.state == Status::HTTP_ERROR)) {
 #ifndef NDEBUG
         printf("HTTPRequest: destroyed with active worker thread, probably bad.\n");
 #endif
@@ -212,7 +207,7 @@ void HTTPRequest::awaitCompletion() {
   worker_thread->join();
 }
 
-HTTPRequest::Status HTTPRequest::getStatus() const {
+HTTP::Status HTTPRequest::getStatus() const {
   return last_status;
 }
 
@@ -372,7 +367,7 @@ void HTTPRequest::startRequest_thread() {
       status_callback(last_status);
     }
   } catch (const std::exception& e) {
-    last_status.state = Status::ERROR;
+    last_status.state = Status::HTTP_ERROR;
     last_status.last_error = e.what();
     status_callback(last_status);
   }
