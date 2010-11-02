@@ -79,7 +79,7 @@ endmacro(link_boost_library)
 macro (add_boost_library BOOST_LIB)
 
     if (WITH_SYSTEM_BOOST)
-        find_package(Boost COMPONENTS thread REQUIRED)
+        find_package(Boost COMPONENTS ${BOOST_LIB} REQUIRED)
     else()
         list(APPEND Boost_INCLUDE_DIRS ${BOOST_SOURCE_DIR})
         list(REMOVE_DUPLICATES Boost_INCLUDE_DIRS)
