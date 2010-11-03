@@ -111,6 +111,12 @@ bool NPJavascriptObject::InvokeDefault(const NPVariant *args, uint32_t argCount,
 
 bool NPJavascriptObject::HasProperty(NPIdentifier name)
 {
+    // Handle numeric identifiers
+    if(!m_browser->IdentifierIsString(name)) {
+        int32_t sIdx = m_browser->IntFromIdentifier(name);
+        return m_api->HasProperty(sIdx);
+    }
+
     std::string sName(m_browser->StringFromIdentifier(name));
     // We check for events of that name as well in order to allow setting of an event handler in the
     // old javascript style, i.e. plugin.onload = function() .....;
