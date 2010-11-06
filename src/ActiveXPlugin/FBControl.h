@@ -172,6 +172,7 @@ public:
     // This is called on shutdown
     void shutdown()
     {
+        pluginMain->ClearWindow();
         delete pluginWin; pluginWin = NULL;
     }
 
@@ -261,5 +262,18 @@ END_COM_MAP()
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(FBControl), CFBControl)
+//__declspec(selectany) ATL::_ATL_OBJMAP_ENTRY __objMap_CFBControl = {
+//    &__uuidof(FBControl),
+//    FBControl::UpdateRegistry,
+//    FBControl::_ClassFactoryCreatorFBControl::CreateInstance,
+//    FBControl::_CreatorFBControl::CreateInstance,
+//    NULL,
+//    0,
+//    FBControl::GetObjectDescription,
+//    FBControl::GetCategoryMap,
+//    FBControl::ObjectMain
+//};
+//extern "C" __declspec(allocate("ATL$__m")) __declspec(selectany) ATL::_ATL_OBJMAP_ENTRY* const __pobjMap_CFBControl = &__objMap_CFBControl;
+//__pragma(comment(linker, "/include:___pobjMap_" CFBControl));
 
 #endif
