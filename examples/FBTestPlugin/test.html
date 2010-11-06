@@ -175,19 +175,12 @@
                 markPassed("location");
                 
             try {
-                plugin.addWithSimpleMath(null, 1, 1);
-                markFailed("mathApiAdd");
-            } catch (e) {
-                // we expect it to throw
-                
-                try {
-                    if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
-                        markFailed("mathApiAdd");
-                    else
-                        markPassed("mathApiAdd");
-                } catch (e) {
+                if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
                     markFailed("mathApiAdd");
-                }
+                else
+                    markPassed("mathApiAdd");
+            } catch (e) {
+                    markFailed("mathApiAdd");
             }
         }
 
