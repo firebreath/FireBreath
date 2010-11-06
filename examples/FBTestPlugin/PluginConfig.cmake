@@ -43,11 +43,11 @@ set(FBSTRING_MIMEType "application/x-fbtestplugin")
 # mac settings
 # The plugin doesn't do any drawing and doesn't need mouse / keyboard events,
 # so turn the following off:
-set (FBMAC_USE_CARBON        1)#0)
+set (FBMAC_USE_CARBON        0)
 set (FBMAC_USE_COCOA         1)
-set (FBMAC_USE_QUICKDRAW     1)#0)
+set (FBMAC_USE_QUICKDRAW     0)
 set (FBMAC_USE_COREGRAPHICS  1)
-set (FBMAC_USE_COREANIMATION 1)#0)
+set (FBMAC_USE_COREANIMATION 0)
 
 add_firebreath_library(log4cplus)
 
