@@ -170,8 +170,8 @@ namespace FB {
         } else {
             funct->call();
             result = funct->getResult();
+            delete funct;
         }
-        delete funct;
         if (varResult.get_type() == typeid(FB::script_error)) {
             throw FB::script_error(varResult.cast<const FB::script_error>().what());
         }
