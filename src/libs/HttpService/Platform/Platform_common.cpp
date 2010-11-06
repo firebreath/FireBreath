@@ -17,17 +17,6 @@ using std::string;
 
 //std::list<VideoThumbnailGenerator*> VideoThumbnailGenerator::generators;
 
-const char* BrowseRoot::pathtype_names[] = {
-  "volume_root",
-  "document_root"
-};
-
-const char* BrowseRoot::contenttype_names[] = {
-  "mixed",
-  "photos",
-  "videos"
-};
-
 boost::filesystem::wpath Platform::resolveShortcutsInPath(const std::wstring& path_to_object) {
   return resolveShortcutsInPath(boost::filesystem::wpath(path_to_object));
 }

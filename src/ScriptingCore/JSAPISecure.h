@@ -35,7 +35,7 @@ namespace FB {
         virtual ~JSAPISecure();
 
         virtual void registerMethod(const std::string& name, const SecurityZone securityLevel, const CallMethodFunctor& func);
-        virtual void registerProperty(const std::wstring& name, const SecurityZone securityLevel, const PropertyFunctors& propFuncs);
+        virtual void registerProperty(const std::string& name, const SecurityZone securityLevel, const PropertyFunctors& propFuncs);
 
     protected:
         SecurityZone m_zone;

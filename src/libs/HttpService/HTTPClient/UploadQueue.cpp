@@ -336,3 +336,37 @@ void UploadQueue::cancel() {
     status = UploadQueue::UPLOAD_COMPLETE;
     if (queue_finished_callback) queue_finished_callback(shared_ptr());
 }
+
+void HTTP::UploadQueue::addCompletionHandler( const FB::URI& uri )
+{
+
+}
+
+void HTTP::UploadQueue::addFile( const UploadQueueEntry& qe )
+{
+    if (status != UPLOAD_IDLE) throw std::runtime_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
+
+    current_queue_bytes += qe.filesize;
+    total_queue_bytes += qe.filesize;
+    ++total_queue_files;
+    ++files_waiting;
+    queue.push_back(qe);
+}
+
+bool HTTP::UploadQueue::removeFile( const std::wstring& source_path )
+{
+    if (status != UPLOAD_IDLE) throw std::runtime_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
+
+    for (std::list<UploadQueueEntry>::iterator it = queue.begin(); it != queue.end(); ++it) {
+        if (it->source_path == source_path) {
+            current_queue_bytes -= it->filesize;
+            total_queue_bytes -= it->filesize;
+            --total_queue_files;
+            --files_waiting;
+            queue.erase(it);
+            return true;
+        }
+    }
+
+    return false; // not found
+}

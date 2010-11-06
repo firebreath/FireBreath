@@ -34,61 +34,6 @@ std::string Platform::getArchitectureName() {
 #endif
 }
 
-BrowseRoot* getSpecialFolder(int csidl, BrowseRoot::PathType path_type, BrowseRoot::ContentType content_type) {
-  TCHAR out_path[MAX_UNICODE_PATH];
-  SHFILEINFOW sfi = {0};
-
-  if (SUCCEEDED(SHGetFolderPath(NULL, csidl|CSIDL_FLAG_CREATE, NULL, 0, out_path))) {
-    if (SUCCEEDED(SHGetFileInfo(out_path, -1, &sfi, sizeof(sfi), SHGFI_DISPLAYNAME))) {
-      string full_path = lpcwstr_to_utf8(out_path);
-      BrowseRoot* b = new BrowseRoot(lpcwstr_to_utf8(sfi.szDisplayName), full_path, path_type, content_type);
-      return b;
-    }
-  }
-  return NULL;
-}
-
-//PluginJSDict* Platform::getLocalBrowseRoots() {
-//  PluginJSDict* d = new PluginJSDict;
-//
-//  BrowseRoot* b = NULL;
-//
-//  // Enumerate local drives, sort of
-//  {
-//    DWORD buflen = GetLogicalDriveStringsW(0, NULL);
-//    if (buflen < 0) throw_GetLastError("GetLogicalDriveStringsW");
-//    boost::scoped_array<TCHAR> drivestrs(new TCHAR[buflen]);
-//    GetLogicalDriveStringsW(buflen, drivestrs.get());
-//    TCHAR* drive = drivestrs.get();
-//    while (*drive) {
-//      SHFILEINFOW sfi = {0};
-//      if (SUCCEEDED(SHGetFileInfo(drive, -1, &sfi, sizeof(sfi), SHGFI_DISPLAYNAME))) {
-//        std::string driveRoot = lpcwstr_to_utf8(drive);
-//        (*d)[driveRoot] = PluginVariant(new BrowseRoot(lpcwstr_to_utf8(sfi.szDisplayName), driveRoot, BrowseRoot::PATH_VOLUME_ROOT));
-//      }
-//      while (*(drive++));
-//    }
-//  }
-//
-//  // User's home folder
-//  b = getSpecialFolder(CSIDL_PERSONAL, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_MIXED);
-//  if (b) (*d)[b->full_path] = PluginVariant(b);
-//  
-//  // User's "My Pictures" folder
-//  b = getSpecialFolder(CSIDL_MYPICTURES, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_PHOTOS);
-//  if (b) (*d)[b->full_path] = PluginVariant(b);
-//
-//  // User's "My Videos" folder
-//  b = getSpecialFolder(CSIDL_MYVIDEO, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_VIDEOS);
-//  if (b) (*d)[b->full_path] = PluginVariant(b);
-//
-//
-//  // Desktop folder (actual desktop storage, not the magical shell pseudofolder)
-//  b = getSpecialFolder(CSIDL_DESKTOPDIRECTORY, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_PHOTOS);
-//  if (b) (*d)[b->full_path] = PluginVariant(b);
-//
-//  return d;
-//}
 
 
 bool Platform::pathIsHidden(const boost::filesystem::wpath& path_to_investigate) {

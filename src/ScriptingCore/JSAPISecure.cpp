@@ -29,7 +29,7 @@ void FB::JSAPISecure::registerMethod(const std::string& name, const FB::Security
         FB::JSAPIAuto::registerMethod(name, func);
 }
 
-void FB::JSAPISecure::registerProperty(const std::wstring& name, const FB::SecurityZone minZone, const FB::PropertyFunctors& propFuncs)
+void FB::JSAPISecure::registerProperty(const std::string& name, const FB::SecurityZone minZone, const FB::PropertyFunctors& propFuncs)
 {
     if (m_zone >= minZone)
         FB::JSAPIAuto::registerProperty(name, propFuncs);

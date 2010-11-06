@@ -14,34 +14,6 @@
 #include <boost/scoped_array.hpp>
 #include <boost/filesystem/path.hpp>
 
-class BrowseRoot {
-public:
-	enum PathType {
-		PATH_VOLUME_ROOT,
-		PATH_DOCUMENT_FOLDER
-	};
-	static const char* pathtype_names[];
-	enum ContentType {
-		CONTENT_TYPE_MIXED,
-		CONTENT_TYPE_PHOTOS,
-		CONTENT_TYPE_VIDEOS
-	};
-	static const char* contenttype_names[];
-	
-	BrowseRoot(const std::string& _name, const std::string& _full_path, PathType _p_type, ContentType _c_type = CONTENT_TYPE_MIXED) :
-  name(_name), full_path(_full_path), p_type(_p_type), c_type(_c_type) {
-		
-	}
-	virtual ~BrowseRoot() {}
-	
-	std::string convertToJSON() const;
-	
-	std::string name;
-	std::string full_path;
-	PathType p_type;
-	ContentType c_type;
-};
-
 namespace Platform {
   // Implement these in platform_*.cpp
   std::string getArchitectureName();
