@@ -46,34 +46,33 @@ namespace
     
     NPVariantBuilderMap makeNPVariantBuilderMap()
     {
-        NPVariantBuilderMap tdm = boost::assign::list_of
-        (makeBuilderEntry<bool>())
-        (makeBuilderEntry<char>())
-        (makeBuilderEntry<unsigned char>())
-        (makeBuilderEntry<short>())
-        (makeBuilderEntry<unsigned short>())
-        (makeBuilderEntry<int>())
-        (makeBuilderEntry<unsigned int>())
-        (makeBuilderEntry<long>())
-        (makeBuilderEntry<unsigned long>())
+        NPVariantBuilderMap tdm;
+        tdm.insert(makeBuilderEntry<bool>());
+        tdm.insert(makeBuilderEntry<char>());
+        tdm.insert(makeBuilderEntry<unsigned char>());
+        tdm.insert(makeBuilderEntry<short>());
+        tdm.insert(makeBuilderEntry<unsigned short>());
+        tdm.insert(makeBuilderEntry<int>());
+        tdm.insert(makeBuilderEntry<unsigned int>());
+        tdm.insert(makeBuilderEntry<long>());
+        tdm.insert(makeBuilderEntry<unsigned long>());
         
 #ifndef BOOST_NO_LONG_LONG
-        (makeBuilderEntry<long long>())
-        (makeBuilderEntry<unsigned long long>())
+        tdm.insert(makeBuilderEntry<long long>());
+        tdm.insert(makeBuilderEntry<unsigned long long>());
 #endif
         
-        (makeBuilderEntry<float>())
-        (makeBuilderEntry<double>())
+        tdm.insert(makeBuilderEntry<float>());
+        tdm.insert(makeBuilderEntry<double>());
         
-        (makeBuilderEntry<std::string>())
-        (makeBuilderEntry<std::wstring>())
+        tdm.insert(makeBuilderEntry<std::string>());
+        tdm.insert(makeBuilderEntry<std::wstring>());
         
-        (makeBuilderEntry<FB::Npapi::NpapiNull>())
-        (makeBuilderEntry<FB::VariantList>())
-        (makeBuilderEntry<FB::VariantMap>())
-        (makeBuilderEntry<FB::JSAPIPtr>())
-        (makeBuilderEntry<FB::JSObjectPtr>())
-        ;
+        tdm.insert(makeBuilderEntry<FB::Npapi::NpapiNull>());
+        tdm.insert(makeBuilderEntry<FB::VariantList>());
+        tdm.insert(makeBuilderEntry<FB::VariantMap>());
+        tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
+        tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
         
         return tdm;
     }

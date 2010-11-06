@@ -21,7 +21,6 @@
 #include <string>
 #include <typeinfo>
 
-#include <boost/assign/list_of.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_same.hpp>
@@ -50,7 +49,7 @@ namespace FB { namespace Npapi
     };
     
     typedef NPVariant (*NPVariantBuilder)(const NpapiBrowserHostPtr&, const FB::variant&);    
-    typedef std::map<const std::type_info* const, NPVariantBuilder, type_info_less> NPVariantBuilderMap;
+    typedef std::map<std::type_info const*, NPVariantBuilder, type_info_less> NPVariantBuilderMap;
     
     template<class T> 
     NPVariant makeNPVariant(const NpapiBrowserHostPtr& host, const FB::variant& var)
