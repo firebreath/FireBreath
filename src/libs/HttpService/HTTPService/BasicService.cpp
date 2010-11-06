@@ -30,6 +30,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include "../HTTPCommon/HTTPResponseData.h"
 #include "HTTPHandler.h"
 #include "../HTTPCommon/HTTPException.h"
+#include "../HTTPCommon/Utils.h"
 #include "HTTPService.h"
 
 #include "BasicService.h"

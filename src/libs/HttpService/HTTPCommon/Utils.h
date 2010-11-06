@@ -13,8 +13,18 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
 #pragma once
+#ifndef HTTP_Utils_h__
+#define HTTP_Utils_h__
+
 #include <string>
+#include <map>
+#include <vector>
 
-std::string base64_encode(const std::string& indata);
-std::string base64_decode(const std::string& indata);
+namespace HTTP {
+    std::multimap<std::string, std::string> parse_http_headers(
+        std::vector<std::string>::const_iterator begin,
+        std::vector<std::string>::const_iterator end);
 
+    std::string build_cookie_header(const std::map<std::string, std::string>& cookies);
+}
+#endif // HTTP_Utils_h__

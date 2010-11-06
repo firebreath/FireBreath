@@ -39,7 +39,8 @@ namespace HTTP {
         double bytes_per_second_receive;
         std::string last_error;
 
-        Status() : state(IDLE), bytes_sent(0), send_total(0), bytes_received(0), receive_total(0), bytes_per_second_send(0), bytes_per_second_receive(0) {}
+        Status() : state(IDLE), bytes_sent(0), send_total(0), bytes_received(0), receive_total(0),
+            bytes_per_second_send(0), bytes_per_second_receive(0) {}
     };
 };
 

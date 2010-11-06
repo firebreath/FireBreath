@@ -15,6 +15,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include "BasicService.h"
 #include <boost/algorithm/string.hpp>
 #include "../HTTPCommon/HTTPException.h"
+#include "../HTTPCommon/Utils.h"
 #include "logging.h"
 
 using namespace boost::algorithm;
@@ -48,29 +49,6 @@ void BasicService::Session::wait_for_header() {
     async_read_until(sock, data, "\r\n\r\n", boost::bind(&Session::handle_request, BasicService::Session::ptr(this), _1));	
 }
 
-std::multimap<std::string, std::string> BasicService::parse_http_headers(std::vector<string>::const_iterator begin, std::vector<string>::const_iterator end) {
-    multimap<string, string> res;
-    for (std::vector<string>::const_iterator it = begin; it != end; ++it) {
-        string line = trim_copy(*it);
-        if (line.empty()) continue;
-        size_t loc = line.find(':');
-        if (loc == std::string::npos) {
-            throw HTTPException(400, "Malformed header");
-        }
-        res.insert(std::make_pair(trim_copy(line.substr(0, loc)), trim_copy(line.substr(loc + 1))));
-    }
-    return res;
-}
-
-std::string BasicService::build_cookie_header(const std::map<std::string, std::string>& cookies) {
-    std::vector<string> cookie_crumbs;
-    cookie_crumbs.reserve(cookies.size());
-    for (map<string, string>::const_iterator it = cookies.begin(); it != cookies.end(); ++it) {
-        cookie_crumbs.push_back(FB::URI::url_encode(it->first) + '=' + FB::URI::url_encode(it->second));
-    }
-
-    return join(cookie_crumbs, ";");
-}
 
 void BasicService::Session::handle_request(boost::system::error_code ec) {
     if (ec) {

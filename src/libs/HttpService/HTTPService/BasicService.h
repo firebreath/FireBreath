@@ -38,11 +38,6 @@ namespace HTTP {
     class BasicService : public HTTPService {
     public:
         friend class HTTPService;
-        // Static utility methods
-        static std::multimap<std::string, std::string> parse_http_headers(
-            std::vector<std::string>::const_iterator begin,
-            std::vector<std::string>::const_iterator end);
-        static std::string build_cookie_header(const std::map<std::string, std::string>& cookies);
 
     public:
         virtual ~BasicService();

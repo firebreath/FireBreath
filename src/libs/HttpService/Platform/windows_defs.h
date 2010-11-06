@@ -7,7 +7,6 @@
 #pragma once
 #ifdef _WIN32
 
-#define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable:4251)

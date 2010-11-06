@@ -26,6 +26,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <boost/asio.hpp>
 #include <curl/curl.h>
 #include "../HTTPService/BasicService.h"
+#include "../HTTPCommon/Utils.h"
 
 #include "HTTPRequest.h"
 using namespace boost::algorithm;
@@ -314,7 +315,7 @@ void HTTPRequest::startRequest_thread() {
       curl_easy_setopt(req, CURLOPT_HTTPPOST, formpost);
     }
     
-    std::string cookie_string = BasicService::build_cookie_header(request_data->cookies);
+    std::string cookie_string = build_cookie_header(request_data->cookies);
     curl_easy_setopt(req, CURLOPT_COOKIE, cookie_string.c_str());
     
     for (std::multimap<std::string, std::string>::iterator it = request_data->headers.begin(); it != request_data->headers.end(); ++it) {

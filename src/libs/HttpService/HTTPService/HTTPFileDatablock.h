@@ -8,8 +8,10 @@
 #ifndef H_HTTP_HTTPFILEDATABLOCK
 #define H_HTTP_HTTPFILEDATABLOCK
 
-#include "windows_defs.h"
-#include "HTTPDatablock.h"
+#include "../Platform/windows_defs.h"
+#include "HTTPCommon/HTTPDatablock.h"
+
+#undef BOOST_HAS_RVALUE_REFS // dunno why this is needed, but it is
 #include <boost/interprocess/file_mapping.hpp>
 #include <boost/interprocess/mapped_region.hpp>
 
@@ -26,8 +28,8 @@ namespace HTTP {
     		return reinterpret_cast<const char*>(region.get_address());
     	}
     protected:
-    	boost::interprocess::file_mapping mmfile;
-    	boost::interprocess::mapped_region region;
+        boost::interprocess::file_mapping mmfile;
+        boost::interprocess::mapped_region region;
     };
 };
 
