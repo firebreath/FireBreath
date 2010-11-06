@@ -41,6 +41,7 @@ file (GLOB SCRIPTING RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     NPJava*
     NPObject*
     NpapiBrowser*
+    NPVariantUtil.h
 )
 
 file (GLOB PLUGIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
