@@ -23,6 +23,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "AXDOM/Document.h"
 #include "AXDOM/Element.h"
 #include "AXDOM/Node.h"
+
+#include <boost/config.hpp>
+
 using boost::assign::list_of;
 
 #include "Win/PluginWindowWin.h"
@@ -193,17 +196,26 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         return;
 
     } else if (var.get_type() == typeid(int)
-        || var.get_type() == typeid(long)
         || var.get_type() == typeid(short)
         || var.get_type() == typeid(char)
-        || var.get_type() == typeid(unsigned int)
+        
         || var.get_type() == typeid(unsigned short)
         || var.get_type() == typeid(unsigned char)) {
         // Integer type
-        outVar = var.convert_cast<long>();
+        outVar = var.convert_cast<int32_t>();
 
     } else if (var.get_type() == typeid(double)
-        || var.get_type() == typeid(float)) {
+        || var.get_type() == typeid(float)
+        || var.get_type() == typeid(unsigned int)
+        || var.get_type() == typeid(long)
+        || var.get_type() == typeid(unsigned long)
+#if !defined(BOOST_NO_LONG_LONG)
+        || var.get_type() == typeid(long long)
+        || var.get_type() == typeid(unsigned long long)
+#endif
+        ) {
+        // Arithmetic types whose range doesn't fit into int32 
+        // (ignoring LLP64 vs. other data models, refactoring will be in 1.4)
         outVar = var.convert_cast<double>();
 
     } else if (var.get_type() == typeid(bool)) {
