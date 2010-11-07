@@ -44,6 +44,7 @@ namespace FB { namespace Npapi {
         size_t getMemberCount();
     public:
         void releaseObject(NPObject* obj);
+        virtual JSAPIPtr getJSAPI();
 
     protected:
         NpapiBrowserHostPtr browser;

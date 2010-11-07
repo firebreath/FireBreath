@@ -37,6 +37,8 @@ public:
         std::for_each(m_values.begin(), m_values.end(), GrabKeys(m_names));
     }
 
+    FB::JSAPIPtr getJSAPI() { return FB::JSAPIPtr(); }
+    
     bool HasMethod(const std::string&) { return false; }
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant&) {}

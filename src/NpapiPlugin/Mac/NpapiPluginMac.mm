@@ -271,11 +271,11 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host)
         pluginWinCA->setNpHost(m_npHost);
         pluginMain->SetWindow(pluginWinCA);
 #endif
-    } else if(enableCoreGraphicsCarbon(host)) {
-        m_eventModel   = EventModelCarbon;
-        m_drawingModel = DrawingModelCoreGraphics;
     } else if(enableCoreGraphicsCocoa(host)) {
         m_eventModel   = EventModelCocoa;
+        m_drawingModel = DrawingModelCoreGraphics;
+    } else if(enableCoreGraphicsCarbon(host)) {
+        m_eventModel   = EventModelCarbon;
         m_drawingModel = DrawingModelCoreGraphics;
     } else if(enableQuickDraw(host)) {
         m_eventModel   = EventModelCarbon;
@@ -372,7 +372,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
 
     if (window != NULL) {
         if (pluginWin != NULL) {
-            if (pluginWinCG->getContext() != (NP_CGContext*)window->window) {
+            if (pluginWinCG->getNPCGContext() != (NP_CGContext*)window->window) {
                 pluginMain->ClearWindow(); // Received new window, kill the old one
                 delete pluginWin;
                 pluginWin = NULL;

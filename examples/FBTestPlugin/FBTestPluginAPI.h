@@ -28,7 +28,7 @@ public:
     FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
 
-    boost::shared_ptr<FBTestPlugin> getPlugin() { return m_pluginWeak.lock(); }
+    boost::shared_ptr<FBTestPlugin> getPlugin();
     
     FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
 
@@ -41,6 +41,10 @@ public:
     long get_someInt();
 
     FB::JSAPIPtr get_simpleMath();
+  
+    FB::JSAPIPtr getTestObj();
+    std::string useTestObj(const FB::JSObjectPtr& obj);
+    
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
@@ -68,6 +72,8 @@ public:
     std::string getPageLocation();
     
     std::string get_pluginPath();
+    
+    long addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
 
 private:
     FB::BrowserHostPtr m_host;

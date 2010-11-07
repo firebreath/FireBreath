@@ -211,8 +211,7 @@ void PluginWindowMacCocoa::unscheduleTimer(int timerId) {
 }
 
 void PluginWindowMacCocoa::InvalidateWindow() {
-    //NPRect rect = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
-    NPRect rect = { m_y, m_x, m_y + m_height, m_x + m_width };
+    NPRect rect = { 0, 0, m_height, m_width };
     m_npHost->InvalidateRect(&rect);
 }
 

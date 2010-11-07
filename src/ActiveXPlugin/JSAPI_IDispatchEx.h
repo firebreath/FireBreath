@@ -47,6 +47,11 @@ public:
         m_host = host;
     }
 
+	FB::JSAPIPtr getAPI()
+	{
+		return m_api;
+	}
+
     void setReadyState(READYSTATE newState)
     {
         m_readyState = newState;

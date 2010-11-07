@@ -35,8 +35,7 @@ TEST(VariantListTest)
 
         std::vector<FB::VariantList> to_test = list_of
             (make_variant_list(vl))
-            (variant_list_of  (1)("foo")(25.74)(-1))
-            (variant_list_of()(1)("foo")(25.74)(-1));
+            (variant_list_of  (1)("foo")(25.74)(-1));
 
         for(size_t i=0; i<vl.size(); ++i)
         {
