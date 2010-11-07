@@ -236,6 +236,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
 {
     CComVariant outVar;
+    ::VariantInit(dest);
 
     const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
     const std::type_info& type = var.get_type();
