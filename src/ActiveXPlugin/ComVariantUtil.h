@@ -135,13 +135,13 @@ namespace FB { namespace ActiveX
     {
         CComVariant outVar;
 
-        FB::JSObjectPtr obj(var.cast<FB::JSObjectPtr>());
+        FB::JSAPIPtr obj(var.cast<FB::JSAPIPtr>());
         IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
         if (api) {
             outVar = api->getIDispatch();
         } else {
             if (obj)
-                outVar = COMJavascriptObject::NewObject(host, var.cast<FB::JSObjectPtr>());
+                outVar = COMJavascriptObject::NewObject(host, var.cast<FB::JSAPIPtr>());
             else
                 outVar.ChangeType(VT_NULL);
         }
@@ -154,13 +154,13 @@ namespace FB { namespace ActiveX
     {
         CComVariant outVar;
 
-        FB::JSAPIPtr obj(var.cast<FB::JSAPIPtr>());
+        FB::JSObjectPtr obj(var.cast<FB::JSObjectPtr>());
         IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
         if (api) {
             outVar = api->getIDispatch();
         } else {
             if (obj)
-                outVar = COMJavascriptObject::NewObject(host, var.cast<JSAPIPtr>());
+                outVar = COMJavascriptObject::NewObject(host, var.cast<FB::JSObjectPtr>());
             else
                 outVar.ChangeType(VT_NULL);
         }
