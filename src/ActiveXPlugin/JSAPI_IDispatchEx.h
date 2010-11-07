@@ -27,6 +27,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "IDispatchAPI.h"
 #include "dispex.h"
 #include <map>
+#include "logging.h"
 
 template <class T, class IDISP, const IID* piid>
 class JSAPI_IDispatchEx :
@@ -291,9 +292,11 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
         return DISP_E_MEMBERNOTFOUND;
     }
 
+    std::wstring wsName;
+
     try 
     {
-        std::wstring wsName = AxIdMap.getValueForId<std::wstring>(id);
+        wsName = AxIdMap.getValueForId<std::wstring>(id);
 
         if (wFlags & DISPATCH_PROPERTYGET) {
             if(!pvarRes)
@@ -362,8 +365,10 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             throw FB::invalid_member("Invalid method or property name");
         }
     } catch (const FB::invalid_member&) {
+        FBLOG_INFO("JSAPI_IDispatchEx", "No such member: \"" << FB::wstring_to_utf8(wsName) << "\"");
         return DISP_E_MEMBERNOTFOUND;
     } catch (const FB::script_error& se) {
+        FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
         if (pei != NULL) {
             pei->bstrSource = CComBSTR(ACTIVEX_PROGID);
             pei->bstrDescription = CComBSTR(se.what());
