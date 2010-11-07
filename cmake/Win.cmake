@@ -13,7 +13,8 @@
 #\**********************************************************/
 
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
-    if (WIN32 AND WIX_FOUND)
+	# WiX doesn't work with VC8 generated DLLs
+    if (WIN32 AND WIX_FOUND AND NOT CMAKE_GENERATOR STREQUAL "Visual Studio 8 2005")
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
             GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)

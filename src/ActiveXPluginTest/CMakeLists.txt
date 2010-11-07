@@ -62,6 +62,8 @@ add_dependencies(${PROJNAME}
     ScriptingCore
     PluginCore
     UnitTest++
+    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
     )
 
 target_link_libraries (${PROJNAME}
@@ -69,6 +71,9 @@ target_link_libraries (${PROJNAME}
     ScriptingCore
     PluginCore
     UnitTest++
+    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
+    ${PLUGIN_PREFIX}_NpapiPlugin
     )
 
 set_target_properties(${PROJNAME} PROPERTIES

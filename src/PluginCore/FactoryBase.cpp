@@ -57,6 +57,11 @@ FB::PluginWindowWin* FB::FactoryBase::createPluginWindowWin(const WindowContextW
 {
     return FB::createPluginWindowWin(ctx);
 }
+
+FB::PluginWindowlessWin* FB::FactoryBase::createPluginWindowless(const WindowContextWindowless& ctx)
+{
+    return FB::createPluginWindowless(ctx);
+}
 #endif
 
 #ifdef FB_MACOSX

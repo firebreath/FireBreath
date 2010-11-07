@@ -104,6 +104,7 @@
             addTest("getMap", "Plugin return map test");
             addTest("mathAPI", "Plugin return JSAPI object test");
             addTest("location", "Get page location test");
+            addTest("mathApiAdd", "Use custom JSAPI coming in from script");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -172,6 +173,15 @@
                 markFailed("location");
             else
                 markPassed("location");
+                
+            try {
+                if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
+                    markFailed("mathApiAdd");
+                else
+                    markPassed("mathApiAdd");
+            } catch (e) {
+                    markFailed("mathApiAdd");
+            }
         }
 
         $(document).ready(pageLoaded);

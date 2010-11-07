@@ -32,30 +32,59 @@ namespace FB
     ///////////////////////////////////
     // declarations
 
-    // create variant list from any STL-style container (i.e. exposes begin() and end())
+    /// @brief Create a FB::VariantList from any STL-style container (i.e. exposes begin() and end())
+    /// @param cont A STL-style container.
+    /// @return A FB::VariantList constructed from the cont.
     template<typename Cont>
-    inline FB::VariantList make_variant_list(const Cont&);
+    inline FB::VariantList make_variant_list(const Cont& cont);
+    /// @brief Create a FB::VariantList from the range [begin, end).
+    /// @param begin the start of the range
+    /// @param end the end of the range
+    /// @return A FB::VariantList containing variants constructed from the contents of the range.
     template<class InputIterator>
     inline FB::VariantList make_variant_list(InputIterator begin, InputIterator end);
+    /// @brief Fill a FB::VariantList with the contents of the range [begin, end). 
+    /// @param begin the start of the range
+    /// @param end the end of the range
+    /// @param result An iterator to the begin of a VariantList range big enough to hold last-first values.
     template<class InputIterator>
     inline void make_variant_list(InputIterator begin, InputIterator end, FB::VariantList::iterator result);
 
-    // convert variant list to STL-style container (i.e. supports value_type and back-insert-iterators)
+    /// @brief Convert a FB::VariantList to STL-style container (i.e. supports value_type and back-insert-iterators).
+    /// @return A Cont with the converted contents of the FB::VariantList.
     template<class Cont>
     inline Cont convert_variant_list(const FB::VariantList& v);
+    /// @brief Fill to with the contents of from, converted to Cont::value_type.
+    /// @param from The input.
+    /// @param to The container to store the converted values in.
     template<class Cont>
     inline void convert_variant_list(const FB::VariantList& from, Cont& to);
+    /// @brief Convert a range of FB::VariantList to STL-style container (i.e. supports value_type and back-insert-iterators).
+    /// @return A Cont with the converted contents of the FB::VariantList range.
     template<class Cont>
     inline Cont convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end);
-    template<typename To, class Cont>
+    /// @brief Fills the range [result, result+(end-begin)) with the contents of the range [begin,end), converted to To
+    /// @param begin the start of the range
+    /// @param end the end of the range
+    /// @param result Out parameter, shall be an output iterator.
+    template<typename To, class OutputIterator>
     inline void convert_variant_list(FB::VariantList::const_iterator begin,
                               FB::VariantList::const_iterator end,
-                              typename Cont::iterator result);
+                              OutputIterator result);
 
-    // convenience creation of variant list similar to boost::assign but passable as a temporary
+    /// @brief Allows convenient creation of an FB::VariantList.
+    /// @return A helper type that overloads operator() for insertion and is convertible to FB::VariantList.
+    ///
+    /// Examples: 
+    /// @code
+    /// FB::VariantList vars = FB::variant_list_of(1)("2")(3.4);
+    /// FireEvent("randomDiceRoll", FB::variant_list_of(4));
+    /// @endcode
     inline FB::detail::VariantListInserter variant_list_of(FB::variant v);
-    inline FB::detail::VariantListInserter variant_list_of();
+    /// @brief Convenience overload to create an empty FB::VariantList.
+    /// @return An empty FB::VariantList.
+    inline FB::VariantList variant_list_of();
 
     ///////////////////////////////////
     // detail definitions
@@ -91,10 +120,10 @@ namespace FB
         return FB::detail::VariantListInserter(v);
     }
 
-    inline FB::detail::VariantListInserter 
+    inline FB::VariantList
     variant_list_of()
     {
-        return FB::detail::VariantListInserter();
+        return FB::VariantList();
     }
 
     template<class InputIterator>

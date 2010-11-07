@@ -114,6 +114,7 @@ namespace FB
     ///     objects which extend JSAPI.
     ///
     /// @author Richard Bateman
+    /// @see FB::JSAPIAuto
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPI : public boost::enable_shared_from_this<JSAPI>
     {

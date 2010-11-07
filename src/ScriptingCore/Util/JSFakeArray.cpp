@@ -12,16 +12,16 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#include "JSArray.h"
+#include "JSFakeArray.h"
 #include <iterator>
 
-FB::JSArray::JSArray()
+FB::JSFakeArray::JSFakeArray()
   : m_values()
 {
     RegisterMethods();
 }
 
-FB::JSArray::JSArray(const FB::JSObjectPtr& obj)
+FB::JSFakeArray::JSFakeArray(const FB::JSObjectPtr& obj)
   : m_values()
 {
     if(!obj->HasProperty("length"))
@@ -31,18 +31,18 @@ FB::JSArray::JSArray(const FB::JSObjectPtr& obj)
     RegisterMethods();
 }
 
-FB::JSArray::JSArray(const FB::VariantList& values)
+FB::JSFakeArray::JSFakeArray(const FB::VariantList& values)
 {
     m_values = values;
     RegisterMethods();
 }
 
-void FB::JSArray::RegisterMethods()
+void FB::JSFakeArray::RegisterMethods()
 {
-    registerProperty("length", make_property(this, &JSArray::GetLength));
+    registerProperty("length", make_property(this, &JSFakeArray::GetLength));
 }
 
-void FB::JSArray::ExtractList(const FB::JSObjectPtr& obj)
+void FB::JSFakeArray::ExtractList(const FB::JSObjectPtr& obj)
 {
     try
     {
@@ -59,32 +59,32 @@ void FB::JSArray::ExtractList(const FB::JSObjectPtr& obj)
     }
 }
 
-size_t FB::JSArray::GetLength() const
+size_t FB::JSFakeArray::GetLength() const
 {
     return m_values.size();
 }
 
-FB::variant FB::JSArray::GetProperty(int index)
+FB::variant FB::JSFakeArray::GetProperty(int index)
 {
     return (*this)[index];
 }
 
-FB::variant& FB::JSArray::operator[](size_t index)
+FB::variant& FB::JSFakeArray::operator[](size_t index)
 {
     return m_values[index];
 }
 
-const FB::variant& FB::JSArray::operator[](size_t index) const
+const FB::variant& FB::JSFakeArray::operator[](size_t index) const
 {
     return m_values[index];
 }
 
-FB::VariantList& FB::JSArray::Values()
+FB::VariantList& FB::JSFakeArray::Values()
 {
     return m_values;
 }
 
-const FB::VariantList& FB::JSArray::Values() const
+const FB::VariantList& FB::JSFakeArray::Values() const
 {
     return m_values;
 }

@@ -24,13 +24,59 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "AXDOM/Element.h"
 #include "AXDOM/Node.h"
 
-#include <boost/config.hpp>
+#include "Win/PluginWindowWin.h"
+#include "ComVariantUtil.h"
 
 using boost::assign::list_of;
-
-#include "Win/PluginWindowWin.h"
-
 using namespace FB;
+using namespace FB::ActiveX;
+
+namespace
+{   
+    template<class T>
+    ComVariantBuilderMap::value_type makeBuilderEntry()
+    {
+        return ComVariantBuilderMap::value_type(&typeid(T), select_ccomvariant_builder::select<T>());
+    }
+    
+    ComVariantBuilderMap makeComVariantBuilderMap()
+    {
+        ComVariantBuilderMap tdm;
+        tdm.insert(makeBuilderEntry<bool>());
+        tdm.insert(makeBuilderEntry<char>());
+        tdm.insert(makeBuilderEntry<unsigned char>());
+        tdm.insert(makeBuilderEntry<short>());
+        tdm.insert(makeBuilderEntry<unsigned short>());
+        tdm.insert(makeBuilderEntry<int>());
+        tdm.insert(makeBuilderEntry<unsigned int>());
+        tdm.insert(makeBuilderEntry<long>());
+        tdm.insert(makeBuilderEntry<unsigned long>());
+        
+#ifndef BOOST_NO_LONG_LONG
+        tdm.insert(makeBuilderEntry<long long>());
+        tdm.insert(makeBuilderEntry<unsigned long long>());
+#endif
+        
+        tdm.insert(makeBuilderEntry<float>());
+        tdm.insert(makeBuilderEntry<double>());
+        
+        tdm.insert(makeBuilderEntry<std::string>());
+        tdm.insert(makeBuilderEntry<std::wstring>());
+        
+        tdm.insert(makeBuilderEntry<FB::VariantList>());
+        tdm.insert(makeBuilderEntry<FB::VariantMap>());
+        tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
+        tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
+        
+        return tdm;
+    }
+    
+    const ComVariantBuilderMap& getComVariantBuilderMap()
+    {
+        static const ComVariantBuilderMap tdm = makeComVariantBuilderMap();
+        return tdm;
+    }
+}
 
 ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
     : m_webBrowser(doc)
@@ -190,90 +236,18 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
 void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
 {
     CComVariant outVar;
-    VariantInit(dest);
-    if (var.empty()) {
-        // Already empty
+    ::VariantInit(dest);
+
+    const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
+    const std::type_info& type = var.get_type();
+    ComVariantBuilderMap::const_iterator it = builderMap.find(&type);
+    
+    if (it == builderMap.end()) {
+        // unhandled type :(
         return;
-
-    } else if (var.get_type() == typeid(int)
-        || var.get_type() == typeid(short)
-        || var.get_type() == typeid(char)
-        
-        || var.get_type() == typeid(unsigned short)
-        || var.get_type() == typeid(unsigned char)) {
-        // Integer type
-        outVar = var.convert_cast<int32_t>();
-
-    } else if (var.get_type() == typeid(double)
-        || var.get_type() == typeid(float)
-        || var.get_type() == typeid(unsigned int)
-        || var.get_type() == typeid(long)
-        || var.get_type() == typeid(unsigned long)
-#if !defined(BOOST_NO_LONG_LONG)
-        || var.get_type() == typeid(long long)
-        || var.get_type() == typeid(unsigned long long)
-#endif
-        ) {
-        // Arithmetic types whose range doesn't fit into int32 
-        // (ignoring LLP64 vs. other data models, refactoring will be in 1.4)
-        outVar = var.convert_cast<double>();
-
-    } else if (var.get_type() == typeid(bool)) {
-        outVar = var.convert_cast<bool>();
-
-    } else if (var.get_type() == typeid(std::string)
-            || var.get_type() == typeid(std::wstring)) {
-        std::wstring wstr = var.convert_cast<std::wstring>();
-        CComBSTR bStr(wstr.c_str());
-        outVar = bStr;
-
-    } else if (var.get_type() == typeid(FB::VariantList)) {
-        FB::JSObjectPtr outArr = this->getDOMWindow()->createArray();
-        FB::VariantList inArr = var.cast<FB::VariantList>();
-        for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            FB::VariantList vl = list_of(*it);
-            outArr->Invoke("push", vl);
-        }
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(outArr);
-        if (api) {
-            outVar = api->getIDispatch();
-        }
-
-    } else if (var.get_type() == typeid(FB::VariantMap)) {
-        FB::JSObjectPtr out = this->getDOMWindow()->createMap();
-        FB::VariantMap inMap = var.cast<FB::VariantMap>();
-        for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out->SetProperty(it->first, it->second);
-        }
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(out);
-        if (api) {
-            outVar = api->getIDispatch();
-        }
-
-    } else if (var.get_type() == typeid(FB::JSObject)) {
-        FB::JSObjectPtr obj(var.cast<FB::JSObjectPtr>());
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
-        if (api) {
-            outVar = api->getIDispatch();
-        } else {
-            if (obj)
-                outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<FB::JSObjectPtr>());
-            else
-                outVar.ChangeType(VT_NULL);
-        }
-
-    } else if (var.get_type() == typeid(JSAPIPtr)) {
-        FB::JSAPIPtr obj(var.cast<FB::JSAPIPtr>());
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
-        if (api) {
-            outVar = api->getIDispatch();
-        } else {
-            if (obj)
-                outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<JSAPIPtr>());
-            else
-                outVar.ChangeType(VT_NULL);
-        }
     }
+    
+    outVar = (it->second)(FB::ptr_cast<ActiveXBrowserHost>(shared_ptr()), var);
 
     outVar.Detach(dest);
 }
