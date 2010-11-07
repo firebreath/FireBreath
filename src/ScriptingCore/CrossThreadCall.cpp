@@ -37,7 +37,11 @@ void CrossThreadCall::syncCallbackFunctor(void *userData)
 
 void CrossThreadCall::asyncCallbackFunctor(void *userData)
 {
-    CrossThreadCall *call = static_cast<CrossThreadCall *>(userData);
-    call->funct->call();
-    delete call;
+    std::auto_ptr<CrossThreadCall> call = static_cast<CrossThreadCall *>(userData);
+
+    try {        
+        call->funct->call();
+    } catch (const FB::script_error&) {
+        // we can't sensibly handle it here
+    }
 }
