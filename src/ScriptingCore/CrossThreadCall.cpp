@@ -37,7 +37,7 @@ void CrossThreadCall::syncCallbackFunctor(void *userData)
 
 void CrossThreadCall::asyncCallbackFunctor(void *userData)
 {
-    std::auto_ptr<CrossThreadCall> call = static_cast<CrossThreadCall *>(userData);
+    std::auto_ptr<CrossThreadCall> call(static_cast<CrossThreadCall *>(userData));
 
     try {        
         call->funct->call();
