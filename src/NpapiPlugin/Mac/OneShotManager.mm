@@ -69,55 +69,38 @@ namespace
         static OneShotManagerHelper *helper = [[OneShotManagerHelper alloc] initWithManager:manager];
         return helper;
     }
-    
-    std::ofstream& getLog() 
-    {
-        static std::ofstream log("/Users/georgfritzsche/log.txt");
-        if (!log) assert(false && "no log :(");
-        return log;
-    }
 }
 
 FB::OneShotManager::OneShotManager()
 {
-    getLog() << "OneShotManager::OneShotManager()" << std::endl;
+    
 }
 
 FB::OneShotManager::~OneShotManager()
 {
-    getLog() << "OneShotManager::~OneShotManager()" << std::endl;
-    
     [getHelper(this) disconnect];
     m_sinks.clear();
 }
 
 void FB::OneShotManager::push(NPP npp, OneShotCallback sink)
 {
-    getLog() << "OneShotManager::push()" << std::endl;
-    
     m_sinks.insert(std::make_pair(npp, sink));
     [getHelper(this) performSelectorOnMainThread:@selector(doStuff:) withObject:nil waitUntilDone:NO];
 }
 
 void FB::OneShotManager::clear(NPP npp)
 {
-    getLog() << "OneShotManager::clear()" << std::endl;
-    
     m_sinks.erase(npp);
 }
 
 FB::OneShotManager& FB::OneShotManager::getInstance()
 {
-    getLog() << "OneShotManager::getInstance()" << std::endl;
-    
     static OneShotManager manager;
     return manager;
 }
 
 void FB::OneShotManager::shoot()
 {
-    getLog() << "OneShotManager::shoot()" << std::endl;
-    
     for (SinkMap::const_iterator it = m_sinks.begin(); it != m_sinks.end(); ++it)
     {
         it->second(it->first, 0);
