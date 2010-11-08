@@ -22,8 +22,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "AsyncFunctionCall.h"
 #include "SafeQueue.h"
 
-#ifdef _WINDOWS_
+#if FB_WIN
 #  include "Win/NpapiBrowserHostAsyncWin.h"
+#elif FB_MACOSX
+#  include "Mac/OneShotManager.h"
 #endif
 
 using namespace FB::Npapi;
@@ -128,7 +130,8 @@ NpapiPlugin *FB::Npapi::getPlugin(NPP instance)
 void NpapiPluginModule::scheduleAsyncCallback(NPP npp, void (*func)(void *), void *userData)
 {
     getHolder(npp)->asyncFunctionQueue.push(FB::AsyncFunctionCallPtr(new FB::AsyncFunctionCall(func, userData)));
-    getHost(npp)->ScheduleTimer(0, false, &asyncCallbackFunction);
+    //getHost(npp)->ScheduleTimer(0, false, &asyncCallbackFunction);
+    OneShotManager::getInstance().push(npp, &asyncCallbackFunction);
 }
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;
@@ -186,6 +189,8 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
+    OneShotManager::getInstance().clear(instance);
+    
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

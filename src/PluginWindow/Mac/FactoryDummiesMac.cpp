@@ -49,7 +49,7 @@ FB::PluginWindowMacCocoaCA* FB::createPluginWindowCocoaCA()
 #if !FBMAC_USE_COCOA || !FBMAC_USE_COREANIMATION
 FB::PluginWindowMacCocoaICA* FB::createPluginWindowCocoaICA()
 {
-
+    return 0;
 }
 #endif
 
