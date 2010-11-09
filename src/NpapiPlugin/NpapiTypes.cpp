@@ -120,7 +120,7 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
 #endif
     if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
 
-#ifdef __LP64__
+#if defined(XP_MACOSX) && defined(__LP64__)
         if (srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
             && srcFuncs->scheduletimer) {
 #else
