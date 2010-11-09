@@ -23,6 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSObject.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
+#include "logging.h"
 
 namespace FB {
 
@@ -40,6 +41,9 @@ namespace FB {
     public:
         FunctorCallImpl(const boost::shared_ptr<C> &cls, const Functor &func) : ref(true), reference(cls), func(func) { }
         FunctorCallImpl(const Functor &func) : ref(false), func(func) {}
+        ~FunctorCallImpl() {
+            FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (non-void)");
+        }
         void call() {
             boost::shared_ptr<C> tmp;
             if (ref) tmp = reference.lock();
@@ -61,6 +65,9 @@ namespace FB {
     public:
         FunctorCallImpl(const boost::shared_ptr<C> &cls, const Functor &func) : func(func), ref(true), reference(cls) { }
         FunctorCallImpl(const Functor &func) : func(func), ref(false) {}
+        ~FunctorCallImpl() {
+            FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (void)");
+        }
         void call() {
             boost::shared_ptr<C> tmp;
             if (ref) tmp = reference.lock();
@@ -77,7 +84,7 @@ namespace FB {
     class CrossThreadCall
     {
     public:
-        virtual ~CrossThreadCall() { if (funct) delete funct; }
+        virtual ~CrossThreadCall() { }
         template<class Functor>
         static typename Functor::result_type syncCall(const FB::BrowserHostPtr &host, Functor func);
 
@@ -95,7 +102,7 @@ namespace FB {
         static void asyncCallbackFunctor(void *userData);
         static void syncCallbackFunctor(void *userData);
 
-        FunctorCall* funct;
+        boost::scoped_ptr<FunctorCall> funct;
         variant m_result;
         bool m_returned;
 

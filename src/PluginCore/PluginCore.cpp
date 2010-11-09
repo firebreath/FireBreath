@@ -62,6 +62,8 @@ PluginCore::PluginCore(const std::set<std::string>& params)
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
     if (++PluginCore::ActivePluginCount == 1) {
+
+        FBLOG_INFO("PluginCore", "Running global plugin initializer");
         // Only on the first initialization
         getFactoryInstance()->globalPluginInitialize();
     }
@@ -80,6 +82,7 @@ PluginCore::~PluginCore()
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
     if (--PluginCore::ActivePluginCount == 0) {
+        FBLOG_INFO("PluginCore", "Running global plugin deinitializer");
         // Only on the destruction of the final plugin instance
         getFactoryInstance()->globalPluginDeinitialize();
     }
