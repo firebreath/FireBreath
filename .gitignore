@@ -7,8 +7,6 @@ Debug/
 Release/
 *~
 *.swp
-*_i.*
-*_p.*
 *.orig
 *.aps
 *.pyc
