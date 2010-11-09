@@ -256,10 +256,12 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         if (api) {
             outVar = api->getIDispatch();
         } else {
-            if (obj)
+            if (obj) {
                 outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<FB::JSObjectPtr>());
-            else
+                outVar.pdispVal->Release();
+            } else {
                 outVar.ChangeType(VT_NULL);
+            }
         }
 
     } else if (var.get_type() == typeid(JSAPIPtr)) {
@@ -268,10 +270,12 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         if (api) {
             outVar = api->getIDispatch();
         } else {
-            if (obj)
+            if (obj) {
                 outVar = COMJavascriptObject::NewObject(ptr_cast<ActiveXBrowserHost>(shared_ptr()), var.cast<JSAPIPtr>());
-            else
+                outVar.pdispVal->Release();
+            } else {
                 outVar.ChangeType(VT_NULL);
+            }
         }
     }
 

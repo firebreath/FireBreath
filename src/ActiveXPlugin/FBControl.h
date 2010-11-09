@@ -174,6 +174,8 @@ public:
     {
         pluginMain->ClearWindow();
         delete pluginWin; pluginWin = NULL;
+        pluginMain.reset(); // This should delete the plugin object
+        m_api.reset();
     }
 
     // This is part of the event system

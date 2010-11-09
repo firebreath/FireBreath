@@ -23,6 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSObject.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
+#include <boost/make_shared.hpp>
 #include "logging.h"
 
 namespace FB {
@@ -97,12 +98,12 @@ namespace FB {
         static void asyncCall(const FB::BrowserHostPtr &host, boost::shared_ptr<C> obj, Functor func);
 
     protected:
-        CrossThreadCall(FunctorCall* funct) : funct(funct), m_returned(false) { }
+        CrossThreadCall(boost::shared_ptr<FunctorCall> funct) : funct(funct), m_returned(false) { }
 
         static void asyncCallbackFunctor(void *userData);
         static void syncCallbackFunctor(void *userData);
 
-        boost::scoped_ptr<FunctorCall> funct;
+        boost::shared_ptr<FunctorCall> funct;
         variant m_result;
         bool m_returned;
 
@@ -113,7 +114,7 @@ namespace FB {
     template<class C, class Functor>
     void CrossThreadCall::asyncCall(const FB::BrowserHostPtr &host, boost::shared_ptr<C> obj, Functor func)
     {
-        FunctorCallImpl<Functor, C> *funct = new FunctorCallImpl<Functor, C>(obj, func);
+        boost::shared_ptr<FunctorCall> funct = boost::make_shared<FunctorCallImpl<Functor, C> >(obj, func);
         CrossThreadCall *call = new CrossThreadCall(funct);
         host->ScheduleAsyncCall(&CrossThreadCall::asyncCallbackFunctor, call);
     }
@@ -130,24 +131,26 @@ namespace FB {
     {
         FB::variant varResult;
 
-        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(func);
+        // We make this shared so that if this is something that needs to be passed into the other thread,
+        // it still goes away when everything is done with it
+        boost::shared_ptr<FunctorCallImpl<Functor, bool>> funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
-            CrossThreadCall *call = new CrossThreadCall(funct);
+            // Synchronous call means that we want call to go away when this scope ends
+            boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call);
+                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get());
 
                 while (!call->m_returned) {
                     call->m_cond.wait(lock);
                 }
                 varResult = call->m_result;
             }
-            delete call;
         } else {
             funct->call();
         }
-        delete funct;
+        
         if (varResult.get_type() == typeid(FB::script_error)) {
             throw FB::script_error(varResult.cast<const FB::script_error>().what());
         }
@@ -159,13 +162,15 @@ namespace FB {
         typename Functor::result_type result;
         FB::variant varResult;
 
-        FunctorCallImpl<Functor, bool> *funct = new FunctorCallImpl<Functor, bool>(func);
+        // We make this shared so that if this is something that needs to be passed into the other thread,
+        // it still goes away when everything is done with it
+        boost::shared_ptr<FunctorCallImpl<Functor, bool>> funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
-            CrossThreadCall *call = new CrossThreadCall(funct);
+            boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call);
+                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get());
 
                 while (!call->m_returned) {
                     call->m_cond.wait(lock);
@@ -173,11 +178,9 @@ namespace FB {
                 result = funct->getResult();
                 varResult = call->m_result;
             }
-            delete call;
         } else {
             funct->call();
             result = funct->getResult();
-            delete funct;
         }
         if (varResult.get_type() == typeid(FB::script_error)) {
             throw FB::script_error(varResult.cast<const FB::script_error>().what());

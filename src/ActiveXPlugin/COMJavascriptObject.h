@@ -35,7 +35,7 @@ public:
     COMJavascriptObject(void)
     {
     }
-    ~COMJavascriptObject(void)
+    virtual ~COMJavascriptObject(void)
     {
     }
 
