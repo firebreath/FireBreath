@@ -124,7 +124,7 @@
                 markFailed("valid");
                 
             try {
-                var path = plugin().pluginPath;
+                var path = plugin.pluginPath;
                 if (path.length < 1) 
                     throw (new Error("path.length < 1"));
                 $("#pluginPath").text(path);
