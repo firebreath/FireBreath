@@ -99,11 +99,13 @@
         function pageLoaded() {
             addTest("loaded", "Plugin onload event");
             addTest("valid", "Plugin valid test");
+            addTest("getPluginPath", "Get plugin path");
             addTest("echo", "Plugin echo test");
             addTest("reverse", "Plugin reverse test");
             addTest("getMap", "Plugin return map test");
             addTest("mathAPI", "Plugin return JSAPI object test");
             addTest("location", "Get page location test");
+            addTest("mathApiAdd", "Use custom JSAPI coming in from script");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -111,7 +113,6 @@
         function pluginLoaded() {
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
-            $("#pluginPath").text(plugin().pluginPath);
             setTimeout(pluginRunTests, 500);
         }
 
@@ -121,6 +122,16 @@
                 markPassed("valid");
             else
                 markFailed("valid");
+                
+            try {
+                var path = plugin().pluginPath;
+                if (path.length < 1) 
+                    throw (new Error("path.length < 1"));
+                $("#pluginPath").text(path);
+                markPassed("getPluginPath");
+            } catch (e) {
+                markFailed("getPluginPath");
+            }
 
             if (plugin.echo("Hello!") == "Hello!"
                 && plugin.echo(1234) == 1234
@@ -172,6 +183,15 @@
                 markFailed("location");
             else
                 markPassed("location");
+                
+            try {
+                if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
+                    markFailed("mathApiAdd");
+                else
+                    markPassed("mathApiAdd");
+            } catch (e) {
+                    markFailed("mathApiAdd");
+            }
         }
 
         $(document).ready(pageLoaded);

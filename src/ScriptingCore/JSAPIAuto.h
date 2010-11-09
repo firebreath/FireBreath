@@ -23,6 +23,20 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <string>
 
 namespace FB {
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())
+    /// @brief Overload of FB::make_method() for methods taking 0 arguments. 
+    ///
+    /// This is used with registerMethod() of FB::JSAPIAuto and there are currently overloads for methods
+    /// taking up to 10 arguments:
+    /// @code
+    /// struct X : FB::JSAPIAuto {
+    ///     long add(long a, long b) { return a+b; }
+    ///     X() { registerMethod("add", FB::make_method(this, &MyClass::add)); }
+    /// };
+    /// @endcode
+    /// @see FB::JSAPIAuto
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPIAuto
@@ -68,16 +82,17 @@ namespace FB {
     /// 
     /// @see JSAPI
     /// @see PluginCore
+    /// @author Georg Fritzsche
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPIAuto : public JSAPI
     {
     public:
-        /// @brief Use description for ToString().
+        /// @brief Description is used by ToString().
         JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
-        ~JSAPIAuto();
+        virtual ~JSAPIAuto();
 
-        void getMemberNames(std::vector<std::string> &nameVector);
-        size_t getMemberCount();
+        virtual void getMemberNames(std::vector<std::string> &nameVector);
+        virtual size_t getMemberCount();
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
 
@@ -149,8 +164,9 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
         ///
-        /// @brief  Default method called when a string value is requested for the plugin object.
-        /// 		Override this to provide your own.  Default returns "<JSAPI-Auto driven Javascript Object>"
+        /// @brief  Default method called when a string value is requested for the scriptable object.
+        ///
+        ///	Override this to provide your own, otherwise it returns the description passed to the constructor.
         /// 		
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
