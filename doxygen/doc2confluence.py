@@ -37,12 +37,22 @@ class Doxygen2Confluence:
             "struct" : "1280302",
             "namespace" : "1280313",
             "file" : "1280310",
+            "typedef": "1282223",
+            "function": "1282221",
+            #"enum": "1280313",
             }
     parents = {}
     createdPages = []
+    username = ""
+    password = ""
+
+    def login(self):
+        self.token = self.rpc.login(self.username, self.password)
 
     def __init__(self, username, password):
-        self.token = self.rpc.login(username, password)
+        self.username = username
+        self.password = password
+        self.login()
 
     def getName(self, name):
         count = 1
@@ -65,7 +75,11 @@ class Doxygen2Confluence:
         try:
             page = self.rpc.getPage(self.token, self.space, pageName)
         except:
-            page = {"space": self.space, "title": pageName}
+            try:
+                self.login()
+                page = self.rpc.getPage(self.token, self.space, pageName)
+            except:
+                page = {"space": self.space, "title": pageName}
 
         page["parentId"] = self.parents[refId]
         if kind == "file":
@@ -81,8 +95,11 @@ class Doxygen2Confluence:
                 self.createdPages.append(page["id"])
                 self.rpc.setContentPermissions(self.token, page["id"], "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
-            except:
-                n = n + 1
+            except Exception as ex:
+                self.login()
+                print type(ex)
+                print ex.args
+                print ex
                 pass
 
         return page["id"]
@@ -126,9 +143,14 @@ class Doxygen2Confluence:
                     memRefId = mem.getAttribute("refid")
                     memRefId = memRefId[0:memRefId.rindex("_")]
                     memKind = mem.getAttribute("kind")
+                    if memKind == "enumvalue":
+                        continue
 
                     if (os.path.exists(os.path.join(path, memRefId + ".html"))):
-                        localName = self.getName(Info[refid]["name"] + " " + memName)
+                        if kind == "namespace":
+                            localName = self.getName("%s %s %s" % (memKind, compoundName, memName))
+                        else:
+                            localName = self.getName(Info[refid]["name"] + " " + memName)
                         refidMap["%s.html" % memRefId] = self.baseUrl % localName
                         Info[refid]["members"][memRefId] = {}
                         Info[refid]["members"][memRefId]["kind"] = memKind
@@ -189,7 +211,10 @@ class Doxygen2Confluence:
             pageId = self.exportToConfluence(refid, item["name"], item["kind"])
             for memid, mem in item["members"].items():
                 #print "Exporting %s to confluence..." % mem["name"]
-                self.parents[memid] = pageId
+                if item["kind"] == "namespace" and mem["kind"] in self.topPages:
+                    self.parents[memid] = self.topPages[mem["kind"]]
+                else:
+                    self.parents[memid] = pageId
                 self.exportToConfluence(memid, mem["name"], mem["kind"])
             if os.path.exists(os.path.join(self.inputHtmlPath, "%s-members.html" % refid)):
                 self.parents["%s-members" % refid] = pageId

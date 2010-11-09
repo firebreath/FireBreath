@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <memory.h>
+#include <memory>
 #include <boost/config.hpp>
 
 #include "NpapiTypes.h"
@@ -27,12 +27,62 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
 
+#include "NPVariantUtil.h"
+
 using namespace FB::Npapi;
 
-struct MethodCallReq
+namespace 
 {
-    //FB::variant
-};
+    struct MethodCallReq
+    {
+        //FB::variant
+    };
+    
+    template<class T>
+    NPVariantBuilderMap::value_type makeBuilderEntry()
+    {
+        return NPVariantBuilderMap::value_type(&typeid(T), select_npvariant_builder::select<T>());
+    }
+    
+    NPVariantBuilderMap makeNPVariantBuilderMap()
+    {
+        NPVariantBuilderMap tdm;
+        tdm.insert(makeBuilderEntry<bool>());
+        tdm.insert(makeBuilderEntry<char>());
+        tdm.insert(makeBuilderEntry<unsigned char>());
+        tdm.insert(makeBuilderEntry<short>());
+        tdm.insert(makeBuilderEntry<unsigned short>());
+        tdm.insert(makeBuilderEntry<int>());
+        tdm.insert(makeBuilderEntry<unsigned int>());
+        tdm.insert(makeBuilderEntry<long>());
+        tdm.insert(makeBuilderEntry<unsigned long>());
+        
+#ifndef BOOST_NO_LONG_LONG
+        tdm.insert(makeBuilderEntry<long long>());
+        tdm.insert(makeBuilderEntry<unsigned long long>());
+#endif
+        
+        tdm.insert(makeBuilderEntry<float>());
+        tdm.insert(makeBuilderEntry<double>());
+        
+        tdm.insert(makeBuilderEntry<std::string>());
+        tdm.insert(makeBuilderEntry<std::wstring>());
+        
+        tdm.insert(makeBuilderEntry<FB::Npapi::NpapiNull>());
+        tdm.insert(makeBuilderEntry<FB::VariantList>());
+        tdm.insert(makeBuilderEntry<FB::VariantMap>());
+        tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
+        tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
+        
+        return tdm;
+    }
+    
+    const NPVariantBuilderMap& getNPVariantBuilderMap()
+    {
+        static const NPVariantBuilderMap tdm = makeNPVariantBuilderMap();
+        return tdm;
+    }
+}
 
 NpapiBrowserHost::NpapiBrowserHost(NpapiPluginModule *module, NPP npp)
     : module(module), m_npp(npp)
@@ -143,118 +193,17 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 {
     assertMainThread();
-    if (var.get_type() == typeid(FB::Npapi::NpapiNull)) {
-        dst->type = NPVariantType_Null;
-
-    } else if (var.get_type() == typeid(int)        
-        || var.get_type() == typeid(short)
-        || var.get_type() == typeid(char)
-        || var.get_type() == typeid(unsigned short)
-        || var.get_type() == typeid(unsigned char)) {
-        // Integer type
-        dst->type = NPVariantType_Int32;
-        dst->value.intValue = var.convert_cast<int32_t>();
-
-    } else if (var.get_type() == typeid(double)
-        || var.get_type() == typeid(float)
-        || var.get_type() == typeid(unsigned int)
-        || var.get_type() == typeid(long)
-        || var.get_type() == typeid(unsigned long)
-#if !defined(BOOST_NO_LONG_LONG)
-        || var.get_type() == typeid(long long)
-        || var.get_type() == typeid(unsigned long long)
-#endif
-        ) {
-        // Arithmetic types whose range doesn't fit into int32 
-        // (ignoring LLP64 vs. other data models, refactoring will be in 1.4)
-        dst->type = NPVariantType_Double;
-        dst->value.doubleValue = var.convert_cast<double>();
-
-    } else if (var.get_type() == typeid(bool)) {
-        dst->type = NPVariantType_Bool;
-        dst->value.boolValue = var.convert_cast<bool>();
-
-    } else if (var.get_type() == typeid(std::string)) {
-        std::string str = var.convert_cast<std::string>();
-        char *outStr = (char*)this->MemAlloc(str.size() + 1);
-        memcpy(outStr, str.c_str(), str.size() + 1);
-        dst->type = NPVariantType_String;
-        dst->value.stringValue.UTF8Characters = outStr;
-        dst->value.stringValue.UTF8Length = str.size();
-
-    } else if (var.get_type() == typeid(std::wstring)) {
-        // This is not a typo; the std::string gets the UTF8 representation
-        // and we pass that back to the browser
-        std::string str = var.convert_cast<std::string>();
-        char *outStr = (char*)this->MemAlloc(str.size() + 1);
-        memcpy(outStr, str.c_str(), str.size() + 1);
-        dst->type = NPVariantType_String;
-        dst->value.stringValue.UTF8Characters = outStr;
-        dst->value.stringValue.UTF8Length = str.size();
-
-    } else if (var.get_type() == typeid(FB::VariantList)) {
-        FB::JSObjectPtr outArr = this->getDOMWindow()->createArray();
-        FB::VariantList inArr = var.cast<FB::VariantList>();
-        for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-            outArr->Invoke("push", variant_list_of(*it));
-        }
-        NPObjectAPIPtr api = ptr_cast<NPObjectAPI>(outArr);
-        if (api) {
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = api->getNPObject();
-            this->RetainObject(dst->value.objectValue);
-        }
-
-    } else if (var.get_type() == typeid(FB::VariantMap)) {
-        FB::JSObjectPtr out = this->getDOMWindow()->createMap();
-        FB::VariantMap inMap = var.cast<FB::VariantMap>();
-        for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-            out->SetProperty(it->first, it->second);
-        }
-        NPObjectAPIPtr api = ptr_cast<NPObjectAPI>(out);
-        if (api) {
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = api->getNPObject();
-            this->RetainObject(dst->value.objectValue);
-        }
-
-    } else if (var.get_type() == typeid(FB::JSAPIPtr)) {
-        NPObject *outObj = NULL;
-        FB::JSAPIPtr obj = var.cast<FB::JSAPIPtr>();
-        NPObjectAPIPtr tmpObj = ptr_cast<NPObjectAPI>(obj);
-
-        if (obj) {
-            if (tmpObj == NULL) {
-                outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
-            } else {
-                outObj = tmpObj->getNPObject();
-                this->RetainObject(outObj);
-            }
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = outObj;
-        } else {
-            dst->type = NPVariantType_Null;
-        }
-    } else if (var.get_type() == typeid(FB::JSObjectPtr)) {
-        NPObject *outObj = NULL;
-        FB::JSObjectPtr obj = var.cast<JSObjectPtr>();
-        NPObjectAPIPtr tmpObj = ptr_cast<NPObjectAPI>(obj);
-
-        if (obj) {
-            if (tmpObj == NULL) {
-                outObj = NPJavascriptObject::NewObject(ptr_cast<NpapiBrowserHost>(shared_ptr()), obj);
-            } else {
-                outObj = tmpObj->getNPObject();
-                this->RetainObject(outObj);
-            }
-
-            dst->type = NPVariantType_Object;
-            dst->value.objectValue = outObj;
-        } else {
-            dst->type = NPVariantType_Null;
-        }
+    
+    const NPVariantBuilderMap& builderMap = getNPVariantBuilderMap();
+    const std::type_info& type = var.get_type();
+    NPVariantBuilderMap::const_iterator it = builderMap.find(&type);
+    
+    if (it == builderMap.end()) {
+        // unhandled type :(
+        return;
     }
-    // TODO: implement object types
+    
+    *dst = (it->second)(FB::ptr_cast<NpapiBrowserHost>(shared_ptr()), var);
 }
 
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData)

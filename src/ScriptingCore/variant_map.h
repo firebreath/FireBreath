@@ -32,12 +32,24 @@ namespace FB
     ///////////////////////////////////
     // declarations
 
-    // convenience creation of variant map similar to boost::assign but passable as a temporary
+    /// @brief Allows convenient creation of an FB::VariantMap.
+    /// @return A helper type that overloads operator() for insertion and is convertible to FB::VariantMap.
+    ///
+    /// Examples: 
+    /// @code
+    /// typedef std::map<std::string, FB::variant> StringVariantMap;
+    /// StringVariantMap varMap = FB::variant_map_of<std::string>("a",1)("b","2")("c",3.4);
+    /// FireEvent("randomDiceRoll", FB::variant_map_of<std::string>("foo",42));
+    /// std::string x = "xyz";
+    /// StringVariantMap varMap2 = FB::variant_map_of(x, 1);
+    /// @endcode
     template<typename T>
     FB::detail::VariantMapInserter<T> variant_map_of(const T& t, const FB::variant& v);
-
+    
+    /// @brief Convenience overload to create an empty variant map.
+    /// @return An empty variant map.
     template<typename T>
-    FB::detail::VariantMapInserter<T> variant_map_of();
+    std::map<T,FB::variant> variant_map_of();
 
     ///////////////////////////////////
     // detail definitions
@@ -79,10 +91,10 @@ namespace FB
     }
 
     template<typename T>
-    FB::detail::VariantMapInserter<T>
+    std::map<T,FB::variant>
     variant_map_of()
     {
-        return FB::detail::VariantMapInserter<T>();
+        return std::map<T, FB::variant>();
     }
 }
 

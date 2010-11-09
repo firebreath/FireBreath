@@ -72,6 +72,9 @@ public:
     void SetProperty(int idx, const FB::variant& value);
 
     FB::variant Invoke(const std::string& methodName, const std::vector<FB::variant>& args);
+
+public:
+	virtual FB::JSAPIPtr getJSAPI();
 };
 
 #endif

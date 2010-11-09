@@ -18,9 +18,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/assign/list_of.hpp>
 #include <boost/lexical_cast.hpp>
 #include "variant_list.h"
-#include "Util/JSArray.h"
+#include "Util/JSFakeArray.h"
 
-TEST(JSArrayTest)
+TEST(JSFakeArrayTest)
 {
     PRINT_TESTNAME;
 
@@ -31,7 +31,7 @@ TEST(JSArrayTest)
         // test C++ acess 
 
         FB::VariantList values = variant_list_of(1)("3")(2.3);
-        boost::shared_ptr<FB::JSArray> test(new FB::JSArray(values));
+        boost::shared_ptr<FB::JSFakeArray> test(new FB::JSFakeArray(values));
         
         std::vector<FB::VariantList> copies = list_of
             (test->Values())

@@ -25,6 +25,9 @@ namespace FB { namespace Npapi {
     class NPJavascriptObject :
         public NPObject
     {
+    public:
+        static bool isNPJavaScriptObject(const NPObject* const npo);
+    
     protected:
         static NPClass NPJavascriptObjectClass;
         FB::JSAPIPtr m_api;
@@ -34,6 +37,7 @@ namespace FB { namespace Npapi {
     public:
         static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIPtr api);
         void setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host);
+        FB::JSAPIPtr getAPI() const;
         NPJavascriptObject(NPP npp);
         virtual ~NPJavascriptObject(void);
 

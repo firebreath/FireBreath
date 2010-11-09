@@ -14,6 +14,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include "UnitTest++.h"
+#include "FactoryBase.h"
+#include <boost/make_shared.hpp>
 
 #define PRINT_TESTNAME  printf("Running unit test %s::%s...\n", UnitTestSuite::GetSuiteName(), \
     m_details.testName); fflush(stdout)
@@ -35,26 +37,23 @@ int main()
     return 0;
 }
 
+std::string g_dllPath = "";
+HINSTANCE gInstance = 0;
+
 static const char *pluginName = "UnitTestMockPlugin";
 static const char *pluginDesc = "It's a mock plugin for a unit test";
 
-const char *_getPluginName()
+class TestFactory : public FB::FactoryBase
 {
-    return pluginName;
-}
+public:
+    std::string getPluginName() { return pluginName; }
+    std::string getPluginDescription() { return pluginDesc; }
+    
+    FB::PluginCorePtr createPlugin(const std::string&) { return FB::PluginCorePtr(); }
+};
 
-const char *_getPluginDesc()
+FB::FactoryBasePtr getFactoryInstance()
 {
-    return pluginDesc;
-}
-
-FB::JSAPI *_getRootJSAPI()
-{
-    return new FB::JSAPISimple();
-}
-
-FB::Npapi::NpapiPlugin *_getNpapiPlugin(FB::Npapi::NpapiBrowserHostPtr host)
-{
-    return NULL;
-    //return new FB::Npapi::NpapiPlugin(host);
+    static FB::FactoryBasePtr factory = boost::make_shared<TestFactory>();
+    return factory;
 }

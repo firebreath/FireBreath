@@ -97,6 +97,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./axstream*.*
     ./dlldatax.c
     ./registrymap.hpp
+    ./ComVariantUtil.h
     )
 
 set (SOURCES
