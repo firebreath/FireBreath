@@ -133,7 +133,7 @@ namespace FB {
 
         // We make this shared so that if this is something that needs to be passed into the other thread,
         // it still goes away when everything is done with it
-        boost::shared_ptr<FunctorCallImpl<Functor, bool>> funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
+        boost::shared_ptr<FunctorCallImpl<Functor, bool> > funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
             // Synchronous call means that we want call to go away when this scope ends
@@ -164,7 +164,7 @@ namespace FB {
 
         // We make this shared so that if this is something that needs to be passed into the other thread,
         // it still goes away when everything is done with it
-        boost::shared_ptr<FunctorCallImpl<Functor, bool>> funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
+        boost::shared_ptr<FunctorCallImpl<Functor, bool> > funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
             boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
