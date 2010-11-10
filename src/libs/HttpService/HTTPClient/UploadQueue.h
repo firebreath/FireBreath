@@ -19,19 +19,29 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <list>
 #include "URI.h"
 #include "UploadQueueEntry.h"
-#include <boost/enable_shared_from_this.hpp>
+#include "PluginEventSource.h"
+#include "PluginEvent.h"
 
 namespace HTTP {
     class UploadQueue;
     class HTTPRequest;
     struct Status;
     typedef boost::shared_ptr<UploadQueue> UploadQueuePtr;
-	class UploadQueue : public boost::enable_shared_from_this<UploadQueue> {
+
+	class UploadQueue : public FB::PluginEventSource {
+    public:
+        class StatusUpdateEvent : public FB::PluginEvent {
+        public:
+            StatusUpdateEvent(const FB::VariantMap& status) : status(status) { }
+            virtual ~StatusUpdateEvent() {}
+
+            FB::VariantMap status;
+        };
     public:
 	    UploadQueue(const std::string& _name);
         virtual ~UploadQueue();
 
-        UploadQueuePtr shared_ptr() { return shared_from_this(); }
+        UploadQueuePtr shared_ptr() { return FB::ptr_cast<UploadQueue>(FB::PluginEventSource::shared_ptr()); }
 	
 	    void addFile(const UploadQueueEntry& qe);
 	    bool removeFile(const std::wstring& filename);
@@ -77,6 +87,7 @@ namespace HTTP {
 	    unsigned int batch_size;
 	    unsigned int max_retries;
 	protected:
+        void sendUpdateEvent();
 	    void start_next_upload();
 	    void upload_request_status_changed(const HTTP::Status& status);
 	};

@@ -103,6 +103,7 @@ void UploadQueue::dispatch() {
     //    boost::shared_ptr<UploadStatusHandler> ph = http_status_handler_weak.lock();
     //    if (ph) ph->postUpdate(getStatusDict());
     //}
+    sendUpdateEvent();
 }
 
 void UploadQueue::start_next_upload() {
@@ -199,8 +200,10 @@ void UploadQueue::start_next_upload() {
         if (! failures.empty()) d["failed_files"] = failures;
 
         // TODOTODO
-        //boost::shared_ptr<UploadStatusHandler> ph = http_status_handler_weak.lock();
-        //if (ph) ph->postUpdate(d);
+        {
+            StatusUpdateEvent evt(d);
+            SendEvent(&evt);
+        }
 
         status = UploadQueue::UPLOAD_COMPLETE;
         // fire completion handlers, if available
@@ -216,12 +219,8 @@ void UploadQueue::start_next_upload() {
 }
 
 void UploadQueue::upload_request_status_changed(const HTTP::Status &status) {
-    // Deliver status dict to HTTP server
-    // TODOTODO
-    //{
-    //    boost::shared_ptr<UploadStatusHandler> ph = http_status_handler_weak.lock();
-    //    if (ph) ph->postUpdate(getStatusDict());
-    //}
+    // Deliver status dict to interested observers
+    sendUpdateEvent();
 
     uint64_t this_batch_size = 0;
     if (status.state == HTTP::Status::HTTP_ERROR) {
@@ -337,6 +336,12 @@ void UploadQueue::cancel() {
     if (queue_finished_callback) queue_finished_callback(shared_ptr());
 }
 
+void UploadQueue::sendUpdateEvent()
+{
+    StatusUpdateEvent evt(getStatusDict());
+    SendEvent(&evt);
+}
+
 void HTTP::UploadQueue::addCompletionHandler( const FB::URI& uri )
 {
 
@@ -370,3 +375,5 @@ bool HTTP::UploadQueue::removeFile( const std::wstring& source_path )
 
     return false; // not found
 }
+
+void sendUpdateEvent();
