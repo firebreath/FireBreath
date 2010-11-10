@@ -142,7 +142,12 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
             KeyDownEvent ev(fb_key, (unsigned int)wParam);
             return SendEvent(&ev);
-        }   
+        }
+        case WM_SIZE:
+        {
+            ResizedEvent ev;
+            return SendEvent(&ev);
+        }
     }
 
     if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
