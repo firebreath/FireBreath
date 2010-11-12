@@ -34,6 +34,7 @@ void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
 {
+    boost::recursive_mutex::scoped_lock _l(m_observerLock);
     m_observers.push_back(sink);
     AttachedEvent newEvent;
     sink->HandleEvent(&newEvent, this);
@@ -46,6 +47,7 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 {
+    boost::recursive_mutex::scoped_lock _l(m_observerLock);
     for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
         PluginEventSinkPtr tmp = it->lock();
         if (!tmp) {
@@ -61,6 +63,7 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 
 bool PluginEventSource::SendEvent(PluginEvent* evt)
 {
+    boost::recursive_mutex::scoped_lock _l(m_observerLock);
     for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
         PluginEventSinkPtr tmp = it->lock();
         if (!tmp) m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive

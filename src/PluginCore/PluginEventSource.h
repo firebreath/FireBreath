@@ -19,6 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <vector>
 #include <typeinfo>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace FB {
 
@@ -131,6 +132,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         typedef std::vector<boost::weak_ptr<PluginEventSink> > ObserverMap; 
         ObserverMap m_observers; /// List of attached observers
+        boost::recursive_mutex m_observerLock;
     };
 };
 

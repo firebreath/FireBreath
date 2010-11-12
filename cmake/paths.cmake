@@ -39,3 +39,4 @@ set (PLUGINCOMMON_SOURCE_DIR "${SOURCE_DIR}/PluginCommon")
 
 set (UNITTEST_FW_SOURCE_DIR "${SOURCE_DIR}/unittest-cpp/UnitTest++")
 
+set(FBLIB_DIRS "${CMAKE_SOURCE_DIR}/src/libs")
