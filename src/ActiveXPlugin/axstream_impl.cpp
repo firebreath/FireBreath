@@ -416,15 +416,15 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
     {   
         m_request->stream->setHeaders( wstring_to_utf8( szResponseHeaders ) );
 
-        bool requestedSeekable = m_request->stream->isSeekable();
+        bool requestedSeekable = m_request->stream->isSeekableRequested();
 
         std::string data;
         if ( GetInfo( HTTP_QUERY_CONTENT_LENGTH, data ) ) m_request->stream->setLength( atol( data.c_str() ) );     // nasty, should use a stringstream for conversion here
         if ( GetInfo( HTTP_QUERY_CONTENT_TYPE, data ) ) m_request->stream->setMimeType( data );
-        if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->setSeekable( data == "bytes" );
+        if ( GetInfo( HTTP_QUERY_ACCEPT_RANGES, data ) ) m_request->stream->setSeekableByServer( data == "bytes" );
 
         bool ok = ( dwResponseCode >= 200 && dwResponseCode < 300 );
-        if ( requestedSeekable && !m_request->stream->isSeekable() ) ok = false;
+        if ( requestedSeekable && !m_request->stream->isSeekableByServer() ) ok = false;
 
         if ( ok )
         {

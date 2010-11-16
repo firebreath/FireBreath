@@ -61,7 +61,7 @@ namespace FB {
         ///
         /// @author Matthias
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize);
+        BrowserStream( const std::string& url, bool cache, bool requestSeekable, size_t internalBufferSize);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStream::~BrowserStream()
@@ -139,9 +139,27 @@ namespace FB {
         virtual std::string getUrl() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool BrowserStream::isSeekableByServer() const;
+        ///
+        /// @brief  Returns true if the stream is actually seekable (server says so).
+        ///
+        /// @author Matthias
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool isSeekableByServer() const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool BrowserStream::isSeekableRequested() const;
+        ///
+        /// @brief  Returns true if a stream was requested to be seekable. Not all servers support this.
+        ///
+        /// @author Matthias
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool isSeekableRequested() const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool BrowserStream::isSeekable() const;
         ///
-        /// @brief  Returns true if the stream is seekable. Not all servers support this.
+        /// @brief  Returns true if a stream was requested to be seekable and the server supports it.
         ///
         /// @author Matthias
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -224,7 +242,7 @@ namespace FB {
     protected:
         // property setters
         virtual void setUrl(const std::string& url);
-        virtual void setSeekable(bool seekable);
+        virtual void setSeekableByServer(bool seekable);
         virtual void setCached(bool cached);
         virtual void setCompleted(bool completed);
         virtual void setOpen(bool open);
@@ -237,7 +255,8 @@ namespace FB {
     private:
         // properties
         std::string     url;
-        bool            seekable;
+        bool            seekableRequested;
+        bool            seekableByServer;
         bool            cached;
         size_t          internalBufferSize;
         std::wstring    cacheFilename;

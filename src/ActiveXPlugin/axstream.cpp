@@ -18,7 +18,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-ActiveXStream::ActiveXStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize ) : FB::BrowserStream( url, cache, seekable, internalBufferSize ), closing(false)
+ActiveXStream::ActiveXStream( const std::string& url, bool cache, bool seekableRequested, size_t internalBufferSize ) : FB::BrowserStream( url, cache, seekableRequested, internalBufferSize ), closing(false)
 {
 }
 

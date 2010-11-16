@@ -17,9 +17,10 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 using namespace FB;
 
 // browser stream
-BrowserStream::BrowserStream(const std::string& Url, bool Cache, bool Seekable, size_t InternalBufferSize) 
+BrowserStream::BrowserStream(const std::string& Url, bool Cache, bool SeekableRequested, size_t InternalBufferSize) 
   : url(Url)
-  , seekable(Seekable)
+  , seekableRequested(SeekableRequested)
+  , seekableByServer(false)
   , cached(Cache)
   , internalBufferSize(InternalBufferSize)
   , length(0)
@@ -44,9 +45,19 @@ std::string BrowserStream::getUrl() const
     return url;
 }
 
+bool BrowserStream::isSeekableRequested() const
+{
+    return seekableRequested;
+}
+
+bool BrowserStream::isSeekableByServer() const
+{
+    return seekableByServer;
+}
+
 bool BrowserStream::isSeekable() const
 {
-    return seekable;
+    return isSeekableRequested() && isSeekableByServer();
 }
 
 bool BrowserStream::isCached() const
@@ -91,9 +102,9 @@ size_t BrowserStream::getInternalBufferSize() const
 
 
 
-void BrowserStream::setSeekable(bool Seekable)
+void BrowserStream::setSeekableByServer(bool SeekableByServer)
 {
-    seekable = Seekable;
+    seekableByServer = SeekableByServer;
 }
 
 void BrowserStream::setCached(bool Cached)

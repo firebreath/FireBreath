@@ -58,7 +58,7 @@ bool NpapiStream::write(const char* data, size_t dataLength, size_t& written)
 bool NpapiStream::close()
 {
     if ( !getStream() ) return false;
-    if ( isSeekable() && isOpen() )
+    if ( isOpen() )
     {
         StreamCompletedEvent ev(this, true);
         SendEvent( &ev );
@@ -106,7 +106,9 @@ void NpapiStream::signalFailedOpen()
 void NpapiStream::signalCompleted(bool success)
 {
     if ( isSeekable() && success ) return;      // If seekable, then complete is immediately sent after the open call worked. 
-                                                        // But we don't want to signal completenes right then.
+                                                // But we don't want to signal completenes right then.
+
+    if ( isCompleted() ) return;                // If already completed, don't send event again
 
     setCompleted( true );
 

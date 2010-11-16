@@ -291,12 +291,11 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
     s->setLength( stream->end );
     s->setUrl( stream->url );
     if( stream->headers ) s->setHeaders( stream->headers );
-    bool seekRequested = s->isSeekable();
-    s->setSeekable( seekable );
+    s->setSeekableByServer( seekable );
 
-    if ( !seekable && seekRequested )   // requested seekable stream, but stream was not seekable
-    {                                   //  stream can only be made seekable by downloading the entire file
-                                        //  which we don't want to happen automatically.
+    if ( s->isSeekableRequested() && !s->isSeekableByServer() )   // requested seekable stream, but stream was not seekable
+    {                                                             //  stream can only be made seekable by downloading the entire file
+                                                                  //  which we don't want to happen automatically.
         s->signalFailedOpen();
         // If unsuccessful, the function should return one of the NPError Error Codes.
         // This will cause the browser to destroy the stream without calling NPP_DestroyStream.
@@ -304,12 +303,12 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
         return NPERR_STREAM_NOT_SEEKABLE;
     }
 
-    if ( seekRequested ) *stype = NP_SEEK;
+    if ( s->isSeekable() ) *stype = NP_SEEK;
     else if ( s->isCached() ) *stype = NP_ASFILE;
     else *stype = NP_NORMAL;
 
     // first npp_newstream has to finish before the user may perform a RequestRead in the opened handler
-    if ( seekRequested ) signalStreamOpened( s ); //m_npHost->ScheduleAsyncCall( signalStreamOpened, s );      
+    if ( s->isSeekable() ) signalStreamOpened( s ); //m_npHost->ScheduleAsyncCall( signalStreamOpened, s );      
     else signalStreamOpened( s );
 
     return NPERR_NO_ERROR;
