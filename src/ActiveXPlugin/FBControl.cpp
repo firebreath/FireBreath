@@ -32,7 +32,6 @@ BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
             break;
 
         case WM_DESTROY:
-        case WM_CLOSE:
             shutdown();
             break;
         }

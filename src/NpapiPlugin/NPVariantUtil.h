@@ -237,8 +237,8 @@ namespace FB { namespace Npapi
                 return &makeNPVariant<int32_t>;
             }
             
-            // max value of T doesn't fit into int32_t, use double instead
-            return &makeNPVariant<double>;
+            // max value of T doesn't fit into int32_t, use string instead
+            return &makeNPVariant<std::string>;
         }
         
         template<class T>
