@@ -23,8 +23,8 @@ PluginWindowMacCocoa::~PluginWindowMacCocoa() {}
 
 int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     // Let the plugin handle the event if it wants
-    MacEventCocoa* macEv = new MacEventCocoa(evt);
-    if(SendEvent(macEv)) {
+    MacEventCocoa macEv(evt);
+    if(SendEvent(&macEv)) {
         return true;
     }
 

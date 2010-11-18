@@ -19,6 +19,7 @@
 #include "PluginEvents/KeyboardEvents.h"
 #include "PluginWindowMacCarbonCG.h"
 #include "ConstructDefaultPluginWindows.h"
+#include <boost/scoped_ptr.hpp>
 
 using namespace FB;
 
@@ -56,10 +57,10 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     switch (evt->what) {
         case mouseDown:
         {
-            HIPoint* point = new HIPoint();
+            boost::scoped_ptr<HIPoint> point(new HIPoint());
             point->x = evt->where.h;
             point->y = evt->where.v;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
 
             int x_0 = point->x - m_x;
             int y_0 = m_height - (point->y - m_y);
@@ -69,10 +70,10 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
 
         case mouseUp:
         {
-            HIPoint* point = new HIPoint();
+            boost::scoped_ptr<HIPoint> point(new HIPoint());
             point->x = evt->where.h;
             point->y = evt->where.v;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
 
             int x_0 = point->x - m_x;
             int y_0 = m_height - (point->y - m_y);
@@ -106,10 +107,10 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             // Get mouse coordinates and fire an event to the plugin
             CGEventRef nullEvent = CGEventCreate(NULL);
             CGPoint pointCG = CGEventGetLocation(nullEvent);
-            HIPoint* point = new HIPoint();
+            boost::scoped_ptr<HIPoint> point(new HIPoint());
             point->x = pointCG.x;
             point->y = pointCG.y;
-            HIPointConvert(point, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
+            HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, this->cgContext->window);
             // <hack>
             int px = point->x - m_x;
             int py = m_height - (point->y - m_y);
@@ -119,6 +120,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
                 if((py > 0) && (py < m_height)) {
                     if ((px == this->m_old_x) && (py == this->m_old_y)) {
                         SendEvent(&macEvent);
+                        CFRelease(nullEvent);
                         return false;
                     } else {
                         this->m_old_x = px;
@@ -127,6 +129,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
                         MouseMoveEvent mmEvt(px, py);
                         if(SendEvent(&mmEvt)) {
                             // Event was handled
+                            CFRelease(nullEvent);
                             return true;
                         }
                     }
@@ -135,7 +138,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
 
             // The plugin is still expecting a nullEvent (for drawing)
             SendEvent(&macEvent);
-
+            CFRelease(nullEvent);
             return false; 
         }
     

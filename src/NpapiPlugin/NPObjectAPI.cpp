@@ -190,6 +190,7 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     for (unsigned int i = 0; i < args.size(); i++) {
         browser->ReleaseVariantValue(&npargs[i]);
     }
+    delete [] npargs;
 
     if (!res) { // If the method call failed, throw an exception
         throw script_error(methodName.c_str());
