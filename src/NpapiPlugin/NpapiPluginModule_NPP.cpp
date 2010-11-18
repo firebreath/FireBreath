@@ -131,7 +131,9 @@ void NpapiPluginModule::scheduleAsyncCallback(NPP npp, void (*func)(void *), voi
 {
     getHolder(npp)->asyncFunctionQueue.push(FB::AsyncFunctionCallPtr(new FB::AsyncFunctionCall(func, userData)));
     //getHost(npp)->ScheduleTimer(0, false, &asyncCallbackFunction);
+#ifdef FB_MACOSX
     OneShotManager::getInstance().push(npp, &asyncCallbackFunction);
+#endif
 }
 
 NpapiPluginModule *NpapiPluginModule::Default = NULL;

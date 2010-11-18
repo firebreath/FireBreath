@@ -107,31 +107,12 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
         dstFuncs->enumerate = srcFuncs->enumerate;
     }
 #ifdef XP_MACOSX
-    bool isWebKit = false;
-    if (instance) {
-        const char* const webKitVersionPrefix = " AppleWebKit/";
-        const char *userAgent = srcFuncs->uagent(instance);
-        if (userAgent) {
-            isWebKit = (strstr(userAgent, webKitVersionPrefix) != NULL);
-        }
-    }
-    if (isWebKit)
-        srcFuncs->pluginthreadasynccall = NULL;
-#endif
-    if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
-
-#if defined(XP_MACOSX) && defined(__LP64__)
-        if (srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
-            && srcFuncs->scheduletimer) {
+    dstFuncs->pluginthreadasynccall = &FB::Npapi::NpapiPluginModule::scheduleAsyncCallback;
 #else
-        if (!srcFuncs->pluginthreadasynccall && srcFuncs->version >= NPVERS_MACOSX_HAS_COCOA_EVENTS // 23
-            && srcFuncs->scheduletimer ) {
-#endif
-            dstFuncs->pluginthreadasynccall = &FB::Npapi::NpapiPluginModule::scheduleAsyncCallback;
-        } else {
-            dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
-        }
+    if(srcFuncs->version >= NPVERS_HAS_PLUGIN_THREAD_ASYNC_CALL) { // 19
+        dstFuncs->pluginthreadasynccall = srcFuncs->pluginthreadasynccall;
     }
+#endif
     if(srcFuncs->version >= NPVERS_HAS_ALL_NETWORK_STREAMS) { // 20
         // ?
     }
