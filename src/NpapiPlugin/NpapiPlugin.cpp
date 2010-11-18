@@ -85,6 +85,7 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
 #endif
     } 
+    setReady();
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
