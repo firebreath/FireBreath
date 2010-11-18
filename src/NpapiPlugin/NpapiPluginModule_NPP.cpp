@@ -189,8 +189,9 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
+#ifdef FB_MACOSX
     OneShotManager::getInstance().clear(instance);
-    
+#endif
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
