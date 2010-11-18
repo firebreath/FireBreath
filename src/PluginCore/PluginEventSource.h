@@ -18,11 +18,17 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <vector>
 #include <typeinfo>
+#include <boost/enable_shared_from_this.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace FB {
 
     class PluginEventSink;
+    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
     class PluginEvent;
+
+    class PluginEventSource;
+    typedef boost::shared_ptr<PluginEventSource> PluginEventSourcePtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginEventSource
@@ -30,11 +36,25 @@ namespace FB {
     /// @brief  Base class for any object, such as BrowserStream or PluginWindow, that needs to fire
     /// 		events to a PluginEventSink object (such as a PluginCore derived plugin class) 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class PluginEventSource
+    class PluginEventSource : public boost::enable_shared_from_this<PluginEventSource>
     {
     public:
         PluginEventSource();
         virtual ~PluginEventSource();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn PluginEventSourcePtr shared_ptr()
+        ///
+        /// @brief  Get a shared_ptr to the current class
+        /// 		
+        /// To get a shared_ptr to a child class of this, such as PluginWindow, you can use ptr_cast:
+        /// @code
+        /// 	 FB::ptr_cast<FB::PluginCore>(shared_ptr());
+        /// @endcode
+        ///
+        /// @return shared_ptr for "this" pointer
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        PluginEventSourcePtr shared_ptr() { return shared_from_this(); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginEventSource::AttachObserver(PluginEventSink*)
@@ -44,6 +64,7 @@ namespace FB {
         /// @param  sink PluginEventSink to attach
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void AttachObserver(PluginEventSink* sink);
+        virtual void AttachObserver(PluginEventSinkPtr sink);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginEventSource::DetachObserver(PluginEventSink* sink)
@@ -53,6 +74,7 @@ namespace FB {
         /// @param  sink PluginEventSink to attach
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void DetachObserver(PluginEventSink* sink);
+        virtual void DetachObserver(PluginEventSinkPtr sink);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool PluginEventSource::SendEvent(PluginEvent* evt)
@@ -108,8 +130,9 @@ namespace FB {
         ///
         /// @brief  Defines an alias representing the observer .
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        typedef std::vector<PluginEventSink*> ObserverMap; 
+        typedef std::vector<boost::weak_ptr<PluginEventSink> > ObserverMap; 
         ObserverMap m_observers; /// List of attached observers
+        boost::recursive_mutex m_observerLock;
     };
 };
 

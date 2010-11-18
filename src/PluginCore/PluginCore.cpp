@@ -172,3 +172,15 @@ void PluginCore::setReady()
     }
     onPluginReady();
 }
+
+bool PluginCore::isWindowless()
+{
+    FB::VariantMap::iterator itr = m_params.find("windowless");
+    if (itr != m_params.end()) {
+        if (itr->second.convert_cast<std::string>().compare("true") == 0) {
+            // Plugin is windowless
+            return true;
+        }
+    }
+    return false;
+}

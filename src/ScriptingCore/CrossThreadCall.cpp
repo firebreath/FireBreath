@@ -41,9 +41,9 @@ void CrossThreadCall::asyncCallbackFunctor(void *userData)
 
     try {        
         call->funct->call();
-    } catch (const FB::script_error&) {
+    } catch (const FB::script_error& ex) {
         // we can't sensibly handle it here
-    } catch (const FB::bad_variant_cast&) {
+    } catch (const FB::bad_variant_cast& ex) {
         // we can't sensibly handle it here
     }
 }

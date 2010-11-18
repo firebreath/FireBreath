@@ -676,6 +676,8 @@ namespace FB
         FB_CONVERT_ENTRY_TO_STRING(unsigned short);
         FB_CONVERT_ENTRY_TO_STRING(char);
         FB_CONVERT_ENTRY_TO_STRING(unsigned char);
+        FB_CONVERT_ENTRY_TO_STRING(int64_t);
+        FB_CONVERT_ENTRY_TO_STRING(uint64_t);
         FB_END_CONVERT_MAP(std::string);
     }
 

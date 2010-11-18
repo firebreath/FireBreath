@@ -50,6 +50,13 @@ namespace FB { namespace Npapi {
         bool m_retainReturnedNPObject;
         bool m_isReady;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn NPObject * FB::Npapi::NpapiPlugin::getScriptableObject()
+        ///
+        /// @brief  Returns the wrapped object
+        ///
+        /// @return NPObject * for wrapped object
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         NPObject *getScriptableObject();
         static void signalStreamOpened(void* stream);
 

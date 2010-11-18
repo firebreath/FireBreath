@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/bind.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
+#include "NPJavascriptObject.h"
 #include "logging.h"
 #include <cassert>
 
@@ -199,4 +200,17 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
         browser->ReleaseVariantValue(&retVal);  // Always release the return value!
         return ret;
     }
+}
+
+FB::JSAPIPtr NPObjectAPI::getJSAPI()
+{
+    if (!obj) {
+        return JSAPIPtr();
+    }
+    
+    if (!NPJavascriptObject::isNPJavaScriptObject(obj)) {
+        return JSAPIPtr();
+    }
+    
+    return static_cast<NPJavascriptObject*>(obj)->getAPI();
 }

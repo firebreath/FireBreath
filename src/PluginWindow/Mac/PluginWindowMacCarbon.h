@@ -21,6 +21,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "PluginEvents/DrawingEvents.h"
 #include "NpapiTypes.h"
 #include <ApplicationServices/ApplicationServices.h>
+#include "NpapiBrowserHost.h"
 
 namespace FB {
     
@@ -31,7 +32,7 @@ namespace FB {
         virtual ~PluginWindowMacCarbon();
         
         virtual int16_t HandleEvent(EventRecord* evt) { return 0; }
-        void InvalidateWindow() {/* TODO */}
+        virtual void InvalidateWindow() {/* TODO */}
         virtual void clearWindow();
 
         // Accessors 
@@ -42,6 +43,9 @@ namespace FB {
 
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
+
+        // Set this window's browser host
+        void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
 
     protected:
         int m_x;
@@ -55,6 +59,8 @@ namespace FB {
         int m_clipBottom;
 
         int m_old_x, m_old_y; // Keep track of mouse movement coordinates
+
+        Npapi::NpapiBrowserHostPtr m_npHost;
     };
 };
 

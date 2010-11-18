@@ -25,6 +25,11 @@ NPJavascriptObject *NPJavascriptObject::NewObject(NpapiBrowserHostPtr host, FB::
     return obj;
 }
 
+bool NPJavascriptObject::isNPJavaScriptObject(const NPObject* const npo)
+{
+    return npo->_class == &NPJavascriptObjectClass;
+}
+
 NPJavascriptObject::NPJavascriptObject(NPP npp)
     : m_valid(true)
 {
@@ -38,6 +43,11 @@ void NPJavascriptObject::setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host)
 {
     m_api = api;
     m_browser = host;
+}
+
+FB::JSAPIPtr NPJavascriptObject::getAPI() const 
+{
+    return m_api;
 }
 
 void NPJavascriptObject::Invalidate()

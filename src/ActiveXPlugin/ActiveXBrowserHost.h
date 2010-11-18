@@ -31,9 +31,6 @@ typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
 /// @class  ActiveXBrowserHost
 ///
 /// @brief  Provides a BrowserHost implementation for ActiveX
-///
-/// @author Richard Bateman
-/// @date   10/15/2010
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 class ActiveXBrowserHost :
     public FB::BrowserHost

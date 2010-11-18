@@ -24,6 +24,9 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 namespace FB {
 
     class PluginEvent;
+    
+    class PluginEventSink;
+    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginEventSink
     ///
@@ -37,7 +40,7 @@ namespace FB {
         virtual ~PluginEventSink() { };
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn boost::shared_ptr<PluginEventSink> shared_ptr()
+        /// @fn PluginEventSinkPtr shared_ptr()
         ///
         /// @brief  Get a shared_ptr to the current class
         /// 		
@@ -48,7 +51,7 @@ namespace FB {
         ///
         /// @return shared_ptr for "this" pointer
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        boost::shared_ptr<PluginEventSink> shared_ptr() { return shared_from_this(); }
+        PluginEventSinkPtr shared_ptr() { return shared_from_this(); }
 
     public:
 

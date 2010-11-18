@@ -23,8 +23,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "FBTestPluginAPI.h"
 
+#include <boost/make_shared.hpp>
+#include "NPJavascriptObject.h"
+#include "NPObjectAPI.h"
+
 FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
-{
+{    
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
     registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));
@@ -44,6 +48,8 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
+    
+    registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
 
     // Read-write property
     registerProperty("testString",
@@ -69,6 +75,14 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
 FBTestPluginAPI::~FBTestPluginAPI()
 {
     //std::map<int,int>::capacity()
+}
+
+boost::shared_ptr<FBTestPlugin> FBTestPluginAPI::getPlugin()
+{
+    boost::shared_ptr<FBTestPlugin> plugin = m_pluginWeak.lock();
+    if (!plugin)
+        throw FB::script_error("The plugin object has been destroyed");
+    return plugin;
 }
 
 std::wstring FBTestPluginAPI::say(const std::wstring& val)
@@ -254,4 +268,14 @@ bool FBTestPluginAPI::testStreams()
 std::string FBTestPluginAPI::get_pluginPath()
 {
     return getPlugin()->getPluginPath();
+}
+
+long FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b) 
+{
+    boost::shared_ptr<SimpleMathAPI> math = FB::get_jsapi<SimpleMathAPI>(jso);
+    if (!math) {
+        throw FB::invalid_arguments("expected SimpleMath object");
+    }
+    
+    return math->add(a, b);
 }

@@ -16,15 +16,9 @@
 
 using namespace FB;
 
-PluginWindowMacCarbon::PluginWindowMacCarbon()
-{
-    
-}
+PluginWindowMacCarbon::PluginWindowMacCarbon() {}
 
-PluginWindowMacCarbon::~PluginWindowMacCarbon()
-{
-    
-}
+PluginWindowMacCarbon::~PluginWindowMacCarbon() {}
 
 void PluginWindowMacCarbon::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
     m_x = x;
@@ -71,3 +65,4 @@ int PluginWindowMacCarbon::getWindowWidth() {
 void PluginWindowMacCarbon::clearWindow() {
     // TODO
 }
+
