@@ -160,16 +160,23 @@ BrowserStream::Range::Range(size_t Start, size_t End) : start(Start), end(End)
 
 
 // default stream handler
+DefaultBrowserStreamHandler::DefaultBrowserStreamHandler() : stream(0)
+{
+}
+
+DefaultBrowserStreamHandler::~DefaultBrowserStreamHandler()
+{
+}
 
 bool DefaultBrowserStreamHandler::onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream * Stream)
 {
-    stream = Stream;
+    setStream( Stream );
     return false;
 }
 
 bool DefaultBrowserStreamHandler::onStreamDestroyed(FB::StreamDestroyedEvent *evt, FB::BrowserStream *)
 {
-    stream = 0;
+    setStream( 0 );
     return false;
 }
 
@@ -192,4 +199,19 @@ bool DefaultBrowserStreamHandler::onStreamOpened(FB::StreamOpenedEvent *evt, FB:
 bool DefaultBrowserStreamHandler::onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *)
 {
      return false;
+}
+
+FB::BrowserStream* DefaultBrowserStreamHandler::getStream() const
+{
+     return stream;
+}
+
+void DefaultBrowserStreamHandler::setStream(FB::BrowserStream* Stream)
+{
+    if ( stream && Stream )
+    {
+        // attempt to overwrite the stream, strange
+        assert(false);
+    }
+    stream = Stream;
 }
