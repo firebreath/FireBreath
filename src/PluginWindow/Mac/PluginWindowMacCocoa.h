@@ -32,7 +32,12 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 namespace FB {
 
     void timerCallback(NPP npp, uint32_t timerID);
-
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  PluginWindowMacCocoa
+    ///
+    /// @brief  Mac OS X Cocoa specific implementation of PluginWindow
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindowMacCocoa : public PluginWindow {
         public:
             PluginWindowMacCocoa();
@@ -44,9 +49,23 @@ namespace FB {
             // Set this window's browser host
             void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
 
-            // Schedules a timer, returns the timer's unique ID
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn     int PluginWindowMacCocoa::scheduleTimer(int interval, bool repeat)
+            ///
+            /// @brief  Schedule a Cocoa timer to notify you on the given interval or period
+            /// 
+            /// @param  interval    Numer of milliseconds before the timer event is first called
+            /// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             virtual int scheduleTimer(int interval, bool repeat);
-            // Unschedules timer corresponding to unique ID
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
+            /// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
+            ///
+            /// @brief  Unschedule a previously scheduled timer
+            /// 
+            /// @param  timerId     The id of the previously scheduled timer
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             virtual void unscheduleTimer(int timerId);
             // Handles a timer event 
             virtual void handleTimerEvent();

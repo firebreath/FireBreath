@@ -46,16 +46,13 @@ namespace FB {
             FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (non-void)");
         }
         void call() {
-            boost::shared_ptr<C> tmp;
-            if (ref) tmp = reference.lock();
-            if (!ref || tmp)
-                retVal = func();
+            retVal = func();
         }
         RT getResult() { return retVal; }
 
     protected:
         bool ref;
-        boost::weak_ptr<C> reference;
+        boost::shared_ptr<C> reference;
         Functor func;
         RT retVal;
     };
@@ -70,16 +67,13 @@ namespace FB {
             FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (void)");
         }
         void call() {
-            boost::shared_ptr<C> tmp;
-            if (ref) tmp = reference.lock();
-            if (!ref || tmp)
-                func();
+            func();
         }
 
     protected:
         Functor func;
         bool ref;
-        boost::weak_ptr<C> reference;
+        boost::shared_ptr<C> reference;
     };
 
     class CrossThreadCall

@@ -30,6 +30,7 @@ include_directories(
     ${FIREBREATH_CONFIG_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
+    ${PLUGINWINDOW_SOURCE_DIR}
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -52,6 +53,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     variant_map.*
     TypeIDMap.*
     utf8*
+    URI*
     SafeQueue*
 )
 
@@ -59,6 +61,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     JSAPI*
     BrowserHost.*
     JSObject.*
+    JSArray.*
     AsyncBrowser*
     Cross*
     AsyncFunction*
