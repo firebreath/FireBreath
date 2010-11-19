@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "Win/win_common.h"
 #include <ShlGuid.h>
+#include "logging.h"
 #include "Win/KeyCodesWin.h"
 #include "AsyncFunctionCall.h"
 
@@ -159,6 +160,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     if (uMsg == WM_ASYNCTHREADINVOKE) {
+        FBLOG_TRACE("PluginWindow", "Running async function call");
         FB::AsyncFunctionCall *evt = static_cast<FB::AsyncFunctionCall*>((void*)lParam);
         evt->func(evt->userData);
         delete evt;

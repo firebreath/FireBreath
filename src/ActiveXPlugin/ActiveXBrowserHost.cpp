@@ -49,9 +49,11 @@ ActiveXBrowserHost::~ActiveXBrowserHost(void)
 
 void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
-    if (m_hWnd != NULL)
+    if (m_hWnd != NULL) {
+        FBLOG_TRACE("ActiveXHost", "Scheduling async call for main thread");
         ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
             (LPARAM)new FB::AsyncFunctionCall(func, userData));
+    }
 }
 
 void *ActiveXBrowserHost::getContextID()

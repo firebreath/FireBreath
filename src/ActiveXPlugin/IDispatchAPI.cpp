@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "IDispatchAPI.h"
 #include "axmain.h"
 #include <dispex.h>
+#include <boost/scoped_array.hpp>
 #include "utf8_tools.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
@@ -270,11 +271,11 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         return host->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
-    CComVariant *comArgs = new CComVariant[args.size()];
+    boost::scoped_array<CComVariant> comArgs(new CComVariant[args.size()]);
     DISPPARAMS params;
     params.cArgs = args.size();
     params.cNamedArgs = 0;
-    params.rgvarg = comArgs;
+    params.rgvarg = comArgs.get();
 
     VARIANT res;
     for (size_t i = 0; i < args.size(); i++) {
@@ -285,7 +286,6 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         DISPATCH_METHOD, &params, &res, NULL, NULL);
 
     if (SUCCEEDED(hr)) {
-        delete [] comArgs;
         return m_browser->getVariant(&res);
     } else {
         throw FB::script_error("Could not get property");

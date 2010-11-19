@@ -151,7 +151,10 @@ namespace FB {
             funct->call();
         }
         
-        if (varResult.get_type() == typeid(FB::script_error)) {
+        if (varResult.get_type() == typeid(FB::script_error*)) {
+            FB::script_error* tmp(varResult.cast<FB::script_error*>());
+            std::string msg = tmp->what();
+            delete tmp;
             throw FB::script_error(varResult.cast<const FB::script_error>().what());
         }
     }
@@ -182,7 +185,10 @@ namespace FB {
             funct->call();
             result = funct->getResult();
         }
-        if (varResult.get_type() == typeid(FB::script_error)) {
+        if (varResult.get_type() == typeid(FB::script_error*)) {
+            FB::script_error* tmp(varResult.cast<FB::script_error*>());
+            std::string msg = tmp->what();
+            delete tmp;
             throw FB::script_error(varResult.cast<const FB::script_error>().what());
         }
         return result;

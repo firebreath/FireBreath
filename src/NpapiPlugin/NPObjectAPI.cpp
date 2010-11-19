@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
+#include <boost/scoped_array.hpp>
 #include "NPObjectAPI.h"
 #include "NpapiBrowserHost.h"
 #include "logging.h"
@@ -173,7 +174,7 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     NPVariant retVal;
 
     // Convert the arguments to NPVariants
-    NPVariant *npargs = new NPVariant[args.size()];
+    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size()]);
     for (unsigned int i = 0; i < args.size(); i++) {
         browser->getNPVariant(&npargs[i], args[i]);
     }
@@ -181,16 +182,15 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     bool res = false;
     // Invoke the method ("" means invoke default method)
     if (methodName.size() > 0) {
-        res = browser->Invoke(obj, browser->GetStringIdentifier(methodName.c_str()), npargs, args.size(), &retVal);
+        res = browser->Invoke(obj, browser->GetStringIdentifier(methodName.c_str()), npargs.get(), args.size(), &retVal);
     } else {
-        res = browser->InvokeDefault(obj, npargs, args.size(), &retVal);
+        res = browser->InvokeDefault(obj, npargs.get(), args.size(), &retVal);
     }
 
     // Free the NPVariants that we earlier allocated
     for (unsigned int i = 0; i < args.size(); i++) {
         browser->ReleaseVariantValue(&npargs[i]);
     }
-    delete [] npargs;
 
     if (!res) { // If the method call failed, throw an exception
         throw script_error(methodName.c_str());

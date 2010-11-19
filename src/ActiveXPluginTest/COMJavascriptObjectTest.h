@@ -23,9 +23,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 DISPID getIDForName(IDispatchEx *obj, std::string name)
 {
-    USES_CONVERSION;
-    CA2W wStr(name.c_str());
-    OLECHAR *oleStr = wStr;
+    std::wstring wStr(FB::utf8_to_wstring(name));
+    CComBSTR nStr(wStr.c_str());
+    OLECHAR *oleStr = nStr.m_str;
     DISPID dispId(-1);
     HRESULT hr = obj->GetIDsOfNames(IID_NULL, &oleStr, 1, LOCALE_SYSTEM_DEFAULT, &dispId);
     if (SUCCEEDED(hr)) {
