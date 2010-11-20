@@ -50,7 +50,11 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
 {
     m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
     m_canvas = gtk_drawing_area_new();
-    GTK_WIDGET_SET_FLAGS (GTK_WIDGET(m_canvas), GTK_CAN_FOCUS);
+#ifdef GTK_WIDGET_SET_FLAGS
+    GTK_WIDGET_SET_FLAGS(GTK_WIDGET(m_canvas), GTK_CAN_FOCUS);
+#else // gtk+-2.22 or newer
+    gtk_widget_set_can_focus(GTK_WIDGET(m_canvas), true);
+#endif
 
     gtk_widget_add_events(
         m_canvas,
