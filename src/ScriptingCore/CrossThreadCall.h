@@ -24,6 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/scoped_ptr.hpp>
 #include "logging.h"
 
 namespace FB {
