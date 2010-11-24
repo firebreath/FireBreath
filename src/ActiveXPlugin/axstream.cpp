@@ -80,7 +80,7 @@ bool ActiveXStream::addRequest( const ActiveXStreamRequest& Request )
 
 size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
 {
-    size_t effectiveLen = min( getInternalBufferSize(), static_cast<size_t>(len) );
+    size_t effectiveLen = len; //min( getInternalBufferSize(), static_cast<size_t>(len) );
     if ( effectiveLen ) 
     {
         //memcpy( &internalBuffer[0], buffer, effectiveLen );
@@ -90,7 +90,7 @@ size_t ActiveXStream::signalDataArrived(void* buffer, size_t len, size_t offset)
         {
             progress = float( offset + len ) / float( getLength() ) * 100.f;
         }
-        if ( isOpen() ) 
+        if ( isOpen() || (getCacheFilename() != L"") ) 
         {
             StreamDataArrivedEvent ev(this, buffer, effectiveLen, offset, progress);
             SendEvent( &ev );

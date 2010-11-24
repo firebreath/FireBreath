@@ -253,9 +253,8 @@ ActiveXBindStatusCallback::OnStopBinding(HRESULT hrStatus, LPCWSTR pszError)
 ActiveXBindStatusCallback::GetBindInfo(DWORD* pgrfBINDF, BINDINFO* pbindInfo)
 {
     *pgrfBINDF = BINDF_ASYNCHRONOUS | BINDF_ASYNCSTORAGE | BINDF_PULLDATA;
-    *pgrfBINDF |= BINDF_GETNEWESTVERSION;
     if ( m_request->stream && m_request->stream->isCached() ) *pgrfBINDF |= BINDF_NEEDFILE;
-    else *pgrfBINDF |= BINDF_NOWRITECACHE | BINDF_PRAGMA_NO_CACHE;
+    else *pgrfBINDF |= BINDF_NOWRITECACHE | BINDF_PRAGMA_NO_CACHE | BINDF_GETNEWESTVERSION;
 
     // Set up the BINDINFO data structure
     pbindInfo->cbSize = sizeof(BINDINFO);

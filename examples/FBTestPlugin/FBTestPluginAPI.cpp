@@ -122,7 +122,16 @@ void FBTestPluginAPI::testEvent(const std::string& param)
 
 FB::variant FBTestPluginAPI::echo(const FB::variant& a)
 {
-    m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
+    try {
+        if (a.is_of_type<FB::JSObjectPtr>()) {
+            m_host->htmlLog("Echoing: " + a.cast<FB::JSObjectPtr>()->Invoke("ToString", FB::variant_list_of()).convert_cast<std::string>());
+        } else {
+            m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
+        }
+    } catch (...) {
+        m_host->htmlLog("Echoing: (unknown)");
+    }
+    
     return a;
 }
 

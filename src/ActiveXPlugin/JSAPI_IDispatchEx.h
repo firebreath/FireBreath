@@ -28,6 +28,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "dispex.h"
 #include <map>
 #include "logging.h"
+#include <mshtmdid.h>
 
 template <class T, class IDISP, const IID* piid>
 class JSAPI_IDispatchEx :
@@ -311,6 +312,8 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
                 case DISPID_ENABLED:
                     CComVariant(true).Detach(pvarRes);
                     return S_OK;
+                case DISPID_SECURITYCTX:
+                    return E_NOTIMPL;
             }
         }
 
@@ -323,12 +326,12 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
 
             m_host->getComVariant(pvarRes, rVal);
 
-        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasProperty(wsName)) {
+        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasProperty(wsName)) {
 
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
 
             m_api->SetProperty(wsName, newVal);
-        } else if (wFlags & DISPATCH_PROPERTYPUT && m_api->HasEvent(wsName)) {
+        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasEvent(wsName)) {
             
             FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
             if (newVal.empty()) {

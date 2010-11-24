@@ -31,6 +31,10 @@ BOOL CFBControl::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARA
                 return TRUE;
             break;
 
+        case WM_MOUSEACTIVATE:
+            lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+            return TRUE;
+
         case WM_DESTROY:
             shutdown();
             break;
