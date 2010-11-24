@@ -181,7 +181,7 @@ namespace FB {
         /// @return true if it succeeds, false if it fails. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool get_valid();
-    private:
+    protected:
         MethodFunctorMap m_methodFunctorMap;        // Stores the methods exposed to JS
         PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
         

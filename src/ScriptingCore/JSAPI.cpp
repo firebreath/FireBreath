@@ -44,6 +44,32 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& 
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
+    {
+        FB::JSAPIPtr self(shared_ptr());
+        for (ProxyList::iterator proxyIt = m_proxies.begin();
+            proxyIt != m_proxies.end(); proxyIt++) {
+            FB::JSAPIPtr proxy(proxyIt->lock());
+            if (!proxy) {
+                // Since you can't use a shared_ptr in a destructor, there
+                // is no way for the proxy object to let us know when it goes
+                // away; thus when we find them, we remove them for efficiency
+                m_proxies.erase(proxyIt);
+                continue;
+            }
+
+            FB::VariantList newArgs;
+            for (std::vector<variant>::const_iterator it = args.begin();
+                it != args.end(); it++) {
+                if (it->is_of_type<FB::JSAPIPtr>() && it->convert_cast<FB::JSAPIPtr>() == self) {
+                    newArgs.push_back(proxy);
+                } else {
+                    newArgs.push_back(*it);
+                }
+            }
+            proxy->FireEvent(eventName, newArgs);
+        }
+    }
+
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(eventName);
 
     for (EventMultiMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
@@ -193,4 +219,9 @@ void JSAPI::SetProperty(const std::wstring& propertyName, const variant& value)
 variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>& args)
 {
     return Invoke(wstring_to_utf8(methodName), args);
+}
+
+void FB::JSAPI::registerProxy( const JSAPIWeakPtr &ptr )
+{
+    m_proxies.push_back(ptr);
 }

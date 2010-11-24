@@ -75,6 +75,12 @@ namespace FB
     // FB pointer types
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @typedef    FB::JSAPIWeakPtr
+    ///
+    /// @brief  Defines an alias for a JSAPI weak_ptr (you should never use a JSAPI* directly)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    typedef boost::weak_ptr<FB::JSAPI> JSAPIWeakPtr; 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSAPIPtr
     ///
     /// @brief  Defines an alias for a JSAPI shared_ptr (you should never use a JSAPI* directly)
@@ -223,11 +229,35 @@ namespace FB
     typedef std::map<std::string, PropertyInfo> PropertyMap;
 
     // new style JSAPI methods
+    /// @brief  Used to set a SecurityZone for a method or property -- used by JSAPISecure
+    typedef int SecurityZone;
+
+    /// @brief  Default SecurityZone values; you can use these or provide your own
+    enum SecurityLevel {
+        SecurityScope_Public = 0,
+        SecurityScope_Protected = 2,
+        SecurityScope_Private = 4,
+        SecurityScope_Local = 6
+    };
 
     /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
     typedef boost::function<variant (const std::vector<variant>&)> CallMethodFunctor;
+    struct MethodFunctors
+    {
+        CallMethodFunctor call;
+        SecurityZone zone;
+        MethodFunctors() : call(), zone(0) {}
+        MethodFunctors(const CallMethodFunctor& call) : call(call), zone(0) {}
+        MethodFunctors(const SecurityZone& zone, const CallMethodFunctor& call) : call(call), zone(zone) {}
+        MethodFunctors(const MethodFunctors& m) : call(m.call), zone(m.zone) {}
+        MethodFunctors& operator=(const MethodFunctors& rhs) {
+            call = rhs.call;
+            zone = rhs.zone;
+            return *this;
+        }
+    };
     /// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
-    typedef std::map<std::string, CallMethodFunctor> MethodFunctorMap;
+    typedef std::map<std::string, MethodFunctors> MethodFunctorMap;
 
     // new style JSAPI properties
 
@@ -240,14 +270,18 @@ namespace FB
     {
         GetPropFunctor get;
         SetPropFunctor set;
-        PropertyFunctors() : get(), set() {}
+        SecurityZone zone;
+        PropertyFunctors() : get(), set(), zone(0) {}
         PropertyFunctors(const GetPropFunctor& get, const SetPropFunctor& set)
-          : get(get), set(set) {}
+          : get(get), set(set), zone(0) {}
         PropertyFunctors(const PropertyFunctors& p)
-          : get(p.get), set(p.set) {}
+          : get(p.get), set(p.set), zone(p.zone) {}
+        PropertyFunctors(const SecurityZone& zone, const GetPropFunctor& get, const SetPropFunctor& set)
+          : get(get), set(set), zone(zone) {}
         PropertyFunctors& operator=(const PropertyFunctors& rhs) {
             get = rhs.get;
             set = rhs.set;
+            zone = rhs.zone;
             return *this;
         }
     };

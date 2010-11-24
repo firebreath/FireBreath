@@ -16,20 +16,16 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef FB_JSAPISECURE_H
 #define FB_JSAPISECURE_H
 
+#include "APITypes.h"
+#include <list>
 #include "JSAPIAuto.h"
 
 namespace FB {
-    typedef int SecurityZone;
+    class JSAPISecureProxy;
+    typedef boost::weak_ptr<JSAPISecureProxy> JSAPISecureProxyWeakPtr;
 
     class JSAPISecure : public FB::JSAPIAuto
     {
-    public:
-        enum SecurityLevel {
-            SecurityScope_Public = 0,
-            SecurityScope_Protected = 2,
-            SecurityScope_Private = 4,
-            SecurityScope_Local = 6
-        };
     public:
         JSAPISecure(const SecurityZone securityLevel, const std::string& description = "<JSAPI-Secure driven Javascript Object>");
         virtual ~JSAPISecure();
@@ -37,9 +33,31 @@ namespace FB {
         virtual void registerMethod(const std::string& name, const SecurityZone securityLevel, const CallMethodFunctor& func);
         virtual void registerProperty(const std::string& name, const SecurityZone securityLevel, const PropertyFunctors& propFuncs);
 
+        virtual bool HasMethod(const std::string& methodName);
+        virtual bool HasMethod(const FB::SecurityZone &zone, const std::string& methodName);
+        virtual bool HasProperty(const std::string& propertyName);
+        virtual bool HasProperty(const FB::SecurityZone &zone, const std::string& propertyName);
+        virtual bool HasProperty(int idx);
+        virtual bool HasProperty(const FB::SecurityZone &zone, int idx);
+
+        virtual variant GetProperty(const std::string& propertyName);
+        virtual variant GetProperty(const FB::SecurityZone &zone, const std::string& propertyName);
+        virtual void SetProperty(const std::string& propertyName, const variant& value);
+        virtual void SetProperty(const FB::SecurityZone &zone, const std::string& propertyName, const variant& value);
+        virtual variant GetProperty(int idx);
+        virtual variant GetProperty(const FB::SecurityZone &zone, int idx);
+        virtual void SetProperty(int idx, const variant& value);
+        virtual void SetProperty(const FB::SecurityZone &zone, int idx, const variant& value);
+        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+        virtual variant Invoke(const FB::SecurityZone &zone, const std::string& methodName, const std::vector<variant>& args);
+
+        virtual bool propertyAccessible( SecurityZone m_zone, const std::string& propertyName );
+        virtual bool methodAccessible( SecurityZone m_zone, const std::string& methodName );
+
     protected:
         SecurityZone m_zone;
     };
+    typedef boost::shared_ptr<FB::JSAPISecure> JSAPISecurePtr;
 };
 
 #endif // FB_JSAPIAUTO_H

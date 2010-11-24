@@ -30,7 +30,7 @@ namespace HTTP {
     class HTTPService : public boost::enable_shared_from_this<HTTPService>
     {
     public:
-        static boost::shared_ptr<HTTPService> create(std::string ipaddr = "127.0.0.1", int port = 0);
+        static boost::shared_ptr<HTTPService> create(const std::string ipaddr = "127.0.0.1", const int port = 0, const std::string hostname = "localhost");
         HTTPService() { };
         virtual ~HTTPService() { };
 

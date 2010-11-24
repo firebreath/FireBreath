@@ -57,10 +57,15 @@ void BasicService::deregisterHandler(boost::shared_ptr<HTTPHandler> hnd) {
     handlers.remove(hnd);
 }
 
-BasicService::BasicService(std::string ipaddr, int port) : srv_acceptor(service), srv_endpoint(ip::tcp::endpoint(ip::address_v4::from_string(ipaddr.c_str()), port)), signing_key(NULL), signing_key_length(0) { }
+BasicService::BasicService(const std::string &ipaddr, const int port, const std::string &hostname)
+    : srv_acceptor(service),
+      srv_endpoint(ip::tcp::endpoint(ip::address_v4::from_string(ipaddr.c_str()), port)),
+      signing_key(NULL),
+      signing_key_length(0),
+      m_hostname(hostname) { }
+
 // Init() needs to be separate so that shared_from_this can give the shared_ptr to the workers in do_async_accept() without exploding everything
 // It's weird, but it works. Read the docs on boost::weak_ptr and enable_shared_from_this for more information.
-
 void BasicService::init() {
     // Initialize presalted hash state
     signing_key_length = 2048;
@@ -125,7 +130,11 @@ FB::URI BasicService::getBaseUri() const {
     FB::URI res;
     res.protocol = "http";
     res.port = srv_endpoint.port();
-    res.domain = srv_endpoint.address().to_string();
+    if (!m_hostname.empty()) {
+        res.domain = m_hostname;
+    } else {
+        res.domain = srv_endpoint.address().to_string();
+    }
     res.path = "/";
     return res;
 }

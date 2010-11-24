@@ -39,6 +39,8 @@ namespace HTTP {
     public:
         friend class HTTPService;
 
+    protected:
+        BasicService(const std::string &ipaddr, const int port, const std::string &hostname);
     public:
         virtual ~BasicService();
 
@@ -64,7 +66,6 @@ namespace HTTP {
     protected:
         void terminate();
 
-        BasicService(std::string ip_addr, int port);
         void init();
 
         void _worker_thread_entry();
@@ -107,6 +108,7 @@ namespace HTTP {
 
         boost::asio::ip::tcp::acceptor srv_acceptor;
         boost::asio::ip::tcp::endpoint srv_endpoint;
+        std::string m_hostname;
     };
 };
 

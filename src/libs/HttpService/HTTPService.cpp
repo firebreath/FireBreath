@@ -22,8 +22,8 @@ using namespace HTTP;
 boost::recursive_mutex HTTPService::instance_set_lock;
 std::list<boost::weak_ptr<HTTPService> > HTTPService::instances;
 
-boost::shared_ptr<HTTPService> HTTPService::create(std::string ipaddr, int port) {
-    boost::shared_ptr<BasicService> svc(new BasicService(ipaddr, port));
+boost::shared_ptr<HTTPService> HTTPService::create(const std::string ipaddr, const int port, const std::string hostname) {
+    boost::shared_ptr<BasicService> svc(new BasicService(ipaddr, port, hostname));
     svc->init();
     {
         boost::recursive_mutex::scoped_lock _l(instance_set_lock);

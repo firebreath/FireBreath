@@ -42,7 +42,7 @@ namespace FB
     /// @see JSAPI
     template<class C, typename F1, typename F2>
     inline PropertyFunctors 
-    make_property(C* instance, F1 getter, F2 setter);
+    make_property(C* instance, F1 getter, F2 setter, const FB::SecurityZone zone = 0);
     
     /// @brief Generate read-only property functors for use with registerProperty() of FB::JSAPIAuto.
     /// @code
@@ -58,7 +58,7 @@ namespace FB
     /// @see JSAPI
     template<class C, typename F>
     inline PropertyFunctors
-    make_property(C* instance, F getter);
+    make_property(C* instance, F getter, const FB::SecurityZone zone = 0);
     
     namespace detail { namespace properties 
     {
@@ -141,9 +141,9 @@ namespace FB
 
     template<class C, typename F1, typename F2>
     inline PropertyFunctors 
-    make_property(C* instance, F1 f1, F2 f2)
+    make_property(C* instance, F1 f1, F2 f2, const FB::SecurityZone zone)
     {
-        return PropertyFunctors(
+        return PropertyFunctors(zone,
             FB::detail::properties::getter<C, F1>::result::f(instance, f1),
             FB::detail::properties::setter<C, F2>::result::f(instance, f2));
     }
@@ -152,9 +152,9 @@ namespace FB
 
     template<class C, typename F>
     inline PropertyFunctors
-    make_property(C* instance, F f)
+    make_property(C* instance, F f, const FB::SecurityZone zone)
     {
-        return PropertyFunctors(
+        return PropertyFunctors(zone,
             FB::detail::properties::getter<C, F>::result::f(instance, f),
             boost::bind(FB::detail::properties::dummySetter, _1));
     }

@@ -45,7 +45,7 @@ if (log4cplus_target_exists)
         log4cplus/*.cpp
         log4cplus/*.h
     )
-    SOURCE_GROUP(BoostLog ${LOGGER})
+    SOURCE_GROUP(log4cplus ${LOGGER})
 elseif(NOT CUSTOM_LOGGING)
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         null/*.cpp

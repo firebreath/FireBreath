@@ -172,7 +172,7 @@ FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vect
         if(it == m_methodFunctorMap.end())
             throw invalid_member(methodName);
 
-        return it->second(args);
+        return it->second.call(args);
     } catch (const FB::bad_variant_cast& ex) {
         std::string errorMsg("Could not convert from ");
         errorMsg += ex.from;

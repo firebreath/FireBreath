@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_JSAPI
 
 #include "APITypes.h"
+#include <list>
 #include <stdexcept>
 #include <boost/enable_shared_from_this.hpp>
 
@@ -458,10 +459,19 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
 
+    public:
+        virtual void registerProxy(const JSAPIWeakPtr &ptr);
+
     protected:
-        EventMultiMap m_eventMap;       // Stores event handlers
-        EventSingleMap m_defEventMap;   // Stores event-as-property event handlers
-        EventIFaceMap m_evtIfaces;      // Stores event interfaces
+        // Stores event handlers
+        EventMultiMap m_eventMap;       
+        // Stores event-as-property event handlers
+        EventSingleMap m_defEventMap;   
+        // Stores event interfaces
+        EventIFaceMap m_evtIfaces;      
+
+        typedef std::vector<JSAPIWeakPtr> ProxyList;
+        ProxyList m_proxies;
                 
         bool m_valid;                   // Tracks if this object has been invalidated
     };
