@@ -77,11 +77,15 @@ bool FB::JSAPIProxy::HasMethod( const std::string& methodName )
 
 bool FB::JSAPIProxy::HasProperty( const std::wstring& propertyName )
 {
+    if (propertyName == L"expired")
+        return true;
     return getAPI()->HasProperty(propertyName);
 }
 
 bool FB::JSAPIProxy::HasProperty( const std::string& propertyName )
 {
+    if (propertyName == "expired")
+        return true;
     return getAPI()->HasProperty(propertyName);
 }
 
@@ -102,11 +106,15 @@ bool FB::JSAPIProxy::HasEvent( const std::wstring& eventName )
 
 FB::variant FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
 {
+    if (propertyName == L"expired")
+        return isExpired();
     return getAPI()->GetProperty(propertyName);
 }
 
 FB::variant FB::JSAPIProxy::GetProperty( const std::string& propertyName )
 {
+    if (propertyName == "expired")
+        return isExpired();
     return getAPI()->GetProperty(propertyName);
 }
 
