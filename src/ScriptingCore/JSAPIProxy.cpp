@@ -25,11 +25,25 @@ boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( FB::JSAPIPtr &inner )
     return ptr;
 }
 
-FB::JSAPIProxy::JSAPIProxy( FB::JSAPIPtr &inner ) : m_api(inner)
+boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( FB::JSAPIWeakPtr &inner )
+{
+    // This is necessary because you can't use shared_from_this in the constructor
+    boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
+    inner.lock()->registerProxy(ptr);
+
+    return ptr;
+}
+
+FB::JSAPIProxy::JSAPIProxy( FB::JSAPIPtr &inner ) : m_api(inner), m_apiWeak(inner)
 {
     if (!inner) {
         throw FB::script_error("Invalid inner JSAPI object passed to proxy");
     }
+}
+
+FB::JSAPIProxy::JSAPIProxy( FB::JSAPIWeakPtr &inner ) : m_apiWeak(inner)
+{
+
 }
 
 FB::JSAPIProxy::~JSAPIProxy( void )
@@ -38,90 +52,90 @@ FB::JSAPIProxy::~JSAPIProxy( void )
 
 void FB::JSAPIProxy::invalidate()
 {
-    m_api->invalidate();
+    getAPI()->invalidate();
 }
 
 void FB::JSAPIProxy::getMemberNames( std::vector<std::string> &nameVector )
 {
-    m_api->getMemberNames(nameVector);
+    getAPI()->getMemberNames(nameVector);
 }
 
 size_t FB::JSAPIProxy::getMemberCount()
 {
-    return m_api->getMemberCount();
+    return getAPI()->getMemberCount();
 }
 
 bool FB::JSAPIProxy::HasMethod( const std::wstring& methodName )
 {
-    return m_api->HasMethod(methodName);
+    return getAPI()->HasMethod(methodName);
 }
 
 bool FB::JSAPIProxy::HasMethod( const std::string& methodName )
 {
-    return m_api->HasMethod(methodName);
+    return getAPI()->HasMethod(methodName);
 }
 
 bool FB::JSAPIProxy::HasProperty( const std::wstring& propertyName )
 {
-    return m_api->HasProperty(propertyName);
+    return getAPI()->HasProperty(propertyName);
 }
 
 bool FB::JSAPIProxy::HasProperty( const std::string& propertyName )
 {
-    return m_api->HasProperty(propertyName);
+    return getAPI()->HasProperty(propertyName);
 }
 
 bool FB::JSAPIProxy::HasProperty( int idx )
 {
-    return m_api->HasProperty(idx);
+    return getAPI()->HasProperty(idx);
 }
 
 bool FB::JSAPIProxy::HasEvent( const std::string& eventName )
 {
-    return m_api->HasEvent(eventName);
+    return getAPI()->HasEvent(eventName);
 }
 
 bool FB::JSAPIProxy::HasEvent( const std::wstring& eventName )
 {
-    return m_api->HasEvent(eventName);
+    return getAPI()->HasEvent(eventName);
 }
 
 FB::variant FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
 {
-    return m_api->GetProperty(propertyName);
+    return getAPI()->GetProperty(propertyName);
 }
 
 FB::variant FB::JSAPIProxy::GetProperty( const std::string& propertyName )
 {
-    return m_api->GetProperty(propertyName);
+    return getAPI()->GetProperty(propertyName);
 }
 
 FB::variant FB::JSAPIProxy::GetProperty( int idx )
 {
-    return m_api->GetProperty(idx);
+    return getAPI()->GetProperty(idx);
 }
 
 void FB::JSAPIProxy::SetProperty( const std::wstring& propertyName, const variant& value )
 {
-    m_api->SetProperty(propertyName, value);
+    getAPI()->SetProperty(propertyName, value);
 }
 
 void FB::JSAPIProxy::SetProperty( const std::string& propertyName, const variant& value )
 {
-    m_api->SetProperty(propertyName, value);
+    getAPI()->SetProperty(propertyName, value);
 }
 
 void FB::JSAPIProxy::SetProperty( int idx, const variant& value )
 {
-    m_api->SetProperty(idx, value);
+    getAPI()->SetProperty(idx, value);
 }
 
 FB::variant FB::JSAPIProxy::Invoke( const std::wstring& methodName, const std::vector<variant>& args )
 {
-    return m_api->Invoke(methodName, args);
+    return getAPI()->Invoke(methodName, args);
 }
 
 FB::variant FB::JSAPIProxy::Invoke( const std::string& methodName, const std::vector<variant>& args )
 {
-    return m_api->Invoke(methodName, args);
+    return getAPI()->Invoke(methodName, args);
 }

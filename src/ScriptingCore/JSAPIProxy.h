@@ -40,14 +40,27 @@ namespace FB
     {
     protected:
         JSAPIProxy(FB::JSAPIPtr &inner);
+        JSAPIProxy(FB::JSAPIWeakPtr &inner);
 
     public:
         static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIPtr &inner);
+        static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIWeakPtr &inner);
         virtual ~JSAPIProxy(void);
 
-        FB::JSAPIPtr getInnerAPI() { return m_api; }
+        inline bool isExpired() {
+            return m_apiWeak.expired();
+        }
+
+        inline FB::JSAPIPtr getAPI() {
+            FB::JSAPIPtr tmp = m_apiWeak.lock();
+            if (tmp)
+                return tmp;
+            throw FB::script_error("This object has expired");
+        }
+
     protected:
         FB::JSAPIPtr m_api;
+        FB::JSAPIWeakPtr m_apiWeak;
 
     public:
 
