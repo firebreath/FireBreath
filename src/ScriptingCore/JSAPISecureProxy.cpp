@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <boost/make_shared.hpp>
+#include "APITypes.h"
 
 #include "JSAPISecureProxy.h"
 
@@ -27,7 +28,7 @@ boost::shared_ptr<FB::JSAPISecureProxy> FB::JSAPISecureProxy::create( const FB::
 FB::JSAPISecureProxy::JSAPISecureProxy( const FB::SecurityZone zone, const FB::JSAPIPtr &inner ) : m_zone(zone), m_api(FB::ptr_cast<FB::JSAPISecure>(inner))
 {
     if (!m_api) {
-        throw std::exception("Invalid inner JSAPISecure object passed to proxy");
+        throw FB::script_error("Invalid inner JSAPISecure object passed to proxy");
     }
 }
 

@@ -28,7 +28,7 @@ boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( FB::JSAPIPtr &inner )
 FB::JSAPIProxy::JSAPIProxy( FB::JSAPIPtr &inner ) : m_api(inner)
 {
     if (!inner) {
-        throw std::exception("Invalid inner JSAPI object passed to proxy");
+        throw FB::script_error("Invalid inner JSAPI object passed to proxy");
     }
 }
 
