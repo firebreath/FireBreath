@@ -1,7 +1,7 @@
 FireBreath
 ==========
 
-Home page: http://www.firebreath.org
+Home page: [http://www.firebreath.org](http://www.firebreath.org)
 
 FireBreath is a cross-platform browser plugin framework. It supports ActiveX and NPAPI on Windows, Mac OS X, and Linux (probably other unix-derivitives as well).
 
