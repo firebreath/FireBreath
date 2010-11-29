@@ -68,6 +68,7 @@ public:
     std::string getPageLocation();
     
     std::string get_pluginPath();
+    void eval(std::string str);
 
 private:
     FB::BrowserHostPtr m_host;

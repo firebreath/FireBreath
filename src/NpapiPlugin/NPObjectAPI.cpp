@@ -71,7 +71,9 @@ void NPObjectAPI::releaseObject(NPObject* obj)
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
     if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberNames, this, nameVector));
+        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector);
+        host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
+        return;
     }
     NPIdentifier *idArray(NULL);
     uint32_t count;

@@ -27,6 +27,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
 {
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
+    registerMethod(L"eval",  make_method(this, &FBTestPluginAPI::eval));
     registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));
     registerMethod(L"asBool",  make_method(this, &FBTestPluginAPI::asBool));
     registerMethod(L"asInt",  make_method(this, &FBTestPluginAPI::asInt));
@@ -91,6 +92,11 @@ long FBTestPluginAPI::get_someInt()
 {
     m_host->htmlLog("Returning some int");
     return 12;
+}
+
+void FBTestPluginAPI::eval(std::string str)
+{
+    m_host->evaluateJavaScript(str);
 }
 
 // add Method

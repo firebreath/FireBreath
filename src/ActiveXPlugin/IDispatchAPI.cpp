@@ -37,7 +37,8 @@ void IDispatchAPI::releaseObject()
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
 {
     if (!host->isMainThread()) {
-        host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberNames, this, nameVector));
+        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector);
+        host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
     HRESULT hr;

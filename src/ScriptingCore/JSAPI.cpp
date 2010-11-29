@@ -194,3 +194,13 @@ variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>
 {
     return Invoke(wstring_to_utf8(methodName), args);
 }
+
+void FB::JSAPI::getMemberNames( std::vector<std::wstring> *nameVector )
+{
+    getMemberNames(*nameVector);
+}
+
+void FB::JSAPI::getMemberNames( std::vector<std::string> *nameVector )
+{
+    getMemberNames(*nameVector);
+}
