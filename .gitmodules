@@ -1,0 +1,3 @@
+[submodule "src/3rdParty/boost"]
+	path = src/3rdParty/boost
+	url = git://github.com/firebreath/firebreath-boost.git
