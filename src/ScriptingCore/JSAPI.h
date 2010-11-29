@@ -298,6 +298,7 @@ namespace FB
         virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event);
 
         virtual void getMemberNames(std::vector<std::wstring> &nameVector);
+        virtual void getMemberNames(std::vector<std::wstring> *nameVector);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) = 0
         ///
@@ -309,6 +310,7 @@ namespace FB
         /// @param [out] nameVector  The name vector. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void getMemberNames(std::vector<std::string> &nameVector) = 0;
+        virtual void getMemberNames(std::vector<std::string> *nameVector);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual size_t getMemberCount() = 0

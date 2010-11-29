@@ -73,6 +73,7 @@ public:
     
     std::string get_pluginPath();
     
+    void eval(std::string str);
     long addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
 
 private:

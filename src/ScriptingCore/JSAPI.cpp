@@ -225,3 +225,13 @@ void FB::JSAPI::registerProxy( const JSAPIWeakPtr &ptr )
 {
     m_proxies.push_back(ptr);
 }
+
+void FB::JSAPI::getMemberNames( std::vector<std::wstring> *nameVector )
+{
+    getMemberNames(*nameVector);
+}
+
+void FB::JSAPI::getMemberNames( std::vector<std::string> *nameVector )
+{
+    getMemberNames(*nameVector);
+}
