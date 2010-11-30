@@ -161,6 +161,14 @@ function (check_boost)
             else()
                 message("Downloading...")
                 file (DOWNLOAD "http://nodeload.github.com/firebreath/firebreath-boost/tarball/master" "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz" STATUS DL_STATUS SHOW_PROGRESS)
+                if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz")
+                    message("Error downloading firebreath-boost. Please get firebreath-boost from ")
+                    message("http://github.com/firebreath/firebreath-boost and install it into")
+                    message("the src/3rdParty/boost directory.  When properly installed, you should have:")
+                    message("    src/3rdParty/boost/boost/")
+                    message("    src/3rdParty/boost/libs/")
+                    message(FATAL_ERROR "firebreath-boost could not be installed. Please install manually.")
+                endif()
                 message("Result: ${DL_STATUS}")
                 find_program(TAR tar NO_DEFAULT_PATHS)
                 find_program(GZIP gzip NO_DEFAULT_PATHS)
@@ -187,7 +195,7 @@ function (check_boost)
                     message("Using tar xzf to extract the archive")
                     execute_process(
                         COMMAND ${TAR}
-                        xzf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        xzvf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
                         #OUTPUT_QUIET
                         )
@@ -197,7 +205,7 @@ function (check_boost)
                     message("to ${BOOST_SOURCE_DIR}/boost and ${BOOST_SOURCE_DIR}/libs")
                     message(FATAL_ERROR "Firebreath-boost not installed! (follow above directions to resolve)")
                 endif()
-                file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz)
+                #file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz)
                 message("Installing firebreath-boost...")
                 file (GLOB _BOOST_FILES
                     ${BOOST_SOURCE_DIR}/firebreath-firebreath-boost*/*)
