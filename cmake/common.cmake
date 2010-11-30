@@ -164,9 +164,7 @@ function (check_boost)
                 message("Result: ${DL_STATUS}")
                 find_program(TAR tar NO_DEFAULT_PATHS)
                 find_program(GZIP gzip NO_DEFAULT_PATHS)
-                if (NOT ${TAR} MATCHES "TAR-NOTFOUND" AND NOT ${GZIP} MATCHES "GZIP-NOTFOUND")
-                    message(FATAL_ERROR "tar/gz method not implemented")
-                elseif (WIN32)
+                if (WIN32)
                     message("Using 7-zip to extract the archive")
                     find_program(SEVZIP 7za PATHS "${CMAKE_DIR}/")
                     execute_process(
@@ -185,6 +183,19 @@ function (check_boost)
                         OUTPUT_QUIET
                         )
                     file(REMOVE ${TAR_FILE})
+                elseif (NOT ${TAR} MATCHES "TAR-NOTFOUND" AND NOT ${GZIP} MATCHES "GZIP-NOTFOUND")
+                    message("Using tar xzf to extract the archive")
+                    execute_process(
+                        COMMAND ${TAR}
+                        xzf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
+                        #OUTPUT_QUIET
+                        )
+                else()
+                    message("Please extract ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz and ")
+                    message("move the boost/ and libs/ subdirectories ")
+                    message("to ${BOOST_SOURCE_DIR}/boost and ${BOOST_SOURCE_DIR}/libs")
+                    message(FATAL_ERROR "Firebreath-boost not installed! (follow above directions to resolve)")
                 endif()
                 file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz)
                 message("Installing firebreath-boost...")
@@ -198,7 +209,7 @@ function (check_boost)
                 file (GLOB _BOOST_TMPFILES
                     ${BOOST_SOURCE_DIR}/firebreath*
                     ${BOOST_SOURCE_DIR}/pax*)
-                file (REMOVE ${_BOOST_TMPFILES})
+                file (REMOVE_RECURSE ${_BOOST_TMPFILES})
             endif()
         endif()
     endif()
