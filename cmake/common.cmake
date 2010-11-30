@@ -167,6 +167,7 @@ function (check_boost)
                     execute_process(
                         COMMAND ${CURL}
                         -L "${FB_URL}"
+                        -k
                         OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         )
                 elseif (NOT ${WGET} MATCHES "WGET-NOTFOUND")
@@ -213,9 +214,9 @@ function (check_boost)
                     message("Using tar xzf to extract the archive")
                     execute_process(
                         COMMAND ${TAR}
-                        xzvf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        xzf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
-                        #OUTPUT_QUIET
+                        OUTPUT_QUIET
                         )
                 else()
                     message("Please extract ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz and ")
