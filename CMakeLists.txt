@@ -21,6 +21,7 @@ Project (FireBreath)
 set(CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 
 include(${CMAKE_DIR}/common.cmake)
+check_boost()
 
 if (APPLE)
     clear_xcode_patches()

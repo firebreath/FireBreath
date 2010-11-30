@@ -124,3 +124,104 @@ macro (export_project_dependencies)
     set (Boost_LIBRARIES ${Boost_LIBRARIES} PARENT_SCOPE)
     set (Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
 endmacro (export_project_dependencies)
+
+function (check_boost)
+    if (NOT WITH_SYSTEM_BOOST)
+        if (NOT EXISTS ${BOOST_SOURCE_DIR})
+            file(MAKE_DIRECTORY ${BOOST_SOURCE_DIR})
+        endif()
+        if (NOT EXISTS ${BOOST_SOURCE_DIR}/boost/)
+            set (FB_URL "https://github.com/firebreath/firebreath-boost/tarball/master")
+            message("Boost not found; downloading latest FireBreath-boost from GitHub (http://github.com/firebreath/firebreath-boost)")
+            find_program(GIT git NO_DEFAULT_PATHS)
+            if (EXISTS ${FB_ROOT_DIR}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
+                message("Using git")
+                if (${GIT} MATCHES "GIT-NOTFOUND")
+                    message(FATAL_ERROR "Can't find git in the path. Please run 'git submodule update --init --recursive' to get firebreath-boost.")
+                endif()
+                execute_process(
+                    COMMAND ${GIT}
+                    submodule update --recursive --init
+                    WORKING_DIRECTORY "${FB_ROOT_DIR}")
+            else()
+                message("Downloading...")
+                find_program(CURL curl)
+                find_program(WGET wget PATHS "${CMAKE_DIR}/")
+                if (NOT ${CURL} MATCHES "CURL-NOTFOUND")
+                    execute_process(
+                        COMMAND ${CURL}
+                        -L "${FB_URL}"
+                        -k
+                        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        )
+                elseif (NOT ${WGET} MATCHES "WGET-NOTFOUND")
+                    execute_process(
+                        COMMAND ${WGET}
+                        --no-check-certificate
+                        -o "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        "${FB_URL}"
+                        )
+                else()
+                    file (DOWNLOAD "${FB_URL}" "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz" STATUS DL_STATUS SHOW_PROGRESS)
+                    message("Result: ${DL_STATUS}")
+                endif()
+                if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz")
+                    message("Error downloading firebreath-boost. Please get firebreath-boost from ")
+                    message("http://github.com/firebreath/firebreath-boost and install it into")
+                    message("the src/3rdParty/boost directory.  When properly installed, you should have:")
+                    message("    src/3rdParty/boost/boost/")
+                    message("    src/3rdParty/boost/libs/")
+                    message(FATAL_ERROR "firebreath-boost could not be installed. Please install manually.")
+                endif()
+                find_program(TAR tar NO_DEFAULT_PATHS)
+                find_program(GZIP gzip NO_DEFAULT_PATHS)
+                if (WIN32)
+                    message("Using 7-zip to extract the archive")
+                    find_program(SEVZIP 7za PATHS "${CMAKE_DIR}/")
+                    execute_process(
+                        COMMAND ${SEVZIP}
+                        e "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
+                        OUTPUT_QUIET
+                        )
+                    file (GLOB TAR_FILE 
+                        ${BOOST_SOURCE_DIR}/*.tar
+                        )
+                    execute_process(
+                        COMMAND ${SEVZIP}
+                        x "${TAR_FILE}"
+                        WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
+                        OUTPUT_QUIET
+                        )
+                    file(REMOVE ${TAR_FILE})
+                elseif (NOT ${TAR} MATCHES "TAR-NOTFOUND" AND NOT ${GZIP} MATCHES "GZIP-NOTFOUND")
+                    message("Using tar xzf to extract the archive")
+                    execute_process(
+                        COMMAND ${TAR}
+                        xzf "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        WORKING_DIRECTORY "${BOOST_SOURCE_DIR}"
+                        OUTPUT_QUIET
+                        )
+                else()
+                    message("Please extract ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz and ")
+                    message("move the boost/ and libs/ subdirectories ")
+                    message("to ${BOOST_SOURCE_DIR}/boost and ${BOOST_SOURCE_DIR}/libs")
+                    message(FATAL_ERROR "Firebreath-boost not installed! (follow above directions to resolve)")
+                endif()
+                #file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz)
+                message("Installing firebreath-boost...")
+                file (GLOB _BOOST_FILES
+                    ${BOOST_SOURCE_DIR}/firebreath-firebreath-boost*/*)
+                foreach (_CUR_FILE ${_BOOST_FILES})
+                    get_filename_component (_CUR_FILENAME ${_CUR_FILE} NAME)
+                    file(RENAME ${_CUR_FILE} ${BOOST_SOURCE_DIR}/${_CUR_FILENAME})
+                endforeach()
+                message("Cleaning up firebreath-boost temp install files...")
+                file (GLOB _BOOST_TMPFILES
+                    ${BOOST_SOURCE_DIR}/firebreath*
+                    ${BOOST_SOURCE_DIR}/pax*)
+                file (REMOVE_RECURSE ${_BOOST_TMPFILES})
+            endif()
+        endif()
+    endif()
+endfunction()
