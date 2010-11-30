@@ -147,6 +147,7 @@ function (check_boost)
             file(MAKE_DIRECTORY ${BOOST_SOURCE_DIR})
         endif()
         if (NOT EXISTS ${BOOST_SOURCE_DIR}/boost/)
+            set (FB_URL "https://github.com/firebreath/firebreath-boost/tarball/master")
             message("Boost not found; downloading latest FireBreath-boost from GitHub (http://github.com/firebreath/firebreath-boost)")
             find_program(GIT git NO_DEFAULT_PATHS)
             if (EXISTS ${FB_ROOT_DIR}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
@@ -160,7 +161,25 @@ function (check_boost)
                     WORKING_DIRECTORY "${FB_ROOT_DIR}")
             else()
                 message("Downloading...")
-                file (DOWNLOAD "http://nodeload.github.com/firebreath/firebreath-boost/tarball/master" "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz" STATUS DL_STATUS SHOW_PROGRESS)
+                find_program(CURL curl)
+                find_program(WGET wget PATHS "${CMAKE_DIR}/")
+                if (NOT ${CURL} MATCHES "CURL-NOTFOUND")
+                    execute_process(
+                        COMMAND ${CURL}
+                        -L "${FB_URL}"
+                        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        )
+                elseif (NOT ${WGET} MATCHES "WGET-NOTFOUND")
+                    execute_process(
+                        COMMAND ${WGET}
+                        --no-check-certificate
+                        -o "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        "${FB_URL}"
+                        )
+                else()
+                    file (DOWNLOAD "${FB_URL}" "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz" STATUS DL_STATUS SHOW_PROGRESS)
+                    message("Result: ${DL_STATUS}")
+                endif()
                 if (NOT EXISTS "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz")
                     message("Error downloading firebreath-boost. Please get firebreath-boost from ")
                     message("http://github.com/firebreath/firebreath-boost and install it into")
@@ -169,7 +188,6 @@ function (check_boost)
                     message("    src/3rdParty/boost/libs/")
                     message(FATAL_ERROR "firebreath-boost could not be installed. Please install manually.")
                 endif()
-                message("Result: ${DL_STATUS}")
                 find_program(TAR tar NO_DEFAULT_PATHS)
                 find_program(GZIP gzip NO_DEFAULT_PATHS)
                 if (WIN32)
