@@ -22,6 +22,9 @@ set(CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
 
 include(${CMAKE_DIR}/common.cmake)
 
+#check to make sure we're either using WITH_SYSTEM_BOOST or have the firebreath-boost lib installed
+check_boost()
+
 if (APPLE)
     clear_xcode_patches()
 endif()
