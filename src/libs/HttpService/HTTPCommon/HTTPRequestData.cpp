@@ -31,5 +31,5 @@ void HTTPRequestData::addFile(const std::string& fieldname, const std::string& f
   fe.filename = filename;
   fe.content_type = content_type;
   fe.contents = contents;
-  files.insert(std::make_pair(fieldname, fe));
+  files[fieldname] = fe;
 }

@@ -20,22 +20,22 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 namespace HTTP {
     class HTTPDatablock {
     public:
-    	virtual ~HTTPDatablock() {}
-    	virtual size_t size() const = 0;
-    	virtual const char* data() const = 0;
-      virtual void resolve() const {}
+        virtual ~HTTPDatablock() {}
+        virtual size_t size() const = 0;
+        virtual const char* data() const = 0;
+        virtual void resolve() const {}
     };
 
     class HTTPStringDatablock : public HTTPDatablock {
     public:
-    	HTTPStringDatablock(const std::string& _str) : str(_str) {}
+        HTTPStringDatablock(const std::string& _str) : str(_str) {}
         HTTPStringDatablock(const char* _data, size_t _len) : str(std::string(_data, _len)) {}
         HTTPStringDatablock() {}
-    	virtual ~HTTPStringDatablock() {}
-    	virtual size_t size() const { return str.size(); }
-    	virtual const char* data() const { return str.data(); }
+        virtual ~HTTPStringDatablock() {}
+        virtual size_t size() const { return str.size(); }
+        virtual const char* data() const { return str.data(); }
     protected:
-    	std::string str;
+        std::string str;
     };
 };
 
