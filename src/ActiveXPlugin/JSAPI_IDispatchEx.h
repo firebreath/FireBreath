@@ -270,7 +270,7 @@ bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB:
 {
     if (args.size() < 2 || args.size() > 3
          || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(FB::JSObject)) {
+         || args[1].get_type() != typeid(FB::JSObjectPtr)) {
         throw FB::invalid_arguments();
     }
 
