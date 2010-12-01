@@ -48,6 +48,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0)
 {
+#if FB_GUI_DISABLED != 1
     m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
     m_canvas = gtk_drawing_area_new();
 #ifdef GTK_WIDGET_SET_FLAGS
@@ -76,6 +77,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     gtk_widget_show(m_canvas);
     gtk_container_add(GTK_CONTAINER(m_container), m_canvas);
     gtk_widget_show(m_container);
+#endif
 }
 
 PluginWindowX11::~PluginWindowX11()
@@ -127,6 +129,8 @@ void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
         SendEvent(&evt);
     }
 }
+
+#if FB_GUI_DISABLED != 1
 
 inline bool isButtonEvent(GdkEvent *event)
 {
@@ -218,6 +222,8 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 //     }
 //     return false;
 // }
+
+#endif
 
 void PluginWindowX11::InvalidateWindow()
 {

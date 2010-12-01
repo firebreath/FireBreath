@@ -15,8 +15,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_PLUGINWINDOWX11
 #define H_PLUGINWINDOWX11
 
+#if FB_GUI_DISABLED != 1
+
 #include <X11/Xlib.h>
 #include <gtk/gtk.h>
+
+#endif
+
 #include "PluginWindow.h"
 #include "WindowContextX11.h"
 
@@ -35,11 +40,14 @@ namespace FB {
         void getWindowPosition(int &x, int &y, int &w, int &h);
         void setWindowClipping(int t, int l, int b, int r);
         void getWindowClipping(int &t, int &l, int &b, int &r);
+        virtual void InvalidateWindow();
+
+#if FB_GUI_DISABLED != 1
+    public:
         GdkNativeWindow getWindow() { return m_window; }
         void setBrowserWindow(GdkNativeWindow win) {  m_browserWindow = win; }
         GdkNativeWindow getBrowserWindow() { return m_browserWindow; }
         static gboolean _EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data);
-        virtual void InvalidateWindow();
     protected:
         gboolean EventCallback(GtkWidget *widget, GdkEvent *event);
 
@@ -48,6 +56,9 @@ namespace FB {
         GtkWidget *m_container;
         GtkWidget *m_canvas;
 
+#endif
+
+    protected:
         int m_x;
         int m_y;
         int m_width;

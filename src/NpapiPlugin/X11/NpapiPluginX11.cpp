@@ -78,6 +78,7 @@ NPError NpapiPluginX11::GetValue(NPPVariable variable, void *value)
 
 NPError NpapiPluginX11::SetWindow(NPWindow* window)
 {
+#if FB_GUI_DISABLED != 1
     if (window != NULL && window->window != NULL) {
         /* Require XEmbed support from browser, see:
          * https://developer.mozilla.org/en/XEmbed_Extension_for_Mozilla_Plugins
@@ -114,7 +115,7 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
         pluginMain->ClearWindow();
         delete pluginWin; pluginWin = NULL;
     }
-
+#endif
     return NPERR_NO_ERROR;
 }
 

@@ -89,7 +89,11 @@ public:
         }
         FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
+#if FB_GUI_DISABLED == 1
+        m_bWindowOnly = FALSE;
+#else
         m_bWindowOnly = TRUE;
+#endif
     }
 
     ~CFBControl()

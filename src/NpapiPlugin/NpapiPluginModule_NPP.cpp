@@ -223,9 +223,11 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
         }
     }
 
+#if FB_GUI_DISABLED != 1
     if (NpapiPlugin *plugin = getPlugin(instance)) {
         return plugin->SetWindow(window);
     }
+#endif
 
     return NPERR_NO_ERROR;
 }
