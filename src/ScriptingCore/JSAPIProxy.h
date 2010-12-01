@@ -70,9 +70,23 @@ namespace FB
         static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIWeakPtr &inner);
         virtual ~JSAPIProxy(void);
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool  FB::JSAPIProxy::isExpired()
+        ///
+        /// @brief  Returns true if the weak_ptr this contains doesn't point to anything
+        ///
+        /// This can be used to determine if the API object proxied to is still valid or not
+        ///
+        /// @return bool
+        /// @since	
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         inline bool isExpired() {
             return m_apiWeak.expired();
         }
+
+        void swap(const FB::JSAPIPtr &inner);
+        void swap(const FB::JSAPIWeakPtr &inner);
+        void reset();
 
         inline FB::JSAPIPtr getAPI() {
             FB::JSAPIPtr tmp = m_apiWeak.lock();

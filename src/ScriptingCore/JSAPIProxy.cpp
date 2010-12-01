@@ -29,7 +29,9 @@ boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( FB::JSAPIWeakPtr &inne
 {
     // This is necessary because you can't use shared_from_this in the constructor
     boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
-    inner.lock()->registerProxy(ptr);
+    FB::JSAPIPtr tmp = inner.lock();
+    if (tmp)
+        tmp->registerProxy(ptr);
 
     return ptr;
 }
@@ -48,6 +50,27 @@ FB::JSAPIProxy::JSAPIProxy( FB::JSAPIWeakPtr &inner ) : m_apiWeak(inner)
 
 FB::JSAPIProxy::~JSAPIProxy( void )
 {
+}
+
+void FB::JSAPIProxy::swap( const FB::JSAPIWeakPtr &inner )
+{
+    this->m_api.reset();
+    this->m_apiWeak = inner;
+    FB::JSAPIPtr ptr = inner.lock();
+    if (ptr)
+        ptr->registerProxy(shared_ptr());
+}
+
+void FB::JSAPIProxy::swap( const FB::JSAPIPtr &inner )
+{
+    this->m_api = inner;
+    this->m_apiWeak = inner;
+    inner->registerProxy(shared_ptr());
+}
+
+void FB::JSAPIProxy::reset()
+{
+
 }
 
 void FB::JSAPIProxy::invalidate()
