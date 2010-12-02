@@ -171,7 +171,7 @@ function (check_boost)
                     execute_process(
                         COMMAND ${WGET}
                         --no-check-certificate
-                        -o "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
+                        -O "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         "${FB_URL}"
                         )
                 elseif (NOT ${CURL} MATCHES "CURL-NOTFOUND")
