@@ -15,34 +15,39 @@
 
 if (WIN32)
     MACRO(DBG_MSG _MSG)
-        #MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\r\n ${_MSG}")
+        if (VERBOSE)
+            MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\r\n ${_MSG}")
+        endif()
     ENDMACRO(DBG_MSG)
 
 
-    # typical root dirs of installations, exactly one of them is used
-    SET (WIX_POSSIBLE_ROOT_DIRS
-        "${WIX_ROOT_DIR}"
-        "$ENV{WIX}"
-        "$ENV{WIX_ROOT_DIR}"
-        "$ENV{ProgramFiles}/Windows Installer XML"
-        "$ENV{ProgramFiles}/Windows Installer XML v3"
-        "$ENV{ProgramFiles}/Windows Installer XML v3.6"
-        )
+    if (NOT ${WIX_ROOT_DIR})
+        # typical root dirs of installations, exactly one of them is used
+        SET (WIX_POSSIBLE_ROOT_DIRS
+            "${WIX_ROOT_DIR}"
+            "$ENV{WIX}"
+            "$ENV{WIX_ROOT_DIR}"
+            "$ENV{ProgramFiles}/Windows Installer XML"
+            "$ENV{ProgramFiles}/Windows Installer XML v3"
+            "$ENV{ProgramFiles}/Windows Installer XML v3.5"
+            "$ENV{ProgramFiles}/Windows Installer XML v3.6"
+            )
 
 
-    #DBG_MSG("DBG (WIX_POSSIBLE_ROOT_DIRS=${WIX_POSSIBLE_ROOT_DIRS}")
+        #DBG_MSG("DBG (WIX_POSSIBLE_ROOT_DIRS=${WIX_POSSIBLE_ROOT_DIRS}")
 
-    #
-    # select exactly ONE WIX base directory/tree 
-    # to avoid mixing different version headers and libs
-    #
-    FIND_PATH(WIX_ROOT_DIR 
-        NAMES 
-        bin/candle.exe
-        bin/light.exe
-        bin/heat.exe
-        PATHS ${WIX_POSSIBLE_ROOT_DIRS})
-    DBG_MSG("WIX_ROOT_DIR=${WIX_ROOT_DIR}")
+        #
+        # select exactly ONE WIX base directory/tree 
+        # to avoid mixing different version headers and libs
+        #
+        FIND_PATH(WIX_ROOT_DIR 
+            NAMES 
+            bin/candle.exe
+            bin/light.exe
+            bin/heat.exe
+            PATHS ${WIX_POSSIBLE_ROOT_DIRS})
+        DBG_MSG("WIX_ROOT_DIR=${WIX_ROOT_DIR}")
+    endif()
 
 
     #
