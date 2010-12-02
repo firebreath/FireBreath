@@ -40,6 +40,8 @@ set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "FBTestPlugin")
 set(FBSTRING_MIMEType "application/x-fbtestplugin")
 
+#set (FB_GUI_DISABLED 1)
+
 # mac settings
 # The plugin doesn't do any drawing and doesn't need mouse / keyboard events,
 # so turn the following off:

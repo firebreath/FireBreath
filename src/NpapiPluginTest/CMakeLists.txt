@@ -16,6 +16,8 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+set (FB_GUI_DISABLED 1)
+
 include(${CMAKE_DIR}/common.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
@@ -75,14 +77,6 @@ if (APPLE)
         ${QUARTZCORE_FRAMEWORK}
         ${CARBON_FRAMEWORK})
 elseif (UNIX)
-    if (NOT GTK_INCLUDE_DIRS)
-        pkg_check_modules(GTK REQUIRED gtk+-2.0)
-        set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LIBRARIES ${GTK_LIBRARIES} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LIBRARY_DIRS ${GTK_LIBRARY_DIRS} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
-    endif()
-    set (OTHER_NPAPITEST_LIBS ${OTHER_NAPITEST_LIBS} ${GTK_LIBRARIES})
 endif (APPLE)
 
 # Repititions in the following are intentional to fix linking errors due to

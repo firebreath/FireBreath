@@ -26,18 +26,12 @@ FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
 
 using namespace FB;
 
-gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data)
-{
-    if (!user_data)
-        return 0;
-
-    PluginWindowX11 *pluginWin = (PluginWindowX11 *)user_data;
-    return pluginWin->EventCallback(widget, event);
-}
-
 PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
-  : m_window(ctx.window),
+  :
+#if FB_GUI_DISABLED != 1
+    m_window(ctx.window),
     m_browserWindow(0),
+#endif
     /* We as C++ programmers do not usually care about initializing integers
      * when it's not actually needed, but it's nice for the code to be clean
      * enough to pass valgrinds memcheck. Without initializing, valgrind
@@ -131,6 +125,15 @@ void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
 }
 
 #if FB_GUI_DISABLED != 1
+
+gboolean PluginWindowX11::_EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data)
+{
+    if (!user_data)
+        return 0;
+
+    PluginWindowX11 *pluginWin = (PluginWindowX11 *)user_data;
+    return pluginWin->EventCallback(widget, event);
+}
 
 inline bool isButtonEvent(GdkEvent *event)
 {

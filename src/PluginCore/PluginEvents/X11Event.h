@@ -13,9 +13,10 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #ifndef H_FB_EVENTS_X11EVENT
 #define H_FB_EVENTS_X11EVENT
 
-#include <X11/Xlib.h>
-#include <gtk/gtk.h>
-
+struct _GtkWidget;
+typedef struct _GtkWidget GtkWidget;
+union _GdkEvent;
+typedef union  _GdkEvent        GdkEvent;
 #include "PluginEvent.h"
 
 namespace FB {
