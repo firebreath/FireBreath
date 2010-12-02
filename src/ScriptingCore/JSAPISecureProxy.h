@@ -48,8 +48,8 @@ namespace FB
 
         FB::JSAPISecurePtr getInnerAPI() { return m_api; }
     protected:
-        FB::JSAPISecurePtr m_api;
         FB::SecurityZone m_zone;
+        FB::JSAPISecurePtr m_api;
 
     public:
 
