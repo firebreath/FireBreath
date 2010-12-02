@@ -151,19 +151,19 @@ function (check_boost)
                 message("Downloading...")
                 find_program(CURL curl)
                 find_program(WGET wget PATHS "${CMAKE_DIR}/")
-                if (NOT ${CURL} MATCHES "CURL-NOTFOUND")
-                    execute_process(
-                        COMMAND ${CURL}
-                        -L "${FB_URL}"
-                        -k
-                        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
-                        )
-                elseif (NOT ${WGET} MATCHES "WGET-NOTFOUND")
+                if (NOT ${WGET} MATCHES "WGET-NOTFOUND")
                     execute_process(
                         COMMAND ${WGET}
                         --no-check-certificate
                         -o "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         "${FB_URL}"
+                        )
+                elseif (NOT ${CURL} MATCHES "CURL-NOTFOUND")
+                    execute_process(
+                        COMMAND ${CURL}
+                        -L "${FB_URL}"
+                        -k
+                        OUTPUT_FILE "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz"
                         )
                 else()
                     file (DOWNLOAD "${FB_URL}" "${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz" STATUS DL_STATUS SHOW_PROGRESS)
