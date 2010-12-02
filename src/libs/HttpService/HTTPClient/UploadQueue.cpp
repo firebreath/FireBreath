@@ -131,7 +131,7 @@ void UploadQueue::start_next_upload() {
             // Pull in post params
             for (std::map<std::string, std::string>::iterator pvit = post_vars.begin();
                 pvit != post_vars.end(); ++pvit) {
-                qe.target.query_data[pvit->first] = pvit->second);
+                qe.target.query_data[pvit->first] = pvit->second;
             }
 
             if (files_started == 0) {
