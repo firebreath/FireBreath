@@ -15,33 +15,39 @@
 
 if (WIN32)
     MACRO(DBG_MSG _MSG)
-        #MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\r\n ${_MSG}")
+        if (VERBOSE)
+            MESSAGE(STATUS "${CMAKE_CURRENT_LIST_FILE}(${CMAKE_CURRENT_LIST_LINE}):\r\n ${_MSG}")
+        endif()
     ENDMACRO(DBG_MSG)
 
 
-    # typical root dirs of installations, exactly one of them is used
-    SET (WIX_POSSIBLE_ROOT_DIRS
-        "${WIX_ROOT_DIR}"
-        "$ENV{WIX}"
-        "$ENV{WIX_ROOT_DIR}"
-        "$ENV{ProgramFiles}/Windows Installer XML"
-        "$ENV{ProgramFiles}/Windows Installer XML v3"
-        )
+    if (NOT ${WIX_ROOT_DIR})
+        # typical root dirs of installations, exactly one of them is used
+        SET (WIX_POSSIBLE_ROOT_DIRS
+            "${WIX_ROOT_DIR}"
+            "$ENV{WIX}"
+            "$ENV{WIX_ROOT_DIR}"
+            "$ENV{ProgramFiles}/Windows Installer XML"
+            "$ENV{ProgramFiles}/Windows Installer XML v3"
+            "$ENV{ProgramFiles}/Windows Installer XML v3.5"
+            "$ENV{ProgramFiles}/Windows Installer XML v3.6"
+            )
 
 
-    #DBG_MSG("DBG (WIX_POSSIBLE_ROOT_DIRS=${WIX_POSSIBLE_ROOT_DIRS}")
+        #DBG_MSG("DBG (WIX_POSSIBLE_ROOT_DIRS=${WIX_POSSIBLE_ROOT_DIRS}")
 
-    #
-    # select exactly ONE WIX base directory/tree 
-    # to avoid mixing different version headers and libs
-    #
-    FIND_PATH(WIX_ROOT_DIR 
-        NAMES 
-        bin/candle.exe
-        bin/light.exe
-        bin/heat.exe
-        PATHS ${WIX_POSSIBLE_ROOT_DIRS})
-    DBG_MSG("WIX_ROOT_DIR=${WIX_ROOT_DIR}")
+        #
+        # select exactly ONE WIX base directory/tree 
+        # to avoid mixing different version headers and libs
+        #
+        FIND_PATH(WIX_ROOT_DIR 
+            NAMES 
+            bin/candle.exe
+            bin/light.exe
+            bin/heat.exe
+            PATHS ${WIX_POSSIBLE_ROOT_DIRS})
+        DBG_MSG("WIX_ROOT_DIR=${WIX_ROOT_DIR}")
+    endif()
 
 
     #
@@ -97,11 +103,13 @@ if (WIN32)
 
             DBG_MSG("WIX output: ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
             DBG_MSG("WIX command: ${WIX_CANDLE}")
+            SET(EXT_FLAGS -ext WixUtilExtension)
+            SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
 
             ADD_CUSTOM_COMMAND( 
                 OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
                 COMMAND   ${WIX_CANDLE}
-                ARGS      ${WIX_CANDLE_FLAGS} ${SOURCE_WIX_FILE}
+                ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} ${SOURCE_WIX_FILE}
                 DEPENDS   ${SOURCE_WIX_FILE} ${${_extra_dep}}
                 COMMENT   "Compiling ${SOURCE_WIX_FILE} -> ${OUTPUT_WIXOBJ}"
                 )
@@ -154,11 +162,13 @@ if (WIN32)
     #
     MACRO(WIX_COMPILE_ALL _target _sources _extra_dep)
         DBG_MSG("WIX compile all: ${${_sources}}, dependencies: ${${_extra_dep}}")
+        SET(EXT_FLAGS -ext WixUtilExtension)
+        SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
 
         ADD_CUSTOM_COMMAND( 
             OUTPUT    ${_target}
             COMMAND   ${WIX_CANDLE}
-            ARGS      ${WIX_CANDLE_FLAGS} -out "${_target}" ${${_sources}}
+            ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
             DEPENDS   ${${_sources}} ${${_extra_dep}}
             COMMENT   "Compiling ${${_sources}} -> ${_target}"
             )
@@ -177,6 +187,9 @@ if (WIN32)
         #DBG_MSG("WIX command: ${WIX_LIGHT}\n WIX target: ${_target} objs: ${${_sources}}")
 
         SET( WIX_LINK_FLAGS_A ${WIX_LINK_FLAGS} )
+        SET(EXT_FLAGS -ext WixUtilExtension)
+        SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
+
         # Add localization
         FOREACH (_current_FILE ${${_loc_files}})
             SET( WIX_LINK_FLAGS_A ${WIX_LINK_FLAGS_A} -loc "${_current_FILE}" )
@@ -186,7 +199,7 @@ if (WIN32)
 
         ADD_CUSTOM_COMMAND( TARGET    ${_project} POST_BUILD
             COMMAND   ${WIX_LIGHT}
-            ARGS      ${WIX_LINK_FLAGS_A} -out "${_target}" ${${_sources}}
+            ARGS      ${WIX_LINK_FLAGS_A} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
             DEPENDS   ${${_sources}}
             COMMENT   "Linking ${${_sources}} -> ${_target}"
             )
