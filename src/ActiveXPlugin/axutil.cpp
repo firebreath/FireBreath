@@ -20,7 +20,7 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
   : m_hkey(0)
 #endif
 {
-#if _MSC_VER > 1400
+#if _ATL_VER > 0x0800
     AtlSetPerUserRegistration(perUser);
 #else // _MSC_VER < 1500
     // this seems to be always active and therefore may break
