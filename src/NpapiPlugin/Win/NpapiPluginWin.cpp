@@ -58,10 +58,11 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
 
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
-    if(pluginMain->isWindowless()) { 
-#if !FBWIN_WINDOWLESS
-        return NPERR_GENERIC_ERROR;
+#if FB_GUI_DISABLED == 1
+    if(1) {
 #else
+    if(pluginMain->isWindowless()) { 
+#endif
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
 
         if(win == NULL && pluginWin != NULL) {
@@ -87,7 +88,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             win->setWindowClipping(window->clipRect.top, window->clipRect.left,
                                    window->clipRect.bottom, window->clipRect.right);
         }
-#endif
     } else { 
         PluginWindowWin* win = dynamic_cast<PluginWindowWin*>(pluginWin);
         // Check to see if we've received a new HWND (new window)
