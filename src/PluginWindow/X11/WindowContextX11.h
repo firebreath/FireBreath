@@ -20,6 +20,10 @@
 #include "config.h"
 #include "NpapiTypes.h"
 
+#if FB_GUI_DISABLED == 1
+typedef long int GdkNativeWindow;
+#endif
+
 namespace FB
 {
     struct WindowContextX11

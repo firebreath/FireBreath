@@ -72,8 +72,12 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         }
     }
     pluginMain->setParams(paramList);
+#if FB_GUI_DISABLED == 1
+    if(1) {
+#else
     if(pluginMain->isWindowless()) {
-       /* Windowless plugins require negotiation with the browser. 
+#endif
+        /* Windowless plugins require negotiation with the browser. 
         * If the plugin does not set this value it is assumed to be 
         * a windowed plugin.
         * See: https://developer.mozilla.org/en/Gecko_Plugin_API_Reference/Drawing_and_Event_Handling
