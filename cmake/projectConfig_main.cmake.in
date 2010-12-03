@@ -102,12 +102,14 @@ if (APPLE)
             ${PLUGIN_INTERNAL_DEPS})
     endif (FBMAC_USE_CARBON)
 
-    if (FBMAC_USE_COCOA)
-        find_library(COCOA_FRAMEWORK Cocoa)
-        set (PLUGIN_INTERNAL_DEPS
-            ${COCOA_FRAMEWORK}
-            ${PLUGIN_INTERNAL_DEPS})
-    endif (FBMAC_USE_COCOA)
+    #if (FBMAC_USE_COCOA)
+    # In order to support async thread calls (needed for all events and other things)
+    # we always need cocoa
+    find_library(COCOA_FRAMEWORK Cocoa)
+    set (PLUGIN_INTERNAL_DEPS
+        ${COCOA_FRAMEWORK}
+        ${PLUGIN_INTERNAL_DEPS})
+    #endif (FBMAC_USE_COCOA)
 
     if (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS)
         find_library(FOUNDATION_FRAMEWORK Foundation)
