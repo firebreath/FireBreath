@@ -54,9 +54,10 @@ if (VERBOSE)
     message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
 endif()
 
-# loop through the found directories and add any with a CMakeLists.txt as a subproject
+# loop through the found directories and add any with a CMakeLists.txt and a PluginConfig.cmake
+# as a subproject
 foreach (CURPROJECT ${PLUGIN_PROJECTS})
-    if (EXISTS "${CURPROJECT}/CMakeLists.txt")
+    if (EXISTS "${CURPROJECT}/CMakeLists.txt" AND EXISTS "${CURPROJECT}/PluginConfig.cmake")
       set (FOUND_PROJECTS 1)
       get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
       configure_file(${CMAKE_DIR}/projectConfig_main.cmake.in ${PROJECTS_BINARY_DIR}/${PROJNAME}/projectConfig.cmake COPYONLY)
@@ -65,7 +66,7 @@ foreach (CURPROJECT ${PLUGIN_PROJECTS})
       endif()
       add_subdirectory("${CURPROJECT}" "${PROJECTS_BINARY_DIR}/${PROJNAME}")
     else()
-        message("Could not find ${CURPROJECT}/CMakeLists.txt")
+        message("${CURPROJECT}/ does not seem to be a FireBreath Plugin")
     endif()
 endforeach()
 
