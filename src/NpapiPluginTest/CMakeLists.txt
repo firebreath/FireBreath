@@ -16,7 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-set (FB_GUI_DISABLED 1)
+#set (FB_GUI_DISABLED 1)
 
 include(${CMAKE_DIR}/common.cmake)
 include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
@@ -77,6 +77,10 @@ if (APPLE)
         ${QUARTZCORE_FRAMEWORK}
         ${CARBON_FRAMEWORK})
 elseif (UNIX)
+    if (NOT FB_GUI_DISABLED)
+        set(OTHER_NPAPITEST_LIBS 
+            ${GTK_LIBRARIES})
+    endif()
 endif (APPLE)
 
 # Repititions in the following are intentional to fix linking errors due to
