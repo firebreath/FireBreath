@@ -25,7 +25,7 @@ public:
     ~FbPerUserRegistration();
 
 private:
-#if _MSC_VER < 1500
+#if _ATL_VER > 0x0800
     HKEY m_hkey;
 #endif
 };
