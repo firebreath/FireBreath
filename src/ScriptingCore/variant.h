@@ -18,6 +18,7 @@
 
 //#define ANY_IMPLICIT_CASTING    // added to enable implicit casting
 
+#include <boost/cstdint.hpp>
 #include <stdexcept>
 #include <typeinfo>
 #include <algorithm>
