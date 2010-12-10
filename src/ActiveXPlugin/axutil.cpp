@@ -16,21 +16,22 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "atlstr.h"
 
 FbPerUserRegistration::FbPerUserRegistration(bool perUser) 
-#if _MSC_VER < 1500
+#if _ATL_VER < 0x0900
   : m_hkey(0)
 #endif
 {
-#if _ATL_VER > 0x0800
-    AtlSetPerUserRegistration(perUser);
-#else // _MSC_VER < 1500
+#if _ATL_VER < 0x0900
     // this seems to be always active and therefore may break
     // any COM functionality thats not registered per user
 
     HRESULT hr;
     HKEY key;
 
-    if(!perUser)
+    if(!perUser && m_hkey) {
+        ::RegCloseKey(m_hkey);
+    } else if (!perUser) {
         return;
+    }
 
     hr = ::RegOpenKeyW(HKEY_CURRENT_USER, L"Software\\Classes", &key);
     if(FAILED(hr))
@@ -43,12 +44,14 @@ FbPerUserRegistration::FbPerUserRegistration(bool perUser)
     }
 
     m_hkey = key;
+#else // _ATL_VER >= 0900
+    AtlSetPerUserRegistration(perUser);
 #endif
 }
 
 FbPerUserRegistration::~FbPerUserRegistration()
 {
-#if _MSC_VER < 1500
+#if _ATL_VER < 0x0900
     if(m_hkey)
         ::RegCloseKey(m_hkey);
 #endif
