@@ -39,26 +39,27 @@ Copyright 2009 Richard Bateman, Firebreath development team
 extern std::string g_dllPath;
 
 // CFBControl
+template <const GUID* pFbCLSID, const char* pMT>
 class ATL_NO_VTABLE CFBControl :
     public CComObjectRootEx<CComSingleThreadModel>,
-    public CComCoClass<CFBControl, &CLSID_FBControl>,
-    public CComControl<CFBControl>,
+    public CComCoClass<CFBControl<pFbCLSID,pMT>, pFbCLSID >,
+    public CComControl<CFBControl<pFbCLSID,pMT> >,
 
-    public JSAPI_IDispatchEx<CFBControl, IFBControl, &DIID_IFBComEventSource>,
-    public IObjectSafetyImpl<CFBControl, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/ >,
+    public JSAPI_IDispatchEx<CFBControl<pFbCLSID,pMT>, IFBControl, &DIID_IFBComEventSource>,
+    public IObjectSafetyImpl<CFBControl<pFbCLSID,pMT>, INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/ >,
 
     // Required for standard events
-    public IProvideClassInfo2Impl<&CLSID_FBControl, NULL, &FB_LIBID>,
+    public IProvideClassInfo2Impl<pFbCLSID, NULL, &FB_LIBID>,
 
-    //public IPersistStreamInitImpl<CFBControl>,
-    public IOleControlImpl<CFBControl>,
-    public IOleObjectImpl<CFBControl>,
-    public IOleInPlaceActiveObjectImpl<CFBControl>,
-    public IQuickActivateImpl<CFBControl>,
-    public IViewObjectExImpl<CFBControl>,
-    public IOleInPlaceObjectWindowlessImpl<CFBControl>,
+    //public IPersistStreamInitImpl<CFBControl<pFbCLSID,pMT> >,
+    public IOleControlImpl<CFBControl<pFbCLSID,pMT> >,
+    public IOleObjectImpl<CFBControl<pFbCLSID,pMT> >,
+    public IOleInPlaceActiveObjectImpl<CFBControl<pFbCLSID,pMT> >,
+    public IQuickActivateImpl<CFBControl<pFbCLSID,pMT> >,
+    public IViewObjectExImpl<CFBControl<pFbCLSID,pMT> >,
+    public IOleInPlaceObjectWindowlessImpl<CFBControl<pFbCLSID,pMT> >,
 
-    public IObjectWithSiteImpl<CFBControl>,
+    public IObjectWithSiteImpl<CFBControl<pFbCLSID,pMT> >,
 
     // Provides methods for getting <params>
     public IPersistPropertyBag,
@@ -66,6 +67,7 @@ class ATL_NO_VTABLE CFBControl :
     public FB::BrowserPlugin
 {
 public:
+    typedef CFBControl<pFbCLSID, pMT> CFBControlX;
     HWND m_messageWin;
 
     FB::PluginWindowWin *pluginWin;
@@ -109,7 +111,7 @@ public:
     // access to the DOM Document and Window
     STDMETHOD(SetClientSite)(IOleClientSite *pClientSite)
     {
-        HRESULT hr = IOleObjectImpl<CFBControl>::SetClientSite (pClientSite);
+        HRESULT hr = IOleObjectImpl<CFBControlX>::SetClientSite (pClientSite);
         if (!pClientSite)
             return hr;
 
@@ -208,21 +210,21 @@ DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
 
 DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
 
-BEGIN_REGMAP(CFBControl)
+BEGIN_REGMAP(CFBControlX)
     REGMAP_ENTRY("PROGID", ACTIVEX_PROGID)
     REGMAP_ENTRY("VERSION", VERSION_NUM)
     REGMAP_ENTRY("DESCRIPTION", FBControl_DESC)
     REGMAP_ENTRY("MOZILLA_PLUGINID", MOZILLA_PLUGINID)
-    REGMAP_UUID("CLSID", CLSID_FBControl)
+    REGMAP_UUID("CLSID", *pFbCLSID)
     REGMAP_UUID("LIBID", FB_LIBID)
-    REGMAP_ENTRY("THREADING", "Single")
+    REGMAP_ENTRY("THREADING", "Multi")
     REGMAP_ENTRY("MIMETYPE", FBSTRING_MIMEType)
     REGMAP_ENTRY("EXTENSION", FBSTRING_FileExtents)
 END_REGMAP()
 
-DECLARE_NOT_AGGREGATABLE(CFBControl)
+DECLARE_NOT_AGGREGATABLE(CFBControlX)
 
-BEGIN_COM_MAP(CFBControl)
+BEGIN_COM_MAP(CFBControlX)
     COM_INTERFACE_ENTRY(IFBControl)
     COM_INTERFACE_ENTRY(IDispatch)
     COM_INTERFACE_ENTRY(IDispatchEx)
@@ -267,7 +269,82 @@ END_COM_MAP()
     }
 };
 
-OBJECT_ENTRY_AUTO(__uuidof(FBControl), CFBControl)
+template <const GUID* pFbCLSID, const char* pMT>
+int CFBControl<pFbCLSID, pMT>::_REFCOUNT(0); // This must only be accessed from the main thread
+
+template <const GUID* pFbCLSID, const char* pMT>
+BOOL CFBControl<pFbCLSID, pMT>::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)
+{
+    BOOL bHandled = FALSE;
+    switch(dwMsgMapID)
+    {
+    case 0: {
+        // WM_CREATE is the only message we handle here
+        switch(uMsg)
+        {
+        case WM_CREATE:
+            lResult = OnCreate(uMsg, wParam, lParam, bHandled);
+            if(bHandled)
+                return TRUE;
+            break;
+
+        case WM_MOUSEACTIVATE:
+            lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+            return TRUE;
+
+        case WM_DESTROY:
+            shutdown();
+            break;
+        }
+
+        if (bHandled)
+            return TRUE;
+        else if(CComControl<CFBControl<pFbCLSID, pMT> >::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult))
+            return TRUE;
+        else if(DefaultReflectionHandler(hWnd, uMsg, wParam, lParam, lResult))
+            return TRUE;
+        } break;
+    
+    }
+    return FALSE;
+}
+
+class FireBreathClassFactory : public CComClassFactory
+{
+	// IClassFactory
+	STDMETHOD(CreateInstance)(
+		LPUNKNOWN pUnkOuter, 
+		REFIID riid, 
+		void** ppvObj)
+	{
+        return CComClassFactory::CreateInstance(pUnkOuter, riid, ppvObj);
+		//ATLASSUME(m_pfnCreateInstance != NULL);
+		//HRESULT hRes = E_POINTER;
+		//if (ppvObj != NULL)
+		//{
+		//	*ppvObj = NULL;
+		//	// can't ask for anything other than IUnknown when aggregating
+
+		//	if ((pUnkOuter != NULL) && !InlineIsEqualUnknown(riid))
+		//	{
+		//		ATLTRACE(atlTraceCOM, 0, _T("CComClassFactory: asked for non IUnknown interface while creating an aggregated object"));
+		//		hRes = CLASS_E_NOAGGREGATION;
+		//	}
+		//	else
+		//		hRes = m_pfnCreateInstance(pUnkOuter, riid, ppvObj);
+		//}
+		//return hRes;
+	}
+};
+
+char FBCONTROL1_MIMETYPE[];
+char FBCONTROL2_MIMETYPE[];
+
+typedef CFBControl<&CLSID_FBControl, FBCONTROL1_MIMETYPE> CFBControl1;
+typedef CFBControl<&CLSID_FBControl2, FBCONTROL2_MIMETYPE> CFBControl2;
+
+OBJECT_ENTRY_AUTO(__uuidof(FBControl), CFBControl1);
+OBJECT_ENTRY_AUTO(__uuidof(FBControl2), CFBControl2);
 //__declspec(selectany) ATL::_ATL_OBJMAP_ENTRY __objMap_CFBControl = {
 //    &__uuidof(FBControl),
 //    FBControl::UpdateRegistry,

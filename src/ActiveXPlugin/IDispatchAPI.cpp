@@ -301,13 +301,9 @@ FB::JSAPIPtr IDispatchAPI::getJSAPI()
         return FB::JSAPIPtr();
     }
     
-	if (COMJavascriptObject* p = dynamic_cast<COMJavascriptObject*>(m_obj.p)) {
+	if (JSAPI_IDispatchExBase* p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p)) {
 		return p->getAPI();
 	}
 
-	if (CFBControl* p = dynamic_cast<CFBControl*>(m_obj.p)) {
-		return p->getAPI();
-	}
-    
     return FB::JSAPIPtr();
 }

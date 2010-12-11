@@ -14,6 +14,9 @@
 #define FBControl_GUID ${FBControl_GUID}
 #define FBControl_DESC "${FBControl_DESC}"
 
+#define FBControl2_GUID ${FBControl2_GUID}
+#define FBControl2_DESC "${FBControl2_DESC}"
+
 #define IFBComJavascriptObject_GUID ${IFBComJavascriptObject_GUID}
 #define IFBComJavascriptObject_DESC "${IFBComJavascriptObject_DESC}"
 

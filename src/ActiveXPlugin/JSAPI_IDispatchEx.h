@@ -30,19 +30,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "logging.h"
 #include <mshtmdid.h>
 
-template <class T, class IDISP, const IID* piid>
-class JSAPI_IDispatchEx :
-    public IDISP,
-    public IConnectionPointContainer,
-    public IConnectionPoint
+class JSAPI_IDispatchExBase
 {
-    typedef CComEnum<IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*,
-        _CopyInterface<IConnectionPoint> > CComEnumConnectionPoints;
-    typedef std::map<DWORD, IDispatchAPIPtr> ConnectionPointMap;
-
 public:
-    JSAPI_IDispatchEx(void) : m_readyState(READYSTATE_LOADING) { };
-    virtual ~JSAPI_IDispatchEx(void) { };
     void setAPI(FB::JSAPIPtr api, ActiveXBrowserHostPtr host)
     {
         m_api = api;
@@ -54,6 +44,25 @@ public:
 		return m_api;
 	}
 
+protected:
+    FB::JSAPIPtr m_api;
+    ActiveXBrowserHostPtr m_host;
+};
+
+template <class T, class IDISP, const IID* piid>
+class JSAPI_IDispatchEx :
+    public JSAPI_IDispatchExBase,
+    public IDISP,
+    public IConnectionPointContainer,
+    public IConnectionPoint
+{
+    typedef CComEnum<IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*,
+        _CopyInterface<IConnectionPoint> > CComEnumConnectionPoints;
+    typedef std::map<DWORD, IDispatchAPIPtr> ConnectionPointMap;
+
+public:
+    JSAPI_IDispatchEx(void) : m_readyState(READYSTATE_LOADING) { };
+    virtual ~JSAPI_IDispatchEx(void) { };
     void setReadyState(READYSTATE newState)
     {
         m_readyState = newState;
@@ -62,8 +71,6 @@ public:
     }
 
 protected:
-    FB::JSAPIPtr m_api;
-    ActiveXBrowserHostPtr m_host;
     ConnectionPointMap m_connPtMap;
 
     READYSTATE m_readyState;

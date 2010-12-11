@@ -1,55 +1,40 @@
-HKCU
-{
-    NoRemove Software
-    {
-        NoRemove MozillaPlugins
-        {
-            ForceRemove '%MOZILLA_PLUGINID%'
-            {
+HKCU {
+    NoRemove Software {
+        NoRemove MozillaPlugins {
+            ForceRemove '%MOZILLA_PLUGINID%' {
                 val Path = s '%MODULE%'
             }
         }
         
-        NoRemove Classes
-        {
-            %PROGID%.%VERSION% = s '%DESCRIPTION%'
-            {
+        NoRemove Classes {
+            %PROGID%.%VERSION% = s '%DESCRIPTION%' {
                 CLSID = s '%CLSID%'
             }
-            %PROGID% = s '%DESCRIPTION%'
-            {
+            %PROGID% = s '%DESCRIPTION%' {
                 CLSID = s '%CLSID%'
                 CurVer = s '%PROGID%.%VERSION%'
             }
-            NoRemove CLSID
-            {
-                ForceRemove %CLSID% = s '%DESCRIPTION%'
-                {
+            NoRemove CLSID {
+                ForceRemove %CLSID% = s '%DESCRIPTION%' {
                     ProgID = s '%PROGID%.%VERSION%'
                     VersionIndependentProgID = s '%PROGID%'
                     ForceRemove 'Programmable'
-                    InprocServer32 = s '%MODULE%'
-                    {
+                    InprocServer32 = s '%MODULE%' {
                         val ThreadingModel = s '%THREADING%'
                     }
                     val AppID = s '%APPID%'
                     ForceRemove 'Control'
-                    'MiscStatus' = s '0'
-                    {
+                    'MiscStatus' = s '0' {
                         '1' = s '131473'
                     }
                     'TypeLib' = s '%LIBID%'
                     'Version' = s '%VERSION%'
                 }
             }
-	        NoRemove MIME
-	        {
-	            NoRemove Database
-	            {
-	                NoRemove 'Content Type'
-	                {
-	                    '%MIMETYPE%' = s '%DESCRIPTION%'
-	                    {
+	        NoRemove MIME {
+	            NoRemove Database {
+	                NoRemove 'Content Type' {
+	                    '%MIMETYPE%' = s '%DESCRIPTION%' {
 	                        val Extension = s '%EXTENSION%'
 	                        val CLSID = s '%CLSID%'
 	                    }

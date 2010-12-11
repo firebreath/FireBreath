@@ -55,16 +55,8 @@ library ${FBTYPELIB_NAME}
         methods:
     };
 
-    [
-        uuid(FBControl_GUID),
-        control,
-        helpstring(FBControl_DESC)
-    ]
-    coclass FBControl
-    {
-        [default] interface IFBControl;
-        [default, source] dispinterface IFBComEventSource;
-    };
+#include "fb_objects.idl"
+
     [
         uuid(FBComJavascriptObject_GUID),
         control,

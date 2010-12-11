@@ -54,7 +54,7 @@ STDAPI DllRegisterServer(void)
     HRESULT hr = _AtlModule.DllRegisterServer();
 
     if (!SUCCEEDED(hr))
-        hr = CFBControl::UpdateRegistry(true);
+        hr = CFBControl1::UpdateRegistry(true);
 #ifdef _MERGE_PROXYSTUB
     if (FAILED(hr))
         return hr;
@@ -70,7 +70,7 @@ STDAPI DllUnregisterServer(void)
     FbPerUserRegistration perUser(true);
     HRESULT hr = _AtlModule.DllUnregisterServer();
     if (!SUCCEEDED(hr))
-        hr = CFBControl::UpdateRegistry(false);
+        hr = CFBControl1::UpdateRegistry(false);
 #ifdef _MERGE_PROXYSTUB
     if (FAILED(hr))
         return hr;
