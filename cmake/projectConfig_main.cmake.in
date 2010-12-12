@@ -41,6 +41,9 @@ include_directories(
     ${FBLIB_INCLUDE_DIRS}
     )
 
+# set up the mimetype strings
+string(REPLACE ";" "\\|" FBMIMETYPE_LIST ${FBSTRING_MIMEType})
+
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})

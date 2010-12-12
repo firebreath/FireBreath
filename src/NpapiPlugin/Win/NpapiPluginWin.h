@@ -29,7 +29,7 @@ namespace FB {
     class NpapiPluginWin : public NpapiPlugin
     {
     public:
-        NpapiPluginWin(const NpapiBrowserHostPtr& host);
+        NpapiPluginWin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
         virtual ~NpapiPluginWin(void);
 
     protected:

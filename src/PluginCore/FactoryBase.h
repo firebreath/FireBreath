@@ -165,7 +165,7 @@ namespace FB
         std::string getPluginDescription();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+        /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
         ///
         /// @brief  Creates a npapi plugin.  The default implementation creates a NpapiPluginWin, NpapiPluginX11, or
         /// 		NpapiPluginMac depending on the platform.  Only in very very rare cases will you need to override
@@ -175,7 +175,7 @@ namespace FB
         ///
         /// @return An NpapiPluginPtr containing an NpapiPlugin derived plugin handler
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host);
+        virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
         
 #ifdef FB_WIN
         ////////////////////////////////////////////////////////////////////////////////////////////////////

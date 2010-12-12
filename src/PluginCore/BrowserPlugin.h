@@ -37,7 +37,7 @@ namespace FB {
     class BrowserPlugin
     {
     public:
-        BrowserPlugin();
+        BrowserPlugin(const std::string& mimetype);
         virtual ~BrowserPlugin();
 
         virtual void shutdown() = 0;

@@ -6,11 +6,15 @@
 <title>test page for object fbcontrol</title>
 </head>
     <script type="text/javascript">
-        function plugin()
+@@foreach (FBSTRING_MIMEType MIMETYPE)
+        function plugin${i}()
         {
-            return document.getElementById('plugin');
+            return document.getElementById('plugin${i}');
         }
-        
+@@endforeach
+
+        plugin = plugin0;
+
         function addEvent(obj, name, func)
         {
             if (window.addEventListener) {
@@ -51,9 +55,11 @@
 <body onload="load()">
 
 
-<object id="plugin" type="${FBSTRING_MIMEType}" width="300" height="300">
+@@foreach (FBSTRING_MIMEType MIMEType)
+<object id="plugin${i}" type="${MIMEType}" width="300" height="300">
     <param name="onload" value="pluginLoaded" />
 </object><br />
+@@endforeach
 
 <a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
 

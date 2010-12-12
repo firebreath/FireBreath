@@ -1,23 +1,26 @@
 HKCU {
     NoRemove Software {
         NoRemove MozillaPlugins {
-            ForceRemove '%MOZILLA_PLUGINID%' {
+            ForceRemove '${MOZILLA_PLUGINID}' {
                 val Path = s '%MODULE%'
             }
         }
         
         NoRemove Classes {
-            %PROGID%.%VERSION% = s '%DESCRIPTION%' {
-                CLSID = s '%CLSID%'
+@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID)
+            ${PROGID}.${AXVERSION_NUM} = s '${FBSTRING_FileDescription}' {
+                CLSID = s '{${CUR_GUID}}'
             }
-            %PROGID% = s '%DESCRIPTION%' {
-                CLSID = s '%CLSID%'
-                CurVer = s '%PROGID%.%VERSION%'
+            ${PROGID} = s '${FBSTRING_FileDescription}' {
+                CLSID = s '{${CUR_GUID}}'
+                CurVer = s '${PROGID}.${AXVERSION_NUM}'
             }
+@@endforeach
             NoRemove CLSID {
-                ForceRemove %CLSID% = s '%DESCRIPTION%' {
-                    ProgID = s '%PROGID%.%VERSION%'
-                    VersionIndependentProgID = s '%PROGID%'
+@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID)
+                ForceRemove {${CUR_GUID}} = s '${FBSTRING_FileDescription}' {
+                    ProgID = s '${PROGID}.${AXVERSION_NUM}'
+                    VersionIndependentProgID = s '${PROGID}'
                     ForceRemove 'Programmable'
                     InprocServer32 = s '%MODULE%' {
                         val ThreadingModel = s '%THREADING%'
@@ -28,16 +31,19 @@ HKCU {
                         '1' = s '131473'
                     }
                     'TypeLib' = s '%LIBID%'
-                    'Version' = s '%VERSION%'
+                    'Version' = s '${AXVERSION_NUM}'
                 }
+@@endforeach
             }
 	        NoRemove MIME {
 	            NoRemove Database {
 	                NoRemove 'Content Type' {
-	                    '%MIMETYPE%' = s '%DESCRIPTION%' {
-	                        val Extension = s '%EXTENSION%'
-	                        val CLSID = s '%CLSID%'
+@@foreach (FBControl_GUID CUR_GUID FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENTS)
+	                    '${CUR_MIMETYPE}' = s '${FBSTRING_FileDescription}' {
+	                        val Extension = s '${CUR_EXTENTS}'
+	                        val CLSID = s '{${CUR_GUID}}'
 	                    }
+@@endforeach
 	                }
 	            }
 	        }            

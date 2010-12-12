@@ -36,7 +36,7 @@ namespace FB { namespace Npapi {
     class NpapiPlugin : public FB::BrowserPlugin
     {
     public:
-        NpapiPlugin(const NpapiBrowserHostPtr& host);
+        NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
         virtual ~NpapiPlugin(void);
 
         virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);

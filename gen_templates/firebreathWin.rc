@@ -60,7 +60,7 @@ BEGIN
             VALUE "ProductVersion", FBSTRING_PLUGIN_VERSION
             VALUE "FileExtents", FBSTRING_FileExtents
             VALUE "FileOpenName", FBSTRING_PluginName
-            VALUE "MIMEType", FBSTRING_MIMEType
+            VALUE "MIMEType", FBSTRING_MIMETypeList
         END
     END
     BLOCK "VarFileInfo"

@@ -27,12 +27,13 @@ using namespace FB::Npapi;
 
 extern std::string g_dllPath;
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
-    return boost::make_shared<NpapiPluginWin>(host);
+    return boost::make_shared<NpapiPluginWin>(host, mimetype);
 }
 
-NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host) : NpapiPlugin(host), pluginWin(NULL)
+NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
+    : NpapiPlugin(host, mimetype), pluginWin(NULL)
 {
     PluginCore::setPlatform("Windows", "NPAPI");
     setFSPath(g_dllPath);

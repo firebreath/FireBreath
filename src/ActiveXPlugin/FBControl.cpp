@@ -15,5 +15,4 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // FBControl.cpp : Implementation of CFBControl
 #include "FBControl.h"
 
-char FBCONTROL1_MIMETYPE[] = "application/x-somePlugin";
-char FBCONTROL2_MIMETYPE[] = "application/x-someOtherPlugin";
+#include "axplugin_defs.inc" // Include generated file for ActiveX mimetypes

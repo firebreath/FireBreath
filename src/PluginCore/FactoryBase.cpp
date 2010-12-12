@@ -47,9 +47,9 @@ std::string FB::FactoryBase::getPluginDescription()
     return FB::getPluginDescription();
 }
 
-FB::Npapi::NpapiPluginPtr FB::FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+FB::Npapi::NpapiPluginPtr FB::FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
-    return FB::Npapi::createNpapiPlugin(host);
+    return FB::Npapi::createNpapiPlugin(host, mimetype);
 }
 
 #ifdef FB_WIN

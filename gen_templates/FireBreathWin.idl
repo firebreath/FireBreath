@@ -55,8 +55,18 @@ library ${FBTYPELIB_NAME}
         methods:
     };
 
-#include "fb_objects.idl"
-
+@@foreach (FBControl_GUID CUR_GUID)
+    [
+        uuid(${CUR_GUID}),
+        control,
+        helpstring(FBControl_DESC)
+    ]
+    coclass FBControl${i}
+    {
+        [default] interface IFBControl;
+        [default, source] dispinterface IFBComEventSource;
+    };
+@@endforeach 
     [
         uuid(FBComJavascriptObject_GUID),
         control,

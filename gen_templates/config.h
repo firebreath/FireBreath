@@ -13,8 +13,26 @@
 #define FBSTRING_ProductName "${FBSTRING_ProductName}"
 #define FBSTRING_FileExtents "${FBSTRING_FileExtents}"
 #define FBSTRING_PluginName "${FBSTRING_PluginName}"
-#define FBSTRING_MIMEType "${FBSTRING_MIMEType}"
-#define FBSTRING_X11MIMEType "${FBSTRING_MIMEType}:${FBSTRING_FileExtents}:${FBSTRING_FileDescription}"
+
+#define FBSTRING_MIMETypeList \
+@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT)
+                              "${CURMIME}|" \
+@@endforeach
+                              ""
+
+@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT)
+#define FBSTRING_MIMEType${i} "${CURMIME}"
+#define FBSTRING_X11MIMEType${i} "${CURMIME}:${CUREXTENT}:${FBSTRING_FileDescription}"
+@@endforeach
+
+
+#define FBSTRING_X11MIMEType \
+@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT)
+                            "${CURMIME}:${CUREXTENT}:${FBSTRING_FileDescription};" \
+@@endforeach
+                            ""
+
+#define FBSTRING_MIMEType   "${FBMIMETYPE_LIST}"
 
 #define FB_GUI_DISABLED         ${FB_GUI_DISABLED}
 

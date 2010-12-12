@@ -40,9 +40,9 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::Npapi;
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std:string& mimetype)
 {
-    return boost::make_shared<NpapiPluginMac>(host);
+    return boost::make_shared<NpapiPluginMac>(host, mimetype);
 }
 
 namespace {
@@ -243,8 +243,8 @@ namespace
     }
 }
 
-NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host)
-  : NpapiPlugin(host), pluginWin(NULL), m_eventModel(), m_drawingModel() {
+NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& mimetype)
+  : NpapiPlugin(host, mimetype), pluginWin(NULL), m_eventModel(), m_drawingModel() {
     // If you receive a BAD_ACCESS error here you probably have something
     // wrong in your FactoryMain.cpp in your plugin project's folder
 

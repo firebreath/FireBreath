@@ -26,7 +26,7 @@ namespace FB { namespace Npapi
     typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
     
-    NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host);
+    NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
 } }
 
 #endif

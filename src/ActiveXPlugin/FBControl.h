@@ -84,7 +84,7 @@ private:
 public:
     // The methods in this class are positioned in this file in the
     // rough order that they will be called in.
-    CFBControl() : pluginWin(NULL), m_messageWin(NULL)
+    CFBControl() : pluginWin(NULL), m_messageWin(NULL), FB::BrowserPlugin(pMT)
     {
         if (_REFCOUNT++ == 0) {
             FB::Log::initLogging();
@@ -211,15 +211,8 @@ DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
 DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
 
 BEGIN_REGMAP(CFBControlX)
-    REGMAP_ENTRY("PROGID", ACTIVEX_PROGID)
-    REGMAP_ENTRY("VERSION", VERSION_NUM)
-    REGMAP_ENTRY("DESCRIPTION", FBControl_DESC)
-    REGMAP_ENTRY("MOZILLA_PLUGINID", MOZILLA_PLUGINID)
-    REGMAP_UUID("CLSID", *pFbCLSID)
     REGMAP_UUID("LIBID", FB_LIBID)
-    REGMAP_ENTRY("THREADING", "Multi")
-    REGMAP_ENTRY("MIMETYPE", FBSTRING_MIMEType)
-    REGMAP_ENTRY("EXTENSION", FBSTRING_FileExtents)
+    REGMAP_ENTRY("THREADING", "Single")
 END_REGMAP()
 
 DECLARE_NOT_AGGREGATABLE(CFBControlX)
@@ -309,54 +302,7 @@ BOOL CFBControl<pFbCLSID, pMT>::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARA
     return FALSE;
 }
 
-class FireBreathClassFactory : public CComClassFactory
-{
-	// IClassFactory
-	STDMETHOD(CreateInstance)(
-		LPUNKNOWN pUnkOuter, 
-		REFIID riid, 
-		void** ppvObj)
-	{
-        return CComClassFactory::CreateInstance(pUnkOuter, riid, ppvObj);
-		//ATLASSUME(m_pfnCreateInstance != NULL);
-		//HRESULT hRes = E_POINTER;
-		//if (ppvObj != NULL)
-		//{
-		//	*ppvObj = NULL;
-		//	// can't ask for anything other than IUnknown when aggregating
-
-		//	if ((pUnkOuter != NULL) && !InlineIsEqualUnknown(riid))
-		//	{
-		//		ATLTRACE(atlTraceCOM, 0, _T("CComClassFactory: asked for non IUnknown interface while creating an aggregated object"));
-		//		hRes = CLASS_E_NOAGGREGATION;
-		//	}
-		//	else
-		//		hRes = m_pfnCreateInstance(pUnkOuter, riid, ppvObj);
-		//}
-		//return hRes;
-	}
-};
-
-char FBCONTROL1_MIMETYPE[];
-char FBCONTROL2_MIMETYPE[];
-
-typedef CFBControl<&CLSID_FBControl, FBCONTROL1_MIMETYPE> CFBControl1;
-typedef CFBControl<&CLSID_FBControl2, FBCONTROL2_MIMETYPE> CFBControl2;
-
-OBJECT_ENTRY_AUTO(__uuidof(FBControl), CFBControl1);
-OBJECT_ENTRY_AUTO(__uuidof(FBControl2), CFBControl2);
-//__declspec(selectany) ATL::_ATL_OBJMAP_ENTRY __objMap_CFBControl = {
-//    &__uuidof(FBControl),
-//    FBControl::UpdateRegistry,
-//    FBControl::_ClassFactoryCreatorFBControl::CreateInstance,
-//    FBControl::_CreatorFBControl::CreateInstance,
-//    NULL,
-//    0,
-//    FBControl::GetObjectDescription,
-//    FBControl::GetCategoryMap,
-//    FBControl::ObjectMain
-//};
-//extern "C" __declspec(allocate("ATL$__m")) __declspec(selectany) ATL::_ATL_OBJMAP_ENTRY* const __pobjMap_CFBControl = &__objMap_CFBControl;
-//__pragma(comment(linker, "/include:___pobjMap_" CFBControl));
+// This includes an auto-generated file that sets up the plugin with mimetypes
+#include "axplugin_defs.h"
 
 #endif

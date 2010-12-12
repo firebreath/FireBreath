@@ -56,9 +56,9 @@ public:
         TestPlugin::StaticDeinitialize();
     }
     
-    FB::Npapi::NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host)
+    FB::Npapi::NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, std::string mimetype)
     {
-        return boost::make_shared<FB::Npapi::NpapiPlugin>(host);
+        return boost::make_shared<FB::Npapi::NpapiPlugin>(host, mimetype);
     }
 };
 
