@@ -30,6 +30,9 @@ elseif(UNIX)
     include(${CMAKE_DIR}/X11.cmake)
 endif()
 
+# include file with the crazy configure_template function
+include(${CMAKE_DIR}/configure_template.cmake)
+
 # include file with build options
 include(${CMAKE_DIR}/options.cmake)
 
