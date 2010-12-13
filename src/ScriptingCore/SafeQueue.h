@@ -35,7 +35,6 @@ namespace FB {
         mutable boost::mutex the_mutex;
         boost::condition_variable the_condition_variable;
     public:
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void SafeQueue::push(Data const& data)
         ///

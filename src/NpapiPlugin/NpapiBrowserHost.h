@@ -53,6 +53,7 @@ namespace FB { namespace Npapi {
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
         void evaluateJavaScript(const std::string &script);
+		bool isSafari();
 
     public:
         FB::variant getVariant(const NPVariant *npVar);

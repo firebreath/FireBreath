@@ -79,18 +79,33 @@ FB::OneShotManager::OneShotManager()
 FB::OneShotManager::~OneShotManager()
 {
     [getHelper(this) disconnect];
-    m_sinks.clear();
 }
 
 void FB::OneShotManager::push(NPP npp, OneShotCallback sink)
 {
-    m_sinks.insert(std::make_pair(npp, sink));
+	boost::mutex::scoped_lock lock(m_mutex);
+    m_sinks.push(std::make_pair(npp, sink));
     [getHelper(this) performSelectorOnMainThread:@selector(doStuff:) withObject:nil waitUntilDone:NO];
 }
 
 void FB::OneShotManager::clear(NPP npp)
 {
-    m_sinks.erase(npp);
+	// This and push must never be called at the same time; thus, the mutex prevents that
+	// from happening.
+	boost::mutex::scoped_lock lock(m_mutex);
+    SinkQueue tmp;
+	SinkPair cur;
+	// Go through all items in the queue; add all but those
+	// associated with npp to a temporary queue
+	while (m_sinks.try_pop(cur)) {
+		if (cur.first != npp) {
+			tmp.push(cur);
+		}
+	}
+	// Add the items we kept back into the queue
+	while (tmp.try_pop(cur)) {
+		m_sinks.push(cur);
+	}
 }
 
 FB::OneShotManager& FB::OneShotManager::getInstance()
@@ -101,10 +116,9 @@ FB::OneShotManager& FB::OneShotManager::getInstance()
 
 void FB::OneShotManager::shoot()
 {
-    for (SinkMap::const_iterator it = m_sinks.begin(); it != m_sinks.end(); ++it)
+	SinkPair val;
+    while (m_sinks.try_pop(val))
     {
-        it->second(it->first, 0);
+        val.second(val.first, 0);
     }
-    
-    m_sinks.clear();
 }

@@ -14,6 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <memory>
 #include <boost/config.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include "NpapiTypes.h"
 #include "APITypes.h"
@@ -189,6 +190,12 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
     }
 
     return retVal;
+}
+
+bool NpapiBrowserHost::isSafari()
+{
+	std::string agent(UserAgent());
+	return boost::algorithm::contains(agent, "Safari");
 }
 
 void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)

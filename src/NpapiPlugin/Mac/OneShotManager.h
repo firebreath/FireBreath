@@ -22,6 +22,7 @@
 
 #include "APITypes.h"
 #include "NpapiTypes.h"
+#include "SafeQueue.h"
 
 
 namespace FB
@@ -43,8 +44,10 @@ namespace FB
     private:
         OneShotManager();
         
-        typedef std::multimap<NPP, OneShotCallback> SinkMap;
-        SinkMap m_sinks;
+		typedef std::pair<NPP, OneShotCallback> SinkPair;
+        typedef FB::SafeQueue<SinkPair> SinkQueue;
+        SinkQueue m_sinks;
+		mutable boost::mutex m_mutex;
     };
 }
 
