@@ -13,6 +13,8 @@ resource 'STR#' (127)
 
 resource 'STR#' (128) 
 { {
-    "${FBSTRING_MIMEType}",
-    "${FBSTRING_FileExtents}"
+@@foreach (FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENT)
+    "${CUR_MIMETYPE}",
+    "${CUR_EXTENT}",
+@@endforeach
 } };

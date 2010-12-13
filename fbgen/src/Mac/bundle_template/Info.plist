@@ -9,7 +9,7 @@
 	<key>CFBundleGetInfoString</key>
     <string>${PLUGIN_NAME} ${FBSTRING_PLUGIN_VERSION}, ${FBSTRING_LegalCopyright}</string>
 	<key>CFBundleIdentifier</key>
-    <string>com.${ACTIVEX_PROGID}</string>
+    <string>com.${FBTYPELIB_NAME}.${FBSTRING_PluginName}</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
@@ -44,11 +44,13 @@
 	<string>${FBSTRING_FileDescription}</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
-		<key>${FBSTRING_MIMEType}</key>
+@@foreach (FBSTRING_MIMEType CUR_MIMETYPE)
+		<key>${CUR_MIMETYPE}</key>
 		<dict>
 			<key>WebPluginTypeDescription</key>
 			<string>${FBSTRING_FileDescription}</string>
 		</dict>
+@@endforeach
 	</dict>
 </dict>
 </plist>

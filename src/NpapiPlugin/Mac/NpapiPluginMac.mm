@@ -17,7 +17,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <dlfcn.h>
 
-#include "Mac/NpapiPluginMac.h"
 #include "NpapiBrowserHost.h"
 #include "PluginCore.h"
 #include "config.h"
@@ -37,10 +36,13 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
+#include <string>
+
+#include "Mac/NpapiPluginMac.h"
 
 using namespace FB::Npapi;
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std:string& mimetype)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
     return boost::make_shared<NpapiPluginMac>(host, mimetype);
 }
