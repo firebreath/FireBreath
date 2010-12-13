@@ -70,7 +70,7 @@ namespace FB
         ///
         /// @brief  Default constructor. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserHost() : m_threadId(boost::this_thread::get_id()) { }
+        BrowserHost() : m_threadId(boost::this_thread::get_id()), m_isShutdown(false) { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~BrowserHost()
@@ -256,6 +256,13 @@ namespace FB
         /// @param  str The log message to send to the browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void htmlLog(const std::string& str);
+		
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void shutdown()
+        ///
+        /// @brief  Notifies the browserhost object that the associated plugin object is shutting down
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual void shutdown();
 
 public:
     virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
@@ -279,7 +286,10 @@ public:
         }
 
     protected:
-        boost::thread::id m_threadId;   // Stores the thread_id for the thread the plugin was started on
+		// Stores the thread_id for the thread the plugin was started on
+        boost::thread::id m_threadId;
+   		// if true then the plugin this belongs to has shut down (or is shutting down)
+		bool m_isShutdown;				
     };
 
     

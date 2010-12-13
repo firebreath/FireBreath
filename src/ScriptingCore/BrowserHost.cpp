@@ -73,6 +73,10 @@ FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj)
     return FB::DOM::NodePtr(new FB::DOM::Node(obj));
 }
 
+void FB::BrowserHost::shutdown()
+{
+	this->m_isShutdown = true;
+}
 
 void FB::BrowserHost::assertMainThread()
 {

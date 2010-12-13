@@ -99,6 +99,8 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 
 void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
 {
+	if (m_isShutdown)
+		return;
     PluginThreadAsyncCall(func, userData);
 }
 
@@ -311,16 +313,22 @@ uint32_t NpapiBrowserHost::MemFlush(uint32_t size)
 
 NPObject *NpapiBrowserHost::RetainObject(NPObject *npobj)
 {
+	if (m_isShutdown)
+		return NULL;
     assertMainThread();
     return module->RetainObject(npobj);
 }
 void NpapiBrowserHost::ReleaseObject(NPObject *npobj)
 {
+	if (m_isShutdown)
+		return;
     assertMainThread();
     return module->ReleaseObject(npobj);
 }
 void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant)
 {
+	if (m_isShutdown)
+		return;
     assertMainThread();
     return module->ReleaseVariantValue(variant);
 }

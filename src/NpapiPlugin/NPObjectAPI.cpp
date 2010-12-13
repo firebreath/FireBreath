@@ -41,9 +41,7 @@ NPObjectAPI::~NPObjectAPI(void)
 void NPObjectAPI::releaseObject(NPObject* obj)
 {
     if (obj != NULL) {
-        if (obj->referenceCount > 0) {
-            browser->ReleaseObject(obj);
-        }
+        browser->ReleaseObject(obj);
     }
 }
 

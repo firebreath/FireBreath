@@ -120,9 +120,9 @@ namespace
     }    
 }
 
-NpapiPlugin *FB::Npapi::getPlugin(NPP instance)
+NpapiPluginPtr FB::Npapi::getPlugin(NPP instance)
 {
-    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin.get();
+    return static_cast<NpapiPDataHolder*>(instance->pdata)->plugin;
 }
 
 
@@ -189,6 +189,9 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
+	if (NpapiBrowserHostPtr host = getHost(instance)) {
+		host->shutdown();
+	}
 #ifdef FB_MACOSX
     OneShotManager::getInstance().clear(instance);
 #endif
@@ -196,7 +199,7 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin* plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         plugin->shutdown();
     }
 
@@ -224,7 +227,7 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
     }
 
 #if FB_GUI_DISABLED != 1
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->SetWindow(window);
     }
 #endif
@@ -239,7 +242,7 @@ NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->NewStream(type, stream, seekable, stype);
     } else {    
         return NPERR_GENERIC_ERROR;
@@ -252,7 +255,7 @@ NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPR
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->DestroyStream(stream, reason);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -265,7 +268,7 @@ int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->WriteReady(stream);
     } else {    
         return NPERR_GENERIC_ERROR;
@@ -279,7 +282,7 @@ int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t off
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->Write(stream, offset, len, buffer);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -292,7 +295,7 @@ void NpapiPluginModule::NPP_StreamAsFile(NPP instance, NPStream* stream, const c
         return;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         plugin->StreamAsFile(stream, fname);
     }
 }
@@ -303,7 +306,7 @@ void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
         return;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         plugin->Print(platformPrint);
     }
 }
@@ -314,7 +317,7 @@ int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
         return 0;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->HandleEvent(event);
     } else {
         return 0;
@@ -328,7 +331,7 @@ void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason re
         return;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         plugin->URLNotify(url, reason, notifyData);
     }
 }
@@ -353,7 +356,7 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->GetValue(variable, value);
     }
 
@@ -366,7 +369,7 @@ NPError NpapiPluginModule::NPP_SetValue(NPP instance, NPNVariable variable, void
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    if (NpapiPlugin *plugin = getPlugin(instance)) {
+    if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->SetValue(variable, value);
     } else {
         return NPERR_GENERIC_ERROR;
