@@ -198,7 +198,7 @@ NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 void NpapiPluginModule::ReleaseObject(NPObject *npobj)
 {
     assertMainThread();
-    FBLOG_DEBUG("Npapi", "Retaining object at " << boost::lexical_cast<std::string>(npobj));
+    FBLOG_DEBUG("Npapi", "Releasing object at " << boost::lexical_cast<std::string>(npobj));
     if (NPNFuncs.releaseobject != NULL) {
         NPNFuncs.releaseobject(npobj);
     }
