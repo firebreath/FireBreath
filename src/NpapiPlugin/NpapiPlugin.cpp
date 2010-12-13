@@ -22,8 +22,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
-    : m_obj(NULL), m_npHost(host), m_retainReturnedNPObject(true), m_isReady(false),
-    FB::BrowserPlugin(mimetype)
+    : FB::BrowserPlugin(mimetype),
+      m_obj(NULL),
+      m_npHost(host),
+      m_retainReturnedNPObject(true),
+      m_isReady(false)
 {
     pluginMain->SetHost(ptr_cast<BrowserHost>(host));
 }
