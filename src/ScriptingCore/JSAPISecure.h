@@ -32,6 +32,10 @@ namespace FB {
 
         virtual void registerMethod(const std::string& name, const SecurityZone securityLevel, const CallMethodFunctor& func);
         virtual void registerProperty(const std::string& name, const SecurityZone securityLevel, const PropertyFunctors& propFuncs);
+        virtual void getMemberNames(const SecurityZone securityLevel, std::vector<std::string> &nameVector);
+        virtual void getMemberNames(std::vector<std::string> &nameVector);
+        virtual size_t getMemberCount(const SecurityZone securityLevel);
+        virtual size_t getMemberCount();
 
         virtual bool HasMethod(const std::string& methodName);
         virtual bool HasMethod(const FB::SecurityZone &zone, const std::string& methodName);
@@ -53,7 +57,6 @@ namespace FB {
 
         virtual bool propertyAccessible( SecurityZone m_zone, const std::string& propertyName );
         virtual bool methodAccessible( SecurityZone m_zone, const std::string& methodName );
-
     protected:
         SecurityZone m_zone;
     };

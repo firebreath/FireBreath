@@ -33,12 +33,56 @@ void FB::JSAPISecure::registerProperty(const std::string& name, const FB::Securi
     m_propertyFunctorsMap[name] = PropertyFunctors(minZone, propFuncs.get, propFuncs.set);
 }
 
+void FB::JSAPISecure::getMemberNames(std::vector<std::string> &nameVector)
+{
+	getMemberNames(m_zone, nameVector);
+}
+
+void FB::JSAPISecure::getMemberNames( const SecurityZone securityLevel, std::vector<std::string> &nameVector )
+{
+    nameVector.clear();
+
+    for (FB::MethodFunctorMap::iterator it = m_methodFunctorMap.begin();
+        it != m_methodFunctorMap.end(); it++) {
+		if (securityLevel >= it->second.zone)
+			nameVector.push_back(it->first);
+    }
+    for (FB::PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.begin();
+        it != m_propertyFunctorsMap.end(); it++) {
+		if (securityLevel >= it->second.zone)
+	        nameVector.push_back(it->first);
+    }
+    for (FB::EventSingleMap::iterator it = m_defEventMap.begin();
+        it != m_defEventMap.end(); it++) {
+        nameVector.push_back(it->first);
+    }
+}
+
+size_t FB::JSAPISecure::getMemberCount()
+{
+	return getMemberCount(m_zone);
+}
+
+size_t FB::JSAPISecure::getMemberCount( const SecurityZone securityLevel )
+{
+	size_t count = 0;
+    for (FB::MethodFunctorMap::iterator it = m_methodFunctorMap.begin();
+        it != m_methodFunctorMap.end(); it++) {
+		if (securityLevel >= it->second.zone)
+			count++;
+    }
+    for (FB::PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.begin();
+        it != m_propertyFunctorsMap.end(); it++) {
+		if (securityLevel >= it->second.zone)
+			count++;
+    }
+	count += m_eventMap.size();
+	return count;
+}
+
 FB::variant FB::JSAPISecure::GetProperty( const std::string& propertyName )
 {
-    if (propertyAccessible(m_zone, propertyName))
-        return FB::JSAPIAuto::GetProperty(propertyName);
-    else
-        throw invalid_member(propertyName);
+	return GetProperty(m_zone, propertyName);
 }
 
 FB::variant FB::JSAPISecure::GetProperty( int idx )
@@ -65,10 +109,7 @@ FB::variant FB::JSAPISecure::GetProperty( const FB::SecurityZone &zone, int idx 
 
 void FB::JSAPISecure::SetProperty( const std::string& propertyName, const variant& value )
 {
-    if (propertyAccessible(m_zone, propertyName))
-        FB::JSAPIAuto::SetProperty(propertyName, value);
-    else
-        throw invalid_member(propertyName);
+	SetProperty(m_zone, propertyName, value);
 }
 
 void FB::JSAPISecure::SetProperty( int idx, const variant& value )
@@ -95,10 +136,7 @@ void FB::JSAPISecure::SetProperty( const FB::SecurityZone &zone, int idx, const 
 
 FB::variant FB::JSAPISecure::Invoke( const std::string& methodName, const std::vector<variant>& args )
 {
-    if (methodAccessible(m_zone, methodName))
-        return FB::JSAPIAuto::Invoke(methodName, args);
-    else
-        throw invalid_member(methodName);
+	return Invoke(m_zone, methodName, args);
 }
 
 FB::variant FB::JSAPISecure::Invoke( const FB::SecurityZone &zone, const std::string& methodName, const std::vector<variant>& args )
