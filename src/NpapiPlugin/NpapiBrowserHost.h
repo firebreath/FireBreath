@@ -41,7 +41,7 @@ namespace FB { namespace Npapi {
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
+        virtual BrowserStreamPtr createStream(const std::string& url, PluginEventSinkPtr callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 );
 
@@ -129,6 +129,7 @@ namespace FB { namespace Npapi {
     };
 
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    typedef boost::weak_ptr<NpapiBrowserHost> NpapiBrowserHostWeakPtr;
 }; };
 
 #endif

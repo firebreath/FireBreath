@@ -23,7 +23,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB
 {
     class BrowserStream;
+	typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
     class PluginEventSink;
+    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
     class JSObject;
 
     namespace DOM {
@@ -189,7 +191,7 @@ namespace FB
         /// @return null if it fails, else BrowserStream object
         /// @todo this should probably be a shared_ptr instead of a normal ptr
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback, 
+        virtual BrowserStreamPtr createStream(const std::string& url, PluginEventSinkPtr callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) = 0;
         

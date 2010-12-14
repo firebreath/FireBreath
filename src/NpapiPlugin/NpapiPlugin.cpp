@@ -231,6 +231,7 @@ void NpapiPlugin::URLNotify(const char* url, NPReason reason, void* notifyData)
     if ( !s ) return;
 
     s->signalCompleted( reason == NPRES_DONE );
+    s->setNotified();
 }
 
 /*
@@ -335,9 +336,9 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
     return NPERR_NO_ERROR;
 }
 
-void NpapiPlugin::signalStreamOpened(void* stream)
+void NpapiPlugin::signalStreamOpened(FB::BrowserStream* stream)
 {
-    NpapiStream* s = static_cast<NpapiStream*>(stream);
+    NpapiStream* s = dynamic_cast<NpapiStream*>(stream);
     if ( !s->isCompleted() ) s->signalOpened();
 }
 
@@ -360,6 +361,7 @@ NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
     stream->notifyData = 0;
 
     if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );
+    s->setDestroyed();
 
     return NPERR_NO_ERROR;
 }

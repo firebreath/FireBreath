@@ -254,22 +254,21 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     outVar.Detach(dest);
 }
 
-FB::BrowserStream* ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSink* callback, 
+FB::BrowserStreamPtr ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
                                     bool cache, bool seekable, size_t internalBufferSize )
 {
-    ActiveXStream* stream = new ActiveXStream( url, cache, seekable, internalBufferSize );
+    ActiveXStreamPtr stream = boost::make_shared<ActiveXStream>( url, cache, seekable, internalBufferSize );
     stream->AttachObserver( callback );
 
     if ( stream->init() )
     {
-        StreamCreatedEvent ev(stream);
+        StreamCreatedEvent ev(stream.get());
         stream->SendEvent( &ev );
         if ( seekable ) stream->signalOpened();
-        return stream;
     }
     else
     {
-        delete stream;
-        return 0;
+        stream.reset();
     }
+    return stream;
 }

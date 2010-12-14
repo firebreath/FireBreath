@@ -19,10 +19,10 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiStream::NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHost* Host ) 
+NpapiStream::NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHostPtr Host ) 
   : FB::BrowserStream( url, cache, seekable, internalBufferSize )
   /*, internalBuffer( internalBufferSize ) */
-  , stream(0), host(Host)
+  , stream(0), host(Host), m_streamNotified(false), m_streamDestroyed(false)
 {
 }
 
@@ -138,7 +138,28 @@ NPStream* NpapiStream::getStream() const
     return stream;
 }
 
-NpapiBrowserHost* NpapiStream::getHost() const
+NpapiBrowserHostPtr NpapiStream::getHost() const
 {
-    return host;
+    return host.lock();
+}
+
+void FB::Npapi::NpapiStream::setCreated()
+{
+    // We hold the reference here until NPP_DestroyStream is called so that the
+    // object can't be deleted out from under the browser
+    m_selfReference = FB::ptr_cast<NpapiStream>(shared_ptr());
+}
+
+void FB::Npapi::NpapiStream::setDestroyed()
+{
+    if (m_streamNotified)
+        m_selfReference.reset();
+    m_streamDestroyed = true;
+}
+
+void FB::Npapi::NpapiStream::setNotified()
+{
+    if (m_streamDestroyed)
+        m_selfReference.reset();
+    m_streamNotified = true;
 }

@@ -52,7 +52,7 @@ protected:
     std::set< ActiveXStreamRequestPtr > requests;
     bool    closing;
 };
-
+typedef boost::shared_ptr<ActiveXStream> ActiveXStreamPtr;
 
 
 

@@ -42,7 +42,7 @@ public:
 
     virtual void *getContextID();
 
-    virtual FB::BrowserStream* createStream(const std::string& url, FB::PluginEventSink* callback, 
+    virtual FB::BrowserStreamPtr createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 );
 

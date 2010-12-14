@@ -21,7 +21,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NPJavascriptObject.h"
 #include "BrowserPlugin.h"
 
-namespace FB { namespace Npapi {
+namespace FB {
+    class BrowserStream;
+    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
+    
+    namespace Npapi {
 
     struct PluginCreateError : std::runtime_error
     {
@@ -58,7 +62,7 @@ namespace FB { namespace Npapi {
         /// @return NPObject * for wrapped object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         NPObject *getScriptableObject();
-        static void signalStreamOpened(void* stream);
+        static void signalStreamOpened(FB::BrowserStream* stream);
 
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are

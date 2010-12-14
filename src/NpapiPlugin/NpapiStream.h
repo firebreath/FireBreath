@@ -23,17 +23,22 @@ Copyright 2010 Richard Bateman, Firebreath development team
 namespace FB { namespace Npapi {
 
     class NpapiPlugin;
+	class NpapiStream;
+	typedef boost::shared_ptr<NpapiStream> NpapiStreamPtr;
 
     class NpapiStream : public FB::BrowserStream
     {
     public:
-        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHost* host );
+        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHostPtr host );
         virtual ~NpapiStream();
         
         //virtual bool is_open();
         virtual bool    readRanges( const std::vector<Range>& ranges );
         virtual bool    write(const char* data, size_t dataLength, size_t& written);
         virtual bool    close();
+        virtual void    setCreated();
+        virtual void    setDestroyed();
+        virtual void    setNotified();
 
     protected:
         virtual int32_t     signalDataArrived(void* buffer, int32_t len, int32_t offset);
@@ -44,13 +49,14 @@ namespace FB { namespace Npapi {
 
         virtual void        setStream(NPStream* stream);
         virtual NPStream*   getStream() const;
-        virtual NpapiBrowserHost*   getHost() const;
-
+        virtual NpapiBrowserHostPtr   getHost() const;
     private:
         //std::vector<char>     internalBuffer;
         NPStream*               stream;
-        NpapiBrowserHost*       host;
-
+        NpapiBrowserHostWeakPtr       host;
+        NpapiStreamPtr m_selfReference;
+        bool m_streamDestroyed;
+        bool m_streamNotified;
         friend class NpapiPlugin;
     };
 

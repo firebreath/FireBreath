@@ -48,15 +48,18 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 {
     boost::recursive_mutex::scoped_lock _l(m_observerLock);
-    for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
+    ObserverMap::iterator it = m_observers.begin();
+    while (it != m_observers.end()) {
         PluginEventSinkPtr tmp = it->lock();
         if (!tmp) {
-            m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive
+            it = m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive
         } else if (tmp == sink) {
-            m_observers.erase(it);
+            it = m_observers.erase(it);
             DetachedEvent newEvent;
             sink->HandleEvent(&newEvent, this);
             return;
+        } else {
+            it++;
         }
     }
 }
@@ -64,11 +67,16 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 bool PluginEventSource::SendEvent(PluginEvent* evt)
 {
     boost::recursive_mutex::scoped_lock _l(m_observerLock);
-    for (ObserverMap::iterator it = m_observers.begin(); it != m_observers.end(); it++) {
+    ObserverMap::iterator it = m_observers.begin();
+    while (it != m_observers.end()) {
         PluginEventSinkPtr tmp = it->lock();
-        if (!tmp) m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive
+        if (!tmp) {
+            it = m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive
+        }
         else if (tmp && tmp->HandleEvent(evt, this)) {
             return true;    // Tell the caller that the event was handled
+        } else {
+            it++;
         }
     }
     return false;

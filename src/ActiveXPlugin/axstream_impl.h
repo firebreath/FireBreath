@@ -27,19 +27,20 @@ Copyright 2010 Richard Bateman, Firebreath development team
 //   http://support.microsoft.com/kb/165800
 
 class ActiveXStream;
+typedef boost::shared_ptr<ActiveXStream> ActiveXStreamPtr;
 class ActiveXBindStatusCallback;
 
 class ActiveXStreamRequest : public boost::enable_shared_from_this<ActiveXStreamRequest>
 {
 public:
-    ActiveXStreamRequest( ActiveXStream* stream );
-    ActiveXStreamRequest( ActiveXStream* stream, const std::vector<FB::BrowserStream::Range>& ranges );
+    ActiveXStreamRequest( ActiveXStreamPtr stream );
+    ActiveXStreamRequest( ActiveXStreamPtr stream, const std::vector<FB::BrowserStream::Range>& ranges );
 
     bool start();
     bool stop();
 
 public:
-    ActiveXStream*      stream;
+    ActiveXStreamPtr      stream;
     CComPtr<IMoniker>   FMoniker;
     CComPtr<IBindCtx>   FBindCtx;
     CComPtr<ActiveXBindStatusCallback> bindStatusCallback;

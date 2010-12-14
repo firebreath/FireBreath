@@ -120,6 +120,8 @@ public:
             return E_FAIL;
         m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
+		CComQIPtr<IDispatch> test(pClientSite);
+
         if (m_webBrowser.p) {
             m_htmlDoc = m_webBrowser;
             m_propNotify = m_spClientSite;
@@ -131,8 +133,14 @@ public:
         m_host->setWindow(m_messageWin);
         pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
         this->setAPI(pluginMain->getRootJSAPI(), m_host);
-        //InPlaceActivate(OLEIVERB_UIACTIVATE);
         //this->FireOnChanged(DISPID_READYSTATE);
+		IDispatchAPIPtr test2(new IDispatchAPI(test, m_host));
+		try {
+			std::string tmp = test2->GetProperty("id").convert_cast<std::string>();
+		} catch (...) { }
+		try {
+			std::string tmp = test2->GetProperty("name").convert_cast<std::string>();
+		} catch (...) { }
 
         return S_OK;
     }

@@ -34,7 +34,8 @@ using namespace FB;
 // ---------------------------------------------------------------------------
 // %%Function: ActiveXBindStatusCallback::ActiveXBindStatusCallback
 // ---------------------------------------------------------------------------
-ActiveXBindStatusCallback::ActiveXBindStatusCallback() : m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
+ActiveXBindStatusCallback::ActiveXBindStatusCallback() :
+	m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
 {
 }
 
@@ -466,11 +467,11 @@ bool ActiveXBindStatusCallback::close()
 }
 
 
-ActiveXStreamRequest::ActiveXStreamRequest( ActiveXStream* Stream ) : stream(Stream)
+ActiveXStreamRequest::ActiveXStreamRequest( ActiveXStreamPtr Stream ) : stream(Stream)
 {
 }
 
-ActiveXStreamRequest::ActiveXStreamRequest( ActiveXStream* Stream, const std::vector<BrowserStream::Range>& Ranges ) : stream(Stream), ranges(Ranges)
+ActiveXStreamRequest::ActiveXStreamRequest( ActiveXStreamPtr Stream, const std::vector<BrowserStream::Range>& Ranges ) : stream(Stream), ranges(Ranges)
 {
 }
 
@@ -492,7 +493,7 @@ bool ActiveXStreamRequest::start()
 
 bool ActiveXStreamRequest::stop()
 {
-    stream = 0;
+    stream.reset();
     if ( !bindStatusCallback ) return true;
     return bindStatusCallback->close();
 }
