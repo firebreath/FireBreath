@@ -10,6 +10,8 @@ shift
 set PDIR=-DPROJECTS_DIR=
 set PDIR=%PDIR%%PROJDIR%
 
+IF %FB_ROOT:~-2,-1% == \ SET FB_ROOT=%FB_ROOT:~0,-2%%FB_ROOT:~-1%
+
 @echo on
 cmake -G %_FB_GEN% %PDIR% %CMAKE_PARAMS% %FB_ROOT%
 @echo off

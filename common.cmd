@@ -16,6 +16,8 @@ set _NPARAM=%~1
 IF /I "%_NPARAM%"=="" goto default_build
 IF /I "%_NPARAM:~0,1%"=="-" goto default_build
 set BUILDDIR=%1
+if %BUILDDIR:~-1%==/ set BUILDDIR=%BUILDDIR:~0,-1%
+if %BUILDDIR:~-1%==\ set BUILDDIR=%BUILDDIR:~0,-1%
 shift
 set _SHIFTTOK=2
 
@@ -25,7 +27,10 @@ goto finish
 set PROJDIR="%RUN_FROM%\projects"
 
 :default_build
+if %PROJDIR:~-1%==/ set PROJDIR=%PROJDIR:~0,-1%
+if %PROJDIR:~-1%==\ set PROJDIR=%PROJDIR:~0,-1%
 IF /I "%PROJDIR%"=="examples" goto examples
+echo "fdsafdsafdsa!"
 set BUILDDIR="%RUN_FROM%\build"
 goto finish
 
