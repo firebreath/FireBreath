@@ -61,6 +61,7 @@ namespace FB {
         SecurityZone m_zone;
     };
     typedef boost::shared_ptr<FB::JSAPISecure> JSAPISecurePtr;
+    typedef boost::weak_ptr<FB::JSAPISecure> JSAPISecureWeakPtr;
 };
 
 #endif // FB_JSAPIAUTO_H

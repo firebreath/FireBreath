@@ -42,14 +42,23 @@ namespace FB
     {
     protected:
         JSAPISecureProxy(const FB::SecurityZone zone, const FB::JSAPIPtr &inner);
+        JSAPISecureProxy(const FB::SecurityZone zone, const FB::JSAPIWeakPtr &inner);
     public:
         static boost::shared_ptr<JSAPISecureProxy> create(const FB::SecurityZone zone, const FB::JSAPIPtr &inner);
+        static boost::shared_ptr<JSAPISecureProxy> create(const FB::SecurityZone zone, const FB::JSAPIWeakPtr &inner);
         virtual ~JSAPISecureProxy(void);
 
-        FB::JSAPISecurePtr getInnerAPI() { return m_api; }
+        FB::JSAPISecurePtr getInnerAPI()
+        {
+            FB::JSAPISecurePtr tmp(m_apiWeak.lock());
+            if (!tmp)
+                throw FB::script_error("Invalid object or object destroyed");
+            return tmp;
+        }
     protected:
         FB::SecurityZone m_zone;
         FB::JSAPISecurePtr m_api;
+        FB::JSAPISecureWeakPtr m_apiWeak;
 
     public:
 

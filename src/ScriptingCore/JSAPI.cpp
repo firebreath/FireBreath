@@ -46,14 +46,14 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& 
 
     {
         FB::JSAPIPtr self(shared_ptr());
-        for (ProxyList::iterator proxyIt = m_proxies.begin();
-            proxyIt != m_proxies.end(); proxyIt++) {
+        ProxyList::iterator proxyIt = m_proxies.begin();
+        while (proxyIt != m_proxies.end()) {
             FB::JSAPIPtr proxy(proxyIt->lock());
             if (!proxy) {
                 // Since you can't use a shared_ptr in a destructor, there
                 // is no way for the proxy object to let us know when it goes
                 // away; thus when we find them, we remove them for efficiency
-                m_proxies.erase(proxyIt);
+                proxyIt = m_proxies.erase(proxyIt);
                 continue;
             }
 
@@ -67,6 +67,7 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& 
                 }
             }
             proxy->FireEvent(eventName, newArgs);
+            proxyIt++;
         }
     }
 
