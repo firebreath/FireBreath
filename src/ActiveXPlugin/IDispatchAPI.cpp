@@ -297,13 +297,13 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
 
 FB::JSAPIPtr IDispatchAPI::getJSAPI()
 {
-	if (!m_obj) {
+    if (!m_obj) {
         return FB::JSAPIPtr();
     }
     
-	if (JSAPI_IDispatchExBase* p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p)) {
-		return p->getAPI();
-	}
+    if (JSAPI_IDispatchExBase* p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p)) {
+        return p->getAPI();
+    }
 
     return FB::JSAPIPtr();
 }

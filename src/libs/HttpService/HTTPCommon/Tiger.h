@@ -71,7 +71,7 @@ public:
   const size_t hash_size() const {
     return 24; //192bit
   }
-	
+    
   std::string toString() const {
     char buf[64];
     for (size_t i = 0; i < 24; ++i) snprintf(buf + (i*2), 3, "%.2x", reinterpret_cast<const char*>(hash)[i^7] & 0xff);

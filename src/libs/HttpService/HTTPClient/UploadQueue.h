@@ -28,7 +28,7 @@ namespace HTTP {
     struct Status;
     typedef boost::shared_ptr<UploadQueue> UploadQueuePtr;
 
-	class UploadQueue : public FB::PluginEventSource {
+    class UploadQueue : public FB::PluginEventSource {
     public:
         class StatusUpdateEvent : public FB::PluginEvent {
         public:
@@ -38,58 +38,58 @@ namespace HTTP {
             FB::VariantMap status;
         };
     public:
-	    UploadQueue(const std::string& _name);
+        UploadQueue(const std::string& _name);
         virtual ~UploadQueue();
 
         UploadQueuePtr shared_ptr() { return FB::ptr_cast<UploadQueue>(FB::PluginEventSource::shared_ptr()); }
-	
-	    void addFile(const UploadQueueEntry& qe);
-	    bool removeFile(const std::wstring& filename);
-	    FB::VariantMap getStatusDict(bool include_filenames = true);
-	    static FB::VariantMap getEmptyProgressDict();
-	
-	    void dispatch();
-	    void cancel();
-	
-	    void addCompletionHandler(const FB::URI& uri);
-	
-	    // ---
-	    std::string name;
-	    enum UploadQueueStatus {
-	        UPLOAD_ERROR = -1,
-	        UPLOAD_IDLE = 0,
-	        UPLOAD_WAITING = 1,
-	        UPLOAD_IN_PROGRESS = 2,
-	        UPLOAD_COMPLETE = 3
-	    } status;
-	    
-	    std::map<std::string, std::string> cookies;
-	    std::map<std::string, std::string> post_vars;
-	
-	    std::list<UploadQueueEntry> queue;
+    
+        void addFile(const UploadQueueEntry& qe);
+        bool removeFile(const std::wstring& filename);
+        FB::VariantMap getStatusDict(bool include_filenames = true);
+        static FB::VariantMap getEmptyProgressDict();
+    
+        void dispatch();
+        void cancel();
+    
+        void addCompletionHandler(const FB::URI& uri);
+    
+        // ---
+        std::string name;
+        enum UploadQueueStatus {
+            UPLOAD_ERROR = -1,
+            UPLOAD_IDLE = 0,
+            UPLOAD_WAITING = 1,
+            UPLOAD_IN_PROGRESS = 2,
+            UPLOAD_COMPLETE = 3
+        } status;
+        
+        std::map<std::string, std::string> cookies;
+        std::map<std::string, std::string> post_vars;
+    
+        std::list<UploadQueueEntry> queue;
         // bytes, files with status = WAITING
-	    uint64_t current_queue_bytes; 
+        uint64_t current_queue_bytes; 
         // bytes (original -- pre resize or any other postprocessing), files in current batch
-	    uint64_t current_batch_bytes; 
+        uint64_t current_batch_bytes; 
         // sum of bytes of files added to the queue since it was last emptied
-	    uint64_t total_queue_bytes; 
+        uint64_t total_queue_bytes; 
         // count of files added to the queue since it was last emptied
-	    uint64_t total_queue_files; 
+        uint64_t total_queue_files; 
         // count of files in WAITING state
-	    uint64_t files_waiting; 
-	
-	    std::set<std::wstring> current_upload_files;
-	    HTTPRequest* current_upload_request;
-	    unsigned int current_batch_retry; // incremented every time we retry a batch due to networking failure, zeroed on a new batch.
-	
-	    boost::function<void(UploadQueuePtr)> queue_finished_callback;
-	    std::list<FB::URI> completion_handlers;
-	    unsigned int batch_size;
-	    unsigned int max_retries;
-	protected:
+        uint64_t files_waiting; 
+    
+        std::set<std::wstring> current_upload_files;
+        HTTPRequest* current_upload_request;
+        unsigned int current_batch_retry; // incremented every time we retry a batch due to networking failure, zeroed on a new batch.
+    
+        boost::function<void(UploadQueuePtr)> queue_finished_callback;
+        std::list<FB::URI> completion_handlers;
+        unsigned int batch_size;
+        unsigned int max_retries;
+    protected:
         void sendUpdateEvent();
-	    void start_next_upload();
-	    void upload_request_status_changed(const HTTP::Status& status);
-	};
+        void start_next_upload();
+        void upload_request_status_changed(const HTTP::Status& status);
+    };
 };
 #endif // UploadQueue_h__

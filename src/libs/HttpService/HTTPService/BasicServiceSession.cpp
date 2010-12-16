@@ -46,7 +46,7 @@ void BasicService::Session::start(const boost::shared_ptr<BasicService>& _parent
 }
 
 void BasicService::Session::wait_for_header() {
-    async_read_until(sock, data, "\r\n\r\n", boost::bind(&Session::handle_request, BasicService::Session::ptr(this), _1));	
+    async_read_until(sock, data, "\r\n\r\n", boost::bind(&Session::handle_request, BasicService::Session::ptr(this), _1));  
 }
 
 
@@ -91,7 +91,7 @@ void BasicService::Session::handle_request(boost::system::error_code ec) {
             resp->code = 200;
             // No response payload necessary.
 
-        }	else if (parent_svc->handlers.empty()) {
+        }   else if (parent_svc->handlers.empty()) {
             resp = new HTTPResponseData;
             resp->headers.insert(std::make_pair("Connection", "Close"));
             resp->headers.insert(std::make_pair("Content-Type", "text/plain"));

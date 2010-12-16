@@ -51,9 +51,9 @@ namespace FB { namespace DOM {
         /// @fn static ElementPtr Element::create(FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Element object from a JSObjectPtr representing a DOM object.  This
-        /// 		will probably throw an exception and definitely not work right if the DOM object
-        /// 		represented is not a Element
-        /// 		
+        ///         will probably throw an exception and definitely not work right if the DOM object
+        ///         represented is not a Element
+        ///         
         /// @param  api The FB::JSObjectAPI object containing the element to wrap
         ///
         /// @return FB::DOM::ElementPtr to the created Element object
@@ -152,14 +152,14 @@ namespace FB { namespace DOM {
         /// @fn virtual ElementPtr Element::getElement(const std::string& name)
         ///
         /// @brief  Gets a child element of the specified name
-        /// 		
+        ///         
         /// This is the rough equivilent of the following javascript command
         ///
         /// @code
-        /// 	 // if name = child
-        /// 	 var el2 = element.child;
-        /// 	 // or
-        /// 	 var el2 = element[name];
+        ///      // if name = child
+        ///      var el2 = element.child;
+        ///      // or
+        ///      var el2 = element[name];
         /// @endcode
         /// 
         /// @param  name    The name of the subelement. 
@@ -181,9 +181,9 @@ namespace FB { namespace DOM {
         /// This is the rough equivilent of the following javascript command
         ///
         /// @code
-        /// 	 var el2 = element[idx];
+        ///      var el2 = element[idx];
         /// @endcode
-        /// 		
+        ///         
         /// @param  idx Zero-based index of the element to fetch. 
         ///
         /// @return The child element. 

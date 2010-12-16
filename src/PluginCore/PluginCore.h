@@ -105,7 +105,7 @@ namespace FB {
         ///       <param name="paramlist" value="width=100;height=100" />
         ///     </object>
         /// @endcode
-        /// 		
+        ///         
         /// Then from within your plugin class, you can access the value like so:
         /// 
         /// std::string paramlist = m_params["starturl"].convert_cast<std::string>();
@@ -134,7 +134,7 @@ namespace FB {
         /// @fn virtual void PluginCore::initDefaultParams()
         ///
         /// @brief  Initialises the default "param" names supported
-        /// 		
+        ///         
         /// Since this is called from the constructor, it cannot be overloaded successfully.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void initDefaultParams();
@@ -145,7 +145,7 @@ namespace FB {
         /// @brief  Called by the browser during startup to provide a Browser Host object. 
         ///
         /// @param  host    The boost::shared_ptr<BrowserHost> to the BrowserHost object for the current
-        /// 			    browser. 
+        ///                 browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetHost(FB::BrowserHostPtr);
 
@@ -162,7 +162,7 @@ namespace FB {
         /// @fn virtual void PluginCore::SetWindow(PluginWindow *)
         ///
         /// @brief  Called by the browser to set the window.  The default implementation fires the 
-        /// 		WindowAttached event in response to this.
+        ///         WindowAttached event in response to this.
         ///
         /// @param  win The new window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -172,7 +172,7 @@ namespace FB {
         /// @fn virtual void PluginCore::ClearWindow()
         ///
         /// @brief  Called by the browser to indicate that the window is no longer valid.  The default
-        /// 		implementation fires the WindowDetached event in response to this.
+        ///         implementation fires the WindowDetached event in response to this.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void ClearWindow();
 
@@ -180,8 +180,8 @@ namespace FB {
         /// @fn virtual void PluginCore::setReady()
         ///
         /// @brief  Called by the browser to indicate that the basic initialization is complete and the
-        /// 		plugin is now ready to interact with the Browser via Javascript.  This may or may not
-        /// 		occur before the Window (if any) is set.
+        ///         plugin is now ready to interact with the Browser via Javascript.  This may or may not
+        ///         occur before the Window (if any) is set.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setReady();
         virtual bool isWindowless();
@@ -190,7 +190,7 @@ namespace FB {
         /// @fn virtual void PluginCore::onPluginReady()
         ///
         /// @brief  This is called when the plugin is ready.
-        /// 		
+        ///         
         /// This may or may not occur before the AttachedEvent is fired to indicate that the plugin
         /// is available.  Params from the browser will be set and the root JSAPI created before this
         /// is called.
@@ -219,8 +219,8 @@ namespace FB {
         /// @fn virtual JSAPIPtr PluginCore::getRootJSAPI()
         ///
         /// @brief  Gets the root JSAPI object.  It is not recommended to call this from the constructor
-        /// 		or before setHost is called, as many JSAPI objects need the BrowserHost and a weak_ptr
-        /// 		to the Plugin class to function correctly.
+        ///         or before setHost is called, as many JSAPI objects need the BrowserHost and a weak_ptr
+        ///         to the Plugin class to function correctly.
         ///
         /// @return The root jsapi. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,7 +258,7 @@ namespace FB {
         /// @fn virtual StringSet* PluginCore::getSupportedParams()
         ///
         /// @brief  Called by the browser to get a list of supported param tags
-        /// 		
+        ///         
         /// This is the alternate way to override which param tags the plugin will query the HTML
         /// page for.  For more information, see initDefaultParams() in this class
         ///
@@ -271,7 +271,7 @@ namespace FB {
         /// @fn virtual void PluginCore::setParams(const FB::VariantMap& inParams)
         ///
         /// @brief  Called by the browser to store the values provided in param tags in m_params
-        /// 		
+        ///         
         /// This function is called once the &lt;param&gt; tag values from the HTML are available.  After this
         /// function is called they can be accessed through m_params.
         /// 

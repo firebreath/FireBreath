@@ -25,14 +25,14 @@ namespace FB
     /// @class  JSArray
     ///
     /// @brief  Wraps a Javascript Array from a FB::JSObject.  Use this if your array is very large
-    /// 		or if you need to pass it by reference and change it in your function.
+    ///         or if you need to pass it by reference and change it in your function.
     /// @code
-    /// 	 void handleArray(const FB::JSObjectPtr &in) {
-    /// 	    FB::JSArray arr(in);
-    /// 	    for (size_t i = 0; i < arr.GetLength(); i++) {
-    /// 	        long i = arr[i].convert_cast<long>();
-    /// 	    }
-    /// 	 }
+    ///      void handleArray(const FB::JSObjectPtr &in) {
+    ///         FB::JSArray arr(in);
+    ///         for (size_t i = 0; i < arr.GetLength(); i++) {
+    ///             long i = arr[i].convert_cast<long>();
+    ///         }
+    ///      }
     /// @endcode
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSArray

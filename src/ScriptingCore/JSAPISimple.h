@@ -24,7 +24,7 @@ namespace FB {
     /// @class  JSAPISimple
     ///
     /// @brief  Simple JSAPI implementation for those who for whatever reason don't want to use JSAPIAuto
-    /// 		
+    ///         
     /// @deprecated 1.1.0
     /// @see FB::JSAPIAuto
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -49,10 +49,10 @@ namespace FB {
         /// @code
         ///    registerMethod( "toString", (CallMethodPtr)&JSAPISimple::callToString );
         /// @code
-        /// 	 
+        ///      
         /// This matches the following definition:
         /// @code
-        /// 	 variant callToString(const std::vector<variant>& args);
+        ///      variant callToString(const std::vector<variant>& args);
         /// @endcode
         /// 
         /// @param  name    The name that the method should be exposed to javascript as
@@ -76,11 +76,11 @@ namespace FB {
         ///     // -or- read-write
         ///     registerProperty( "valid", (GetPropPtr)&MySimpleAPI::getValid, (SetPropPtr)&MySimpleAPI::setValid);
         /// @code
-        /// 	 
+        ///      
         /// This matches the following definition:
         /// @code
-        /// 	 variant getValid();
-        /// 	 void setValid(variant value);
+        ///      variant getValid();
+        ///      void setValid(variant value);
         /// @endcode
         ///
         /// @param  name    The name. 
@@ -111,7 +111,7 @@ namespace FB {
         /// @brief  Example function for testing fireEvent
         ///
         /// @param  args    arguments from javascript.  The first should be the name of the event
-        /// 				to fire, the rest will be passed into the event 
+        ///                 to fire, the rest will be passed into the event 
         ///
         /// @return nothing
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,7 +121,7 @@ namespace FB {
         /// @fn virtual variant callToString(const std::vector<variant>& args)
         ///
         /// @brief  Called when a string representation of the object requested.  Always returns
-        /// 		"JSAPI Javascript Object";  
+        ///         "JSAPI Javascript Object";  
         ///
         /// @param  args   All arguments are ignored
         ///
@@ -135,7 +135,7 @@ namespace FB {
         /// @brief  Returns true to indicate that the JSAPI interface is working
         ///
         /// @return tru
-        /// 		e 
+        ///         e 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant getValid();
 

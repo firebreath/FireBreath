@@ -44,10 +44,10 @@ namespace FB
     private:
         OneShotManager();
         
-		typedef std::pair<NPP, OneShotCallback> SinkPair;
+        typedef std::pair<NPP, OneShotCallback> SinkPair;
         typedef FB::SafeQueue<SinkPair> SinkQueue;
         SinkQueue m_sinks;
-		mutable boost::mutex m_mutex;
+        mutable boost::mutex m_mutex;
     };
 }
 

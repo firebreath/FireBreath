@@ -32,9 +32,9 @@ HTTPDatablock* HTTPResponseData::coalesceBlocks() {
 }
 
 HTTPResponseData::~HTTPResponseData() {
-	for (std::list<HTTPDatablock*>::iterator it = data.begin(); it != data.end(); ++it) {
-		delete *it;
-	}
+    for (std::list<HTTPDatablock*>::iterator it = data.begin(); it != data.end(); ++it) {
+        delete *it;
+    }
 }
 
 void HTTPResponseData::setNoncacheable() {

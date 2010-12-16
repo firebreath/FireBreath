@@ -56,22 +56,22 @@ boost::filesystem::wpath Platform::resolveShortcutsInPath(const boost::filesyste
 }
 
 //string BrowseRoot::convertToJSON() const {
-//	PluginJSDict d;
-//	
-//	d.insert(std::make_pair(string("name"), name));
-//	d.insert(std::make_pair(string("full_path"), full_path));
-//	d.insert(std::make_pair(string("path_type"), string(pathtype_names[p_type])));
-//	d.insert(std::make_pair(string("content_type"), string(contenttype_names[c_type])));
+//  PluginJSDict d;
+//  
+//  d.insert(std::make_pair(string("name"), name));
+//  d.insert(std::make_pair(string("full_path"), full_path));
+//  d.insert(std::make_pair(string("path_type"), string(pathtype_names[p_type])));
+//  d.insert(std::make_pair(string("content_type"), string(contenttype_names[c_type])));
 //  d.insert(std::make_pair(string("traversable"), PluginVariant(true)));
 //           
-//	return d.convertToJSON();
+//  return d.convertToJSON();
 //}
 
 //bool Platform::generateVideoThumbnail(const std::string& filename, const ImageProcessor::Dimension& dim, ImageProcessor::Result& res) {
-//	for (std::list<VideoThumbnailGenerator*>::iterator it = VideoThumbnailGenerator::generators.begin(); it != VideoThumbnailGenerator::generators.end(); ++it) {
-//		if ((*it)->generate(filename, dim, res)) return true;
-//	}
-//	return false; // no handlers worked...
+//  for (std::list<VideoThumbnailGenerator*>::iterator it = VideoThumbnailGenerator::generators.begin(); it != VideoThumbnailGenerator::generators.end(); ++it) {
+//      if ((*it)->generate(filename, dim, res)) return true;
+//  }
+//  return false; // no handlers worked...
 //}
 
 char* Platform::getRandomBytes(size_t bytecount) {

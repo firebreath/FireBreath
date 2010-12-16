@@ -26,7 +26,7 @@ namespace FB
     /// @class  JSObject
     ///
     /// @brief  Wraps a Javascript Object
-    /// 		
+    ///         
     /// Whenever you access a javascript object on a page, it will be through this object.  Because
     /// JSObject extends JSAPI, the API will be the same as a JSAPI object other than a few additional
     /// methods provided on this object for convenience.
@@ -67,7 +67,7 @@ namespace FB
         /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         ///
         /// @brief  Just like Invoke, but works asynchronously.  Useful for javascript callbacks and events.
-        /// 		Can be safely called from any thread
+        ///         Can be safely called from any thread
         ///
         /// @param  methodName  Name of the method. 
         /// @param  args        The arguments. 
@@ -79,7 +79,7 @@ namespace FB
         /// @fn virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
         ///
         /// @brief  Just like SetProperty, but works asynchronously.  Useful if you are running on another
-        /// 		thread and don't need to wait to be sure it worked.
+        ///         thread and don't need to wait to be sure it worked.
         ///
         /// @param  propertyName    Name of the property. 
         /// @param  value           The value. 
@@ -106,7 +106,7 @@ namespace FB
         /// @fn template<class Dict> static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
         ///
         /// @brief  Gets object values out of the javscript object src and adds them to the STL Dict
-        /// 		container dst
+        ///         container dst
         ///
         /// @param  src         Source for the. 
         /// @param [in,out] dst Destination for the. 
@@ -218,19 +218,19 @@ namespace FB
     
     // TODO: this doesn't belong here
 
-	/// @brief Get a JSAPI-derived interface from a JSObject.
-	/// @since 1.4
-	///
-	/// @code 
-	/// if (boost::shared_ptr<MyCustomAPI> ptr = FB::get_jsapi<MyCustomAPI>(jsobject)) {
-	///     doStuff(ptr);
-	/// } else {
-	///     // failed ...
-	/// }
-	/// @endcode
-	///
-	/// @return Returns a boost::shared_ptr<API> which is empty on failure
-	///         and non-empty on success.
+    /// @brief Get a JSAPI-derived interface from a JSObject.
+    /// @since 1.4
+    ///
+    /// @code 
+    /// if (boost::shared_ptr<MyCustomAPI> ptr = FB::get_jsapi<MyCustomAPI>(jsobject)) {
+    ///     doStuff(ptr);
+    /// } else {
+    ///     // failed ...
+    /// }
+    /// @endcode
+    ///
+    /// @return Returns a boost::shared_ptr<API> which is empty on failure
+    ///         and non-empty on success.
     template<class API>
     boost::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
     {

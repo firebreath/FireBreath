@@ -101,7 +101,7 @@ namespace FB {
         /// @fn IDTYPE TypeIDMap::getIdForValue(const variant& val)
         ///
         /// @brief  Gets the identifier assigned to the given value; if none is yet assigned, assigns a
-        /// 		sequential identifier to the provided value
+        ///         sequential identifier to the provided value
         ///
         /// @param  val The value. 
         ///
@@ -162,7 +162,7 @@ namespace FB {
         ///
         /// Example:
         /// @code
-        /// 	 bool isStr = idMap.idIsType<std::string>(47);
+        ///      bool isStr = idMap.idIsType<std::string>(47);
         /// @endcode
         /// 
         /// @param  idt The identifier to check. 
@@ -187,7 +187,7 @@ namespace FB {
         /// @brief  Gets the value assigned to the identifier. 
         ///
         /// @exception  FB::bad_variant_cast    Thrown if the provided type is not valid for the value or if
-        /// 									the identifier is not assigned to anything.
+        ///                                     the identifier is not assigned to anything.
         ///
         /// @param  idt The identifier to check. 
         ///

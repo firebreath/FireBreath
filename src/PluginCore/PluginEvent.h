@@ -43,10 +43,10 @@ namespace FB {
         /// @fn template<class T> T* PluginEvent::get()
         ///
         /// @brief  Dynamic cast the pluginEvent to the specified type and throw an exception if it is not
-        /// 		a subtype of the specified type
-        /// 		
+        ///         a subtype of the specified type
+        ///         
         /// @code
-        /// 	 AttachedEvent *atevt = evt->get<AttachedEvent>();
+        ///      AttachedEvent *atevt = evt->get<AttachedEvent>();
         /// @endcode
         ///
         /// @exception  std::invalid_argument   Thrown when invalid argument. 

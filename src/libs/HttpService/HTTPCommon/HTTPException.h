@@ -24,13 +24,13 @@ namespace HTTP {
 
     class HTTPException : public std::exception {
     public:
-    	HTTPException(short _response_code, const char* _msg);
-    	virtual ~HTTPException() throw() { free(msg); }
-    	virtual const char* what() const throw() { return msg; }
-    	std::string getResponseHeader() const;
+        HTTPException(short _response_code, const char* _msg);
+        virtual ~HTTPException() throw() { free(msg); }
+        virtual const char* what() const throw() { return msg; }
+        std::string getResponseHeader() const;
     protected:
-    	short response_code;
-    	char* msg;
+        short response_code;
+        char* msg;
     };
 
 };

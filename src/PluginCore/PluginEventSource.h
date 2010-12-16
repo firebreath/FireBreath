@@ -34,7 +34,7 @@ namespace FB {
     /// @class  PluginEventSource
     ///
     /// @brief  Base class for any object, such as BrowserStream or PluginWindow, that needs to fire
-    /// 		events to a PluginEventSink object (such as a PluginCore derived plugin class) 
+    ///         events to a PluginEventSink object (such as a PluginCore derived plugin class) 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginEventSource : public boost::enable_shared_from_this<PluginEventSource>
     {
@@ -46,10 +46,10 @@ namespace FB {
         /// @fn PluginEventSourcePtr shared_ptr()
         ///
         /// @brief  Get a shared_ptr to the current class
-        /// 		
+        ///         
         /// To get a shared_ptr to a child class of this, such as PluginWindow, you can use ptr_cast:
         /// @code
-        /// 	 FB::ptr_cast<FB::PluginCore>(shared_ptr());
+        ///      FB::ptr_cast<FB::PluginCore>(shared_ptr());
         /// @endcode
         ///
         /// @return shared_ptr for "this" pointer
@@ -91,9 +91,9 @@ namespace FB {
         /// @fn template <class T> T* PluginEventSource::get_as()
         ///
         /// @brief  Templated convenience function for performing a dynamic cast of this object
-        /// 		
+        ///         
         /// @code
-        /// 	 PluginWindow* wnd = evtSource->get_as<PluginWindow>();
+        ///      PluginWindow* wnd = evtSource->get_as<PluginWindow>();
         /// @endcode
         ///
         /// @exception  std::bad_cast   Thrown when bad cast. 

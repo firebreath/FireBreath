@@ -172,14 +172,14 @@ namespace Json {
         To create an empty array, pass arrayValue.
         To create an empty object, pass objectValue.
         Another Value can then be set to this one by assignment.
-	This is useful since clear() and resize() will not alter types.
+    This is useful since clear() and resize() will not alter types.
 
         Examples:
-	\code
-	Json::Value null_value; // null
-	Json::Value arr_value(Json::arrayValue); // []
-	Json::Value obj_value(Json::objectValue); // {}
-	\endcode
+    \code
+    Json::Value null_value; // null
+    Json::Value arr_value(Json::arrayValue); // []
+    Json::Value obj_value(Json::objectValue); // {}
+    \endcode
       */
       Value( ValueType type = nullValue );
       Value( Int value );

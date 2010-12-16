@@ -213,7 +213,7 @@ HTTP::Status HTTPRequest::getStatus() const {
 }
 
 void HTTPRequest::onStatusChanged(const callback_fn_t& _callback) {
-	status_callback = _callback;
+    status_callback = _callback;
 }
 
 boost::shared_ptr<HTTPRequestData> HTTPRequest::getRequest() {
@@ -225,11 +225,11 @@ boost::shared_ptr<HTTPResponseData> HTTPRequest::getResponse() {
 }
 
 void HTTPRequest::startRequest(boost::shared_ptr<HTTPRequestData> _request_data) {
-	request_data = _request_data;
+    request_data = _request_data;
   proxy_config = static_proxy_config;
   
   // We build the HTTP request in another thread to avoid blocking the caller if the request is large or resolving the size of the attached content takes a while.
-	worker_thread = boost::shared_ptr<thread>(new thread(boost::bind(&HTTPRequest::startRequest_thread, this)));
+    worker_thread = boost::shared_ptr<thread>(new thread(boost::bind(&HTTPRequest::startRequest_thread, this)));
 }
 
 static size_t httprequest_writefn(void* ptr, size_t size, size_t nmemb, HTTPResponseData* resp) {
@@ -322,11 +322,11 @@ void HTTPRequest::startRequest_thread() {
       headerlist = curl_slist_append(headerlist, (it->first + string(": ") + it->second).c_str());
     }
     // remove the Expect header that cURL insists on adding. this is dangerous
-	// and results in 417 errors from old/misconfigured proxies as well as lighttpd
+    // and results in 417 errors from old/misconfigured proxies as well as lighttpd
     // versions prior to 0.5. yes, this is how you disable headers in cURL; you pass
-	// the header name with no data on the right side. classy.
+    // the header name with no data on the right side. classy.
     headerlist = curl_slist_append(headerlist, "Expect:");
-	  
+      
     curl_easy_setopt(req, CURLOPT_HTTPHEADER, headerlist);
     curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 0); // no redirects for security reasons
 

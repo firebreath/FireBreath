@@ -124,7 +124,7 @@ namespace log4cplus {
 
            /** Returns a copy of this object.  Derived classes
              *  should override this method.
-	     */
+         */
             virtual std::auto_ptr<InternalLoggingEvent> clone() const;
 
 
@@ -132,7 +132,7 @@ namespace log4cplus {
           // public methods
             /** The logger of the logging event. It is set by 
              *  the LoggingEvent constructor. 
-	     */
+         */
             const log4cplus::tstring& getLoggerName() const { return loggerName; }
 
             /** LogLevel of logging event. */

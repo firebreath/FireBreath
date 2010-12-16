@@ -104,7 +104,7 @@ namespace FB
     /// @exception bad_variant_cast
     ///
     /// @brief  Thrown when variant::cast<type> or variant::convert_cast<type> fails because the
-    /// 		type of the value stored in the variant is not compatible with the operation
+    ///         type of the value stored in the variant is not compatible with the operation
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct bad_variant_cast : std::bad_cast {
         bad_variant_cast(const std::type_info& src, const std::type_info& dest)
@@ -228,29 +228,29 @@ namespace FB
     /// @class  variant
     ///
     /// @brief  Accepts any datatype, used in all interactions with javascript.  Provides tools for
-    /// 		getting back out the type you put in or for coercing that type into another type
-    /// 		(if possible).
+    ///         getting back out the type you put in or for coercing that type into another type
+    ///         (if possible).
     ///
     /// variant is the most versatile and fundamental class in FireBreath.  Any type can be assigned
     /// to a variant, and you can get that type back out using cast(), like so:
     /// @code
-    /// 	 variant a = 5;
-    /// 	 int i_a = a.cast<int>();
+    ///      variant a = 5;
+    ///      int i_a = a.cast<int>();
     /// @endcode
-    /// 		
+    ///         
     /// Basic type conversion can be handled using convert_cast(), like so:
     /// @code
-    /// 	 variant str = "5";
-    /// 	 int i_a = a.convert_cast<int>();
+    ///      variant str = "5";
+    ///      int i_a = a.convert_cast<int>();
     /// @endcode
     /// 
     /// JSAPIAuto relies heavily on the ability of variant to convert_cast effectively for all type
     /// conversion.  If the type conversion fails, a FB::bad_variant_cast exception will be thrown.
     /// 
     /// @note If you assign a char* to variant it will be automatically converted to a std::string before
-    /// 	  the assignment.
+    ///       the assignment.
     /// @note If you assign a wchar_t* to variant it will be automatically converted to a std::wstring
-    /// 	  before the assignment
+    ///       before the assignment
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class variant
     {
@@ -471,13 +471,13 @@ namespace FB
         /// @fn template<typename T> bool variant::is_of_type() const
         ///
         /// @brief  Query if this object is of a particular type. 
-        /// 		
+        ///         
         /// Example:
         /// @code
-        /// 	 if (value.is_of_type<int>())
-        /// 	 {
-        /// 	    // Do something
-        /// 	 }
+        ///      if (value.is_of_type<int>())
+        ///      {
+        ///         // Do something
+        ///      }
         /// @endcode
         ///
         /// @return true if of type, false if not. 
@@ -491,7 +491,7 @@ namespace FB
         /// @fn template<typename T> const T& variant::cast() const
         ///
         /// @brief  returns the value cast as the given type; throws bad_variant_type if that type is
-        /// 		not the type of the value stored in variant
+        ///         not the type of the value stored in variant
         ///
         /// @exception  bad_variant_cast    Thrown when bad variant cast. 
         ///
@@ -514,8 +514,8 @@ namespace FB
         /// @fn template<typename T> typename FB::meta::disable_for_containers_and_numbers<T, const T>::type variant::convert_cast() const
         ///
         /// @brief  Converts the stored value to the requested type *if possible* and returns the resulting
-        /// 		value.  If the conversion is not possible, throws bad_variant_cast
-        /// 		
+        ///         value.  If the conversion is not possible, throws bad_variant_cast
+        ///         
         /// Supported destination types include:
         ///   - all numeric types
         ///   - std::string (stored in UTF8 if needed)

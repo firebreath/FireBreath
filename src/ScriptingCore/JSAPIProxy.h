@@ -48,10 +48,10 @@ namespace FB
         ///
         /// @brief  Creates a JSAPIProxy that holds a shared_ptr reference to the JSAPI object provided
         ///
-        /// @param	inner		the API to reference; a reference to this API will be held and inner will
+        /// @param  inner       the API to reference; a reference to this API will be held and inner will
         ///                     not be released until this proxy object is released
         /// @return boost::shared_ptr<JSAPIProxy>
-        /// @since	1.4.0
+        /// @since  1.4.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIPtr &inner);
 
@@ -60,12 +60,12 @@ namespace FB
         ///
         /// @brief  Creates a JSAPIProxy that holds a weak_ptr reference to the JSAPI object provided
         ///
-        /// @param	inner		the API to reference; a reference to this API will be weak and when inner
+        /// @param  inner       the API to reference; a reference to this API will be weak and when inner
         ///                     is released this object will throw an exception in response to any access
         ///                     except requests for the "expired" property, which is reserved in JSAPIProxy
         ///                     and will return true if inner has been released.
         /// @return boost::shared_ptr<JSAPIProxy>
-        /// @since	1.4.0
+        /// @since  1.4.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIWeakPtr &inner);
         virtual ~JSAPIProxy(void);
@@ -78,7 +78,7 @@ namespace FB
         /// This can be used to determine if the API object proxied to is still valid or not
         ///
         /// @return bool
-        /// @since	
+        /// @since  
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         inline bool isExpired() {
             return m_apiWeak.expired();

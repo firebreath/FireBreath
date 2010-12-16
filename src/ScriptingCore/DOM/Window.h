@@ -43,7 +43,7 @@ namespace FB {
     /// @class  Window
     ///
     /// @brief  DOM Window abstraction for manipulating and accessing the javascript window object that
-    /// 		the plugin is contained in
+    ///         the plugin is contained in
     /// @since 1.3
     /// Most of the time you will want to call BrowserHost::getDOMWindow() to get the reference to
     /// the containing window
@@ -85,8 +85,8 @@ namespace FB {
         /// @fn static WindowPtr Window::create(FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Window object from a JSObjectPtr representing a DOM object.  This
-        /// 		will probably throw an exception and definitely not work right if the DOM object
-        /// 		represented is not a window
+        ///         will probably throw an exception and definitely not work right if the DOM object
+        ///         represented is not a window
         ///
         /// @param  api The FB::JSObjectAPI object containing the window to wrap
         ///
@@ -142,7 +142,7 @@ namespace FB {
         /// @brief  Returns window.location for the containing page
         ///
         /// @return The location as a strin
-        /// 		g. 
+        ///         g. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual std::string getLocation();
     };
