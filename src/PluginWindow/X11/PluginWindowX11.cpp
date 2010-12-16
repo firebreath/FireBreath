@@ -12,6 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include <gtk/gtkx.h>
+
 #include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
@@ -231,4 +233,9 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 void PluginWindowX11::InvalidateWindow()
 {
     // Doesn't exist yet
+}
+
+GdkNativeWindow PluginWindowX11::getWindow()
+{
+  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
 }
