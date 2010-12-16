@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <gtk/gtkx.h>
+#include <gdk/gdkx.h>
 
 #include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
