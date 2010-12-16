@@ -21,7 +21,7 @@ if (WIN32)
     ENDMACRO(DBG_MSG)
 
 
-    if (NOT ${WIX_ROOT_DIR})
+    if (NOT WIX_ROOT_DIR)
         # typical root dirs of installations, exactly one of them is used
         SET (WIX_POSSIBLE_ROOT_DIRS
             "${WIX_ROOT_DIR}"
