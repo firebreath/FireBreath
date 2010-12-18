@@ -43,6 +43,7 @@ namespace HTTP {
 
         UploadQueuePtr shared_ptr() { return FB::ptr_cast<UploadQueue>(FB::PluginEventSource::shared_ptr()); }
 	
+        bool hasFile(const std::wstring& filename);
 	    void addFile(const UploadQueueEntry& qe);
 	    bool removeFile(const std::wstring& filename);
 	    FB::VariantMap getStatusDict(bool include_filenames = true);

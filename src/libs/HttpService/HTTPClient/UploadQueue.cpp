@@ -14,6 +14,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 
 #include "UploadQueue.h"
 #include "HTTPRequest.h"
+#include "JSAPI.h"
 #include <boost/algorithm/string.hpp>
 #include "../HTTPCommon/Status.h"
 #include "../HTTPCommon/Utils.h"
@@ -199,12 +200,6 @@ void UploadQueue::start_next_upload() {
 
         if (! failures.empty()) d["failed_files"] = failures;
 
-        // TODOTODO
-        {
-            StatusUpdateEvent evt(d);
-            SendEvent(&evt);
-        }
-
         status = UploadQueue::UPLOAD_COMPLETE;
         // fire completion handlers, if available
         for (std::list<FB::URI>::iterator it = completion_handlers.begin();
@@ -214,7 +209,11 @@ void UploadQueue::start_next_upload() {
             HTTPRequest::asyncStartRequest(reqdata);
         }
 
-        if (queue_finished_callback) queue_finished_callback(shared_ptr());
+        if (queue_finished_callback)
+            queue_finished_callback(shared_ptr());
+        
+        StatusUpdateEvent evt(d);
+        SendEvent(&evt);
     }
 }
 
@@ -344,13 +343,13 @@ void UploadQueue::sendUpdateEvent()
 
 void HTTP::UploadQueue::addCompletionHandler( const FB::URI& uri )
 {
-    if (status != UPLOAD_IDLE) throw std::runtime_error("UploadQueue::addCompletionHandler(): queue has been dispatched, can't be modified");
+    if (status != UPLOAD_IDLE) throw FB::script_error("UploadQueue::addCompletionHandler(): queue has been dispatched, can't be modified");
     completion_handlers.push_back(uri);
 }
 
 void HTTP::UploadQueue::addFile( const UploadQueueEntry& qe )
 {
-    if (status != UPLOAD_IDLE) throw std::runtime_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
+    if (status != UPLOAD_IDLE) throw FB::script_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
 
     current_queue_bytes += qe.filesize;
     total_queue_bytes += qe.filesize;
@@ -361,7 +360,7 @@ void HTTP::UploadQueue::addFile( const UploadQueueEntry& qe )
 
 bool HTTP::UploadQueue::removeFile( const std::wstring& source_path )
 {
-    if (status != UPLOAD_IDLE) throw std::runtime_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
+    if (status != UPLOAD_IDLE) throw FB::script_error("UploadQueue::addFile(): queue has been dispatched, can't be modified");
 
     for (std::list<UploadQueueEntry>::iterator it = queue.begin(); it != queue.end(); ++it) {
         if (it->source_path == source_path) {
@@ -375,6 +374,16 @@ bool HTTP::UploadQueue::removeFile( const std::wstring& source_path )
     }
 
     return false; // not found
+}
+
+bool HTTP::UploadQueue::hasFile( const std::wstring& filename )
+{
+    for (std::list<UploadQueueEntry>::iterator it = queue.begin(); it != queue.end(); ++it) {
+        if (it->source_path == filename) {
+            return true;
+        }
+    }
+    return false;
 }
 
 void sendUpdateEvent();
