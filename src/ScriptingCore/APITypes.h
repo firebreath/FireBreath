@@ -30,7 +30,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 /// @namespace  FB
 ///
 /// @brief  Primary location of FireBreath classes and utility functions.
-/// 		
+///         
 /// The five most important classes to understand when implementing a FireBreath plugin are:
 ///   - FB::PluginCore
 ///   - FB::JSAPI / FB::JSAPIAuto
@@ -97,7 +97,7 @@ namespace FB
     /// @typedef    FB::JSObjectPtr
     ///
     /// @brief  Defines an alias representing a JSObject shared_ptr (you should never use a 
-    /// 		JSObject* directly)
+    ///         JSObject* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef boost::shared_ptr<FB::JSObject> JSObjectPtr;
 
@@ -105,7 +105,7 @@ namespace FB
     /// @typedef    FB::BrowserHostPtr
     ///
     /// @brief  Defines an alias representing a BrowserHost shared_ptr (you should never use a 
-    /// 		BrowserHost* directly)
+    ///         BrowserHost* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     typedef boost::shared_ptr<FB::BrowserHost> BrowserHostPtr;
     
@@ -172,7 +172,7 @@ namespace FB
     /// @struct CatchAll
     ///
     /// @brief  When used as a parameter on a JSAPIAuto function this matches 0 or more variants
-    /// 		-- in other words, all other parameters from this point on regardless of type.
+    ///         -- in other words, all other parameters from this point on regardless of type.
     /// 
     /// This helper struct allows your scriptable methods to receive 0 or more parameters in addition
     /// to some fixed ones. E.g. given the following scriptable method:

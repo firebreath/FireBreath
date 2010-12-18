@@ -35,7 +35,7 @@ using namespace FB;
 // %%Function: ActiveXBindStatusCallback::ActiveXBindStatusCallback
 // ---------------------------------------------------------------------------
 ActiveXBindStatusCallback::ActiveXBindStatusCallback() :
-	m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
+    m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
 {
 }
 

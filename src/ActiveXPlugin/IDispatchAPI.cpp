@@ -302,13 +302,13 @@ FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB
 
 FB::JSAPIPtr IDispatchAPI::getJSAPI()
 {
-	if (!m_obj) {
+    if (!m_obj) {
         return FB::JSAPIPtr();
     }
     
-	if (JSAPI_IDispatchExBase* p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p)) {
-		return p->getAPI();
-	}
+    if (JSAPI_IDispatchExBase* p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p)) {
+        return p->getAPI();
+    }
 
     return FB::JSAPIPtr();
 }

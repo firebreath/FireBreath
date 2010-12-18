@@ -23,7 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB
 {
     class BrowserStream;
-	typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
+    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
     class PluginEventSink;
     typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
     class JSObject;
@@ -99,7 +99,7 @@ namespace FB
         /// 
         /// @param  func     The function to call. 
         /// @param  userData The userData to pass to the function.
-        /// 				 
+        ///                  
         /// @see ScheduleOnMainThread
         /// @see CallOnMainThread
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ namespace FB
         ///
         /// With this template function calls can be made on the main thread like so:
         /// @code
-        /// 	 int result = host->CallOnMainThread(boost::bind(&ObjectType::method, obj, arg1, arg2));
+        ///      int result = host->CallOnMainThread(boost::bind(&ObjectType::method, obj, arg1, arg2));
         /// @endcode
         /// 
         /// This is a synchronous cross-thread call, and as such may have a performance penalty
@@ -134,10 +134,10 @@ namespace FB
         /// With this template function a call can be scheduled to run asynchronously on the main thread
         /// like so:
         /// @code
-        /// 	 boost::shared_ptr<ObjectType> obj(get_object_sharedptr());
+        ///      boost::shared_ptr<ObjectType> obj(get_object_sharedptr());
         ///      host->ScheduleOnMainThread(obj, boost::bind(&ObjectType::method, obj, arg1, arg2));
         /// @endcode
-        /// 		
+        ///         
         /// Note that the first parameter should be a shared_ptr to the object the call is made on; this
         /// is then used to create a weak_ptr so that if the object goes away before the call is made
         /// the call can fail silently instead of crashing the browser.
@@ -166,8 +166,8 @@ namespace FB
         /// @fn virtual void *getContextID() = 0
         ///
         /// @brief  Gets a unique identifier for this BrowserHost.  There are cases where you may need
-        /// 		multiple BrowserHosts in a single FireBreath plugin, primarily if you are embedding
-        /// 		some sort of web browser inside your plugin, and this is needed for that.
+        ///         multiple BrowserHosts in a single FireBreath plugin, primarily if you are embedding
+        ///         some sort of web browser inside your plugin, and this is needed for that.
         ///
         /// @return null if it fails, else the context identifier. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -183,7 +183,7 @@ namespace FB
         ///
         /// @param  url                 URL of the document to request. 
         /// @param  callback            PluginEventSink to send status updates to (usually your Plugin class
-        /// 							derived from PluginCore)
+        ///                             derived from PluginCore)
         /// @param  cache               true to cache. 
         /// @param  seekable            true if the Stream should be seekable. 
         /// @param  internalBufferSize  Size of the internal buffer. 
@@ -240,7 +240,7 @@ namespace FB
         /// @fn virtual void evaluateJavaScript(const std::string &script) = 0
         ///
         /// @brief  Evaluates arbitrary javascript; note that it does not return the result due to cross-
-        /// 		browser compatibility issues
+        ///         browser compatibility issues
         ///
         /// @param  script  The script to evaluate. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,13 +258,13 @@ namespace FB
         /// @param  str The log message to send to the browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void htmlLog(const std::string& str);
-		
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void shutdown()
         ///
         /// @brief  Notifies the browserhost object that the associated plugin object is shutting down
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void shutdown();
+        virtual void shutdown();
 
 public:
     virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
@@ -278,7 +278,7 @@ public:
         /// @fn BrowserHostPtr shared_ptr()
         ///
         /// @brief  Provides a BrowserHostPtr shared_ptr for use in situations where you would normally
-        /// 		provide the "this" pointer.
+        ///         provide the "this" pointer.
         ///
         /// @return BrowerHostPtr for "this" pointer
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -288,10 +288,10 @@ public:
         }
 
     protected:
-		// Stores the thread_id for the thread the plugin was started on
+        // Stores the thread_id for the thread the plugin was started on
         boost::thread::id m_threadId;
-   		// if true then the plugin this belongs to has shut down (or is shutting down)
-		bool m_isShutdown;				
+        // if true then the plugin this belongs to has shut down (or is shutting down)
+        bool m_isShutdown;              
     };
 
     

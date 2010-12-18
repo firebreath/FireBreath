@@ -25,72 +25,72 @@ std::string Platform::getArchitectureName() {
 }
 
 string findUserFolder(OSType folderType) {
-	FSRef ref;
-	OSErr err = FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &ref);
-	if (err != noErr) return string();
-	char path[1024];
-	err = FSRefMakePath(&ref, (UInt8*)path, 1024);
-	if (err != noErr) return string();
-	return string(path);
+    FSRef ref;
+    OSErr err = FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &ref);
+    if (err != noErr) return string();
+    char path[1024];
+    err = FSRefMakePath(&ref, (UInt8*)path, 1024);
+    if (err != noErr) return string();
+    return string(path);
 }
 
 /*PluginJSDict* Platform::getLocalBrowseRoots() {
-	PluginJSDict* d = new PluginJSDict;
-	
-	// first, grab the user document folders: Pictures and Movies
-	string res;
-	res = findUserFolder(kPictureDocumentsFolderType);
-	if (!res.empty()) (*d)[res] = new BrowseRoot("Pictures", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_PHOTOS);
-	res = findUserFolder(kMovieDocumentsFolderType);
-	if (!res.empty()) (*d)[res] = new BrowseRoot("Movies", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_VIDEOS);
-	res = findUserFolder(kDesktopFolderType);
+    PluginJSDict* d = new PluginJSDict;
+    
+    // first, grab the user document folders: Pictures and Movies
+    string res;
+    res = findUserFolder(kPictureDocumentsFolderType);
+    if (!res.empty()) (*d)[res] = new BrowseRoot("Pictures", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_PHOTOS);
+    res = findUserFolder(kMovieDocumentsFolderType);
+    if (!res.empty()) (*d)[res] = new BrowseRoot("Movies", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_VIDEOS);
+    res = findUserFolder(kDesktopFolderType);
   if (!res.empty()) (*d)[res] = new BrowseRoot("Desktop", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_MIXED);
   res = findUserFolder(kDomainTopLevelFolderType);
   if (!res.empty()) (*d)[res] = new BrowseRoot("Home", res, BrowseRoot::PATH_DOCUMENT_FOLDER, BrowseRoot::CONTENT_TYPE_MIXED);
   
   
-	// now enum all mounts
-	for (ItemCount volIdx = 1; ; ++volIdx) {
-		FSVolumeRefNum actualVolume;
-		FSVolumeInfo info; // unused
-		HFSUniStr255 volumeName;
-		FSRef rootDirectory;
-		
-		OSErr err = FSGetVolumeInfo(kFSInvalidVolumeRefNum, volIdx, &actualVolume, kFSVolInfoNone, &info, &volumeName, &rootDirectory);
-		if (err == nsvErr) {
-			break; // iteration terminated
-		}
-		if (err != noErr) {
-			continue; // I/O error or something
-		}
-		
-		char outbuf[1024]; // UTF8
-		ByteCount realInputLen, realOutputLen;
-		TECObjectRef tec;
-		OSStatus st = TECCreateConverter(&tec, CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat),
+    // now enum all mounts
+    for (ItemCount volIdx = 1; ; ++volIdx) {
+        FSVolumeRefNum actualVolume;
+        FSVolumeInfo info; // unused
+        HFSUniStr255 volumeName;
+        FSRef rootDirectory;
+        
+        OSErr err = FSGetVolumeInfo(kFSInvalidVolumeRefNum, volIdx, &actualVolume, kFSVolInfoNone, &info, &volumeName, &rootDirectory);
+        if (err == nsvErr) {
+            break; // iteration terminated
+        }
+        if (err != noErr) {
+            continue; // I/O error or something
+        }
+        
+        char outbuf[1024]; // UTF8
+        ByteCount realInputLen, realOutputLen;
+        TECObjectRef tec;
+        OSStatus st = TECCreateConverter(&tec, CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicode16BitFormat),
                                      CreateTextEncoding(kTextEncodingUnicodeDefault, kTextEncodingDefaultVariant, kUnicodeUTF8Format));
-		
-		if (st != noErr) {
-			continue;
-		}
-		
-		st = TECConvertText(tec, (ConstTextPtr) volumeName.unicode, volumeName.length*2 / *bytes* /, &realInputLen, 
+        
+        if (st != noErr) {
+            continue;
+        }
+        
+        st = TECConvertText(tec, (ConstTextPtr) volumeName.unicode, volumeName.length*2 / *bytes* /, &realInputLen, 
                         (TextPtr) outbuf, 1024, &realOutputLen);
-		
-		TECDisposeConverter(tec);
-		if (st != noErr) {
-			continue;
-		}
-		
-		string volName(outbuf, realOutputLen);
-		err = FSRefMakePath(&rootDirectory, (UInt8*)outbuf, 1024);
-		if (err != noErr) {
-			continue;
-		}
+        
+        TECDisposeConverter(tec);
+        if (st != noErr) {
+            continue;
+        }
+        
+        string volName(outbuf, realOutputLen);
+        err = FSRefMakePath(&rootDirectory, (UInt8*)outbuf, 1024);
+        if (err != noErr) {
+            continue;
+        }
     
-		(*d)[string(outbuf)] = new BrowseRoot(volName, string(outbuf), BrowseRoot::PATH_VOLUME_ROOT, BrowseRoot::CONTENT_TYPE_MIXED);
-	}
-	return d;
+        (*d)[string(outbuf)] = new BrowseRoot(volName, string(outbuf), BrowseRoot::PATH_VOLUME_ROOT, BrowseRoot::CONTENT_TYPE_MIXED);
+    }
+    return d;
 }*/
 
 bool Platform::pathIsHidden(const boost::filesystem::wpath& path_to_investigate) {
@@ -159,18 +159,18 @@ HTTPProxyConfig Platform::getSystemProxyConfig() {
 /*
 class QuickLookThumbnailGenerator : public VideoThumbnailGenerator {
 public:
-	QuickLookThumbnailGenerator() : qlframework(NULL) {
-		// We dynamically resolve the reference to the QuickLook framework, since it's
-		// not available on Mac OS X 10.4 (and we want to work there with only one binary)
-		qlframework = dlopen("/System/Library/Frameworks/QuickLook.framework/QuickLook", RTLD_NOW);
+    QuickLookThumbnailGenerator() : qlframework(NULL) {
+        // We dynamically resolve the reference to the QuickLook framework, since it's
+        // not available on Mac OS X 10.4 (and we want to work there with only one binary)
+        qlframework = dlopen("/System/Library/Frameworks/QuickLook.framework/QuickLook", RTLD_NOW);
     if (! qlframework) return; // QuickLook framework isn't available or doesn't exist.
-		QLThumbnailImageCreate_ptr = reinterpret_cast<CGImageRef(*)(CFAllocatorRef,CFURLRef,CGSize,CFDictionaryRef)>(dlsym(qlframework, "QLThumbnailImageCreate"));
-		if (QLThumbnailImageCreate_ptr) generators.push_back(this);
-	}
+        QLThumbnailImageCreate_ptr = reinterpret_cast<CGImageRef(*)(CFAllocatorRef,CFURLRef,CGSize,CFDictionaryRef)>(dlsym(qlframework, "QLThumbnailImageCreate"));
+        if (QLThumbnailImageCreate_ptr) generators.push_back(this);
+    }
   ~QuickLookThumbnailGenerator() {
     if (qlframework) dlclose(qlframework);
   }
-	virtual bool generate(const std::string& filename, const ImageProcessor::Dimension& dim, ImageProcessor::Result& res) {
+    virtual bool generate(const std::string& filename, const ImageProcessor::Dimension& dim, ImageProcessor::Result& res) {
     if (! QLThumbnailImageCreate_ptr) return false; // Shouldn't happen, since we're not supposed to be registered if this failed
 
     cf_scoped_ptr<CFURLRef> url(CFURLCreateFromFileSystemRepresentation(kCFAllocatorDefault, reinterpret_cast<const UInt8*>(filename.data()), filename.size(), false));
@@ -192,10 +192,10 @@ public:
     res.length = CFDataGetLength(target);
     res.data = boost::shared_array<char>(new char[res.length]);
     CFDataGetBytes(target, CFRangeMake(0, res.length), reinterpret_cast<UInt8*>(res.data.get()));
-		return true;
-	}
+        return true;
+    }
 protected:
-	CGImageRef(*QLThumbnailImageCreate_ptr)(CFAllocatorRef,CFURLRef,CGSize,CFDictionaryRef);
+    CGImageRef(*QLThumbnailImageCreate_ptr)(CFAllocatorRef,CFURLRef,CGSize,CFDictionaryRef);
   void* qlframework;
 };
 

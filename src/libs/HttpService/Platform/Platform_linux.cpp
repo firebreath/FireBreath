@@ -24,7 +24,7 @@ std::string Platform::getArchitectureName() {
 }
 
 PluginJSDict* Platform::getLocalBrowseRoots() {
-	PluginJSDict* d = new PluginJSDict;
+    PluginJSDict* d = new PluginJSDict;
   (*d)["/"] = new BrowseRoot("/", "/", BrowseRoot::PATH_VOLUME_ROOT);
   const char* homeenv = getenv("HOME");
   if (homeenv) (*d)["~"] = new BrowseRoot(homeenv, homeenv, BrowseRoot::PATH_DOCUMENT_FOLDER);

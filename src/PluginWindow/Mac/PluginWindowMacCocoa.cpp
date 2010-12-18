@@ -181,7 +181,7 @@ void PluginWindowMacCocoa::setWindowClipping(uint16_t top, uint16_t left, uint16
 
 void FB::timerCallback(NPP npp, uint32_t timerID) {
     FB::Npapi::NpapiPluginPtr p = FB::Npapi::getPlugin(npp);
-	boost::shared_ptr<FB::Npapi::NpapiPluginMac> plugin = FB::ptr_cast<FB::Npapi::NpapiPluginMac>(p);
+    boost::shared_ptr<FB::Npapi::NpapiPluginMac> plugin = FB::ptr_cast<FB::Npapi::NpapiPluginMac>(p);
     if(plugin != NULL) {
         plugin->HandleCocoaTimerEvent();
     }

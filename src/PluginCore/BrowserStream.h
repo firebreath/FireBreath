@@ -24,7 +24,7 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 
 namespace FB {
     class BrowserStream;
-	typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
+    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  BrowserStream
@@ -75,7 +75,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~BrowserStream();
 
-		virtual BrowserStreamPtr shared_ptr() { return FB::ptr_cast<BrowserStream>(shared_from_this()); }
+        virtual BrowserStreamPtr shared_ptr() { return FB::ptr_cast<BrowserStream>(shared_from_this()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool BrowserStream::readRange( size_t start, size_t end )
@@ -271,7 +271,7 @@ namespace FB {
         bool            opened;
         std::string     headers;
     };
-	typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
+    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  DefaultBrowserStreamHandler

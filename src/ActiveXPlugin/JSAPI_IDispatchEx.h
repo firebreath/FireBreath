@@ -39,10 +39,10 @@ public:
         m_host = host;
     }
 
-	FB::JSAPIPtr getAPI()
-	{
-		return m_api;
-	}
+    FB::JSAPIPtr getAPI()
+    {
+        return m_api;
+    }
 
 protected:
     FB::JSAPIPtr m_api;

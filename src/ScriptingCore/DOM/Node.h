@@ -64,9 +64,9 @@ namespace FB { namespace DOM {
         /// @fn static NodePtr create(FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Node object from a JSObjectPtr representing a DOM node.  This
-        /// 		will probably throw an exception and definitely not work right if the js object
-        /// 		represented is not a node
-        /// 		
+        ///         will probably throw an exception and definitely not work right if the js object
+        ///         represented is not a node
+        ///         
         /// @param  api The FB::JSObjectAPI object containing the node to wrap
         ///
         /// @return FB::DOM::NodePtr to the created Node object
@@ -83,7 +83,7 @@ namespace FB { namespace DOM {
         /// @code
         ///      double tmp = node.callMethod<double>("pow", FB::variant_list_of(3)(2));
         /// @endcode
-        /// 		
+        ///         
         /// @param  name the name of the method to call
         /// @param  args a VariantList of arguments to pass ot the method
         ///
@@ -136,7 +136,7 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Templated function, gets the specified prooerty by index and returns it cast as the
         ///         specified type
-        ///	
+        /// 
         /// @param  idx the index of the property to get
         ///
         /// @return result of calling the method cast as type T
@@ -154,7 +154,7 @@ namespace FB { namespace DOM {
         /// @fn virtual NodePtr getNode(const std::string& name)
         ///
         /// @brief  Gets a child node of the specified name
-        /// 		
+        ///         
         /// @param  name the name of the child node to fetch
         ///
         /// @return child node
@@ -165,7 +165,7 @@ namespace FB { namespace DOM {
         /// @fn virtual NodePtr getNode(int idx)
         ///
         /// @brief  Gets a child node of the specified name by index
-        /// 		
+        ///         
         /// @param  idx the index of the child node to fetch
         ///
         /// @return child node
@@ -178,7 +178,7 @@ namespace FB { namespace DOM {
         /// @fn virtual void setProperty(const std::string& name, const variant& val)
         ///
         /// @brief  Sets a property on the node to a given value
-        /// 		
+        ///         
         /// @param  name the name of the property to set
         /// @param  val the new value for the property
         ///

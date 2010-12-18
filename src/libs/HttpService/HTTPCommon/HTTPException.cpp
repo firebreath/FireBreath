@@ -20,7 +20,7 @@ HTTPException::HTTPException(short _response_code, const char* _msg) : response_
   msg = strdup(_msg);
 }
 std::string HTTPException::getResponseHeader() const {
-	switch (response_code) {
+    switch (response_code) {
 #define RC(code, msg) case code: return ("HTTP/1.1 " #code " " msg); break;
       RC(400, "Bad Request")
       RC(401, "Unauthorized")
@@ -28,9 +28,9 @@ std::string HTTPException::getResponseHeader() const {
       RC(404, "Not Found")
       RC(405, "Method Not Allowed")
       RC(415, "Unsupported Media Type")
-		default:
+        default:
       RC(500, "Internal Server Error")
       RC(501, "Not Implemented")
 #undef RC
-	};
+    };
 }

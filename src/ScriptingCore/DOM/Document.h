@@ -29,7 +29,7 @@ namespace FB { namespace DOM {
     /// @class  Document
     ///
     /// @brief  Abstraction for accessing and manipulating a DOM Document
-    /// 		
+    ///         
     /// This class should not be created directly; instead, use the Document::create method
     /// 
     /// Most of the time you will want to call BrowserHost::getDOMDocument() to get the reference to
@@ -54,8 +54,8 @@ namespace FB { namespace DOM {
         /// @fn static DocumentPtr Document::create(FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Document object from a JSObjectPtr representing a DOM object.  This
-        /// 		will probably throw an exception and definitely not work right if the DOM object
-        /// 		represented is not a document
+        ///         will probably throw an exception and definitely not work right if the DOM object
+        ///         represented is not a document
         ///
         /// @param  api The FB::JSObjectAPI object containing the document to wrap
         ///

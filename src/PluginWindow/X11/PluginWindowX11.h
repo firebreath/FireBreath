@@ -46,7 +46,7 @@ namespace FB {
 
 #if FB_GUI_DISABLED != 1
     public:
-        GdkNativeWindow getWindow() { return m_window; }
+        GdkNativeWindow getWindow();
         void setBrowserWindow(GdkNativeWindow win) {  m_browserWindow = win; }
         GdkNativeWindow getBrowserWindow() { return m_browserWindow; }
         static gboolean _EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data);

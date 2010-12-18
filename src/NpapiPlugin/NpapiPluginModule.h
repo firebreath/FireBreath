@@ -25,7 +25,7 @@ namespace FB {
     namespace Npapi {
         class NpapiPlugin;
         // Get instance of NpapiPlugin from an NPP instance
-		boost::shared_ptr<NpapiPlugin> getPlugin(NPP instance);
+        boost::shared_ptr<NpapiPlugin> getPlugin(NPP instance);
 
         class NpapiPluginModule
         {

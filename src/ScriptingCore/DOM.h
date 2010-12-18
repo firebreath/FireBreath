@@ -23,9 +23,9 @@ namespace FB {
 /// @namespace  FB::DOM 
 ///
 /// @brief These are convenience objects used to access and manipulate DOM objects.  They should
-/// 	   never be created directly; instead, get the Window object or the Document object
-/// 	   from the BrowserHost or create it with DOM::Element::create(obj) (or similar)
-/// 	   
+///        never be created directly; instead, get the Window object or the Document object
+///        from the BrowserHost or create it with DOM::Element::create(obj) (or similar)
+///        
 /// FB::DOM contains the following classes:
 ///   - FB::DOM::Node
 ///   - FB::DOM::Element

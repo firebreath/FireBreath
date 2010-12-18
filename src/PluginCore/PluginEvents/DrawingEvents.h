@@ -42,7 +42,7 @@ namespace FB {
     /// @class  RefreshEvent
     ///
     /// @brief  Fired when the plugin should repaint itself (such as on windows when WM_PAINT is
-    /// 		received)
+    ///         received)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class RefreshEvent : public PluginEvent
     {

@@ -28,7 +28,7 @@ namespace FB {
     /// @class  BrowserPlugin
     ///
     /// @brief  Browser-specific plugin base class
-    /// 		
+    ///         
     /// This object is the base class for FBControl and NpapiPlugin, which are the browser-specific
     /// plugin classes that contain a PluginCore derived plugin object.
     /// 

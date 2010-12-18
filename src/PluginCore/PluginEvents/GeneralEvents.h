@@ -24,7 +24,7 @@ namespace FB {
     /// @class  TimerEvent
     ///
     /// @brief  Fired when a timer event is received; currently this only works on windows and is
-    /// 		fired when WM_TIMER is received.
+    ///         fired when WM_TIMER is received.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class TimerEvent : public PluginEvent
     {

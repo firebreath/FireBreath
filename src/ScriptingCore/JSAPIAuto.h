@@ -50,13 +50,13 @@ namespace FB {
     /// For example, to provide a property called "IsFinished" that javascript can access, you need
     /// two methods:
     /// @code
-    /// 	 bool get_IsFinished();
-    /// 	 void set_IsFinished(bool newVal);
+    ///      bool get_IsFinished();
+    ///      void set_IsFinished(bool newVal);
     /// @endcode
     /// Then in the constructor of your class that extends JSAPIAuto (we'll call it MyPluginAPI),
     /// you register it like so:
     /// @code
-    /// 	 registerProperty("IsFinished", 
+    ///      registerProperty("IsFinished", 
     ///                       make_property(this, 
     ///                                     &MyPluginAPI::get_IsFinished, 
     ///                                     &MyPluginAPI::set_IsFinished));
@@ -69,14 +69,14 @@ namespace FB {
     /// Similarly, to provide a method called "add" that accepts two integers and returns an integer,
     /// you need one method on your class:
     /// @code
-    /// 	 int add(int a, int b);
+    ///      int add(int a, int b);
     /// @endcode
     /// Then in the constructor of your class that extends JSAPIAuto (still calling it MyPluginAPI),
     /// you register it like so:
     /// @code
-    /// 	 registerMethod("add", make_method(this, &MyPluginAPI::add));
+    ///      registerMethod("add", make_method(this, &MyPluginAPI::add));
     /// @endcode
-    /// 		
+    ///         
     /// If arguments are passed that cannot be converted to an int, a javascript exception will be
     /// thrown.
     /// 
@@ -107,18 +107,18 @@ namespace FB {
         /// To provide a method to javascript called "add" that accepts two integers and returns an integer,
         /// you need one method on your class:
         /// @code
-        /// 	 int add(int a, int b);
+        ///      int add(int a, int b);
         /// @endcode
         /// Then in the constructor of your class that extends JSAPIAuto (still calling it MyPluginAPI),
         /// you register it like so:
         /// @code
-        /// 	 registerMethod("add", make_method(this, &MyPluginAPI::add));
+        ///      registerMethod("add", make_method(this, &MyPluginAPI::add));
         /// @endcode
-        /// 		
+        ///         
         /// You should then be able to call the method from javascript and get a result:
         /// @code
-        /// 	 // Assumes that this JSAPI object is the Root JSAPI for the plugin
-        /// 	 alert(document.getElementById("plugin").add(2,765));
+        ///      // Assumes that this JSAPI object is the Root JSAPI for the plugin
+        ///      alert(document.getElementById("plugin").add(2,765));
         /// @endcode
         ///
         /// @param  name    The name that the method will have when accessed from javascript. 
@@ -141,13 +141,13 @@ namespace FB {
         /// To provide a property called "IsFinished" that javascript can access, you need
         /// two methods:
         /// @code
-        /// 	 bool get_IsFinished();
-        /// 	 void set_IsFinished(bool newVal);
+        ///      bool get_IsFinished();
+        ///      void set_IsFinished(bool newVal);
         /// @endcode
         /// Then in the constructor of your class that extends JSAPIAuto (we'll call it MyPluginAPI),
         /// you register it like so:
         /// @code
-        /// 	 registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished, &MyPluginAPI::set_IsFinished));
+        ///      registerProperty("IsFinished", make_property(this, &MyPluginAPI::get_IsFinished, &MyPluginAPI::set_IsFinished));
         /// @endcode
         /// To register a property that is read- or write-only, simply provide "NULL" for the getter or
         /// setter function when registering the property.
@@ -167,8 +167,8 @@ namespace FB {
         ///
         /// @brief  Default method called when a string value is requested for the scriptable object.
         ///
-        ///	Override this to provide your own, otherwise it returns the description passed to the constructor.
-        /// 		
+        /// Override this to provide your own, otherwise it returns the description passed to the constructor.
+        ///         
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual std::string ToString();
@@ -177,7 +177,7 @@ namespace FB {
         /// @fn virtual bool JSAPIAuto::get_valid()
         ///
         /// @brief  Property exposed by default to javascript useful for checking to make sure that the
-        /// 		JSAPI is working.
+        ///         JSAPI is working.
         ///
         /// @return true if it succeeds, false if it fails. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -25,7 +25,7 @@ namespace FB {
     /// @class  PluginWindow
     ///
     /// @brief  PluginWindow is the base class for all PluginWindow objects.
-    /// 		
+    ///         
     /// A PluginWindow object is platform specific and contains everything you need to perform
     /// drawing operations as well as being the source of system events such as MouseEvent or
     /// KeyEvent.

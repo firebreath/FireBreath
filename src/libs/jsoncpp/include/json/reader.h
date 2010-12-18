@@ -179,11 +179,11 @@ namespace Json {
     Result:
     \verbatim
     {
-	"dir": {
-	    "file": {
-		// The input stream JSON would be nested here.
-	    }
-	}
+    "dir": {
+        "file": {
+        // The input stream JSON would be nested here.
+        }
+    }
     }
     \endverbatim
     \throw std::exception on parse error.

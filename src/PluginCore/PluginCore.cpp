@@ -79,8 +79,8 @@ void PluginCore::initDefaultParams()
 
 PluginCore::~PluginCore()
 {
-	// Tell the host that the plugin is shutting down
-	m_host->shutdown();
+    // Tell the host that the plugin is shutting down
+    m_host->shutdown();
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
     if (--PluginCore::ActivePluginCount == 0) {

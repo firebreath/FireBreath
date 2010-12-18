@@ -35,13 +35,13 @@ inline GdkNativeWindow getGdkWindow(void *in)
     return (char*)in - (char*)0;
 }
 
-namespace 
+namespace
 {
-    std::string getPluginPath() 
+    std::string getPluginPath()
     {
-        ::Dl_info dlinfo; 
-        if (::dladdr((void*)::NP_Initialize, &dlinfo) != 0) { 
-            return dlinfo.dli_fname; 
+        ::Dl_info dlinfo;
+        if (::dladdr((void*)::NP_Initialize, &dlinfo) != 0) {
+            return dlinfo.dli_fname;
         } else {
             return "";
         }
@@ -52,16 +52,16 @@ NpapiPluginX11::NpapiPluginX11(const FB::Npapi::NpapiBrowserHostPtr& host, const
     : NpapiPlugin(host, mimetype), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");
-    
+
     // Get the path to the shared lib
-    
-    static const std::string pluginPath = getPluginPath(); 
+
+    static const std::string pluginPath = getPluginPath();
     setFSPath(pluginPath);
 }
 
 NpapiPluginX11::~NpapiPluginX11()
 {
-    delete pluginWin; 
+    delete pluginWin;
     pluginWin = NULL;
 }
 
@@ -105,12 +105,16 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
 
             pluginWin = getFactoryInstance()->createPluginWindowX11(WindowContextX11(getGdkWindow(window->window)));
             pluginWin->setBrowserWindow(browserWindow);
+            pluginWin->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWin->setWindowClipping(window->clipRect.top, window->clipRect.left,
+                                         window->clipRect.bottom, window->clipRect.right);
             pluginMain->SetWindow(pluginWin);
+        } else {
+            pluginWin->setWindowPosition(window->x, window->y, window->width, window->height);
+            pluginWin->setWindowClipping(window->clipRect.top, window->clipRect.left,
+                                         window->clipRect.bottom, window->clipRect.right);
         }
 
-        pluginWin->setWindowPosition(window->x, window->y, window->width, window->height);
-        pluginWin->setWindowClipping(window->clipRect.top, window->clipRect.left,
-                                      window->clipRect.bottom, window->clipRect.right);
     } else if (pluginWin != NULL) {
         // If the handle goes to NULL, our window is gone and we need to stop using it
         pluginMain->ClearWindow();

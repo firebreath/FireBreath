@@ -49,11 +49,11 @@ namespace FB
     /// @class  FactoryBase
     ///
     /// @brief  This is the base factory for a plugin.  Every plugin *must* implement this class
-    /// 		and override at least the createPlugin() method.  To futher customize your plugin,
-    /// 		you can override other methods to replace the PluginWindow or the NpapiPlugin class.
-    /// 		
+    ///         and override at least the createPlugin() method.  To futher customize your plugin,
+    ///         you can override other methods to replace the PluginWindow or the NpapiPlugin class.
+    ///         
     /// @code
-    /// 	 // Example implementation:
+    ///      // Example implementation:
     ///      class PluginFactory : public FB::FactoryBase
     ///      {
     ///      public:
@@ -92,10 +92,10 @@ namespace FB
         /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(const std::string& mimetype) = 0
         ///
         /// @brief  Creates a FB::PluginCore derived user plugin object.  This must be implemented
-        /// 		for all plugin projects.
+        ///         for all plugin projects.
         ///
         /// @code
-        /// 	 // Example implementation
+        ///      // Example implementation
         ///      FB::PluginCorePtr createPlugin(const std::string& mimetype)
         ///      {
         ///          return boost::make_shared<MyPluginObject>();
@@ -103,8 +103,8 @@ namespace FB
         /// @endcode
         /// 
         /// @param mimetype As of 1.3 this is not wired in, in future versions this will be the mimetype
-        /// 				that was requested by the object tag that this plugin is being loaded for.  This
-        /// 				will allow you to optionally provide multiple plugins in one file.
+        ///                 that was requested by the object tag that this plugin is being loaded for.  This
+        ///                 will allow you to optionally provide multiple plugins in one file.
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +149,7 @@ namespace FB
         /// @fn std::string FactoryBase::getPluginName()
         ///
         /// @brief  Returns the name of the plugin.  To change the name of your plugin edit
-        /// 		PluginConfig.cmake
+        ///         PluginConfig.cmake
         ///
         /// @return The plugin name. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +158,7 @@ namespace FB
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
         /// @brief  Returns the description of the plugin.  To change the description of your plugin edit
-        /// 		PluginConfig.cmake
+        ///         PluginConfig.cmake
         ///
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -168,8 +168,8 @@ namespace FB
         /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
         ///
         /// @brief  Creates a npapi plugin.  The default implementation creates a NpapiPluginWin, NpapiPluginX11, or
-        /// 		NpapiPluginMac depending on the platform.  Only in very very rare cases will you need to override
-        /// 		this method.
+        ///         NpapiPluginMac depending on the platform.  Only in very very rare cases will you need to override
+        ///         this method.
         ///
         /// @param  host    The BrowserHost object for the browser containing this plugin
         ///

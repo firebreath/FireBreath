@@ -46,7 +46,7 @@ public:
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief  Releases the object.  Do not call this method, it is used by the destructor, but has
-    /// 		to be public so that it can be forced to run on the main thread.
+    ///         to be public so that it can be forced to run on the main thread.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     void releaseObject();
 
@@ -75,7 +75,7 @@ public:
     FB::JSObjectPtr Construct(const std::string& memberName, const FB::VariantList& args);
 
 public:
-	virtual FB::JSAPIPtr getJSAPI();
+    virtual FB::JSAPIPtr getJSAPI();
 };
 
 #endif

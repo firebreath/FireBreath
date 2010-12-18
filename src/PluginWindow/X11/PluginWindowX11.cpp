@@ -12,12 +12,20 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+
 #include "PluginEvents/X11Event.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
-#include "PluginWindowX11.h"
 #include "ConstructDefaultPluginWindows.h"
+
+#include "PluginWindowX11.h"
+
+#if FB_GUI_DISABLED != 1
+
+#include <gdk/gdkx.h>
+
+#endif
 
 FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
 {
@@ -225,6 +233,11 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 //     }
 //     return false;
 // }
+
+GdkNativeWindow PluginWindowX11::getWindow()
+{
+  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
+}
 
 #endif
 

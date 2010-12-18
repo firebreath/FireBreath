@@ -101,7 +101,7 @@ namespace FB
         /// @fn virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args)
         ///
         /// @brief  Fires an event into javascript asynchronously
-        /// 		
+        ///         
         /// This fires an event to all handlers attached to the given event in javascript.
         /// 
         /// IE:
@@ -110,18 +110,18 @@ namespace FB
         /// @endcode
         /// Firefox/Safari/Chrome/Opera:
         /// @code
-        /// 	 // Note that the convention used by these browsers is that "on" is implied
-        /// 	 document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
+        ///      // Note that the convention used by these browsers is that "on" is implied
+        ///      document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
         /// @endcode
         ///
         /// You can then fire the event -- from any thread -- from the JSAPI object like so:
         /// @code
-        /// 	 FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
         /// @endcode
-        /// 		
+        ///         
         /// Also note that registerEvent must be called from the constructor to register the event.
         /// @code
-        /// 	 registerEvent("onload");
+        ///      registerEvent("onload");
         /// @endcode
         /// 
         /// @param  eventName   Name of the event.  This event must start with "on"
@@ -215,8 +215,8 @@ namespace FB
         /// @fn virtual void registerEventInterface(JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to register a JSObject interface that handles events.  This is
-        /// 		primarily used by IE.  Objects provided to this method are called when events are fired
-        /// 		by calling a method of the event name on the event interface
+        ///         primarily used by IE.  Objects provided to this method are called when events are fired
+        ///         by calling a method of the event name on the event interface
         ///
         /// @param  event   The JSAPI interface 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -238,12 +238,12 @@ namespace FB
         /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name)
         ///
         /// @brief  Called by the browser to get the default event handler method for an event.
-        /// 		
+        ///         
         /// This is called when the following occurs iff onload is a registered event:
         /// @code
-        /// 	 var handler = document.getElementByID("plugin").onload;
+        ///      var handler = document.getElementByID("plugin").onload;
         /// @endcode
-        /// 		
+        ///         
         /// @param  name    The event name. 
         ///
         /// @return The default event method. 
@@ -257,7 +257,7 @@ namespace FB
         ///
         /// This is called when the following occurs iff onload is a registered event:
         /// @code
-        /// 	 document.getElementByID("plugin").onload = function() { alert("loaded"); };
+        ///      document.getElementByID("plugin").onload = function() { alert("loaded"); };
         /// @endcode
         ///
         /// @param  name    The event name
@@ -275,7 +275,7 @@ namespace FB
         /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) = 0
         ///
         /// @brief  Called by the browser to enumerate the members of this JSAPI object
-        /// 		
+        ///         
         /// This must be implemented by anything extending JSAPI directly.  JSAPIAuto implements this
         /// for you.
         ///
@@ -326,11 +326,11 @@ namespace FB
         /// @fn virtual bool HasProperty(int idx) = 0
         ///
         /// @brief  Query if the property at "idx" exists.
-        /// 	
+        ///     
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to HasProperty with idx = 12:
         /// @code
-        /// 	  document.getElementById("plugin")[12];
+        ///       document.getElementById("plugin")[12];
         /// @endcode 
         ///
         /// @param  idx Zero-based index of the property to check for
@@ -391,7 +391,7 @@ namespace FB
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to GetProperty with idx = 12:
         /// @code
-        /// 	  var i = document.getElementById("plugin")[12];
+        ///       var i = document.getElementById("plugin")[12];
         /// @endcode 
         ///
         /// @param  idx Zero-based index of the property to get the value of. 
@@ -408,7 +408,7 @@ namespace FB
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to SetProperty with idx = 12:
         /// @code
-        /// 	  document.getElementById("plugin")[12] = "property value";
+        ///       document.getElementById("plugin")[12] = "property value";
         /// @endcode 
         ///
         /// @param  idx     Zero-based index of the property to set the value of. 
