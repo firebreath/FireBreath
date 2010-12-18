@@ -34,3 +34,8 @@ void JSObject::InvokeAsync(const std::string& methodName, const std::vector<vari
 {
     host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
 }
+
+FB::JSObjectPtr FB::JSObject::Construct( const std::wstring& memberName, const std::vector<variant>& args )
+{
+    return Construct(FB::wstring_to_utf8(memberName), args);
+}

@@ -55,6 +55,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     utf8*
     URI*
     SafeQueue*
+    JSExceptions.h
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -68,6 +69,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     SyncBrowser*
     *Converter.*
     JSCallback*
+    JSEvent.*
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

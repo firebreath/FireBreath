@@ -91,13 +91,14 @@ namespace FB {
         JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
         virtual ~JSAPIAuto();
 
+        virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
+
         virtual void getMemberNames(std::vector<std::string> &nameVector);
         virtual size_t getMemberCount();
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
 
         virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
         ///
@@ -186,6 +187,15 @@ namespace FB {
         PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
         
         const std::string m_description;
+
+        struct Attribute {
+            FB::variant value;
+            bool readonly;
+        };
+        typedef std::map<std::string, Attribute> AttributeMap;
+
+        AttributeMap m_attributes;
+        bool m_allowDynamicAttributes;
     };
 };
 

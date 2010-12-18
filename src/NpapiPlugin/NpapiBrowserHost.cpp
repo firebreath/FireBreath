@@ -69,7 +69,8 @@ namespace
         tdm.insert(makeBuilderEntry<std::string>());
         tdm.insert(makeBuilderEntry<std::wstring>());
         
-        tdm.insert(makeBuilderEntry<FB::Npapi::NpapiNull>());
+        tdm.insert(makeBuilderEntry<FB::FBNull>());
+        tdm.insert(makeBuilderEntry<FB::FBVoid>());
         tdm.insert(makeBuilderEntry<FB::VariantList>());
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());

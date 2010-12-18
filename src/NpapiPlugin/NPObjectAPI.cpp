@@ -180,6 +180,42 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     }
 }
 
+FB::JSObjectPtr NPObjectAPI::Construct( const std::string& memberName, const FB::VariantList& args )
+{
+    if (!host->isMainThread()) {
+        typedef FB::JSObjectPtr (FB::JSObject::*curtype)(const std::string& memberName, const std::vector<variant>& args);
+        return host->CallOnMainThread(boost::bind((curtype)&JSObject::Construct, this, memberName, args));
+    }
+    NPVariant retVal;
+
+    if (!memberName.empty()) {
+        return this->GetProperty(memberName).convert_cast<FB::JSObjectPtr>()->Construct("", args);
+    }
+
+    // Convert the arguments to NPVariants
+    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size()]);
+    for (unsigned int i = 0; i < args.size(); i++) {
+        browser->getNPVariant(&npargs[i], args[i]);
+    }
+
+    bool res = false;
+    // Construct the new object
+    res = browser->Construct(obj, npargs.get(), args.size(), &retVal);
+
+    // Free the NPVariants that we earlier allocated
+    for (unsigned int i = 0; i < args.size(); i++) {
+        browser->ReleaseVariantValue(&npargs[i]);
+    }
+
+    if (!res) { // If the method call failed, throw an exception
+        throw script_error("Could not construct object");
+    } else {
+        FB::JSObjectPtr ret = browser->getVariant(&retVal).convert_cast<FB::JSObjectPtr>();
+        browser->ReleaseVariantValue(&retVal);  // Always release the return value!
+        return ret;
+    }
+}
+
 FB::JSAPIPtr NPObjectAPI::getJSAPI()
 {
     if (!obj) {

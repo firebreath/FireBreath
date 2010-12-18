@@ -44,6 +44,12 @@ namespace FB
     class JSAPI;
     class JSObject;
     class variant;
+    namespace variant_detail {
+        // Note that null translates to returning NULL
+        struct null;
+        // Note that empty translates into return VOID (undefined)
+        struct empty;
+    }
     
     // Variant list
 
@@ -191,6 +197,31 @@ namespace FB
     struct CatchAll {
         typedef FB::VariantList value_type;
         FB::VariantList value;
+    };
+
+    // Special Variant types
+    typedef FB::variant_detail::empty FBVoid;
+    typedef FB::variant_detail::null FBNull;
+    struct FBDateString {
+    public:
+        FBDateString() { }
+        FBDateString(const FBDateString& rhs) : date(rhs.date) { }
+        FBDateString(const std::string &dstr) : date(dstr) { }
+
+        FBDateString& operator=(const std::string& dstr) { date = dstr; return *this; }
+        std::string getValue() { return date; }
+        std::string setValue(std::string value) { date = value; }
+        bool operator<(const std::string& rh) const
+        {
+            return date < rh;
+        }
+        bool operator<(const FBDateString& rh) const
+        {
+            return date < rh.date;
+        }
+        
+    protected:
+        std::string date;
     };
 
     // JSAPI methods

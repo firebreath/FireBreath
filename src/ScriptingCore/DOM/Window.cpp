@@ -61,3 +61,13 @@ std::string Window::getLocation()
 {
     return getNode("location")->getProperty<std::string>("href");
 }
+
+FB::JSObjectPtr FB::DOM::Window::createDate( const std::string& datestring )
+{
+    JSObjectPtr obj;
+    if (datestring.empty())
+        obj = getJSObject()->Construct("Date", FB::VariantList());
+    else
+        obj = getJSObject()->Construct("Date", FB::variant_list_of(datestring));
+    return obj;
+}

@@ -137,6 +137,15 @@ namespace FB {
         virtual FB::JSObjectPtr createMap();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual FB::JSObjectPtr Window::createDate(const std::string& datestring)
+        ///
+        /// @brief  Creates a javascript Date object and returns it
+        ///
+        /// @return new javascript Date object
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual FB::JSObjectPtr createDate(const std::string& datestring);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string Window::getLocation()
         ///
         /// @brief  Returns window.location for the containing page

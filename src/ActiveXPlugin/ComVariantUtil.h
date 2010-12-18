@@ -71,12 +71,26 @@ namespace FB { namespace ActiveX
     template<class T> 
     CComVariant makeComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
-        BOOST_STATIC_ASSERT((false && sizeof(T)==0));
-        CComVariant npv;
-        npv.type = CComVariantType_Null;
-        return npv;
+        CComVariant out;
+        out.ChangeType(VT_NULL);
+        return out;
     }
     
+    template<> inline
+    CComVariant makeComVariant<FB::FBNull>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+    {
+        CComVariant out;
+        out.ChangeType(VT_NULL);
+        return out;
+    }
+
+    template<> inline
+    CComVariant makeComVariant<FB::FBVoid>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+    {
+        CComVariant out; // Just leave it at VT_EMPTY
+        return out;
+    }
+
     template<> inline
     CComVariant makeComVariant<std::string>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {

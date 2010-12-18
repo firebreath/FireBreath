@@ -86,6 +86,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetPropertyAsync(const std::string& propertyName, const variant& value);
 
+        virtual FB::JSObjectPtr Construct(const std::wstring& memberName, const std::vector<variant>& args);
+        virtual FB::JSObjectPtr Construct(const std::string& memberName, const std::vector<variant>& args) = 0;
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Cont> static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)

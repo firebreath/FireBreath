@@ -18,7 +18,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : m_methodFunctorMap(),
     m_propertyFunctorsMap(),
-    m_description(description)
+    m_description(description),
+    m_allowDynamicAttributes(true)
 {
     registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
     
@@ -99,7 +100,11 @@ bool FB::JSAPIAuto::HasProperty(const std::string& propertyName)
     if(!m_valid)
         return false;
 
-    return (m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end());
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes && !HasMethod(propertyName))
+        return true;
+
+    return m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end() || m_attributes.find(propertyName) != m_attributes.end();
 }
 
 bool FB::JSAPIAuto::HasProperty(int idx)
@@ -107,9 +112,11 @@ bool FB::JSAPIAuto::HasProperty(int idx)
     if(!m_valid)
         return false;
 
-    // By default, we don't have any indexed properties; so return false.  To add indexed
-    // properties, override this method
-    return false;
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes)
+        return true;
+
+    return m_attributes.find(boost::lexical_cast<std::string>(idx)) != m_attributes.end();
 }
 
 FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
@@ -118,11 +125,20 @@ FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
         throw object_invalidated();
 
     PropertyFunctorsMap::const_iterator it = m_propertyFunctorsMap.find(propertyName);
-    if(it == m_propertyFunctorsMap.end())
-        throw invalid_member(propertyName);
-
-    return it->second.get();
-
+    if(it != m_propertyFunctorsMap.end())
+        return it->second.get();
+    else {
+        AttributeMap::iterator fnd = m_attributes.find(propertyName);
+        if (fnd != m_attributes.end())
+            return fnd->second.value;
+        else if (m_allowDynamicAttributes) {
+            return FB::FBVoid(); // If we allow dynamic attributes then we need to
+                                 // return void if the property doesn't exist;
+                                 // otherwise checking a property will throw an exception
+        } else {
+            throw invalid_member(propertyName);
+        }
+    }
 }
 
 void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& value)
@@ -131,35 +147,53 @@ void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& 
         throw object_invalidated();
 
     PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.find(propertyName);
-    if(it == m_propertyFunctorsMap.end())
+    if(it != m_propertyFunctorsMap.end()) {
+        try {
+            it->second.set(value);
+        } catch (const FB::bad_variant_cast& ex) {
+            std::string errorMsg("Could not convert from ");
+            errorMsg += ex.from;
+            errorMsg += " to ";
+            errorMsg += ex.to;
+            throw FB::invalid_arguments(errorMsg);
+        }
+    } else if (m_allowDynamicAttributes || (m_attributes.find(propertyName) != m_attributes.end() && !m_attributes[propertyName].readonly)) {
+        registerAttribute(propertyName, value);
+    } else {
         throw invalid_member(propertyName);
-    
-    try {
-        it->second.set(value);
-    } catch (const FB::bad_variant_cast& ex) {
-        std::string errorMsg("Could not convert from ");
-        errorMsg += ex.from;
-        errorMsg += " to ";
-        errorMsg += ex.to;
-        throw FB::invalid_arguments(errorMsg);
-    }}
+    }
+}
 
 FB::variant FB::JSAPIAuto::GetProperty(int idx)
 {
     if(!m_valid)
         throw object_invalidated();
 
+    std::string id = boost::lexical_cast<std::string>(idx);
+    AttributeMap::iterator fnd = m_attributes.find(id);
+    if (fnd != m_attributes.end())
+        return fnd->second.value;
+    else if (m_allowDynamicAttributes) {
+        return FB::FBVoid(); // If we allow dynamic attributes then we need to
+                             // return void if the property doesn't exist;
+                             // otherwise checking a property will throw an exception
+    } else {
+        throw invalid_member(boost::lexical_cast<std::string>(idx));
+    }
+
     // This method should be overridden to access properties in an array style from javascript,
     // i.e. var value = pluginObj[45]; would call GetProperty(45)
-    // Default is to throw "invalid member"
-    // Incidently, this isn't a very efficient way to convert this to a string; but, it shouldn't
-    // get called much, and I'm lazy (taxilian)
-    throw invalid_member(FB::variant(idx).convert_cast<std::string>());
+    // Default is to throw "invalid member" unless m_attributes has something matching
 }
 
 void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
 {
-    throw invalid_member(FB::variant(idx).convert_cast<std::string>());
+    std::string id(boost::lexical_cast<std::string>(idx));
+    if (m_allowDynamicAttributes || (m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly)) {
+        registerAttribute(id, value);
+    } else {
+        throw invalid_member(FB::variant(idx).convert_cast<std::string>());
+    }
 }
 
 FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)
@@ -180,4 +214,10 @@ FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vect
         errorMsg += ex.to;
         throw FB::invalid_arguments(errorMsg);
     }
+}
+
+void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::variant& value, bool readonly /*= false*/ )
+{
+    Attribute attr = {value, readonly};
+    m_attributes[name] = attr;
 }

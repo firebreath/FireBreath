@@ -67,6 +67,9 @@ namespace
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
         tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
+
+        tdm.insert(makeBuilderEntry<FB::FBVoid>());
+        tdm.insert(makeBuilderEntry<FB::FBNull>());
         
         return tdm;
     }

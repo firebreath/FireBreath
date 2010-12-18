@@ -25,6 +25,8 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/mpl/vector.hpp>
 
 namespace FB { 
+    class variant;
+    typedef std::vector<variant> VariantList;
     namespace detail 
     {
         // helper meta function that removes all pointers etc. from a type

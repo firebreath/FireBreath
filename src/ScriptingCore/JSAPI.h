@@ -18,81 +18,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include <list>
-#include <stdexcept>
 #include <boost/enable_shared_from_this.hpp>
+#include "JSExceptions.h"
 
 namespace FB
 {
     class JSObject;
     class BrowserHost;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @exception script_error
-    ///
-    /// @brief  Exception type; when thrown in a JSAPI method, a javascript exception will be thrown. 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    struct script_error : std::exception
-    {
-        script_error(const std::string& error)
-            : m_error(error)
-        { }
-        ~script_error() throw() { }
-        virtual const char* what() const throw() { 
-            return m_error.c_str(); 
-        }
-        std::string m_error;
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @exception invalid_arguments
-    ///
-    /// @brief  Thrown by a JSAPI object when the argument(s) provided to a SetProperty or Invoke
-    ///         call are found to be invalid.  JSAPIAuto will throw this automatically if the argument
-    ///         cannot be convert_cast to the type expected by the function.
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    struct invalid_arguments : script_error
-    {
-        invalid_arguments()
-            : script_error("Invalid Arguments")
-        { }
-        ~invalid_arguments() throw() { }
-
-        invalid_arguments(const std::string& error)
-            : script_error(error)
-        { }
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @exception object_invalidated
-    ///
-    /// @brief  Thrown by a JSAPI object when a call is made on it after the object has been
-    ///         invalidated.
-    ///         
-    /// This is particularly useful when you want to invalidate the object
-    /// when the plugin gets released, as the PluginCore-derived Plugin object will usually get
-    /// released before the JSAPI object
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    struct object_invalidated : script_error
-    {
-        object_invalidated()
-            : script_error("This object is no longer valid")
-        { }
-        ~object_invalidated() throw() { }
-    };
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @exception invalid_member
-    ///
-    /// @brief  Thrown when an Invoke, SetProperty, or GetProperty call is made for a member that is
-    ///         invalid (does not exist, not accessible, only supports Get or Set, etc) 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    struct invalid_member : script_error
-    {
-        invalid_member(const std::string& memberName)
-            : script_error("The specified member does not exist: " + memberName)
-        { }
-        ~invalid_member() throw() { }
-    };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPI
@@ -157,6 +89,9 @@ namespace FB
         void invalidate();
 
     protected:
+        void JSAPI::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+
+    protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -195,6 +130,43 @@ namespace FB
         /// @see registerEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void FireJSEvent
+        ///
+        /// @brief  Fires an event into javascript asynchronously using a W3C-compliant event parameter
+        /// 		
+        /// This fires an event to all handlers attached to the given event in javascript. With a
+        /// W3C-compliant event parameter
+        /// 
+        /// IE:
+        /// @code
+        ///      document.getElementByID("plugin").attachEvent("onload", function() { alert("loaded!"); });
+        /// @endcode
+        /// Firefox/Safari/Chrome/Opera:
+        /// @code
+        /// 	 // Note that the convention used by these browsers is that "on" is implied
+        /// 	 document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
+        /// @endcode
+        ///
+        /// You can then fire the event -- from any thread -- from the JSAPI object like so:
+        /// @code
+        /// 	 FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        /// @endcode
+        /// 		
+        /// Also note that registerEvent must be called from the constructor to register the event.
+        /// @code
+        /// 	 registerEvent("onload");
+        /// @endcode
+        /// 
+        /// @param  eventName   Name of the event.  This event must start with "on"
+        /// @param  args        The arguments that should be sent to each attached event handler
+        ///
+        /// @see registerEvent
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params);
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments);
 
     public:
 

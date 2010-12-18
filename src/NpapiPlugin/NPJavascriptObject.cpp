@@ -58,12 +58,17 @@ void NPJavascriptObject::Invalidate()
 
 bool NPJavascriptObject::HasMethod(NPIdentifier name)
 {
-    std::string mName = m_browser->StringFromIdentifier(name);
+    try {
+        std::string mName = m_browser->StringFromIdentifier(name);
 
-    if (mName == "addEventListener" || mName == "removeEventListener") {
-        return true;
-    } else {
-        return m_api->HasMethod(mName);
+        if (mName == "addEventListener" || mName == "removeEventListener") {
+            return true;
+        } else {
+            return m_api->HasMethod(mName);
+        }
+    } catch (const script_error& e) {
+        m_browser->SetException(this, e.what());
+        return false;
     }
 }
 
@@ -121,16 +126,21 @@ bool NPJavascriptObject::InvokeDefault(const NPVariant *args, uint32_t argCount,
 
 bool NPJavascriptObject::HasProperty(NPIdentifier name)
 {
-    // Handle numeric identifiers
-    if(!m_browser->IdentifierIsString(name)) {
-        int32_t sIdx = m_browser->IntFromIdentifier(name);
-        return m_api->HasProperty(sIdx);
-    }
+    try {
+        // Handle numeric identifiers
+        if(!m_browser->IdentifierIsString(name)) {
+            int32_t sIdx = m_browser->IntFromIdentifier(name);
+            return m_api->HasProperty(sIdx);
+        }
 
-    std::string sName(m_browser->StringFromIdentifier(name));
-    // We check for events of that name as well in order to allow setting of an event handler in the
-    // old javascript style, i.e. plugin.onload = function() .....;
-    return m_api->HasEvent(sName) || m_api->HasProperty(sName);
+        std::string sName(m_browser->StringFromIdentifier(name));
+        // We check for events of that name as well in order to allow setting of an event handler in the
+        // old javascript style, i.e. plugin.onload = function() .....;
+        return m_api->HasEvent(sName) || m_api->HasProperty(sName);
+    } catch (const script_error& e) {
+        m_browser->SetException(this, e.what());
+        return false;
+    }
 }
 
 bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)

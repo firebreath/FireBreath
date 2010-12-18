@@ -89,15 +89,26 @@ FB::variant FB::JSAPISecure::GetProperty( int idx )
 {
     // We don't currently register members like this, so there is no built-in security for them.
     // Thus, to be secure, we simply disable them =]
-    throw invalid_member(boost::lexical_cast<std::string>(idx));
+    std::string id(boost::lexical_cast<std::string>(idx));
+    AttributeMap::iterator fnd = m_attributes.find(id);
+    if (fnd != m_attributes.end()) {
+        return fnd->second.value;
+    } else if (m_allowDynamicAttributes) {
+        return FB::FBVoid();
+    } else {
+        throw invalid_member(boost::lexical_cast<std::string>(idx));
+    }
 }
 
 FB::variant FB::JSAPISecure::GetProperty( const FB::SecurityZone &zone, const std::string& propertyName )
 {
-    if (propertyAccessible(zone, propertyName))
+    if (propertyAccessible(zone, propertyName)) {
         return FB::JSAPIAuto::GetProperty(propertyName);
-    else
+    } else if (m_allowDynamicAttributes) {
+        return FB::FBVoid();
+    } else {
         throw invalid_member(propertyName);
+    }
 }
 
 FB::variant FB::JSAPISecure::GetProperty( const FB::SecurityZone &zone, int idx )
@@ -115,14 +126,20 @@ void FB::JSAPISecure::SetProperty( const std::string& propertyName, const varian
 void FB::JSAPISecure::SetProperty( int idx, const variant& value )
 {
     // We don't currently register members like this, so there is no built-in security for them.
-    // Thus, to be secure, we simply disable them =]
-    throw invalid_member(boost::lexical_cast<std::string>(idx));
+    // Thus, to be secure, we simply disable them unless dynamic attributes (which are not secured)
+    // are enable
+    if (m_allowDynamicAttributes)
+        registerAttribute(boost::lexical_cast<std::string>(idx), value);
+    else
+        throw invalid_member(boost::lexical_cast<std::string>(idx));
 }
 
 void FB::JSAPISecure::SetProperty( const FB::SecurityZone &zone, const std::string& propertyName, const variant& value )
 {
     if (propertyAccessible(zone, propertyName))
         FB::JSAPIAuto::SetProperty(propertyName, value);
+    else if (m_allowDynamicAttributes && m_propertyFunctorsMap.find(propertyName) == m_propertyFunctorsMap.end())
+        registerAttribute(propertyName, value);
     else
         throw invalid_member(propertyName);
 }
@@ -130,8 +147,12 @@ void FB::JSAPISecure::SetProperty( const FB::SecurityZone &zone, const std::stri
 void FB::JSAPISecure::SetProperty( const FB::SecurityZone &zone, int idx, const variant& value )
 {
     // We don't currently register members like this, so there is no built-in security for them.
-    // Thus, to be secure, we simply disable them =]
-    throw invalid_member(boost::lexical_cast<std::string>(idx));
+    // Thus, to be secure, we simply disable them unless dynamic attributes (which are not secured)
+    // are enable
+    if (m_allowDynamicAttributes)
+        registerAttribute(boost::lexical_cast<std::string>(idx), value);
+    else
+        throw invalid_member(boost::lexical_cast<std::string>(idx));
 }
 
 FB::variant FB::JSAPISecure::Invoke( const std::string& methodName, const std::vector<variant>& args )
@@ -150,20 +171,21 @@ FB::variant FB::JSAPISecure::Invoke( const FB::SecurityZone &zone, const std::st
 bool FB::JSAPISecure::methodAccessible( SecurityZone m_zone, const std::string& methodName )
 {
     MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
-    if(it == m_methodFunctorMap.end())
-        return false;
-    else {
+    if(it != m_methodFunctorMap.end())
         return (m_zone >= it->second.zone);
+    else {
+        return false;
     }
 }
 
 bool FB::JSAPISecure::propertyAccessible( SecurityZone m_zone, const std::string& propertyName )
 {
     PropertyFunctorsMap::iterator it = m_propertyFunctorsMap.find(propertyName);
-    if(it == m_propertyFunctorsMap.end())
-        return false;
-    else {
+    if(it != m_propertyFunctorsMap.end()) {
         return (m_zone >= it->second.zone);
+    } else {
+        // generic attributes are accessible from any zone
+        return m_attributes.find(propertyName) != m_attributes.end();
     }
 }
 
@@ -179,20 +201,36 @@ bool FB::JSAPISecure::HasMethod( const FB::SecurityZone &zone, const std::string
 
 bool FB::JSAPISecure::HasProperty( const std::string& propertyName )
 {
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes && !HasMethod(propertyName))
+        return true;
+
     return propertyAccessible(m_zone, propertyName);
 }
 
 bool FB::JSAPISecure::HasProperty( const FB::SecurityZone &zone, const std::string& propertyName )
 {
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes && !HasMethod(propertyName))
+        return true;
+
     return propertyAccessible(zone, propertyName);
 }
 
 bool FB::JSAPISecure::HasProperty( int idx )
 {
-    return false;
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes)
+        return true;
+
+    return m_attributes.find(boost::lexical_cast<std::string>(idx)) != m_attributes.end();
 }
 
 bool FB::JSAPISecure::HasProperty( const FB::SecurityZone &zone, int idx )
 {
-    return false;
+    // To be able to set dynamic properties, we have to respond true always
+    if (m_allowDynamicAttributes)
+        return true;
+
+    return m_attributes.find(boost::lexical_cast<std::string>(idx)) != m_attributes.end();
 }

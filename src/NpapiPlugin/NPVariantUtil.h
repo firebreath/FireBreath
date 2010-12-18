@@ -120,7 +120,15 @@ namespace FB { namespace Npapi
     }
     
     template<> inline
-    NPVariant makeNPVariant<FB::Npapi::NpapiNull>(const NpapiBrowserHostPtr& host, const FB::variant& var)
+    NPVariant makeNPVariant<FB::FBVoid>(const NpapiBrowserHostPtr& host, const FB::variant& var)
+    {
+        NPVariant npv;
+        npv.type = NPVariantType_Void;
+        return npv;
+    }
+
+    template<> inline
+    NPVariant makeNPVariant<FB::FBNull>(const NpapiBrowserHostPtr& host, const FB::variant& var)
     {
         NPVariant npv;
         npv.type = NPVariantType_Null;        
@@ -160,6 +168,23 @@ namespace FB { namespace Npapi
             out->SetProperty(it->first, it->second);
         }
         
+        if (NPObjectAPIPtr api = FB::ptr_cast<NPObjectAPI>(out)) {
+            npv.type = NPVariantType_Object;
+            npv.value.objectValue = api->getNPObject();
+            host->RetainObject(npv.value.objectValue);
+        }
+        
+        return npv;
+    }
+    
+    template<> inline
+    NPVariant makeNPVariant<FB::FBDateString>(const NpapiBrowserHostPtr& host, const FB::variant& var)
+    {
+        NPVariant npv;
+        
+        FB::FBDateString date = var.cast<FB::FBDateString>();
+        FB::JSObjectPtr out = host->getDOMWindow()->createDate(date.getValue());;
+       
         if (NPObjectAPIPtr api = FB::ptr_cast<NPObjectAPI>(out)) {
             npv.type = NPVariantType_Object;
             npv.value.objectValue = api->getNPObject();

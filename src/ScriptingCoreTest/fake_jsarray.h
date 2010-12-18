@@ -31,6 +31,7 @@ public:
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant) {}
     FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
+    FB::JSObjectPtr Construct(const std::string&, const FB::VariantList&) { return FB::JSObjectPtr(); }
 
     // Methods for enumeration
     virtual void getMemberNames(std::vector<std::string> &nameVector) { }

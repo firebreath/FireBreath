@@ -40,7 +40,8 @@ namespace FB { namespace Npapi {
 
     void copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *srcFuncs, NPP instance = NULL);
 
-    typedef FB::variant_detail::empty NpapiNull;
+    typedef FB::FBNull NpapiNull;
+    typedef FB::FBVoid NpapiVoid;
 
 }; };
 

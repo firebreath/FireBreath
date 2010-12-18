@@ -261,14 +261,20 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
 
     std::wstring wsName(bstrName);
 
-    if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
-        *pid = AxIdMap.getIdForValue(wsName);
-    } else if (m_api->HasProperty(wsName) || m_api->HasMethod(wsName) || m_api->HasEvent(wsName)) {
-        *pid = AxIdMap.getIdForValue(wsName);
-    } else {
+    try {
+        if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
+            *pid = AxIdMap.getIdForValue(wsName);
+        } else if (m_api->HasProperty(wsName) || m_api->HasMethod(wsName) || m_api->HasEvent(wsName)) {
+            *pid = AxIdMap.getIdForValue(wsName);
+        } else {
+            *pid = -1;
+            return DISP_E_UNKNOWNNAME;
+        }
+        return S_OK;
+    } catch (const FB::script_error &e) {
         *pid = -1;
+        return DISP_E_UNKNOWNNAME;
     }
-    return S_OK;
 }
 
 // helper method for Invoke

@@ -62,7 +62,10 @@ namespace FB { namespace Npapi {
         void SetProperty(int idx, const variant& value);
 
         variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+
+        FB::JSObjectPtr Construct(const std::string& memberName, const std::vector<variant>& args);
     };
 
 }; };
+
 #endif
