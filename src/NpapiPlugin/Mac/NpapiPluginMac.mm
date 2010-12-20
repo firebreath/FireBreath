@@ -253,7 +253,6 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
     PluginCore::setPlatform("Mac", "NPAPI");
     
     // Get the path to the bundle
-    
     static const std::string pluginPath = getPluginPath();      
     setFSPath(pluginPath);
 
