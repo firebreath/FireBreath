@@ -69,6 +69,7 @@ file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     SyncBrowser*
     *Converter.*
     JSCallback*
+    JSFunction*
     JSEvent.*
     )
 

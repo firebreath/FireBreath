@@ -92,6 +92,7 @@ namespace FB {
         virtual ~JSAPIAuto();
 
         virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
+        virtual void setReserved(const std::string &name);
 
         virtual void getMemberNames(std::vector<std::string> &nameVector);
         virtual size_t getMemberCount();
@@ -129,6 +130,9 @@ namespace FB {
         virtual bool HasMethod(const std::string& methodName);
         virtual bool HasProperty(const std::string& propertyName);
         virtual bool HasProperty(int idx);
+
+        bool isReserved( const std::string& propertyName );
+
 
         virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
 
@@ -182,6 +186,9 @@ namespace FB {
         /// @return true if it succeeds, false if it fails. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool get_valid();
+
+        virtual FB::variant getAttribute(const std::string& name);
+        virtual void setAttribute(const std::string& name, const FB::variant& value);
     protected:
         MethodFunctorMap m_methodFunctorMap;        // Stores the methods exposed to JS
         PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
@@ -189,12 +196,17 @@ namespace FB {
         const std::string m_description;
 
         struct Attribute {
+            bool operator<(const Attribute& rh) const
+            {
+                return value < rh.value;
+            }
             FB::variant value;
             bool readonly;
         };
         typedef std::map<std::string, Attribute> AttributeMap;
 
         AttributeMap m_attributes;
+        FB::StringSet m_reservedMembers;
         bool m_allowDynamicAttributes;
     };
 };

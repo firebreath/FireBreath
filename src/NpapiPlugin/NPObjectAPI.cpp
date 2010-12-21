@@ -182,6 +182,7 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
 
 FB::JSObjectPtr NPObjectAPI::Construct( const std::string& memberName, const FB::VariantList& args )
 {
+    // NOTE: This doesn't work.  Sorry :-/
     if (!host->isMainThread()) {
         typedef FB::JSObjectPtr (FB::JSObject::*curtype)(const std::string& memberName, const std::vector<variant>& args);
         return host->CallOnMainThread(boost::bind((curtype)&JSObject::Construct, this, memberName, args));
@@ -189,7 +190,10 @@ FB::JSObjectPtr NPObjectAPI::Construct( const std::string& memberName, const FB:
     NPVariant retVal;
 
     if (!memberName.empty()) {
-        return this->GetProperty(memberName).convert_cast<FB::JSObjectPtr>()->Construct("", args);
+        if (memberName != "constructor")
+            return this->GetProperty(memberName).convert_cast<FB::JSObjectPtr>()->Construct("constructor", args);
+        else
+            return this->GetProperty("constructor").convert_cast<FB::JSObjectPtr>()->Construct("", args);
     }
 
     // Convert the arguments to NPVariants

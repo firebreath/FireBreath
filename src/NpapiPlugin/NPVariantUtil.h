@@ -189,6 +189,8 @@ namespace FB { namespace Npapi
             npv.type = NPVariantType_Object;
             npv.value.objectValue = api->getNPObject();
             host->RetainObject(npv.value.objectValue);
+        } else {
+            return makeNPVariant<std::string>(host, date.getValue());
         }
         
         return npv;

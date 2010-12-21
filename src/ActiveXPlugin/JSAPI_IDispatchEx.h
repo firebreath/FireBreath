@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "TypeIDMap.h"
 #include "COM_config.h"
 #include "utf8_tools.h"
+#include "JSFunction.h"
 
 #include "axmain.h"
 #include "IDispatchAPI.h"
@@ -272,6 +273,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, 
         }
         return S_OK;
     } catch (const FB::script_error &e) {
+        e;
         *pid = -1;
         return DISP_E_UNKNOWNNAME;
     }
@@ -330,31 +332,7 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
             }
         }
 
-        if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(wsName)) {
-
-            if(!pvarRes)
-                return E_INVALIDARG;
-
-            FB::variant rVal = m_api->GetProperty(wsName);
-
-            m_host->getComVariant(pvarRes, rVal);
-
-        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasProperty(wsName)) {
-
-            FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
-
-            m_api->SetProperty(wsName, newVal);
-        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasEvent(wsName)) {
-            
-            FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
-            if (newVal.empty()) {
-                m_api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
-            } else {
-                FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
-                m_api->setDefaultEventMethod(wsName, method);
-            }
-
-        } else if (wFlags & DISPATCH_METHOD && ((wsName == L"attachEvent") || (wsName == L"detachEvent")) ) {
+        if (wFlags & DISPATCH_METHOD && ((wsName == L"attachEvent") || (wsName == L"detachEvent")) ) {
         
             std::vector<FB::variant> params;
             for (int i = pdp->cArgs - 1; i >= 0; i--) {
@@ -367,17 +345,59 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
                 this->callSetEventListener(params, false);
             }
 
-        } else if (wFlags & DISPATCH_METHOD && m_api->HasMethod(wsName) ) {
+        } else if (wFlags & DISPATCH_METHOD && (m_api->HasMethod(wsName) || !id) ) {
 
             std::vector<FB::variant> params;
-            for (int i = pdp->cArgs - 1; i >= 0; i--) {
-                params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+            if (id == 0) {
+                // TODO: Figure out why default function calls have an extra argument;
+                // My theory is that the argument is the object we're calling this on,
+                // since the first (last, since we reverse the order) argument passed
+                // is an IDispatch object
+                wsName = L"";
+                for (int i = pdp->cArgs - 1; i >= 1; i--) {
+                    params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+                }
+            } else {
+                for (int i = pdp->cArgs - 1; i >= 0; i--) {
+                    params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+                }
             }
             FB::variant rVal;
             rVal = m_api->Invoke(wsName, params);
             
             if(pvarRes)
                 m_host->getComVariant(pvarRes, rVal);
+
+        } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasMethod(wsName)) {
+
+            FB::variant rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
+            m_host->getComVariant(pvarRes, rVal);
+
+        } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(wsName)) {
+
+            if(!pvarRes)
+                return E_INVALIDARG;
+
+            FB::variant rVal = m_api->GetProperty(wsName);
+            if (rVal.empty() && m_api->HasMethod(wsName)) {
+                rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
+            }
+
+            m_host->getComVariant(pvarRes, rVal);
+        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasProperty(wsName)) {
+
+            FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
+            m_api->SetProperty(wsName, newVal);
+
+        } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasEvent(wsName)) {
+            
+            FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
+            if (newVal.empty()) {
+                m_api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
+            } else {
+                FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
+                m_api->setDefaultEventMethod(wsName, method);
+            }
 
         } else {
             throw FB::invalid_member("Invalid method or property name");

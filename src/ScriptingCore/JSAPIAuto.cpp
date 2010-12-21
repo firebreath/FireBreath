@@ -22,9 +22,25 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
     m_allowDynamicAttributes(true)
 {
     registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
+    registerMethod("getAttribute",  make_method(this, &JSAPIAuto::getAttribute));
+    registerMethod("setAttribute",  make_method(this, &JSAPIAuto::setAttribute));
     
     registerProperty("value", make_property(this, &JSAPIAuto::ToString));
     registerProperty("valid", make_property(this, &JSAPIAuto::get_valid));
+
+    setReserved("offsetWidth");
+    setReserved("offsetHeight");
+    setReserved("width");
+    setReserved("height");
+    setReserved("attributes");
+    setReserved("nodeType");
+    setReserved("namespaceURI");
+    setReserved("localName");
+    setReserved("wrappedJSObject");
+    setReserved("prototype");
+    setReserved("style");
+    setReserved("id");
+    setReserved("constructor");
 }
 
 FB::JSAPIAuto::~JSAPIAuto()
@@ -101,7 +117,7 @@ bool FB::JSAPIAuto::HasProperty(const std::string& propertyName)
         return false;
 
     // To be able to set dynamic properties, we have to respond true always
-    if (m_allowDynamicAttributes && !HasMethod(propertyName))
+    if (m_allowDynamicAttributes && !HasMethod(propertyName) && !isReserved(propertyName))
         return true;
 
     return m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end() || m_attributes.find(propertyName) != m_attributes.end();
@@ -220,4 +236,33 @@ void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::varian
 {
     Attribute attr = {value, readonly};
     m_attributes[name] = attr;
+}
+
+void FB::JSAPIAuto::setReserved( const std::string &name )
+{
+    m_reservedMembers.insert(name);
+}
+
+bool FB::JSAPIAuto::isReserved( const std::string& propertyName )
+{
+    return m_reservedMembers.find(propertyName) != m_reservedMembers.end();
+}
+
+FB::variant FB::JSAPIAuto::getAttribute( const std::string& name )
+{
+    if (m_attributes.find(name) != m_attributes.end()) {
+        return m_attributes[name];
+    }
+    return FB::FBVoid();
+}
+
+void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& value )
+{
+    AttributeMap::iterator fnd = m_attributes.find(name);
+    if (fnd != m_attributes.end() || !fnd->second.readonly) {
+        Attribute attr = {value, false};
+        m_attributes[name] = attr;
+    } else {
+        throw FB::script_error("Cannot set read-only property " + name);
+    }
 }

@@ -71,6 +71,7 @@ namespace
         
         tdm.insert(makeBuilderEntry<FB::FBNull>());
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
+        tdm.insert(makeBuilderEntry<FB::FBDateString>());
         tdm.insert(makeBuilderEntry<FB::VariantList>());
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());

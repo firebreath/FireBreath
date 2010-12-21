@@ -31,7 +31,7 @@ TEST(JSCallback_Basics)
     boost::shared_ptr<TestObjectJSAPIAuto> backing(new TestObjectJSAPIAuto);
     
     {
-        FB::JSAPIPtr test = FB::make_callback(backing.get(), &TestObjectJSAPIAuto::returnString);
+        FB::JSAPIPtr test = FB::make_callback(backing, &TestObjectJSAPIAuto::returnString);
         const std::string method("");
         CHECK(test->HasMethod(method));
         const std::string value("foo");
@@ -41,7 +41,7 @@ TEST(JSCallback_Basics)
     }    
     
     {
-        FB::JSAPIPtr test = FB::make_callback(backing.get(), &TestObjectJSAPIAuto::concatenate);
+        FB::JSAPIPtr test = FB::make_callback(backing, &TestObjectJSAPIAuto::concatenate);
         
         const std::string method("");
         CHECK(test->HasMethod(method));
@@ -54,7 +54,7 @@ TEST(JSCallback_Basics)
     {
         // test catching all remaining params with CatchAll as the last argument
         
-        FB::JSAPIPtr test = FB::make_callback(backing.get(), &TestObjectJSAPIAuto::concatMany);
+        FB::JSAPIPtr test = FB::make_callback(backing, &TestObjectJSAPIAuto::concatMany);
         
         const std::string method("");
         CHECK(test->HasMethod(method));

@@ -64,10 +64,16 @@ std::string Window::getLocation()
 
 FB::JSObjectPtr FB::DOM::Window::createDate( const std::string& datestring )
 {
-    JSObjectPtr obj;
-    if (datestring.empty())
-        obj = getJSObject()->Construct("Date", FB::VariantList());
-    else
-        obj = getJSObject()->Construct("Date", FB::variant_list_of(datestring));
-    return obj;
+    // This is not working; I'm leaving it here in hopes that we can find a way to make it work.
+    // My best idea so far is to inject a help function into javascript :-/
+    try {
+        JSObjectPtr obj;
+        if (datestring.empty())
+            obj = getJSObject()->Construct("Date", FB::VariantList());
+        else
+            obj = getJSObject()->Construct("Date", FB::variant_list_of(datestring));
+        return obj;
+    } catch (...) {
+        return FB::JSObjectPtr();
+    }
 }
