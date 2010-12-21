@@ -202,7 +202,7 @@ bool FB::JSAPISecure::HasMethod( const FB::SecurityZone &zone, const std::string
 bool FB::JSAPISecure::HasProperty( const std::string& propertyName )
 {
     // To be able to set dynamic properties, we have to respond true always
-    if (m_allowDynamicAttributes && !HasMethod(propertyName))
+    if (m_allowDynamicAttributes && !HasMethod(propertyName) && !isReserved(propertyName))
         return true;
 
     return propertyAccessible(m_zone, propertyName);
