@@ -130,7 +130,6 @@ public:
         m_messageWin = FB::PluginWindowWin::createMessageWindow();
         m_host->setWindow(m_messageWin);
         pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
-        this->setAPI(pluginMain->getRootJSAPI(), m_host);
 
         return S_OK;
     }
@@ -157,6 +156,12 @@ public:
             }
         }
         pluginMain->setParams(paramMap);
+        this->setAPI(pluginMain->getRootJSAPI(), m_host);
+
+        // This is when we can consider the plugin "ready".  The window may or may not (likely not)
+		// be around yet!
+        setReadyState(READYSTATE_COMPLETE);
+        pluginMain->setReady();
         return S_OK;
     }
 
@@ -167,9 +172,6 @@ public:
         pluginWin->setCallOldWinProc(true);
         pluginMain->SetWindow(pluginWin);
 
-        // This is when we can consider the plugin "ready".  It is the last of the startup lifecycle to occur.
-        pluginMain->setReady();
-        setReadyState(READYSTATE_COMPLETE);
         return S_OK;
     }
 

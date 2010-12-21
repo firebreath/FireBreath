@@ -30,6 +30,8 @@ namespace FB {
         JSAPISecure(const SecurityZone securityLevel, const std::string& description = "<JSAPI-Secure driven Javascript Object>");
         virtual ~JSAPISecure();
 
+		virtual void setSecurityZone(const SecurityZone securityLevel);
+
         virtual void registerMethod(const std::string& name, const SecurityZone securityLevel, const CallMethodFunctor& func);
         virtual void registerProperty(const std::string& name, const SecurityZone securityLevel, const PropertyFunctors& propFuncs);
         virtual void getMemberNames(const SecurityZone securityLevel, std::vector<std::string> &nameVector);

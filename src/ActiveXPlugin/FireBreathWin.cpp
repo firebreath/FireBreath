@@ -30,7 +30,8 @@ STDAPI DllCanUnloadNow(void)
     if (hr != S_OK)
         return hr;
 #endif
-    return _AtlModule.DllCanUnloadNow();
+	HRESULT hr = _AtlModule.DllCanUnloadNow();
+    return hr;
 }
 
 

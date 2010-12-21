@@ -31,3 +31,13 @@ boost::shared_ptr<HTTPService> HTTPService::create(const std::string ipaddr, con
     }
     return svc;
 }
+
+void HTTPService::terminateAllInstances() {
+    boost::recursive_mutex::scoped_lock _l(instance_set_lock);
+    while (!instances.empty()) {
+        boost::shared_ptr<HTTPService> srv = boost::dynamic_pointer_cast<BasicService>(instances.front().lock());
+        instances.erase(instances.begin());
+        if (srv) srv->terminate();
+    }
+    instances.clear();
+}

@@ -44,9 +44,7 @@ namespace HTTP {
     public:
         virtual ~BasicService();
 
-        // should only be called directly before module unload, since
-        // it may leave instances in an unusable state
-        static void terminateAllInstances();
+        void terminate();
 
         void registerHandler(boost::shared_ptr<HTTPHandler> hnd);
         void deregisterHandler(boost::shared_ptr<HTTPHandler> hnd);
@@ -64,8 +62,6 @@ namespace HTTP {
         static const size_t threadpool_size = 2;
 
     protected:
-        void terminate();
-
         void init();
 
         void _worker_thread_entry();

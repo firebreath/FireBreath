@@ -136,7 +136,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         std::string sName(m_browser->StringFromIdentifier(name));
         // We check for events of that name as well in order to allow setting of an event handler in the
         // old javascript style, i.e. plugin.onload = function() .....;
-        return m_api->HasEvent(sName) || m_api->HasProperty(sName);
+        return !HasMethod(name) && (m_api->HasEvent(sName) || m_api->HasProperty(sName));
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;

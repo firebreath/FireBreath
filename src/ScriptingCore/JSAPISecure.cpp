@@ -23,6 +23,11 @@ FB::JSAPISecure::~JSAPISecure()
 {
 }
 
+void FB::JSAPISecure::setSecurityZone( const SecurityZone securityLevel )
+{
+	m_zone = securityLevel;
+}
+
 void FB::JSAPISecure::registerMethod(const std::string& name, const FB::SecurityZone minZone, const FB::CallMethodFunctor& func)
 {
     m_methodFunctorMap[name] = MethodFunctors(minZone, func);

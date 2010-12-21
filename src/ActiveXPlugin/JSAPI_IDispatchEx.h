@@ -465,6 +465,9 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, 
         m_memberList.clear();
         m_api->getMemberNames(m_memberList);
     }
+	if (m_memberList.size() == 0)
+		return S_FALSE;
+
     if (id == DISPID_STARTENUM) {
         *pid = AxIdMap.getIdForValue(m_memberList[0]);
         return S_OK;

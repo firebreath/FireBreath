@@ -34,16 +34,16 @@ if (CURL_FOUND)
     endif()
 elseif( WIN32 )
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/curl)
-        find_program(HG "hg" DOC "location of the mercurial executable")
-        if (HG MATCHES "HG_NOTFOUND")
-            message("Could not find mercurial executable to get the curl libs. "
-                "Please get them from http://code.google.com/p/firebreath/source/checkout?repo=curl "
-                "and put them in ${CMAKE_CURRENT_SOURCE_DIR}/curl/" FATAL)
-        else()
-            message("No curl libraries found; fetching from FireBreath codebase")
+        find_program(GIT git DOC "location of the git executable")
+        if (GIT)
             execute_process(
-                COMMAND ${HG} clone https://curl.firebreath.googlecode.com/hg/ curl
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                COMMAND ${GIT}
+                clone git://github.com/taxilian/firebreath-curl curl
+                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+        else()            
+            message("error ${GIT} to get the curl libs. "
+                "Please get them from http://github.com/taxilian/firebreath-curl "
+                "and put them in ${CMAKE_CURRENT_SOURCE_DIR}/curl/" FATAL)
         endif()
     endif()
     append_firebreath_link_library(${CMAKE_CURRENT_SOURCE_DIR}/curl/lib/libcurl.lib)

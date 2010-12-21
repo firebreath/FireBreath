@@ -97,8 +97,7 @@ StringSet* PluginCore::getSupportedParams()
 
 void PluginCore::setParams(const FB::VariantMap& inParams)
 {
-    m_params.insert(inParams.begin(), inParams.end());
-    for (FB::VariantMap::iterator it = m_params.begin(); it != m_params.end(); ++it)
+    for (FB::VariantMap::const_iterator it = inParams.begin(); it != inParams.end(); ++it)
     {
         std::string key(it->first);
         try {
@@ -111,9 +110,12 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 FBLOG_TRACE("PluginCore", "Found <param> event handler: " << key);
 
                 m_params[key] = tmp;
-            }
+            } else {
+				m_params[key] = it->second;
+			}
         } catch (const std::exception &ex) {
             FBLOG_WARN("PluginCore", "Exception processing <param> " << key << ": " << ex.what());
+			m_params[it->first] = it->second;
         }
     }
 }

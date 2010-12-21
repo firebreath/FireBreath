@@ -34,16 +34,16 @@ if (OPENSSL_FOUND)
     endif()
 elseif( WIN32 )
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openssl)
-        find_program(HG "hg" DOC "location of the mercurial executable")
-        if (HG MATCHES "HG_NOTFOUND")
-            message("Could not find mercurial executable to get the openssl libs. "
-                "Please get them from http://code.google.com/p/firebreath/source/checkout?repo=openssl "
-                "and put them in ${CMAKE_CURRENT_SOURCE_DIR}/openssl/" FATAL)
-        else()
-            message("No openssl libraries found; fetching from FireBreath codebase")
+        find_program(GIT git DOC "location of the git executable")
+        if (GIT)
             execute_process(
-                COMMAND ${HG} clone https://openssl.firebreath.googlecode.com/hg/ openssl
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+                COMMAND ${GIT}
+                clone git://github.com/taxilian/firebreath-openssl openssl
+                WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+        else()            
+            message("error ${GIT} to get the openssl libs. "
+                "Please get them from http://github.com/taxilian/firebreath-openssl "
+                "and put them in ${CMAKE_CURRENT_SOURCE_DIR}/openssl/" FATAL)
         endif()
     endif()
     list(APPEND FBLIB_LIBRARIES

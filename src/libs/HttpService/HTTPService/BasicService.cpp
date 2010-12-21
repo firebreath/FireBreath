@@ -87,16 +87,6 @@ void BasicService::init() {
     }
 }
 
-void BasicService::terminateAllInstances() {
-    boost::recursive_mutex::scoped_lock _l(instance_set_lock);
-    while (!instances.empty()) {
-        boost::shared_ptr<BasicService> srv = boost::dynamic_pointer_cast<BasicService>(instances.front().lock());
-        instances.erase(instances.begin());
-        if (srv) srv->terminate();
-    }
-    instances.clear();
-}
-
 void BasicService::terminate() {
     service.stop();
     srv_acceptor.close();
