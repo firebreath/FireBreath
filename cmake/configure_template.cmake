@@ -13,8 +13,8 @@
 #\**********************************************************/
 
 
-set(__CFG_foreach_regex "@@foreach *\\(([^)]+)\\)")
-set(__CFG_endforeach_regex "@@endforeach")
+set(__CFG_foreach_regex "@foreach *\\(([^)]+)\\)")
+set(__CFG_endforeach_regex "@endforeach")
 
 function(_configure_template_foreach f_contents outputfile)
     set(f_contents ${${f_contents}})

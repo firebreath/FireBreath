@@ -253,13 +253,22 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
     PluginCore::setPlatform("Mac", "NPAPI");
     
     // Get the path to the bundle
-    
     static const std::string pluginPath = getPluginPath();      
     setFSPath(pluginPath);
 
     if(enableInvalidatingCoreAnimation(host)) {
         m_eventModel = EventModelCocoa;
         m_drawingModel = DrawingModelInvalidatingCoreAnimation;
+#if FBMAC_USE_COCOA && FBMAC_USE_COREANIMATION
+        // This hack exists to allow the plugin to call setLayer() on 
+        // the newly created PluginWindowMacCocoaCA window. This must
+        // be done before SetWindowCA() since the browser will call
+        // GetValue() for the CALayer before it calls SetWindow.
+        PluginWindowMacCocoaICA* pluginWinICA = getFactoryInstance()->createPluginWindowCocoaICA();
+        this->pluginWin = static_cast<PluginWindow*>(pluginWinICA);
+        pluginWinICA->setNpHost(m_npHost);
+        pluginMain->SetWindow(pluginWinICA);
+#endif
     } else if(enableCoreAnimation(host)) {
         m_eventModel   = EventModelCocoa;
         m_drawingModel = DrawingModelCoreAnimation;
@@ -589,7 +598,7 @@ int16_t NpapiPluginMac::HandleEvent(void* event)
 int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
 #if FBMAC_USE_COREANIMATION
     if(variable == NPPVpluginCoreAnimationLayer) {
-        if(m_drawingModel == DrawingModelCoreAnimation) {
+        if(m_drawingModel == DrawingModelCoreAnimation || m_drawingModel == DrawingModelInvalidatingCoreAnimation) {
             PluginWindowMacCocoaCA* win = static_cast<PluginWindowMacCocoaCA*>(pluginWin);
             if(win != NULL) {
                 *((CALayer **)value) = (CALayer*)win->getLayer();
