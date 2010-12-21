@@ -210,7 +210,7 @@ namespace FB
 
         FBDateString& operator=(const std::string& dstr) { date = dstr; return *this; }
         std::string getValue() { return date; }
-        std::string setValue(std::string value) { date = value; }
+        void setValue(std::string value) { date = value; }
         bool operator<(const std::string& rh) const
         {
             return date < rh;

@@ -89,7 +89,7 @@ namespace FB
         void invalidate();
 
     protected:
-        void JSAPI::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+        void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
 
     protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////

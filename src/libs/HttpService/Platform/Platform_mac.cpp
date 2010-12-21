@@ -24,6 +24,7 @@ std::string Platform::getArchitectureName() {
   return "macosx";
 }
 
+/*
 string findUserFolder(OSType folderType) {
     FSRef ref;
     OSErr err = FSFindFolder(kUserDomain, folderType, kDontCreateFolder, &ref);
@@ -33,6 +34,7 @@ string findUserFolder(OSType folderType) {
     if (err != noErr) return string();
     return string(path);
 }
+*/
 
 /*PluginJSDict* Platform::getLocalBrowseRoots() {
     PluginJSDict* d = new PluginJSDict;
