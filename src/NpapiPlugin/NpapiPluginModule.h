@@ -19,6 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "NpapiTypes.h"
+#include "FactoryBase.h"
 #include <boost/thread.hpp>
 
 namespace FB { 

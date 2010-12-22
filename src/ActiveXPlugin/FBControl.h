@@ -38,6 +38,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 extern std::string g_dllPath;
 
+void flagStaticInitialized(bool init = true);
+bool isStaticInitialized();
+
 // CFBControl
 template <const GUID* pFbCLSID, const char* pMT>
 class ATL_NO_VTABLE CFBControl :
@@ -86,9 +89,6 @@ public:
     // rough order that they will be called in.
     CFBControl() : pluginWin(NULL), m_messageWin(NULL), FB::BrowserPlugin(pMT)
     {
-        if (_REFCOUNT++ == 0) {
-            FB::Log::initLogging();
-        }
         FB::PluginCore::setPlatform("Windows", "IE");
         setFSPath(g_dllPath);
 #if FB_GUI_DISABLED == 1
@@ -101,7 +101,6 @@ public:
     ~CFBControl()
     {
         if (--_REFCOUNT == 0) {
-            FB::Log::stopLogging();
         }
         if (m_messageWin)
             ::DestroyWindow(m_messageWin);

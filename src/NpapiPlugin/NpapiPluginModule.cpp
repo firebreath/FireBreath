@@ -24,11 +24,13 @@ using namespace FB::Npapi;
 NpapiPluginModule::NpapiPluginModule(void) : m_threadId(boost::this_thread::get_id())
 {
     FB::Log::initLogging();
+    getFactoryInstance()->globalPluginInitialize();
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
 
 NpapiPluginModule::~NpapiPluginModule(void)
 {
+    getFactoryInstance()->globalPluginDeinitialize();
     FB::Log::stopLogging();
 }
 

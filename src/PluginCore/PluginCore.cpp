@@ -48,10 +48,7 @@ PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
     FB::Log::initLogging();
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
-    if (++PluginCore::ActivePluginCount == 1) {
-        // Only on the first initialization
-        getFactoryInstance()->globalPluginInitialize();
-    }
+    ++PluginCore::ActivePluginCount;
 
     initDefaultParams();
 }
@@ -61,12 +58,8 @@ PluginCore::PluginCore(const std::set<std::string>& params)
 {
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
-    if (++PluginCore::ActivePluginCount == 1) {
+    ++PluginCore::ActivePluginCount;
 
-        FBLOG_INFO("PluginCore", "Running global plugin initializer");
-        // Only on the first initialization
-        getFactoryInstance()->globalPluginInitialize();
-    }
     initDefaultParams();
 }
 
@@ -83,11 +76,7 @@ PluginCore::~PluginCore()
     m_host->shutdown();
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
-    if (--PluginCore::ActivePluginCount == 0) {
-        FBLOG_INFO("PluginCore", "Running global plugin deinitializer");
-        // Only on the destruction of the final plugin instance
-        getFactoryInstance()->globalPluginDeinitialize();
-    }
+    --PluginCore::ActivePluginCount;
 }
 
 StringSet* PluginCore::getSupportedParams()

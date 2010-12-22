@@ -16,3 +16,17 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FBControl.h"
 
 #include "axplugin_defs.inc" // Include generated file for ActiveX mimetypes
+
+namespace {
+	volatile bool g_Initialized;
+}
+
+void flagStaticInitialized( bool init /*= true*/ )
+{
+	g_Initialized = init;
+}
+
+bool isStaticInitialized()
+{
+	return g_Initialized;
+}

@@ -31,6 +31,11 @@ STDAPI DllCanUnloadNow(void)
         return hr;
 #endif
 	HRESULT hr = _AtlModule.DllCanUnloadNow();
+	if (SUCCEEDED(hr) && isStaticInitialized()) {
+	    getFactoryInstance()->globalPluginDeinitialize();
+        FB::Log::stopLogging();
+		flagStaticInitialized(false);
+	}
     return hr;
 }
 
@@ -42,7 +47,13 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
     if (PrxDllGetClassObject(rclsid, riid, ppv) == S_OK)
         return S_OK;
 #endif
-    return _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+	HRESULT hr = _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+	if (SUCCEEDED(hr) && !isStaticInitialized()) {
+        FB::Log::initLogging();
+	    getFactoryInstance()->globalPluginInitialize();
+		flagStaticInitialized(true);
+	}
+	return hr;
 }
 
 
