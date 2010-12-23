@@ -96,7 +96,7 @@ ActiveXBrowserHost::~ActiveXBrowserHost(void)
 {
 }
 
-void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
+void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData) const
 {
     if (m_hWnd != NULL) {
         FBLOG_TRACE("ActiveXHost", "Scheduling async call for main thread");
@@ -105,7 +105,7 @@ void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData)
     }
 }
 
-void *ActiveXBrowserHost::getContextID()
+void *ActiveXBrowserHost::getContextID() const
 {
     return (void*)this;
 }
@@ -115,22 +115,22 @@ void ActiveXBrowserHost::setWindow(HWND wnd)
     m_hWnd = wnd;
 }
 
-FB::DOM::WindowPtr ActiveXBrowserHost::_createWindow(const FB::JSObjectPtr& obj)
+FB::DOM::WindowPtr ActiveXBrowserHost::_createWindow(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::WindowPtr(new AXDOM::Window(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
-FB::DOM::DocumentPtr ActiveXBrowserHost::_createDocument(const FB::JSObjectPtr& obj)
+FB::DOM::DocumentPtr ActiveXBrowserHost::_createDocument(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::DocumentPtr(new AXDOM::Document(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
-FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObjectPtr& obj)
+FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::ElementPtr(new AXDOM::Element(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
-FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj)
+FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::NodePtr(new AXDOM::Node(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
 }
@@ -258,7 +258,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
 }
 
 FB::BrowserStreamPtr ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
-                                    bool cache, bool seekable, size_t internalBufferSize )
+                                    bool cache, bool seekable, size_t internalBufferSize ) const
 {
     ActiveXStreamPtr stream = boost::make_shared<ActiveXStream>( url, cache, seekable, internalBufferSize );
     stream->AttachObserver( callback );

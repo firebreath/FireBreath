@@ -46,9 +46,9 @@ namespace FB
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct AsyncLogRequest
     {
-        AsyncLogRequest(BrowserHostPtr host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(const boost::shared_ptr<BrowserHost>& host, const std::string& message) : m_host(host), m_msg(message) { }
 
-        BrowserHostPtr m_host;
+        const boost::shared_ptr<BrowserHost> m_host;
         std::string m_msg;
     };
 
@@ -103,7 +103,7 @@ namespace FB
         /// @see ScheduleOnMainThread
         /// @see CallOnMainThread
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0;
+        virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Functor> typename Functor::result_type CallOnMainThread(Functor func)
@@ -171,7 +171,7 @@ namespace FB
         ///
         /// @return null if it fails, else the context identifier. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void *getContextID() = 0;
+        virtual void *getContextID() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback,
@@ -193,7 +193,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual BrowserStreamPtr createStream(const std::string& url, PluginEventSinkPtr callback, 
                                             bool cache = true, bool seekable = false, 
-                                            size_t internalBufferSize = 128 * 1024 ) = 0;
+                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
         
         // Methods for accessing the DOM
     public:
@@ -204,7 +204,7 @@ namespace FB
         /// @brief  When running in debug mode, asserts that the call is made on the main thread. 
         /// @since 1.2.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void assertMainThread();
+        void assertMainThread() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn bool isMainThread()
@@ -214,7 +214,7 @@ namespace FB
         /// @return true if called on main thread, false if not. 
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool isMainThread();
+        bool isMainThread() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual DOM::DocumentPtr getDOMDocument() = 0
@@ -267,10 +267,10 @@ namespace FB
         virtual void shutdown();
 
 public:
-    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
-    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
-    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
-    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
+    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
+    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
+    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj) const;
+    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj) const;
 
     protected:
 

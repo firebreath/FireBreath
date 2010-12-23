@@ -55,25 +55,25 @@ variant JSAPISimple::getValid()
     return m_valid;
 }
 
-void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector)
+void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
 {
     nameVector.clear();
 
-    for (FB::MethodMap::iterator it = m_methodMap.begin();
+    for (FB::MethodMap::const_iterator it = m_methodMap.begin();
         it != m_methodMap.end(); it++) {
         nameVector.push_back(it->first);
     }
-    for (FB::PropertyMap::iterator it = m_propertyMap.begin();
+    for (FB::PropertyMap::const_iterator it = m_propertyMap.begin();
         it != m_propertyMap.end(); it++) {
         nameVector.push_back(it->first);
     }
-    for (FB::EventSingleMap::iterator it = m_defEventMap.begin();
+    for (FB::EventSingleMap::const_iterator it = m_defEventMap.begin();
         it != m_defEventMap.end(); it++) {
         nameVector.push_back(it->first);
     }
 }
 
-size_t JSAPISimple::getMemberCount()
+size_t JSAPISimple::getMemberCount() const
 {
     return m_methodMap.size()
         + m_propertyMap.size()
@@ -93,12 +93,12 @@ void JSAPISimple::registerProperty(const std::string& name, GetPropPtr getFunc, 
 }
 
 // Methods to query existance of members on the API
-bool JSAPISimple::HasMethod(const std::string& methodName)
+bool JSAPISimple::HasMethod(const std::string& methodName) const
 {
     if (!m_valid)
         return false;
 
-    MethodMap::iterator fnd = m_methodMap.find(methodName);
+    MethodMap::const_iterator fnd = m_methodMap.find(methodName);
     if (fnd != m_methodMap.end()) {
         return true;
     } else {
@@ -106,12 +106,12 @@ bool JSAPISimple::HasMethod(const std::string& methodName)
     }
 }
 
-bool JSAPISimple::HasProperty(const std::string& propertyName)
+bool JSAPISimple::HasProperty(const std::string& propertyName) const
 {
     if (!m_valid)
         return false;
 
-    PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
+    PropertyMap::const_iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end()) {
         return true;
     } else {
@@ -127,7 +127,7 @@ variant JSAPISimple::GetProperty(const std::string& propertyName)
     if (!m_valid)
         throw object_invalidated();
 
-    PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
+    PropertyMap::const_iterator fnd = m_propertyMap.find(propertyName);
     if (fnd != m_propertyMap.end() && fnd->second.getFunc != NULL) {
         return (this->*fnd->second.getFunc)();
     } else {
@@ -140,7 +140,7 @@ void JSAPISimple::SetProperty(const std::string& propertyName, const variant& va
     if (!m_valid)
         throw object_invalidated();
 
-    PropertyMap::iterator fnd = m_propertyMap.find(propertyName);
+    PropertyMap::const_iterator fnd = m_propertyMap.find(propertyName);
     if (fnd->second.setFunc != NULL) {
         (this->*fnd->second.setFunc)(value);
     } else {
@@ -148,7 +148,7 @@ void JSAPISimple::SetProperty(const std::string& propertyName, const variant& va
     }
 }
 
-bool JSAPISimple::HasProperty(int idx)
+bool JSAPISimple::HasProperty(int idx) const
 {
     if (!m_valid)
         throw object_invalidated();

@@ -39,10 +39,15 @@ namespace FB
     class JSAPIProxy : public JSAPI
     {
     protected:
-        JSAPIProxy(FB::JSAPIPtr &inner);
-        JSAPIProxy(FB::JSAPIWeakPtr &inner);
+        JSAPIProxy(const FB::JSAPIPtr &inner);
+        JSAPIProxy(const FB::JSAPIWeakPtr &inner);
+
+        JSAPIProxy(const SecurityZone& securityLevel, const FB::JSAPIPtr &inner);
+        JSAPIProxy(const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner);
 
     public:
+        virtual ~JSAPIProxy(void);
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn boost::shared_ptr<JSAPIProxy>  FB::JSAPIProxy::create(FB::JSAPIPtr &inner)
         ///
@@ -53,7 +58,9 @@ namespace FB
         /// @return boost::shared_ptr<JSAPIProxy>
         /// @since  1.4.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIPtr &inner);
+        static boost::shared_ptr<JSAPIProxy> create(const FB::JSAPIPtr &inner);
+        /// @@overload
+        static boost::shared_ptr<JSAPIProxy> create(const SecurityZone& securityLevel, const FB::JSAPIPtr &inner);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn boost::shared_ptr<JSAPIProxy>  FB::JSAPIProxy::create(FB::JSAPIWeakPtr &inner)
@@ -67,8 +74,9 @@ namespace FB
         /// @return boost::shared_ptr<JSAPIProxy>
         /// @since  1.4.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static boost::shared_ptr<JSAPIProxy> create(FB::JSAPIWeakPtr &inner);
-        virtual ~JSAPIProxy(void);
+        static boost::shared_ptr<JSAPIProxy> create(const FB::JSAPIWeakPtr &inner);
+        /// @@overload
+        static boost::shared_ptr<JSAPIProxy> create(const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn bool  FB::JSAPIProxy::isExpired()
@@ -80,7 +88,7 @@ namespace FB
         /// @return bool
         /// @since  
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        inline bool isExpired() {
+        inline bool isExpired() const {
             return m_apiWeak.expired();
         }
 
@@ -88,31 +96,31 @@ namespace FB
         void swap(const FB::JSAPIWeakPtr &inner);
         void reset();
 
-        inline FB::JSAPIPtr getAPI() {
+        inline FB::JSAPIPtr getAPI() const {
             FB::JSAPIPtr tmp = m_apiWeak.lock();
             if (tmp)
                 return tmp;
-            throw FB::script_error("This object has expired");
+            throw FB::object_invalidated();
         }
 
     protected:
-        FB::JSAPIPtr m_api;
-        FB::JSAPIWeakPtr m_apiWeak;
+        mutable FB::JSAPIPtr m_api;
+        mutable FB::JSAPIWeakPtr m_apiWeak;
 
     public:
 
         void invalidate();
-        virtual void getMemberNames(std::vector<std::string> &nameVector);
+        virtual void getMemberNames(std::vector<std::string> &nameVector) const;
+        virtual size_t getMemberCount() const;
 
-        virtual size_t getMemberCount();
-        virtual bool HasMethod(const std::wstring& methodName);
-        virtual bool HasMethod(const std::string& methodName);
-        virtual bool HasProperty(const std::wstring& propertyName);
-        virtual bool HasProperty(const std::string& propertyName);
-        virtual bool HasProperty(int idx);
+        virtual bool HasMethod(const std::wstring& methodName) const;
+        virtual bool HasMethod(const std::string& methodName) const;
+        virtual bool HasProperty(const std::wstring& propertyName) const;
+        virtual bool HasProperty(const std::string& propertyName) const;
+        virtual bool HasProperty(int idx) const;
 
-        virtual bool HasEvent(const std::string& eventName);
-        virtual bool HasEvent(const std::wstring& eventName);
+        virtual bool HasEvent(const std::string& eventName) const;
+        virtual bool HasEvent(const std::wstring& eventName) const;
 
         virtual variant GetProperty(const std::wstring& propertyName);
         virtual variant GetProperty(const std::string& propertyName);

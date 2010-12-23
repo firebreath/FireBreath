@@ -45,10 +45,10 @@ void NPObjectAPI::releaseObject(NPObject* obj)
     }
 }
 
-void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
+void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
 {
     if (!host->isMainThread()) {
-        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector);
+        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
         host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
@@ -62,7 +62,7 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector)
     browser->MemFree(idArray);
 }
 
-size_t NPObjectAPI::getMemberCount()
+size_t NPObjectAPI::getMemberCount() const
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberCount, this));
@@ -74,30 +74,30 @@ size_t NPObjectAPI::getMemberCount()
     return (size_t)count;
 }
 
-bool NPObjectAPI::HasMethod(const std::string& methodName)
+bool NPObjectAPI::HasMethod(const std::string& methodName) const
 {
     if (!host->isMainThread()) {
-        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
     }
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
-bool NPObjectAPI::HasProperty(const std::string& propertyName)
+bool NPObjectAPI::HasProperty(const std::string& propertyName) const
 {
     if (!host->isMainThread()) {
-        typedef bool (NPObjectAPI::*curtype)(const std::string&);
+        typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
     }
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
 
-bool NPObjectAPI::HasProperty(int idx)
+bool NPObjectAPI::HasProperty(int idx) const
 {
     return browser->HasProperty(obj, browser->GetIntIdentifier(idx));
 }
 
-bool NPObjectAPI::HasEvent(const std::string& eventName)
+bool NPObjectAPI::HasEvent(const std::string& eventName) const
 {
     return false;
 }
@@ -220,7 +220,7 @@ FB::JSObjectPtr NPObjectAPI::Construct( const std::string& memberName, const FB:
     }
 }
 
-FB::JSAPIPtr NPObjectAPI::getJSAPI()
+FB::JSAPIPtr NPObjectAPI::getJSAPI() const
 {
     if (!obj) {
         return JSAPIPtr();

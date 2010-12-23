@@ -25,7 +25,7 @@ void FB::BrowserHost::htmlLog(const std::string& str)
 {
     FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
     this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
-            new FB::AsyncLogRequest(shared_ptr(), str));
+            new FB::AsyncLogRequest(shared_from_this(), str));
 }
 
 void FB::BrowserHost::AsyncHtmlLog(void *logReq)
@@ -53,32 +53,32 @@ void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
     evaluateJavaScript(FB::wstring_to_utf8(script));
 }
 
-FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj)
+FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::WindowPtr(new FB::DOM::Window(obj));
 }
 
-FB::DOM::DocumentPtr FB::BrowserHost::_createDocument(const FB::JSObjectPtr& obj)
+FB::DOM::DocumentPtr FB::BrowserHost::_createDocument(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::DocumentPtr(new FB::DOM::Document(obj));
 }
 
-FB::DOM::ElementPtr FB::BrowserHost::_createElement(const FB::JSObjectPtr& obj)
+FB::DOM::ElementPtr FB::BrowserHost::_createElement(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::ElementPtr(new FB::DOM::Element(obj));
 }
 
-FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj)
+FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::NodePtr(new FB::DOM::Node(obj));
 }
 
 void FB::BrowserHost::shutdown()
 {
-    this->m_isShutdown = true;
+    m_isShutdown = true;
 }
 
-void FB::BrowserHost::assertMainThread()
+void FB::BrowserHost::assertMainThread() const
 {
 #ifdef _DEBUG
     if (!isMainThread()) {
@@ -88,7 +88,7 @@ void FB::BrowserHost::assertMainThread()
 #endif
 }
 
-bool FB::BrowserHost::isMainThread()
+bool FB::BrowserHost::isMainThread() const
 {
     return m_threadId == boost::this_thread::get_id();
 }

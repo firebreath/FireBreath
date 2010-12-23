@@ -41,7 +41,7 @@ void NpapiBrowserHostAsyncWin::setWindow(NPWindow* window)
     m_hwnd = static_cast<HWND>(window->window);
 }
 
-void NpapiBrowserHostAsyncWin::ScheduleAsyncCall(void (*func)(void*), void* userData)
+void NpapiBrowserHostAsyncWin::ScheduleAsyncCall(void (*func)(void*), void* userData) const
 {
     if(!m_hwnd) 
         return;

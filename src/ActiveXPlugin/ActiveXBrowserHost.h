@@ -38,13 +38,13 @@ class ActiveXBrowserHost :
 public:
     ActiveXBrowserHost(IWebBrowser2 *doc);
     virtual ~ActiveXBrowserHost(void);
-    virtual void ScheduleAsyncCall(void (*func)(void *), void *userData);
+    virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const;
 
-    virtual void *getContextID();
+    virtual void *getContextID() const;
 
     virtual FB::BrowserStreamPtr createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
                                             bool cache = true, bool seekable = false, 
-                                            size_t internalBufferSize = 128 * 1024 );
+                                            size_t internalBufferSize = 128 * 1024 ) const;
 
     void setWindow(HWND wnd);
 
@@ -54,21 +54,21 @@ public:
     void evaluateJavaScript(const std::string &script);
 
 public:
-    FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj);
-    FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj);
-    FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj);
-    FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj);
+    FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
+    FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
+    FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj) const;
+    FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj) const;
 
 protected:
-    void initDOMObjects();
+    void initDOMObjects(); // This is const so that getDOMDocument/Window can be
     HWND m_hWnd;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
     CComPtr<IHTMLWindow2> m_htmlWin;
     CComPtr<IWebBrowser2> m_webBrowser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
-    FB::DOM::WindowPtr m_window;
-    FB::DOM::DocumentPtr m_document;
+    mutable FB::DOM::WindowPtr m_window;
+    mutable FB::DOM::DocumentPtr m_document;
 
 public:
     FB::variant getVariant(const VARIANT *cVar);

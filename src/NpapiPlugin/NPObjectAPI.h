@@ -36,25 +36,25 @@ namespace FB { namespace Npapi {
         NPObjectAPI(NPObject *, NpapiBrowserHostPtr);
         virtual ~NPObjectAPI(void);
 
-        void *getEventId() { return (void*)obj; }
-        void *getEventContext() { return browser->getContextID(); };
-        NPObject *getNPObject() { return obj; }
+        void *getEventId() const { return (void*)obj; }
+        void *getEventContext() const { return browser->getContextID(); };
+        NPObject *getNPObject() const { return obj; }
 
-        void getMemberNames(std::vector<std::string> &nameVector);
-        size_t getMemberCount();
+        void getMemberNames(std::vector<std::string> &nameVector) const;
+        size_t getMemberCount() const;
     public:
         void releaseObject(NPObject* obj);
-        virtual JSAPIPtr getJSAPI();
+        virtual JSAPIPtr getJSAPI() const;
 
     protected:
         NpapiBrowserHostPtr browser;
         NPObject *obj;
 
     public:
-        bool HasMethod(const std::string& methodName);
-        bool HasProperty(const std::string& propertyName);
-        bool HasProperty(int idx);
-        bool HasEvent(const std::string& eventName);
+        bool HasMethod(const std::string& methodName) const;
+        bool HasProperty(const std::string& propertyName) const;
+        bool HasProperty(int idx) const;
+        bool HasEvent(const std::string& eventName) const;
 
         variant GetProperty(const std::string& propertyName);
         void SetProperty(const std::string& propertyName, const variant& value);

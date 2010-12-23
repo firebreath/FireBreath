@@ -37,32 +37,32 @@ public:
         std::for_each(m_values.begin(), m_values.end(), GrabKeys(m_names));
     }
 
-    FB::JSAPIPtr getJSAPI() { return FB::JSAPIPtr(); }
+    FB::JSAPIPtr getJSAPI() const { return FB::JSAPIPtr(); }
     
-    bool HasMethod(const std::string&) { return false; }
+    bool HasMethod(const std::string&) const { return false; }
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant&) {}
     FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
     FB::JSObjectPtr Construct(const std::string&, const FB::VariantList&) { return FB::JSObjectPtr(); }
 
     // Methods for enumeration
-    virtual void getMemberNames(StringVec &names) 
+    virtual void getMemberNames(StringVec &names) const
     {
         names = m_names;
     }
     
-    virtual size_t getMemberCount() 
+    virtual size_t getMemberCount() const
     {
         return m_values.size(); 
     }
 
 
-    bool HasProperty(const std::string& s)    
+    bool HasProperty(const std::string& s) const
     { 
         return (s == "length"); 
     }
     
-    bool HasProperty(int index)        
+    bool HasProperty(int index) const
     { 
         return ((unsigned)index < m_values.size()); 
     }

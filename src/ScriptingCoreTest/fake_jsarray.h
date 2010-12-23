@@ -25,24 +25,24 @@ public:
     {
     }
     
-    FB::JSAPIPtr getJSAPI() { return FB::JSAPIPtr(); }
+    FB::JSAPIPtr getJSAPI() const { return FB::JSAPIPtr(); }
 
-    bool HasMethod(const std::string&) { return false; }
+    bool HasMethod(const std::string&) const { return false; }
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant) {}
     FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
     FB::JSObjectPtr Construct(const std::string&, const FB::VariantList&) { return FB::JSObjectPtr(); }
 
     // Methods for enumeration
-    virtual void getMemberNames(std::vector<std::string> &nameVector) { }
-    virtual size_t getMemberCount() { return 0; }
+    virtual void getMemberNames(std::vector<std::string> &nameVector) const { }
+    virtual size_t getMemberCount() const { return 0; }
 
-    bool HasProperty(const std::string& s)    
+    bool HasProperty(const std::string& s) const
     { 
         return (s == "length"); 
     }
     
-    bool HasProperty(int index)        
+    bool HasProperty(int index) const  
     { 
         return ((unsigned)index < m_values.size()); 
     }

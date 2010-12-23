@@ -27,6 +27,12 @@ JSAPI::JSAPI(void) : m_valid(true)
     registerEvent("onload");
 }
 
+FB::JSAPI::JSAPI( const SecurityZone& securityLevel )
+{
+    m_zoneStack.push_back(securityLevel);
+    registerEvent("onload");
+}
+
 JSAPI::~JSAPI(void)
 {
 }
@@ -35,6 +41,38 @@ void JSAPI::invalidate()
 {
     m_valid = false;
 }
+
+// Security zone management
+void FB::JSAPI::setDefaultZone( const SecurityZone& securityLevel )
+{
+	assert(m_zoneStack.size() > 0);
+	m_zoneStack.pop_front();
+	m_zoneStack.push_front(securityLevel);
+}
+FB::SecurityZone FB::JSAPI::getDefaultZone()
+{
+    assert(m_zoneStack.size() > 0);
+    return m_zoneStack.front();
+}
+
+void FB::JSAPI::pushZone( const SecurityZone& securityLevel )
+{
+	m_zoneMutex.lock();
+	m_zoneStack.push_back(securityLevel);
+}
+
+void FB::JSAPI::popZone( )
+{
+	m_zoneStack.pop_back();
+	m_zoneMutex.unlock();
+}
+
+FB::SecurityZone FB::JSAPI::getZone() const
+{
+	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+	return m_zoneStack.back();
+}
+
 
 void JSAPI::FireEvent(const std::wstring& eventName, const std::vector<variant>& args)
 {
@@ -82,16 +120,16 @@ void JSAPI::fireAsyncEvent( const std::string& eventName, const std::vector<vari
 {
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(eventName);
 
-    for (EventMultiMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
+    for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; eventIt++) {
         eventIt->second->InvokeAsync("", args);
     }
-    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
+    EventSingleMap::const_iterator fnd = m_defEventMap.find(eventName);
     if (fnd != m_defEventMap.end() && fnd->second != NULL && fnd->second->getEventId() != NULL) {
         fnd->second->InvokeAsync("", args);
     }
 
     // Some events are registered as a jsapi object with a method of the same name as the event
-    for (EventIFaceMap::iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
+    for (EventIFaceMap::const_iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
         ifaceIt->second->InvokeAsync(eventName, args);
     }
 }
@@ -180,14 +218,14 @@ void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantList
 }
 
 
-bool JSAPI::HasEvent(const std::wstring& eventName)
+bool JSAPI::HasEvent(const std::wstring& eventName) const
 {
     return HasEvent(wstring_to_utf8(eventName));
 }
 
-bool JSAPI::HasEvent(const std::string& eventName)
+bool JSAPI::HasEvent(const std::string& eventName) const
 {
-    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
+    EventSingleMap::const_iterator fnd = m_defEventMap.find(eventName);
     if (fnd != m_defEventMap.end()) {
         return true;
     } else {
@@ -240,14 +278,14 @@ void JSAPI::unregisterEventInterface(JSObjectPtr& event)
     m_evtIfaces.erase(fnd);
 }
 
-JSObjectPtr JSAPI::getDefaultEventMethod(const std::wstring& name)
+JSObjectPtr JSAPI::getDefaultEventMethod(const std::wstring& name) const
 {
     return getDefaultEventMethod(wstring_to_utf8(name));
 }
 
-JSObjectPtr JSAPI::getDefaultEventMethod(const std::string& name)
+JSObjectPtr JSAPI::getDefaultEventMethod(const std::string& name) const
 {
-    EventSingleMap::iterator fnd = m_defEventMap.find(name);
+    EventSingleMap::const_iterator fnd = m_defEventMap.find(name);
     if (fnd != m_defEventMap.end()) {
         return fnd->second;
     }
@@ -278,24 +316,29 @@ void JSAPI::registerEvent(const std::string &name)
         m_defEventMap[name] = JSObjectPtr();
 }
 
-void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector)
+void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector) const
 {
     nameVector.clear();
     std::vector<std::string> utf8Vector;
     getMemberNames(utf8Vector);
-    for (std::vector<std::string>::iterator it = utf8Vector.begin();
+    for (std::vector<std::string>::const_iterator it = utf8Vector.begin();
             it != utf8Vector.end(); ++it) {
         std::wstring wStrVal(utf8_to_wstring(*it));
         nameVector.push_back(wStrVal);
     }
 }
 
-bool JSAPI::HasMethod(const std::wstring& methodName)
+bool JSAPI::HasMethod(const std::wstring& methodName) const
 {
     return HasMethod(wstring_to_utf8(methodName));
 }
 
-bool JSAPI::HasProperty(const std::wstring& propertyName)
+bool FB::JSAPI::HasMethodObject( const std::wstring& methodObjName ) const
+{
+	return HasMethodObject(wstring_to_utf8(methodObjName));
+}
+
+bool JSAPI::HasProperty(const std::wstring& propertyName) const
 {
     return HasProperty(wstring_to_utf8(propertyName));
 }
@@ -315,23 +358,31 @@ variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>
     return Invoke(wstring_to_utf8(methodName), args);
 }
 
-void FB::JSAPI::registerProxy( const JSAPIWeakPtr &ptr )
+void FB::JSAPI::registerProxy( const JSAPIWeakPtr &ptr ) const
 {
     m_proxies.push_back(ptr);
 }
 
-void FB::JSAPI::getMemberNames( std::vector<std::wstring> *nameVector )
+void FB::JSAPI::unregisterProxy( const FB::JSAPIPtr& ptr ) const
+{
+    for (ProxyList::iterator it = m_proxies.begin(); it != m_proxies.end(); ++it) {
+        FB::JSAPIPtr cur(it->lock());
+        if (!cur || ptr == cur)
+            it = m_proxies.erase(it);
+    }
+}
+
+void FB::JSAPI::getMemberNames( std::vector<std::wstring> *nameVector ) const
 {
     getMemberNames(*nameVector);
 }
 
-void FB::JSAPI::getMemberNames( std::vector<std::string> *nameVector )
+void FB::JSAPI::getMemberNames( std::vector<std::string> *nameVector ) const
 {
     getMemberNames(*nameVector);
+}
 
-    void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
-
-
-    void proxyProcessList( const std::vector<variant> &args, FB::JSAPIPtr self, FB::JSAPIPtr proxy );
-
+FB::JSAPIPtr FB::JSAPI::GetMethodObject( const std::wstring& methodObjName )
+{
+    return GetMethodObject(FB::wstring_to_utf8(methodObjName));
 }

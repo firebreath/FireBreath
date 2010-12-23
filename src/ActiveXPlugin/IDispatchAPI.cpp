@@ -36,10 +36,10 @@ void IDispatchAPI::releaseObject()
     m_obj.Release();
 }
 
-void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
+void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
 {
     if (!host->isMainThread()) {
-        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector);
+        typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
         host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
@@ -59,7 +59,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector)
     }
 }
 
-size_t IDispatchAPI::getMemberCount()
+size_t IDispatchAPI::getMemberCount() const
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
@@ -80,7 +80,7 @@ size_t IDispatchAPI::getMemberCount()
     return count;
 }
 
-DISPID IDispatchAPI::getIDForName(const std::wstring& name)
+DISPID IDispatchAPI::getIDForName(const std::wstring& name) const
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
@@ -110,29 +110,29 @@ DISPID IDispatchAPI::getIDForName(const std::wstring& name)
     }
 }
 
-bool IDispatchAPI::HasMethod(const std::wstring& methodName)
+bool IDispatchAPI::HasMethod(const std::wstring& methodName) const
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(methodName) != -1;
 }
 
-bool IDispatchAPI::HasMethod(const std::string& methodName)
+bool IDispatchAPI::HasMethod(const std::string& methodName) const
 {
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(FB::utf8_to_wstring(methodName)) != -1 && !HasProperty(methodName);
 }
 
-bool IDispatchAPI::HasProperty(const std::wstring& propertyName)
+bool IDispatchAPI::HasProperty(const std::wstring& propertyName) const
 {
     return HasProperty(FB::wstring_to_utf8(propertyName));
 }
 
-bool IDispatchAPI::HasProperty(const std::string& propertyName)
+bool IDispatchAPI::HasProperty(const std::string& propertyName) const
 {
     if (!host->isMainThread()) {
-        typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&);
+        typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
     }
 
@@ -163,21 +163,21 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName)
     }
 }
 
-bool IDispatchAPI::HasProperty(int idx)
+bool IDispatchAPI::HasProperty(int idx) const
 {
     FB::variant name(idx);
     return getIDForName(name.convert_cast<std::wstring>()) != -1;
 }
 
-bool IDispatchAPI::HasEvent(const std::wstring& eventName)
+bool IDispatchAPI::HasEvent(const std::wstring& eventName) const
 {
     return getIDForName(eventName) != -1;
 }
 
-bool IDispatchAPI::HasEvent(const std::string& eventName)
+bool IDispatchAPI::HasEvent(const std::string& eventName) const
 {
     if (!host->isMainThread()) {
-        typedef bool (IDispatchAPI::*HasEventType)(const std::string&);
+        typedef bool (IDispatchAPI::*HasEventType)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
     }
 
@@ -300,7 +300,7 @@ FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB
     return FB::JSObjectPtr();
 }
 
-FB::JSAPIPtr IDispatchAPI::getJSAPI()
+FB::JSAPIPtr IDispatchAPI::getJSAPI() const
 {
     if (!m_obj) {
         return FB::JSAPIPtr();

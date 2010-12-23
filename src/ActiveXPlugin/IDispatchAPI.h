@@ -36,13 +36,13 @@ public:
     IDispatchAPI(IDispatch *, ActiveXBrowserHostPtr);
     virtual ~IDispatchAPI(void);
 
-    void *getEventId() { return (void*)m_obj; }
-    void *getEventContext() { return m_browser->getContextID(); };
-    IDispatch *getIDispatch() { return m_obj; }
+    void *getEventId() const { return (void*)m_obj; }
+    void *getEventContext() const { return m_browser->getContextID(); };
+    IDispatch *getIDispatch() const { return m_obj; }
 
     // Enumerate members
-    void getMemberNames(std::vector<std::string> &nameVector);
-    size_t getMemberCount();
+    void getMemberNames(std::vector<std::string> &nameVector) const;
+    size_t getMemberCount() const;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @brief  Releases the object.  Do not call this method, it is used by the destructor, but has
@@ -55,16 +55,16 @@ protected:
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
 
 protected:
-    DISPID getIDForName(const std::wstring& name);
+    DISPID getIDForName(const std::wstring& name) const;
 
 public:
-    bool HasMethod(const std::string& methodName);
-    bool HasMethod(const std::wstring& methodName);
-    bool HasProperty(const std::string& propertyName);
-    bool HasProperty(const std::wstring& propertyName);
-    bool HasProperty(int idx);
-    bool HasEvent(const std::string& eventName);
-    bool HasEvent(const std::wstring& eventName);
+    bool HasMethod(const std::string& methodName) const;
+    bool HasMethod(const std::wstring& methodName) const;
+    bool HasProperty(const std::string& propertyName) const;
+    bool HasProperty(const std::wstring& propertyName) const;
+    bool HasProperty(int idx) const;
+    bool HasEvent(const std::string& eventName) const;
+    bool HasEvent(const std::wstring& eventName) const;
 
     FB::variant GetProperty(const std::string& propertyName);
     void SetProperty(const std::string& propertyName, const FB::variant& value);
@@ -75,7 +75,7 @@ public:
     FB::JSObjectPtr Construct(const std::string& memberName, const FB::VariantList& args);
 
 public:
-    virtual FB::JSAPIPtr getJSAPI();
+    virtual FB::JSAPIPtr getJSAPI() const;
 };
 
 #endif

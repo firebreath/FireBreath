@@ -19,10 +19,15 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "JSAPI.h"
 #include "MethodConverter.h"
 #include "PropertyConverter.h"
+#include <deque>
 #include <vector>
 #include <string>
+#include "boost/thread/recursive_mutex.hpp"
 
 namespace FB {
+	class JSFunction;
+	typedef boost::shared_ptr<JSFunction> JSFunctionPtr;
+
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())
     /// @brief Overload of FB::make_method() for methods taking 0 arguments. 
@@ -86,18 +91,37 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class JSAPIAuto : public JSAPI
     {
+    protected:
+        struct Attribute {
+            bool operator<(const Attribute& rh) const
+            {
+                return value < rh.value;
+            }
+            FB::variant value;
+            bool readonly;
+        };
+		typedef std::map<std::string, FB::JSFunctionPtr> MethodObjectMap;
+		typedef std::map<std::string, FB::SecurityZone> ZoneMap;
+        typedef std::map<std::string, Attribute> AttributeMap;
+
     public:
         /// @brief Description is used by ToString().
-        JSAPIAuto(const std::string& description = "<JSAPI-Auto driven Javascript Object>");
-        virtual ~JSAPIAuto();
+        JSAPIAuto(const std::string& description = "<JSAPI-Auto Javascript Object>");
+        JSAPIAuto(const SecurityZone& securityLevel, const std::string& description = "<JSAPI-Auto Secure Javascript Object>");
+		typedef std::deque<SecurityZone> ZoneStack;
+
+		void init( );
+
+		virtual ~JSAPIAuto();
 
         virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
         virtual void setReserved(const std::string &name);
 
-        virtual void getMemberNames(std::vector<std::string> &nameVector);
-        virtual size_t getMemberCount();
+        virtual void getMemberNames(std::vector<std::string> &nameVector) const;
+        virtual size_t getMemberCount() const;
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+		virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
         virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -127,12 +151,12 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerMethod(const std::string& name, const CallMethodFunctor& func);
 
-        virtual bool HasMethod(const std::string& methodName);
-        virtual bool HasProperty(const std::string& propertyName);
-        virtual bool HasProperty(int idx);
+        virtual bool HasMethod(const std::string& methodName) const;
+		virtual bool HasMethodObject(const std::string& methodObjName) const;
+        virtual bool HasProperty(const std::string& propertyName) const;
+        virtual bool HasProperty(int idx) const;
 
-        bool isReserved( const std::string& propertyName );
-
+        bool isReserved( const std::string& propertyName ) const;
 
         virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
 
@@ -189,26 +213,28 @@ namespace FB {
 
         virtual FB::variant getAttribute(const std::string& name);
         virtual void setAttribute(const std::string& name, const FB::variant& value);
+
+	protected:
+		inline bool memberAccessible( ZoneMap::const_iterator it ) const;
+
     protected:
-        MethodFunctorMap m_methodFunctorMap;        // Stores the methods exposed to JS
-        PropertyFunctorsMap m_propertyFunctorsMap;  // Stores the properties exposed to JS
+		// Stores Method Objects -- JSAPI proxy objects for calling a method on this object
+		MethodObjectMap m_methodObjectMap;
+		// Stores the methods exposed to JS
+        MethodFunctorMap m_methodFunctorMap;
+		// Stores the properties exposed to JS
+        PropertyFunctorsMap m_propertyFunctorsMap;
+        // Keeps track of the security zone of each member
+        ZoneMap m_zoneMap;
         
         const std::string m_description;
-
-        struct Attribute {
-            bool operator<(const Attribute& rh) const
-            {
-                return value < rh.value;
-            }
-            FB::variant value;
-            bool readonly;
-        };
-        typedef std::map<std::string, Attribute> AttributeMap;
 
         AttributeMap m_attributes;
         FB::StringSet m_reservedMembers;
         bool m_allowDynamicAttributes;
+        bool m_allowMethodObjects;
     };
+
 };
 
 #endif // JSAPIAUTO_H

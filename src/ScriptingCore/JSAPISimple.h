@@ -36,8 +36,8 @@ namespace FB {
         virtual ~JSAPISimple(void);
 
     public:
-        void getMemberNames(std::vector<std::string> &nameVector);
-        size_t getMemberCount();
+        void getMemberNames(std::vector<std::string> &nameVector) const;
+        size_t getMemberCount() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerMethod(const std::string& name, CallMethodPtr func)
@@ -90,9 +90,9 @@ namespace FB {
         virtual void registerProperty(const std::string& name, GetPropPtr getFunc, SetPropPtr setFunc);
 
         // Methods to query existance of members on the API
-        virtual bool HasMethod(const std::string& methodName);
-        virtual bool HasProperty(const std::string& propertyName);
-        virtual bool HasProperty(int idx);
+        virtual bool HasMethod(const std::string& methodName) const;
+        virtual bool HasProperty(const std::string& propertyName) const;
+        virtual bool HasProperty(int idx) const;
 
         // Methods to manage properties on the API
         virtual variant GetProperty(const std::string& propertyName);
@@ -134,8 +134,7 @@ namespace FB {
         ///
         /// @brief  Returns true to indicate that the JSAPI interface is working
         ///
-        /// @return tru
-        ///         e 
+        /// @return true 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant getValid();
 

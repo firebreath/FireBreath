@@ -40,5 +40,7 @@ FB::variant FB::JSFunction::exec( const FB::CatchAll& args )
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
         throw new FB::script_error("Invalid JSAPI object");
+    // Force calls to use the default zone
+    FB::scoped_zonelock(api, api->getDefaultZone());
     return api->Invoke(m_methodName, args.value);
 }

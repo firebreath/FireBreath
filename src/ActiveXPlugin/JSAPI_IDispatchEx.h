@@ -370,7 +370,11 @@ HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFl
 
         } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasMethod(wsName)) {
 
-            FB::variant rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
+            FB::variant rVal;
+            if (m_api->HasMethodObject(wsName))
+                rVal = m_api->GetMethodObject(wsName);
+            else
+                rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
             m_host->getComVariant(pvarRes, rVal);
 
         } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(wsName)) {

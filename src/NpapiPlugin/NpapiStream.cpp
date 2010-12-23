@@ -19,7 +19,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiStream::NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHostPtr Host ) 
+NpapiStream::NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, const NpapiBrowserHostConstPtr& Host ) 
   : FB::BrowserStream( url, cache, seekable, internalBufferSize )
   /*, internalBuffer( internalBufferSize ) */
   , stream(0), host(Host), m_streamDestroyed(false), m_streamNotified(false)
@@ -138,7 +138,7 @@ NPStream* NpapiStream::getStream() const
     return stream;
 }
 
-NpapiBrowserHostPtr NpapiStream::getHost() const
+NpapiBrowserHostConstPtr NpapiStream::getHost() const
 {
     return host.lock();
 }

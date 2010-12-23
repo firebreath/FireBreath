@@ -29,7 +29,7 @@ namespace FB { namespace Npapi {
     class NpapiStream : public FB::BrowserStream
     {
     public:
-        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, NpapiBrowserHostPtr host );
+        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, const NpapiBrowserHostConstPtr &host );
         virtual ~NpapiStream();
         
         //virtual bool is_open();
@@ -49,11 +49,11 @@ namespace FB { namespace Npapi {
 
         virtual void        setStream(NPStream* stream);
         virtual NPStream*   getStream() const;
-        virtual NpapiBrowserHostPtr   getHost() const;
+        virtual NpapiBrowserHostConstPtr   getHost() const;
     private:
         //std::vector<char>     internalBuffer;
         NPStream*               stream;
-        NpapiBrowserHostWeakPtr       host;
+        NpapiBrowserHostWeakConstPtr       host;
         NpapiStreamPtr m_selfReference;
         bool m_streamDestroyed;
         bool m_streamNotified;

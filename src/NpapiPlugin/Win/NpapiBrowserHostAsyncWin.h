@@ -27,7 +27,7 @@ namespace FB { namespace Npapi
         NpapiBrowserHostAsyncWin(NpapiPluginModule *module, NPP npp);
         virtual ~NpapiBrowserHostAsyncWin();
 
-        virtual void ScheduleAsyncCall(void (*func)(void*), void* userData);
+        virtual void ScheduleAsyncCall(void (*func)(void*), void* userData) const;
         void setWindow(NPWindow* window);
 
     private:

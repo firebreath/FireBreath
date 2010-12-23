@@ -136,7 +136,11 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         std::string sName(m_browser->StringFromIdentifier(name));
         // We check for events of that name as well in order to allow setting of an event handler in the
         // old javascript style, i.e. plugin.onload = function() .....;
-        return !HasMethod(name) && (m_api->HasEvent(sName) || m_api->HasProperty(sName));
+
+        if (m_api->HasMethodObject(sName))
+            return true;
+        else
+            return !HasMethod(name) && (m_api->HasEvent(sName) || m_api->HasProperty(sName));
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -153,6 +157,8 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
                 FB::JSObjectPtr tmp(m_api->getDefaultEventMethod(sName));
                 if (tmp != NULL)
                     res = tmp;
+            } else if (m_api->HasMethodObject(sName)) {
+                res = m_api->GetMethodObject(sName);
             } else {
                 res = m_api->GetProperty(sName);
             }
@@ -182,6 +188,8 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
                     FB::JSObjectPtr tmp(arg.cast<FB::JSObjectPtr>());
                     m_api->setDefaultEventMethod(sName, tmp);
                 }
+            } else if (m_api->HasMethodObject(sName)) {
+                throw FB::script_error("This property cannot be changed");
             } else {
                 m_api->SetProperty(sName, arg);
             }

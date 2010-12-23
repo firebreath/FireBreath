@@ -60,8 +60,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~JSObject();
 
-        virtual void *getEventId() { return NULL; }
-        virtual void *getEventContext() { return NULL; }
+        virtual void *getEventId() const { return NULL; }
+        virtual void *getEventContext() const { return NULL; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
@@ -118,7 +118,7 @@ namespace FB
     
     public:
         /// @brief Get associated FB::JSAPI.
-        virtual JSAPIPtr getJSAPI() = 0;
+        virtual JSAPIPtr getJSAPI() const = 0;
 
     public:
         BrowserHostPtr host;
