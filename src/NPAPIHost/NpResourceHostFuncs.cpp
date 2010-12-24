@@ -66,7 +66,7 @@ NPObject* NP_LOADDS NpapiHost::NH_RetainObject(NPObject *obj)
 /* NPN_ReleaseObject */
 void NP_LOADDS NpapiHost::NH_ReleaseObject(NPObject *obj)
 {
-    if (--(obj->referenceCount) == 0) {
+    if (obj != NULL && --(obj->referenceCount) == 0) {
         if (obj->_class->deallocate) {
             obj->_class->deallocate(obj);
         } else {

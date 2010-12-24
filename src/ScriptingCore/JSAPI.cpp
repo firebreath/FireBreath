@@ -27,7 +27,7 @@ JSAPI::JSAPI(void) : m_valid(true)
     registerEvent("onload");
 }
 
-FB::JSAPI::JSAPI( const SecurityZone& securityLevel )
+FB::JSAPI::JSAPI( const SecurityZone& securityLevel ) : m_valid(true)
 {
     m_zoneStack.push_back(securityLevel);
     registerEvent("onload");
