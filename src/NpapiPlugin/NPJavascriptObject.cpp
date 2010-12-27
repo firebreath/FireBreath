@@ -95,8 +95,10 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
 {
     VOID_TO_NPVARIANT(*result);
     try {
-        std::string mName = m_browser->StringFromIdentifier(name);
-        printf("Invoking %s\n", mName.c_str()); 
+        std::string mName;
+        if (name != NULL) {
+            std::string mName = m_browser->StringFromIdentifier(name);
+        }
         std::vector<FB::variant> vArgs;
         for (unsigned int i = 0; i < argCount; i++) {
             vArgs.push_back(m_browser->getVariant(&args[i]));
