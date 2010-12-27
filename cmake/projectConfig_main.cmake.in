@@ -39,6 +39,7 @@ include_directories(
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     )
 
 # set up the mimetype strings
@@ -87,6 +88,7 @@ if (WIN32)
     set (PLUGIN_INTERNAL_DEPS
         ${PLUGIN_PREFIX}_ActiveXPlugin
         ${PLUGIN_INTERNAL_DEPS}
+        atlthunk.lib
         )
 
     file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}

@@ -34,6 +34,7 @@ include_directories(
     ${PLUGINCOMMON_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
     ${PLUGINWINDOW_SOURCE_DIR}
+    ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     )
 

@@ -25,14 +25,7 @@ set (SOURCES
     ${PLATFORM}
     )
 
-add_library(${PROJNAME} SHARED ${SOURCES})
-
-set_target_properties (${PROJNAME} PROPERTIES
-    OUTPUT_NAME np${PLUGIN_NAME}
-    PROJECT_LABEL ${PROJNAME}
-    RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-    )
+add_windows_plugin(${PROJNAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJNAME}

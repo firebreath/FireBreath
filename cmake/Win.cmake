@@ -12,6 +12,123 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
+# Find ATL stuff
+
+if (NOT $ENV{VS100COMNTOOLS} STREQUAL "")
+    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS100COMNTOOLS}/../../VC" REALPATH CACHE)
+elseif(NOT $ENV{VS90COMNTOOLS} STREQUAL "")
+    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS90COMNTOOLS}/../../VC" REALPATH CACHE)
+elseif(NOT $ENV{VS80COMNTOOLS} STREQUAL "")
+    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS80COMNTOOLS}/../../VC" REALPATH CACHE)
+endif()
+
+if (NOT ATL_INCLUDE_DIR)
+    set (DDK_SEARCH_PATHS 
+        "$ENV{SystemDrive}/WinDDK"
+        "$ENV{ProgramFiles}/WinDDK"
+        "$ENV{CommonProgramFiles}/WinDDK"
+        CACHE INTERNAL "DDK Search Paths")
+
+    set(ATL_GUESSES ".")
+    foreach (SEARCH_DIR ${DDK_SEARCH_PATHS})
+        if (EXISTS ${SEARCH_DIR})
+            file (GLOB DDK_DIRS
+                ${SEARCH_DIR}/*)
+            foreach(DDKDIR ${DDK_DIRS})
+                file(GLOB ATL_CUR
+                    ${DDKDIR}/inc/atl*)
+                SET(ATL_GUESSES ${ATL_GUESSES} ${ATL_CUR})
+            endforeach()
+        endif()
+    endforeach()
+
+    set(ATLLIB_GUESSES ".")
+    foreach (SEARCH_DIR ${DDK_SEARCH_PATHS})
+        if (EXISTS ${SEARCH_DIR})
+            file (GLOB DDK_DIRS
+                ${SEARCH_DIR}/*)
+            foreach(DDKDIR ${DDK_DIRS})
+                file(GLOB ATL_CUR
+                    ${DDKDIR}/lib/atl/i386)
+                SET(ATLLIB_GUESSES ${ATLLIB_GUESSES} ${ATL_CUR})
+            endforeach()
+        endif()
+    endforeach()
+
+    set(MFC_GUESSES ".")
+    foreach (SEARCH_DIR ${DDK_SEARCH_PATHS})
+        if (EXISTS ${SEARCH_DIR})
+            file (GLOB DDK_DIRS
+                ${SEARCH_DIR}/*)
+            foreach(DDKDIR ${DDK_DIRS})
+                file(GLOB MFC_CUR
+                    ${DDKDIR}/inc/mfc*)
+                SET(MFC_GUESSES ${MFC_GUESSES} ${MFC_CUR})
+            endforeach()
+        endif()
+    endforeach()
+
+    find_file(ATLWIN
+        atlwin.h
+    PATHS
+        ${VC_DIR}/atlmfc/include
+        ${ATL_GUESSES}
+    )
+
+    find_file(ATLLIB
+        atls.lib
+    PATHS
+        ${VC_DIR}/atlmfc/lib
+        ${ATLLIB_GUESSES}
+    )
+
+    find_file(MFCWIN
+        winres.h
+    PATHS
+        ${VC_DIR}/atlmfc/include
+        ${MFC_GUESSES}
+    )
+
+    if (ATLWIN AND ATLLIB)
+        GET_FILENAME_COMPONENT(ATL_INCLUDE_DIR ${ATLWIN} PATH CACHE)
+        GET_FILENAME_COMPONENT(ATL_LIBRARY_DIR ${ATLLIB} PATH CACHE)
+        message("-- Found ATL include dir: ${ATL_INCLUDE_DIR}")
+        message("-- Found ATL lib dir: ${ATL_LIBRARY_DIR}")
+    else()
+        message(FATAL_ERROR "FireBreath on windows requires ATL/MFC libs to be installed.  Please download the Microsoft DDK and install the build environments in $ENV{SystemDrive}\\WinDDK")
+    endif()
+    if (MFCWIN)
+        GET_FILENAME_COMPONENT(MFC_INCLUDE_DIR ${MFCWIN} PATH CACHE)
+        message("-- Found MFC include dir: ${MFC_INCLUDE_DIR}")
+    else()
+        message(FATAL_ERROR "FireBreath on windows requires ATL/MFC libs to be installed.  Please download the Microsoft DDK and install the build environments in $ENV{SystemDrive}\\WinDDK")
+    endif()
+
+endif()
+set(ATL_INCLUDE_DIRS
+    ${ATL_INCLUDE_DIR}
+    ${MFC_INCLUDE_DIR}
+    CACHE INTERNAL "ATL and MFC include dirs")
+
+
+MACRO(add_windows_plugin PROJNAME INSOURCES)
+    set(SOURCES
+        ${${INSOURCES}}
+    )
+
+    add_library(${PROJNAME} SHARED ${SOURCES})
+
+    set_target_properties (${PROJNAME} PROPERTIES
+        OUTPUT_NAME np${PLUGIN_NAME}
+        PROJECT_LABEL ${PROJNAME}
+        RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+        LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+        LINK_FLAGS "${LINK_FLAGS}"
+        )
+
+ENDMACRO(add_windows_plugin)
+
+
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
 	# WiX doesn't work with VC8 generated DLLs
     if (WIN32 AND WIX_FOUND AND NOT CMAKE_GENERATOR STREQUAL "Visual Studio 8 2005")

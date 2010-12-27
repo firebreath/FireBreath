@@ -37,6 +37,8 @@ if (WIN32)
 	set(CMAKE_SHARED_LINKER_FLAGS_RELEASE
 	    "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}    /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF")
 
+    set(LINK_FLAGS "/LIBPATH:\"${ATL_LIBRARY_DIR}\"")
+
 	if (WITH_DYNAMIC_MSVC_RUNTIME)
 	    message(STATUS "Building with dynamic MSVC runtime")
 	    foreach(flag_var

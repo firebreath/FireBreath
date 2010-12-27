@@ -30,6 +30,7 @@ include_directories(
 	${SCRIPTINGCORE_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
+    ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     ${GEN_DIR}/gen
     )
