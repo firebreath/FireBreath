@@ -15,13 +15,13 @@
 #include "JSFunction.h"
 
 FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func )
-    : m_apiWeak(obj), m_methodName(FB::wstring_to_utf8(func)), FB::JSAPIAuto(FB::wstring_to_utf8(func) + "()")
+    : FB::JSAPIAuto(FB::wstring_to_utf8(func) + "()"), m_apiWeak(obj), m_methodName(FB::wstring_to_utf8(func))
 {
     init();
 }
 
 FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func )
-    : m_apiWeak(obj), m_methodName(func), FB::JSAPIAuto(func + "()")
+    : FB::JSAPIAuto(func + "()"), m_apiWeak(obj), m_methodName(func)
 {
     init();
 }

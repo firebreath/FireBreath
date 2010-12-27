@@ -20,17 +20,18 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <cassert>
 
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
-  : m_description(description),
+  : FB::JSAPI(SecurityScope_Public),
+    m_description(description),
     m_allowDynamicAttributes(true), 
-    m_allowMethodObjects(true),
-    FB::JSAPI(SecurityScope_Public)
+    m_allowMethodObjects(true)
 {
 	init();
 }
 
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
-  : m_description(description),
-    m_allowDynamicAttributes(true), FB::JSAPI(securityLevel)
+  : FB::JSAPI(securityLevel),
+    m_description(description),
+    m_allowDynamicAttributes(true)
 {
 	init();
 }

@@ -31,8 +31,8 @@ namespace FB {
         variant exec(const FB::CatchAll& args);
 
     protected:
-        const std::string m_methodName;
         const FB::JSAPIWeakPtr m_apiWeak;
+        const std::string m_methodName;
     };
 };
     

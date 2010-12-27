@@ -71,7 +71,7 @@ FB::JSAPIProxy::JSAPIProxy( const FB::JSAPIWeakPtr &inner )
 }
 
 FB::JSAPIProxy::JSAPIProxy( const SecurityZone& securityLevel, const FB::JSAPIPtr &inner )
-    : m_api(inner), m_apiWeak(inner), FB::JSAPI(securityLevel)
+    : FB::JSAPI(securityLevel), m_api(inner), m_apiWeak(inner)
 {
     if (!inner) {
         throw FB::script_error("Invalid inner JSAPI object passed to proxy");
@@ -79,7 +79,7 @@ FB::JSAPIProxy::JSAPIProxy( const SecurityZone& securityLevel, const FB::JSAPIPt
 }
 
 FB::JSAPIProxy::JSAPIProxy( const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner )
-    : m_apiWeak(inner), FB::JSAPI(securityLevel)
+    : FB::JSAPI(securityLevel), m_apiWeak(inner)
 {
 
 }

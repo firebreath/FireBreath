@@ -49,6 +49,8 @@ namespace FB { namespace Npapi {
     protected:
         NpapiBrowserHostPtr browser;
         NPObject *obj;
+        bool is_JSAPI;
+        FB::JSAPIWeakPtr inner;
 
     public:
         bool HasMethod(const std::string& methodName) const;

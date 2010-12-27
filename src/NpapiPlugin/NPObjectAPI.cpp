@@ -24,11 +24,18 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
-    : JSObject(h), browser(h), obj(o)
+    : JSObject(h), browser(h), obj(o), is_JSAPI(false)
 {
     assert(browser);
     if (o != NULL) {
         browser->RetainObject(obj);
+    }
+	if (NPJavascriptObject::isNPJavaScriptObject(obj)) {
+		NPJavascriptObject* tmp = static_cast<NPJavascriptObject*>(obj);
+        // This is a JSAPI object in disguise... some browsers will freak if
+        // an exception is thrown when calling a plugin object through the browser.
+        inner = tmp->getAPI();
+        is_JSAPI = true;
     }
 }
 
@@ -52,6 +59,12 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
         host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
+    if (is_JSAPI) {
+		FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+			tmp->getMemberNames(nameVector);
+        return;
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
 
@@ -67,6 +80,13 @@ size_t NPObjectAPI::getMemberCount() const
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberCount, this));
     }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->getMemberCount();
+        else 
+            return 0;
+    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
     browser->Enumerate(obj, &idArray, &count);
@@ -80,6 +100,13 @@ bool NPObjectAPI::HasMethod(const std::string& methodName) const
         typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
     }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasMethod(methodName);
+        else 
+            return false;
+    }
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
@@ -89,16 +116,37 @@ bool NPObjectAPI::HasProperty(const std::string& propertyName) const
         typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
     }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasProperty(propertyName);
+        else 
+            return false;
+    }
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
 
 bool NPObjectAPI::HasProperty(int idx) const
 {
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasProperty(idx);
+        else 
+            return false;
+    }
     return browser->HasProperty(obj, browser->GetIntIdentifier(idx));
 }
 
 bool NPObjectAPI::HasEvent(const std::string& eventName) const
 {
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasEvent(eventName);
+        else 
+            return false;
+    }
     return false;
 }
 
@@ -108,6 +156,13 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->GetProperty(propertyName);
+        else 
+            return false;
     }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
@@ -123,6 +178,12 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 {
     if (!host->isMainThread()) {
         host->CallOnMainThread(boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+        return;
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            SetProperty(propertyName, value);
         return;
     }
     NPVariant val;
@@ -141,6 +202,11 @@ FB::variant NPObjectAPI::GetProperty(int idx)
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
     std::string strIdx(boost::lexical_cast<std::string>(idx));
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            SetProperty(idx, value);
+    }
     SetProperty(strIdx, value);
 }
 
@@ -149,6 +215,13 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->Invoke(methodName, args);
+        else 
+            return false;
     }
     NPVariant retVal;
 
