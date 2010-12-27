@@ -53,7 +53,7 @@ void FB::Log::initLogging()
 
     // For now we just always add this; it prevents errors. 
     // TODO: Make this more conditional on something intelligent
-    log4cplus::NullAppenderPtr nullAppender(new log4cplus::NullAppender());
+    log4cplus::SharedAppenderPtr nullAppender(new log4cplus::NullAppender());
     std::auto_ptr<log4cplus::Layout> layout3(new log4cplus::TTCCLayout());
     nullAppender->setLayout(layout3);
     logger.addAppender(nullAppender);
