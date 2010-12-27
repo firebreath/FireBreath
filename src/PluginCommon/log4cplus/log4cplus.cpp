@@ -22,6 +22,7 @@ Copyright 2010 Facebook, Inc
 #include "log4cplus/ndc.h"
 #include "log4cplus/fileappender.h"
 #include "log4cplus/win32debugappender.h"
+#include "log4cplus/nullappender.h"
 
 #include "../logging.h"
 #include "utf8_tools.h"
