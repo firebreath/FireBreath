@@ -33,6 +33,12 @@ WindowPtr Document::getWindow()
     return Window::create(api);
 }
 
+ElementPtr Document::getBody()
+{
+	JSObjectPtr api = getProperty<FB::JSObjectPtr>("body");
+	return Element::create(api);
+}
+
 ElementPtr Document::getElementById(const std::string& id)
 {
     JSObjectPtr api =

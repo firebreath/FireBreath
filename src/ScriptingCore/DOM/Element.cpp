@@ -42,6 +42,11 @@ void Element::setWidth(int width)
     setProperty("width", width);
 }
 
+int Element::getScrollWidth()
+{
+	return getProperty<int>("scrollWidth");
+}
+
 int Element::getHeight()
 {
     return getProperty<int>("height");
@@ -49,6 +54,11 @@ int Element::getHeight()
 void Element::setHeight(int height)
 {
     setProperty("height", height);
+}
+
+int Element::getScrollHeight()
+{
+	return getProperty<int>("scrollHeight");
 }
 
 int Element::getChildNodeCount()

@@ -75,6 +75,15 @@ namespace FB { namespace DOM {
         virtual WindowPtr getWindow();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual ElementPtr Document::getBody()
+        ///
+        /// @brief  Gets a DOM::ElementPtr for the document's body.
+        ///
+        /// @return The document's body.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual ElementPtr getBody();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::getElementById(const std::string& elem_id)
         ///
         /// @brief  Gets an element from the DOM with the specified id
