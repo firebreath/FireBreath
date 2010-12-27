@@ -138,6 +138,7 @@ public:
     // Often (always?) this is only called if there are no items in the property bag
     STDMETHOD(InitNew)()
     {
+        setReady();
         return S_OK;
     }
     
@@ -155,13 +156,19 @@ public:
             }
         }
         pluginMain->setParams(paramMap);
-        this->setAPI(pluginMain->getRootJSAPI(), m_host);
 
+        setReady();
+        return S_OK;
+    }
+
+    void setReady()
+    {
         // This is when we can consider the plugin "ready".  The window may or may not (likely not)
-		// be around yet!
+        // be around yet!
+        pluginMain->setParams(FB::VariantMap());
+        this->setAPI(pluginMain->getRootJSAPI(), m_host);
         setReadyState(READYSTATE_COMPLETE);
         pluginMain->setReady();
-        return S_OK;
     }
 
     // Now the window has been created and we're going to call setReady on the PluginCore object
