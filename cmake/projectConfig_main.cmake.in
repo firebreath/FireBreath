@@ -88,7 +88,7 @@ if (WIN32)
     set (PLUGIN_INTERNAL_DEPS
         ${PLUGIN_PREFIX}_ActiveXPlugin
         ${PLUGIN_INTERNAL_DEPS}
-        atlthunk.lib
+        ${ATL_LIBRARY}
         )
 
     file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}

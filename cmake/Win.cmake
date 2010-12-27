@@ -92,6 +92,15 @@ if (NOT ATL_INCLUDE_DIR)
     if (ATLWIN AND ATLLIB)
         GET_FILENAME_COMPONENT(ATL_INCLUDE_DIR ${ATLWIN} PATH CACHE)
         GET_FILENAME_COMPONENT(ATL_LIBRARY_DIR ${ATLLIB} PATH CACHE)
+        find_file(ATL_LIBRARY
+            atlthunk.lib
+        PATHS
+            ${ATL_LIBRARY_DIR})
+        if (ATL_LIBRARY)
+            set (ATL_LIBRARY "atlthunk.lib")
+        else()
+            unset(ATL_LIBRARY)
+        endif()
         message("-- Found ATL include dir: ${ATL_INCLUDE_DIR}")
         message("-- Found ATL lib dir: ${ATL_LIBRARY_DIR}")
     else()
