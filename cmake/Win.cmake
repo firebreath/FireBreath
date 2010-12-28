@@ -14,14 +14,19 @@
 
 # Find ATL stuff
 
-if (NOT $ENV{VS100COMNTOOLS} STREQUAL "")
-    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS100COMNTOOLS}/../../VC" REALPATH CACHE)
-elseif(NOT $ENV{VS90COMNTOOLS} STREQUAL "")
-    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS90COMNTOOLS}/../../VC" REALPATH CACHE)
-elseif(NOT $ENV{VS80COMNTOOLS} STREQUAL "")
-    GET_FILENAME_COMPONENT(VC_DIR "$ENV{VS80COMNTOOLS}/../../VC" REALPATH CACHE)
+if (NOT VC_DIR)
+    if (MSVC10)
+        GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\10.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
+    elseif (MSVC90)
+        GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\9.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
+    elseif (MSVC80)
+        GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\8.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
+    else()
+        message("!! Could not find VS DIR!")
+    endif()
+    set(VC_DIR ${VS_DIR}/VC CACHE STRING "Visual Studio VC directory path")
+    message("-- Visual Studio dir: ${VS_DIR}")
 endif()
-
 if (NOT ATL_INCLUDE_DIR)
     set (DDK_SEARCH_PATHS 
         "$ENV{SystemDrive}/WinDDK"
@@ -99,7 +104,7 @@ if (NOT ATL_INCLUDE_DIR)
         if (ATL_LIBRARY)
             set (ATL_LIBRARY "atlthunk.lib")
         else()
-            unset(ATL_LIBRARY)
+            set(ATL_LIBRARY "")
         endif()
         message("-- Found ATL include dir: ${ATL_INCLUDE_DIR}")
         message("-- Found ATL lib dir: ${ATL_LIBRARY_DIR}")
