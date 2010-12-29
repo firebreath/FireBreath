@@ -61,7 +61,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
     try {
         std::string mName = m_browser->StringFromIdentifier(name);
 
-        if (mName == "addEventListener" || mName == "removeEventListener") {
+        if (mName == "addEventListener" || mName == "removeEventListener" || mName == "toString") {
             return true;
         } else {
             return !m_api->HasMethodObject(mName) && m_api->HasMethod(mName);
@@ -97,7 +97,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
     try {
         std::string mName;
         if (name != NULL) {
-            std::string mName = m_browser->StringFromIdentifier(name);
+            mName = m_browser->StringFromIdentifier(name);
         }
         std::vector<FB::variant> vArgs;
         for (unsigned int i = 0; i < argCount; i++) {
@@ -139,7 +139,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         // We check for events of that name as well in order to allow setting of an event handler in the
         // old javascript style, i.e. plugin.onload = function() .....;
 
-        if (m_api->HasMethodObject(sName))
+        if (sName != "toString" && m_api->HasMethodObject(sName))
             return true;
         else
             return !HasMethod(name) && (m_api->HasEvent(sName) || m_api->HasProperty(sName));
