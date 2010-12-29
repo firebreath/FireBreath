@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FactoryBase.h"
 #include "PluginCore.h"
 #include "BrowserHost.h"
-#include "config.h"
 
 using namespace FB::Npapi;
 
@@ -26,7 +25,10 @@ NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mim
       m_obj(NULL),
       m_npHost(host),
       m_retainReturnedNPObject(true),
-      m_isReady(false)
+      m_isReady(false),
+      m_mimetype(mimetype),
+      m_pluginName(getFactoryInstance()->getPluginName(mimetype)),
+      m_pluginDesc(getFactoryInstance()->getPluginDescription(mimetype))
 {
     pluginMain->SetHost(ptr_cast<BrowserHost>(host));
 }
@@ -113,12 +115,13 @@ value parameters, to the plug-in.
 */
 NPError NpapiPlugin::GetValue(NPPVariable variable, void *value)
 {
+
     switch (variable) {
     case NPPVpluginNameString:
-        *((const char **)value) = FBSTRING_PluginName;
+        *((const char **)value) = m_pluginName.c_str();
         break;
     case NPPVpluginDescriptionString:
-        *((const char **)value) = FBSTRING_FileDescription;
+        *((const char **)value) = m_pluginDesc.c_str();
         break;
     case NPPVpluginScriptableNPObject:
         *(NPObject **)value = getScriptableObject();

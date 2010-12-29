@@ -81,14 +81,14 @@ FB::OneShotManager::~OneShotManager()
     [getHelper(this) disconnect];
 }
 
-void FB::OneShotManager::push(NPP npp, OneShotCallback sink)
+void FB::OneShotManager::push(void* npp, OneShotCallback sink)
 {
 	boost::mutex::scoped_lock lock(m_mutex);
     m_sinks.push(std::make_pair(npp, sink));
     [getHelper(this) performSelectorOnMainThread:@selector(doStuff:) withObject:nil waitUntilDone:NO];
 }
 
-void FB::OneShotManager::clear(NPP npp)
+void FB::OneShotManager::clear(void* npp)
 {
 	// This and push must never be called at the same time; thus, the mutex prevents that
 	// from happening.

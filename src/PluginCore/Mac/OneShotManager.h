@@ -21,7 +21,6 @@
 #include <boost/utility.hpp>
 
 #include "APITypes.h"
-#include "NpapiTypes.h"
 #include "SafeQueue.h"
 
 
@@ -32,10 +31,10 @@ namespace FB
     public:
         ~OneShotManager();
         
-        typedef void (*OneShotCallback)(NPP, uint32_t);
+        typedef void (*OneShotCallback)(void*, uint32_t);
         
-        void push(NPP, OneShotCallback);
-        void clear(NPP);
+        void push(void*, OneShotCallback);
+        void clear(void*);
         
         void shoot();
         
@@ -44,7 +43,7 @@ namespace FB
     private:
         OneShotManager();
         
-        typedef std::pair<NPP, OneShotCallback> SinkPair;
+        typedef std::pair<void*, OneShotCallback> SinkPair;
         typedef FB::SafeQueue<SinkPair> SinkQueue;
         SinkQueue m_sinks;
         mutable boost::mutex m_mutex;

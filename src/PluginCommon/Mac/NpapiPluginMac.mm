@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "NpapiBrowserHost.h"
 #include "PluginCore.h"
-#include "config.h"
+#include "global/config.h"
 
 #if FBMAC_USE_COREANIMATION
 #include <QuartzCore/CoreAnimation.h>

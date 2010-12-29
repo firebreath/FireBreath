@@ -29,7 +29,6 @@ set(MOZILLA_PLUGINID "@firebreath.googlecode.com/FBTestPlugin")
 
 # strings
 set(FBSTRING_CompanyName "Firebreath Dev Team")
-set(FBSTRING_FileDescription "Firebreath Test Plugin - Plugin for testing all interfaces and features")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2009 Firebreath Dev Team")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
@@ -50,6 +49,10 @@ set(FBControl_GUID
     9E506282-69D3-5ABA-9C1D-15994B37F4AD
     )
 set(FBSTRING_FileExtents "")
+set(FBSTRING_FileDescription
+    "Firebreath Test Plugin - Plugin for testing all interfaces and features"
+    "Firebreath Test Plugin Secondary - Helper for testing all interfaces and features"
+    )
 
 
 

@@ -15,7 +15,7 @@
 // Depending on the plugin config, only a part of the mac window classes are actually built.
 // This file takes care of the linking errors.
 
-#include "config.h"
+#include "global/config.h"
 #include "ConstructDefaultPluginWindows.h"
 
 #if !FBMAC_USE_CARBON || !FBMAC_USE_QUICKDRAW

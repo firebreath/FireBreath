@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #ifndef H_FB_NPAPI_NPAPIPLUGINWIN
 #define H_FB_NPAPI_NPAPIPLUGINWIN
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include "NpapiPlugin.h"
 
 namespace FB { 

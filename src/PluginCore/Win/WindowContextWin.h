@@ -14,23 +14,27 @@
  */
 
 #pragma once
-#ifndef H_FB_WINDOWCONTEXTX11
-#define H_FB_WINDOWCONTEXTX11
+#ifndef H_FB_WINDOWCONTEXTWIN
+#define H_FB_WINDOWCONTEXTWIN
 
-#include "config.h"
-#include "NpapiTypes.h"
-
-#if FB_GUI_DISABLED == 1
-typedef long int GdkNativeWindow;
-#endif
+#include "win_common.h"
+#include "global/config.h"
 
 namespace FB
 {
-    struct WindowContextX11
+    struct WindowContextWin
     {
-        GdkNativeWindow window;
-        WindowContextX11(GdkNativeWindow window) 
-          : window(window)
+        HWND handle;
+        WindowContextWin(HWND handle) 
+          : handle(handle)
+        {}
+    };
+    
+    struct WindowContextWindowless
+    {
+        HDC drawable;
+        WindowContextWindowless(HDC drawable) 
+          : drawable(drawable)
         {}
     };
 }

@@ -53,6 +53,9 @@ namespace FB {
         NpapiBrowserHostPtr m_npHost;
         bool m_retainReturnedNPObject;
         bool m_isReady;
+        std::string m_mimetype;
+        std::string m_pluginName;
+        std::string m_pluginDesc;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn NPObject * FB::Npapi::NpapiPlugin::getScriptableObject()

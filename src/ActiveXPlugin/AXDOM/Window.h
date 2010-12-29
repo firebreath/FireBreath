@@ -16,7 +16,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #ifndef H_AXDOM_WINDOW
 #define H_AXDOM_WINDOW
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include <atlctl.h>
 #include <string>
 #include <boost/shared_ptr.hpp>

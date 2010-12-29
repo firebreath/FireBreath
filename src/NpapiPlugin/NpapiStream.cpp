@@ -14,7 +14,6 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "NpapiPlugin.h"
 #include "NpapiStream.h"
-#include "config.h"
 #undef min
 
 using namespace FB::Npapi;

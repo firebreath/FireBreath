@@ -20,8 +20,8 @@
 
 namespace FB
 {   
-    std::string getPluginName();
-    std::string getPluginDescription();
+    std::string getPluginName(const std::string& mimetype);
+    std::string getPluginDescription(const std::string& mimetype);
 }
 
 #endif

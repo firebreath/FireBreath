@@ -24,8 +24,6 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "FBTestPluginAPI.h"
 
 #include <boost/make_shared.hpp>
-#include "NPJavascriptObject.h"
-#include "NPObjectAPI.h"
 
 FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {    

@@ -14,29 +14,34 @@
  */
 
 #pragma once
-#ifndef H_FB_WINDOWCONTEXTWIN
-#define H_FB_WINDOWCONTEXTWIN
+#ifndef H_FB_WINDOWCONTEXTMAC
+#define H_FB_WINDOWCONTEXTMAC
 
-#include "config.h"
+#include "global/config.h"
 #include "NpapiTypes.h"
 
 namespace FB
 {
-    struct WindowContextWin
+#if FBMAC_USE_QUICKDRAW
+    struct WindowContextQuickDraw
     {
-        HWND handle;
-        WindowContextWin(HWND handle) 
-          : handle(handle)
+        CGrafPtr port;
+        int x, y;
+        WindowContextQuickDraw(CGrafPtr port, int x, int y) 
+          : port(port), x(x), y(y) 
         {}
     };
+#endif
     
-    struct WindowContextWindowless
+#if FBMAC_USE_COREGRAPHICS
+    struct WindowContextCoreGraphics
     {
-        HDC drawable;
-        WindowContextWindowless(HDC drawable) 
-          : drawable(drawable)
+        NP_CGContext* context;
+        WindowContextCoreGraphics(NP_CGContext* context) 
+          : context(context)
         {}
     };
+#endif
 }
 
 #endif

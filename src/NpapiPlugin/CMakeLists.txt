@@ -17,9 +17,8 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/common.cmake)
-include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
-set (PROJNAME ${PLUGIN_PREFIX}_NpapiPlugin)
+set (PROJNAME NpapiPlugin)
 Project (${PROJNAME})
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
@@ -29,11 +28,10 @@ include_directories(
     ${GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${GEN_DIR}/gen
+    ${CONFIG_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCOMMON_SOURCE_DIR}
+    ${PLUGINCORE_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
-    ${PLUGINWINDOW_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     )

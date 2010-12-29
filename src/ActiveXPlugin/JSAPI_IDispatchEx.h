@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include "JSAPI.h"
 #include "TypeIDMap.h"
-#include "COM_config.h"
+#include "global/COM_config.h"
 #include "utf8_tools.h"
 #include "JSFunction.h"
 

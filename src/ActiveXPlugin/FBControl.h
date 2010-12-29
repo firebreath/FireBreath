@@ -17,10 +17,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FBCONTROL
 #define H_FBCONTROL
 
-#include "resource.h"       // main symbols
-#include "Win/win_common.h"
-#include "COM_config.h"
-#include "config.h"
+#include "global/resource.h"       // main symbols
+#include "win_common.h"
+#include "global/COM_config.h"
+#include "global/config.h"
 #include <atlctl.h>
 #include <ShlGuid.h>
 #include "FireBreathWin_i.h"
@@ -28,6 +28,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
+#include "Win/WinMessageWindow.h"
 
 #include "BrowserPlugin.h"
 #include "PluginCore.h"
@@ -71,8 +72,8 @@ class ATL_NO_VTABLE CFBControl :
 {
 public:
     typedef CFBControl<pFbCLSID, pMT> CFBControlX;
-    HWND m_messageWin;
 
+protected:
     FB::PluginWindowWin *pluginWin;
     CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
     CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
@@ -81,8 +82,8 @@ public:
 
     ActiveXBrowserHostPtr m_host;
 
-private:
-    static int _REFCOUNT; // This must only be accessed from the main thread
+protected:
+    boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;
 
 public:
     // The methods in this class are positioned in this file in the
@@ -100,10 +101,6 @@ public:
 
     ~CFBControl()
     {
-        if (--_REFCOUNT == 0) {
-        }
-        if (m_messageWin)
-            ::DestroyWindow(m_messageWin);
     }
 
     // Note that the window has not been created yet; this is where we get
@@ -126,8 +123,8 @@ public:
         }
 
         m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
-        m_messageWin = FB::PluginWindowWin::createMessageWindow();
-        m_host->setWindow(m_messageWin);
+        m_messageWin.swap(boost::scoped_ptr<FB::WinMessageWindow>(new FB::WinMessageWindow()));
+        m_host->setWindow(m_messageWin->getHWND());
         pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
 
         return S_OK;
@@ -269,9 +266,6 @@ END_COM_MAP()
 };
 
 template <const GUID* pFbCLSID, const char* pMT>
-int CFBControl<pFbCLSID, pMT>::_REFCOUNT(0); // This must only be accessed from the main thread
-
-template <const GUID* pFbCLSID, const char* pMT>
 BOOL CFBControl<pFbCLSID, pMT>::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult, DWORD dwMsgMapID)
 {
     BOOL bHandled = FALSE;
@@ -309,6 +303,6 @@ BOOL CFBControl<pFbCLSID, pMT>::ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARA
 }
 
 // This includes an auto-generated file that sets up the plugin with mimetypes
-#include "axplugin_defs.h"
+#include "global/axplugin_defs.h"
 
 #endif

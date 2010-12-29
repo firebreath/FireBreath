@@ -34,31 +34,38 @@ include_directories(
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
-    ${PLUGINWINDOW_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
+    ${CONFIG_DIR}
     )
 
 # set up the mimetype strings
 string(REPLACE ";" "\\|" FBMIMETYPE_LIST ${FBSTRING_MIMEType})
 
+
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
+    get_filename_component(CUREXT ${TemplateFile} EXT)
+    if (CUREXT STREQUAL ".h" OR CUREXT STREQUAL ".hpp" OR CUREXT STREQUAL ".inc")
+        set (CUR_DEST ${TEMPLATE_DEST_DIR}/global)
+    else()
+        set (CUR_DEST ${TEMPLATE_DEST_DIR})
+    endif()
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE})
         if (VERBOSE)
             message("Configuring ${CURFILE} from project source dir")
         endif()
-        configure_template(${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+        configure_template(${CMAKE_CURRENT_SOURCE_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
     else()
         if (VERBOSE)
             message("Configuring ${CURFILE}")
         endif()
-        configure_template(${TEMPLATE_DIR}/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+        configure_template(${TEMPLATE_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
     endif()
 endforeach()
 
@@ -75,11 +82,10 @@ endforeach()
 set(PLUGIN_INTERNAL_DEPS
     ${Boost_LIBRARIES}
     PluginCore
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ${PLUGIN_PREFIX}_PluginWindow
+    ${PLUGIN_PREFIX}_PluginCommon
+    NpapiPlugin
     PluginCore
     ScriptingCore
-    ${PLUGIN_PREFIX}_PluginCommon
     ${Boost_LIBRARIES}
     ${FBLIB_LIBRARIES}
     )

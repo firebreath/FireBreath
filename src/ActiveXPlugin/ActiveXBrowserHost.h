@@ -16,8 +16,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_ACTIVEXBROWSERHOST
 #define H_ACTIVEXBROWSERHOST
 
-#include "Win/win_common.h"
-#include "COM_config.h"
+#include "win_common.h"
+#include "global/COM_config.h"
 #include <atlctl.h>
 #include "BrowserHost.h"
 #include "APITypes.h"

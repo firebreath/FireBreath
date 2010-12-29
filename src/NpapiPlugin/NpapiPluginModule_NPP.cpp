@@ -13,7 +13,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <cstdio>
-#include "config.h"
 #include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
 #include "FactoryBase.h"
@@ -110,10 +109,10 @@ namespace
         return instance != NULL && instance->pdata != NULL;
     }
     
-    void asyncCallbackFunction(NPP npp, uint32_t timerID)
+    void asyncCallbackFunction(void* npp, uint32_t timerID)
     {
         boost::shared_ptr<FB::AsyncFunctionCall> evt;
-        NpapiPDataHolder *holder = getHolder(npp);
+        NpapiPDataHolder *holder = getHolder(static_cast<NPP>(npp));
         while (holder->asyncFunctionQueue.try_pop(evt)) {
             evt->func(evt->userData);
         }
@@ -213,17 +212,6 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
 {
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
-    }
-
-    if(asyncCallsWorkaround(instance)) {
-        NpapiBrowserHostPtr host = getHost(instance);
-        if(host) {
-#ifdef _WINDOWS_
-            boost::shared_ptr<NpapiBrowserHostAsyncWin> hostWin = boost::dynamic_pointer_cast<NpapiBrowserHostAsyncWin>(host);
-            if(hostWin)
-                hostWin->setWindow(window);
-#endif
-        }
     }
 
 #if FB_GUI_DISABLED != 1
@@ -338,20 +326,7 @@ void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason re
 
 NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
-    /* Some values are not dependent on having a valid plugin instance */
-    switch(variable) {
-        case NPPVpluginNameString:
-            *((const char **)value) = FBSTRING_PluginName;
-            return NPERR_NO_ERROR;
-            break;
-        case NPPVpluginDescriptionString:
-            *((const char **)value) = FBSTRING_FileDescription;
-            return NPERR_NO_ERROR;
-            break;
-        default:
-            break;
-    }
-
+    // These values may depend on the mimetype of the plugin
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

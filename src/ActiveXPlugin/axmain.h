@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "FireBreathWin_i.h"
 #include "TypeIDMap.h"
-#include "resource.h"
+#include "global/resource.h"
 
 class CFireBreathWinModule : public CAtlDllModuleT< CFireBreathWinModule >
 {

@@ -8,8 +8,8 @@
 // dllmain.cpp : Implementation of DllMain.
 
 #include <boost/scoped_array.hpp>
-#include "Win/win_common.h"
-#include "resource.h"
+#include "win_common.h"
+#include "global/resource.h"
 #include "axmain.h"
 #include "axutil.h"
 

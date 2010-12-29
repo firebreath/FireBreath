@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_AXUTIL
 #define H_AXUTIL
 
-#include "Win/win_common.h"
+#include "win_common.h"
 
 class FbPerUserRegistration
 {

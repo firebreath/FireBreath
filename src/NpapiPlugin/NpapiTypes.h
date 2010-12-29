@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_NPAPITYPES
 
 #ifdef _WINDOWS
-#include "Win/win_common.h"
+#include "win_common.h"
 #endif
 
 #include "nptypes.h"

@@ -39,12 +39,22 @@ void FB::FactoryBase::globalPluginDeinitialize()
 
 std::string FB::FactoryBase::getPluginName()
 {
-    return FB::getPluginName();
+    return FB::getPluginName("");
+}
+
+std::string FB::FactoryBase::getPluginName( const std::string& mimetype )
+{
+    return FB::getPluginName(mimetype);
 }
 
 std::string FB::FactoryBase::getPluginDescription()
 {
-    return FB::getPluginDescription();
+    return FB::getPluginDescription("");
+}
+
+std::string FB::FactoryBase::getPluginDescription( const std::string& mimetype )
+{
+    return FB::getPluginDescription(mimetype);
 }
 
 FB::Npapi::NpapiPluginPtr FB::FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)

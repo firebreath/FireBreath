@@ -57,23 +57,13 @@ set (SOURCES
 
 add_executable(${PROJNAME} ${SOURCES})
 
-add_dependencies(${PROJNAME}
-    ${PLUGIN_PREFIX}_ActiveXPlugin
-    ScriptingCore
-    PluginCore
-    UnitTest++
-    ${PLUGIN_PREFIX}_PluginWindow
-    ${PLUGIN_PREFIX}_PluginCommon
-    )
-
 target_link_libraries (${PROJNAME}
     ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
+    NpapiPlugin
     PluginCore
     UnitTest++
-    ${PLUGIN_PREFIX}_PluginWindow
     ${PLUGIN_PREFIX}_PluginCommon
-    ${PLUGIN_PREFIX}_NpapiPlugin
     )
 
 set_target_properties(${PROJNAME} PROPERTIES

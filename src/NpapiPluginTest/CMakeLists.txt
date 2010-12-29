@@ -19,9 +19,8 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 #set (FB_GUI_DISABLED 1)
 
 include(${CMAKE_DIR}/common.cmake)
-include(${CMAKE_CURRENT_BINARY_DIR}/../PluginConfig.cmake)
 
-set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_NpapiPlugin)
+set (PROJNAME UnitTest_NpapiPlugin)
 Project (${PROJNAME})
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
@@ -33,10 +32,11 @@ include_directories(
     ${NPAPIPLUGIN_SOURCE_DIR}
     ${NPAPIHOST_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
+    ${PLUGINCORE_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
-    ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     ${UNITTEST_FW_SOURCE_DIR}/src
+    ${CONFIG_DIR}
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -50,16 +50,6 @@ set (SOURCES
     )
 
 add_executable(${PROJNAME} ${SOURCES})
-
-add_dependencies(${PROJNAME}
-    ScriptingCore
-    PluginCore
-    NPAPIHost
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ${PLUGIN_PREFIX}_PluginWindow
-    ${PLUGIN_PREFIX}_PluginCommon
-    UnitTest++
-    )
 
 if (APPLE)
     if (FBMAC_USE_CARBON)
@@ -88,13 +78,9 @@ endif (APPLE)
 target_link_libraries (${PROJNAME}
     ${Boost_LIBRARIES}
     PluginCore
-    ${PLUGIN_PREFIX}_NpapiPlugin
-    ${PLUGIN_PREFIX}_PluginWindow
-    PluginCore
+    NpapiPlugin
     ScriptingCore
-    ${PLUGIN_PREFIX}_PluginCommon
     NPAPIHost
     UnitTest++
-    PluginCore
     ${OTHER_NPAPITEST_LIBS}
     )

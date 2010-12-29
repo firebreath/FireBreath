@@ -15,13 +15,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_PLUGINWINDOWWIN
 #define H_PLUGINWINDOWWIN
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include "PluginWindow.h"
-#include "WindowContextWin.h"
+#include "Win/WindowContextWin.h"
 
 #include <map>
 
-#define WM_ASYNCTHREADINVOKE    WM_USER + 1
+typedef struct _NPEvent NPEvent;
 
 namespace FB {
 
@@ -72,15 +72,6 @@ namespace FB {
         // Windowed plugins get OS events directly through their window
         int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static HWND PluginWindowWin::createMessageWindow()
-        ///
-        /// @brief  Creates a message window. Don't touch this if you don't understand what you are doing
-        ///
-        /// @return The handle of the window. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HWND createMessageWindow();
 
     protected:
         static PluginWindowMap m_windowMap;

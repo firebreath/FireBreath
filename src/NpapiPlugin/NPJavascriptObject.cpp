@@ -64,7 +64,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
         if (mName == "addEventListener" || mName == "removeEventListener") {
             return true;
         } else {
-            return m_api->HasMethod(mName);
+            return !m_api->HasMethodObject(mName) && m_api->HasMethod(mName);
         }
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());

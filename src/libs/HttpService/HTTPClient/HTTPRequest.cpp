@@ -13,7 +13,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
 #ifdef _WIN32
-#include "Win/targetver.h"
+#include "win_targetver.h"
 #include "../Platform/windows_defs.h"
 #endif
 

@@ -13,7 +13,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 \**********************************************************/
 
 #ifdef _WIN32
-#include "Win/targetver.h"
+#include "win_targetver.h"
 #endif
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>

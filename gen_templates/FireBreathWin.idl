@@ -10,7 +10,7 @@
 // This file will be processed by the MIDL tool to
 // produce the type library (FireBreathWin.tlb) and marshalling code.
 
-#include "COM_config.h"
+#include "global/COM_config.h"
 #include "olectl.h"
 import "oaidl.idl";
 import "ocidl.idl";

@@ -17,21 +17,23 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #ifndef H_NPAPIBROWSERHOSTASYNCWIN
 #define H_NPAPIBROWSERHOSTASYNCWIN
 
-#include "../NpapiBrowserHost.h"
+#include "NpapiBrowserHost.h"
+#include <boost/scoped_ptr.hpp>
 
-namespace FB { namespace Npapi 
-{
-    class NpapiBrowserHostAsyncWin : public NpapiBrowserHost
-    {
-    public:
-        NpapiBrowserHostAsyncWin(NpapiPluginModule *module, NPP npp);
-        virtual ~NpapiBrowserHostAsyncWin();
+namespace FB { 
+    class WinMessageWindow;
+    namespace Npapi {
+        class NpapiBrowserHostAsyncWin : public NpapiBrowserHost
+        {
+        public:
+            NpapiBrowserHostAsyncWin(NpapiPluginModule *module, NPP npp);
+            virtual ~NpapiBrowserHostAsyncWin();
 
-        virtual void ScheduleAsyncCall(void (*func)(void*), void* userData) const;
-        void setWindow(NPWindow* window);
+            virtual void ScheduleAsyncCall(void (*func)(void*), void* userData) const;
 
-    private:
-        HWND m_hwnd;
-    };
-} }
+        private:
+            boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;
+        };
+    }
+}
 #endif

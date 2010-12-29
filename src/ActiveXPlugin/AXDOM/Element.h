@@ -16,7 +16,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #ifndef H_AXDOM_ELEMENT
 #define H_AXDOM_ELEMENT
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include <atlctl.h>
 #include <string>
 #include <boost/lexical_cast.hpp>

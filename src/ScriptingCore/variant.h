@@ -545,15 +545,6 @@ namespace FB
         typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
         convert_cast() const;
 
-        // implicit casting is disabled by default for compatibility with boost::any 
-#ifdef ANY_IMPLICIT_CASTING
-        // automatic casting operator
-        template<typename T>
-        operator T() const {
-            return convert_cast<T>();
-        }
-#endif // implicit casting
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn bool variant::empty() const
         ///

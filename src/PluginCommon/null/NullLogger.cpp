@@ -13,7 +13,7 @@ Copyright 2010 Facebook, Inc
 \**********************************************************/
 
 #include <string>
-#include "../logging.h"
+#include "logging.h"
 
 void FB::Log::initLogging() {};
 void FB::Log::stopLogging() {};

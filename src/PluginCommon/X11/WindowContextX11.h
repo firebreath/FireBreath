@@ -14,34 +14,25 @@
  */
 
 #pragma once
-#ifndef H_FB_WINDOWCONTEXTMAC
-#define H_FB_WINDOWCONTEXTMAC
+#ifndef H_FB_WINDOWCONTEXTX11
+#define H_FB_WINDOWCONTEXTX11
 
-#include "config.h"
+#include "global/config.h"
 #include "NpapiTypes.h"
+
+#if FB_GUI_DISABLED == 1
+typedef long int GdkNativeWindow;
+#endif
 
 namespace FB
 {
-#if FBMAC_USE_QUICKDRAW
-    struct WindowContextQuickDraw
+    struct WindowContextX11
     {
-        CGrafPtr port;
-        int x, y;
-        WindowContextQuickDraw(CGrafPtr port, int x, int y) 
-          : port(port), x(x), y(y) 
+        GdkNativeWindow window;
+        WindowContextX11(GdkNativeWindow window) 
+          : window(window)
         {}
     };
-#endif
-    
-#if FBMAC_USE_COREGRAPHICS
-    struct WindowContextCoreGraphics
-    {
-        NP_CGContext* context;
-        WindowContextCoreGraphics(NP_CGContext* context) 
-          : context(context)
-        {}
-    };
-#endif
 }
 
 #endif

@@ -15,14 +15,14 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Anson MacKeracher, Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include "PluginWindow.h"
 
 #include "NpapiBrowserHost.h"
 #include "NpapiPlugin.h"
 #include "Win/KeyCodesWin.h"
 
-#include "WindowContextWin.h"
+#include "Win/WindowContextWin.h"
 
 /* This class implements the windowless plugin "window" in FireBreath.
  * Windowless plugins are different from windowed plugins in that they

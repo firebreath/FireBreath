@@ -154,6 +154,7 @@ namespace FB
         /// @return The plugin name. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string getPluginName();
+        std::string getPluginName(const std::string& mimetype);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
@@ -163,6 +164,7 @@ namespace FB
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string getPluginDescription();
+        std::string getPluginDescription(const std::string& mimetype);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)

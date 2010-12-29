@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #ifndef _WINDOWS
 #define HWND void *
 #else
-#include "Win/win_common.h"
+#include "win_common.h"
 #endif
 
 #include "PluginEvent.h"

@@ -12,14 +12,13 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include "NpapiTypes.h"
 #include "PluginCore.h"
-#include "Win/PluginWindowWin.h"
 #include "FactoryBase.h"
-#include "Win/PluginWindowlessWin.h"
-#include "config.h"
 #include "Win/NpapiPluginWin.h"
+#include "Win/PluginWindowWin.h"
+#include "Win/PluginWindowlessWin.h"
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
 

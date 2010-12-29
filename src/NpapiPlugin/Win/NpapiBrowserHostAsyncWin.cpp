@@ -15,13 +15,13 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 #include "NpapiBrowserHostAsyncWin.h"
 #include "AsyncFunctionCall.h"
-#include "Win/PluginWindowWin.h"
+#include "Win/WinMessageWindow.h"
 
 using namespace FB::Npapi;
 
 NpapiBrowserHostAsyncWin::NpapiBrowserHostAsyncWin(NpapiPluginModule* module, NPP npp)
   : NpapiBrowserHost(module, npp)
-  , m_hwnd(0)
+  , m_messageWin(new FB::WinMessageWindow())
 {
 
 }
@@ -31,21 +31,8 @@ NpapiBrowserHostAsyncWin::~NpapiBrowserHostAsyncWin()
 
 }
 
-void NpapiBrowserHostAsyncWin::setWindow(NPWindow* window)
-{
-    if(!window) {
-        m_hwnd = 0;
-        return;
-    }
-
-    m_hwnd = static_cast<HWND>(window->window);
-}
-
 void NpapiBrowserHostAsyncWin::ScheduleAsyncCall(void (*func)(void*), void* userData) const
 {
-    if(!m_hwnd) 
-        return;
-    
-    ::PostMessage(m_hwnd, WM_ASYNCTHREADINVOKE, NULL, 
+    ::PostMessage(m_messageWin->getHWND(), WM_ASYNCTHREADINVOKE, NULL, 
                   (LPARAM)new FB::AsyncFunctionCall(func, userData));
 }

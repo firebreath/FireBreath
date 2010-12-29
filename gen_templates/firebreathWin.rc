@@ -6,8 +6,8 @@
 
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
-#include "config.h"
+#include "global/resource.h"
+#include "global/config.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////

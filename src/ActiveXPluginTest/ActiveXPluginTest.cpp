@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
+#include "win_common.h"
 #include "UnitTest++.h"
 #include "FactoryBase.h"
 #include <boost/make_shared.hpp>

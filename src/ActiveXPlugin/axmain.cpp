@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
-#include "resource.h"
+#include "win_common.h"
+#include "global/resource.h"
 #include "axmain.h"
 #include "dlldatax.h"
 

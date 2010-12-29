@@ -17,7 +17,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #define H_AXDOM_NODE
 
 #include <string>
-#include "Win/win_common.h"
+#include "win_common.h"
 #include <atlctl.h>
 #include "IDispatchAPI.h"
 #include "JSObject.h"
