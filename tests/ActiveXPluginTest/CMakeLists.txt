@@ -16,33 +16,39 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-#set (FB_GUI_DISABLED 1)
-
 include(${CMAKE_DIR}/common.cmake)
 
-set (PROJNAME UnitTest_NpapiPlugin)
+set (PROJNAME ${PLUGIN_PREFIX}_UnitTest_ActiveXPlugin)
 Project (${PROJNAME})
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
 include_directories(
-    ${GECKOSDK_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${NPAPIPLUGIN_SOURCE_DIR}
-    ${NPAPIHOST_SOURCE_DIR}
+	${CMAKE_CURRENT_SOURCE_DIR}
+	${ACTIVEXPLUGIN_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCORE_SOURCE_DIR}
-    ${PLUGINCOMMON_SOURCE_DIR}
-    ${Boost_INCLUDE_DIRS}
+    ${WINDOWSCOMMON_SOURCE_DIR}
+    ${GEN_DIR}/gen
     ${UNITTEST_FW_SOURCE_DIR}/src
-    ${CONFIG_DIR}
+    ${Boost_INCLUDE_DIRS}
     )
 
+add_definitions(
+    /D "UNICODE"
+    /D "_UNICODE"
+    /D "_ATL_STATIC_REGISTRY"
+)
+
+file (GLOB TESTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    *Test.h
+    )
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./[^.]*.h
     ./[^.]*.cpp
     )
+
+source_group(Tests FILES ${TESTS})
 
 set (SOURCES
     ${GENERAL}
@@ -51,36 +57,18 @@ set (SOURCES
 
 add_executable(${PROJNAME} ${SOURCES})
 
-if (APPLE)
-    if (FBMAC_USE_CARBON)
-        find_library(CARBON_FRAMEWORK Carbon)
-    endif (FBMAC_USE_CARBON)
-    find_library(COCOA_FRAMEWORK Cocoa)
-    find_library(FOUNDATION_FRAMEWORK Foundation)
-    find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
-    find_library(QUARTZCORE_FRAMEWORK QuartzCore)
-    set (OTHER_NPAPITEST_LIBS 
-        ${OTHER_NPAPITEST_LIBS} 
-        ${COCOA_FRAMEWORK}
-        ${FOUNDATION_FRAMEWORK}
-        ${APPLICATIONSERVICES_FRAMEWORK}
-        ${QUARTZCORE_FRAMEWORK}
-        ${CARBON_FRAMEWORK})
-elseif (UNIX)
-    if (NOT FB_GUI_DISABLED)
-        set(OTHER_NPAPITEST_LIBS 
-            ${GTK_LIBRARIES})
-    endif()
-endif (APPLE)
-
-# Repititions in the following are intentional to fix linking errors due to
-# cyclic references on Linux. Don't change without testing on Linux!
 target_link_libraries (${PROJNAME}
-    ${Boost_LIBRARIES}
-    PluginCore
-    NpapiPlugin
+    ${PLUGIN_PREFIX}_ActiveXPlugin
     ScriptingCore
-    NPAPIHost
+    NpapiCore
+    PluginCore
     UnitTest++
-    ${OTHER_NPAPITEST_LIBS}
+    ${PLUGIN_PREFIX}_PluginCommon
     )
+
+set_target_properties(${PROJNAME} PROPERTIES
+	RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
+)
+
+add_custom_command(TARGET ${PROJNAME} POST_BUILD
+    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJNAME}")

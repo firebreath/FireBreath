@@ -33,7 +33,7 @@ include_directories(
     ${FIREBREATH_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
     ${PLUGINCORE_SOURCE_DIR}
-    ${NPAPIPLUGIN_SOURCE_DIR}
+    ${NPAPICORE_SOURCE_DIR}
     ${CONFIG_DIR}
     )
 

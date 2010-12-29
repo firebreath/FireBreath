@@ -29,7 +29,7 @@ include_directories(
     ${GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${ACTIVEXPLUGIN_SOURCE_DIR}
-    ${NPAPIPLUGIN_SOURCE_DIR}
+    ${NPAPICORE_SOURCE_DIR}
     ${WINDOWSCOMMON_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${PLUGINCOMMON_SOURCE_DIR}
@@ -83,7 +83,7 @@ set(PLUGIN_INTERNAL_DEPS
     ${Boost_LIBRARIES}
     PluginCore
     ${PLUGIN_PREFIX}_PluginCommon
-    NpapiPlugin
+    NpapiCore
     PluginCore
     ScriptingCore
     ${Boost_LIBRARIES}

@@ -44,7 +44,7 @@ add_boost_library(thread)
 # but are required before any plugins are loaded
 add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
 add_subdirectory(${PLUGINCORE_SOURCE_DIR})
-add_subdirectory(${NPAPIPLUGIN_SOURCE_DIR})
+add_subdirectory(${NPAPICORE_SOURCE_DIR})
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 
@@ -75,7 +75,7 @@ endforeach()
 add_subdirectory(${UNITTEST_FW_SOURCE_DIR})
 add_subdirectory(${NPAPIHOST_SOURCE_DIR})
 add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR})
-#add_subdirectory(${NPAPIPLUGINTEST_SOURCE_DIR}) # - not functional, needs to be re-done
+#add_subdirectory(${NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 
 if (NOT FOUND_PROJECTS)
     MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")

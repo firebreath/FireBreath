@@ -18,7 +18,7 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(${CMAKE_DIR}/common.cmake)
 
-set (PROJNAME NpapiPlugin)
+set (PROJNAME NpapiCore)
 Project (${PROJNAME})
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
