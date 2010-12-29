@@ -22,8 +22,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "FBControl.h"
 
 IDispatchAPI::IDispatchAPI(IDispatch *obj, ActiveXBrowserHostPtr host) :
-    m_obj(obj), m_browser(host), FB::JSObject(host)
+    FB::JSObject(host), m_obj(obj), m_browser(host), is_JSAPI(false)
 {
+    FB::JSAPIPtr ptr(getJSAPI());
+    if (ptr) {
+        // This is a JSAPI object wrapped in an IDispatch object; we'll call it
+        // directly(ish)
+        is_JSAPI = true;
+        inner = ptr;
+    }
 }
 
 IDispatchAPI::~IDispatchAPI(void)
@@ -41,6 +48,12 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
     if (!host->isMainThread()) {
         typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
         host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
+        return;
+    }
+    if (is_JSAPI) {
+		FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+			tmp->getMemberNames(nameVector);
         return;
     }
     HRESULT hr;
@@ -63,6 +76,13 @@ size_t IDispatchAPI::getMemberCount() const
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->getMemberCount();
+        else 
+            return 0;
     }
     HRESULT hr;
     DISPID dispid;
@@ -119,6 +139,17 @@ bool IDispatchAPI::HasMethod(const std::wstring& methodName) const
 
 bool IDispatchAPI::HasMethod(const std::string& methodName) const
 {
+    if (!host->isMainThread()) {
+        typedef bool (IDispatchAPI::*curtype)(const std::string&) const;
+        return host->CallOnMainThread(boost::bind((curtype)&IDispatchAPI::HasMethod, this, methodName));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasMethod(methodName);
+        else 
+            return false;
+    }
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(FB::utf8_to_wstring(methodName)) != -1 && !HasProperty(methodName);
@@ -134,6 +165,13 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName) const
     if (!host->isMainThread()) {
         typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasProperty(propertyName);
+        else 
+            return false;
     }
 
     DISPPARAMS params;
@@ -180,6 +218,13 @@ bool IDispatchAPI::HasEvent(const std::string& eventName) const
         typedef bool (IDispatchAPI::*HasEventType)(const std::string&) const;
         return host->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
     }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->HasEvent(eventName);
+        else 
+            return false;
+    }
 
     // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
@@ -192,6 +237,13 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {
     if (!host->isMainThread()) {
         return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->GetProperty(propertyName);
+        else 
+            return false;
     }
 
     DISPPARAMS params;
@@ -221,6 +273,12 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
 {
     if (!host->isMainThread()) {
         host->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
+        return;
+    }
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            SetProperty(propertyName, value);
         return;
     }
 
@@ -262,6 +320,11 @@ FB::variant IDispatchAPI::GetProperty(int idx)
 
 void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 {
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            SetProperty(idx, value);
+    }
     FB::variant sIdx(idx);
     SetProperty(sIdx.convert_cast<std::string>(), value);
 }

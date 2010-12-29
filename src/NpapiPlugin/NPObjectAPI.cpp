@@ -30,12 +30,12 @@ NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
     if (o != NULL) {
         browser->RetainObject(obj);
     }
-	if (NPJavascriptObject::isNPJavaScriptObject(obj)) {
-		NPJavascriptObject* tmp = static_cast<NPJavascriptObject*>(obj);
-        // This is a JSAPI object in disguise... some browsers will freak if
-        // an exception is thrown when calling a plugin object through the browser.
-        inner = tmp->getAPI();
+    FB::JSAPIPtr ptr(getJSAPI());
+    if (ptr) {
+        // This is a JSAPI object wrapped in an IDispatch object; we'll call it
+        // directly(ish)
         is_JSAPI = true;
+        inner = ptr;
     }
 }
 
@@ -196,6 +196,11 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 FB::variant NPObjectAPI::GetProperty(int idx)
 {
     std::string strIdx(boost::lexical_cast<std::string>(idx));
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            return tmp->GetProperty(idx);
+    }
     return GetProperty(strIdx);
 }
 

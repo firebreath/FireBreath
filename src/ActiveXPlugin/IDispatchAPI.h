@@ -53,6 +53,8 @@ public:
 protected:
     ActiveXBrowserHostPtr m_browser;
     CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
+    bool is_JSAPI;
+    FB::JSAPIWeakPtr inner;
 
 protected:
     DISPID getIDForName(const std::wstring& name) const;
