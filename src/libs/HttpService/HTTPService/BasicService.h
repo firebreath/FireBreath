@@ -16,7 +16,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #ifndef H_HTTP_BASICSERVICE
 #define H_HTTP_BASICSERVICE
 
-#include "Win/targetver.h"
+#include "win_targetver.h"
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
