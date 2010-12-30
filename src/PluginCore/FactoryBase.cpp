@@ -15,6 +15,9 @@
 #include "FactoryBase.h"
 #include "ConstructDefaultPluginWindows.h"
 #include "NpapiPluginFactory.h"
+#ifdef FB_WIN
+#include "ActiveXFactoryDefinitions.h"
+#endif
 #include "PluginInfo.h"
 
 FB::FactoryBase::FactoryBase()
@@ -72,6 +75,16 @@ FB::PluginWindowlessWin* FB::FactoryBase::createPluginWindowless(const WindowCon
 {
     return FB::createPluginWindowless(ctx);
 }
+IDispatchEx* FB::FactoryBase::createCOMJSObject( BrowserHostPtr host, FB::JSAPIPtr api )
+{
+    return _getCOMJSWrapper(host, api);
+}
+
+HRESULT FB::FactoryBase::UpdateWindowsRegistry( bool install )
+{
+    return _updateRegistry(install);
+}
+
 #endif
 
 #ifdef FB_MACOSX
@@ -106,5 +119,6 @@ FB::PluginWindowX11* FB::FactoryBase::createPluginWindowX11(const FB::WindowCont
 {
     return FB::createPluginWindowX11(ctx);
 }
+
 #endif
 

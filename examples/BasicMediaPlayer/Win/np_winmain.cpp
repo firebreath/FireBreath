@@ -8,7 +8,7 @@ License:    New BSD License
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "Win/win_common.h"
+#include "win_common.h"
 
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"

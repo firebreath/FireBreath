@@ -33,7 +33,7 @@ include_directories(
     ${NPAPIHOST_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
     ${PLUGINCORE_SOURCE_DIR}
-    ${PLUGINCOMMON_SOURCE_DIR}
+    ${PLUGINAUTO_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${CONFIG_DIR}
@@ -46,7 +46,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 set (SOURCES
     ${GENERAL}
-    ${PLUGINCOMMON_SOURCE_DIR}/null/NullLogger.cpp
+    ${PLUGINAUTO_SOURCE_DIR}/null/NullLogger.cpp
     )
 
 add_executable(${PROJNAME} ${SOURCES})

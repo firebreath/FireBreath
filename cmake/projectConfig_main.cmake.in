@@ -28,13 +28,12 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
-    ${ACTIVEXPLUGIN_SOURCE_DIR}
     ${NPAPICORE_SOURCE_DIR}
-    ${WINDOWSCOMMON_SOURCE_DIR}
+    ${ACTIVEXCORE_SOURCE_DIR}
     ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCOMMON_SOURCE_DIR}
+    ${PLUGINAUTO_SOURCE_DIR}
+    ${PLUGINAUTO_SOURCE_DIR}/Win
     ${PLUGINCORE_SOURCE_DIR}
-    ${PLUGINCOMMON_SOURCE_DIR}
     ${GEN_DIR}/gen
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
@@ -44,7 +43,6 @@ include_directories(
 
 # set up the mimetype strings
 string(REPLACE ";" "\\|" FBMIMETYPE_LIST ${FBSTRING_MIMEType})
-
 
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
@@ -82,7 +80,7 @@ endforeach()
 set(PLUGIN_INTERNAL_DEPS
     ${Boost_LIBRARIES}
     PluginCore
-    ${PLUGIN_PREFIX}_PluginCommon
+    ${PLUGIN_PREFIX}_PluginAuto
     NpapiCore
     PluginCore
     ScriptingCore
@@ -92,7 +90,7 @@ set(PLUGIN_INTERNAL_DEPS
 
 if (WIN32)
     set (PLUGIN_INTERNAL_DEPS
-        ${PLUGIN_PREFIX}_ActiveXPlugin
+        ActiveXCore
         ${PLUGIN_INTERNAL_DEPS}
         ${ATL_LIBRARY}
         )

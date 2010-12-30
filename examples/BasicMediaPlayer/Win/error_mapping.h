@@ -16,7 +16,7 @@ Copyright 2009 Georg Fritzsche,
 #ifndef H_ERROR_MAPPING_23122009
 #define H_ERROR_MAPPING_23122009
 
-#include "Win/win_common.h"
+#include "win_common.h"
 
 std::string mapVfwError(HRESULT hr);
 

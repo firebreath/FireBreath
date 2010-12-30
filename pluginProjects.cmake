@@ -13,10 +13,4 @@
 #\**********************************************************/
 
 
-add_subdirectory(${PLUGINCOMMON_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCommon)
-
-if (WIN32)  # ActiveX projects
-  add_subdirectory(${ACTIVEXPLUGIN_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ActiveXPlugin)
-  add_subdirectory(${ACTIVEXPLUGINTEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ActiveXPluginTest)
-endif(WIN32)
-
+add_subdirectory(${PLUGINAUTO_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginAuto)

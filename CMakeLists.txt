@@ -45,6 +45,9 @@ add_boost_library(thread)
 add_subdirectory(${SCRIPTINGCORE_SOURCE_DIR})
 add_subdirectory(${PLUGINCORE_SOURCE_DIR})
 add_subdirectory(${NPAPICORE_SOURCE_DIR})
+if (WIN32)
+    add_subdirectory(${ACTIVEXCORE_SOURCE_DIR})
+endif()
 
 # search the project src dir for plugin project directories
 file (GLOB PLUGIN_PROJECTS 
@@ -75,6 +78,9 @@ endforeach()
 add_subdirectory(${UNITTEST_FW_SOURCE_DIR})
 add_subdirectory(${NPAPIHOST_SOURCE_DIR})
 add_subdirectory(${SCRIPTINGCORETEST_SOURCE_DIR})
+if (WIN32)
+    add_subdirectory(${ACTIVEXCORETEST_SOURCE_DIR})
+endif()
 #add_subdirectory(${NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 
 if (NOT FOUND_PROJECTS)

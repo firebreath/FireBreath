@@ -26,6 +26,10 @@ namespace FB
 {
     class FactoryBase;
     class PluginCore;
+    class BrowserHost;
+    class JSAPI;
+    typedef boost::shared_ptr<BrowserHost> BrowserHostPtr;
+    typedef boost::shared_ptr<JSAPI> JSAPIPtr;
     /// @brief  Defines an alias representing a boost::shared_ptr<FactoryBase>
     typedef boost::shared_ptr<FactoryBase> FactoryBasePtr;
 
@@ -42,7 +46,9 @@ namespace FB
     
 /// @brief Get an instance of the factory class. This function *must* be defined in your plugin project.
 FB::FactoryBasePtr getFactoryInstance();
-    
+struct IDispatchEx;
+typedef long HRESULT;
+
 namespace FB
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +114,7 @@ namespace FB
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::PluginCorePtr createPlugin(const std::string& mimetype) = 0;
+        virtual FB::PluginCorePtr           createPlugin(const std::string& mimetype) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginInitialize()
@@ -125,7 +131,7 @@ namespace FB
         ///      }
         /// @endcode
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void globalPluginInitialize();
+        virtual void                        globalPluginInitialize();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginDeinitialize()
@@ -143,7 +149,7 @@ namespace FB
         ///      }
         /// @endcode
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void globalPluginDeinitialize();
+        virtual void                        globalPluginDeinitialize();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginName()
@@ -153,8 +159,8 @@ namespace FB
         ///
         /// @return The plugin name. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::string getPluginName();
-        std::string getPluginName(const std::string& mimetype);
+        std::string                         getPluginName();
+        std::string                         getPluginName(const std::string& mimetype);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
@@ -163,8 +169,8 @@ namespace FB
         ///
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        std::string getPluginDescription();
-        std::string getPluginDescription(const std::string& mimetype);
+        std::string                         getPluginDescription();
+        std::string                         getPluginDescription(const std::string& mimetype);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
@@ -177,7 +183,7 @@ namespace FB
         ///
         /// @return An NpapiPluginPtr containing an NpapiPlugin derived plugin handler
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
+        virtual FB::Npapi::NpapiPluginPtr   createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
         
 #ifdef FB_WIN
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +195,7 @@ namespace FB
         ///
         /// @return A PluginWindowWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowWin*           createPluginWindowWin(const WindowContextWin&);
+        virtual PluginWindowWin*            createPluginWindowWin(const WindowContextWin&);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginWindowlessWin* FactoryBase::createPluginWindowless(const WindowContextWin&)
@@ -200,7 +206,10 @@ namespace FB
         ///
         /// @return A PluginWindowlessWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowlessWin*           createPluginWindowless(const WindowContextWindowless&);
+        virtual PluginWindowlessWin*        createPluginWindowless(const WindowContextWindowless&);
+
+        virtual IDispatchEx*                createCOMJSObject(FB::BrowserHostPtr host, FB::JSAPIPtr api);
+        virtual HRESULT                     UpdateWindowsRegistry( bool install );
 #endif
       
 #ifdef FB_MACOSX

@@ -18,7 +18,6 @@
 #define H_FB_WINDOWCONTEXTWIN
 
 #include "win_common.h"
-#include "global/config.h"
 
 namespace FB
 {
