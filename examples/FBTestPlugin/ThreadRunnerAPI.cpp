@@ -31,12 +31,17 @@ void ThreadRunnerAPI::threadRun()
         if (this->m_queue.try_pop(func))
         {
 			FB::variant var;
-			var = func->Invoke("", FB::VariantList());
+            try {
+                var = func->Invoke("", FB::VariantList());
+            } catch (const FB::script_error& ex) {
+                // The function call failed
+                m_host->htmlLog(std::string("Function call failed with ") + ex.what());
+                continue;
+            }
 			if (var.is_of_type<std::string>()) {
 				m_host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
-			}
-			else {
-				m_queue.push(var.convert_cast<FB::JSObjectPtr>());
+			} else if (var.is_of_type<FB::JSObjectPtr>()) {
+			    m_queue.push(var.convert_cast<FB::JSObjectPtr>());
 			}
         }
         

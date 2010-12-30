@@ -184,7 +184,7 @@ namespace FB {
             FB::script_error* tmp(varResult.cast<FB::script_error*>());
             std::string msg = tmp->what();
             delete tmp;
-            throw FB::script_error(varResult.cast<const FB::script_error>().what());
+            throw FB::script_error(msg);
         }
         return result;
     }

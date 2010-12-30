@@ -120,7 +120,6 @@
 
         function pluginRunTests() {
             var plugin = window.plugin();
-			//console.log(plugin);
             if (plugin.valid)
                 markPassed("valid");
             else
@@ -221,7 +220,7 @@
         }
 		function PasswordDlg(message, onComplete) 
 		{
-			console.log("PasswordDlg: " +message);
+			//console.log("PasswordDlg: " +message);
 			var $template= $('<div id="PasswordDlg">\
 					<span class="ui-icon ui-icon-key" style="float:left; margin:0 7px 20px 0;"></span>\
 					<label>'+ message +'</label><input type="password"/></div>');
@@ -232,19 +231,20 @@
 				modal: true,
 				//autoOpen: true,
 				open: function(event, ui) { 
-					console.log("PasswordDlg show dialog" + dialog_finished);
+					//console.log("PasswordDlg show dialog" + dialog_finished);
 					$(this).find("input:password").keypress(function (e) {
 						if (e.keyCode =='13') {
-							console.log("Enter pressed ");$template.dialog("close");
+							//console.log("Enter pressed ");$template.dialog("close");
 							}
-						else 
-							console.log("keyCode: " + e.keyCode);
-						});
+						else {
+							//console.log("keyCode: " + e.keyCode);
+                                                }
+					});
 				},
 				close: function(e, ui) {
 					dialog_finished = true;
-					console.log("PasswordDlg show close" + dialog_finished);
-					console.log($(this).find("input:password").val());
+					//console.log("PasswordDlg show close" + dialog_finished);
+					//console.log($(this).find("input:password").val());
 					res = $(this).find("input:password").val();
 					$(this).dialog('destroy').remove();
 				},
@@ -259,8 +259,8 @@
 				}
 			});
 			var fn = function () {
-				console.log("PasswordDlg internal fn: " +message);
-				console.log("PasswordDlg internal fn: " + dialog_finished);
+				//console.log("PasswordDlg internal fn: " +message);
+				//console.log("PasswordDlg internal fn: " + dialog_finished);
 				if (dialog_finished) {
 					dialog_finished = false;
 					onComplete();
