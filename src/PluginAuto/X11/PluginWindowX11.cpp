@@ -40,13 +40,6 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     m_window(ctx.window),
     m_browserWindow(0),
 #endif
-    /* We as C++ programmers do not usually care about initializing integers
-     * when it's not actually needed, but it's nice for the code to be clean
-     * enough to pass valgrinds memcheck. Without initializing, valgrind
-     * will utter errors like:
-     * "Conditional jump or move depends on uninitialised value(s)"
-     * in setWindowPosition and setWindowClipping
-     */
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0)
 {
