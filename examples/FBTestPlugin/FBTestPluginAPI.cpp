@@ -50,6 +50,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     
     registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
 
+    registerMethod("countArrayLength",  make_method(this, &FBTestPluginAPI::countArrayLength));
     // Read-write property
     registerProperty("testString",
                      make_property(this,
@@ -283,6 +284,14 @@ std::string FBTestPluginAPI::get_pluginPath()
     return getPlugin()->getPluginPath();
 }
 
+long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
+{
+	if (!jso->HasProperty("getArray"))
+		throw FB::invalid_arguments();
+	FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
+	long len = array.size();// array->GetProperty("length").convert_cast<long>();
+	return len;
+}
 long FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b) 
 {
     boost::shared_ptr<SimpleMathAPI> math = FB::get_jsapi<SimpleMathAPI>(jso);

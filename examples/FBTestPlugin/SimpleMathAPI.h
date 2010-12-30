@@ -36,6 +36,7 @@ public:
     long sub(long a, long b);
     long mult(long a, long b);
     long div(long a, long b);
+	FB::VariantList getArray();
 
 private:
     FB::BrowserHostPtr m_host;

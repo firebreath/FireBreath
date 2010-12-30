@@ -25,13 +25,19 @@ void ThreadRunnerAPI::threadRun()
 {
     while (!boost::this_thread::interruption_requested())
     {
-        m_host->htmlLog("Thread iteration start");
+        m_host->htmlLog("Thread Dialog iteration start");
 
         FB::JSObjectPtr func;
         if (this->m_queue.try_pop(func))
         {
-            std::string str = func->Invoke("", FB::VariantList()).convert_cast<std::string>();
-            m_host->htmlLog("Function call returned: " + str);
+			FB::variant var;
+			var = func->Invoke("", FB::VariantList());
+			if (var.is_of_type<std::string>()) {
+				m_host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
+			}
+			else {
+				m_queue.push(var.convert_cast<FB::JSObjectPtr>());
+			}
         }
         
         boost::this_thread::sleep(boost::posix_time::seconds(1));

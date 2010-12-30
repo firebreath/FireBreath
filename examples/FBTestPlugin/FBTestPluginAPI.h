@@ -19,6 +19,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
 #include "ThreadRunnerAPI.h"
+//#include "JsTestArrayAPI.h"
 
 class FBTestPlugin;
 
@@ -58,6 +59,7 @@ public:
     FB::VariantList getObjectValues(const FB::JSObjectPtr& arr);
     FB::VariantMap getUserData();
     FB::VariantList getUserArray();
+long countArrayLength(const FB::JSObjectPtr &jso); 
 
     // Method add
     long add(long a, long b);

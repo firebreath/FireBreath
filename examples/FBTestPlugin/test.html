@@ -106,6 +106,8 @@
             addTest("mathAPI", "Plugin return JSAPI object test");
             addTest("location", "Get page location test");
             addTest("mathApiAdd", "Use custom JSAPI coming in from script");
+            addTest("countArray", "Count array length returned from JSAPI object");
+            addTest("dialog", "Dialog callback test");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -118,6 +120,7 @@
 
         function pluginRunTests() {
             var plugin = window.plugin();
+			//console.log(plugin);
             if (plugin.valid)
                 markPassed("valid");
             else
@@ -133,6 +136,7 @@
                 markFailed("getPluginPath");
             }
 
+			try {
             if (plugin.echo("Hello!") == "Hello!"
                 && plugin.echo(1234) == 1234
                 && plugin.echo(12.445) == 12.445
@@ -141,6 +145,7 @@
             } else {
                 markFailed("echo");
             }
+			}catch (e){alert(e)};
 
             var tmp = Array();
             for (var i = 0; i < 15; i++) {
@@ -192,7 +197,79 @@
             } catch (e) {
                     markFailed("mathApiAdd");
             }
+            var sm = plugin.simpleMath;
+			var c = plugin.countArrayLength(sm);
+			if (c!=4) {
+				markFailed("countArray");
+				alert(c);
+			}
+            else
+                markPassed("countArray");
+			try {
+				thread = plugin.createThreadRunner();
+
+				thread.addMethod(function(){
+					return PasswordDlg("Message text", function()
+						{
+//							alert("Dialog closed");
+							markPassed("dialog");
+						});});
+			}
+			catch (e) {
+				alert (e);
+			}
         }
+		function PasswordDlg(message, onComplete) 
+		{
+			console.log("PasswordDlg: " +message);
+			var $template= $('<div id="PasswordDlg">\
+					<span class="ui-icon ui-icon-key" style="float:left; margin:0 7px 20px 0;"></span>\
+					<label>'+ message +'</label><input type="password"/></div>');
+			var dialog_finished = false;
+			var res= '';
+			$template.dialog({
+				title: "Enter some text",
+				modal: true,
+				//autoOpen: true,
+				open: function(event, ui) { 
+					console.log("PasswordDlg show dialog" + dialog_finished);
+					$(this).find("input:password").keypress(function (e) {
+						if (e.keyCode =='13') {
+							console.log("Enter pressed ");$template.dialog("close");
+							}
+						else 
+							console.log("keyCode: " + e.keyCode);
+						});
+				},
+				close: function(e, ui) {
+					dialog_finished = true;
+					console.log("PasswordDlg show close" + dialog_finished);
+					console.log($(this).find("input:password").val());
+					res = $(this).find("input:password").val();
+					$(this).dialog('destroy').remove();
+				},
+				buttons: {
+					'ok' : function() {
+						$(this).dialog("close");
+					}, 
+					'cancel': function() {
+						res = '';
+						$(this).dialog("close");
+					}
+				}
+			});
+			var fn = function () {
+				console.log("PasswordDlg internal fn: " +message);
+				console.log("PasswordDlg internal fn: " + dialog_finished);
+				if (dialog_finished) {
+					dialog_finished = false;
+					onComplete();
+					return res;
+				}
+				return fn;
+			}
+			return fn;
+		}
 
         $(document).ready(pageLoaded);
 
