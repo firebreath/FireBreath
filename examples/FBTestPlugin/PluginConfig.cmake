@@ -54,7 +54,8 @@ set(FBSTRING_FileDescription
     "Firebreath Test Plugin Secondary - Helper for testing all interfaces and features"
     )
 
-set (FB_ATLREG_MACHINEWIDE 1)
+# If you want to register per-machine, uncomment this line
+#set (FB_ATLREG_MACHINEWIDE 1)
 
 #set (FB_GUI_DISABLED 1)
 

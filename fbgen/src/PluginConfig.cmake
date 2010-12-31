@@ -48,3 +48,6 @@ set(FBMAC_USE_CARBON 1)
 set(FBMAC_USE_COCOA 1)
 set(FBMAC_USE_COREGRAPHICS 1)
 set(FBMAC_USE_COREANIMATION 0)
+
+# If you want to register per-machine on Windows, uncomment this line
+#set (FB_ATLREG_MACHINEWIDE 1)
