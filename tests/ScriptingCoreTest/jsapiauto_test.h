@@ -150,7 +150,7 @@ TEST(JSAPIAuto_Methods)
     {
         // Test variant parameter type
         const std::string method("getType");
-        CHECK(test->HasMethod(method)); 
+        CHECK(test->HasMethod(method));
         
         FB::variant ret = test->Invoke(method, FB::variant_list_of((long)12));
         CHECK(ret.cast<std::string>() == typeid(long).name());
@@ -161,7 +161,8 @@ TEST(JSAPIAuto_Methods)
         ret = test->Invoke(method, FB::variant_list_of((bool)true));
         CHECK(ret.cast<std::string>() == typeid(bool).name());
 
-        ret = test->Invoke(method, FB::variant_list_of((void *)0x12));
+        // Test explicit assignment
+        ret = test->Invoke(method, FB::variant_list_of(FB::variant((void *)0x12, true)));
         CHECK(ret.cast<std::string>() == typeid(void*).name());
     }
 

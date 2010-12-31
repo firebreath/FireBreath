@@ -46,11 +46,6 @@ set (SOURCES
 
 add_executable(${PROJNAME} ${SOURCES})
 
-add_dependencies(${PROJNAME}
-    ScriptingCore
-    UnitTest++
-    )
-
 target_link_libraries (${PROJNAME}
     ScriptingCore
     UnitTest++

@@ -47,9 +47,7 @@ SOURCE_GROUP(Util FILES ${UTILTYPES})
 
 file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     APITypes.*
-    variant.*
-    variant_list.*
-    variant_map.*
+    variant*
     TypeIDMap.*
     utf8*
     URI*

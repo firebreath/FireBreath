@@ -297,8 +297,8 @@ namespace FB { namespace ActiveX {
     bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB::variant> &args, bool add)
     {
         if (args.size() < 2 || args.size() > 3
-             || args[0].get_type() != typeid(std::string)
-             || args[1].get_type() != typeid(FB::JSObjectPtr)) {
+             || !args[0].can_be_type<std::string>()
+             || !args[1].can_be_type<FB::JSObjectPtr>()) {
             throw FB::invalid_arguments();
         }
 

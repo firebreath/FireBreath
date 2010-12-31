@@ -336,7 +336,7 @@ bool FB::JSAPIAuto::isReserved( const std::string& propertyName ) const
 FB::variant FB::JSAPIAuto::getAttribute( const std::string& name )
 {
     if (m_attributes.find(name) != m_attributes.end()) {
-        return m_attributes[name];
+        return m_attributes[name].value;
     }
     return FB::FBVoid();
 }

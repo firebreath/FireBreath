@@ -127,8 +127,7 @@ namespace FB
     template<class Cont>
     void JSObject::GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
     {
-        try
-        {
+        try {
             FB::variant tmp = src->GetProperty("length");
             long length = tmp.convert_cast<long>();
             std::back_insert_iterator<Cont> inserter(dst);
@@ -137,9 +136,7 @@ namespace FB
                 tmp = src->GetProperty(i);
                 *inserter++ = tmp.convert_cast<typename Cont::value_type>();
             }
-        }
-        catch(const FB::script_error& e) 
-        {
+        } catch(const FB::script_error& e) {
             throw e;
         }
     }
@@ -152,71 +149,116 @@ namespace FB
         typedef std::pair<KeyType, MappedType> PairType;
         typedef std::vector<std::string> StringVec;
 
-        try 
-        {
+        try {
             StringVec fields;
             src->getMemberNames(fields);
             std::insert_iterator<Dict> inserter(dst, dst.begin());
 
-            for(StringVec::iterator it = fields.begin(); it != fields.end(); it++) 
-            {
+            for(StringVec::iterator it = fields.begin(); it != fields.end(); it++) {
                 FB::variant tmp = src->GetProperty(*it);
                 *inserter++ = PairType(*it, tmp.convert_cast<MappedType>());
             }
-        } 
-        catch (const FB::script_error& e)
-        {
+        } catch (const FB::script_error& e) {
             throw e;
         }
     }
     
-    // TODO: this doesn't belong here
-    template<class Cont>
-    typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
-    variant::convert_cast() const
-    {
-        typedef FB::JSObjectPtr JsObject;
-        
-        // if the held data is of type Cont just return it
+    namespace variant_detail { namespace conversion {
+        // Convert in
+        template <class T>
+        typename boost::enable_if<
+            boost::mpl::and_<
+            boost::is_base_of<FB::JSAPI, T>,
+            boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
+            ,variant>::type
+        make_variant(const boost::shared_ptr<T>& ptr) {
+            return variant(FB::JSAPIPtr(ptr), true);
+        }
+        template <class T>
+        typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
+        make_variant(const boost::shared_ptr<T>& ptr) {
+            return variant(FB::JSObjectPtr(ptr), true);
+        }
 
-        if(get_type() == typeid(Cont)) 
-            return convert_cast_impl<Cont>();
+        // Convert out
+        template<class T>
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::shared_ptr<T> >::type
+            convert_variant(const variant& var, variant_detail::conversion::type_spec< boost::shared_ptr<T> >)
+        {
+            FB::JSAPIPtr ptr;
+            // First of all, to succeed it *must* be a JSAPI object!
+            if (var.get_type() == typeid(FB::JSObjectPtr)) {
+                ptr = var.cast<FB::JSObjectPtr>();
+            } else {
+                ptr = var.cast<FB::JSAPIPtr>();
+            }
 
-        // if the help data is not a JavaScript object throw
+            FB::JSObjectPtr jso = FB::ptr_cast<FB::JSObject>(ptr);
+            if (jso) {
+                FB::JSAPIPtr inner = jso->getJSAPI();
+                if (inner) {
+                    boost::shared_ptr<T> tmp = FB::ptr_cast<T>(inner);
+                    if (tmp) {
+                        // Whew! We pulled the JSAPI object out of a JSObject and found what we were
+                        // looking for; we always return the inner-most object.  Keep that in mind!
+                        return tmp;
+                    }
+                    // If there is an inner object, but it isn't the one we want, fall through
+                }
+            }
+            boost::shared_ptr<T> ret = FB::ptr_cast<T>(ptr);
+            if (ret)
+                return ret;
+            else
+                throw FB::bad_variant_cast(var.get_type(), typeid(T));
+        }
 
-        if(!(get_type() == typeid(JsObject)))
-            throw bad_variant_cast(get_type(), typeid(JsObject));
-        
-        // if it is a JavaScript object try to treat it as an array
+        template<class Cont>
+        typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+            convert_variant(const variant& var, variant_detail::conversion::type_spec<Cont>)
+        {
+            typedef FB::JSObjectPtr JsObject;
+            
+            // if the held data is of type Cont just return it
 
-        Cont cont;
-        FB::JSObject::GetArrayValues(cast<JsObject>(), cont);
-        return cont;
-    }
+            if(var.is_of_type<Cont>()) 
+                return var.cast<Cont>();
 
-    // TODO: this doesn't belong here
-    template<class Dict>
-    typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
-    variant::convert_cast() const
-    {
-        typedef FB::JSObjectPtr JsObject;
-        
-        // if the held data is of type Dict just return it
+            // if the help data is not a JavaScript object throw
 
-        if(get_type() == typeid(Dict)) 
-            return convert_cast_impl<Dict>();
+            if(!var.can_be_type<JsObject>())
+                throw bad_variant_cast(var.get_type(), typeid(JsObject));
+            
+            // if it is a JavaScript object try to treat it as an array
 
-        // if the help data is not a JavaScript object throw
+            Cont cont;
+            FB::JSObject::GetArrayValues(var.convert_cast<JsObject>(), cont);
+            return cont;
+        }
 
-        if(!(get_type() == typeid(JsObject)))
-            throw bad_variant_cast(get_type(), typeid(JsObject));
-        
-        // if it is a JavaScript object try to treat it as an array
+        template<class Dict>
+        typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
+            convert_variant(const variant& var, variant_detail::conversion::type_spec<Dict>)
+        {
+            typedef FB::JSObjectPtr JsObject;
+            
+            // if the held data is of type Dict just return it
 
-        Dict dict;
-        FB::JSObject::GetObjectValues(cast<JsObject>(), dict);
-        return dict;
-    }
+            if(var.is_of_type<Dict>()) 
+                return var.cast<Dict>();
+
+            // if the help data is not a JavaScript object throw
+
+            if(!var.can_be_type<JsObject>())
+                throw bad_variant_cast(var.get_type(), typeid(JsObject));
+            
+            // if it is a JavaScript object try to treat it as an array
+
+            Dict dict;
+            FB::JSObject::GetObjectValues(var.convert_cast<JsObject>(), dict);
+            return dict;
+        }
+    } }
     
     // TODO: this doesn't belong here
 

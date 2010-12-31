@@ -25,7 +25,7 @@ FB::VariantMap FB::CreateEvent( const FB::JSAPIPtr& api, const std::string& name
     event["bubbles"] = false;
     event["cancelable"] = false; // Events in firebreath are async; not cancelable
     event["namespaceURI"] = name;
-    event["timeStamp"] = FB::FBDateString();
+    //event["timeStamp"] = FB::FBDateString();
 
     // Add the custom members
     event.insert(members.begin(), members.end());

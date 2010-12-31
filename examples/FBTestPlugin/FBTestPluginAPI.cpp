@@ -19,6 +19,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "variant_list.h"
 #include "FBTestPlugin.h"
 #include "SimpleMathAPI.h"
+#include "ThreadRunnerAPI.h"
 #include "SimpleStreams.h"
 
 #include "FBTestPluginAPI.h"
@@ -69,7 +70,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
 
     registerEvent("onfired");
 
-    m_simpleMath = FB::JSAPIPtr(new SimpleMathAPI(m_host));
+    m_simpleMath = boost::make_shared<SimpleMathAPI>(m_host);
 }
 
 FBTestPluginAPI::~FBTestPluginAPI()
@@ -253,7 +254,7 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     return map;
 }
 
-FB::JSAPIPtr FBTestPluginAPI::get_simpleMath()
+boost::shared_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }
@@ -292,12 +293,12 @@ long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso)
 	long len = array.size();// array->GetProperty("length").convert_cast<long>();
 	return len;
 }
-long FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b) 
+long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& math, long a, long b) 
 {
-    boost::shared_ptr<SimpleMathAPI> math = FB::get_jsapi<SimpleMathAPI>(jso);
-    if (!math) {
-        throw FB::invalid_arguments("expected SimpleMath object");
-    }
-    
     return math->add(a, b);
+}
+
+boost::shared_ptr<ThreadRunnerAPI> FBTestPluginAPI::createThreadRunner()
+{
+    return boost::make_shared<ThreadRunnerAPI>(m_host);
 }

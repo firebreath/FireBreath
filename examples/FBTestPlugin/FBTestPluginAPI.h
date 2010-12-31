@@ -14,13 +14,15 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include <string>
+#include <boost/shared_ptr.hpp>
 #include <sstream>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
-#include "ThreadRunnerAPI.h"
 
 class FBTestPlugin;
+class SimpleMathAPI;
+class ThreadRunnerAPI;
 
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
@@ -30,7 +32,7 @@ public:
 
     boost::shared_ptr<FBTestPlugin> getPlugin();
     
-    FB::JSAPIPtr createThreadRunner() { return FB::JSAPIPtr(new ThreadRunnerAPI(m_host)); }
+    boost::shared_ptr<ThreadRunnerAPI> createThreadRunner();
 
     std::wstring say(const std::wstring& val);
     // Read/Write property testString
@@ -40,11 +42,8 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    FB::JSAPIPtr get_simpleMath();
+    boost::shared_ptr<SimpleMathAPI> get_simpleMath();
   
-    FB::JSAPIPtr getTestObj();
-    std::string useTestObj(const FB::JSObjectPtr& obj);
-    
     FB::variant echo(const FB::variant& a);
 
     std::string asString(const FB::variant& a);
@@ -75,11 +74,11 @@ public:
     std::string get_pluginPath();
     
     void eval(std::string str);
-    long addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
+    long addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& jso, long a, long b);
 
 private:
     FB::BrowserHostPtr m_host;
-    FB::JSAPIPtr m_simpleMath;
+    boost::shared_ptr<SimpleMathAPI> m_simpleMath;
     boost::weak_ptr<FBTestPlugin> m_pluginWeak;
 
     std::string m_testString;

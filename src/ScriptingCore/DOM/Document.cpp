@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#include "variant.h"
 #include "variant_list.h"
 #include "Window.h"
 

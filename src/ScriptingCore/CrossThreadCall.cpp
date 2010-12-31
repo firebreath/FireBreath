@@ -28,7 +28,7 @@ void CrossThreadCall::syncCallbackFunctor(void *userData)
         }
         catch(const FB::script_error& e)
         {
-            call->m_result = new FB::script_error(e.what());
+            call->m_result = variant(new FB::script_error(e.what()), true);
         }
         call->m_returned = true;
         call->m_cond.notify_one();

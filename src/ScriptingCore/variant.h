@@ -26,12 +26,17 @@
 #include <sstream>
 #include <string>
 
+#include <boost/type_traits/is_integral.hpp>
+#include <boost/type_traits/is_floating_point.hpp>
+#include <boost/type_traits/is_arithmetic.hpp>
+#include <boost/mpl/or.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include "APITypes.h"
 #include "Util/meta_util.h"
 #include "utf8_tools.h"
+#include "variant_conversions.h"
 //#include "JSObject.h"
 
 
@@ -41,22 +46,22 @@
 #endif
 
 #define FB_BEGIN_CONVERT_MAP(_type_) \
-    const std::type_info *type(&get_type()); \
+    const std::type_info *type(&var.get_type()); \
     if (*type == typeid(_type_)) { \
-    return cast< _type_ >(); \
+    return var.cast< _type_ >(); \
     } else
 
-#define FB_END_CONVERT_MAP(_type_) { throw bad_variant_cast(get_type(), typeid(_type_)); }
+#define FB_END_CONVERT_MAP(_type_) { throw bad_variant_cast(var.get_type(), typeid(_type_)); }
 #define FB_END_CONVERT_MAP_NO_THROW(_type_) {}
 
 #define FB_CONVERT_ENTRY_SIMPLE(_type_, _srctype_)             \
     if ( *type == typeid( _srctype_ ) ) {              \
-    return static_cast< _type_ >( cast< _srctype_ >() );\
+    return static_cast< _type_ >( var.cast< _srctype_ >() );\
     } else
 
 #define FB_CONVERT_ENTRY_COMPLEX_BEGIN(_srctype_, _var_) \
     if (*type == typeid(_srctype_)) { \
-    _srctype_ _var_ = cast<_srctype_>();
+    _srctype_ _var_ = var.cast<_srctype_>();
 
 #define FB_CONVERT_ENTRY_COMPLEX_END() \
     } else
@@ -64,21 +69,21 @@
 #define FB_CONVERT_ENTRY_NUMERIC(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         try { \
-            return boost::numeric_cast<_type_>(cast<_srctype_>());\
+            return boost::numeric_cast<_type_>(var.cast<_srctype_>());\
         } catch (const boost::numeric::bad_numeric_cast& ) { \
-            throw bad_variant_cast(get_type(), typeid(_type_)); \
+            throw bad_variant_cast(var.get_type(), typeid(_type_)); \
         } \
     } else
 
 #define FB_CONVERT_ENTRY_FROM_STRING(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         typedef _srctype_::value_type char_type; \
-        std::basic_istringstream<char_type> iss(cast<_srctype_>()); \
+        std::basic_istringstream<char_type> iss(var.cast<_srctype_>()); \
         _type_ to; \
         if (iss >> to) { \
             return to; \
         } else { \
-            throw bad_variant_cast(get_type(), typeid(_type_)); \
+            throw bad_variant_cast(var.get_type(), typeid(_type_)); \
         } \
     } else
 
@@ -86,10 +91,10 @@
     if (*type == typeid(_srctype_)) { \
         typedef _type_::value_type char_type; \
         std::basic_ostringstream<char_type> oss; \
-        if (oss << cast<_srctype_>()) { \
+        if (oss << var.cast<_srctype_>()) { \
             return oss.str(); \
         } else { \
-            throw bad_variant_cast(get_type(), typeid(_type_)); \
+            throw bad_variant_cast(var.get_type(), typeid(_type_)); \
         } \
     } else
 
@@ -224,6 +229,11 @@ namespace FB
         };
     } // namespace variant_detail
 
+    class variant;
+
+    template <class T>
+    variant make_variant(T t);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  variant
     ///
@@ -264,37 +274,14 @@ namespace FB
         /// @param  x   The value 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
-        variant(const T& x) {
-            table = variant_detail::get_table<T>::get();
-            if (sizeof(T) <= sizeof(void*)) {
-                new(&object) T(x);
-            }
-            else {        
-                object = new T(x);
-            }
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant::variant(const wchar_t *x)
-        ///
-        /// @brief  Constructor with a wide string. 
-        ///
-        /// @param  x   The string value
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant(const wchar_t *x) {
+        variant(const T& x, bool) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
-            assign(x);
+            assign(x, true);
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant::variant(const char *x)
-        ///
-        /// @brief  Constructor with a string. 
-        ///
-        /// @param  x   The string value
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant(const char *x) {
+        template <typename T>
+        variant(const T& x) {
             table = variant_detail::get_table<variant_detail::empty>::get();
             object = NULL;
             assign(x);
@@ -353,30 +340,24 @@ namespace FB
             return *this;
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant& variant::assign(const char *x)
-        ///
-        /// @brief  Assigns a string value as a std::string from a const char*
-        ///
-        /// @param  x   The string value 
-        ///
-        /// @return *this
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant& assign(const char *x) {
-            return assign(std::string(x));
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant& variant::assign(const wchar_t *x)
-        ///
-        /// @brief  Assigns a wide string value as a std::wstring from a const wchar_t*
-        ///
-        /// @param  x   The string value 
-        ///
-        /// @return *this
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant& assign(const wchar_t *x) {
-            return assign(std::wstring(x));
+        template<class T>
+        variant& assign(const T x) {
+            *this = make_variant(x);
+            // If you get an error that there are no overloads that could convert all the argument
+            // types for this line, you are trying to use a type that is not known to FireBreath.
+            // First, make sure you really want to use this type! If you aren't doing this on
+            // purpose, double check your type, because it's wrong!
+            //
+            // Alternately, if you mean to do this there are two options:
+            // 1. You can create a variant or call .assign on a variant with a second bool
+            //    parameter, like so:
+            //        FB::variant tmp((void*)0x12, true); // Forces creation with unknown type
+            //        tmp.assign((int*)0x32, true); // Forces assignment of unknown type
+            //
+            // 2. You could either create your own assignment function by either overriding
+            //    FB::make_variant or FB::variant_detail::conversion::make_variant.
+            //
+            return *this;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -389,7 +370,7 @@ namespace FB
         /// @return *this
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
-        variant& assign(const T& x)
+        variant& assign(const T& x, bool)
         {
             // are we copying between the same type?
             variant_detail::fxn_ptr_table* x_table = variant_detail::get_table<T>::get();
@@ -483,6 +464,34 @@ namespace FB
         /// @return true if of type, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>
+        bool can_be_type() const {
+            if (get_type() == typeid(T))
+                return true;
+            try {
+                // See if it can be that type by converting
+                convert_cast<T>();
+                return true;
+            } catch (...) {
+                return false;
+            }
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn template<typename T> bool variant::is_of_type() const
+        ///
+        /// @brief  Query if this object is of a particular type. 
+        ///         
+        /// Example:
+        /// @code
+        ///      if (value.is_of_type<int>())
+        ///      {
+        ///         // Do something
+        ///      }
+        /// @endcode
+        ///
+        /// @return true if of type, false if not. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        template<typename T>
         bool is_of_type() const {
             return (get_type() == typeid(T));
         }
@@ -526,24 +535,8 @@ namespace FB
         ///
         /// @return converted value of the specified type
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        template<typename T>        
-        typename FB::meta::disable_for_containers_and_numbers<T, const T>::type
-        convert_cast() const
-        {
-            return convert_cast_impl<T>();
-        }
-
-        template<class T>
-        typename FB::meta::enable_for_numbers<T, T>::type
-        convert_cast() const;
-        
-        template<class Cont>
-        typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
-        convert_cast() const;
-        
-        template<class Dict>
-        typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
-        convert_cast() const;
+        template<typename T>
+        const T convert_cast() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn bool variant::empty() const
@@ -577,21 +570,6 @@ namespace FB
             object = NULL;
         }
         
-        // boost::any-like casting
-        template<typename T>
-        inline T* variant_cast() 
-        {
-            if (get_type() != typeid(T)) {
-                throw bad_variant_cast(get_type(), typeid(T));
-            }
-            if (sizeof(T) <= sizeof(void*)) {
-                return reinterpret_cast<T*>(&object);
-            }
-            else {
-                return reinterpret_cast<T*>(object);
-            }
-        }
-
     private:
         template<typename T>
         const T convert_cast_impl() const {
@@ -603,54 +581,9 @@ namespace FB
         void* object;
     };
 
-    // boost::any-like casting
-    template<typename T>
-    inline T* variant_cast(variant* v) {
-        return v->variant_cast<T>();
-    }
-
-    template<typename T>
-    inline T const* variant_cast(variant const* v) {
-        return variant_cast<T>(const_cast<variant*>(v));
-    }
-
-    template<typename T>
-    inline T const& variant_cast(variant const& v){
-        return *variant_cast<T>(const_cast<variant*>(&v));
-    }
-    
-    template<> inline const void variant::convert_cast_impl<void>() const {
-        return;
-    }
-    
-    template<> inline const variant variant::convert_cast_impl<variant>() const {
-        return *this;
-    }
-    
-    template<class T>
-    inline typename FB::meta::enable_for_numbers<T, T>::type
-    variant::convert_cast() const {
-        FB_BEGIN_CONVERT_MAP(T)
-        FB_CONVERT_ENTRY_NUMERIC(T, char)
-        FB_CONVERT_ENTRY_NUMERIC(T, unsigned char)
-        FB_CONVERT_ENTRY_NUMERIC(T, short)
-        FB_CONVERT_ENTRY_NUMERIC(T, unsigned short)
-        FB_CONVERT_ENTRY_NUMERIC(T, int)
-        FB_CONVERT_ENTRY_NUMERIC(T, unsigned int)
-        FB_CONVERT_ENTRY_NUMERIC(T, long)
-        FB_CONVERT_ENTRY_NUMERIC(T, unsigned long)
-        FB_CONVERT_ENTRY_NUMERIC(T, float)
-        FB_CONVERT_ENTRY_NUMERIC(T, double)
-        FB_CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
-            // we handle bool here specifically because the numeric_cast produces warnings
-            return static_cast<T>(bval ? 1 : 0);
-        FB_CONVERT_ENTRY_COMPLEX_END();
-        FB_CONVERT_ENTRY_FROM_STRING(T, std::string)
-        FB_CONVERT_ENTRY_FROM_STRING(T, std::wstring)
-        FB_END_CONVERT_MAP(T)
-    }
-    
-    template<> inline const std::string variant::convert_cast_impl<std::string>() const {
+    template <>
+    inline const std::string variant::convert_cast<std::string>() const {
+        variant var = *this;
         FB_BEGIN_CONVERT_MAP(std::string);
         FB_CONVERT_ENTRY_TO_STRING(double);
         FB_CONVERT_ENTRY_TO_STRING(float);
@@ -673,7 +606,9 @@ namespace FB
         FB_END_CONVERT_MAP(std::string);
     }
 
-    template<> inline const std::wstring variant::convert_cast_impl<std::wstring>() const {
+    template<>
+    inline const std::wstring variant::convert_cast<std::wstring>() const {
+        variant var = *this;
         FB_BEGIN_CONVERT_MAP(std::wstring);
         FB_CONVERT_ENTRY_TO_WSTRING(double);
         FB_CONVERT_ENTRY_TO_WSTRING(float);
@@ -694,7 +629,9 @@ namespace FB
         FB_END_CONVERT_MAP(std::wstring);
     }
     
-    template<> inline const bool variant::convert_cast_impl<bool>() const {
+    template<>
+    inline const bool variant::convert_cast<bool>() const {
+        variant var = *this;
         FB_BEGIN_CONVERT_MAP(bool);
         FB_CONVERT_ENTRY_COMPLEX_BEGIN(std::string, str);
         std::transform(str.begin(), str.end(), str.begin(), ::tolower); 
@@ -706,7 +643,99 @@ namespace FB
         FB_CONVERT_ENTRY_COMPLEX_END();
         FB_END_CONVERT_MAP_NO_THROW(short);
         
-        return convert_cast_impl<long>();
+        return convert_cast<long>();
+    }
+
+    namespace variant_detail {
+        namespace conversion {
+            ///////////////////////////////////////////////////
+            // variant assign conversion functions
+            //
+            // These functions are called to process any
+            // values assigned to the variant.  For example,
+            // all const char* parameters are converted to
+            // std::string
+            ///////////////////////////////////////////////////
+            template <class T>
+            typename boost::enable_if<
+                boost::mpl::or_<
+                    boost::mpl::or_<
+                        boost::mpl::or_<
+                            boost::is_same<std::vector<variant>, T>,
+                            boost::is_same<std::map<std::string, variant>, T>
+                        >,
+                        boost::mpl::or_<
+                            boost::is_same<std::wstring, T>,
+                            boost::is_same<std::string, T>
+                        >
+                    >,
+                    boost::mpl::or_<
+                        boost::is_same<variant_detail::empty, T>,
+                        boost::is_same<variant_detail::null, T>
+                    >
+                >, variant>::type
+            make_variant(const T& t) {
+                return variant(t, true);
+            }
+
+            template <class T>
+            typename boost::enable_if<boost::is_arithmetic<T>, variant>::type
+            make_variant(const T t) {
+                return variant(t, true);
+            }
+
+            variant make_variant(const char* x);
+            variant make_variant(const wchar_t* x);
+            ///////////////////////////////////////////////////
+            // variant convert_cast helpers
+            //
+            // These functions are called to process any
+            // values assigned to the variant.  For example,
+            // all const char* parameters are converted to
+            // std::string
+            ///////////////////////////////////////////////////
+            
+            const void convert_variant(const variant&, const variant_detail::conversion::type_spec<void>&);
+            const variant& convert_variant(const variant& var, const variant_detail::conversion::type_spec<variant>&);
+            
+            template<typename T>
+            typename FB::meta::enable_for_numbers<T, T>::type
+            convert_variant(const variant& var, const variant_detail::conversion::type_spec<T>&) {
+                FB_BEGIN_CONVERT_MAP(T)
+                FB_CONVERT_ENTRY_NUMERIC(T, char)
+                FB_CONVERT_ENTRY_NUMERIC(T, unsigned char)
+                FB_CONVERT_ENTRY_NUMERIC(T, short)
+                FB_CONVERT_ENTRY_NUMERIC(T, unsigned short)
+                FB_CONVERT_ENTRY_NUMERIC(T, int)
+                FB_CONVERT_ENTRY_NUMERIC(T, unsigned int)
+                FB_CONVERT_ENTRY_NUMERIC(T, long)
+                FB_CONVERT_ENTRY_NUMERIC(T, unsigned long)
+                FB_CONVERT_ENTRY_NUMERIC(T, long long)
+                FB_CONVERT_ENTRY_NUMERIC(T, unsigned long long)
+                FB_CONVERT_ENTRY_NUMERIC(T, float)
+                FB_CONVERT_ENTRY_NUMERIC(T, double)
+                FB_CONVERT_ENTRY_COMPLEX_BEGIN(bool, bval);
+                    // we handle bool here specifically because the numeric_cast produces warnings
+                    return static_cast<T>(bval ? 1 : 0);
+                FB_CONVERT_ENTRY_COMPLEX_END();
+                FB_CONVERT_ENTRY_FROM_STRING(T, std::string)
+                FB_CONVERT_ENTRY_FROM_STRING(T, std::wstring)
+                FB_END_CONVERT_MAP(T)
+            }
+        }
+    }
+	template<typename T>
+	const T variant::convert_cast() const
+	{
+		return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<T>());
+	}
+    template <class T>
+    variant make_variant(T t)
+    {
+        // If you got an error on this line, you are trying to assign an unsupported type to 
+        // FB::variant! If you're certain you want to do this then you should use the constructor
+        // or assign method that takes a bool.  e.g.: variant tmp(myWeirdType, true);
+        return variant_detail::conversion::make_variant(t);
     }
 }
 
