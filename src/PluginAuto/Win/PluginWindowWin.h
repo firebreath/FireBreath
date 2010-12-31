@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "Win/WindowContextWin.h"
 
 #include <map>
+#include <boost/cstdint.hpp>
 
 typedef struct _NPEvent NPEvent;
 
@@ -70,7 +71,7 @@ namespace FB {
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 
         // Windowed plugins get OS events directly through their window
-        int16_t HandleEvent(NPEvent* evt) { return 0; }
+        boost::int16_t HandleEvent(NPEvent* evt) { return 0; }
         virtual void InvalidateWindow();
 
     protected:
