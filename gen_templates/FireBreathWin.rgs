@@ -2,7 +2,7 @@ HKCU
 {
     NoRemove Software
     {
-        NoRemove ClassesB
+        NoRemove Classes
         {
             NoRemove AppID
             {
