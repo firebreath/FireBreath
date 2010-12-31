@@ -56,7 +56,9 @@ STDAPI DllRegisterServer(void)
 {
     //Sleep(10000);
     // registers object, typelib and all interfaces in typelib
+#ifndef FB_ATLREG_MACHINEWIDE
     FbPerUserRegistration perUser(true);
+#endif
     HRESULT hr = _AtlModule.DllRegisterServer();
 
     if (!SUCCEEDED(hr))
@@ -68,7 +70,9 @@ STDAPI DllRegisterServer(void)
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
+#ifndef FB_ATLREG_MACHINEWIDE
     FbPerUserRegistration perUser(true);
+#endif
     HRESULT hr = _AtlModule.DllUnregisterServer();
     if (!SUCCEEDED(hr))
         hr = getFactoryInstance()->UpdateWindowsRegistry(false);

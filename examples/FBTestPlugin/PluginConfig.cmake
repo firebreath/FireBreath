@@ -54,7 +54,7 @@ set(FBSTRING_FileDescription
     "Firebreath Test Plugin Secondary - Helper for testing all interfaces and features"
     )
 
-
+set (FB_ATLREG_MACHINEWIDE 1)
 
 #set (FB_GUI_DISABLED 1)
 
