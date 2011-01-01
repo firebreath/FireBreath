@@ -120,7 +120,7 @@ TEST(JSAPI_Methods)
             CHECK(true);
         }
 
-        test1 = boost::shared_ptr<TestObjectJSAPI>(new TestObjectJSAPI());
+        test1 = boost::make_shared<TestObjectJSAPI>();
         try {   // invalid parameters
             test1->Invoke("setValue", variant_list_of(0));
             CHECK(false);

@@ -32,6 +32,7 @@
 #include <boost/mpl/or.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/optional.hpp>
 
 #include "APITypes.h"
 #include "Util/meta_util.h"
@@ -679,6 +680,14 @@ namespace FB
             }
 
             template <class T>
+            variant make_variant(const boost::optional<T>& val) {
+                if (val)
+                    return variant(*val);
+                else
+                    return variant();
+            }
+
+            template <class T>
             typename boost::enable_if<boost::is_arithmetic<T>, variant>::type
             make_variant(const T t) {
                 return variant(t, true);
@@ -698,6 +707,15 @@ namespace FB
             const void convert_variant(const variant&, const variant_detail::conversion::type_spec<void>&);
             const variant& convert_variant(const variant& var, const variant_detail::conversion::type_spec<variant>&);
             
+            template<typename T>
+            boost::optional<T> convert_variant(const variant& var, const variant_detail::conversion::type_spec<boost::optional<T> >&) {
+                try {
+                    return var.convert_cast<T>();
+                } catch (...) {
+                    return boost::optional<T>();
+                }
+            }
+
             template<typename T>
             typename FB::meta::enable_for_numbers<T, T>::type
             convert_variant(const variant& var, const variant_detail::conversion::type_spec<T>&) {
