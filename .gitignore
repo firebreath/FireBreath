@@ -15,3 +15,5 @@ buildex/
 projects/*
 .fbgen.cfg
 src/libs/log4cplus/include/log4cplus/config/defines.hxx
+src/libs/curl/curl
+src/libs/openssl/openssl
