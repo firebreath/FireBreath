@@ -30,6 +30,8 @@
 #include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/mpl/or.hpp>
+#include <boost/mpl/and.hpp>
+#include <boost/mpl/not.hpp>
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
@@ -685,6 +687,16 @@ namespace FB
                     return variant(*val);
                 else
                     return variant();
+            }
+
+            template <class T>
+            typename boost::enable_if<
+                boost::mpl::and_<
+                    boost::is_convertible<T, int>,
+                    boost::mpl::not_<boost::is_arithmetic<T> >
+                >, variant>::type
+            make_variant(const T t) {
+                return variant(static_cast<int>(t), true);
             }
 
             template <class T>
