@@ -37,6 +37,8 @@
 
 #define FB_GUI_DISABLED         ${FB_GUI_DISABLED}
 
+#cmakedefine FB_ATLREG_MACHINEWIDE 1
+
 #if FB_GUI_DISABLED == 1
 
 #define FBMAC_USE_CARBON        0
@@ -54,3 +56,5 @@
 #define FBMAC_USE_COREANIMATION ${FBMAC_USE_COREANIMATION}
 
 #endif
+
+#define FB_
