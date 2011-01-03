@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
+    FB_FORWARD_PTR(JSAPIProxy);
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPIProxy
     ///

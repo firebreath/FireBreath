@@ -21,14 +21,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiTypes.h"
 #include "FactoryBase.h"
 #include <boost/thread.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace FB { 
     namespace Npapi {
-        class NpapiPlugin;
+        FB_FORWARD_PTR(NpapiPlugin);
         // Get instance of NpapiPlugin from an NPP instance
-        boost::shared_ptr<NpapiPlugin> getPlugin(NPP instance);
+        NpapiPluginPtr getPlugin(NPP instance);
 
-        class NpapiPluginModule
+        class NpapiPluginModule : boost::noncopyable
         {
         public:
             static NpapiPluginModule *Default;

@@ -25,8 +25,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "boost/thread/recursive_mutex.hpp"
 
 namespace FB {
-	class JSFunction;
-	typedef boost::shared_ptr<JSFunction> JSFunctionPtr;
+    FB_FORWARD_PTR(JSFunction);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())

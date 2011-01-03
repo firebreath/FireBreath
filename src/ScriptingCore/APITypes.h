@@ -23,6 +23,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 
+#define FB_FORWARD_PTR(x) class x; \
+    typedef boost::shared_ptr<x> x ## Ptr; \
+    typedef boost::weak_ptr<x> x ## WeakPtr;
+
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))
 
@@ -40,9 +44,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 namespace FB
 {
-    class BrowserHost;
-    class JSAPI;
-    class JSObject;
+    FB_FORWARD_PTR(BrowserHost);
+    FB_FORWARD_PTR(JSAPI);
+    FB_FORWARD_PTR(JSObject);
     class variant;
     namespace variant_detail {
         // Note that null translates to returning NULL

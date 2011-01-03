@@ -19,8 +19,7 @@
 #include "JSAPIAuto.h"
 
 namespace FB {
-	class JSFunction;
-	typedef boost::shared_ptr<JSFunction> JSFunctionPtr;
+    FB_FORWARD_PTR(JSFunction);
     class JSFunction : public FB::JSAPIAuto {
     public:
         JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func);

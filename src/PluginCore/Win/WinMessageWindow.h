@@ -3,6 +3,7 @@
 #define WinMessageWindow_h__
 
 #include "win_common.h"
+#include <boost/noncopyable.hpp>
 
 namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -12,7 +13,7 @@ namespace FB {
     ///
     /// @return The handle of the window. 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class WinMessageWindow
+    class WinMessageWindow : boost::noncopyable
     {
     public:
         WinMessageWindow();

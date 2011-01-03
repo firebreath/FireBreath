@@ -21,6 +21,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB
 {
+    FB_FORWARD_PTR(JSArray);
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSArray
     ///

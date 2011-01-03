@@ -20,15 +20,13 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <typeinfo>
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/thread/recursive_mutex.hpp>
+#include <boost/noncopyable.hpp>
 
 namespace FB {
 
-    class PluginEventSink;
-    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
+    FB_FORWARD_PTR(PluginEventSink);
+    FB_FORWARD_PTR(PluginEventSource);
     class PluginEvent;
-
-    class PluginEventSource;
-    typedef boost::shared_ptr<PluginEventSource> PluginEventSourcePtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginEventSource
@@ -36,7 +34,7 @@ namespace FB {
     /// @brief  Base class for any object, such as BrowserStream or PluginWindow, that needs to fire
     ///         events to a PluginEventSink object (such as a PluginCore derived plugin class) 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class PluginEventSource : public boost::enable_shared_from_this<PluginEventSource>
+    class PluginEventSource : public boost::enable_shared_from_this<PluginEventSource>, boost::noncopyable
     {
     public:
         PluginEventSource();

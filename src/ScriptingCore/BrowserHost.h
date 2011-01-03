@@ -18,25 +18,20 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
 
 namespace FB
 {
-    class BrowserStream;
-    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
-    class PluginEventSink;
-    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
-    class JSObject;
+    FB_FORWARD_PTR(BrowserStream);
+    FB_FORWARD_PTR(PluginEventSink);
+    FB_FORWARD_PTR(JSObject);
 
     namespace DOM {
-        class Window;
-        class Document;
-        class Element;
-        class Node;
-        typedef boost::shared_ptr<Window> WindowPtr;
-        typedef boost::shared_ptr<Document> DocumentPtr;
-        typedef boost::shared_ptr<Element> ElementPtr;
-        typedef boost::shared_ptr<Node> NodePtr;
+        FB_FORWARD_PTR(Window);
+        FB_FORWARD_PTR(Document);
+        FB_FORWARD_PTR(Element);
+        FB_FORWARD_PTR(Node);
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

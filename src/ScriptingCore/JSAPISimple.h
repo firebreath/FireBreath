@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI.h"
 
 namespace FB {
-
+    FB_FORWARD_PTR(JSAPISimple);
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPISimple
     ///

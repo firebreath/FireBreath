@@ -20,8 +20,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <list>
 #include <deque>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/noncopyable.hpp>
 #include "JSExceptions.h"
 #include "boost/thread/recursive_mutex.hpp"
+#include "boost/thread/mutex.hpp"
 
 namespace FB
 {
@@ -51,7 +53,7 @@ namespace FB
     /// @author Richard Bateman
     /// @see FB::JSAPIAuto
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JSAPI : public boost::enable_shared_from_this<JSAPI>
+    class JSAPI : public boost::enable_shared_from_this<JSAPI>, boost::noncopyable
     {
     public:
 

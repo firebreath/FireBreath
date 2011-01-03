@@ -19,6 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <string>
 #include <map>
 #include <stdexcept>
+#include <boost/cast.hpp>
 
 namespace FB {
 
@@ -49,18 +50,15 @@ namespace FB {
         ///      AttachedEvent *atevt = evt->get<AttachedEvent>();
         /// @endcode
         ///
-        /// @exception  std::invalid_argument   Thrown when invalid argument. 
+        /// @exception  std::bad_cast   Thrown when invalid argument. 
         ///
-        /// @return null if it fails, else a T* 
+        /// @return T* 
+        /// @since 1.4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class T>
         T* get()
         {
-            T* out(dynamic_cast<T*>(this));
-            if (out == NULL) {
-                throw std::invalid_argument("Invalid message type");
-            }
-            return out;
+            return boost::polymorphic_cast<T*>(this);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

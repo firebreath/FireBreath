@@ -22,9 +22,8 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB { namespace Npapi {
 
-    class NpapiPlugin;
-    class NpapiStream;
-    typedef boost::shared_ptr<NpapiStream> NpapiStreamPtr;
+    FB_FORWARD_PTR(NpapiPlugin);
+    FB_FORWARD_PTR(NpapiStream);
 
     class NpapiStream : public FB::BrowserStream
     {

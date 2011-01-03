@@ -24,12 +24,10 @@
 
 namespace FB
 {
-    class FactoryBase;
-    class PluginCore;
-    class BrowserHost;
-    class JSAPI;
-    typedef boost::shared_ptr<BrowserHost> BrowserHostPtr;
-    typedef boost::shared_ptr<JSAPI> JSAPIPtr;
+    FB_FORWARD_PTR(FactoryBase);
+    FB_FORWARD_PTR(PluginCore);
+    FB_FORWARD_PTR(BrowserHost);
+    FB_FORWARD_PTR(JSAPI);
     /// @brief  Defines an alias representing a boost::shared_ptr<FactoryBase>
     typedef boost::shared_ptr<FactoryBase> FactoryBasePtr;
 
@@ -37,10 +35,8 @@ namespace FB
     typedef boost::shared_ptr<PluginCore> PluginCorePtr;
     
     namespace Npapi { 
-        class NpapiPlugin; 
-        class NpapiBrowserHost;
-        typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
-        typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+        FB_FORWARD_PTR(NpapiPlugin);
+        FB_FORWARD_PTR(NpapiBrowserHost);
     }
 }
     

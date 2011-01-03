@@ -22,8 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserPlugin.h"
 
 namespace FB {
-    class BrowserStream;
-    typedef boost::shared_ptr<BrowserStream> BrowserStreamPtr;
+    FB_FORWARD_PTR(BrowserStream);
     
     namespace Npapi {
 
@@ -34,8 +33,7 @@ namespace FB {
         { }
     };
     
-    class NpapiPlugin;
-    typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
+    FB_FORWARD_PTR(NpapiPlugin);
 
     class NpapiPlugin : public FB::BrowserPlugin
     {

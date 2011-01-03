@@ -20,6 +20,7 @@
 
 namespace FB 
 {
+    FB_FORWARD_PTR(JSCallback);
     class JSCallback : public FB::JSAPIAuto
     {
     public:
