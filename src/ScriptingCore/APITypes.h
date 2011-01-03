@@ -22,13 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
-
-#define FB_FORWARD_PTR(x) class x; \
-    typedef boost::shared_ptr<x> x ## Ptr; \
-    typedef boost::weak_ptr<x> x ## WeakPtr;
-
-// get rid of "unused variable" warnings
-#define FB_UNUSED_VARIABLE(x) ((void)(x))
+#include "FBPointers.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @namespace  FB

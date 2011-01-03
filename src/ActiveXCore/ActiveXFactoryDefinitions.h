@@ -15,14 +15,14 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <boost/shared_ptr.hpp>
+#include "FBPointers.h"
 
 struct IDispatchEx;
 typedef long HRESULT;
 
 namespace FB {
-    class BrowserHost;
-    typedef boost::shared_ptr<BrowserHost> BrowserHostPtr;
+    FB_FORWARD_PTR(BrowserHost);
+    FB_FORWARD_PTR(JSAPI);
 }
 
 IDispatchEx* _getCOMJSWrapper(FB::BrowserHostPtr host, FB::JSAPIPtr api);
