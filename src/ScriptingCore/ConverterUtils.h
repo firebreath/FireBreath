@@ -55,6 +55,32 @@ namespace FB {
         }
     } // namespace detail
 
+    // "soft" conversion wrapper function
+    template<typename To>
+    inline
+    To convertArgumentSoft(const FB::VariantList& args, const size_t index,
+        typename boost::disable_if<FB::meta::is_optional<To> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
+        else {
+            std::stringstream ss;
+            ss << "Error: Argument " << index
+               << "is not optional.";
+            throw FB::invalid_arguments(ss.str());
+        }
+    }
+    template<typename To>
+    inline
+    To convertArgumentSoft(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<FB::meta::is_optional<To> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
+        else
+            return To(); // Empty optional argument
+    }
+
     // conversion wrapper function
     template<typename To, typename From>
     inline
@@ -66,7 +92,7 @@ namespace FB {
     // conversion wrapper function
     template<typename To, typename From>
     inline
-    To convertArgument(const From& from, const size_t index)
+    To convertArgument(const From& from, const size_t index, boost::disable_if< FB::meta::is_optional<To> >*p = 0)
     {
         return FB::detail::converter<To, From>::convert(from, index);
     }
@@ -156,7 +182,7 @@ namespace FB { namespace detail
         inline
         ArgType convertLastArgument(const FB::VariantList& l, size_t n)
         {
-            return FB::convertArgument<ArgType, FB::variant>(l.back(), n);
+            return FB::convertArgumentSoft<ArgType>(l, n);
         }
 
         // if the last argument is CatchAll, fill it with all remaining parameters

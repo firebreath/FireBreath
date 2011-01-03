@@ -16,6 +16,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef H_META_UTIL_22122009
 #define H_META_UTIL_22122009
 
+#include <boost/optional.hpp>
 #include "meta_util_impl.h"
 
 namespace FB { namespace meta 
@@ -24,6 +25,17 @@ namespace FB { namespace meta
     template<typename T>
     struct plain_type 
         : FB::meta::detail::plain_type<T> {};
+
+    ////////////////////////////////////////////////
+    // is optional - a boost::optional<T> type
+
+    template <typename T>
+    struct is_optional
+        : boost::false_type {};
+
+    template <typename T>
+    struct is_optional< boost::optional<T> >
+        : boost::true_type {};
 
     ///////////////////////////////////////////////////////
     // STL style container classification

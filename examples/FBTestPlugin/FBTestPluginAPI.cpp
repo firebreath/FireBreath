@@ -46,6 +46,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod("getTagAttribute", make_method(this, &FBTestPluginAPI::getTagAttribute));
     registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
     registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
+    registerMethod("optionalTest", make_method(this, &FBTestPluginAPI::optionalTest));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
@@ -301,4 +302,13 @@ long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& 
 boost::shared_ptr<ThreadRunnerAPI> FBTestPluginAPI::createThreadRunner()
 {
     return boost::make_shared<ThreadRunnerAPI>(m_host);
+}
+
+const boost::optional<std::string> FBTestPluginAPI::optionalTest( const boost::optional<std::string>& str )
+{
+    if (str)
+        m_host->htmlLog(*str);
+    else
+        m_host->htmlLog("No string passed in!");
+    return str;
 }

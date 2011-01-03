@@ -19,6 +19,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
+#include <boost/optional.hpp>
 
 class FBTestPlugin;
 class SimpleMathAPI;
@@ -50,6 +51,7 @@ public:
     bool asBool(const FB::variant& a);
     long asInt(const FB::variant& a);
     double asDouble(const FB::variant& a);
+    const boost::optional<std::string> optionalTest(const boost::optional<std::string>& str);
 
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
