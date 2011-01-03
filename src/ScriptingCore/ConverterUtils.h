@@ -196,9 +196,9 @@ namespace FB { namespace detail
         ArgType convertLastArgument(const FB::VariantList& l, size_t n)
         {
             // If this is the last parameter and 
-            if (n > l.size()) {
+            if (l.size() > n) {
                 std::stringstream ss;
-                ss << "Too many arguments, expected " << l.size() << ".";
+                ss << "Too many arguments, expected " << n << ".";
                 throw FB::invalid_arguments(ss.str());
             }
             return FB::convertArgumentSoft<ArgType>(l, n);
