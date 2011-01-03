@@ -277,8 +277,8 @@ namespace FB
             method_wrapper7(F f) : f(f) {}
             FB::variant operator()(C* instance, const FB::VariantList& in)
             {
-                    return FB::variant();
-                (instance->*f)(
+                typedef typename plain_type<T6>::type TLast;
+                return (instance->*f)(
                     convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
                     convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
                     convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
