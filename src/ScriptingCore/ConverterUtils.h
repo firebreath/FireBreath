@@ -59,7 +59,10 @@ namespace FB {
     template<typename To>
     inline
     To convertArgumentSoft(const FB::VariantList& args, const size_t index,
-        typename boost::disable_if<FB::meta::is_optional<To> >::type* p=0)
+        typename boost::disable_if<boost::mpl::or_<
+            FB::meta::is_optional<To>,
+            boost::is_same<To, FB::variant>
+        > >::type* p=0)
     {
         if (args.size() >= index)
             return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
@@ -81,6 +84,16 @@ namespace FB {
             return To(); // Empty optional argument
     }
 
+    template<typename To>
+    inline
+    To convertArgumentSoft(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<boost::is_same<To, FB::variant> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
+        else
+            return FB::variant(); // Empty variant argument
+    }
     // conversion wrapper function
     template<typename To, typename From>
     inline
@@ -182,6 +195,12 @@ namespace FB { namespace detail
         inline
         ArgType convertLastArgument(const FB::VariantList& l, size_t n)
         {
+            // If this is the last parameter and 
+            if (n > l.size()) {
+                std::stringstream ss;
+                ss << "Too many arguments, expected " << l.size() << ".";
+                throw FB::invalid_arguments(ss.str());
+            }
             return FB::convertArgumentSoft<ArgType>(l, n);
         }
 

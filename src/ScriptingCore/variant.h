@@ -721,11 +721,10 @@ namespace FB
             
             template<typename T>
             boost::optional<T> convert_variant(const variant& var, const variant_detail::conversion::type_spec<boost::optional<T> >&) {
-                try {
-                    return var.convert_cast<T>();
-                } catch (...) {
+                if (var.is_null() || var.empty())
                     return boost::optional<T>();
-                }
+
+                return var.convert_cast<T>();
             }
 
             template<typename T>
