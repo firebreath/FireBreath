@@ -23,6 +23,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/and.hpp>
 #include <boost/type_traits.hpp>
+#include <boost/variant/variant_fwd.hpp>
 
 namespace FB { namespace meta { namespace detail
 {

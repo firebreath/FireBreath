@@ -31,11 +31,22 @@ namespace FB { namespace meta
 
     template <typename T>
     struct is_optional
-        : boost::false_type {};
+        : boost::mpl::false_ {};
 
     template <typename T>
     struct is_optional< boost::optional<T> >
-        : boost::true_type {};
+        : boost::mpl::true_ {};
+
+    ////////////////////////////////////////////////
+    // is_boost_variant - is a boost::variant type
+
+    template <typename T>
+    struct is_boost_variant
+        : boost::mpl::false_ {};
+
+    template <BOOST_VARIANT_ENUM_PARAMS(typename T)>
+    struct is_boost_variant< boost::variant<BOOST_VARIANT_ENUM_PARAMS(T)> >
+        : boost::mpl::true_ {};
 
     ///////////////////////////////////////////////////////
     // STL style container classification

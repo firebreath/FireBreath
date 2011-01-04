@@ -14,12 +14,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 
 #include "APITypes.h"
+#include <boost/variant.hpp>
+#include <boost/optional.hpp>
 #include "variant_list.h"
 #include "variant_map.h"
 #include "fake_jsarray.h"
 #include "fake_jsmap.h"
 
-TEST(VariantTest)
+TEST(VariantBasicTest)
 {
     PRINT_TESTNAME;
     using namespace FB;
@@ -69,6 +71,11 @@ TEST(VariantTest)
 
     a = 0;
     CHECK(a.get_type() == typeid(int));
+}
+TEST(VariantArrayConversionTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
 
     // scripting style array conversion
     {
@@ -82,6 +89,11 @@ TEST(VariantTest)
         
         CHECK(vs1 == vs2);
     }
+}
+TEST(VariantScriptMapConversionTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
 
     // scripting style map conversion
     {
@@ -107,6 +119,11 @@ TEST(VariantTest)
             CHECK(value.second.convert_cast<std::string>() == result.second.convert_cast<std::string>());
         }
     }
+}
+TEST(VariantWideStringTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
 
     // wstring type handling and conversion
     {
@@ -148,6 +165,11 @@ TEST(VariantTest)
         std::wstring widestr( str3.convert_cast<std::wstring>() );
         CHECK(widestr == lstr);*/
     }
+}
+TEST(VariantIsOfTypeTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
 
     // is_of_type<>()
     {
@@ -163,5 +185,64 @@ TEST(VariantTest)
 
         FB::variant charArrVar(charArrVal);
         CHECK(( charArrVar.is_of_type<std::string>() ));
+    }
+}
+TEST(VariantOptionalTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
+
+    // is_of_type<>()
+    {
+        boost::optional<int> iVal;
+        boost::optional<std::string> strVal;
+        boost::optional<double> dblVal;
+
+        variant a = 15;
+        variant b = "A string";
+        variant c = 23.55f;
+        iVal = a.convert_cast<boost::optional<int> >();
+        CHECK(iVal && *iVal == a.convert_cast<int>());
+        
+        strVal = b.convert_cast<boost::optional<std::string> >();
+        CHECK(strVal && *strVal == b.convert_cast<std::string>());
+        
+        dblVal = c.convert_cast<boost::optional<double> >();
+        CHECK(dblVal && *dblVal == c.convert_cast<double>());
+
+        iVal = variant().convert_cast<boost::optional<int> >();
+        CHECK(!iVal);
+        strVal = variant().convert_cast<boost::optional<std::string> >();
+        CHECK(!strVal);
+        dblVal = variant().convert_cast<boost::optional<double> >();
+        CHECK(!dblVal);
+    }
+}
+TEST(VariantBoostVariantConversionTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
+
+    typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> VtComplete;
+    typedef boost::variant<long> VtLong;
+    typedef boost::variant<short, int, long, boost::uint64_t> VtInts;
+    typedef boost::variant<float, double, int, long> VtNum;
+    typedef boost::variant<std::string, std::wstring> VtStr;
+    typedef boost::variant<std::wstring, std::string> VtWstr;
+
+    {
+        VtComplete a = 23;
+        variant av(a);
+        CHECK(av.convert_cast<int>() == 23);
+        a = 23.0f;
+        av = a;
+        CHECK(av.convert_cast<double>() == 23.0f);
+        a = FB::JSAPIPtr();
+        av = a;
+        CHECK(!av.convert_cast<FB::JSAPIPtr>());
+        CHECK(av.is_null());
+        a = FB::FBVoid();
+        av = a;
+        CHECK(av.empty());
     }
 }

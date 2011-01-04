@@ -173,12 +173,18 @@ namespace FB
             boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
             ,variant>::type
         make_variant(const boost::shared_ptr<T>& ptr) {
-            return variant(FB::JSAPIPtr(ptr), true);
+            if (ptr)
+                return variant(FB::JSAPIPtr(ptr), true);
+            else
+                return variant(FB::FBNull());
         }
         template <class T>
         typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
         make_variant(const boost::shared_ptr<T>& ptr) {
-            return variant(FB::JSObjectPtr(ptr), true);
+            if (ptr)
+                return variant(FB::JSObjectPtr(ptr), true);
+            else
+                return variant(FB::FBNull());
         }
 
         // Convert out
@@ -190,9 +196,13 @@ namespace FB
             // First of all, to succeed it *must* be a JSAPI object!
             if (var.get_type() == typeid(FB::JSObjectPtr)) {
                 ptr = var.cast<FB::JSObjectPtr>();
+            } else if (var.empty() || var.is_null()) {
+                return boost::shared_ptr<T>();
             } else {
                 ptr = var.cast<FB::JSAPIPtr>();
             }
+            if (!ptr)
+                return boost::shared_ptr<T>();
 
             FB::JSObjectPtr jso = FB::ptr_cast<FB::JSObject>(ptr);
             if (jso) {

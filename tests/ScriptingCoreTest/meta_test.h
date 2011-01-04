@@ -18,12 +18,13 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #include <vector>
 #include <string>
 #include <cstdio>
+#include <boost/variant.hpp>
 
 #include "Util/meta_util.h"
 
 class MetaTestEmptyClass {};
 
-TEST(MetaTest)
+TEST(HasTypeMetaTest)
 {
     PRINT_TESTNAME;
 
@@ -53,6 +54,16 @@ TEST(MetaTest)
         CHECK((d::has_type_size_type      <Test>::value));
     }
 
+}
+TEST(IsContainerMetaTest)
+{
+    PRINT_TESTNAME;
+
+
+    namespace m = FB::meta;
+    namespace d = FB::meta::detail;    
+
+    typedef MetaTestEmptyClass Empty;
     // is_container_impl<> step by step
 
     {
@@ -120,6 +131,15 @@ TEST(MetaTest)
     }
 
     // implementation checks
+}
+TEST(ImplementationMetaTest)
+{
+    PRINT_TESTNAME;
+
+    namespace m = FB::meta;
+    namespace d = FB::meta::detail;    
+
+    typedef MetaTestEmptyClass Empty;
 
     {
         typedef std::map<int,int> MapIntInt;
@@ -136,5 +156,63 @@ TEST(MetaTest)
         CHECK((!m::is_pseudo_container<Empty>::value));
         CHECK((!m::is_container<Empty>::value));
         CHECK((!m::is_assoc_container<Empty>::value));
+    }
+}
+TEST(IsBoostVariantMetaTest)
+{
+    PRINT_TESTNAME;
+
+    namespace m = FB::meta;
+    namespace d = FB::meta::detail;    
+
+    typedef MetaTestEmptyClass Empty;
+
+    {
+        typedef boost::variant<int,long,double,std::string> Var1;
+        typedef boost::optional<Var1> nVar1;
+        typedef boost::variant<char, unsigned long long> Var2;
+        typedef long nVar2;
+        typedef boost::variant<int> Var3;
+        typedef int nVar3;
+
+        CHECK((m::is_boost_variant<Var1>::value));
+        CHECK((m::is_boost_variant<Var2>::value));
+        CHECK((m::is_boost_variant<Var3>::value));
+        CHECK(!(m::is_boost_variant<nVar1>::value));
+        CHECK(!(m::is_boost_variant<nVar2>::value));
+        CHECK(!(m::is_boost_variant<nVar3>::value));
+    }
+}
+TEST(IsOptionalMetaTest)
+{
+    PRINT_TESTNAME;
+
+    namespace m = FB::meta;
+    namespace d = FB::meta::detail;    
+
+    typedef MetaTestEmptyClass Empty;
+
+    {
+        typedef boost::optional<int> T1;
+        typedef boost::optional<unsigned char> T2;
+        typedef boost::optional<long> T3;
+        typedef boost::optional<Empty> T4;
+        typedef boost::optional<boost::variant<char, unsigned long long> > T5;
+        typedef int nT1;
+        typedef unsigned char nT2;
+        typedef long nT3;
+        typedef Empty nT4;
+        typedef boost::variant<char, unsigned long long> nT5;
+
+        CHECK((m::is_optional<T1>::value));
+        CHECK((m::is_optional<T2>::value));
+        CHECK((m::is_optional<T3>::value));
+        CHECK((m::is_optional<T4>::value));
+        CHECK((m::is_optional<T5>::value));
+        CHECK(!(m::is_optional<nT1>::value));
+        CHECK(!(m::is_optional<nT2>::value));
+        CHECK(!(m::is_optional<nT3>::value));
+        CHECK(!(m::is_optional<nT4>::value));
+        CHECK(!(m::is_optional<nT5>::value));
     }
 }
