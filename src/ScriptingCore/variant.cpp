@@ -31,10 +31,20 @@ variant FB::variant_detail::conversion::make_variant(const wchar_t* x) {
 // std::string
 ///////////////////////////////////////////////////
 
-const void FB::variant_detail::conversion::convert_variant(const FB::variant&, const FB::variant_detail::conversion::type_spec<void>&) {
+const void FB::variant_detail::conversion::convert_variant(const FB::variant&, const FB::variant_detail::conversion::type_spec<void>) {
     return;
 }
 
-const FB::variant& FB::variant_detail::conversion::convert_variant(const FB::variant& var, const FB::variant_detail::conversion::type_spec<FB::variant>&) {
+const FB::variant& FB::variant_detail::conversion::convert_variant(const FB::variant& var, const FB::variant_detail::conversion::type_spec<FB::variant>) {
     return var;
+}
+
+const FB::FBNull FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBNull> )
+{
+    return FB::FBNull();
+}
+
+const FB::FBVoid FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBVoid> )
+{
+    return FB::FBVoid();
 }

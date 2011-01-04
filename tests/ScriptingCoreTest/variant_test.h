@@ -218,7 +218,7 @@ TEST(VariantOptionalTest)
         CHECK(!dblVal);
     }
 }
-TEST(VariantBoostVariantConversionTest)
+TEST(VariantToBoostVariantConversionTest)
 {
     PRINT_TESTNAME;
     using namespace FB;
@@ -244,5 +244,40 @@ TEST(VariantBoostVariantConversionTest)
         a = FB::FBVoid();
         av = a;
         CHECK(av.empty());
+    }
+}
+TEST(BoostVariantToVariantConversionTest)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
+
+    typedef FB::boost_variant::generic VtComplete;
+
+    {
+        variant a = 23;
+        VtComplete av(a.convert_cast<VtComplete>());
+        CHECK(boost::get<int>(av) == 23);
+        a = 23.5;
+        av = a.convert_cast<VtComplete>();
+        CHECK(boost::get<double>(av) == 23.5f);
+        a = FB::JSAPIPtr();
+        av = a.convert_cast<VtComplete>();
+        try {
+            boost::get<FB::JSAPIPtr>(av);
+        } catch (...) {
+            CHECK(true);
+        }
+        try {
+            boost::get<FB::FBNull>(av);
+        } catch (...) {
+            CHECK(false);
+        }
+        a = FB::FBVoid();
+        av = a.convert_cast<VtComplete>();
+        try {
+            boost::get<FB::FBVoid>(av);
+        } catch (...) {
+            CHECK(false);
+        }
     }
 }

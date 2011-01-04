@@ -737,43 +737,49 @@ namespace FB
 
             template <typename V>
             struct FBVariant_to_boost_variant {
-                V res;
-                bool found;
+                V* res;
+                bool* found;
                 const variant& val;
-                FBVariant_to_boost_variant(const variant& val) : found(false), val(val) {}
+                FBVariant_to_boost_variant(const variant& val, bool* b, V* v) : res(v), found(b), val(val) {}
 
                 template <typename T>
                 void operator()(type_spec<T>&) {
                     if (typeid(T) == val.get_type()) {
                         // If we find an exact type match, use it
-                        res = val.cast<T>();
-                        found = true;
+                        *res = val.cast<T>();
+                        *found = true;
+                        return;
                     }
-                    else if (found) return; // When we find the correct cast we can be done
+                    else if (*found) return; // When we find the correct cast we can be done
                     try {
                         // If we haven't found an exact match, go for the next best match
-                        res = val.convert_cast<T>();
-                        found = true;
+                        *res = val.convert_cast<T>();
+                        *found = true;
                     } catch (const FB::bad_variant_cast&) {
                     }
                 }
             };
             
             template <class T>
-            T convert_variant(const variant& var, const typename boost::enable_if<FB::meta::is_boost_variant<T>, type_spec<T> >::type) {
-                FBVariant_to_boost_variant<T> converter(var);
+            T convert_variant(const variant& var, const type_spec<T>,
+                typename boost::enable_if<FB::meta::is_boost_variant<T> >::type*p = 0) {
+                bool found(false);
+                T res;
+                FBVariant_to_boost_variant<T> converter(var, &found, &res);
                 boost::mpl::for_each<T::types, type_spec<boost::mpl::_1> >(converter);
-                if (converter.found)
-                    return converter.res;
+                if (found)
+                    return res;
                 else
                     throw FB::bad_variant_cast(var.get_type(), typeid(T));
             }
             
-            const void convert_variant(const variant&, const variant_detail::conversion::type_spec<void>&);
-            const variant& convert_variant(const variant& var, const variant_detail::conversion::type_spec<variant>&);
+            const void convert_variant(const variant&, const type_spec<void>);
+            const FB::FBNull convert_variant(const variant&, const type_spec<FBNull>);
+            const FB::FBVoid convert_variant(const variant&, const type_spec<FBVoid>);
+            const variant& convert_variant(const variant& var, const type_spec<variant>);
             
             template<typename T>
-            boost::optional<T> convert_variant(const variant& var, const variant_detail::conversion::type_spec<boost::optional<T> >&) {
+            boost::optional<T> convert_variant(const variant& var, const type_spec<boost::optional<T> >) {
                 if (var.is_null() || var.empty())
                     return boost::optional<T>();
 
@@ -782,7 +788,7 @@ namespace FB
 
             template<typename T>
             typename FB::meta::enable_for_numbers<T, T>::type
-            convert_variant(const variant& var, const variant_detail::conversion::type_spec<T>&) {
+            convert_variant(const variant& var, const type_spec<T>&) {
                 FB_BEGIN_CONVERT_MAP(T)
                 FB_CONVERT_ENTRY_NUMERIC(T, char)
                 FB_CONVERT_ENTRY_NUMERIC(T, unsigned char)

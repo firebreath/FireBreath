@@ -191,15 +191,21 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
     case VT_I4:
     case VT_UI1:
     case VT_UI2:
-    case VT_UI4:
-    case VT_I8:
-    case VT_UI8:
     case VT_INT:
-    case VT_UINT:
         converted.ChangeType(VT_I4, cVar);
         retVal = (long)converted.lVal;
         break;
+    case VT_UI4:
+    case VT_UINT:
+        converted.ChangeType(VT_UI4, cVar);
+        retVal = (unsigned long)converted.ulVal;
+        break;
 
+    case VT_I8:
+        retVal = static_cast<boost::int64_t>(cVar->llVal);
+        break;
+    case VT_UI8:
+        retVal = static_cast<boost::uint64_t>(cVar->ullVal);
     case VT_LPSTR:
     case VT_LPWSTR:
     case VT_BSTR:
@@ -224,7 +230,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_NULL:
-        retVal = FB::variant_detail::null();
+        retVal = FB::FBNull();
         break;
 
     case VT_EMPTY:

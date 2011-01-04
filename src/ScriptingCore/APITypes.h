@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
+#include <boost/variant/variant_fwd.hpp>
 #include "FBPointers.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -325,6 +326,12 @@ namespace FB
     boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
     {
         return boost::dynamic_pointer_cast<T>(r);
+    }
+
+    namespace boost_variant {
+        typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> generic;
+        typedef boost::variant<long, int, double, float, std::string, FB::FBNull, FB::FBVoid> primitives;
+        typedef boost::variant<std::string, FB::StringSet> strings;
     }
 }
 
