@@ -766,7 +766,7 @@ namespace FB
                 bool found(false);
                 T res;
                 FBVariant_to_boost_variant<T> converter(var, &found, &res);
-                boost::mpl::for_each<T::types, type_spec<boost::mpl::_1> >(converter);
+                boost::mpl::for_each<typename T::types, type_spec<boost::mpl::_1> >(converter);
                 if (found)
                     return res;
                 else
