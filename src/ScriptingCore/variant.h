@@ -37,6 +37,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/optional.hpp>
 #include <boost/variant/variant_fwd.hpp>
+#include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
 
 #include "APITypes.h"
@@ -719,9 +720,9 @@ namespace FB
             // std::string
             ///////////////////////////////////////////////////
             struct boost_variant_to_FBVariant
-                : public boost::static_visitor<FB::variant> {
+				: public boost::static_visitor<FB::variant> {
                 template <typename T>
-                FB::variant operator()(const T inVal) {
+                FB::variant operator()(T inVal) const {
                     return FB::variant(inVal);
                 }
             };
@@ -731,7 +732,7 @@ namespace FB
                 FB::meta::is_boost_variant<T>, variant
             >::type
             make_variant(T& inVal) {
-                return inVal.apply_visitor(boost_variant_to_FBVariant());
+                return boost::apply_visitor(boost_variant_to_FBVariant(), inVal);
             }
 
             template <typename V>
