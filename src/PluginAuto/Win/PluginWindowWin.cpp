@@ -159,14 +159,6 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    if (uMsg == WM_ASYNCTHREADINVOKE) {
-        FBLOG_TRACE("PluginWindow", "Running async function call");
-        FB::AsyncFunctionCall *evt = static_cast<FB::AsyncFunctionCall*>((void*)lParam);
-        evt->func(evt->userData);
-        delete evt;
-        return S_OK;
-    } 
-
     PluginWindowMap::iterator it = m_windowMap.find(static_cast<void*>(hWnd));
     if (it == m_windowMap.end()) 
         // This could happen if we're using this as a message-only window
