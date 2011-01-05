@@ -20,9 +20,14 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "win_common.h"
 #include <atlctl.h>
 #include "JSObject.h"
+#include "Element.h"
 #include "DOM/Document.h"
 #include "DOM/Element.h"
 
+#ifdef _WIN32
+#pragma warning(push)
+#pragma warning( disable : 4250 )
+#endif
 namespace FB { namespace ActiveX {
     namespace AXDOM {
 
@@ -31,16 +36,15 @@ namespace FB { namespace ActiveX {
         ///
         /// @brief  ActiveX specific implementation of DOM::Document
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        class Document : public FB::DOM::Document
+        class Document : public virtual FB::ActiveX::AXDOM::Element, public virtual FB::DOM::Document
         {
         public:
             Document(const FB::JSObjectPtr &element, IWebBrowser2 *web);
             virtual ~Document();
 
         public:
-            virtual FB::DOM::WindowPtr getWindow();
-            virtual FB::DOM::ElementPtr getElementById(const std::string& elem_id);
-            virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(const std::string& tagName);
+            virtual FB::DOM::WindowPtr getWindow() const;
+            virtual FB::DOM::ElementPtr getElementById(const std::string& elem_id) const;
 
         protected:
             CComQIPtr<IWebBrowser> m_webBrowser;
@@ -49,5 +53,8 @@ namespace FB { namespace ActiveX {
 
     };
 } }
+#ifdef _WIN32
+#pragma warning(pop)
+#endif
 
 #endif // H_AXDOM_DOCUMENT

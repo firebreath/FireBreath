@@ -21,13 +21,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <atlctl.h>
 #include "BrowserHost.h"
 #include "APITypes.h"
+#include "FBPointers.h"
 
 namespace FB {
     namespace ActiveX {
-        class ActiveXBrowserHost;
-        class IDispatchAPI;
-        typedef boost::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
-        typedef boost::shared_ptr<IDispatchAPI> IDispatchAPIPtr;
+        FB_FORWARD_PTR(ActiveXBrowserHost);
+        FB_FORWARD_PTR(IDispatchAPI);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @class  ActiveXBrowserHost
@@ -38,7 +37,7 @@ namespace FB {
             public FB::BrowserHost
         {
         public:
-            ActiveXBrowserHost(IWebBrowser2 *doc);
+            ActiveXBrowserHost(IWebBrowser2 *doc, IHTMLElement2* element);
             virtual ~ActiveXBrowserHost(void);
             virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const;
 
@@ -53,6 +52,7 @@ namespace FB {
         public:
             FB::DOM::DocumentPtr getDOMDocument();
             FB::DOM::WindowPtr getDOMWindow();
+            FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
 
         public:
@@ -64,13 +64,15 @@ namespace FB {
         protected:
             void initDOMObjects(); // This is const so that getDOMDocument/Window can be
             HWND m_hWnd;
-            CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
-            CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocDisp;
+            CComQIPtr<IHTMLElement2> m_htmlElement;
+            CComQIPtr<IHTMLDocument2> m_htmlDoc;
+            CComQIPtr<IDispatch> m_htmlDocDisp;
             CComPtr<IHTMLWindow2> m_htmlWin;
             CComPtr<IWebBrowser2> m_webBrowser;
-            CComQIPtr<IDispatch, &IID_IDispatch> m_htmlWinDisp;
+            CComQIPtr<IDispatch> m_htmlWinDisp;
             mutable FB::DOM::WindowPtr m_window;
             mutable FB::DOM::DocumentPtr m_document;
+            mutable FB::DOM::ElementPtr m_element;
 
         public:
             FB::variant getVariant(const VARIANT *cVar);

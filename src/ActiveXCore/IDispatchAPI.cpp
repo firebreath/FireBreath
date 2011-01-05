@@ -373,7 +373,9 @@ FB::JSAPIPtr IDispatchAPI::getJSAPI() const
     }
     JSAPI_IDispatchExBase* p(NULL);
     CComQIPtr<IFireBreathObject> fbObj(m_obj);
-    if (fbObj.p && (p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p))) {
+    // If it's our own element then both of these will pass!  This means it isn't us!
+    CComQIPtr<IHTMLElement> testObj(m_obj);
+    if (!testObj && fbObj && (p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p))) {
         return p->getAPI();
     }
 

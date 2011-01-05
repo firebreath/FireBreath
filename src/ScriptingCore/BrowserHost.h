@@ -232,6 +232,15 @@ namespace FB
         virtual DOM::WindowPtr getDOMWindow() = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual DOM::ElementPtr getDOMElement() = 0
+        ///
+        /// @brief  Gets a DOM::Element wrapper for the DOM/JS object tag that the plugin resides in.
+        ///
+        /// @return The dom element. 
+        /// @see DOM::Element
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual DOM::ElementPtr getDOMElement() = 0;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void evaluateJavaScript(const std::string &script) = 0
         ///
         /// @brief  Evaluates arbitrary javascript; note that it does not return the result due to cross-

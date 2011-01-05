@@ -74,8 +74,9 @@ namespace FB {
 
         protected:
             FB::PluginWindowWin *pluginWin;
-            CComQIPtr<IHTMLDocument2, &IID_IHTMLDocument2> m_htmlDoc;
-            CComQIPtr<IDispatch, &IID_IDispatch> m_htmlDocIDisp;
+            CComQIPtr<IHTMLElement2> m_htmlElement;
+            CComQIPtr<IHTMLDocument2> m_htmlDoc;
+            CComQIPtr<IDispatch> m_htmlDocIDisp;
             CComQIPtr<IServiceProvider> m_serviceProvider;
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
@@ -105,6 +106,8 @@ namespace FB {
             ~CFBControl()
             {
             }
+
+            virtual FB::VariantMap getProperties(const CComQIPtr<IPropertyBag2>& pBag);
 
             virtual void setReady();
             virtual void setWindow(HWND);
@@ -154,7 +157,8 @@ namespace FB {
 
         BEGIN_REGMAP(CFBControlX)
             REGMAP_UUID("LIBID", (*plibid))
-            REGMAP_ENTRY("THREADING", "Single")
+            REGMAP_ENTRY("THREADING", "Apartment")
+            //REGMAP_ENTRY("THREADING", "Single")
         END_REGMAP()
 
         DECLARE_NOT_AGGREGATABLE(CFBControlX)
@@ -226,6 +230,15 @@ namespace FB {
                 m_propNotify = m_spClientSite;
                 m_htmlDocIDisp = m_webBrowser;
             }
+            CComQIPtr<IOleControlSite> site(m_spClientSite);
+            CComPtr<IDispatch> dispatch;
+            site->GetExtendedControl(&dispatch);
+            m_htmlElement = dispatch;
+            CComQIPtr<IHTMLDOMNode> test1(dispatch);
+            CComQIPtr<IHTMLElement> test2(dispatch);
+            CComQIPtr<IHTMLObjectElement> test3(dispatch);
+            CComVariant id;
+            dispatch.GetPropertyByName(L"id", &id);
 
             m_messageWin.swap(boost::scoped_ptr<FB::WinMessageWindow>(new FB::WinMessageWindow()));
 
@@ -237,24 +250,45 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InitNew()
         {
+            pluginMain->setParams(FB::VariantMap());
             setReady();
             return S_OK;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
-        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::Load( IPropertyBag *pPropBag, IErrorLog *pErrorLog )
+        FB::VariantMap CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::getProperties( const CComQIPtr<IPropertyBag2>& pBag )
         {
+            ULONG pCount(0), pGot(0);
+            HRESULT hr = pBag->CountProperties(&pCount);
             FB::VariantMap paramMap;
-            FB::StringSet *paramList = this->pluginMain->getSupportedParams();
-            for (FB::StringSet::iterator it = paramList->begin(); it != paramList->end(); it++) {
-                CComVariant val;
-                pPropBag->Read(FB::utf8_to_wstring(*it).c_str(), &val, pErrorLog);
-                if (val.vt) {
-                    FB::variant varval = m_host->getVariant(&val);
-                    paramMap[it->c_str()] = varval;
+            boost::scoped_array<PROPBAG2> pArr(new PROPBAG2[pCount]);
+            hr = pBag->GetPropertyInfo(0, pCount, pArr.get(), &pGot);
+
+            boost::scoped_array<HRESULT> results(new HRESULT[pCount]);
+            boost::scoped_array<CComVariant> vals(new CComVariant[pCount]);
+            hr = pBag->Read(pGot, pArr.get(), NULL, vals.get(), results.get());
+            if (SUCCEEDED(hr)) {
+                for(ULONG i = 0; i < pGot; ++i) {
+                    HRESULT curRes = results[i];
+                    if (SUCCEEDED(curRes)) {
+                        PROPBAG2* curInfo = &pArr[i];
+                        VARIANT* curVal = &vals[i];
+                        std::string name(FB::wstring_to_utf8(curInfo->pstrName));
+                        FB::variant varval(m_host->getVariant(curVal));
+                        paramMap[name] = varval;
+
+                        // Clean up
+                        CoTaskMemFree(curInfo->pstrName);
+                    }
                 }
             }
-            pluginMain->setParams(paramMap);
+            return paramMap;
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::Load( IPropertyBag *pPropBag, IErrorLog *pErrorLog )
+        {
+            pluginMain->setParams(getProperties(CComQIPtr<IPropertyBag2>(pPropBag)));
 
             setReady();
             return S_OK;
@@ -263,7 +297,7 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::clientSiteSet()
         {
-            m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser));
+            m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_htmlElement));
             m_host->setWindow(m_messageWin->getHWND());
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
         }
@@ -273,7 +307,6 @@ namespace FB {
         {
             // This is when we can consider the plugin "ready".  The window may or may not (likely not)
             // be around yet!
-            pluginMain->setParams(FB::VariantMap());
             this->setAPI(pluginMain->getRootJSAPI(), m_host);
             setReadyState(READYSTATE_COMPLETE);
             pluginMain->setReady();

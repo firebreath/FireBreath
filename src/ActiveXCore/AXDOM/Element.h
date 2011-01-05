@@ -22,6 +22,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include <boost/lexical_cast.hpp>
 #include "IDispatchAPI.h"
 #include "JSObject.h"
+#include "Node.h"
 #include "DOM/Element.h"
 
 namespace FB { namespace ActiveX {
@@ -32,15 +33,17 @@ namespace FB { namespace ActiveX {
         ///
         /// @brief  ActiveX specific implementation of DOM::Element
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        class Element : public FB::DOM::Element
+        class Element : public virtual FB::ActiveX::AXDOM::Node, public virtual FB::DOM::Element
         {
         public:
             Element(const FB::JSObjectPtr& element, IWebBrowser *web);
             virtual ~Element();
 
-        public:
+            virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(const std::string& tagName) const;
+            virtual std::string getStringAttribute(const std::string& attr) const;
 
-            CComQIPtr<IHTMLElement> m_axElement;
+        public:
+            CComQIPtr<IDispatch> m_axDisp;
             CComPtr<IWebBrowser> m_webBrowser;
         };
 

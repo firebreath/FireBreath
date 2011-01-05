@@ -43,7 +43,7 @@ namespace FB { namespace ActiveX
     {
         bool operator() (const std::type_info* const lhs, const std::type_info* const rhs) const
         {
-            return lhs->before(*rhs);
+            return lhs->before(*rhs) ? true : false;
         }
     };
     

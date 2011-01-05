@@ -125,7 +125,7 @@ FB::DOM::DocumentPtr NpapiBrowserHost::getDOMDocument()
     if (!m_htmlDoc)
         throw std::runtime_error("Cannot find HTML document");
 
-    return FB::DOM::DocumentPtr(new FB::DOM::Document(m_htmlDoc));
+    return FB::DOM::Document::create(m_htmlDoc);
 }
 
 FB::DOM::WindowPtr NpapiBrowserHost::getDOMWindow()
@@ -133,9 +133,16 @@ FB::DOM::WindowPtr NpapiBrowserHost::getDOMWindow()
     if (!m_htmlWin)
         throw std::runtime_error("Cannot find HTML window");
 
-    return FB::DOM::WindowPtr(new FB::DOM::Window(m_htmlWin));
+    return FB::DOM::Window::create(m_htmlWin);
 }
 
+FB::DOM::ElementPtr FB::Npapi::NpapiBrowserHost::getDOMElement()
+{
+    if (!m_htmlElement)
+        throw std::runtime_error("Cannot find HTML window");
+
+    return FB::DOM::Element::create(m_htmlElement);
+}
 void NpapiBrowserHost::evaluateJavaScript(const std::string &script) 
 {
     assertMainThread();

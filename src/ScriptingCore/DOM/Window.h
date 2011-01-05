@@ -48,7 +48,7 @@ namespace FB {
     /// Most of the time you will want to call BrowserHost::getDOMWindow() to get the reference to
     /// the containing window
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class Window : public Node
+    class Window : public virtual Node
     {
     public:
 
@@ -92,7 +92,7 @@ namespace FB {
         ///
         /// @return WindowPtr of the new Window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static WindowPtr create(FB::JSObjectPtr &api) { return api->host->_createWindow(api); }
+        static WindowPtr create(const FB::JSObjectPtr &api) { return api->host->_createWindow(api); }
 
     public:
 

@@ -39,6 +39,8 @@
 #include <boost/variant/variant_fwd.hpp>
 #include <boost/variant/apply_visitor.hpp>
 #include <boost/variant/static_visitor.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/preprocessor/tuple/to_seq.hpp>
 
 #include "APITypes.h"
 #include "Util/meta_util.h"
@@ -49,6 +51,7 @@
 
 
 #ifdef _WIN32
+#pragma warning(push)
 #pragma warning( disable : 4800 )
 #endif
 
@@ -826,6 +829,10 @@ namespace FB
         return variant_detail::conversion::make_variant(t);
     }
 }
+
+#ifdef _WIN32
+#pragma warning(pop)
+#endif
 
 #undef FB_BEGIN_CONVERT_MAP
 #undef FB_END_CONVERT_MAP

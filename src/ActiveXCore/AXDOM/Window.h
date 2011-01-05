@@ -20,6 +20,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include <atlctl.h>
 #include <string>
 #include <boost/shared_ptr.hpp>
+#include "Node.h"
 #include "DOM/Window.h"
 
 namespace FB { namespace ActiveX {
@@ -30,16 +31,16 @@ namespace FB { namespace ActiveX {
         ///
         /// @brief  ActiveX specific implementation of DOM::Window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        class Window : public FB::DOM::Window
+        class Window : public virtual FB::DOM::Window, public virtual Node
         {
         public:
             Window(FB::JSObjectPtr obj, IWebBrowser2 *web);
             virtual ~Window();
 
         public:
-            virtual FB::DOM::DocumentPtr getDocument();
-            virtual void alert(const std::string& str);
-            virtual std::string getLocation();
+            virtual FB::DOM::DocumentPtr getDocument() const;
+            virtual void alert(const std::string& str) const;
+            virtual std::string getLocation() const;
 
         protected:
             CComQIPtr<IHTMLWindow2> m_htmlWin;

@@ -35,7 +35,7 @@ namespace FB { namespace DOM {
     /// Most of the time you will want to call BrowserHost::getDOMDocument() to get the reference to
     /// the containing document
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class Document : public Element
+    class Document : public virtual Element
     {
     public:
         Document(const FB::JSObjectPtr &element);
@@ -61,7 +61,7 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::DocumentPtr to the created Document object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static DocumentPtr create(FB::JSObjectPtr &api) { return api->host->_createDocument(api); }
+        static DocumentPtr create(const FB::JSObjectPtr &api) { return api->host->_createDocument(api); }
 
     public:
 
@@ -72,7 +72,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The window. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual WindowPtr getWindow();
+        virtual WindowPtr getWindow() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::getBody()
@@ -81,34 +81,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The document's body.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual ElementPtr getBody();
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual ElementPtr Document::getElementById(const std::string& elem_id)
-        ///
-        /// @brief  Gets an element from the DOM with the specified id
-        ///
-        /// @param  elem_id Identifier for the element. 
-        ///
-        /// @return The element by identifier. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElementById(const std::string& elem_id);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual std::vector<ElementPtr> Document::getElementsByTagName(const std::string& tagName)
-        ///
-        /// @brief  Gets a list of all elements in the document with the specified tag name
-        ///
-        /// @param  tagName Name of the tag. 
-        ///
-        /// @return The elements by tag name. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName);
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual std::vector<ElementPtr> Document::getElementsByTagName(const std::wstring& tagName)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName);
+		virtual ElementPtr getBody() const;
     };
 
 }; };

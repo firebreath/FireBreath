@@ -79,8 +79,8 @@ namespace
     }
 }
 
-ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc)
-    : m_webBrowser(doc)
+ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IHTMLElement2* element)
+    : m_htmlElement(element), m_webBrowser(doc)
 {
     if (m_webBrowser.p) {
         m_webBrowser->get_Document(&m_htmlDocDisp);
@@ -136,8 +136,9 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 void ActiveXBrowserHost::initDOMObjects()
 {
     if (!m_window) {
-        m_window = DOM::Window::create(FB::JSObjectPtr(new IDispatchAPI(m_htmlWin.p, ptr_cast<ActiveXBrowserHost>(shared_ptr()))));
-        m_document = DOM::Document::create(FB::JSObjectPtr(new IDispatchAPI(m_htmlDocDisp.p, ptr_cast<ActiveXBrowserHost>(shared_ptr()))));
+        m_window = DOM::Window::create(boost::make_shared<IDispatchAPI>(m_htmlWin.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_document = DOM::Document::create(boost::make_shared<IDispatchAPI>(m_htmlDocDisp.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_element = DOM::Document::create(boost::make_shared<IDispatchAPI>(m_htmlElement.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
     }
 }
 
@@ -151,6 +152,12 @@ FB::DOM::WindowPtr ActiveXBrowserHost::getDOMWindow()
 {
     initDOMObjects();
     return m_window;
+}
+
+FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
+{
+    initDOMObjects();
+    return m_element;
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)

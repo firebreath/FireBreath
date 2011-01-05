@@ -60,7 +60,7 @@ TEST (COMJavascriptObject_CreateTest)
 {
     PRINT_TESTNAME;
 
-    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL, NULL));
 
     boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj(getFactoryInstance()->createCOMJSObject(host, testIf));
@@ -72,7 +72,7 @@ TEST(COMJavascriptObject_Methods)
 {
     PRINT_TESTNAME;
 
-    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL));
+    ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL, NULL));
 
     boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj = getFactoryInstance()->createCOMJSObject(host, testIf);

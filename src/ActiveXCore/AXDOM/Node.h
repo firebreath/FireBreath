@@ -33,15 +33,13 @@ namespace FB { namespace ActiveX {
         ///
         /// @brief  Provides an ActiveX specific implementation of DOM::Node
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        class Node : public FB::DOM::Node
+        class Node : public virtual FB::DOM::Node
         {
         public:
             Node(const FB::JSObjectPtr& element, IWebBrowser *web)
                 : m_axNode(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
                   m_webBrowser(web), FB::DOM::Node(element)
             {
-                if (!m_axNode)
-                    throw std::bad_cast("This is not a valid DOM node");
             }
             virtual ~Node() { }
 

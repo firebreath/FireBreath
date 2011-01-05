@@ -32,7 +32,7 @@ namespace FB { namespace DOM {
     ///
     /// This class should not be created directly; instead, use the Element::create method
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class Element : public Node
+    class Element : public virtual Node
     {
     public:
         Element(const FB::JSObjectPtr& element);
@@ -58,7 +58,7 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::ElementPtr to the created Element object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static ElementPtr create(FB::JSObjectPtr &api) { return api->host->_createElement(api); }
+        static ElementPtr create(const FB::JSObjectPtr &api) { return api->host->_createElement(api); }
 
     public:
 
@@ -69,7 +69,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The inner html. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::string getInnerHTML();
+        virtual std::string getInnerHTML() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setInnerHTML(const std::string&)
@@ -78,7 +78,7 @@ namespace FB { namespace DOM {
         ///
         /// @param  html    The html to set
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setInnerHTML(const std::string& html);
+        virtual void setInnerHTML(const std::string& html) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getWidth()
@@ -87,7 +87,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The width.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getWidth();
+        virtual int getWidth() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setWidth(int)
@@ -96,7 +96,7 @@ namespace FB { namespace DOM {
         ///
         /// @param  width    The new width of the element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setWidth(int width);
+        virtual void setWidth(const int width) const;
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getScrollWidth()
@@ -105,7 +105,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The scroll width.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual int getScrollWidth();
+		virtual int getScrollWidth() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getHeight()
@@ -114,7 +114,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The height. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getHeight();
+        virtual int getHeight() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setHeight(int)
@@ -123,7 +123,7 @@ namespace FB { namespace DOM {
         ///
         /// @param  height    The new height of the element
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setHeight(int height);
+        virtual void setHeight(const int height) const;
 
 		////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getScrollHeight()
@@ -132,7 +132,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The scroll height.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual int getScrollHeight();
+		virtual int getScrollHeight() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getChildNodeCount()
@@ -141,7 +141,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child node count. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getChildNodeCount();
+        virtual int getChildNodeCount() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getChildNode(int idx)
@@ -155,7 +155,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child node. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getChildNode(int idx);
+        virtual ElementPtr getChildNode(const int idx) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getParentNode()
@@ -164,7 +164,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The parent node. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getParentNode();
+        virtual ElementPtr getParentNode() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getElement(const std::string& name)
@@ -184,7 +184,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child element. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElement(const std::string& name)
+        virtual ElementPtr getElement(const std::string& name) const
         {
             JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
             ElementPtr retVal(new Element(api));
@@ -206,12 +206,41 @@ namespace FB { namespace DOM {
         ///
         /// @return The child element. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElement(int idx)
+        virtual ElementPtr getElement(const int idx) const
         {
             JSObjectPtr api = getProperty<FB::JSObjectPtr>(idx);
             ElementPtr retVal(new Element(api));
             return retVal;
         }
+
+        virtual std::string getStringAttribute(const std::string& attr) const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual ElementPtr getElementById(const std::string& elem_id)
+        ///
+        /// @brief  Gets an element from the DOM with the specified id
+        ///
+        /// @param  elem_id Identifier for the element. 
+        ///
+        /// @return The element by identifier. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual ElementPtr getElementById(const std::string& elem_id) const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName)
+        ///
+        /// @brief  Gets a list of all elements in the document with the specified tag name
+        ///
+        /// @param  tagName Name of the tag. 
+        ///
+        /// @return The elements by tag name. 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName) const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName) const;
     };
 
 }; };

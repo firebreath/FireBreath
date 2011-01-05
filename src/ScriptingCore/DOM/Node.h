@@ -49,7 +49,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The js object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::JSObjectPtr getJSObject() { return m_element; }
+        virtual FB::JSObjectPtr getJSObject() const { return m_element; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn NodePtr node()
@@ -71,7 +71,7 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::NodePtr to the created Node object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static NodePtr create(FB::JSObjectPtr &api) { return api->host->_createNode(api); }
+        static NodePtr create(const FB::JSObjectPtr &api) { return api->host->_createNode(api); }
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -90,7 +90,7 @@ namespace FB { namespace DOM {
         /// @return result of calling the method cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        T callMethod(const std::string& name, const VariantList& args)
+        T callMethod(const std::string& name, const VariantList& args) const
         {
             FB::variant tmp = m_element->Invoke(name, args);
             return tmp.convert_cast<T>();
@@ -99,14 +99,14 @@ namespace FB { namespace DOM {
         /// @overload template <class T> T callMethod(const std::wstring& name, const VariantList& args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        T callMethod(const std::wstring& name, const VariantList& args)
+        T callMethod(const std::wstring& name, const VariantList& args) const
         {
             return callMethod<T>(FB::wstring_to_utf8(name), args); 
         }
         
         /// @overload
         template <class T>
-        T getProperty(const std::wstring& name)
+        T getProperty(const std::wstring& name) const
         {
             return getProperty<T>(FB::wstring_to_utf8(name));
         }
@@ -125,7 +125,7 @@ namespace FB { namespace DOM {
         /// @return value of the requested property cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        T getProperty(const std::string& name)
+        T getProperty(const std::string& name) const
         {
             FB::variant tmp = m_element->GetProperty(name);
             return tmp.convert_cast<T>();
@@ -142,14 +142,14 @@ namespace FB { namespace DOM {
         /// @return result of calling the method cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        T getProperty(int idx)
+        T getProperty(const int idx) const
         {
             FB::variant tmp = m_element->GetProperty(idx);
             return tmp.convert_cast<T>();
         }
 
         /// @overload
-        virtual NodePtr getNode(const std::wstring& name);
+        virtual NodePtr getNode(const std::wstring& name) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual NodePtr getNode(const std::string& name)
         ///
@@ -159,7 +159,7 @@ namespace FB { namespace DOM {
         ///
         /// @return child node
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual NodePtr getNode(const std::string& name);
+        virtual NodePtr getNode(const std::string& name) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual NodePtr getNode(int idx)
@@ -170,10 +170,10 @@ namespace FB { namespace DOM {
         ///
         /// @return child node
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual NodePtr getNode(int idx);
+        virtual NodePtr getNode(const int idx) const;
 
         /// @overload
-        virtual void setProperty(const std::wstring& name, const variant& val);
+        virtual void setProperty(const std::wstring& name, const variant& val) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void setProperty(const std::string& name, const variant& val)
         ///
@@ -184,10 +184,10 @@ namespace FB { namespace DOM {
         ///
         /// @return result of calling the method cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setProperty(const std::string& name, const variant& val);
+        virtual void setProperty(const std::string& name, const variant& val) const;
 
         /// @overload
-        virtual void setProperty(int idx, const variant& val);
+        virtual void setProperty(const int idx, const variant& val) const;
 
     protected:
         JSObjectPtr m_element; // The JSObject that this object wraps

@@ -52,6 +52,7 @@ namespace FB { namespace Npapi {
     public:
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
+        FB::DOM::ElementPtr getDOMElement();
         void evaluateJavaScript(const std::string &script);
         bool isSafari() const;
 
@@ -66,6 +67,7 @@ namespace FB { namespace Npapi {
         NPP m_npp;
         NPObjectAPIPtr m_htmlDoc;
         NPObjectAPIPtr m_htmlWin;
+        NPObjectAPIPtr m_htmlElement;
 
     public:
         void* MemAlloc(uint32_t size) const;
