@@ -15,39 +15,55 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axutil.h"
 #include "atlstr.h"
 
-FB::ActiveX::FbPerUserRegistration::FbPerUserRegistration(bool perUser) 
+using namespace FB;
+using namespace FB::ActiveX;
+
+FbPerUserRegistration::FbPerUserRegistration(bool perUser) 
 #if _ATL_VER < 0x0900
-  : m_hkey(0)
+  : m_mapping(false)
 #endif
 {
 #if _ATL_VER < 0x0900
     // this seems to be always active and therefore may break
     // any COM functionality thats not registered per user
 
-    HRESULT hr;
+    if (!perUser) {
+        return;
+    }
+
     HKEY key;
 
-    if(!perUser && m_hkey) {
-        ::RegCloseKey(m_hkey);
-    } else if (!perUser) {
-        return;
-    }
-
-    hr = ::RegOpenKeyW(HKEY_CURRENT_USER, L"Software\\Classes", &key);
-    if(FAILED(hr))
-        return;
-
-    hr = ::RegOverridePredefKey(HKEY_CLASSES_ROOT, key);
-    if(FAILED(hr)) {
+    LONG err = ::RegOpenKeyEx(HKEY_CURRENT_USER, TEXT("Software\\Classes"), 0, MAXIMUM_ALLOWED, &key);
+    if(err == ERROR_SUCCESS) {
+        err = ::RegOverridePredefKey(HKEY_CLASSES_ROOT, key);
         ::RegCloseKey(key);
-        key = 0;
     }
 
-    m_hkey = key;
+    if (err == ERROR_SUCCESS) {
+        EnablePerUserTLibRegistration();
+        m_mapping = true;
+    }
 #else // _ATL_VER >= 0900
     AtlSetPerUserRegistration(perUser);
 #endif
 }
+
+#if _ATL_VER < 0x0900
+void FbPerUserRegistration::EnablePerUserTLibRegistration()
+{
+    HMODULE hOleaut32 = ::GetModuleHandle(TEXT("Oleaut32.dll"));
+    assert(hOleaut32);
+
+    typedef void (WINAPI * EnablePerUserTLibRegistrationProcPtr) (void);
+    EnablePerUserTLibRegistrationProcPtr enablePerUserTLibRegistrationProcPtr =
+        reinterpret_cast<EnablePerUserTLibRegistrationProcPtr>(
+        GetProcAddress(hOleaut32, "OaEnablePerUserTLibRegistration"));
+    if (enablePerUserTLibRegistrationProcPtr) {
+        enablePerUserTLibRegistrationProcPtr();
+    }
+}
+
+#endif
 
 FB::ActiveX::FbPerUserRegistration::~FbPerUserRegistration()
 {

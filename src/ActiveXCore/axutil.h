@@ -19,20 +19,23 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #include "TypeIDMap.h"
 
-namespace FB { namespace ActiveX {
-    extern FB::TypeIDMap<DISPID> AxIdMap;
+namespace FB { 
+    namespace ActiveX {
+        extern FB::TypeIDMap<DISPID> AxIdMap;
 
-    class FbPerUserRegistration
-    {
-    public:
-        FbPerUserRegistration(bool perUser = true);
-        ~FbPerUserRegistration();
+        class FbPerUserRegistration
+        {
+        public:
+            FbPerUserRegistration(bool perUser = true);
+            ~FbPerUserRegistration();
 
-    private:
-    #if _ATL_VER < 0x0900
-        HKEY m_hkey;
-    #endif
-    };
-} }
+        private:
+        #if _ATL_VER < 0x0900
+            static void EnablePerUserTLibRegistration();
+            bool m_mapping;
+        #endif
+        };
+    }
+}
 
 #endif
