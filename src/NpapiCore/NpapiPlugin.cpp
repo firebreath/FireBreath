@@ -316,7 +316,7 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
     s->setLength( stream->end );
     s->setUrl( stream->url );
     if( stream->headers ) s->setHeaders( stream->headers );
-    s->setSeekableByServer( seekable );
+    s->setSeekableByServer( seekable ? true : false );
 
     if ( s->isSeekableRequested() && !s->isSeekableByServer() )   // requested seekable stream, but stream was not seekable
     {                                                             //  stream can only be made seekable by downloading the entire file

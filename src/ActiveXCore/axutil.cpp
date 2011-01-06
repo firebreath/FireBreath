@@ -68,8 +68,8 @@ void FbPerUserRegistration::EnablePerUserTLibRegistration()
 FB::ActiveX::FbPerUserRegistration::~FbPerUserRegistration()
 {
 #if _ATL_VER < 0x0900
-    if(m_hkey)
-        ::RegCloseKey(m_hkey);
+    if (m_mapping)
+        ::RegOverridePredefKey(HKEY_CLASSES_ROOT, NULL);
 #endif
 }
 
