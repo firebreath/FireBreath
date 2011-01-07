@@ -425,8 +425,8 @@ namespace FB { namespace ActiveX {
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
             if (pei != NULL) {
-                pei->bstrSource = CComBSTR(m_mimetype.c_str());
-                pei->bstrDescription = CComBSTR(se.what());
+                pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
+                pei->bstrDescription = CComBSTR(se.what()).Detach();
                 pei->bstrHelpFile = NULL;
                 pei->pfnDeferredFillIn = NULL;
                 pei->scode = E_NOTIMPL;
