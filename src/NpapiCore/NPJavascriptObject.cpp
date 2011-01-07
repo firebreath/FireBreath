@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NPJavascriptObject *NPJavascriptObject::NewObject(NpapiBrowserHostPtr host, FB::JSAPIPtr api)
+NPJavascriptObject *NPJavascriptObject::NewObject(NpapiBrowserHostPtr host, FB::JSAPIWeakPtr api)
 {
     NPJavascriptObject *obj = static_cast<NPJavascriptObject *>(host->CreateObject(&NPJavascriptObjectClass));
 
@@ -31,7 +31,8 @@ bool NPJavascriptObject::isNPJavaScriptObject(const NPObject* const npo)
 }
 
 NPJavascriptObject::NPJavascriptObject(NPP npp)
-    : m_valid(true)
+    : m_valid(true), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
+    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this))
 {
 }
 
@@ -39,7 +40,7 @@ NPJavascriptObject::~NPJavascriptObject(void)
 {
 }
 
-void NPJavascriptObject::setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host)
+void NPJavascriptObject::setAPI(FB::JSAPIWeakPtr api, NpapiBrowserHostPtr host)
 {
     m_api = api;
     m_browser = host;
@@ -47,13 +48,16 @@ void NPJavascriptObject::setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host)
 
 FB::JSAPIPtr NPJavascriptObject::getAPI() const 
 {
-    return m_api;
+    FB::JSAPIPtr ptr(m_api.lock());
+    if (!ptr)
+        throw std::bad_cast("Invalid object");
+    return ptr;
 }
 
 void NPJavascriptObject::Invalidate()
 {
     m_valid = false;
-    m_api->invalidate();
+    getAPI()->invalidate();
 }
 
 bool NPJavascriptObject::HasMethod(NPIdentifier name)
@@ -61,36 +65,45 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
     try {
         std::string mName = m_browser->StringFromIdentifier(name);
 
-        if (mName == "addEventListener" || mName == "removeEventListener" || mName == "toString") {
-            return true;
-        } else {
-            return !m_api->HasMethodObject(mName) && m_api->HasMethod(mName);
-        }
+        return !getAPI()->HasMethodObject(mName) && getAPI()->HasMethod(mName);
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
     }
 }
-
-bool NPJavascriptObject::callSetEventListener(const std::vector<FB::variant> &args, bool add)
+FB::variant FB::Npapi::NPJavascriptObject::NPO_addEventListener::exec( const std::vector<variant>& args )
 {
-    if (args.size() < 2 || args.size() > 3
-         || args[0].get_type() != typeid(std::string)
-         || args[1].get_type() != typeid(JSObjectPtr)) {
-        throw invalid_arguments();
-    }
-
-    std::string evtName = "on" + args[0].convert_cast<std::string>();
-    FB::JSObjectPtr method(args[1].convert_cast<JSObjectPtr>());
-    if (add) {
-        m_api->registerEventMethod(evtName, method);
+    if (args.size() > 1 && args.size() < 3) {
+        try {
+            std::string evtName = "on" + args[0].convert_cast<std::string>();
+            FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+            obj->getAPI()->registerEventMethod(evtName, method);
+            return FB::variant();
+        } catch (const std::bad_cast& e) {
+            throw FB::invalid_arguments(e.what());
+        }
     } else {
-        m_api->unregisterEventMethod(evtName, method);
+        throw FB::invalid_arguments();
     }
-
-    return true;
 }
 
+FB::variant FB::Npapi::NPJavascriptObject::NPO_removeEventListener::exec( const std::vector<variant>& args )
+{
+    if (args.size() > 1 && args.size() < 3) {
+        try {
+            std::string evtName = "on" + args[0].convert_cast<std::string>();
+            FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+            obj->getAPI()->unregisterEventMethod(evtName, method);
+            return FB::variant();
+        } catch (const std::bad_cast& e) {
+            throw FB::invalid_arguments(e.what());
+        }
+    } else {
+        throw FB::invalid_arguments();
+    }
+}
 bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     VOID_TO_NPVARIANT(*result);
@@ -104,17 +117,12 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
             vArgs.push_back(m_browser->getVariant(&args[i]));
         }
 
-        // Event Handling
-        if (mName == "addEventListener") {
-            return callSetEventListener(vArgs, true);
-        } else if (mName == "removeEventListener") {
-            return callSetEventListener(vArgs, false);
-        } else {
-            // Default method call
-            FB::variant ret = m_api->Invoke(mName, vArgs);
-            m_browser->getNPVariant(result, ret);
-            return true;
-        }
+        // Default method call
+        FB::variant ret = getAPI()->Invoke(mName, vArgs);
+        m_browser->getNPVariant(result, ret);
+        return true;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -132,17 +140,21 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         // Handle numeric identifiers
         if(!m_browser->IdentifierIsString(name)) {
             int32_t sIdx = m_browser->IntFromIdentifier(name);
-            return m_api->HasProperty(sIdx);
+            return getAPI()->HasProperty(sIdx);
         }
 
         std::string sName(m_browser->StringFromIdentifier(name));
         // We check for events of that name as well in order to allow setting of an event handler in the
         // old javascript style, i.e. plugin.onload = function() .....;
 
-        if (sName != "toString" && m_api->HasMethodObject(sName))
+        if (sName == "addEventListener" || sName == "removeEventListener") {
+            return true;
+        } else if (sName != "toString" && getAPI()->HasMethodObject(sName))
             return true;
         else
-            return !HasMethod(name) && (m_api->HasEvent(sName) || m_api->HasProperty(sName));
+            return !HasMethod(name) && (getAPI()->HasEvent(sName) || getAPI()->HasProperty(sName));
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -155,21 +167,27 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
         FB::variant res;
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
-            if (m_api->HasEvent(sName)) {
-                FB::JSObjectPtr tmp(m_api->getDefaultEventMethod(sName));
+            if (sName == "addEventListener") {
+                res = m_addEventFunc;
+            } else if (sName == "removeEventListener") {
+                res = m_removeEventFunc;
+            } else if (getAPI()->HasEvent(sName)) {
+                FB::JSObjectPtr tmp(getAPI()->getDefaultEventMethod(sName));
                 if (tmp != NULL)
                     res = tmp;
-            } else if (m_api->HasMethodObject(sName)) {
-                res = m_api->GetMethodObject(sName);
+            } else if (getAPI()->HasMethodObject(sName)) {
+                res = getAPI()->GetMethodObject(sName);
             } else {
-                res = m_api->GetProperty(sName);
+                res = getAPI()->GetProperty(sName);
             }
         } else {
-            res = m_api->GetProperty(m_browser->IntFromIdentifier(name));
+            res = getAPI()->GetProperty(m_browser->IntFromIdentifier(name));
         }
 
         m_browser->getNPVariant(result, res);
         return true;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -182,23 +200,25 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
         FB::variant arg = m_browser->getVariant(value);
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
-            if (m_api->HasEvent(sName)) {
+            if (getAPI()->HasEvent(sName)) {
                 if(value->type == NPVariantType_Null) {
                     FB::JSObjectPtr nullEvent;
-                    m_api->setDefaultEventMethod(sName, nullEvent);
+                    getAPI()->setDefaultEventMethod(sName, nullEvent);
                 } else if(value->type == NPVariantType_Object) {
                     FB::JSObjectPtr tmp(arg.cast<FB::JSObjectPtr>());
-                    m_api->setDefaultEventMethod(sName, tmp);
+                    getAPI()->setDefaultEventMethod(sName, tmp);
                 }
-            } else if (m_api->HasMethodObject(sName)) {
+            } else if (getAPI()->HasMethodObject(sName)) {
                 throw FB::script_error("This property cannot be changed");
             } else {
-                m_api->SetProperty(sName, arg);
+                getAPI()->SetProperty(sName, arg);
             }
         } else {
-            m_api->SetProperty(m_browser->IntFromIdentifier(name), arg);
+            getAPI()->SetProperty(m_browser->IntFromIdentifier(name), arg);
         }
         return true;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch(const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -210,12 +230,14 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
     try {
         if (m_browser->IdentifierIsString(name)) {
             std::string sName(m_browser->StringFromIdentifier(name));
-            if (m_api->HasEvent(sName)) {
+            if (getAPI()->HasEvent(sName)) {
                 FB::JSObjectPtr nullEvent;
-                m_api->setDefaultEventMethod(sName, nullEvent);
+                getAPI()->setDefaultEventMethod(sName, nullEvent);
             }
         }
         return false;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch(const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -227,7 +249,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
     try {
         typedef std::vector<std::string> StringArray;
         StringArray memberList;
-        m_api->getMemberNames(memberList);
+        getAPI()->getMemberNames(memberList);
         *count = memberList.size();
         NPIdentifier *outList(NULL);
         outList = (NPIdentifier*)m_browser->MemAlloc((uint32_t)(sizeof(NPIdentifier) * *count));
@@ -237,6 +259,8 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         }
         *value = outList;
         return true;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -248,6 +272,8 @@ bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPV
     try {
         // TODO: add support for constructing
         return false;
+    } catch (const std::bad_cast&) {
+        return false; // invalid object
     } catch (const script_error& e) {
         m_browser->SetException(this, e.what());
         return false;
@@ -347,3 +373,4 @@ NPClass NPJavascriptObject::NPJavascriptObjectClass = {
     NPJavascriptObject::_Enumeration,
     NPJavascriptObject::_Construct
 };
+

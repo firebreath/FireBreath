@@ -52,6 +52,12 @@ void @{PLUGIN_ident}::StaticDeinitialize()
 ///////////////////////////////////////////////////////////////////////////////
 @{PLUGIN_ident}::~@{PLUGIN_ident}()
 {
+    // This is optional, but if you reset m_api (the shared_ptr to your JSAPI
+    // root object) and tell the host to free the retained JSAPI objects then
+    // unless you are holding another shared_ptr reference to your JSAPI object
+    // they will be released here.
+    m_api.reset();
+    m_host->freeRetainedObjects();
 }
 
 void @{PLUGIN_ident}::onPluginReady()

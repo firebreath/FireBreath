@@ -31,6 +31,11 @@ FBTestPlugin::FBTestPlugin()
 
 FBTestPlugin::~FBTestPlugin()
 {
+    // By resetting the api and then telling the host that the plugin instance is shutting down,
+    // we control the lifecycle. As long as m_api isn't stored anywhere else, telling host to
+    // shutdown should free the object
+    m_api.reset();
+    m_host->shutdown();
 }
 
 FB::JSAPIPtr FBTestPlugin::createJSAPI()

@@ -209,6 +209,9 @@ namespace FB { namespace Npapi
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
+                // Note that the retainobject used here (lowercase) is for JSAPI objects
+                // This is confusing; TODO: rename one of these methods
+                host->retainJSAPIPtr(obj);
                 outObj = NPJavascriptObject::NewObject(host, obj);
             }
             

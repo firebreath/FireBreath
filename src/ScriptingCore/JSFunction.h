@@ -25,9 +25,12 @@ namespace FB {
         JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func);
         JSFunction(const FB::JSAPIWeakPtr& obj, const std::string& func);
 
-        void init();
+        virtual bool HasMethod(const std::string& methodName) const;
+        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+        virtual variant exec(const std::vector<variant>& args);
 
-        variant exec(const FB::CatchAll& args);
+    private:
+        virtual void init();
 
     protected:
         const FB::JSAPIWeakPtr m_apiWeak;

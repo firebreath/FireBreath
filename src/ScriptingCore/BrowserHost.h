@@ -67,7 +67,7 @@ namespace FB
         ///
         /// @brief  Default constructor. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserHost() : m_threadId(boost::this_thread::get_id()), m_isShutdown(false) { }
+        BrowserHost() : m_threadId(boost::this_thread::get_id()), m_isShutDown(false) { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~BrowserHost()
@@ -270,6 +270,12 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void shutdown();
 
+        virtual bool isShutDown() const;
+
+        void freeRetainedObjects() const;
+        void retainJSAPIPtr(const FB::JSAPIPtr& obj) const;
+        void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;
+
 public:
     virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
     virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
@@ -291,11 +297,14 @@ public:
             return shared_from_this();
         }
 
-    protected:
+
+    private:
         // Stores the thread_id for the thread the plugin was started on
         boost::thread::id m_threadId;
         // if true then the plugin this belongs to has shut down (or is shutting down)
-        bool m_isShutdown;              
+        bool m_isShutDown;
+
+        mutable std::set<FB::JSAPIPtr> m_retainedObjects;
     };
 
     

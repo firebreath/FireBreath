@@ -75,7 +75,13 @@ FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 
 void FB::BrowserHost::shutdown()
 {
-    m_isShutdown = true;
+    freeRetainedObjects();
+    m_isShutDown = true;
+}
+
+bool FB::BrowserHost::isShutDown() const
+{
+    return m_isShutDown;
 }
 
 void FB::BrowserHost::assertMainThread() const
@@ -91,4 +97,20 @@ void FB::BrowserHost::assertMainThread() const
 bool FB::BrowserHost::isMainThread() const
 {
     return m_threadId == boost::this_thread::get_id();
+}
+
+void FB::BrowserHost::freeRetainedObjects() const
+{
+    // This releases all stored shared_ptr objects that the browser is holding
+    m_retainedObjects.clear();
+}
+
+void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
+{
+    m_retainedObjects.insert(obj);
+}
+
+void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
+{
+    m_retainedObjects.erase(m_retainedObjects.find(obj));
 }

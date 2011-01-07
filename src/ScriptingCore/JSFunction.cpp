@@ -30,17 +30,32 @@ void FB::JSFunction::init()
 {
     // There are no reserved members on this object
     m_reservedMembers.clear();
-    // For now we'll just allow dynamic attributes; later we may expand this somehow
-    m_allowDynamicAttributes = true;
-    registerMethod("", make_method(this, &FB::JSFunction::exec));
 }
 
-FB::variant FB::JSFunction::exec( const FB::CatchAll& args )
+FB::variant FB::JSFunction::exec( const std::vector<variant>& args )
 {
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
         throw new FB::script_error("Invalid JSAPI object");
     // Force calls to use the default zone
     FB::scoped_zonelock(api, api->getDefaultZone());
-    return api->Invoke(m_methodName, args.value);
+    return api->Invoke(m_methodName, args);
+}
+
+bool FB::JSFunction::HasMethod( const std::string& methodName ) const
+{
+    if (methodName == "") {
+        return true;
+    } else {
+        return FB::JSAPIAuto::HasMethod(methodName);
+    }
+}
+
+FB::variant FB::JSFunction::Invoke( const std::string& methodName, const std::vector<variant>& args )
+{
+    if (methodName == "") {
+        return exec(args);
+    } else {
+        return FB::JSAPIAuto::Invoke(methodName, args);
+    }
 }

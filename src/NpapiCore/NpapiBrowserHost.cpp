@@ -101,7 +101,7 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 
 void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData) const
 {
-    if (m_isShutdown)
+    if (isShutDown())
         return;
     PluginThreadAsyncCall(func, userData);
 }
@@ -111,10 +111,19 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
     copyNPBrowserFuncs(&NPNFuncs, pFuncs, m_npp);
 
     NPObject *window(NULL);
-    GetValue(NPNVWindowNPObject, (void**)&window);
+    NPObject *element(NULL);
+    try {
+        GetValue(NPNVWindowNPObject, (void**)&window);
+        GetValue(NPNVPluginElementNPObject, (void**)&element);
 
-    m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_ptr())));
-    ReleaseObject(window);
+        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_ptr())));
+        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_ptr())));
+    } catch (...) {
+        if (window)
+            ReleaseObject(window);
+        if (element)
+            ReleaseObject(element);
+    }
     if (m_htmlWin) {
         m_htmlDoc = ptr_cast<NPObjectAPI>(m_htmlWin->GetProperty("document").cast<FB::JSObjectPtr>());
     }
@@ -322,21 +331,21 @@ uint32_t NpapiBrowserHost::MemFlush(uint32_t size) const
 
 NPObject *NpapiBrowserHost::RetainObject(NPObject *npobj) const
 {
-    if (m_isShutdown)
+    if (isShutDown())
         return NULL;
     assertMainThread();
     return module->RetainObject(npobj);
 }
 void NpapiBrowserHost::ReleaseObject(NPObject *npobj) const
 {
-    if (m_isShutdown)
+    if (isShutDown())
         return;
     assertMainThread();
     return module->ReleaseObject(npobj);
 }
 void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant) const
 {
-    if (m_isShutdown)
+    if (isShutDown())
         return;
     assertMainThread();
     return module->ReleaseVariantValue(variant);

@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPI.h"
 #include "NpapiTypes.h"
 #include "NpapiBrowserHost.h"
+#include "JSFunction.h"
 
 namespace FB { namespace Npapi {
     class NPJavascriptObject :
@@ -30,19 +31,18 @@ namespace FB { namespace Npapi {
     
     protected:
         static NPClass NPJavascriptObjectClass;
-        FB::JSAPIPtr m_api;
+        FB::JSAPIWeakPtr m_api;
         NpapiBrowserHostPtr m_browser;
         bool m_valid;
 
     public:
-        static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIPtr api);
-        void setAPI(FB::JSAPIPtr api, NpapiBrowserHostPtr host);
+        static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIWeakPtr api);
+        void setAPI(FB::JSAPIWeakPtr api, NpapiBrowserHostPtr host);
         FB::JSAPIPtr getAPI() const;
-        NPJavascriptObject(NPP npp);
         virtual ~NPJavascriptObject(void);
 
-    protected:
-        virtual bool callSetEventListener(const std::vector<variant> &args, bool add);
+    private:
+        NPJavascriptObject(NPP npp);
 
     protected:
         void Invalidate();
@@ -70,6 +70,33 @@ namespace FB { namespace Npapi {
         static bool _RemoveProperty(NPObject *npobj, NPIdentifier name);
         static bool _Enumeration(NPObject *npobj, NPIdentifier **value, uint32_t *count);
         static bool _Construct(NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
+
+    public:
+        FB_FORWARD_PTR(NPO_addEventListener);
+        FB_FORWARD_PTR(NPO_removeEventListener);
+        friend class NPO_addEventListener;
+        friend class NPO_removeEventListener;
+        NPO_addEventListenerPtr m_addEventFunc;
+        NPO_removeEventListenerPtr m_removeEventFunc;
+
+        class NPO_addEventListener : public FB::JSFunction
+        {
+        public:
+            NPO_addEventListener(NPJavascriptObject* ptr)
+                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent"), obj(ptr) { }
+            FB::variant exec(const std::vector<variant>& args);
+        private:
+            NPJavascriptObject* obj;
+        };
+        class NPO_removeEventListener : public FB::JSFunction
+        {
+        public:
+            NPO_removeEventListener(NPJavascriptObject* ptr)
+                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent"), obj(ptr) { }
+            FB::variant exec(const std::vector<variant>& args);
+        private:
+            NPJavascriptObject* obj;
+        };
     };
 
 }; };

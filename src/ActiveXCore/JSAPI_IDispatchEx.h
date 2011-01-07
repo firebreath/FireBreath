@@ -44,6 +44,57 @@ namespace FB { namespace ActiveX {
     class JSAPI_IDispatchExBase : public IFireBreathObject
     {
     public:
+        FB_FORWARD_PTR(IDisp_AttachEvent);
+        FB_FORWARD_PTR(IDisp_DetachEvent);
+        class IDisp_AttachEvent : public FB::JSFunction
+        {
+        public:
+            IDisp_AttachEvent(JSAPI_IDispatchExBase* ptr)
+                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent"), obj(ptr) { }
+            FB::variant exec(const std::vector<variant>& args) {
+                if (args.size() == 2) {
+                    try {
+	                    std::string evtName = args[0].convert_cast<std::string>();
+	                    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+	                    obj->getAPI()->registerEventMethod(evtName, method);
+                        return FB::variant();
+                    } catch (const std::bad_cast& e) {
+                    	throw FB::invalid_arguments(e.what());
+                    }
+                } else {
+                    throw FB::invalid_arguments();
+                }
+            }
+        private:
+            JSAPI_IDispatchExBase* obj;
+        };
+        class IDisp_DetachEvent : public FB::JSFunction
+        {
+        public:
+            IDisp_DetachEvent(JSAPI_IDispatchExBase* ptr)
+                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent"), obj(ptr) { }
+            FB::variant exec(const std::vector<variant>& args) {
+                if (args.size() == 2) {
+                    try {
+	                    std::string evtName = args[0].convert_cast<std::string>();
+	                    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+	                    obj->getAPI()->unregisterEventMethod(evtName, method);
+                        return FB::variant();
+                    } catch (const std::bad_cast& e) {
+                    	throw FB::invalid_arguments(e.what());
+                    }
+                } else {
+                    throw FB::invalid_arguments();
+                }
+            }
+        private:
+            JSAPI_IDispatchExBase* obj;
+        };
+    public:
+        JSAPI_IDispatchExBase() 
+            : m_attachFunc(boost::make_shared<IDisp_AttachEvent>(this)), 
+              m_detachFunc(boost::make_shared<IDisp_DetachEvent>(this))
+        { }
         void setAPI(FB::JSAPIPtr api, ActiveXBrowserHostPtr host)
         {
             m_api = api;
@@ -52,11 +103,20 @@ namespace FB { namespace ActiveX {
 
         FB::JSAPIPtr getAPI()
         {
-            return m_api;
+            FB::JSAPIPtr api(m_api.lock());
+            if (!api)
+                throw std::bad_cast("Invalid object");
+            return api;
         }
 
+        friend class IDisp_AttachEvent;
+        friend class IDisp_DetachEvent;
+
     protected:
-        FB::JSAPIPtr m_api;
+        FB::JSAPIWeakPtr m_api;
+        IDisp_AttachEventPtr m_attachFunc;
+        IDisp_DetachEventPtr m_detachFunc;
+
         ActiveXBrowserHostPtr m_host;
     };
 
@@ -193,16 +253,18 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCookie)
     {
-        if (!m_api) return CONNECT_E_CANNOTCONNECT;
-
-        IDispatch *idisp(NULL);
-        if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
-            IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
-            m_connPtMap[(DWORD)obj.get()] = obj;
-            *pdwCookie = (DWORD)obj.get();
-            m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));
-            return S_OK;
-        } else {
+        try {
+            IDispatch *idisp(NULL);
+            if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
+                IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
+                m_connPtMap[(DWORD)obj.get()] = obj;
+                *pdwCookie = (DWORD)obj.get();
+                getAPI()->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));
+                return S_OK;
+            } else {
+                return CONNECT_E_CANNOTCONNECT;
+            }
+        } catch (const std::exception&) {
             return CONNECT_E_CANNOTCONNECT;
         }
     }
@@ -210,14 +272,16 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Unadvise(DWORD dwCookie)
     {
-        if (!m_api)
-            return S_OK;    // If m_api has been detached already, the plugin is shut down so this is a non-issue
-        ConnectionPointMap::iterator fnd = m_connPtMap.find(dwCookie);
-        if (fnd == m_connPtMap.end()) {
-            return E_UNEXPECTED;
-        } else {
-            m_api->registerEventInterface(FB::ptr_cast<FB::JSObject>(fnd->second));
-            m_connPtMap.erase(fnd);
+        try {
+            ConnectionPointMap::iterator fnd = m_connPtMap.find(dwCookie);
+            if (fnd == m_connPtMap.end()) {
+                return E_UNEXPECTED;
+            } else {
+                getAPI()->unregisterEventInterface(FB::ptr_cast<FB::JSObject>(fnd->second));
+                m_connPtMap.erase(fnd);
+                return S_OK;
+            }
+        } catch (const std::exception&) {
             return S_OK;
         }
     }
@@ -271,21 +335,20 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetDispID(BSTR bstrName, DWORD grfdex, DISPID *pid)
     {
-        if (!m_api) return DISP_E_UNKNOWNNAME;
-
         std::wstring wsName(bstrName);
 
         try {
+            FB::JSAPIPtr api(getAPI());
             if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
                 *pid = AxIdMap.getIdForValue(wsName);
-            } else if (m_api->HasProperty(wsName) || m_api->HasMethod(wsName) || m_api->HasEvent(wsName)) {
+            } else if (api->HasProperty(wsName) || api->HasMethod(wsName) || api->HasEvent(wsName)) {
                 *pid = AxIdMap.getIdForValue(wsName);
             } else {
                 *pid = -1;
                 return DISP_E_UNKNOWNNAME;
             }
             return S_OK;
-        } catch (const FB::script_error &e) {
+        } catch (const std::exception &e) {
             e;
             *pid = -1;
             return DISP_E_UNKNOWNNAME;
@@ -296,18 +359,20 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     bool JSAPI_IDispatchEx<T,IDISP,piid>::callSetEventListener(const std::vector<FB::variant> &args, bool add)
     {
-        if (args.size() < 2 || args.size() > 3
-             || !args[0].can_be_type<std::string>()
-             || !args[1].can_be_type<FB::JSObjectPtr>()) {
+        if (args.size() < 2 || args.size() > 3) {
             throw FB::invalid_arguments();
         }
-
-        std::string evtName = args[0].convert_cast<std::string>();
-        FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
-        if (add) {
-            m_api->registerEventMethod(evtName, method);
-        } else {
-            m_api->unregisterEventMethod(evtName, method);
+        
+        try {
+            std::string evtName = args[0].convert_cast<std::string>();
+            FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+            if (add) {
+                getAPI()->registerEventMethod(evtName, method);
+            } else {
+                getAPI()->unregisterEventMethod(evtName, method);
+            }
+        } catch(const std::bad_cast&) {
+            throw FB::invalid_arguments();
         }
 
         return true;
@@ -319,7 +384,13 @@ namespace FB { namespace ActiveX {
                                                  EXCEPINFO *pei, 
                                                  IServiceProvider *pspCaller)
     {
-        if (!m_api || !AxIdMap.idExists(id)) {
+        FB::JSAPIPtr api;
+        try {
+            api = getAPI();
+        } catch (...) {
+            return DISP_E_MEMBERNOTFOUND;
+        }
+        if (!AxIdMap.idExists(id)) {
             return DISP_E_MEMBERNOTFOUND;
         }
 
@@ -345,20 +416,29 @@ namespace FB { namespace ActiveX {
                 }
             }
 
-            if (wFlags & DISPATCH_METHOD && ((wsName == L"attachEvent") || (wsName == L"detachEvent")) ) {
-            
-                std::vector<FB::variant> params;
-                for (int i = pdp->cArgs - 1; i >= 0; i--) {
-                    params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+            if (wsName == L"attachEvent" || wsName == L"detachEvent") {
+                if (wFlags & DISPATCH_METHOD) {
+                    std::vector<FB::variant> params;
+                    for (int i = pdp->cArgs - 1; i >= 0; i--) {
+                        params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+                    }
+
+                    if (wsName[0] == L'a') {
+                        m_attachFunc->exec(params);
+                    } else {
+                        m_detachFunc->exec(params);
+                    }
+                } else if (wFlags & DISPATCH_PROPERTYGET) {
+                    FB::variant rVal;
+                    if (wsName[0] == L'a') {
+                        rVal = m_attachFunc;
+                    } else {
+                        rVal = m_detachFunc;
+                    }
+                    m_host->getComVariant(pvarRes, rVal);
                 }
 
-                if (wsName == L"attachEvent") {
-                    this->callSetEventListener(params, true);
-                } else if (wsName == L"detachEvent") {
-                    this->callSetEventListener(params, false);
-                }
-
-            } else if (wFlags & DISPATCH_METHOD && (m_api->HasMethod(wsName) || !id) ) {
+            } else if (wFlags & DISPATCH_METHOD && (api->HasMethod(wsName) || !id) ) {
 
                 std::vector<FB::variant> params;
                 if (id == 0) {
@@ -376,44 +456,44 @@ namespace FB { namespace ActiveX {
                     }
                 }
                 FB::variant rVal;
-                rVal = m_api->Invoke(wsName, params);
+                rVal = api->Invoke(wsName, params);
                 
                 if(pvarRes)
                     m_host->getComVariant(pvarRes, rVal);
 
-            } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasMethod(wsName)) {
+            } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
 
                 FB::variant rVal;
-                if (m_api->HasMethodObject(wsName))
-                    rVal = m_api->GetMethodObject(wsName);
+                if (api->HasMethodObject(wsName))
+                    rVal = api->GetMethodObject(wsName);
                 else
-                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
+                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(api, wsName));
                 m_host->getComVariant(pvarRes, rVal);
 
-            } else if (wFlags & DISPATCH_PROPERTYGET && m_api->HasProperty(wsName)) {
+            } else if (wFlags & DISPATCH_PROPERTYGET && api->HasProperty(wsName)) {
 
                 if(!pvarRes)
                     return E_INVALIDARG;
 
-                FB::variant rVal = m_api->GetProperty(wsName);
-                if (rVal.empty() && m_api->HasMethod(wsName)) {
-                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(m_api, wsName));
+                FB::variant rVal = api->GetProperty(wsName);
+                if (rVal.empty() && api->HasMethod(wsName)) {
+                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(api, wsName));
                 }
 
                 m_host->getComVariant(pvarRes, rVal);
-            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasProperty(wsName)) {
+            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
 
                 FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
-                m_api->SetProperty(wsName, newVal);
+                api->SetProperty(wsName, newVal);
 
-            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && m_api->HasEvent(wsName)) {
+            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasEvent(wsName)) {
                 
                 FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
                 if (newVal.empty()) {
-                    m_api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
+                    api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
                 } else {
                     FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
-                    m_api->setDefaultEventMethod(wsName, method);
+                    api->setDefaultEventMethod(wsName, method);
                 }
 
             } else {
@@ -475,12 +555,16 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetNextDispID(DWORD grfdex, DISPID id, DISPID *pid)
     {
-        if (!m_api)
+        FB::JSAPIPtr api;
+        try {
+            api = getAPI();
+        } catch (...) {
             return S_FALSE;
+        }
 
-        if (m_memberList.size() != m_api->getMemberCount()) {
+        if (m_memberList.size() != api->getMemberCount()) {
             m_memberList.clear();
-            m_api->getMemberNames(m_memberList);
+            api->getMemberNames(m_memberList);
         }
     	if (m_memberList.size() == 0)
     		return S_FALSE;
