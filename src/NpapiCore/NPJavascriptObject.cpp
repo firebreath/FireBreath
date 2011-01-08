@@ -12,8 +12,10 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "NPJavascriptObject.h"
+#include <typeinfo>
 #include "JSObject.h"
+
+#include "NPJavascriptObject.h"
 
 using namespace FB::Npapi;
 
@@ -48,9 +50,7 @@ void NPJavascriptObject::setAPI(FB::JSAPIWeakPtr api, NpapiBrowserHostPtr host)
 
 FB::JSAPIPtr NPJavascriptObject::getAPI() const 
 {
-    FB::JSAPIPtr ptr(m_api.lock());
-    if (!ptr)
-        throw std::bad_cast("Invalid object");
+    FB::JSAPIPtr ptr(m_api);
     return ptr;
 }
 
