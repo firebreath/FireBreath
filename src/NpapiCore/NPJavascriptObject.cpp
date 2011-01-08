@@ -50,7 +50,9 @@ void NPJavascriptObject::setAPI(FB::JSAPIWeakPtr api, NpapiBrowserHostPtr host)
 
 FB::JSAPIPtr NPJavascriptObject::getAPI() const 
 {
-    FB::JSAPIPtr ptr(m_api);
+    FB::JSAPIPtr ptr(m_api.lock());
+    if (!ptr)
+        throw std::bad_cast();
     return ptr;
 }
 
