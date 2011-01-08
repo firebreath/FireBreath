@@ -59,7 +59,10 @@ FB::JSAPIPtr NPJavascriptObject::getAPI() const
 void NPJavascriptObject::Invalidate()
 {
     m_valid = false;
-    getAPI()->invalidate();
+    try {
+        getAPI()->invalidate();
+    } catch(const std::bad_cast&) {
+    }
 }
 
 bool NPJavascriptObject::HasMethod(NPIdentifier name)
