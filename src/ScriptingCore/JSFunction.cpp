@@ -14,14 +14,14 @@
 
 #include "JSFunction.h"
 
-FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func )
-    : FB::JSAPIAuto(FB::wstring_to_utf8(func) + "()"), m_apiWeak(obj), m_methodName(FB::wstring_to_utf8(func))
+FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone zone)
+    : FB::JSAPIAuto(zone, FB::wstring_to_utf8(func) + "()"), m_apiWeak(obj), m_methodName(FB::wstring_to_utf8(func))
 {
     init();
 }
 
-FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func )
-    : FB::JSAPIAuto(func + "()"), m_apiWeak(obj), m_methodName(func)
+FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func, const FB::SecurityZone zone)
+    : FB::JSAPIAuto(zone, func + "()"), m_apiWeak(obj), m_methodName(func)
 {
     init();
 }
@@ -37,8 +37,8 @@ FB::variant FB::JSFunction::exec( const std::vector<variant>& args )
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
         throw new FB::script_error("Invalid JSAPI object");
-    // Force calls to use the default zone
-    FB::scoped_zonelock(api, api->getDefaultZone());
+    // Force calls to use the zone this function was created with
+    FB::scoped_zonelock(api, getZone());
     return api->Invoke(m_methodName, args);
 }
 

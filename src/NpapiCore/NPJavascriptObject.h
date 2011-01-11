@@ -83,7 +83,7 @@ namespace FB { namespace Npapi {
         {
         public:
             NPO_addEventListener(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent"), obj(ptr) { }
+                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent", SecurityScope_Public), obj(ptr) { }
             FB::variant exec(const std::vector<variant>& args);
         private:
             NPJavascriptObject* obj;
@@ -92,7 +92,7 @@ namespace FB { namespace Npapi {
         {
         public:
             NPO_removeEventListener(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent"), obj(ptr) { }
+                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent", SecurityScope_Public), obj(ptr) { }
             FB::variant exec(const std::vector<variant>& args);
         private:
             NPJavascriptObject* obj;
