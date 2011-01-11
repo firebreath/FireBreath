@@ -50,7 +50,7 @@ namespace FB { namespace ActiveX {
         {
         public:
             IDisp_AttachEvent(JSAPI_IDispatchExBase* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent"), obj(ptr) { }
+                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent", FB::SecurityScope_Public), obj(ptr) { }
             FB::variant exec(const std::vector<variant>& args) {
                 if (args.size() == 2) {
                     try {
@@ -72,7 +72,7 @@ namespace FB { namespace ActiveX {
         {
         public:
             IDisp_DetachEvent(JSAPI_IDispatchExBase* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent"), obj(ptr) { }
+                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent", FB::SecurityScope_Public), obj(ptr) { }
             FB::variant exec(const std::vector<variant>& args) {
                 if (args.size() == 2) {
                     try {
