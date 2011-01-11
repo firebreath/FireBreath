@@ -467,7 +467,7 @@ namespace FB { namespace ActiveX {
                 if (api->HasMethodObject(wsName))
                     rVal = api->GetMethodObject(wsName);
                 else
-                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(api, wsName));
+                    rVal = true;
                 m_host->getComVariant(pvarRes, rVal);
 
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasProperty(wsName)) {
@@ -476,9 +476,6 @@ namespace FB { namespace ActiveX {
                     return E_INVALIDARG;
 
                 FB::variant rVal = api->GetProperty(wsName);
-                if (rVal.empty() && api->HasMethod(wsName)) {
-                    rVal = FB::JSAPIPtr(boost::make_shared<FB::JSFunction>(api, wsName));
-                }
 
                 m_host->getComVariant(pvarRes, rVal);
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
