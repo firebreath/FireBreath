@@ -16,7 +16,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #ifndef H_FB_PLUGINEVENTSOURCE
 #define H_FB_PLUGINEVENTSOURCE
 
-#include <vector>
+#include <list>
 #include <typeinfo>
 #include "APITypes.h"
 #include <boost/enable_shared_from_this.hpp>
@@ -122,6 +122,9 @@ namespace FB {
             return out != NULL;
         }
 
+    private:
+        bool PluginEventSource::_deleteObserver( PluginEventSinkPtr sink, PluginEventSinkWeakPtr wptr );
+
     protected:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -129,7 +132,7 @@ namespace FB {
         ///
         /// @brief  Defines an alias representing the observer .
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        typedef std::vector<boost::weak_ptr<PluginEventSink> > ObserverMap; 
+        typedef std::list<boost::weak_ptr<PluginEventSink> > ObserverMap; 
         ObserverMap m_observers; /// List of attached observers
         boost::recursive_mutex m_observerLock;
     };
