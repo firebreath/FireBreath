@@ -40,6 +40,31 @@ FB::DOM::WindowPtr Document::getWindow() const
     return FB::DOM::Window::create(api);
 }
 
+std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::string& tagName) const
+{
+    CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
+    CComPtr<IHTMLElementCollection> list;
+    std::vector<FB::DOM::ElementPtr> tagList;
+    CComBSTR tName(FB::utf8_to_wstring(tagName).c_str());
+    if (doc) {
+        doc->getElementsByTagName(tName, &list);
+    } else {
+        throw std::runtime_error("Could not get element by tag name");
+    }
+    long length(0);
+    if (SUCCEEDED(list->get_length(&length))) {
+        for (long i = 0; i < length; i++) {
+            CComPtr<IDispatch> dispObj;
+            CComVariant idx(i);
+            list->item(idx, idx, &dispObj);
+            FB::JSObjectPtr obj(new IDispatchAPI(dispObj.p, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+            tagList.push_back(FB::DOM::Element::create(obj));
+        }
+    }
+    return tagList;
+}
+
+
 FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
 {
     CComQIPtr<IHTMLDocument3> doc3(m_htmlDoc);
