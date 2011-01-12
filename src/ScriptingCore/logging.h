@@ -17,6 +17,7 @@ Copyright 2010 Facebook, Inc
 #define H_FB_LOGGING
 
 #include <sstream>
+#include <list>
 
 #if !FB_NO_LOGGING_MACROS
 #  if defined(__GNUC__)
@@ -62,7 +63,19 @@ namespace FB { namespace Log {
     void error(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
     void fatal(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
 
-    std::wstring getLogFilename();
+    enum LogLevel {
+        LogLevel_Trace  = 0x01,
+        LogLevel_Debug  = 0x02,
+        LogLevel_Info   = 0x04,
+        LogLevel_Warn   = 0x08,
+        LogLevel_Error  = 0x10
+    };
+
+    enum LogMethod {
+        LogMethod_Console  = 0x01,
+        LogMethod_File  = 0x02
+    };
+    typedef std::list<std::pair<FB::Log::LogMethod, std::string> > LogMethodList;
 
 }; };
 
