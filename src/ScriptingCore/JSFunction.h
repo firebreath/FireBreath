@@ -22,8 +22,8 @@ namespace FB {
     FB_FORWARD_PTR(JSFunction);
     class JSFunction : public FB::JSAPIAuto {
     public:
-        JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func);
-        JSFunction(const FB::JSAPIWeakPtr& obj, const std::string& func);
+        JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone);
+        JSFunction(const FB::JSAPIWeakPtr& obj, const std::string& func, const FB::SecurityZone);
 
         virtual bool HasMethod(const std::string& methodName) const;
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);

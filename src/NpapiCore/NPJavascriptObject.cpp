@@ -80,7 +80,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
 }
 FB::variant FB::Npapi::NPJavascriptObject::NPO_addEventListener::exec( const std::vector<variant>& args )
 {
-    if (args.size() > 1 && args.size() < 3) {
+    if (args.size() > 1 && args.size() < 4) {
         try {
             std::string evtName = "on" + args[0].convert_cast<std::string>();
             FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
@@ -96,7 +96,7 @@ FB::variant FB::Npapi::NPJavascriptObject::NPO_addEventListener::exec( const std
 
 FB::variant FB::Npapi::NPJavascriptObject::NPO_removeEventListener::exec( const std::vector<variant>& args )
 {
-    if (args.size() > 1 && args.size() < 3) {
+    if (args.size() > 1 && args.size() < 4) {
         try {
             std::string evtName = "on" + args[0].convert_cast<std::string>();
             FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());

@@ -22,7 +22,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <deque>
 #include <vector>
 #include <string>
-#include "boost/thread/recursive_mutex.hpp"
+#include <boost/thread/recursive_mutex.hpp>
+#include <boost/tuple/tuple.hpp>
+#include <boost/tuple/tuple_comparison.hpp> 
 
 namespace FB {
     FB_FORWARD_PTR(JSFunction);
@@ -99,7 +101,7 @@ namespace FB {
             FB::variant value;
             bool readonly;
         };
-		typedef std::map<std::string, FB::JSFunctionPtr> MethodObjectMap;
+		typedef std::map<boost::tuple<std::string, FB::SecurityZone>, FB::JSFunctionPtr> MethodObjectMap;
 		typedef std::map<std::string, FB::SecurityZone> ZoneMap;
         typedef std::map<std::string, Attribute> AttributeMap;
 

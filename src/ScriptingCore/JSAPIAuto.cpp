@@ -31,7 +31,8 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
   : FB::JSAPI(securityLevel),
     m_description(description),
-    m_allowDynamicAttributes(true)
+    m_allowDynamicAttributes(true), 
+    m_allowMethodObjects(true)
 {
 	init();
 }
@@ -302,12 +303,12 @@ FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
         throw object_invalidated();
 
     if (memberAccessible(m_zoneMap.find(methodObjName)) && HasMethod(methodObjName)) {
-        MethodObjectMap::const_iterator fnd = m_methodObjectMap.find(methodObjName);
+        MethodObjectMap::const_iterator fnd = m_methodObjectMap.find(boost::make_tuple(methodObjName, getZone()));
         if (fnd != m_methodObjectMap.end()) {
             return fnd->second;
         } else {
-            FB::JSFunctionPtr ptr(boost::make_shared<FB::JSFunction>(shared_ptr(), methodObjName));
-            m_methodObjectMap[methodObjName] = ptr;
+            FB::JSFunctionPtr ptr(boost::make_shared<FB::JSFunction>(shared_ptr(), methodObjName, getZone()));
+            m_methodObjectMap[boost::make_tuple(methodObjName, getZone())] = ptr;
             return ptr;
         }
 	} else {

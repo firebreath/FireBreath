@@ -24,6 +24,7 @@ using namespace FB;
 
 JSAPI::JSAPI(void) : m_valid(true)
 {
+    m_zoneStack.push_back(SecurityScope_Public);
     registerEvent("onload");
 }
 
@@ -69,6 +70,7 @@ void FB::JSAPI::popZone( )
 
 FB::SecurityZone FB::JSAPI::getZone() const
 {
+	assert(m_zoneStack.size() > 0);
 	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
 	return m_zoneStack.back();
 }

@@ -58,10 +58,10 @@ void BasicService::deregisterHandler(boost::shared_ptr<HTTPHandler> hnd) {
 }
 
 BasicService::BasicService(const std::string &ipaddr, const int port, const std::string &hostname)
-    : srv_acceptor(service),
-      srv_endpoint(ip::tcp::endpoint(ip::address_v4::from_string(ipaddr.c_str()), port)),
-      signing_key(NULL),
+    : signing_key(NULL),
       signing_key_length(0),
+      srv_acceptor(service),
+      srv_endpoint(ip::tcp::endpoint(ip::address_v4::from_string(ipaddr.c_str()), port)),
       m_hostname(hostname) { }
 
 // Init() needs to be separate so that shared_from_this can give the shared_ptr to the workers in do_async_accept() without exploding everything
