@@ -34,14 +34,14 @@ FBTestPlugin::~FBTestPlugin()
     // By resetting the api and then telling the host that the plugin instance is shutting down,
     // we control the lifecycle. As long as m_api isn't stored anywhere else, telling host to
     // shutdown should free the object
-    m_api.reset();
-    m_host->shutdown();
+    releaseRootJSAPI();
+    m_host->freeRetainedObjects();
 }
 
 FB::JSAPIPtr FBTestPlugin::createJSAPI()
 {
     // m_host is the BrowserHost
-    return FB::JSAPIPtr(new FBTestPluginAPI(FB::ptr_cast<FBTestPlugin>(shared_ptr()), m_host));
+    return boost::make_shared<FBTestPluginAPI>(FB::ptr_cast<FBTestPlugin>(shared_from_this()), m_host);
 }
 
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)

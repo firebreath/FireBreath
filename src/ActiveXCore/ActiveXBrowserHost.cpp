@@ -64,6 +64,7 @@ namespace
         tdm.insert(makeBuilderEntry<FB::VariantList>());
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
+        tdm.insert(makeBuilderEntry<FB::JSAPIWeakPtr>());
         tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
 
         tdm.insert(makeBuilderEntry<FB::FBVoid>());

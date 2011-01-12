@@ -72,30 +72,12 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn PluginCore::PluginCore()
         ///
-        /// @brief  Default constructor.  This does not specify any params that should be queried from the
-        ///         object tag
+        /// @brief  Default Constructor
         ///
-        /// @see PluginCore::PluginCore(const std::set<std::string>& params)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        PluginCore();
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn PluginCore::PluginCore(const std::set<std::string>& params)
-        ///
-        /// @brief  Constructor with names of &lt;param&gt;s that should be accepted
-        ///
-        /// If your plugin needs the option of accepting &lt;param&gt; tags from the containing web page, you
-        /// should provide a set of strings with the name of each param you wish to accept.
-        ///
-        /// You can do this from your PluginCore derived plugin object like so:
-        /// @code
-        ///     MyPluginObject::MyPluginObject() : FB::PluginCore(FB::StringSet(list_of("onload")("starturl")("paramlist")))
-        ///     {
-        ///         // ...
-        ///     }
-        /// @endcode
+        /// As of FireBreath 1.4 alpha 3, you no longer need to specify the param tags that you want
+        /// to support, as these will now be automatically detected on all platforms.
         /// 
-        /// You will then be able to access param values set in your HTML with &lt;param&gt; tags inside your
+        /// You can access param values set in your HTML with &lt;param&gt; tags inside your
         /// object tag, like so:
         /// 
         /// @code
@@ -116,12 +98,12 @@ namespace FB {
         /// that start with "on" will be automatically resolved to matching function names if possible.
         /// 
         /// To get the function from an "onstart" param, you could use the following code:
-        /// FB::JSObjectPtr func = m_params["onstart"].cast<FB::JSObjectPtr>();
+        /// FB::JSObjectPtr func = m_params["onstart"].convert_cast<FB::JSObjectPtr>();
         /// 
         /// @param  params  std::set of std::strings of the names of the params you wish to accept
         /// @see getSupportedParams
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        PluginCore(const std::set<std::string>& params);
+        PluginCore();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginCore::~PluginCore()
@@ -129,15 +111,6 @@ namespace FB {
         /// @brief  Finaliser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~PluginCore();
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void PluginCore::initDefaultParams()
-        ///
-        /// @brief  Initialises the default "param" names supported
-        ///         
-        /// Since this is called from the constructor, it cannot be overloaded successfully.
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void initDefaultParams();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::SetHost(FB::BrowserHostPtr)
@@ -216,6 +189,20 @@ namespace FB {
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual JSAPIPtr PluginCore::releaseRootJSAPI()
+        ///
+        /// @brief  Releases the root JSAPI object.
+        ///
+        /// This should only be called from your destructor; if called along with m_host->freeRetainedObjects
+        /// it can be used to cause the root JSAPI object to be freed during the destructor of your
+        /// plugin object instead of during the destructor of PluginCore
+        ///
+        /// @return The root jsapi. 
+        /// @since 1.4
+        /// @see getRootJSAPI
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void releaseRootJSAPI() { m_api.reset(); }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual JSAPIPtr PluginCore::getRootJSAPI()
         ///
         /// @brief  Gets the root JSAPI object.  It is not recommended to call this from the constructor
@@ -255,17 +242,16 @@ namespace FB {
         virtual void setFSPath(const std::string& path) { m_filesystemPath = path; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual StringSet* PluginCore::getSupportedParams()
+        /// @fn virtual std::string& getFSPath()
         ///
-        /// @brief  Called by the browser to get a list of supported param tags
-        ///         
-        /// This is the alternate way to override which param tags the plugin will query the HTML
-        /// page for.  For more information, see initDefaultParams() in this class
+        /// @brief  Returns the path and filename of the current plugin module
         ///
-        /// @return StringSet of supported param tag names. 
-        /// @see PluginCore::PluginCore(const std::set<std::string>& params)
+        /// On Windows, this returns the path to the plugin DLL file.  On Mac, it's a .dylib. On linux a .so
+        /// 
+        /// @return  Full pathname of the file. 
+        /// @since 1.4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual StringSet* getSupportedParams();
+        virtual std::string& getFSPath() { return m_filesystemPath; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::setParams(const FB::VariantMap& inParams)
@@ -283,20 +269,19 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
 
     protected:
-        /// Don't use directly; use GetWindow() 
-        PluginWindow *m_Window;         
-        /// Don't use directly; use getRootJSAPI()
-        JSAPIPtr m_api;                 
         /// The BrowserHost object for the current session
         BrowserHostPtr m_host;          
         /// Stores the value passed into setFSPath()
-        std::string m_filesystemPath;   
-        /// Stores the list of params returned by getSupportedParams()
-        StringSet m_supportedParamSet;  
+        std::string m_filesystemPath;
         /// Boolean value indicates if the browser has called setParams() yet or not
         bool m_paramsSet;               
-        /// Sotres the list of params provided by the browser to setParams()
+        /// Stores the list of params provided by the browser to setParams()
         FB::VariantMap m_params;        
+    private:
+        /// Don't use directly; use GetWindow() 
+        PluginWindow *m_Window;         
+        /// Don't use directly; use getRootJSAPI()
+        JSAPIPtr m_api;
     };
 };
 

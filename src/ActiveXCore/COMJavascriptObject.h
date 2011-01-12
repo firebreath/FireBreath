@@ -42,7 +42,7 @@ namespace FB {
             {
             }
 
-            static IDispatchEx *NewObject(ActiveXBrowserHostPtr host, FB::JSAPIPtr api)
+            static IDispatchEx *NewObject(ActiveXBrowserHostPtr host, FB::JSAPIWeakPtr api)
             {
                 CComObject<CurObjType> *obj;
                 HRESULT hr = CComObject<CurObjType>::CreateInstance(&obj);

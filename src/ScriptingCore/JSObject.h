@@ -186,16 +186,32 @@ namespace FB
             else
                 return variant(FB::FBNull());
         }
+        template <class T>
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>,variant>::type
+        make_variant(const boost::weak_ptr<T>& ptr) {
+            boost::shared_ptr<T> tmp(ptr.lock());
+            return variant(FB::JSAPIWeakPtr(tmp));
+        }
+        template <class T>
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>,variant>::type
+        make_variant(const T& ptr) {
+            BOOST_STATIC_ASSERT(false);
+            // If you get an error here, you're trying to use a FB::JSAPI* (or a raw ptr to
+            // a class that derives from it. You should never do this! Always keep it wrapped
+            // in a boost::shared_ptr or boost::weak_ptr!
+        }
 
         // Convert out
         template<class T>
         typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::shared_ptr<T> >::type
-            convert_variant(const variant& var, variant_detail::conversion::type_spec< boost::shared_ptr<T> >)
+            convert_variant(const variant& var, type_spec< boost::shared_ptr<T> >)
         {
             FB::JSAPIPtr ptr;
             // First of all, to succeed it *must* be a JSAPI object!
             if (var.get_type() == typeid(FB::JSObjectPtr)) {
                 ptr = var.cast<FB::JSObjectPtr>();
+            } else if (var.get_type() == typeid(FB::JSAPIWeakPtr)) {
+                ptr = var.cast<FB::JSAPIWeakPtr>().lock();
             } else if (var.empty() || var.is_null()) {
                 return boost::shared_ptr<T>();
             } else {
@@ -223,10 +239,17 @@ namespace FB
             else
                 throw FB::bad_variant_cast(var.get_type(), typeid(T));
         }
+        template<class T>
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::weak_ptr<T> >::type
+            convert_variant(const variant& var, type_spec< boost::weak_ptr<T> >)
+        {
+            boost::shared_ptr<T> sptr(var.convert_cast<boost::shared_ptr<T> >());
+            return boost::weak_ptr<T>(sptr);
+        }
 
         template<class Cont>
         typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
-            convert_variant(const variant& var, variant_detail::conversion::type_spec<Cont>)
+            convert_variant(const variant& var, type_spec<Cont>)
         {
             typedef FB::JSObjectPtr JsObject;
             
@@ -249,7 +272,7 @@ namespace FB
 
         template<class Dict>
         typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
-            convert_variant(const variant& var, variant_detail::conversion::type_spec<Dict>)
+            convert_variant(const variant& var, type_spec<Dict>)
         {
             typedef FB::JSObjectPtr JsObject;
             

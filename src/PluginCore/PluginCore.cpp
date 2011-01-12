@@ -49,25 +49,6 @@ PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
     // This class is only created on the main UI thread,
     // so there is no need for mutexes here
     ++PluginCore::ActivePluginCount;
-
-    initDefaultParams();
-}
-
-PluginCore::PluginCore(const std::set<std::string>& params)
-    : m_Window(NULL), m_supportedParamSet(params), m_paramsSet(false)
-{
-    // This class is only created on the main UI thread,
-    // so there is no need for mutexes here
-    ++PluginCore::ActivePluginCount;
-
-    initDefaultParams();
-}
-
-void PluginCore::initDefaultParams()
-{
-    m_supportedParamSet.insert("onload");
-    m_supportedParamSet.insert("onerror");
-    m_supportedParamSet.insert("onlog");
 }
 
 PluginCore::~PluginCore()
@@ -77,11 +58,6 @@ PluginCore::~PluginCore()
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
     --PluginCore::ActivePluginCount;
-}
-
-StringSet* PluginCore::getSupportedParams()
-{
-    return &m_supportedParamSet;
 }
 
 void PluginCore::setParams(const FB::VariantMap& inParams)
@@ -179,6 +155,12 @@ bool PluginCore::isWindowless()
         if (itr->second.convert_cast<std::string>().compare("true") == 0) {
             // Plugin is windowless
             return true;
+        }
+    } else {
+        try {
+            FB::variant val(m_host->getDOMElement()->getStringAttribute("windowless"));
+            return val.convert_cast<bool>();
+        } catch (...) {
         }
     }
     return false;

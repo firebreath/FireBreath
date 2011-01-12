@@ -95,7 +95,7 @@ namespace FB { namespace ActiveX {
             : m_attachFunc(boost::make_shared<IDisp_AttachEvent>(this)), 
               m_detachFunc(boost::make_shared<IDisp_DetachEvent>(this))
         { }
-        void setAPI(FB::JSAPIPtr api, ActiveXBrowserHostPtr host)
+        void setAPI(FB::JSAPIWeakPtr api, ActiveXBrowserHostPtr host)
         {
             m_api = api;
             m_host = host;

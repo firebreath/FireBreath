@@ -209,9 +209,37 @@ namespace FB { namespace Npapi
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
-                // Note that the retainobject used here (lowercase) is for JSAPI objects
-                // This is confusing; TODO: rename one of these methods
                 host->retainJSAPIPtr(obj);
+                outObj = NPJavascriptObject::NewObject(host, obj);
+            }
+            
+            npv.type = NPVariantType_Object;
+            npv.value.objectValue = outObj;
+        }
+        else
+        {
+            npv.type = NPVariantType_Null;
+        }
+        
+        return npv;
+    }
+    template<> inline
+    NPVariant makeNPVariant<FB::JSAPIWeakPtr>(const NpapiBrowserHostPtr& host, const FB::variant& var)
+    {
+        NPVariant npv;
+
+        // convert_cast will automatically make a shared_ptr out of the weak_ptr; if the weak_ptr
+        // is expired it'll be a NULL ptr
+        if (FB::JSAPIPtr obj = var.convert_cast<FB::JSAPIPtr>()) 
+        {
+            NPObject *outObj = NULL;
+            
+            if (NPObjectAPIPtr tmpObj = FB::ptr_cast<NPObjectAPI>(obj)) {
+                outObj = tmpObj->getNPObject();
+                host->RetainObject(outObj);
+            } else {
+                // The big difference between returning a weak_ptr instead of a shared_ptr is
+                // that we don't have the browser object retain the weak_ptr
                 outObj = NPJavascriptObject::NewObject(host, obj);
             }
             

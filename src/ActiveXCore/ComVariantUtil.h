@@ -168,6 +168,27 @@ namespace FB { namespace ActiveX
     }
     
     template<> inline
+    CComVariant makeComVariant<FB::JSAPIWeakPtr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+    {
+        CComVariant outVar;
+
+        FB::JSAPIPtr obj(var.convert_cast<FB::JSAPIPtr>());
+        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
+        if (api) {
+            outVar = api->getIDispatch();
+        } else {
+            if (obj) {
+                outVar = getFactoryInstance()->createCOMJSObject(host, var.cast<FB::JSAPIPtr>());
+                outVar.pdispVal->Release();
+            } else {
+                outVar.ChangeType(VT_NULL);
+            }
+        }
+
+        return outVar;
+    }
+    
+    template<> inline
     CComVariant makeComVariant<FB::JSObjectPtr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
         CComVariant outVar;
