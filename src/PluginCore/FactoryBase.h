@@ -21,6 +21,7 @@
 #include <boost/utility.hpp>
 #include "APITypes.h"
 #include "FBPointers.h"
+#include "logging.h"
 
 #include "PluginWindowForwardDecl.h"
 
@@ -183,6 +184,26 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::Npapi::NpapiPluginPtr   createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
         
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void getLoggingMethods(FB::Log::LogMethodList& outMethods)
+        ///
+        /// @brief  Called by the logger to discover which log methods should be used
+        ///
+        /// @param  outMethods    a LogMethodList instance to hold the result
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void getLoggingMethods(FB::Log::LogMethodList& outMethods);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn  FB::Log::LogLevel getLogLevel()
+        ///
+        /// @brief  Called by the logger to discover what loglevel to use
+        ///
+        /// @param  outMethods    a LogMethodList instance to hold the result
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        FB::Log::LogLevel getLogLevel();
+
 #ifdef FB_WIN
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginWindowWin* FactoryBase::createPluginWindowWin(const WindowContextWin&)

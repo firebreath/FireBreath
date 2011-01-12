@@ -22,8 +22,10 @@ Copyright 2010 Facebook, Inc
 #include "log4cplus/ndc.h"
 #include "log4cplus/fileappender.h"
 #include "log4cplus/win32debugappender.h"
+#include "log4cplus/consoleappender.h"
 #include "log4cplus/nullappender.h"
 
+#include "FactoryBase.h"
 #include "logging.h"
 #include "utf8_tools.h"
 
@@ -37,27 +39,46 @@ void FB::Log::initLogging()
     if (logging_started)
         return;
 
+    bool addedAppender = false;
+
     log4cplus::Logger logger = log4cplus::Logger::getInstance(L"FireBreath");
-#ifdef LOG_FILE
-    log4cplus::SharedAppenderPtr fileAppender(new log4cplus::FileAppender(getLogFilename()));
-    std::auto_ptr<log4cplus::Layout> layout(new log4cplus::TTCCLayout());
-    fileAppender->setLayout(layout);
-    logger.addAppender(fileAppender);
-#endif
+    FB::Log::LogMethodList mlist;
+    getFactoryInstance()->getLoggingMethods(mlist);
 
-#if defined(_DEBUG) && defined(_WIN32)
-    log4cplus::SharedAppenderPtr debugAppender(new log4cplus::Win32DebugAppender());
-    std::auto_ptr<log4cplus::Layout> layout2(new log4cplus::TTCCLayout());
-    debugAppender->setLayout(layout2);
-    logger.addAppender(debugAppender);
+    for (FB::Log::LogMethodList::const_iterator it = mlist.begin(); it != mlist.end(); ++it) {
+        switch( it->first ) {
+        case FB::Log::LogMethod_Console: {
+#ifdef FB_WIN
+            log4cplus::SharedAppenderPtr debugAppender(new log4cplus::Win32DebugAppender());
+            std::auto_ptr<log4cplus::Layout> layout2(new log4cplus::TTCCLayout());
+            debugAppender->setLayout(layout2);
+            logger.addAppender(debugAppender);
+            addedAppender = true;
+#else
+            log4cplus::SharedAppenderPtr debugAppender(new log4cplus::ConsoleAppender());
+            std::auto_ptr<log4cplus::Layout> layout2(new log4cplus::TTCCLayout());
+            debugAppender->setLayout(layout2);
+            logger.addAppender(debugAppender);
+            addedAppender = true;
 #endif
+            }
+        case FB::Log::LogMethod_File: {
+            log4cplus::SharedAppenderPtr fileAppender(new log4cplus::FileAppender(FB::utf8_to_wstring(it->second)));
+            std::auto_ptr<log4cplus::Layout> layout(new log4cplus::TTCCLayout());
+            fileAppender->setLayout(layout);
+            logger.addAppender(fileAppender);
+            addedAppender = true;
+          }
+        }
+    }
 
-    // For now we just always add this; it prevents errors. 
-    // TODO: Make this more conditional on something intelligent
-    log4cplus::SharedAppenderPtr nullAppender(new log4cplus::NullAppender());
-    std::auto_ptr<log4cplus::Layout> layout3(new log4cplus::TTCCLayout());
-    nullAppender->setLayout(layout3);
-    logger.addAppender(nullAppender);
+    // If there are no other appenders, add a NULL appender
+    if (!addedAppender) {
+        log4cplus::SharedAppenderPtr nullAppender(new log4cplus::NullAppender());
+        std::auto_ptr<log4cplus::Layout> layout3(new log4cplus::TTCCLayout());
+        nullAppender->setLayout(layout3);
+        logger.addAppender(nullAppender);
+    }
     
     logging_started = true;
 }
@@ -98,13 +119,4 @@ void FB::Log::fatal(const std::string& src, const std::string& msg, const char *
 {
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
-}
-
-std::wstring FB::Log::getLogFilename()
-{
-#if defined(XP_WIN)
-    return L"C:\\firebreath.log";
-#elif defined(XP_UNIX)
-    return L"~/firebreath.log";
-#endif
 }
