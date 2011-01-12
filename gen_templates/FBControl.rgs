@@ -1,11 +1,5 @@
 HKCU {
     NoRemove Software {
-        NoRemove MozillaPlugins {
-            ForceRemove '${MOZILLA_PLUGINID}' {
-                val Path = s '%MODULE%'
-            }
-        }
-        
         NoRemove Classes {
 @@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID)
             ${PROGID}.${AXVERSION_NUM} = s '${FBSTRING_FileDescription}' {
@@ -47,6 +41,38 @@ HKCU {
 	                }
 	            }
 	        }            
+        }
+
+        NoRemove Microsoft {
+            NoRemove Windows {
+                NoRemove CurrentVersion {
+                    NoRemove Ext {
+                        NoRemove PreApproved {
+@@foreach (FBControl_GUID CUR_GUID)
+                            ForceRemove '{${CUR_GUID}}'
+@@endforeach
+                        }
+                        NoRemove Stats {
+@@foreach (FBControl_GUID CUR_GUID)
+                            ForceRemove '{${CUR_GUID}}' {
+                                iexplore {
+                                    AllowedDomains {
+                                        '*'
+                                    }
+                                    val Count = d ''
+                                }
+                            }
+@@endforeach
+                        }
+                    }
+                }
+            }
+        }
+
+        NoRemove MozillaPlugins {
+            ForceRemove '${MOZILLA_PLUGINID}' {
+                val Path = s '%MODULE%'
+            }
         }
     }
 }
