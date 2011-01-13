@@ -48,7 +48,7 @@ namespace FB { namespace DOM {
         ElementPtr element() { return boost::dynamic_pointer_cast<Element>(node()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static ElementPtr Element::create(FB::JSObjectPtr &api)
+        /// @fn static ElementPtr Element::create(const FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Element object from a JSObjectPtr representing a DOM object.  This
         ///         will probably throw an exception and definitely not work right if the DOM object

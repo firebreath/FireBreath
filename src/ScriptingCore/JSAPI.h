@@ -137,8 +137,6 @@ namespace FB
         virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void FireJSEvent
-        ///
         /// @brief  Fires an event into javascript asynchronously using a W3C-compliant event parameter
         ///         
         /// This fires an event to all handlers attached to the given event in javascript. With a
@@ -170,7 +168,9 @@ namespace FB
         /// @see registerEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
+        /// @overload
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params);
+        /// @overload
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments);
 
     public:
@@ -230,7 +230,7 @@ namespace FB
         virtual void setDefaultZone(const SecurityZone& securityLevel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public void getDefaultZone(const SecurityZone& securityLevel)
+        /// @fn public SecurityZone getDefaultZone(const SecurityZone& securityLevel) const
         ///
         /// @brief  Gets the default zone (the zone the class operates on before a push)
         ///
@@ -241,7 +241,7 @@ namespace FB
         /// @see popZone
         /// @see getDefaultZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual SecurityZone getDefaultZone();
+        virtual SecurityZone getDefaultZone() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public SecurityZone getZone() const
@@ -395,7 +395,7 @@ namespace FB
         virtual bool HasMethod(const std::string& methodName) const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasMethodObject(const std::wstring& methodObjName)
+        /// @overload virtual bool HasMethodObject(const std::wstring& methodObjName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethodObject(const std::wstring& methodObjName) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -627,11 +627,11 @@ namespace FB
         ///
         /// @brief  
         ///
-        /// @param  api     const JSAPI*        JSAPI object to lock the zone for
+        /// @param  api     JSAPI*        JSAPI object to lock the zone for
         /// @param  zone    const SecurityZone& Zone to push
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        scoped_zonelock(const JSAPI* api, const SecurityZone& zone) : m_api(api) {
+        scoped_zonelock(JSAPI* api, const SecurityZone& zone) : m_api(api) {
             lock(zone);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////

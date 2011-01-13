@@ -61,7 +61,7 @@ namespace FB { namespace DOM {
         NodePtr node() { return shared_from_this(); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static NodePtr create(FB::JSObjectPtr &api)
+        /// @fn static NodePtr create(const FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Node object from a JSObjectPtr representing a DOM node.  This
         ///         will probably throw an exception and definitely not work right if the js object

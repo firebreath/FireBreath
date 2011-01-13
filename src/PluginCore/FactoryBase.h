@@ -159,6 +159,7 @@ namespace FB
         /// @return The plugin name. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string                         getPluginName();
+        /// @overload
         std::string                         getPluginName(const std::string& mimetype);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
@@ -169,10 +170,11 @@ namespace FB
         /// @return The plugin description 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string                         getPluginDescription();
+        /// @overload
         std::string                         getPluginDescription(const std::string& mimetype);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn FB::Npapi::NpapiPluginPtr FactoryBase::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+        /// @fn virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
         ///
         /// @brief  Creates a npapi plugin.  The default implementation creates a NpapiPluginWin, NpapiPluginX11, or
         ///         NpapiPluginMac depending on the platform.  Only in very very rare cases will you need to override
@@ -185,24 +187,24 @@ namespace FB
         virtual FB::Npapi::NpapiPluginPtr   createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn void getLoggingMethods(FB::Log::LogMethodList& outMethods)
+        /// @fn virtual void getLoggingMethods(FB::Log::LogMethodList& outMethods)
         ///
         /// @brief  Called by the logger to discover which log methods should be used
         ///
         /// @param  outMethods    a LogMethodList instance to hold the result
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void getLoggingMethods(FB::Log::LogMethodList& outMethods);
+        virtual void getLoggingMethods(FB::Log::LogMethodList& outMethods);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn  FB::Log::LogLevel getLogLevel()
+        /// @fn virtual FB::Log::LogLevel getLogLevel()
         ///
         /// @brief  Called by the logger to discover what loglevel to use
         ///
         /// @param  outMethods    a LogMethodList instance to hold the result
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        FB::Log::LogLevel getLogLevel();
+        virtual FB::Log::LogLevel getLogLevel();
 
 #ifdef FB_WIN
         ////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -50,7 +50,7 @@ void FB::JSAPI::setDefaultZone( const SecurityZone& securityLevel )
     m_zoneStack.pop_front();
     m_zoneStack.push_front(securityLevel);
 }
-FB::SecurityZone FB::JSAPI::getDefaultZone()
+FB::SecurityZone FB::JSAPI::getDefaultZone() const
 {
     assert(m_zoneStack.size() > 0);
     return m_zoneStack.front();

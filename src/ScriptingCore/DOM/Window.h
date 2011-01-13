@@ -82,7 +82,7 @@ namespace FB {
         WindowPtr window() { return boost::dynamic_pointer_cast<Window>(node()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static WindowPtr Window::create(FB::JSObjectPtr &api)
+        /// @fn static WindowPtr Window::create(const FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Window object from a JSObjectPtr representing a DOM object.  This
         ///         will probably throw an exception and definitely not work right if the DOM object

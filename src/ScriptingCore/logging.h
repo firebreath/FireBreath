@@ -63,14 +63,25 @@ namespace FB { namespace Log {
     void error(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
     void fatal(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
 
+    //////////////////////////////////////////////////////////////////////////
+    /// Used to specify the preferred loglevel for a logging system
+    //////////////////////////////////////////////////////////////////////////
     enum LogLevel {
+        // All log messages, no matter how small
         LogLevel_Trace  = 0x01,
+        // Debug level log messages - messages you won't care about unless you're debugging
         LogLevel_Debug  = 0x02,
+        // Informational log messages - not critical to know, but you might care
         LogLevel_Info   = 0x04,
+        // Only log warning and worse messages
         LogLevel_Warn   = 0x08,
+        // Only log messages that are actual errors
         LogLevel_Error  = 0x10
     };
 
+    //////////////////////////////////////////////////////////////////////////
+    /// Used to specify which logging methods to use
+    //////////////////////////////////////////////////////////////////////////
     enum LogMethod {
         LogMethod_Console  = 0x01,
         LogMethod_File  = 0x02

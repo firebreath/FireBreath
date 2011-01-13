@@ -33,6 +33,11 @@ namespace FB
     /// from a different instance of the plugin into a page, or presumably even a JSObject from one
     /// page into another (be *really* careful with that).  Note that not all JSAPI objects are linked
     /// to a BrowserHost instance, and thus might not need this wrapper class to function correctly
+    ///
+    /// Both constructors also have an optional SecurityZone parameter that, if provided, can allow
+    /// this proxy object to operate in a different security zone than the object it wraps, allowing
+    /// the same object to be shared between two instances of a plugin that run in different
+    /// security zones
     /// 
     /// @see FB::JSAPI
     /// @see FB::JSAPIAuto
@@ -50,21 +55,21 @@ namespace FB
         virtual ~JSAPIProxy(void);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn boost::shared_ptr<JSAPIProxy>  FB::JSAPIProxy::create(FB::JSAPIPtr &inner)
+        /// @fn JSAPIProxyPtr FB::JSAPIProxy::create(const FB::JSAPIPtr &inner)
         ///
         /// @brief  Creates a JSAPIProxy that holds a shared_ptr reference to the JSAPI object provided
         ///
         /// @param  inner       the API to reference; a reference to this API will be held and inner will
         ///                     not be released until this proxy object is released
         /// @return boost::shared_ptr<JSAPIProxy>
-        /// @since  1.4.0
+        /// @since  1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static boost::shared_ptr<JSAPIProxy> create(const FB::JSAPIPtr &inner);
-        /// @@overload
-        static boost::shared_ptr<JSAPIProxy> create(const SecurityZone& securityLevel, const FB::JSAPIPtr &inner);
+        static JSAPIProxyPtr create(const FB::JSAPIPtr &inner);
+        /// @overload
+        static JSAPIProxyPtr create(const SecurityZone& securityLevel, const FB::JSAPIPtr &inner);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn boost::shared_ptr<JSAPIProxy>  FB::JSAPIProxy::create(FB::JSAPIWeakPtr &inner)
+        /// @fn JSAPIProxyPtr  FB::JSAPIProxy::create(const FB::JSAPIWeakPtr &inner)
         ///
         /// @brief  Creates a JSAPIProxy that holds a weak_ptr reference to the JSAPI object provided
         ///
@@ -73,28 +78,44 @@ namespace FB
         ///                     except requests for the "expired" property, which is reserved in JSAPIProxy
         ///                     and will return true if inner has been released.
         /// @return boost::shared_ptr<JSAPIProxy>
-        /// @since  1.4.0
+        /// @since  1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static boost::shared_ptr<JSAPIProxy> create(const FB::JSAPIWeakPtr &inner);
-        /// @@overload
-        static boost::shared_ptr<JSAPIProxy> create(const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner);
+        static JSAPIProxyPtr create(const FB::JSAPIWeakPtr &inner);
+        /// @overload
+        static JSAPIProxyPtr create(const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn bool  FB::JSAPIProxy::isExpired()
+        /// @fn bool  FB::JSAPIProxy::isExpired() const
         ///
         /// @brief  Returns true if the weak_ptr this contains doesn't point to anything
         ///
         /// This can be used to determine if the API object proxied to is still valid or not
         ///
         /// @return bool
-        /// @since  
+        /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         inline bool isExpired() const {
             return m_apiWeak.expired();
         }
 
-        void swap(const FB::JSAPIPtr &inner);
-        void swap(const FB::JSAPIWeakPtr &inner);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void FB::JSAPIProxy::changeObject(const FB::JSAPIPtr &inner)
+        ///
+        /// @brief  Changes the wrapped JSAPIPtr to the given one
+        ///
+        /// @param  inner	const FB::JSAPIPtr &	New JSAPIPtr
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void changeObject(const FB::JSAPIPtr &inner);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void FB::JSAPIProxy::changeObject(FB::JSAPIWeakPtr &inner)
+        ///
+        /// @brief  Changes the wrapped JSAPIWeakPtr to the given one
+        ///
+        /// @param  inner	FB::JSAPIWeakPtr &	    New JSAPIWeakPtr
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void changeObject(const FB::JSAPIWeakPtr &inner);
         void reset();
 
         inline FB::JSAPIPtr getAPI() const {

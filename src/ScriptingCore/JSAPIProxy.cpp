@@ -16,19 +16,19 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPIProxy.h"
 
-boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( const FB::JSAPIPtr &inner )
+FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
     inner->registerProxy(ptr);
 
     return ptr;
 }
 
-boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( const FB::JSAPIWeakPtr &inner )
+FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIWeakPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
     FB::JSAPIPtr tmp = inner.lock();
     if (tmp)
         tmp->registerProxy(ptr);
@@ -36,19 +36,19 @@ boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( const FB::JSAPIWeakPtr
     return ptr;
 }
 
-boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIPtr &inner )
+FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
     inner->registerProxy(ptr);
 
     return ptr;
 }
 
-boost::shared_ptr<FB::JSAPIProxy> FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner )
+FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    boost::shared_ptr<FB::JSAPIProxy> ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
     FB::JSAPIPtr tmp = inner.lock();
     if (tmp)
         tmp->registerProxy(ptr);
@@ -88,7 +88,7 @@ FB::JSAPIProxy::~JSAPIProxy( void )
 {
 }
 
-void FB::JSAPIProxy::swap( const FB::JSAPIWeakPtr &inner )
+void FB::JSAPIProxy::changeObject( const FB::JSAPIWeakPtr &inner )
 {
     if (FB::JSAPIPtr ptr = m_apiWeak.lock()) {
         ptr->unregisterProxy(shared_ptr());
@@ -100,7 +100,7 @@ void FB::JSAPIProxy::swap( const FB::JSAPIWeakPtr &inner )
         ptr->registerProxy(shared_ptr());
 }
 
-void FB::JSAPIProxy::swap( const FB::JSAPIPtr &inner )
+void FB::JSAPIProxy::changeObject( const FB::JSAPIPtr &inner )
 {
     if (FB::JSAPIPtr ptr = m_apiWeak.lock()) {
         ptr->unregisterProxy(shared_ptr());
