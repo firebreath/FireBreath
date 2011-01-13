@@ -107,6 +107,7 @@ macro (add_firebreath_library project_name)
 
     foreach(LIB_DIR ${FBLIB_DIRS})
         if (EXISTS ${LIB_DIR}/${project_name}/CMakeLists.txt)
+            set (${PLUGIN_NAME}_${project_name} YES PARENT_SCOPE)
             get_target_property(library_target_exists ${project_name} TYPE)
             if (NOT library_target_exists)
                 set(FBLIB_DEFINITIONS)
