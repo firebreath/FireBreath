@@ -616,7 +616,7 @@ void NpapiBrowserHost::UnscheduleTimer(int timerId)  const
     }
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
+FB::BrowserStreamPtr NpapiBrowserHost::createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                     bool cache, bool seekable, size_t internalBufferSize ) const
 {
     assertMainThread();

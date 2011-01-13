@@ -23,7 +23,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::ActiveX;
 
-FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch *obj, const ActiveXBrowserHostPtr& host) :
+boost::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * obj, const ActiveXBrowserHostPtr& host)
+{
+	return boost::make_shared<IDispatchAPI>(obj, host);
+}
+
+FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHostPtr& host) :
     FB::JSObject(host), m_obj(obj), m_browser(host), is_JSAPI(false)
 {
     FB::JSAPIPtr ptr(getJSAPI());
@@ -61,7 +66,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
     }
     HRESULT hr;
     DISPID dispid;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    CComQIPtr<IDispatchEx> dispex(m_obj);
     if (!dispex) {
         throw FB::script_error("Cannot enumerate members; IDispatchEx not supported");
     }
@@ -91,7 +96,7 @@ size_t IDispatchAPI::getMemberCount() const
     DISPID dispid;
     size_t count(0);
 
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
+    CComQIPtr<IDispatchEx> dispex(m_obj);
     if (!dispex) {
         return -1;
     }
@@ -116,8 +121,8 @@ DISPID IDispatchAPI::getIDForName(const std::wstring& name) const
 
     std::wstring wName(name);
     HRESULT hr = E_NOTIMPL;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p != NULL) {
+    CComQIPtr<IDispatchEx> dispex(m_obj);
+    if (dispex) {
         hr = dispex->GetDispID(CComBSTR(name.c_str()),
             fdexNameEnsure | fdexNameCaseSensitive | 0x10000000, &dispId);
     } else {
@@ -177,20 +182,20 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName) const
             return false;
     }
 
-    DISPPARAMS params;
-    params.cArgs = 0;
-    params.cNamedArgs = 0;
-
-    VARIANT res;
-    EXCEPINFO eInfo;
-
-    HRESULT hr = E_NOTIMPL;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
     DISPID id = getIDForName(FB::utf8_to_wstring(propertyName));
     if (id == -1 && propertyName != "toString")
         return false;
-    // The only way to find out if the property actually exists or not is to try to get it; 
-    if (dispex.p) {
+
+	DISPPARAMS params;
+    params.cArgs = 0;
+    params.cNamedArgs = 0;
+
+	// The only way to find out if the property actually exists or not is to try to get it; 
+    VARIANT res;
+    EXCEPINFO eInfo;
+    HRESULT hr = E_NOTIMPL;
+    CComQIPtr<IDispatchEx> dispex(m_obj);
+    if (dispex) {
         hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
             &res, &eInfo, NULL);
     } else {
@@ -257,8 +262,8 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
     EXCEPINFO eInfo;
 
     HRESULT hr = E_NOTIMPL;
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p) {
+    CComQIPtr<IDispatchEx> dispex(m_obj);
+    if (dispex) {
         hr = dispex->InvokeEx(getIDForName(FB::utf8_to_wstring(propertyName)), LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
             &res, &eInfo, NULL);
     } else {
@@ -301,8 +306,8 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
 
     HRESULT hr = E_NOTIMPL;
     DISPID id(getIDForName(FB::utf8_to_wstring(propertyName)));
-    CComQIPtr<IDispatchEx, &IID_IDispatchEx> dispex(m_obj);
-    if (dispex.p) {
+    CComQIPtr<IDispatchEx> dispex(m_obj);
+    if (dispex) {
         hr = dispex->InvokeEx(id, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUTREF, &params,
             &res, &eInfo, NULL);
     } else {

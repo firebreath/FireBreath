@@ -83,7 +83,7 @@ namespace
 ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IHTMLElement2* element)
     : m_htmlElement(element), m_webBrowser(doc)
 {
-    if (m_webBrowser.p) {
+    if (m_webBrowser) {
         m_webBrowser->get_Document(&m_htmlDocDisp);
         m_htmlDoc = m_htmlDocDisp;
         m_htmlDoc->get_parentWindow(&m_htmlWin);
@@ -137,9 +137,9 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 void ActiveXBrowserHost::initDOMObjects()
 {
     if (!m_window) {
-        m_window = DOM::Window::create(boost::make_shared<IDispatchAPI>(m_htmlWin.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
-        m_document = DOM::Document::create(boost::make_shared<IDispatchAPI>(m_htmlDocDisp.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
-        m_element = DOM::Document::create(boost::make_shared<IDispatchAPI>(m_htmlElement.p, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+		m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_element = DOM::Document::create(IDispatchAPI::create(m_htmlElement, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
     }
 }
 
@@ -163,12 +163,11 @@ FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 {
-    VARIANT res;
-
-    if(m_htmlDoc.p == NULL) {
+    if(!m_htmlDoc) {
         throw FB::script_error("Can't execute JavaScript: Window is NULL");
     }
 
+    CComVariant res;
     HRESULT hr = m_htmlWin->execScript(CComBSTR(script.c_str()),
                                        CComBSTR("javascript"), &res);
     if (SUCCEEDED(hr)) {
@@ -178,6 +177,20 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
     } else {
         throw FB::script_error("Error executing JavaScript code");
     }
+}
+
+void ActiveXBrowserHost::shutdown()
+{
+	BrowserHost::shutdown();
+	m_htmlElement.Release();
+	m_htmlDoc.Release();
+	m_htmlDocDisp.Release();
+	m_htmlWin.Release();
+	m_webBrowser.Release();
+	m_htmlWinDisp.Release();
+	m_window.reset();
+	m_document.reset();
+    m_element.reset();
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
@@ -228,7 +241,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-        retVal = FB::JSObjectPtr(new IDispatchAPI(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_ptr()))); 
+		retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_ptr()))); 
         break;
 
     case VT_ERROR:
@@ -269,10 +282,10 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     outVar.Detach(dest);
 }
 
-FB::BrowserStreamPtr ActiveXBrowserHost::createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
+FB::BrowserStreamPtr ActiveXBrowserHost::createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                     bool cache, bool seekable, size_t internalBufferSize ) const
 {
-    ActiveXStreamPtr stream = boost::make_shared<ActiveXStream>( url, cache, seekable, internalBufferSize );
+    ActiveXStreamPtr stream(boost::make_shared<ActiveXStream>(url, cache, seekable, internalBufferSize));
     stream->AttachObserver( callback );
 
     if ( stream->init() )

@@ -37,7 +37,7 @@ FB::DOM::DocumentPtr Window::getDocument() const
     CComPtr<IHTMLDocument2> htmlDoc;
     m_htmlWin->get_document(&htmlDoc);
     CComQIPtr<IDispatch> htmlDocDisp(htmlDoc);
-    FB::JSObjectPtr docAPI(new IDispatchAPI(htmlDocDisp, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->host)));
+	FB::JSObjectPtr docAPI(IDispatchAPI::create(htmlDocDisp, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->host)));
     return FB::DOM::Document::create(docAPI);
 }
 

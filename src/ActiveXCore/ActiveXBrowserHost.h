@@ -43,7 +43,7 @@ namespace FB {
 
             virtual void *getContextID() const;
 
-            virtual FB::BrowserStreamPtr createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
+            virtual FB::BrowserStreamPtr createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                                     bool cache = true, bool seekable = false, 
                                                     size_t internalBufferSize = 128 * 1024 ) const;
 
@@ -54,6 +54,7 @@ namespace FB {
             FB::DOM::WindowPtr getDOMWindow();
             FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
+			void shutdown();
 
         public:
             FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
