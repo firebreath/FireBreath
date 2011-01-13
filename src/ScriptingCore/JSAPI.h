@@ -586,21 +586,60 @@ namespace FB
     /// @brief  Provides a helper class for locking
     ///
     /// This class will call pushZone on the provided JSAPI object when instantiated and popZone
-    /// when it goes out of scope. See documentation for FB::JSAPI::pushZone for an example
+    /// when it goes out of scope. 
+	/// @code
+	///      // In the constructor
+	///      // Register protected members
+	///		 {
+	///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
+	///		     registerMethod("start", make_method(this, &MyPluginAPI::start));
+	///      } // Zone automatically popped off
+	///      // Register private members
+	///      {
+	///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
+	///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
+	///      } // Zone automatically popped off
+	/// @endcode
     /// 
+	/// @since 1.4a3
     /// @see FB::JSAPI::pushZone
     /// @see FB::JSAPI::popZone
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class scoped_zonelock
+    class scoped_zonelock : boost::noncopyable
 	{
 	public:
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public FB::scoped_zonelock::scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
+		///
+		/// @brief  Accepts a FB::JSAPIPtr and pushes the specified security zone to be used
+        ///         until this object goes out of scope
+		///
+		/// @param  api     const JSAPIPtr&     JSAPI object to lock the zone for
+		/// @param  zone    const SecurityZone& Zone to push
+		/// @since 1.4a3
+		////////////////////////////////////////////////////////////////////////////////////////////////////
 		scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
             : m_api(api.get()), ref(api) {
 			lock(zone);
 		}
-		scoped_zonelock(JSAPI* api, const SecurityZone& zone) : m_api(api) {
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public   FB::scoped_zonelock::scoped_zonelock(JSAPI* api, const SecurityZone& zone)
+		///
+		/// @brief  
+		///
+		/// @param  api     const JSAPI*        JSAPI object to lock the zone for
+		/// @param  zone    const SecurityZone& Zone to push
+		/// @since 1.4a3
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		scoped_zonelock(const JSAPI* api, const SecurityZone& zone) : m_api(api) {
 			lock(zone);
 		}
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public   FB::scoped_zonelock::~scoped_zonelock()
+		///
+		/// @brief   Unlocks/pops the zone
+		/// @since 1.4a3
+		////////////////////////////////////////////////////////////////////////////////////////////////////
 		~scoped_zonelock() {
 			if (m_api)
                 m_api->popZone();
