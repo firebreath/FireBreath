@@ -54,6 +54,7 @@ namespace FB {
             FB::DOM::WindowPtr getDOMWindow();
             FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
+			void shutdown();
 
         public:
             FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;

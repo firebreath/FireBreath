@@ -137,7 +137,7 @@ namespace FB { namespace ActiveX {
         void setReadyState(READYSTATE newState)
         {
             m_readyState = newState;
-            if (m_propNotify.p != NULL)
+            if (m_propNotify)
                 m_propNotify->OnChanged(DISPID_READYSTATE);
         }
 
@@ -254,9 +254,9 @@ namespace FB { namespace ActiveX {
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::Advise(IUnknown *pUnkSink, DWORD *pdwCookie)
     {
         try {
-            IDispatch *idisp(NULL);
-            if (SUCCEEDED(pUnkSink->QueryInterface(IID_IDispatch, (void**)&idisp))) {
-                IDispatchAPIPtr obj(new IDispatchAPI(idisp, m_host));
+            CComQIPtr<IDispatch> disp(pUnkSink);
+            if (disp) {
+				IDispatchAPIPtr obj(IDispatchAPI::create(disp, m_host));
                 m_connPtMap[(DWORD)obj.get()] = obj;
                 *pdwCookie = (DWORD)obj.get();
                 getAPI()->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));

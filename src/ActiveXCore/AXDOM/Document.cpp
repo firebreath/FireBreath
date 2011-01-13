@@ -35,7 +35,7 @@ FB::DOM::WindowPtr Document::getWindow() const
     CComQIPtr<IHTMLWindow2> htmlWin;
     m_htmlDoc->get_parentWindow(&htmlWin);
     CComQIPtr<IDispatch> windowDisp(htmlWin);
-    FB::JSObjectPtr api(new IDispatchAPI(htmlWin.p, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+	FB::JSObjectPtr api(IDispatchAPI::create(htmlWin, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
 
     return FB::DOM::Window::create(api);
 }
@@ -57,7 +57,7 @@ std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::strin
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-            FB::JSObjectPtr obj(new IDispatchAPI(dispObj.p, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+			FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }
@@ -74,6 +74,6 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
     CComPtr<IHTMLElement> el(NULL);
     doc3->getElementById(CComBSTR(FB::utf8_to_wstring(elem_id).c_str()), &el);
     CComQIPtr<IDispatch> disp(el);
-    FB::JSObjectPtr ptr(new IDispatchAPI(disp.p, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+	FB::JSObjectPtr ptr(IDispatchAPI::create(disp, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
     return FB::DOM::Element::create(ptr);
 }

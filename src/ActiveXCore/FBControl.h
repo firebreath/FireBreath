@@ -217,15 +217,22 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetClientSite( IOleClientSite *pClientSite )
         {
             HRESULT hr = IOleObjectImpl<CFBControlX>::SetClientSite (pClientSite);
-            if (!pClientSite)
+			if (!pClientSite) {
+				m_htmlElement.Release();
+				m_htmlDoc.Release();
+				m_htmlDocIDisp.Release();
+				m_webBrowser.Release();
+				m_serviceProvider.Release();
+				m_host.reset();
                 return hr;
+			}
 
             m_serviceProvider = pClientSite;
             if (!m_serviceProvider)
                 return E_FAIL;
             m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
-            if (m_webBrowser.p) {
+            if (m_webBrowser) {
                 m_htmlDoc = m_webBrowser;
                 m_propNotify = m_spClientSite;
                 m_htmlDocIDisp = m_webBrowser;
