@@ -143,7 +143,7 @@ namespace FB {
         ///
         /// @return new javascript Date object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::JSObjectPtr createDate(const std::string& datestring) const;
+//        virtual FB::JSObjectPtr createDate(const std::string& datestring) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string Window::getLocation() const

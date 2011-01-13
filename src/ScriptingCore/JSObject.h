@@ -192,14 +192,6 @@ namespace FB
             boost::shared_ptr<T> tmp(ptr.lock());
             return variant(FB::JSAPIWeakPtr(tmp));
         }
-        template <class T>
-        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>,variant>::type
-        make_variant(const T& ptr) {
-            BOOST_STATIC_ASSERT(false);
-            // If you get an error here, you're trying to use a FB::JSAPI* (or a raw ptr to
-            // a class that derives from it. You should never do this! Always keep it wrapped
-            // in a boost::shared_ptr or boost::weak_ptr!
-        }
 
         // Convert out
         template<class T>

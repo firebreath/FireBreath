@@ -71,7 +71,7 @@ namespace
         
         tdm.insert(makeBuilderEntry<FB::FBNull>());
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
-        tdm.insert(makeBuilderEntry<FB::FBDateString>());
+        //tdm.insert(makeBuilderEntry<FB::FBDateString>());
         tdm.insert(makeBuilderEntry<FB::VariantList>());
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
@@ -616,7 +616,7 @@ void NpapiBrowserHost::UnscheduleTimer(int timerId)  const
     }
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::createStream(const std::string& url, FB::PluginEventSinkPtr callback, 
+FB::BrowserStreamPtr NpapiBrowserHost::createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                     bool cache, bool seekable, size_t internalBufferSize ) const
 {
     assertMainThread();

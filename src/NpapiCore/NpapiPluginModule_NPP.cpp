@@ -64,15 +64,15 @@ namespace
             if(asyncCallsWorkaround(npp, &npnFuncs)) {
                 npnFuncs.pluginthreadasynccall = NULL;
     #ifdef _WINDOWS_
-                NpapiBrowserHostPtr host(new NpapiBrowserHostAsyncWin(module, npp));
+                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHostAsyncWin>(module, npp));
                 return host;
     #else
                 // no work-around for this platform
-                NpapiBrowserHostPtr host(new NpapiBrowserHost(module, npp));
+                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHost>(module, npp));
                 return host;
     #endif
             } else {
-                NpapiBrowserHostPtr host(new NpapiBrowserHost(module, npp));
+                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHost>(module, npp));
                 return host;
             }
         } catch (...) {

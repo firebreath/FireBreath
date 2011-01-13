@@ -43,7 +43,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
      Regular Class Stuff
 \***************************/
 
-PluginCore::PluginCore() : m_Window(NULL), m_paramsSet(false)
+PluginCore::PluginCore() : m_paramsSet(false), m_Window(NULL)
 {
     FB::Log::initLogging();
     // This class is only created on the main UI thread,

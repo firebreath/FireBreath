@@ -41,7 +41,7 @@ namespace FB { namespace Npapi {
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual BrowserStreamPtr createStream(const std::string& url, PluginEventSinkPtr callback, 
+        virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
