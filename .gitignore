@@ -1,5 +1,6 @@
 .hg/
 .bzr/
+.svn/
 *.user
 *.suo
 *.ncb
