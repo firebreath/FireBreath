@@ -28,12 +28,12 @@ using FB::ActiveX::FbPerUserRegistration;
 // Used to determine whether the DLL can be unloaded by OLE
 STDAPI DllCanUnloadNow(void)
 {
-	HRESULT hr = _AtlModule.DllCanUnloadNow();
-	if (SUCCEEDED(hr) && isStaticInitialized()) {
-	    getFactoryInstance()->globalPluginDeinitialize();
+    HRESULT hr = _AtlModule.DllCanUnloadNow();
+    if (SUCCEEDED(hr) && isStaticInitialized()) {
+        getFactoryInstance()->globalPluginDeinitialize();
         FB::Log::stopLogging();
-		flagStaticInitialized(false);
-	}
+        flagStaticInitialized(false);
+    }
     return hr;
 }
 
@@ -41,13 +41,13 @@ STDAPI DllCanUnloadNow(void)
 // Returns a class factory to create an object of the requested type
 STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 {
-	HRESULT hr = _AtlModule.DllGetClassObject(rclsid, riid, ppv);
-	if (SUCCEEDED(hr) && !isStaticInitialized()) {
+    HRESULT hr = _AtlModule.DllGetClassObject(rclsid, riid, ppv);
+    if (SUCCEEDED(hr) && !isStaticInitialized()) {
         FB::Log::initLogging();
-	    getFactoryInstance()->globalPluginInitialize();
-		flagStaticInitialized(true);
-	}
-	return hr;
+        getFactoryInstance()->globalPluginInitialize();
+        flagStaticInitialized(true);
+    }
+    return hr;
 }
 
 

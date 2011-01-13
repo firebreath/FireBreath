@@ -194,7 +194,7 @@ TEST(JSAPIAuto_Methods)
         const std::string description = "asdf123541234mlkasdf";
         boost::shared_ptr<FB::JSAPIAuto> x = boost::make_shared<FB::JSAPIAuto>(description);
         CHECK_EQUAL(description, x->ToString());
-		const std::string tmp(x->Invoke("toString", FB::VariantList()).convert_cast<std::string>());
+        const std::string tmp(x->Invoke("toString", FB::VariantList()).convert_cast<std::string>());
         CHECK_EQUAL(description, tmp);
     }
 }

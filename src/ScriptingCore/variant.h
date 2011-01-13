@@ -723,7 +723,7 @@ namespace FB
             // std::string
             ///////////////////////////////////////////////////
             struct boost_variant_to_FBVariant
-				: public boost::static_visitor<FB::variant> {
+                : public boost::static_visitor<FB::variant> {
                 template <typename T>
                 FB::variant operator()(T inVal) const {
                     return FB::variant(inVal);
@@ -815,11 +815,11 @@ namespace FB
             }
         }
     }
-	template<typename T>
-	const T variant::convert_cast() const
-	{
-		return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<T>());
-	}
+    template<typename T>
+    const T variant::convert_cast() const
+    {
+        return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<T>());
+    }
     template <class T>
     variant make_variant(T t)
     {

@@ -25,7 +25,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
     m_allowDynamicAttributes(true), 
     m_allowMethodObjects(true)
 {
-	init();
+    init();
 }
 
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
@@ -34,34 +34,34 @@ FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& 
     m_allowDynamicAttributes(true), 
     m_allowMethodObjects(true)
 {
-	init();
+    init();
 }
 
 void FB::JSAPIAuto::init( )
 {
     {
         scoped_zonelock _l(this, SecurityScope_Public);
-    	registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
-    	registerMethod("getAttribute",  make_method(this, &JSAPIAuto::getAttribute));
-    	registerMethod("setAttribute",  make_method(this, &JSAPIAuto::setAttribute));
+        registerMethod("toString",  make_method(this, &JSAPIAuto::ToString));
+        registerMethod("getAttribute",  make_method(this, &JSAPIAuto::getAttribute));
+        registerMethod("setAttribute",  make_method(this, &JSAPIAuto::setAttribute));
 
-    	registerProperty("value", make_property(this, &JSAPIAuto::ToString));
-    	registerProperty("valid", make_property(this, &JSAPIAuto::get_valid));
+        registerProperty("value", make_property(this, &JSAPIAuto::ToString));
+        registerProperty("valid", make_property(this, &JSAPIAuto::get_valid));
     }
 
-	setReserved("offsetWidth");
-	setReserved("offsetHeight");
-	setReserved("width");
-	setReserved("height");
-	setReserved("attributes");
-	setReserved("nodeType");
-	setReserved("namespaceURI");
-	setReserved("localName");
-	setReserved("wrappedJSObject");
-	setReserved("prototype");
-	setReserved("style");
-	setReserved("id");
-	setReserved("constructor");
+    setReserved("offsetWidth");
+    setReserved("offsetHeight");
+    setReserved("width");
+    setReserved("height");
+    setReserved("attributes");
+    setReserved("nodeType");
+    setReserved("namespaceURI");
+    setReserved("localName");
+    setReserved("wrappedJSObject");
+    setReserved("prototype");
+    setReserved("style");
+    setReserved("id");
+    setReserved("constructor");
 }
 
 FB::JSAPIAuto::~JSAPIAuto()
@@ -87,7 +87,7 @@ void FB::JSAPIAuto::registerMethod(const std::wstring& name, const CallMethodFun
 
 void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     m_methodFunctorMap[name] = func;
     m_zoneMap[name] = getZone();
 }
@@ -99,14 +99,14 @@ void FB::JSAPIAuto::registerProperty(const std::wstring& name, const PropertyFun
 
 void FB::JSAPIAuto::registerProperty(const std::string& name, const PropertyFunctors& propFuncs)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     m_propertyFunctorsMap[name] = propFuncs;
     m_zoneMap[name] = getZone();
 }
 
 void FB::JSAPIAuto::getMemberNames(std::vector<std::string> &nameVector) const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     nameVector.clear();
     for (ZoneMap::const_iterator it = m_zoneMap.begin(); it != m_zoneMap.end(); ++it) {
         if (getZone() >= it->second)
@@ -116,7 +116,7 @@ void FB::JSAPIAuto::getMemberNames(std::vector<std::string> &nameVector) const
 
 size_t FB::JSAPIAuto::getMemberCount() const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     size_t count = 0;
     for (ZoneMap::const_iterator it = m_zoneMap.begin(); it != m_zoneMap.end(); ++it) {
         if (getZone() >= it->second)
@@ -127,7 +127,7 @@ size_t FB::JSAPIAuto::getMemberCount() const
 
 bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
     
@@ -136,14 +136,14 @@ bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
 
 bool FB::JSAPIAuto::HasMethodObject( const std::string& methodObjName ) const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     
     return m_allowMethodObjects && HasMethod(methodObjName);
 }
 
 bool FB::JSAPIAuto::HasProperty(const std::string& propertyName) const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
 
@@ -159,7 +159,7 @@ bool FB::JSAPIAuto::HasProperty(const std::string& propertyName) const
 
 bool FB::JSAPIAuto::HasProperty(int idx) const
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
 
@@ -172,7 +172,7 @@ bool FB::JSAPIAuto::HasProperty(int idx) const
 
 FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         throw object_invalidated();
 
@@ -205,7 +205,7 @@ FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
 
 void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& value)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         throw object_invalidated();
 
@@ -235,7 +235,7 @@ void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& 
 
 FB::variant FB::JSAPIAuto::GetProperty(int idx)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         throw object_invalidated();
 
@@ -261,7 +261,7 @@ void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
     if (!m_valid)
         throw object_invalidated();
 
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     
     std::string id(boost::lexical_cast<std::string>(idx));
     if (m_allowDynamicAttributes || (m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly)) {
@@ -273,32 +273,32 @@ void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
 
 FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         throw object_invalidated();
 
     if (memberAccessible(m_zoneMap.find(methodName))) {
-	    try {
-	        MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
-	        if(it == m_methodFunctorMap.end())
-	            throw invalid_member(methodName);
+        try {
+            MethodFunctorMap::iterator it = m_methodFunctorMap.find(methodName);
+            if(it == m_methodFunctorMap.end())
+                throw invalid_member(methodName);
 
-	        return it->second.call(args);
-	    } catch (const FB::bad_variant_cast& ex) {
-	        std::string errorMsg("Could not convert from ");
-	        errorMsg += ex.from;
-	        errorMsg += " to ";
-	        errorMsg += ex.to;
-	        throw FB::invalid_arguments(errorMsg);
-	    }
-	} else {
+            return it->second.call(args);
+        } catch (const FB::bad_variant_cast& ex) {
+            std::string errorMsg("Could not convert from ");
+            errorMsg += ex.from;
+            errorMsg += " to ";
+            errorMsg += ex.to;
+            throw FB::invalid_arguments(errorMsg);
+        }
+    } else {
         throw invalid_member(methodName);
-	}
+    }
 }
 
 FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         throw object_invalidated();
 
@@ -311,14 +311,14 @@ FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
             m_methodObjectMap[boost::make_tuple(methodObjName, getZone())] = ptr;
             return ptr;
         }
-	} else {
+    } else {
         throw invalid_member(methodObjName);
-	}
+    }
 }
 
 void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::variant& value, bool readonly /*= false*/ )
 {
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     Attribute attr = {value, readonly};
     m_attributes[name] = attr;
     m_zoneMap[name] = getZone();

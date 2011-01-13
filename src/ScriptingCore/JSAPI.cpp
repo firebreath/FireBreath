@@ -46,9 +46,9 @@ void JSAPI::invalidate()
 // Security zone management
 void FB::JSAPI::setDefaultZone( const SecurityZone& securityLevel )
 {
-	assert(m_zoneStack.size() > 0);
-	m_zoneStack.pop_front();
-	m_zoneStack.push_front(securityLevel);
+    assert(m_zoneStack.size() > 0);
+    m_zoneStack.pop_front();
+    m_zoneStack.push_front(securityLevel);
 }
 FB::SecurityZone FB::JSAPI::getDefaultZone()
 {
@@ -58,21 +58,21 @@ FB::SecurityZone FB::JSAPI::getDefaultZone()
 
 void FB::JSAPI::pushZone( const SecurityZone& securityLevel )
 {
-	m_zoneMutex.lock();
-	m_zoneStack.push_back(securityLevel);
+    m_zoneMutex.lock();
+    m_zoneStack.push_back(securityLevel);
 }
 
 void FB::JSAPI::popZone( )
 {
-	m_zoneStack.pop_back();
-	m_zoneMutex.unlock();
+    m_zoneStack.pop_back();
+    m_zoneMutex.unlock();
 }
 
 FB::SecurityZone FB::JSAPI::getZone() const
 {
-	assert(m_zoneStack.size() > 0);
-	boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-	return m_zoneStack.back();
+    assert(m_zoneStack.size() > 0);
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    return m_zoneStack.back();
 }
 
 
@@ -337,7 +337,7 @@ bool JSAPI::HasMethod(const std::wstring& methodName) const
 
 bool FB::JSAPI::HasMethodObject( const std::wstring& methodObjName ) const
 {
-	return HasMethodObject(wstring_to_utf8(methodObjName));
+    return HasMethodObject(wstring_to_utf8(methodObjName));
 }
 
 bool JSAPI::HasProperty(const std::wstring& propertyName) const

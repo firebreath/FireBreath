@@ -30,7 +30,7 @@ void ThreadRunnerAPI::threadRun()
         FB::JSObjectPtr func;
         if (this->m_queue.try_pop(func))
         {
-			FB::variant var;
+            FB::variant var;
             try {
                 var = func->Invoke("", FB::VariantList());
             } catch (const FB::script_error& ex) {
@@ -38,11 +38,11 @@ void ThreadRunnerAPI::threadRun()
                 m_host->htmlLog(std::string("Function call failed with ") + ex.what());
                 continue;
             }
-			if (var.is_of_type<std::string>()) {
-				m_host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
-			} else if (var.is_of_type<FB::JSObjectPtr>()) {
-			    m_queue.push(var.convert_cast<FB::JSObjectPtr>());
-			}
+            if (var.is_of_type<std::string>()) {
+                m_host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
+            } else if (var.is_of_type<FB::JSObjectPtr>()) {
+                m_queue.push(var.convert_cast<FB::JSObjectPtr>());
+            }
         }
         
         boost::this_thread::sleep(boost::posix_time::seconds(1));

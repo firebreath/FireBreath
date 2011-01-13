@@ -54,9 +54,9 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
         return;
     }
     if (is_JSAPI) {
-		FB::JSAPIPtr tmp = inner.lock();
+        FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
-			tmp->getMemberNames(nameVector);
+            tmp->getMemberNames(nameVector);
         return;
     }
     HRESULT hr;

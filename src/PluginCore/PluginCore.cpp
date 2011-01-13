@@ -76,11 +76,11 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
 
                 m_params[key] = tmp;
             } else {
-				m_params[key] = it->second;
-			}
+                m_params[key] = it->second;
+            }
         } catch (const std::exception &ex) {
             FBLOG_WARN("PluginCore", "Exception processing <param> " << key << ": " << ex.what());
-			m_params[it->first] = it->second;
+            m_params[it->first] = it->second;
         }
     }
     try {

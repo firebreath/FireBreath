@@ -288,11 +288,11 @@ std::string FBTestPluginAPI::get_pluginPath()
 
 long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
 {
-	if (!jso->HasProperty("getArray"))
-		throw FB::invalid_arguments();
-	FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
-	long len = array.size();// array->GetProperty("length").convert_cast<long>();
-	return len;
+    if (!jso->HasProperty("getArray"))
+        throw FB::invalid_arguments();
+    FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
+    long len = array.size();// array->GetProperty("length").convert_cast<long>();
+    return len;
 }
 long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& math, long a, long b) 
 {

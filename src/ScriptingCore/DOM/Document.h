@@ -51,7 +51,7 @@ namespace FB { namespace DOM {
         DocumentPtr document() { return boost::dynamic_pointer_cast<Document>(node()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static DocumentPtr Document::create(FB::JSObjectPtr &api)
+        /// @fn static DocumentPtr Document::create(const FB::JSObjectPtr &api)
         ///
         /// @brief  Creates a FB::DOM::Document object from a JSObjectPtr representing a DOM object.  This
         ///         will probably throw an exception and definitely not work right if the DOM object
@@ -81,7 +81,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The document's body.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual ElementPtr getBody() const;
+        virtual ElementPtr getBody() const;
     };
 
 }; };

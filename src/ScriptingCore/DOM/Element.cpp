@@ -45,7 +45,7 @@ void Element::setWidth(const int width) const
 
 int Element::getScrollWidth() const
 {
-	return getProperty<int>("scrollWidth");
+    return getProperty<int>("scrollWidth");
 }
 
 int Element::getHeight() const
@@ -59,7 +59,7 @@ void Element::setHeight(const int height) const
 
 int Element::getScrollHeight() const
 {
-	return getProperty<int>("scrollHeight");
+    return getProperty<int>("scrollHeight");
 }
 
 int Element::getChildNodeCount() const

@@ -18,16 +18,16 @@ Copyright 2009 Richard Bateman, Firebreath development team
 //#include "global/axplugin_defs.inc" // Include generated file for ActiveX mimetypes
 
 namespace {
-	volatile bool g_Initialized;
+    volatile bool g_Initialized;
 }
 
 void FB::ActiveX::flagStaticInitialized( bool init /*= true*/ )
 {
-	g_Initialized = init;
+    g_Initialized = init;
 }
 
 bool FB::ActiveX::isStaticInitialized()
 {
-	return g_Initialized;
+    return g_Initialized;
 }
 

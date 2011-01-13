@@ -140,7 +140,7 @@ namespace FB
         /// @fn virtual void FireJSEvent
         ///
         /// @brief  Fires an event into javascript asynchronously using a W3C-compliant event parameter
-        /// 		
+        ///         
         /// This fires an event to all handlers attached to the given event in javascript. With a
         /// W3C-compliant event parameter
         /// 
@@ -150,18 +150,18 @@ namespace FB
         /// @endcode
         /// Firefox/Safari/Chrome/Opera:
         /// @code
-        /// 	 // Note that the convention used by these browsers is that "on" is implied
-        /// 	 document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
+        ///      // Note that the convention used by these browsers is that "on" is implied
+        ///      document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
         /// @endcode
         ///
         /// You can then fire the event -- from any thread -- from the JSAPI object like so:
         /// @code
-        /// 	 FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
         /// @endcode
-        /// 		
+        ///         
         /// Also note that registerEvent must be called from the constructor to register the event.
         /// @code
-        /// 	 registerEvent("onload");
+        ///      registerEvent("onload");
         /// @endcode
         /// 
         /// @param  eventName   Name of the event.  This event must start with "on"
@@ -174,87 +174,87 @@ namespace FB
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments);
 
     public:
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public  void FB::JSAPI::pushZone(const SecurityZone& securityLevel)
-		///
-		/// @brief  Pushes a new security level and locks a mutex (for every Push there *must* be a Pop!)
-		///
-		/// This should be used to temporarily set the security zone of the API object. Note that this
-		/// also locks a mutex to ensure that access to members under a non-default security level is
-		/// serialized. Do not *ever* leave an unmatched push (a push with no pop after it). For safety,
-		/// use the helper FB::scoped_zonelock:
-		/// @code
-		///      // In the constructor
-		///      // Register protected members
-		///		 {
-		///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
-		///		     registerMethod("start", make_method(this, &MyPluginAPI::start));
-		///      } // Zone automatically popped off
-		///      // Register private members
-		///      {
-		///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
-		///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
-		///      } // Zone automatically popped off
-		/// @endcode
-		///
-		/// @param  securityLevel	const SecurityZone &	Zone id to push on the stack
-		/// @since 1.4a3
-		/// @see FB::scoped_zonelock
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void pushZone(const SecurityZone& securityLevel);
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public  void FB::JSAPI::popZone()
-		///
-		/// @brief  Pops off a security level and unlocks the mutex (for every Push there *must* be a Pop!)
-		///
-		/// Seriously, it's far better to use FB::scoped_zonelock instead of using popZone and pushZone
-		///
-		/// @returns void
-		/// @since 1.4a3
-		/// @see FB::scoped_zonelock
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void popZone();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public  void FB::JSAPI::pushZone(const SecurityZone& securityLevel)
+        ///
+        /// @brief  Pushes a new security level and locks a mutex (for every Push there *must* be a Pop!)
+        ///
+        /// This should be used to temporarily set the security zone of the API object. Note that this
+        /// also locks a mutex to ensure that access to members under a non-default security level is
+        /// serialized. Do not *ever* leave an unmatched push (a push with no pop after it). For safety,
+        /// use the helper FB::scoped_zonelock:
+        /// @code
+        ///      // In the constructor
+        ///      // Register protected members
+        ///      {
+        ///          FB::scoped_zonelock _l(this, SecurityScope_Protected);
+        ///          registerMethod("start", make_method(this, &MyPluginAPI::start));
+        ///      } // Zone automatically popped off
+        ///      // Register private members
+        ///      {
+        ///          FB::scoped_zonelock _l(this, SecurityScope_Protected);
+        ///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
+        ///      } // Zone automatically popped off
+        /// @endcode
+        ///
+        /// @param  securityLevel   const SecurityZone &    Zone id to push on the stack
+        /// @since 1.4a3
+        /// @see FB::scoped_zonelock
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void pushZone(const SecurityZone& securityLevel);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public  void FB::JSAPI::popZone()
+        ///
+        /// @brief  Pops off a security level and unlocks the mutex (for every Push there *must* be a Pop!)
+        ///
+        /// Seriously, it's far better to use FB::scoped_zonelock instead of using popZone and pushZone
+        ///
+        /// @returns void
+        /// @since 1.4a3
+        /// @see FB::scoped_zonelock
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void popZone();
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public void setDefaultZone(const SecurityZone& securityLevel)
-		///
-		/// @brief  Sets the default zone (the zone the class operates on before a push)
-		///
-		/// @returns void
-		/// @since 1.4a3
-		/// @see FB::scoped_zonelock
-		/// @see pushZone
-		/// @see popZone
-		/// @see getDefaultZone
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void setDefaultZone(const SecurityZone& securityLevel);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void setDefaultZone(const SecurityZone& securityLevel)
+        ///
+        /// @brief  Sets the default zone (the zone the class operates on before a push)
+        ///
+        /// @returns void
+        /// @since 1.4a3
+        /// @see FB::scoped_zonelock
+        /// @see pushZone
+        /// @see popZone
+        /// @see getDefaultZone
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setDefaultZone(const SecurityZone& securityLevel);
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public void getDefaultZone(const SecurityZone& securityLevel)
-		///
-		/// @brief  Gets the default zone (the zone the class operates on before a push)
-		///
-		/// @returns SecurityZone the default zone
-		/// @since 1.4a3
-		/// @see FB::scoped_zonelock
-		/// @see pushZone
-		/// @see popZone
-		/// @see getDefaultZone
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual SecurityZone getDefaultZone();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void getDefaultZone(const SecurityZone& securityLevel)
+        ///
+        /// @brief  Gets the default zone (the zone the class operates on before a push)
+        ///
+        /// @returns SecurityZone the default zone
+        /// @since 1.4a3
+        /// @see FB::scoped_zonelock
+        /// @see pushZone
+        /// @see popZone
+        /// @see getDefaultZone
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual SecurityZone getDefaultZone();
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public SecurityZone getZone() const
-		///
-		/// @brief  Gets the currently active zone
-		///
-		/// @returns SecurityZone the current zone
-		/// @since 1.4a3
-		/// @see FB::scoped_zonelock
-		/// @see pushZone
-		/// @see popZone
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual SecurityZone getZone() const;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public SecurityZone getZone() const
+        ///
+        /// @brief  Gets the currently active zone
+        ///
+        /// @returns SecurityZone the current zone
+        /// @since 1.4a3
+        /// @see FB::scoped_zonelock
+        /// @see pushZone
+        /// @see popZone
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual SecurityZone getZone() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEvent(const std::string& name)
@@ -404,13 +404,13 @@ namespace FB
         /// @brief  Query if 'methodObjName' is a valid methodObj. 
         ///
         /// @param  methodObjName    Name of the method to fetch an object for. 
-		///
-		/// If this feature is supported 
+        ///
+        /// If this feature is supported 
         ///
         /// @return true if methodObj exists, false if not. 
-		/// @since 1.4
+        /// @since 1.4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual bool HasMethodObject(const std::string& methodObjName) const { return false; }
+        virtual bool HasMethodObject(const std::string& methodObjName) const { return false; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasProperty(const std::wstring& propertyName) const
@@ -467,17 +467,17 @@ namespace FB
         ///
         /// @brief  Gets a method object (JSAPI object that has a default method)
         ///
-		/// Often it is preferable with the plugins to have the API return a JSAPI object as a
-		/// property and then call the default method on that object.  This looks the same in
-		/// javascript, except that you can save the function object if you want to.  See
-		/// FB::JSFunction for an example of how to make a function object
-		///
+        /// Often it is preferable with the plugins to have the API return a JSAPI object as a
+        /// property and then call the default method on that object.  This looks the same in
+        /// javascript, except that you can save the function object if you want to.  See
+        /// FB::JSFunction for an example of how to make a function object
+        ///
         /// @param  methodObjName    Name of the methodObj. 
         /// @return The methodObj value 
-		/// @since 1.4
-		/// @see FB::JSFunction
+        /// @since 1.4
+        /// @see FB::JSFunction
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual JSAPIPtr GetMethodObject(const std::string& methodObjName) { return FB::JSAPIPtr(); }
+        virtual JSAPIPtr GetMethodObject(const std::string& methodObjName) { return FB::JSAPIPtr(); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual variant GetProperty(const std::wstring& propertyName)
@@ -563,7 +563,7 @@ namespace FB
         virtual void unregisterProxy( const FB::JSAPIPtr& ptr ) const;
 
     protected:
-		typedef std::deque<SecurityZone> ZoneStack;
+        typedef std::deque<SecurityZone> ZoneStack;
         // Stores event handlers
         EventMultiMap m_eventMap;       
         // Stores event-as-property event handlers
@@ -574,7 +574,7 @@ namespace FB
         typedef std::vector<JSAPIWeakPtr> ProxyList;
         mutable ProxyList m_proxies;
 
-		mutable boost::recursive_mutex m_zoneMutex;
+        mutable boost::recursive_mutex m_zoneMutex;
         ZoneStack m_zoneStack;
                 
         bool m_valid;                   // Tracks if this object has been invalidated
@@ -587,71 +587,71 @@ namespace FB
     ///
     /// This class will call pushZone on the provided JSAPI object when instantiated and popZone
     /// when it goes out of scope. 
-	/// @code
-	///      // In the constructor
-	///      // Register protected members
-	///		 {
-	///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
-	///		     registerMethod("start", make_method(this, &MyPluginAPI::start));
-	///      } // Zone automatically popped off
-	///      // Register private members
-	///      {
-	///			 FB::scoped_zonelock _l(this, SecurityScope_Protected);
-	///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
-	///      } // Zone automatically popped off
-	/// @endcode
+    /// @code
+    ///      // In the constructor
+    ///      // Register protected members
+    ///      {
+    ///          FB::scoped_zonelock _l(this, SecurityScope_Protected);
+    ///          registerMethod("start", make_method(this, &MyPluginAPI::start));
+    ///      } // Zone automatically popped off
+    ///      // Register private members
+    ///      {
+    ///          FB::scoped_zonelock _l(this, SecurityScope_Protected);
+    ///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
+    ///      } // Zone automatically popped off
+    /// @endcode
     /// 
-	/// @since 1.4a3
+    /// @since 1.4a3
     /// @see FB::JSAPI::pushZone
     /// @see FB::JSAPI::popZone
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class scoped_zonelock : boost::noncopyable
-	{
-	public:
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public FB::scoped_zonelock::scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
-		///
-		/// @brief  Accepts a FB::JSAPIPtr and pushes the specified security zone to be used
+    {
+    public:
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public FB::scoped_zonelock::scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
+        ///
+        /// @brief  Accepts a FB::JSAPIPtr and pushes the specified security zone to be used
         ///         until this object goes out of scope
-		///
-		/// @param  api     const JSAPIPtr&     JSAPI object to lock the zone for
-		/// @param  zone    const SecurityZone& Zone to push
-		/// @since 1.4a3
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
+        ///
+        /// @param  api     const JSAPIPtr&     JSAPI object to lock the zone for
+        /// @param  zone    const SecurityZone& Zone to push
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
             : m_api(api.get()), ref(api) {
-			lock(zone);
-		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public   FB::scoped_zonelock::scoped_zonelock(JSAPI* api, const SecurityZone& zone)
-		///
-		/// @brief  
-		///
-		/// @param  api     const JSAPI*        JSAPI object to lock the zone for
-		/// @param  zone    const SecurityZone& Zone to push
-		/// @since 1.4a3
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		scoped_zonelock(const JSAPI* api, const SecurityZone& zone) : m_api(api) {
-			lock(zone);
-		}
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public   FB::scoped_zonelock::~scoped_zonelock()
-		///
-		/// @brief   Unlocks/pops the zone
-		/// @since 1.4a3
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		~scoped_zonelock() {
-			if (m_api)
+            lock(zone);
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public   FB::scoped_zonelock::scoped_zonelock(JSAPI* api, const SecurityZone& zone)
+        ///
+        /// @brief  
+        ///
+        /// @param  api     const JSAPI*        JSAPI object to lock the zone for
+        /// @param  zone    const SecurityZone& Zone to push
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        scoped_zonelock(const JSAPI* api, const SecurityZone& zone) : m_api(api) {
+            lock(zone);
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public   FB::scoped_zonelock::~scoped_zonelock()
+        ///
+        /// @brief   Unlocks/pops the zone
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        ~scoped_zonelock() {
+            if (m_api)
                 m_api->popZone();
-		}
+        }
     private:
-		void lock(const SecurityZone& zone) const {
-			if (m_api)
-				m_api->pushZone(zone);
-		}
-		JSAPI* m_api;
+        void lock(const SecurityZone& zone) const {
+            if (m_api)
+                m_api->pushZone(zone);
+        }
+        JSAPI* m_api;
         const FB::JSAPIPtr ref;
-	};
+    };
 };
 
 // There are important conversion routines that require JSObject and JSAPI to both be loaded

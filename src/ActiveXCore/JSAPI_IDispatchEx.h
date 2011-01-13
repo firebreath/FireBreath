@@ -54,12 +54,12 @@ namespace FB { namespace ActiveX {
             FB::variant exec(const std::vector<variant>& args) {
                 if (args.size() == 2) {
                     try {
-	                    std::string evtName = args[0].convert_cast<std::string>();
-	                    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
-	                    obj->getAPI()->registerEventMethod(evtName, method);
+                        std::string evtName = args[0].convert_cast<std::string>();
+                        FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+                        obj->getAPI()->registerEventMethod(evtName, method);
                         return FB::variant();
                     } catch (const std::bad_cast& e) {
-                    	throw FB::invalid_arguments(e.what());
+                        throw FB::invalid_arguments(e.what());
                     }
                 } else {
                     throw FB::invalid_arguments();
@@ -76,12 +76,12 @@ namespace FB { namespace ActiveX {
             FB::variant exec(const std::vector<variant>& args) {
                 if (args.size() == 2) {
                     try {
-	                    std::string evtName = args[0].convert_cast<std::string>();
-	                    FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
-	                    obj->getAPI()->unregisterEventMethod(evtName, method);
+                        std::string evtName = args[0].convert_cast<std::string>();
+                        FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
+                        obj->getAPI()->unregisterEventMethod(evtName, method);
                         return FB::variant();
                     } catch (const std::bad_cast& e) {
-                    	throw FB::invalid_arguments(e.what());
+                        throw FB::invalid_arguments(e.what());
                     }
                 } else {
                     throw FB::invalid_arguments();
@@ -563,8 +563,8 @@ namespace FB { namespace ActiveX {
             m_memberList.clear();
             api->getMemberNames(m_memberList);
         }
-    	if (m_memberList.size() == 0)
-    		return S_FALSE;
+        if (m_memberList.size() == 0)
+            return S_FALSE;
 
         if (id == DISPID_STARTENUM) {
             *pid = AxIdMap.getIdForValue(m_memberList[0]);

@@ -81,7 +81,7 @@ namespace FB {
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
 
-        	DWORD m_dwCurrentSafety;
+            DWORD m_dwCurrentSafety;
 
             ActiveXBrowserHostPtr m_host;
 
@@ -354,38 +354,38 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::GetInterfaceSafetyOptions(REFIID riid, DWORD *pdwSupportedOptions, DWORD *pdwEnabledOptions)
         {
-    		if (pdwSupportedOptions == NULL || pdwEnabledOptions == NULL)
-    			return E_POINTER;
+            if (pdwSupportedOptions == NULL || pdwEnabledOptions == NULL)
+                return E_POINTER;
 
-    		HRESULT hr;
-    		CComPtr<IUnknown> pUnk;
-    		// Check if we support this interface
-    		hr = GetUnknown()->QueryInterface(riid, (void**)&pUnk);
-    		if (SUCCEEDED(hr)) {
-    			*pdwSupportedOptions = getSupportedObjectSafety();
-				*pdwEnabledOptions   = m_dwCurrentSafety;
-    		} else {
-    			// We don't support this interface
-    			*pdwSupportedOptions = 0;
-    			*pdwEnabledOptions   = 0;
-    		}
-    		return hr;
+            HRESULT hr;
+            CComPtr<IUnknown> pUnk;
+            // Check if we support this interface
+            hr = GetUnknown()->QueryInterface(riid, (void**)&pUnk);
+            if (SUCCEEDED(hr)) {
+                *pdwSupportedOptions = getSupportedObjectSafety();
+                *pdwEnabledOptions   = m_dwCurrentSafety;
+            } else {
+                // We don't support this interface
+                *pdwSupportedOptions = 0;
+                *pdwEnabledOptions   = 0;
+            }
+            return hr;
         }
         
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetInterfaceSafetyOptions(REFIID riid, DWORD dwOptionSetMask, DWORD dwEnabledOptions)
         {
-    		CComPtr<IUnknown> pUnk;
-    		// Check if we support the interface and return E_NOINTEFACE if we don't
-    		if (FAILED(GetUnknown()->QueryInterface(riid, (void**)&pUnk)))
-    			return E_NOINTERFACE;
+            CComPtr<IUnknown> pUnk;
+            // Check if we support the interface and return E_NOINTEFACE if we don't
+            if (FAILED(GetUnknown()->QueryInterface(riid, (void**)&pUnk)))
+                return E_NOINTERFACE;
 
-    		// If we are asked to set options we don't support then fail
-    		if (dwOptionSetMask & ~getSupportedObjectSafety())
-    			return E_FAIL;
+            // If we are asked to set options we don't support then fail
+            if (dwOptionSetMask & ~getSupportedObjectSafety())
+                return E_FAIL;
 
-    		m_dwCurrentSafety = (m_dwCurrentSafety & ~dwOptionSetMask) | (dwOptionSetMask & dwEnabledOptions);
-    		return S_OK;
+            m_dwCurrentSafety = (m_dwCurrentSafety & ~dwOptionSetMask) | (dwOptionSetMask & dwEnabledOptions);
+            return S_OK;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>

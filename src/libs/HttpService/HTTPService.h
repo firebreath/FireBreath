@@ -38,7 +38,7 @@ namespace HTTP {
         // it may leave instances in an unusable state
         static void terminateAllInstances();
 
-		// Should old be called when the plugin using the service unloads
+        // Should old be called when the plugin using the service unloads
         virtual void terminate() = 0;
 
         virtual void registerHandler(boost::shared_ptr<HTTPHandler> hnd) = 0;

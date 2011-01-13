@@ -37,12 +37,12 @@ SimpleMathAPI::~SimpleMathAPI()
 // add Method
 FB::VariantList SimpleMathAPI::getArray() 
 {
-	std::vector<std::string> ret;
-	ret.push_back("aa");
-	ret.push_back("bb");
-	ret.push_back("cc");
-	ret.push_back("dd");
-	return FB::make_variant_list(ret);
+    std::vector<std::string> ret;
+    ret.push_back("aa");
+    ret.push_back("bb");
+    ret.push_back("cc");
+    ret.push_back("dd");
+    return FB::make_variant_list(ret);
 }
 long SimpleMathAPI::add(long a, long b)
 {

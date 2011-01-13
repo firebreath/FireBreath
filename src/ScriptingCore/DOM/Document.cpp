@@ -36,6 +36,6 @@ WindowPtr Document::getWindow() const
 
 ElementPtr Document::getBody() const
 {
-	JSObjectPtr api = getProperty<FB::JSObjectPtr>("body");
-	return Element::create(api);
+    JSObjectPtr api = getProperty<FB::JSObjectPtr>("body");
+    return Element::create(api);
 }

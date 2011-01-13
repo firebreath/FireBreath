@@ -101,19 +101,19 @@ namespace FB {
             FB::variant value;
             bool readonly;
         };
-		typedef std::map<boost::tuple<std::string, FB::SecurityZone>, FB::JSFunctionPtr> MethodObjectMap;
-		typedef std::map<std::string, FB::SecurityZone> ZoneMap;
+        typedef std::map<boost::tuple<std::string, FB::SecurityZone>, FB::JSFunctionPtr> MethodObjectMap;
+        typedef std::map<std::string, FB::SecurityZone> ZoneMap;
         typedef std::map<std::string, Attribute> AttributeMap;
 
     public:
         /// @brief Description is used by ToString().
         JSAPIAuto(const std::string& description = "<JSAPI-Auto Javascript Object>");
         JSAPIAuto(const SecurityZone& securityLevel, const std::string& description = "<JSAPI-Auto Secure Javascript Object>");
-		typedef std::deque<SecurityZone> ZoneStack;
+        typedef std::deque<SecurityZone> ZoneStack;
 
-		void init( );
+        void init( );
 
-		virtual ~JSAPIAuto();
+        virtual ~JSAPIAuto();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false)
@@ -167,7 +167,7 @@ namespace FB {
         virtual size_t getMemberCount() const;
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-		virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
+        virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
         virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace FB {
         virtual void registerMethod(const std::string& name, const CallMethodFunctor& func);
 
         virtual bool HasMethod(const std::string& methodName) const;
-		virtual bool HasMethodObject(const std::string& methodObjName) const;
+        virtual bool HasMethodObject(const std::string& methodObjName) const;
         virtual bool HasProperty(const std::string& propertyName) const;
         virtual bool HasProperty(int idx) const;
 
@@ -283,15 +283,15 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setAttribute(const std::string& name, const FB::variant& value);
 
-	protected:
-		inline bool memberAccessible( ZoneMap::const_iterator it ) const;
+    protected:
+        inline bool memberAccessible( ZoneMap::const_iterator it ) const;
 
     protected:
-		// Stores Method Objects -- JSAPI proxy objects for calling a method on this object
-		MethodObjectMap m_methodObjectMap;
-		// Stores the methods exposed to JS
+        // Stores Method Objects -- JSAPI proxy objects for calling a method on this object
+        MethodObjectMap m_methodObjectMap;
+        // Stores the methods exposed to JS
         MethodFunctorMap m_methodFunctorMap;
-		// Stores the properties exposed to JS
+        // Stores the properties exposed to JS
         PropertyFunctorsMap m_propertyFunctorsMap;
         // Keeps track of the security zone of each member
         ZoneMap m_zoneMap;

@@ -169,7 +169,7 @@ namespace FB
         virtual void *getContextID() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback,
+        /// @fn virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
         /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const = 0
         ///
         /// @brief  Creates a BrowserStream. 
@@ -185,8 +185,9 @@ namespace FB
         ///
         /// @return null if it fails, else BrowserStream object
         /// @todo this should probably be a shared_ptr instead of a normal ptr
+        /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual BrowserStreamPtr createStream(const std::string& url, PluginEventSinkPtr callback, 
+        virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
         
@@ -267,7 +268,7 @@ namespace FB
         /// @fn virtual void shutdown()
         ///
         /// @brief  Notifies the browserhost object that the associated plugin object is shutting down
-        /// 		
+        ///         
         /// This triggers events such as releasing all JSAPI objects that have been passed to the browser
         /// and disables cross-thread calls (since our context is going away if the plugin is shutting
         /// down)
@@ -276,7 +277,7 @@ namespace FB
         virtual void shutdown();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void isShutdown() const
+        /// @fn virtual bool isShutdown() const
         ///
         /// @brief  returns true if the FB::BrowserHost::shutdown() method has been called on this object
         /// 
@@ -297,7 +298,7 @@ namespace FB
         /// @fn virtual void retainJSAPIPtr(const FB::JSAPIPtr& obj) const
         ///
         /// @brief  retains an instance of the JSAPI object until the plugin shuts down
-        /// 		
+        ///         
         /// @param obj  JSAPIPtr object to retain
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -306,7 +307,7 @@ namespace FB
         /// @fn virtual void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const
         ///
         /// @brief  releases the specified JSAPI object to allow it to be invalidated and freed. This is
-        /// 		done automatically for all retained objects on shutdown
+        ///         done automatically for all retained objects on shutdown
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;

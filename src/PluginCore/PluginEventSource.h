@@ -123,6 +123,7 @@ namespace FB {
         }
 
     private:
+        // Helper function used by DetachObserver
         bool PluginEventSource::_deleteObserver( PluginEventSinkPtr sink, PluginEventSinkWeakPtr wptr );
 
     protected:
