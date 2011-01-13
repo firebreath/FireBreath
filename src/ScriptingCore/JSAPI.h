@@ -230,7 +230,7 @@ namespace FB
         virtual void setDefaultZone(const SecurityZone& securityLevel);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public SecurityZone getDefaultZone(const SecurityZone& securityLevel) const
+        /// @fn public virtual SecurityZone getDefaultZone() const
         ///
         /// @brief  Gets the default zone (the zone the class operates on before a push)
         ///

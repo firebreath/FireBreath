@@ -361,10 +361,10 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     }
 }
 
-FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB::VariantList& args )
-{
-    return FB::JSObjectPtr();
-}
+//FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB::VariantList& args )
+//{
+//    return FB::JSObjectPtr();
+//}
 
 FB::JSAPIPtr IDispatchAPI::getJSAPI() const
 {

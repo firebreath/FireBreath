@@ -149,7 +149,7 @@ namespace FB {
         virtual void setReserved(const std::string &name);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public isReserved( const std::string& propertyName ) cons(
+        /// @fn public bool isReserved( const std::string& propertyName ) const
         ///
         /// @brief   Returns true if the specified propertyName is a reserved attribute
         ///

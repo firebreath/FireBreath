@@ -108,7 +108,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void changeObject(const FB::JSAPIPtr &inner);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public void FB::JSAPIProxy::changeObject(FB::JSAPIWeakPtr &inner)
+        /// @fn public void FB::JSAPIProxy::changeObject(const FB::JSAPIWeakPtr &inner)
         ///
         /// @brief  Changes the wrapped JSAPIWeakPtr to the given one
         ///

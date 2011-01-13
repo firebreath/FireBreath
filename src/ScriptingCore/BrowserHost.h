@@ -277,7 +277,7 @@ namespace FB
         virtual void shutdown();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool isShutdown() const
+        /// @fn virtual bool isShutDown() const
         ///
         /// @brief  returns true if the FB::BrowserHost::shutdown() method has been called on this object
         /// 

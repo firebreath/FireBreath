@@ -43,7 +43,7 @@ namespace FB { namespace DOM {
         virtual ~Node() { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::JSObjectPtr getJSObject()
+        /// @fn virtual FB::JSObjectPtr getJSObject() const
         ///
         /// @brief  Returns the FB::JSObjectPtr that this object is wrapping
         ///
