@@ -308,7 +308,7 @@ namespace FB {
         DefaultBrowserStreamHandler();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual BrowserStream::~BrowserStream()
+        /// @fn virtual DefaultBrowserStreamHandler::~DefaultBrowserStreamHandler()
         ///
         /// @brief  Destructor.
         ///

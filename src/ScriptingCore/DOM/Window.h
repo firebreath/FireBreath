@@ -97,63 +97,63 @@ namespace FB {
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual DocumentPtr Window::getDocument()
+        /// @fn virtual DocumentPtr Window::getDocument() const
         ///
         /// @brief  Gets the DOM Document contained in this window
         ///
         /// @return The document. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual DocumentPtr getDocument();
+        virtual DocumentPtr getDocument() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void Window::alert(const std::string& str)
+        /// @fn virtual void Window::alert(const std::string& str) const
         ///
         /// @brief  Pop up a JS alert box
         ///
         /// @param  str The alert string
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void alert(const std::string& str);
+        virtual void alert(const std::string& str) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual void Window::alert(const std::wstring& str)
+        /// @overload virtual void Window::alert(const std::wstring& str) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void alert(const std::wstring& str);
+        virtual void alert(const std::wstring& str) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::JSObjectPtr Window::createArray()
+        /// @fn virtual FB::JSObjectPtr Window::createArray() const
         ///
         /// @brief  Creates a javascript array object and returns it
         ///
         /// @return new empty javascript array
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::JSObjectPtr createArray();
+        virtual FB::JSObjectPtr createArray() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::JSObjectPtr Window::createMap()
+        /// @fn virtual FB::JSObjectPtr Window::createMap() const
         ///
         /// @brief  Creates a javascript object and returns it
         ///
         /// @return new empty javascript object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::JSObjectPtr createMap();
+        virtual FB::JSObjectPtr createMap() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::JSObjectPtr Window::createDate(const std::string& datestring)
+        /// @fn virtual FB::JSObjectPtr Window::createDate(const std::string& datestring) const
         ///
         /// @brief  Creates a javascript Date object and returns it
         ///
         /// @return new javascript Date object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::JSObjectPtr createDate(const std::string& datestring);
+        virtual FB::JSObjectPtr createDate(const std::string& datestring) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual std::string Window::getLocation()
+        /// @fn virtual std::string Window::getLocation() const
         ///
         /// @brief  Returns window.location for the containing page
         ///
         /// @return The location as a strin
         ///         g. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::string getLocation();
+        virtual std::string getLocation() const;
     };
 
 } };

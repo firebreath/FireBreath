@@ -78,7 +78,7 @@ namespace FB
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) = 0
+        /// @fn virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const = 0
         ///
         /// @brief  Schedule asynchronous call to be executed on the main thread. 
         ///
@@ -158,7 +158,7 @@ namespace FB
         static void AsyncHtmlLog(void *data);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void *getContextID() = 0
+        /// @fn virtual void *getContextID() const = 0
         ///
         /// @brief  Gets a unique identifier for this BrowserHost.  There are cases where you may need
         ///         multiple BrowserHosts in a single FireBreath plugin, primarily if you are embedding
@@ -170,7 +170,7 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStream* createStream(const std::string& url, PluginEventSink* callback,
-        /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) = 0
+        /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const = 0
         ///
         /// @brief  Creates a BrowserStream. 
         ///
@@ -194,7 +194,7 @@ namespace FB
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn void assertMainThread()
+        /// @fn void assertMainThread() const
         ///
         /// @brief  When running in debug mode, asserts that the call is made on the main thread. 
         /// @since 1.2.0
@@ -202,7 +202,7 @@ namespace FB
         void assertMainThread() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn bool isMainThread()
+        /// @fn bool isMainThread() const
         ///
         /// @brief  Query if this object is on the main thread. 
         ///
@@ -267,13 +267,48 @@ namespace FB
         /// @fn virtual void shutdown()
         ///
         /// @brief  Notifies the browserhost object that the associated plugin object is shutting down
+        /// 		
+        /// This triggers events such as releasing all JSAPI objects that have been passed to the browser
+        /// and disables cross-thread calls (since our context is going away if the plugin is shutting
+        /// down)
+        /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void shutdown();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void isShutdown() const
+        ///
+        /// @brief  returns true if the FB::BrowserHost::shutdown() method has been called on this object
+        /// 
+        /// @return bool true if shutdown() has been called
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool isShutDown() const;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void freeRetainedObjects() const
+        ///
+        /// @brief  releases all JSAPI objects that have been passed to the browser
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void freeRetainedObjects() const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void retainJSAPIPtr(const FB::JSAPIPtr& obj) const
+        ///
+        /// @brief  retains an instance of the JSAPI object until the plugin shuts down
+        /// 		
+        /// @param obj  JSAPIPtr object to retain
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void retainJSAPIPtr(const FB::JSAPIPtr& obj) const;
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const
+        ///
+        /// @brief  releases the specified JSAPI object to allow it to be invalidated and freed. This is
+        /// 		done automatically for all retained objects on shutdown
+        /// @since 1.4a3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;
 
 public:

@@ -75,7 +75,7 @@ namespace FB { namespace DOM {
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template <class T> T callMethod(const std::string& name, const VariantList& args)
+        /// @fn template <class T> T callMethod(const std::string& name, const VariantList& args) const
         ///
         /// @brief  Templated function, calls a method on the node of the given name, casts the result to
         ///         type T, and returns it
@@ -96,7 +96,7 @@ namespace FB { namespace DOM {
             return tmp.convert_cast<T>();
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload template <class T> T callMethod(const std::wstring& name, const VariantList& args)
+        /// @overload template <class T> T callMethod(const std::wstring& name, const VariantList& args) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
         T callMethod(const std::wstring& name, const VariantList& args) const
@@ -111,7 +111,7 @@ namespace FB { namespace DOM {
             return getProperty<T>(FB::wstring_to_utf8(name));
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template <class T> T getProperty(const std::string& name)
+        /// @fn template <class T> T getProperty(const std::string& name) const
         ///
         /// @brief  Templated function, gets the specified prooerty and returns it cast as the specified
         ///         type
@@ -132,7 +132,7 @@ namespace FB { namespace DOM {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template <class T> T getProperty(int idx)
+        /// @fn template <class T> T getProperty(int idx) const
         ///
         /// @brief  Templated function, gets the specified prooerty by index and returns it cast as the
         ///         specified type
@@ -151,7 +151,7 @@ namespace FB { namespace DOM {
         /// @overload
         virtual NodePtr getNode(const std::wstring& name) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual NodePtr getNode(const std::string& name)
+        /// @fn virtual NodePtr getNode(const std::string& name) const
         ///
         /// @brief  Gets a child node of the specified name
         ///         
@@ -162,7 +162,7 @@ namespace FB { namespace DOM {
         virtual NodePtr getNode(const std::string& name) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual NodePtr getNode(int idx)
+        /// @fn virtual NodePtr getNode(int idx) const
         ///
         /// @brief  Gets a child node of the specified name by index
         ///         
@@ -175,7 +175,7 @@ namespace FB { namespace DOM {
         /// @overload
         virtual void setProperty(const std::wstring& name, const variant& val) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void setProperty(const std::string& name, const variant& val)
+        /// @fn virtual void setProperty(const std::string& name, const variant& val) const
         ///
         /// @brief  Sets a property on the node to a given value
         ///         

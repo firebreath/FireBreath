@@ -198,29 +198,63 @@ namespace FB
 		/// @endcode
 		///
 		/// @param  securityLevel	const SecurityZone &	Zone id to push on the stack
-		/// @since 1.4
+		/// @since 1.4a3
 		/// @see FB::scoped_zonelock
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		virtual void pushZone(const SecurityZone& securityLevel);
 		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn public  void FB::JSAPI::popZone(const SecurityZone& securityLevel)
+		/// @fn public  void FB::JSAPI::popZone()
 		///
 		/// @brief  Pops off a security level and unlocks the mutex (for every Push there *must* be a Pop!)
 		///
-		/// Description of how the function works
-		/// @code
-		///      // Sample code
-		/// @endcode
+		/// Seriously, it's far better to use FB::scoped_zonelock instead of using popZone and pushZone
 		///
 		/// @returns void
-		/// @since 1.4
+		/// @since 1.4a3
 		/// @see FB::scoped_zonelock
 		////////////////////////////////////////////////////////////////////////////////////////////////////
 		virtual void popZone();
-		virtual void setDefaultZone(const SecurityZone& securityLevel);
-		virtual SecurityZone getDefaultZone();
-		virtual SecurityZone getZone() const;
 
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public void setDefaultZone(const SecurityZone& securityLevel)
+		///
+		/// @brief  Sets the default zone (the zone the class operates on before a push)
+		///
+		/// @returns void
+		/// @since 1.4a3
+		/// @see FB::scoped_zonelock
+		/// @see pushZone
+		/// @see popZone
+		/// @see getDefaultZone
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual void setDefaultZone(const SecurityZone& securityLevel);
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public void getDefaultZone(const SecurityZone& securityLevel)
+		///
+		/// @brief  Gets the default zone (the zone the class operates on before a push)
+		///
+		/// @returns SecurityZone the default zone
+		/// @since 1.4a3
+		/// @see FB::scoped_zonelock
+		/// @see pushZone
+		/// @see popZone
+		/// @see getDefaultZone
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual SecurityZone getDefaultZone();
+
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn public SecurityZone getZone() const
+		///
+		/// @brief  Gets the currently active zone
+		///
+		/// @returns SecurityZone the current zone
+		/// @since 1.4a3
+		/// @see FB::scoped_zonelock
+		/// @see pushZone
+		/// @see popZone
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual SecurityZone getZone() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEvent(const std::string& name)
@@ -283,11 +317,11 @@ namespace FB
         virtual void unregisterEventInterface(JSObjectPtr& event);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name)
+        /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name)
+        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
         ///
         /// @brief  Called by the browser to get the default event handler method for an event.
         ///         
@@ -324,7 +358,7 @@ namespace FB
         virtual void getMemberNames(std::vector<std::wstring> &nameVector) const;
         virtual void getMemberNames(std::vector<std::wstring> *nameVector) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) = 0
+        /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) const = 0
         ///
         /// @brief  Called by the browser to enumerate the members of this JSAPI object
         ///         
@@ -337,7 +371,7 @@ namespace FB
         virtual void getMemberNames(std::vector<std::string> *nameVector) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual size_t getMemberCount() = 0
+        /// @fn virtual size_t getMemberCount() const = 0
         ///
         /// @brief  Gets the member count. 
         ///
@@ -346,11 +380,11 @@ namespace FB
         virtual size_t getMemberCount() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasMethod(const std::wstring& methodName)
+        /// @overload virtual bool HasMethod(const std::wstring& methodName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::wstring& methodName) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasMethod(const std::string& methodName) = 0
+        /// @fn virtual bool HasMethod(const std::string& methodName) const = 0
         ///
         /// @brief  Query if the JSAPI object has the 'methodName' method. 
         ///
@@ -365,7 +399,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethodObject(const std::wstring& methodObjName) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasMethodObject(const std::string& methodObjName)
+        /// @fn virtual bool HasMethodObject(const std::string& methodObjName) const
         ///
         /// @brief  Query if 'methodObjName' is a valid methodObj. 
         ///
@@ -379,11 +413,11 @@ namespace FB
 		virtual bool HasMethodObject(const std::string& methodObjName) const { return false; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasProperty(const std::wstring& propertyName)
+        /// @overload virtual bool HasProperty(const std::wstring& propertyName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::wstring& propertyName) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasProperty(const std::string& propertyName)
+        /// @fn virtual bool HasProperty(const std::string& propertyName) const
         ///
         /// @brief  Query if 'propertyName' is a valid property. 
         ///
@@ -393,7 +427,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::string& propertyName) const = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasProperty(int idx) = 0
+        /// @fn virtual bool HasProperty(int idx) const = 0
         ///
         /// @brief  Query if the property at "idx" exists.
         ///     
@@ -410,7 +444,7 @@ namespace FB
         virtual bool HasProperty(int idx) const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasEvent(const std::string& eventName)
+        /// @fn virtual bool HasEvent(const std::string& eventName) const
         ///
         /// @brief  Query if the event 'eventName' has been registered
         ///
@@ -420,7 +454,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasEvent(const std::string& eventName) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasEvent(const std::wstring& eventName)
+        /// @overload virtual bool HasEvent(const std::wstring& eventName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasEvent(const std::wstring& eventName) const;
 
@@ -546,7 +580,18 @@ namespace FB
         bool m_valid;                   // Tracks if this object has been invalidated
     };
 
-	class scoped_zonelock
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class scoped_zonelock
+    ///
+    /// @brief  Provides a helper class for locking
+    ///
+    /// This class will call pushZone on the provided JSAPI object when instantiated and popZone
+    /// when it goes out of scope. See documentation for FB::JSAPI::pushZone for an example
+    /// 
+    /// @see FB::JSAPI::pushZone
+    /// @see FB::JSAPI::popZone
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class scoped_zonelock
 	{
 	public:
 		scoped_zonelock(const JSAPIPtr &api, const SecurityZone& zone)
@@ -556,15 +601,15 @@ namespace FB
 		scoped_zonelock(JSAPI* api, const SecurityZone& zone) : m_api(api) {
 			lock(zone);
 		}
-		void lock(const SecurityZone& zone) const {
-			if (m_api)
-				m_api->pushZone(zone);
-		}
 		~scoped_zonelock() {
 			if (m_api)
                 m_api->popZone();
 		}
     private:
+		void lock(const SecurityZone& zone) const {
+			if (m_api)
+				m_api->pushZone(zone);
+		}
 		JSAPI* m_api;
         const FB::JSAPIPtr ref;
 	};

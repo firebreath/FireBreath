@@ -115,8 +115,53 @@ namespace FB {
 
 		virtual ~JSAPIAuto();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false)
+        ///
+        /// @brief   Registers an attribute _name_ and sets the value to _value. Optionally read-only
+        ///
+        /// @param  name        The name (as seen from JavaScript) of the Attribute
+        /// @param  value       The value
+        /// @param  readonly    True if the attribute should not be modifiable from JavaScript
+        ///
+        /// @since 1.4a3
+        /// @see getAttribute
+        /// @see setAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public void setReserved(const std::string &name)
+        ///
+        /// @brief   Prevents attributes from being created from JavaScript with the specified name
+        ///
+        /// This is generally only useful to prevent your plugin from overriding some attribute on the
+        /// object tag it resides in in the DOM.  Attributes such as "id", "name", and "width" are marked
+        /// as reserved by default.
+        /// 
+        /// @param  name    The name of the attribute to mark as reserved
+        ///
+        /// @returns void
+        ///
+        /// @since 1.4a3
+        /// @see registerAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setReserved(const std::string &name);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public isReserved( const std::string& propertyName ) cons(
+        ///
+        /// @brief   Returns true if the specified propertyName is a reserved attribute
+        ///
+        /// @param   propertyName    Name of the attribute to check
+        ///
+        /// @returns bool true if propertyName is reserved
+        ///
+        /// @since 1.4a3
+        /// @see setReserved
+        /// @see registerAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool isReserved( const std::string& propertyName ) const;
 
         virtual void getMemberNames(std::vector<std::string> &nameVector) const;
         virtual size_t getMemberCount() const;
@@ -156,8 +201,6 @@ namespace FB {
 		virtual bool HasMethodObject(const std::string& methodObjName) const;
         virtual bool HasProperty(const std::string& propertyName) const;
         virtual bool HasProperty(int idx) const;
-
-        bool isReserved( const std::string& propertyName ) const;
 
         virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
 
@@ -212,7 +255,32 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool get_valid();
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public virtual FB::variant getAttribute(const std::string& name)
+        ///
+        /// @brief   Returns the attribute with the given name, empty variant if none
+        ///
+        /// @param  name    name of the attribute to get
+        ///
+        /// @returns FB::variant
+        ///
+        /// @since 1.4a3
+        /// @see registerAttribute
+        /// @see setAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::variant getAttribute(const std::string& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public virtual void setAttribute(const std::string& name, const FB::variant& value)
+        ///
+        /// @brief   Assigns a value to the specified attribute, if it is not reserved or read-only
+        ///
+        /// @param  name    name of the attribute to set
+        /// @param  value   value for the attribute
+        ///
+        /// @since 1.4a3
+        /// @see registerAttribute
+        /// @see getAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setAttribute(const std::string& name, const FB::variant& value);
 
 	protected:

@@ -29,40 +29,40 @@ Window::~Window()
 {
 }
 
-DocumentPtr Window::getDocument()
+DocumentPtr Window::getDocument() const
 {
     JSObjectPtr api = getProperty<JSObjectPtr>("document");
     return Document::create(api);
 }
 
-void Window::alert(const std::wstring& str)
+void Window::alert(const std::wstring& str) const
 {
     alert(FB::wstring_to_utf8(str));
 }
 
-void Window::alert(const std::string& str)
+void Window::alert(const std::string& str) const
 {
     callMethod<void>("alert", variant_list_of(str));
 }
 
-FB::JSObjectPtr Window::createArray()
+FB::JSObjectPtr Window::createArray() const
 {
     JSObjectPtr arr = this->callMethod<JSObjectPtr>("Array", FB::VariantList());
     return arr;
 }
 
-FB::JSObjectPtr Window::createMap()
+FB::JSObjectPtr Window::createMap() const
 {
     JSObjectPtr arr = this->callMethod<JSObjectPtr>("Object", FB::VariantList());
     return arr;
 }
 
-std::string Window::getLocation()
+std::string Window::getLocation() const
 {
     return getNode("location")->getProperty<std::string>("href");
 }
 
-FB::JSObjectPtr FB::DOM::Window::createDate( const std::string& datestring )
+FB::JSObjectPtr FB::DOM::Window::createDate( const std::string& datestring ) const
 {
     // This is not working; I'm leaving it here in hopes that we can find a way to make it work.
     // My best idea so far is to inject a help function into javascript :-/
