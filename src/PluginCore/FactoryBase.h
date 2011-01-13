@@ -201,7 +201,6 @@ namespace FB
         ///
         /// @brief  Called by the logger to discover what loglevel to use
         ///
-        /// @param  outMethods    a LogMethodList instance to hold the result
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::Log::LogLevel getLogLevel();

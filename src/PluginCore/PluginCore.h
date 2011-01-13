@@ -100,7 +100,6 @@ namespace FB {
         /// To get the function from an "onstart" param, you could use the following code:
         /// FB::JSObjectPtr func = m_params["onstart"].convert_cast<FB::JSObjectPtr>();
         /// 
-        /// @param  params  std::set of std::strings of the names of the params you wish to accept
         /// @see getSupportedParams
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         PluginCore();
