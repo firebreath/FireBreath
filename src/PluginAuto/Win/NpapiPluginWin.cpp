@@ -56,6 +56,11 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
         return NPERR_NO_ERROR;
     }
 
+    if(window->window == NULL) {
+        // Ignore this SetWindow, since it's got a NULL HWND
+        return NPERR_NO_ERROR;
+    }
+
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
     if(pluginGuiEnabled() && pluginMain->isWindowless()) { 
