@@ -21,9 +21,9 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include <boost/weak_ptr.hpp>
 #include <boost/optional.hpp>
 
-class FBTestPlugin;
-class SimpleMathAPI;
-class ThreadRunnerAPI;
+FB_FORWARD_PTR(ThreadRunnerAPI);
+FB_FORWARD_PTR(SimpleMathAPI);
+FB_FORWARD_PTR(FBTestPlugin);
 
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
@@ -31,9 +31,9 @@ public:
     FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
 
-    boost::shared_ptr<FBTestPlugin> getPlugin();
+    FBTestPluginPtr getPlugin();
     
-    boost::shared_ptr<ThreadRunnerAPI> createThreadRunner();
+    ThreadRunnerAPIPtr createThreadRunner();
 
     std::wstring say(const std::wstring& val);
     // Read/Write property testString

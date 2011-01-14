@@ -241,11 +241,6 @@ namespace FB {
             CComPtr<IDispatch> dispatch;
             site->GetExtendedControl(&dispatch);
             m_htmlElement = dispatch;
-            CComQIPtr<IHTMLDOMNode> test1(dispatch);
-            CComQIPtr<IHTMLElement> test2(dispatch);
-            CComQIPtr<IHTMLObjectElement> test3(dispatch);
-            CComVariant id;
-            dispatch.GetPropertyByName(L"id", &id);
 
             m_messageWin.swap(boost::scoped_ptr<FB::WinMessageWindow>(new FB::WinMessageWindow()));
 
