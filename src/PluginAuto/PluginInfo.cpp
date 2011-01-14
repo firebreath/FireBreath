@@ -58,3 +58,11 @@ std::string FB::getPluginDescription(const std::string& mimetype)
         return "Unknown Description";
     }
 }
+
+bool FB::pluginGuiEnabled() {
+#if FB_GUI_DISABLED
+    return false;
+#else
+    return true;
+#endif
+}

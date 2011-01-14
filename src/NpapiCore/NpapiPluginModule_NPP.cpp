@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/shared_ptr.hpp>
 #include "AsyncFunctionCall.h"
 #include "SafeQueue.h"
+#include "PluginInfo.h"
 
 #if FB_WIN
 #  include "Win/NpapiBrowserHostAsyncWin.h"
@@ -214,11 +215,10 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-#if FB_GUI_DISABLED != 1
-    if (NpapiPluginPtr plugin = getPlugin(instance)) {
-        return plugin->SetWindow(window);
-    }
-#endif
+    if (pluginGuiEnabled())
+        if (NpapiPluginPtr plugin = getPlugin(instance)) {
+            return plugin->SetWindow(window);
+        }
 
     return NPERR_NO_ERROR;
 }

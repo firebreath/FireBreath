@@ -25,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "logging.h"
 #include "Win/WinMessageWindow.h"
 #include "JSAPI_IDispatchEx.h"
+#include "PluginInfo.h"
 
 #include "BrowserPlugin.h"
 #include "PluginCore.h"
@@ -96,11 +97,10 @@ namespace FB {
             {
                 FB::PluginCore::setPlatform("Windows", "IE");
                 setFSPath(g_dllPath);
-        #if FB_GUI_DISABLED == 1
-                m_bWindowOnly = FALSE;
-        #else
-                m_bWindowOnly = TRUE;
-        #endif
+                if (FB::pluginGuiEnabled())
+                    m_bWindowOnly = FALSE;
+                else
+                    m_bWindowOnly = TRUE;
             }
 
             ~CFBControl()

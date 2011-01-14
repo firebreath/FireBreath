@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiStream.h"
 #include "FactoryBase.h"
 #include "PluginCore.h"
+#include "PluginInfo.h"
 #include "BrowserHost.h"
 
 using namespace FB::Npapi;
@@ -78,11 +79,7 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         }
     }
     pluginMain->setParams(paramList);
-#if FB_GUI_DISABLED == 1
-    if(1) {
-#else
-    if(pluginMain->isWindowless()) {
-#endif
+    if(FB::pluginGuiEnabled() && pluginMain->isWindowless()) {
         /* Windowless plugins require negotiation with the browser. 
         * If the plugin does not set this value it is assumed to be 
         * a windowed plugin.
