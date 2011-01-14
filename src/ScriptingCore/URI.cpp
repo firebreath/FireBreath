@@ -21,6 +21,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <boost/asio.hpp>
 #include <boost/logic/tribool.hpp>
 #include <vector>
+#include <sstream>
 
 #include "URI.h"
 
@@ -33,56 +34,56 @@ using FB::URI;
 URI::StringStringMap URI::m_lhMap;
 
 std::string URI::url_encode(const std::string& in) {
-    std::string res;
-    res.reserve(static_cast<size_t>(in.size() * 1.4));
+    std::stringstream res;
     for (size_t i = 0; i < in.size(); ++i) {
         char c = in[i];
         if (isalnum(c) ||
             c == '$' || c == '-' || c == '_' || c == '.' || c == '!' ||
-            c == '*' || c == '\''|| c == '(' || c == ')' || c == ',' || c == '/') res.push_back(c);
+            c == '*' || c == '\''|| c == '(' || c == ')' || c == ',' || c == '/') res << c;
         else {
             char buf[4];
             sprintf(buf, "%%%.2x", c & 0xff);
-            res += string(buf);
+            res << buf;
         }
     }
-    return res;
+    return res.str();
 }
 
 std::string URI::url_decode(const std::string& in) {
-    std::string res;
-    res.reserve(in.size());
+    std::stringstream res;
     for (size_t i = 0; i < in.size(); ++i) {
         if (in[i] == '%' && (i + 2) < in.size() && isxdigit(in[i+1]) && isxdigit(in[i+2])) {
             char buf[3];
             ++i;
             buf[0] = in[i++]; buf[1] = in[i]; buf[2] = '\0';
-            res.push_back((char)strtol(buf, NULL, 16));
-        } else res.push_back(in[i]);
+            res << ((char)strtol(buf, NULL, 16));
+        } else res << in[i];
     }
-    return res;
+    return res.str();
 }
 
 std::string URI::toString(bool include_host_part) const {
-    std::string res;
+    std::stringstream res;
     if (include_host_part) {
-        res = protocol + string("://");
-        if (!login.empty()) res += login + string("@");
-        res += domain;
-        if (port) res += string(":") + boost::lexical_cast<string>(port);
+        res << protocol << string("://");
+        if (!login.empty()) res << login << "@";
+        res << domain;
+        if (port) res << ":" << boost::lexical_cast<string>(port);
     }
-    res += url_encode(path);
+    res << url_encode(path);
     if (!query_data.empty()) {
         char separator = '?';
         for (std::map<std::string, std::string>::const_iterator it = query_data.begin(); it != query_data.end(); ++it) {
-            res.push_back(separator);
+            res << separator;
             separator = '&';
-            res += url_encode(it->first);
-            res.push_back('=');
-            res += url_encode(it->second);
+            res << url_encode(it->first);
+            res << '=';
+            res << url_encode(it->second);
         }
     }
-    return res;
+    if (!fragment.empty())
+        res << "#" << fragment;
+    return res.str();
 }
 
 URI URI::fromString(const std::string& in_str) {
