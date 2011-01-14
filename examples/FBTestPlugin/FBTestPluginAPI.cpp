@@ -299,7 +299,7 @@ long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& 
     return math->add(a, b);
 }
 
-boost::shared_ptr<ThreadRunnerAPI> FBTestPluginAPI::createThreadRunner()
+ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
 {
     return boost::make_shared<ThreadRunnerAPI>(m_host);
 }
