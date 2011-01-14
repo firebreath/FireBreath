@@ -21,6 +21,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Win/PluginWindowlessWin.h"
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
+#include "PluginInfo.h"
 
 using namespace FB::Npapi;
 
