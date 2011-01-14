@@ -28,7 +28,7 @@ class Doxygen2Confluence:
     pathMap = {}
     baseUrl = "/display/documentation/%s"
     classDocsUrl = "http://classdocs.firebreath.org/"
-    server = xmlrpclib.ServerProxy("http://firebreath.org/rpc/xmlrpc")
+    server = xmlrpclib.ServerProxy("http://www.firebreath.org/rpc/xmlrpc")
     rpc = server.confluence1
     token = ""
     space = "documentation"
