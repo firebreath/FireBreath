@@ -58,11 +58,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
 
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
-#if FB_GUI_DISABLED == 1
-    if(1) {
-#else
-    if(pluginMain->isWindowless()) { 
-#endif
+    if(pluginGuiEnabled() && pluginMain->isWindowless()) { 
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
 
         if(win == NULL && pluginWin != NULL) {

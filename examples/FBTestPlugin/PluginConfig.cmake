@@ -57,7 +57,7 @@ set(FBSTRING_FileDescription
 # If you want to register per-machine, uncomment this line
 #set (FB_ATLREG_MACHINEWIDE 1)
 
-set (FB_GUI_DISABLED 1)
+#set (FB_GUI_DISABLED 1)
 
 # mac settings
 # The plugin doesn't do any drawing and doesn't need mouse / keyboard events,
