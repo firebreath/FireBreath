@@ -16,6 +16,7 @@ Copyright 2010 PacketPass Inc, Georg Fritzsche,
 #include "SimpleStreams.h"
 #include "BrowserStream.h"
 #include "BrowserHost.h"
+#include "DefaultBrowserStreamHandler.h"
 
 using namespace FB;
 
