@@ -29,22 +29,26 @@ set(BUILD_SHARED_LIBS YES)
 # which is not gcc compatible
 set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt")
 
-# GTK is required for XEmbed to work
-if (NOT FB_GUI_DISABLED)
-    if (NOT GTK_INCLUDE_DIRS)
-        pkg_check_modules(GTK REQUIRED gtk+-2.0)
-        set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LIBRARIES ${GTK_LIBRARIES} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LIBRARY_DIRS ${GTK_LIBRARY_DIRS} CACHE INTERNAL "GTK include dirs")
-        set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
+MACRO(init_GTK_DIRS)
+    # GTK is required for XEmbed to work
+    if (NOT FB_GUI_DISABLED)
+        if (NOT GTK_INCLUDE_DIRS)
+            pkg_check_modules(GTK REQUIRED gtk+-2.0)
+            set (GTK_INCLUDE_DIRS ${GTK_INCLUDE_DIRS} CACHE INTERNAL "GTK include dirs")
+            set (GTK_LIBRARIES ${GTK_LIBRARIES} CACHE INTERNAL "GTK include dirs")
+            set (GTK_LIBRARY_DIRS ${GTK_LIBRARY_DIRS} CACHE INTERNAL "GTK include dirs")
+            set (GTK_LDFLAGS ${GTK_LDFLAGS} CACHE INTERNAL "GTK include dirs")
+        endif()
+    else()
+        set (GTK_INCLUDE_DIRS "")
+        set (GTK_LIBRARIES "")
+        set (GTK_LDFLAGS "")
     endif()
-else()
-    set (GTK_INCLUDE_DIRS "")
-    set (GTK_LIBRARIES "")
-    set (GTK_LDFLAGS "")
-endif()
+ENDMACRO()
 
 MACRO(add_x11_plugin PROJNAME INSOURCES)
+    init_GTK_DIRS()
+
     add_definitions(
         -D"FB_X11=1"
     )
@@ -64,9 +68,11 @@ MACRO(add_x11_plugin PROJNAME INSOURCES)
         LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
     )
 
-    target_link_libraries(${PROJNAME}
-        ${GTK_LIBRARIES}
-    )
+    if (NOT FB_GUI_DISABLED)
+        target_link_libraries(${PROJNAME}
+            ${GTK_LIBRARIES}
+        )
+    endif()
 ENDMACRO(add_x11_plugin)
 
 function (add_rpm_package PROJNAME )
