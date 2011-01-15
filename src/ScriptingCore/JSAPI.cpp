@@ -269,12 +269,12 @@ void JSAPI::unregisterEventMethod(const std::string& name, JSObjectPtr &event)
     }
 }
 
-void JSAPI::registerEventInterface(JSObjectPtr& event)
+void JSAPI::registerEventInterface(const JSObjectPtr& event)
 {
     m_evtIfaces[static_cast<void*>(event.get())] = event;
 }
 
-void JSAPI::unregisterEventInterface(JSObjectPtr& event)
+void JSAPI::unregisterEventInterface(const JSObjectPtr& event)
 {
     EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
     m_evtIfaces.erase(fnd);

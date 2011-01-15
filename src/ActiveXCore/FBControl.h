@@ -337,8 +337,10 @@ namespace FB {
             delete pluginWin; pluginWin = NULL;
             m_api.reset(); // Once we release this, pluginMain releasing should free it
             pluginMain.reset(); // This should delete the plugin object
+            m_propNotify.Release();
 			m_webBrowser.Release();
 			m_serviceProvider.Release();
+            m_connPtMap.clear();
             m_host->shutdown();
 			m_host.reset();
         }

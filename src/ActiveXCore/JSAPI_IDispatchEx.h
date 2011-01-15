@@ -207,6 +207,8 @@ namespace FB { namespace ActiveX {
         HRESULT hRes = pEnum->Init(connectionPoint, &connectionPoint[1],
             reinterpret_cast<IConnectionPointContainer*>(this), AtlFlagCopy);
 
+        connectionPoint[0]->Release();
+        
         if (FAILED(hRes))
         {
             delete pEnum;
@@ -259,7 +261,7 @@ namespace FB { namespace ActiveX {
 				IDispatchAPIPtr obj(IDispatchAPI::create(disp, m_host));
                 m_connPtMap[(DWORD)obj.get()] = obj;
                 *pdwCookie = (DWORD)obj.get();
-                getAPI()->registerEventInterface(FB::ptr_cast<FB::JSObject>(obj));
+                getAPI()->registerEventInterface(obj);
                 return S_OK;
             } else {
                 return CONNECT_E_CANNOTCONNECT;
@@ -277,7 +279,7 @@ namespace FB { namespace ActiveX {
             if (fnd == m_connPtMap.end()) {
                 return E_UNEXPECTED;
             } else {
-                getAPI()->unregisterEventInterface(FB::ptr_cast<FB::JSObject>(fnd->second));
+                getAPI()->unregisterEventInterface(fnd->second);
                 m_connPtMap.erase(fnd);
                 return S_OK;
             }
