@@ -306,7 +306,7 @@ namespace FB
         ///
         /// @param  event   The JSAPI interface 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventInterface(JSObjectPtr& event);
+        virtual void registerEventInterface(const JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventInterface(JSObjectPtr& event)
         ///
@@ -314,7 +314,7 @@ namespace FB
         ///
         /// @param  event   The JSAPI interface
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventInterface(JSObjectPtr& event);
+        virtual void unregisterEventInterface(const JSObjectPtr& event);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
