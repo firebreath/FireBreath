@@ -114,8 +114,8 @@ namespace FB {
 }
 
 FB::BrowserHost::BrowserHost()
-    : m_threadId(boost::this_thread::get_id()), m_isShutDown(false),
-      _asyncManager(boost::make_shared<AsyncCallManager>())
+    : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
+      m_isShutDown(false)
 {
 
 }
