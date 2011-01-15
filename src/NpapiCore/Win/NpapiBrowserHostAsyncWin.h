@@ -29,7 +29,7 @@ namespace FB {
             NpapiBrowserHostAsyncWin(NpapiPluginModule *module, NPP npp);
             virtual ~NpapiBrowserHostAsyncWin();
 
-            virtual void ScheduleAsyncCall(void (*func)(void*), void* userData) const;
+            virtual bool _scheduleAsyncCall(void (*func)(void*), void* userData) const;
 
         private:
             boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;

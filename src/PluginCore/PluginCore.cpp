@@ -83,12 +83,6 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
             m_params[it->first] = it->second;
         }
     }
-    try {
-        std::string onload = m_host->getDOMElement()->getStringAttribute("onload");
-        m_host->evaluateJavaScript(onload);
-    } catch (...) {
-        // If this fails, it doesn't matter why... it was a "just in case" thing anyway
-    }
 }
 
 void PluginCore::SetHost(FB::BrowserHostPtr host)

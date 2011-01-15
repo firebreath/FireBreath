@@ -3,29 +3,34 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Jan 23, 2010
 License:    Dual license model; choose one of two:
-            New BSD License
-            http://www.opensource.org/licenses/bsd-license.php
-            - or -
-            GNU Lesser General Public License, version 2.1
-            http://www.gnu.org/licenses/lgpl-2.1.html
+New BSD License
+http://www.opensource.org/licenses/bsd-license.php
+- or -
+GNU Lesser General Public License, version 2.1
+http://www.gnu.org/licenses/lgpl-2.1.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <cstdio>
 #include <cassert>
+#include <algorithm>
+#include <boost/lambda/lambda.hpp>
+#include <boost/lambda/bind.hpp>
+#include <boost/lambda/construct.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
 #include "logging.h"
 
 #include "BrowserHost.h"
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
     FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
     this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
-            new FB::AsyncLogRequest(shared_from_this(), str));
+        new FB::AsyncLogRequest(shared_from_this(), str));
 }
 
 void FB::BrowserHost::AsyncHtmlLog(void *logReq)
@@ -73,15 +78,54 @@ FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj) const
     return FB::DOM::NodePtr(new FB::DOM::Node(obj));
 }
 
+//////////////////////////////////////////
+// This is used to keep async calls from
+// crashing the browser on shutdown
+//////////////////////////////////////////
+
+namespace FB {
+    struct _asyncCallData : boost::noncopyable {
+        _asyncCallData(void (*func)(void*), void* userData, int id, AsyncCallManagerPtr mgr)
+            : func(func), userData(userData), uniqId(id), called(false), mgr(mgr)
+        {}
+        void call();
+        void (*func)(void *);
+        void *userData;
+        int uniqId;
+        bool called;
+        AsyncCallManagerWeakPtr mgr;
+    };
+
+    class AsyncCallManager : public boost::enable_shared_from_this<AsyncCallManager>, boost::noncopyable {
+    public:
+        int lastId;
+        AsyncCallManager() : lastId(1) {}
+        ~AsyncCallManager();
+
+        boost::recursive_mutex m_mutex;
+        void shutdown();
+
+        _asyncCallData* makeCallback(void (*func)(void *), void * userData );
+        void call( _asyncCallData* data );
+
+        std::list<_asyncCallData*> DataList;
+        std::list<_asyncCallData*> canceledDataList;
+    };
+}
+
+FB::BrowserHost::BrowserHost()
+    : m_threadId(boost::this_thread::get_id()), m_isShutDown(false),
+      _asyncManager(boost::make_shared<AsyncCallManager>())
+{
+
+}
+
 void FB::BrowserHost::shutdown()
 {
     freeRetainedObjects();
+    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_isShutDown = true;
-}
-
-bool FB::BrowserHost::isShutDown() const
-{
-    return m_isShutDown;
+    _asyncManager->shutdown();
 }
 
 void FB::BrowserHost::assertMainThread() const
@@ -101,16 +145,79 @@ bool FB::BrowserHost::isMainThread() const
 
 void FB::BrowserHost::freeRetainedObjects() const
 {
+    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     // This releases all stored shared_ptr objects that the browser is holding
     m_retainedObjects.clear();
 }
 
 void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
+    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_retainedObjects.insert(obj);
 }
 
 void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
+    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_retainedObjects.erase(m_retainedObjects.find(obj));
+}
+
+void FB::_asyncCallData::call()
+{
+    if (func) {
+        func(userData); called = true; userData = NULL; func = NULL;
+    }
+}
+
+
+void FB::AsyncCallManager::call( _asyncCallData* data )
+{
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    data->call();
+    DataList.remove(data);
+}
+
+FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), void * userData)
+{
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    _asyncCallData *data = new _asyncCallData(func, userData, ++lastId, shared_from_this());
+    DataList.push_back(data);
+    return data;
+}
+
+void FB::AsyncCallManager::shutdown()
+{
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    using namespace boost::lambda;
+    std::for_each(DataList.begin(), DataList.end(), bind(&_asyncCallData::call, boost::lambda::_1));
+    // Store these so that they can be freed when the browserhost object is destroyed -- at that
+    // point it's no longer possible for the browser to finish the async calls
+    canceledDataList.insert(canceledDataList.end(), DataList.begin(), DataList.end());
+    DataList.clear();
+}
+
+FB::AsyncCallManager::~AsyncCallManager()
+{
+    using namespace boost::lambda;
+    std::for_each(canceledDataList.begin(), canceledDataList.end(), bind(delete_ptr(), boost::lambda::_1));
+}
+
+
+void asyncCallWrapper(void *userData)
+{
+    boost::scoped_ptr<FB::_asyncCallData> data(static_cast<FB::_asyncCallData*>(userData));
+    FB::AsyncCallManagerPtr ptr(data->mgr.lock());
+    if (ptr) {
+        ptr->call(data.get());
+    }
+}
+
+bool FB::BrowserHost::ScheduleAsyncCall( void (*func)(void *), void *userData ) const
+{
+    if (isShutDown()) {
+        return false;
+    } else {
+        _asyncCallData* data = _asyncManager->makeCallback(func, userData);
+        return _scheduleAsyncCall(&asyncCallWrapper, data);
+    }
 }

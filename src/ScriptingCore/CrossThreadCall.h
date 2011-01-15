@@ -111,7 +111,11 @@ namespace FB {
     {
         boost::shared_ptr<FunctorCall> funct = boost::make_shared<FunctorCallImpl<Functor, C> >(obj, func);
         CrossThreadCall *call = new CrossThreadCall(funct);
-        host->ScheduleAsyncCall(&CrossThreadCall::asyncCallbackFunctor, call);
+        if (!host->ScheduleAsyncCall(&CrossThreadCall::asyncCallbackFunctor, call)) {
+            // Host is likely shut down; at any rate, this didn't work. Since it's asynchronous, fail silently
+            delete call;
+            return;
+        }
     }
 
     template<class Functor>
@@ -135,7 +139,10 @@ namespace FB {
             boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get());
+                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get())) {
+                    // Browser probably shutting down, but cross thread call failed.
+                    throw FB::script_error("Could not marshal to main thread");
+                }
 
                 while (!call->m_returned) {
                     call->m_cond.wait(lock);
@@ -168,7 +175,10 @@ namespace FB {
             boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get());
+                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get())) {
+                    // Browser probably shutting down, but cross thread call failed.
+                    throw FB::script_error("Could not marshal to main thread");
+                }
 
                 while (!call->m_returned) {
                     call->m_cond.wait(lock);
@@ -193,12 +203,14 @@ namespace FB {
     template <class Functor>
     typename Functor::result_type BrowserHost::CallOnMainThread(Functor func)
     {
+        boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
         return CrossThreadCall::syncCall(shared_ptr(), func);
     }
     
     template <class C, class Functor>
     void BrowserHost::ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func)
     {
+        boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
         CrossThreadCall::asyncCall(shared_ptr(), obj, func);
     }    
 };
