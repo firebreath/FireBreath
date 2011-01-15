@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
+#include <boost/thread/shared_mutex.hpp>
 
 namespace FB
 {
@@ -47,6 +48,8 @@ namespace FB
         std::string m_msg;
     };
 
+    FB_FORWARD_PTR(AsyncCallManager);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  BrowserHost
     ///
@@ -67,7 +70,7 @@ namespace FB
         ///
         /// @brief  Default constructor. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserHost() : m_threadId(boost::this_thread::get_id()), m_isShutDown(false) { }
+        BrowserHost();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~BrowserHost()
@@ -78,7 +81,7 @@ namespace FB
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const = 0
+        /// @fn bool ScheduleAsyncCall(void (*func)(void *), void *userData) const = 0
         ///
         /// @brief  Schedule asynchronous call to be executed on the main thread. 
         ///
@@ -90,15 +93,17 @@ namespace FB
         ///
         /// The provided function will be called with the userData on the main thread.
         /// 
-        /// NOTE: This is a low level call; it is almost always easier to use ScheduleOnMainThread
+        /// NOTE: This is a low level call; it is almost always better to use ScheduleOnMainThread
         /// 
         /// @param  func     The function to call. 
         /// @param  userData The userData to pass to the function.
+        ///
+        /// @returns bool true if the call was scheduled
         ///                  
         /// @see ScheduleOnMainThread
         /// @see CallOnMainThread
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
+        bool ScheduleAsyncCall(void (*func)(void *), void *userData) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Functor> typename Functor::result_type CallOnMainThread(Functor func)
@@ -277,14 +282,14 @@ namespace FB
         virtual void shutdown();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool isShutDown() const
+        /// @fn inline bool isShutDown() const
         ///
         /// @brief  returns true if the FB::BrowserHost::shutdown() method has been called on this object
         /// 
         /// @return bool true if shutdown() has been called
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool isShutDown() const;
+        inline bool isShutDown() const { return m_isShutDown; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void freeRetainedObjects() const
@@ -312,13 +317,18 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;
 
-public:
-    virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
-    virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
-    virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj) const;
-    virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj) const;
+    public:
+        virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
+        virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
+        virtual FB::DOM::ElementPtr _createElement(const FB::JSObjectPtr& obj) const;
+        virtual FB::DOM::NodePtr _createNode(const FB::JSObjectPtr& obj) const;
 
-    protected:
+    private:
+        mutable AsyncCallManagerPtr _asyncManager;
+        // Yes, this is supposed to be both private and pure virtual.
+        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
+
+    public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn BrowserHostPtr shared_ptr()
@@ -339,6 +349,8 @@ public:
         boost::thread::id m_threadId;
         // if true then the plugin this belongs to has shut down (or is shutting down)
         bool m_isShutDown;
+        // Used to prevent race conditions with scheduling cross-thread calls during shutdown
+        mutable boost::shared_mutex m_xtmutex;
 
         mutable std::set<FB::JSAPIPtr> m_retainedObjects;
     };

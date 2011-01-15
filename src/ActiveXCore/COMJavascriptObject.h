@@ -24,7 +24,7 @@ namespace FB {
 
         template <const GUID* pclsid, class ICurObjInterface, const IID* piid, const GUID* plibid>
         class ATL_NO_VTABLE COMJavascriptObject :
-            public CComObjectRootEx<CComSingleThreadModel>,
+            public CComObjectRootEx<CComMultiThreadModel>,
             public CComCoClass<COMJavascriptObject<pclsid, ICurObjInterface, piid, plibid>, pclsid>,
 
             public JSAPI_IDispatchEx<COMJavascriptObject<pclsid, ICurObjInterface, piid, plibid>, ICurObjInterface, piid>,

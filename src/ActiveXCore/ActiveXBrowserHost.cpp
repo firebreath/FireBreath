@@ -80,8 +80,8 @@ namespace
     }
 }
 
-ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IHTMLElement2* element)
-    : m_htmlElement(element), m_webBrowser(doc)
+ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* site)
+    : m_spClientSite(site), m_webBrowser(doc)
 {
     if (m_webBrowser) {
         m_webBrowser->get_Document(&m_htmlDocDisp);
@@ -95,12 +95,14 @@ ActiveXBrowserHost::~ActiveXBrowserHost(void)
 {
 }
 
-void ActiveXBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData) const
+bool ActiveXBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
 {
-    if (m_hWnd != NULL) {
+    if (!isShutDown() && m_hWnd != NULL) {
         FBLOG_TRACE("ActiveXHost", "Scheduling async call for main thread");
-        ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
-            (LPARAM)new FB::AsyncFunctionCall(func, userData));
+        return ::PostMessage(m_hWnd, WM_ASYNCTHREADINVOKE, NULL, 
+            (LPARAM)new FB::AsyncFunctionCall(func, userData)) ? true : false;
+    } else {
+        return false;
     }
 }
 
@@ -139,7 +141,6 @@ void ActiveXBrowserHost::initDOMObjects()
     if (!m_window) {
 		m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
         m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
-        m_element = DOM::Document::create(IDispatchAPI::create(m_htmlElement, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
     }
 }
 
@@ -157,8 +158,11 @@ FB::DOM::WindowPtr ActiveXBrowserHost::getDOMWindow()
 
 FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
 {
-    initDOMObjects();
-    return m_element;
+    CComQIPtr<IOleControlSite> site(m_spClientSite);
+    CComPtr<IDispatch> dispatch;
+    site->GetExtendedControl(&dispatch);
+    CComQIPtr<IHTMLElement2> htmlElement(dispatch);
+    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -182,7 +186,7 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 void ActiveXBrowserHost::shutdown()
 {
 	BrowserHost::shutdown();
-	m_htmlElement.Release();
+	m_spClientSite.Release();
 	m_htmlDoc.Release();
 	m_htmlDocDisp.Release();
 	m_htmlWin.Release();
@@ -190,7 +194,6 @@ void ActiveXBrowserHost::shutdown()
 	m_htmlWinDisp.Release();
 	m_window.reset();
 	m_document.reset();
-    m_element.reset();
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)

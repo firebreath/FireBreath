@@ -37,9 +37,9 @@ namespace FB {
             public FB::BrowserHost
         {
         public:
-            ActiveXBrowserHost(IWebBrowser2 *doc, IHTMLElement2* element);
+            ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* clientSite);
             virtual ~ActiveXBrowserHost(void);
-            virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const;
+            virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
 
             virtual void *getContextID() const;
 
@@ -65,7 +65,7 @@ namespace FB {
         protected:
             void initDOMObjects(); // This is const so that getDOMDocument/Window can be
             HWND m_hWnd;
-            CComQIPtr<IHTMLElement2> m_htmlElement;
+        	CComQIPtr<IOleClientSite> m_spClientSite;
             CComQIPtr<IHTMLDocument2> m_htmlDoc;
             CComQIPtr<IDispatch> m_htmlDocDisp;
             CComPtr<IHTMLWindow2> m_htmlWin;
@@ -73,7 +73,6 @@ namespace FB {
             CComQIPtr<IDispatch> m_htmlWinDisp;
             mutable FB::DOM::WindowPtr m_window;
             mutable FB::DOM::DocumentPtr m_document;
-            mutable FB::DOM::ElementPtr m_element;
 
         public:
             FB::variant getVariant(const VARIANT *cVar);

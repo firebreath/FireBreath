@@ -203,8 +203,9 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
         plugin->shutdown();
     }
 
-    delete getHolder(instance);
+    NpapiPDataHolder* tmp(getHolder(instance));
     instance->pdata = NULL;
+    delete tmp;
 
     return NPERR_NO_ERROR;
 }

@@ -46,7 +46,7 @@ namespace FB { namespace Npapi {
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
     public:
-        virtual void ScheduleAsyncCall(void (*func)(void *), void *userData) const;
+        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
         virtual void *getContextID() const { return (void *)m_npp; }
 
     public:

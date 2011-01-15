@@ -100,11 +100,12 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 {
 }
 
-void NpapiBrowserHost::ScheduleAsyncCall(void (*func)(void *), void *userData) const
+bool NpapiBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
 {
     if (isShutDown())
-        return;
+        return false;
     PluginThreadAsyncCall(func, userData);
+    return true;
 }
 
 void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)

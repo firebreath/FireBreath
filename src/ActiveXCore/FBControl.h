@@ -45,7 +45,7 @@ namespace FB {
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         class ATL_NO_VTABLE CFBControl :
-            public CComObjectRootEx<CComSingleThreadModel>,
+            public CComObjectRootEx<CComMultiThreadModel>,
             public CComCoClass<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid>, pFbCLSID >,
             public CComControl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
 
@@ -75,9 +75,6 @@ namespace FB {
 
         protected:
             FB::PluginWindowWin *pluginWin;
-            CComQIPtr<IHTMLElement2> m_htmlElement;
-            CComQIPtr<IHTMLDocument2> m_htmlDoc;
-            CComQIPtr<IDispatch> m_htmlDocIDisp;
             CComQIPtr<IServiceProvider> m_serviceProvider;
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
@@ -98,9 +95,9 @@ namespace FB {
                 FB::PluginCore::setPlatform("Windows", "IE");
                 setFSPath(g_dllPath);
                 if (FB::pluginGuiEnabled())
-                    m_bWindowOnly = FALSE;
-                else
                     m_bWindowOnly = TRUE;
+                else
+                    m_bWindowOnly = FALSE;
             }
 
             ~CFBControl()
@@ -123,6 +120,9 @@ namespace FB {
             // Note that the window has not been created yet; this is where we get
             // access to the DOM Document and Window
             STDMETHOD(SetClientSite)(IOleClientSite *pClientSite);
+
+            // Called when the control is deactivated when it's time to shut down
+        	STDMETHOD(InPlaceDeactivate)(void);
 
             /* IPersistPropertyBag calls */
             // This will be called once when the browser initializes the property bag (PARAM tags) 
@@ -157,6 +157,7 @@ namespace FB {
 
         BEGIN_REGMAP(CFBControlX)
             REGMAP_UUID("LIBID", (*plibid))
+            //REGMAP_ENTRY("THREADING", "Free")
             REGMAP_ENTRY("THREADING", "Apartment")
             //REGMAP_ENTRY("THREADING", "Single")
         END_REGMAP()
@@ -218,11 +219,9 @@ namespace FB {
         {
             HRESULT hr = IOleObjectImpl<CFBControlX>::SetClientSite (pClientSite);
 			if (!pClientSite) {
-				m_htmlElement.Release();
-				m_htmlDoc.Release();
-				m_htmlDocIDisp.Release();
 				m_webBrowser.Release();
 				m_serviceProvider.Release();
+                m_host->shutdown();
 				m_host.reset();
                 return hr;
 			}
@@ -233,20 +232,22 @@ namespace FB {
             m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
 
             if (m_webBrowser) {
-                m_htmlDoc = m_webBrowser;
                 m_propNotify = m_spClientSite;
-                m_htmlDocIDisp = m_webBrowser;
             }
-            CComQIPtr<IOleControlSite> site(m_spClientSite);
-            CComPtr<IDispatch> dispatch;
-            site->GetExtendedControl(&dispatch);
-            m_htmlElement = dispatch;
 
             m_messageWin.swap(boost::scoped_ptr<FB::WinMessageWindow>(new FB::WinMessageWindow()));
 
             clientSiteSet();
 
             return S_OK;
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceDeactivate( void )
+        {
+            shutdown();
+            HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::InPlaceDeactivate();
+            return hr;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -299,7 +300,7 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::clientSiteSet()
         {
-            m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_htmlElement));
+            m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
             m_host->setWindow(m_messageWin->getHWND());
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
         }
@@ -334,8 +335,12 @@ namespace FB {
         {
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
+            m_api.reset(); // Once we release this, pluginMain releasing should free it
             pluginMain.reset(); // This should delete the plugin object
-            m_api.reset();
+			m_webBrowser.Release();
+			m_serviceProvider.Release();
+            m_host->shutdown();
+			m_host.reset();
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -410,9 +415,6 @@ namespace FB {
                     lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
                     return TRUE;
 
-                case WM_DESTROY:
-                    shutdown();
-                    break;
                 }
 
                 if (bHandled)
