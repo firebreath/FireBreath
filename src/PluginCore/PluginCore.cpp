@@ -146,15 +146,10 @@ bool PluginCore::isWindowless()
 {
     FB::VariantMap::iterator itr = m_params.find("windowless");
     if (itr != m_params.end()) {
-        if (itr->second.convert_cast<std::string>().compare("true") == 0) {
-            // Plugin is windowless
-            return true;
-        }
-    } else {
         try {
-            FB::variant val(m_host->getDOMElement()->getStringAttribute("windowless"));
-            return val.convert_cast<bool>();
-        } catch (...) {
+            return itr->second.convert_cast<bool>();
+        } catch (const FB::bad_variant_cast& ex) {
+            FB_UNUSED_VARIABLE(ex);
         }
     }
     return false;

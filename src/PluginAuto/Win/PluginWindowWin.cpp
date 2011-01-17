@@ -47,7 +47,7 @@ PluginWindowWin::PluginWindowWin(const WindowContextWin& ctx)
   , m_callOldWinProc(false)
 {
     // subclass window so we can intercept window messages 
-    lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)PluginWindowWin::_WinProc);
+    lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)&PluginWindowWin::_WinProc);
     // associate window with this object so that we can route events properly
     m_windowMap[static_cast<void*>(m_hWnd)] = this;
 }
@@ -55,7 +55,11 @@ PluginWindowWin::PluginWindowWin(const WindowContextWin& ctx)
 PluginWindowWin::~PluginWindowWin()
 {
     // Unsubclass the window so that everything is as it was before we got it
-    SubclassWindow(m_hWnd, lpOldWinProc);
+    // Some browsers, like Chrome, unsubclass it for us and then proxy to us. Creepy, no?
+    WNDPROC current_wnd_proc = reinterpret_cast<WNDPROC>(
+        GetWindowLongPtr(m_hWnd, GWLP_WNDPROC));
+    if (current_wnd_proc == &PluginWindowWin::_WinProc)
+        SubclassWindow(m_hWnd, lpOldWinProc);
 
     PluginWindowMap::iterator it = m_windowMap.find(static_cast<void*>(m_hWnd));
     if (it != m_windowMap.end()) 

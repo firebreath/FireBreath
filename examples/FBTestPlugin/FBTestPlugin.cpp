@@ -67,3 +67,13 @@ bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
     this->m_host->htmlLog(oStr.str());
     return false;
 }
+
+bool FBTestPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* )
+{
+    return false;
+}
+
+bool FBTestPlugin::onDetached( FB::DetachedEvent *evt, FB::PluginWindow* )
+{
+    return false;
+}
