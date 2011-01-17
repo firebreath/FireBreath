@@ -47,18 +47,13 @@ NpapiPluginWin::~NpapiPluginWin()
 NPError NpapiPluginWin::SetWindow(NPWindow* window)
 {
     // If window == NULL then our window is gone. Stop drawing.
-    if(window == NULL) {
+    if(window == NULL || window->window == NULL) {
         // Our window is gone
         if(pluginMain != NULL) {
             // Destroy our FireBreath window
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL;
         }
-        return NPERR_NO_ERROR;
-    }
-
-    if(window->window == NULL) {
-        // Ignore this SetWindow, since it's got a NULL HWND
         return NPERR_NO_ERROR;
     }
 
@@ -96,9 +91,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
         if(win != NULL && win->getHWND() != (HWND)window->window) {
             pluginMain->ClearWindow();
             delete pluginWin; pluginWin = NULL; 
-        }
-
-        if(win == NULL && pluginWin != NULL) {
+        } else if(win == NULL && pluginWin != NULL) {
             // We've received a window of a different type than the 
             // window we have been using up until now.
             // This is unlikely/impossible, but it's worth checking for.
@@ -107,10 +100,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
         }
     
         if(pluginWin == NULL) {
-            // Reset plugin window
-            pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL;
-            
             // Create new window
             HWND browserHWND;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND); 
