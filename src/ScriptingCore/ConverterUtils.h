@@ -61,7 +61,10 @@ namespace FB {
     To convertArgumentSoft(const FB::VariantList& args, const size_t index,
         typename boost::disable_if<boost::mpl::or_<
             FB::meta::is_optional<To>,
-            boost::is_same<To, FB::variant>
+            boost::mpl::or_<
+                boost::is_same<To, FB::variant>,
+                boost::is_same<To, boost::tribool>
+            >
         > >::type* p=0)
     {
         if (args.size() >= index)
@@ -73,6 +76,7 @@ namespace FB {
             throw FB::invalid_arguments(ss.str());
         }
     }
+    
     template<typename To>
     inline
     To convertArgumentSoft(const FB::VariantList& args, const size_t index,
@@ -82,6 +86,17 @@ namespace FB {
             return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
         else
             return To(); // Empty optional argument
+    }
+
+    template<typename To>
+    inline
+    To convertArgumentSoft(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<boost::is_same<To, boost::tribool> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convert(args[index-1], index);
+        else
+            return boost::tribool(); // Empty variant argument
     }
 
     template<typename To>

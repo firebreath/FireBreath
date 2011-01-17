@@ -41,6 +41,7 @@
 #include <boost/variant/static_visitor.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/preprocessor/tuple/to_seq.hpp>
+#include <boost/logic/tribool.hpp>
 
 #include "APITypes.h"
 #include "Util/meta_util.h"
@@ -695,6 +696,9 @@ namespace FB
                 else
                     return variant();
             }
+
+            variant make_variant(const boost::tribool& val);
+            boost::tribool convert_variant( const FB::variant& var, const type_spec<boost::tribool>& );
 
             template <class T>
             typename boost::enable_if<

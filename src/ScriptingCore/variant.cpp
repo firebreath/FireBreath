@@ -48,3 +48,17 @@ const FB::FBVoid FB::variant_detail::conversion::convert_variant( const FB::vari
 {
     return FB::FBVoid();
 }
+
+FB::variant FB::variant_detail::conversion::make_variant(const boost::tribool& val) {
+    if (val.value == boost::tribool::indeterminate_value)
+        return FB::variant();
+    else
+        return (bool)val;
+}
+boost::tribool FB::variant_detail::conversion::convert_variant( const FB::variant& var, const type_spec<boost::tribool>& )
+{
+    if (var.is_null() || var.empty())
+        return boost::tribool();
+    else
+        return var.convert_cast<bool>();
+}
