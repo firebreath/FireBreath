@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #include <atlctl.h>
 #include <ShlGuid.h>
+#include <boost/cast.hpp>
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
@@ -74,7 +75,7 @@ namespace FB {
             typedef CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> CFBControlX;
 
         protected:
-            FB::PluginWindowWin *pluginWin;
+            FB::PluginWindow *pluginWin;
             CComQIPtr<IServiceProvider> m_serviceProvider;
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
@@ -94,10 +95,6 @@ namespace FB {
             {
                 FB::PluginCore::setPlatform("Windows", "IE");
                 setFSPath(g_dllPath);
-                if (FB::pluginGuiEnabled())
-                    m_bWindowOnly = TRUE;
-                else
-                    m_bWindowOnly = FALSE;
             }
 
             ~CFBControl()
@@ -121,6 +118,9 @@ namespace FB {
             // access to the DOM Document and Window
             STDMETHOD(SetClientSite)(IOleClientSite *pClientSite);
 
+            STDMETHOD(SetObjectRects)(LPCRECT prcPos, LPCRECT prcClip);
+            STDMETHOD(InPlaceActivate)(LONG iVerb, const RECT* prcPosRect);
+	
             // Called when the control is deactivated when it's time to shut down
         	STDMETHOD(InPlaceDeactivate)(void);
 
@@ -132,9 +132,6 @@ namespace FB {
             // When this is called, we load any <param> tag values there are
             STDMETHOD(Load)(IPropertyBag *pPropBag, IErrorLog *pErrorLog);
 
-            // Now the window has been created and we're going to call setReady on the PluginCore object
-            LRESULT OnCreate(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
-
             // This is called on shutdown
             void shutdown();
 
@@ -145,6 +142,7 @@ namespace FB {
             // ever get called
             STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties);
 
+        	virtual HRESULT OnDraw(_In_ ATL_DRAWINFO& di);
         public:
         DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
             OLEMISC_CANTLINKINSIDE |
@@ -209,6 +207,16 @@ namespace FB {
         };
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        HRESULT FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::OnDraw( _In_ ATL_DRAWINFO& di )
+        {
+            if (m_bWndLess) {
+                HRESULT lRes(0);
+                static_cast<PluginWindowlessWin*>(pluginWin)->HandleEvent(WM_PAINT, reinterpret_cast<uint32_t>(di.hdcDraw), NULL, lRes);
+            }
+    		return S_OK;
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         DWORD FB::ActiveX::CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::getSupportedObjectSafety()
         {
             return INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/;
@@ -240,6 +248,38 @@ namespace FB {
             clientSiteSet();
 
             return S_OK;
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetObjectRects(LPCRECT prcPos, LPCRECT prcClip)
+        {
+            HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::SetObjectRects(prcPos, prcClip);
+
+            if (m_bWndLess && pluginWin) {
+                FB::PluginWindowlessWin* ptr(static_cast<FB::PluginWindowlessWin*>(pluginWin));
+                ptr->setWindowClipping(prcClip->top, prcClip->left, prcClip->bottom, prcClip->right);
+                ptr->setWindowPosition(prcPos->left, prcPos->top, prcPos->right-prcPos->left, prcPos->bottom-prcPos->top);
+            }
+            return hr;
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceActivate( LONG iVerb, const RECT* prcPosRect)
+        {
+            HRESULT hr = CComControl<CFBControlX>::InPlaceActivate(iVerb, prcPosRect);
+
+            if (hr != S_OK)
+                return hr;
+
+            if (m_bWndLess) {
+                pluginWin = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
+            } else {
+                pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
+                static_cast<PluginWindowWin*>(pluginWin)->setCallOldWinProc(true);
+            }
+            pluginMain->SetWindow(pluginWin);
+
+            return hr;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -303,6 +343,7 @@ namespace FB {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
             m_host->setWindow(m_messageWin->getHWND());
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
+            m_bWindowOnly = pluginMain->isWindowless() ? TRUE : FALSE;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -316,18 +357,8 @@ namespace FB {
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
-        LRESULT CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::OnCreate( UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/ )
-        {
-            setWindow(m_hWnd);
-            return S_OK;
-        }
-
-        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::setWindow( HWND hWnd )
         {
-            pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
-            pluginWin->setCallOldWinProc(true);
-            pluginMain->SetWindow(pluginWin);
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -407,12 +438,6 @@ namespace FB {
                 // WM_CREATE is the only message we handle here
                 switch(uMsg)
                 {
-                case WM_CREATE:
-                    lResult = OnCreate(uMsg, wParam, lParam, bHandled);
-                    if(bHandled)
-                        return TRUE;
-                    break;
-
                 case WM_MOUSEACTIVATE:
                     lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
                     return TRUE;
@@ -420,6 +445,8 @@ namespace FB {
                 }
 
                 if (bHandled)
+                    return TRUE;
+                else if (m_bWndLess && pluginWin && static_cast<PluginWindowlessWin*>(pluginWin)->HandleEvent(uMsg, wParam, lParam, lResult))
                     return TRUE;
                 else if(CComControl<CFBControlX>::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult))
                     return TRUE;

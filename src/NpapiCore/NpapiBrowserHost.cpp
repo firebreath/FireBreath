@@ -428,6 +428,12 @@ NPError NpapiBrowserHost::SetValue(NPPVariable variable, void *value) const
     }
 }
 
+void NpapiBrowserHost::InvalidateRect2(const NPRect& invalidRect) const
+{
+    NPRect rect = invalidRect;
+    return InvalidateRect(&rect);
+}
+
 void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect) const
 {
     assertMainThread();

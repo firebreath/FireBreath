@@ -181,7 +181,36 @@ LRESULT CALLBACK PluginWindowWin::_WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
     return 0;
 }
 
-void PluginWindowWin::InvalidateWindow()
+void PluginWindowWin::InvalidateWindow() const
 {
     InvalidateRect(m_hWnd, NULL, true);
+}
+
+FB::Rect FB::PluginWindowWin::getWindowPosition() const
+{
+    RECT rect;
+    ::GetWindowRect(m_hWnd, &rect);
+    FB::Rect out = {
+        boost::numeric_cast<int16_t>(rect.top),
+        boost::numeric_cast<int16_t>(rect.left),
+        boost::numeric_cast<int16_t>(rect.bottom),
+        boost::numeric_cast<int16_t>(rect.right)};
+    return out;
+}
+
+FB::Rect FB::PluginWindowWin::getWindowClipping() const
+{
+    return getWindowPosition();
+}
+
+int FB::PluginWindowWin::getWindowWidth() const
+{
+    FB::Rect pos = getWindowPosition();
+    return pos.right - pos.left;
+}
+
+int FB::PluginWindowWin::getWindowHeight() const
+{
+    FB::Rect pos = getWindowPosition();
+    return pos.bottom - pos.top;
 }

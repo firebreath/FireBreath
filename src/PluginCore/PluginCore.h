@@ -20,7 +20,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "APITypes.h"
 #include <string>
 #include <set>
-#include "boost/assign.hpp"
+#include <boost/assign.hpp>
+#include <boost/logic/tribool.hpp>
 
 using boost::assign::list_of;
 
@@ -281,6 +282,7 @@ namespace FB {
         PluginWindow *m_Window;         
         /// Don't use directly; use getRootJSAPI()
         JSAPIPtr m_api;
+        boost::tribool m_windowLessParam;
     };
 };
 

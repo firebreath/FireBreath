@@ -340,6 +340,13 @@ namespace FB
         typedef boost::variant<long, int, double, float, std::string, FB::FBNull, FB::FBVoid> primitives;
         typedef boost::variant<std::string, FB::StringSet> strings;
     }
+
+    struct Rect {
+        int16_t top;
+        int16_t left;
+        int16_t bottom;
+        int16_t right;
+    };
 }
 
 // This needs to be included after all our classes are defined because it relies on types defined in this file

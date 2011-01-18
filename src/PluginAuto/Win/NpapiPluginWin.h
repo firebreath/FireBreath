@@ -36,6 +36,7 @@ namespace FB {
         FB::PluginWindow *pluginWin;
 
     public:
+        void invalidateWindow(uint16_t left, uint16_t top, uint16_t right, uint16_t bottom);
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
         // plugin instance

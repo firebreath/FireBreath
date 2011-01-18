@@ -18,32 +18,32 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "win_common.h"
 #include "PluginWindow.h"
 
-#include "NpapiBrowserHost.h"
-#include "NpapiPlugin.h"
 #include "Win/KeyCodesWin.h"
+#include <boost/function.hpp>
 
 #include "Win/WindowContextWin.h"
 
-/* This class implements the windowless plugin "window" in FireBreath.
- * Windowless plugins are different from windowed plugins in that they
- * don't have a handle to a window, and instead are given a handle to
- * a drawable from the browser. Also all plugin events are delivered
- * through the NPAPI NPP_HandleEvent() function, instead of intercepting
- * the events directly through the window.
- */
 
 namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginWindowlessWin
     ///
-    /// @brief  Windows specific implementation of PluginWindow. Uses NPAPI windowless mode.
+    /// @brief  Windows specific implementation of PluginWindow.
+    ///
+    /// This class implements the windowless plugin "window" in FireBreath.
+    /// Windowless plugins are different from windowed plugins in that they
+    /// don't have a handle to a window, and instead are given a handle to
+    /// a drawable from the browser. HandleEvent is called to give us system
+    /// events instead of intercepting the events directly through the window. 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindowlessWin : public PluginWindow
     {
         public:
             PluginWindowlessWin(const WindowContextWindowless&);
             ~PluginWindowlessWin();
-            
+
+            typedef boost::function<void (uint16_t, uint16_t, uint16_t, uint16_t)> InvalidateWindowFunc;
+
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             /// @fn HDC PluginWindowlessWin::getHDC()
             ///
@@ -52,71 +52,39 @@ namespace FB {
             /// @note   The window's HDC is likely to change frequently
             /// @return The HDC 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-            HDC getHDC() { return m_hdc; }
+            HDC getHDC() const { return m_hdc; }
             void setHDC(HDC hdc) { m_hdc = hdc; }
-            HWND getHWND(); 
+            void setHWND(HWND browserHwnd) { m_browserHwnd = browserHwnd; }
+            void setInvalidateWindowFunc(InvalidateWindowFunc func) { m_invalidateWindow = func; }
+            HWND getHWND() const { return m_browserHwnd; } 
 
-            // NpapiBrowserHost is used to send calls to NPAPI
-            Npapi::NpapiBrowserHostPtr getNpHost() { return m_npHost; }
-            void setNpHost(Npapi::NpapiBrowserHostPtr npHost) { m_npHost = npHost; }
-
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn NPRect PluginWindowlessWin::getWindowPosition()
-            ///
-            /// @brief  Gets the position rect of the window
-            ///
-            /// @return The position rect of the window
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            NPRect getWindowPosition();
+            FB::Rect getWindowPosition() const;
             void setWindowPosition(int x, int y, int width, int height);
-            void setWindowPosition(NPRect pos);
+            void setWindowPosition(FB::Rect pos);
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn NPRect PluginWindowlessWin::getWindowClipping()
-            ///
-            /// @brief  Gets the clipping rect of the window
-            ///
-            /// @return The clipping rect of the window
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            NPRect getWindowClipping();
+            FB::Rect getWindowClipping() const;
             void setWindowClipping(int top, int left, int bottom, int right);
-            void setWindowClipping(NPRect clip);
+            void setWindowClipping(FB::Rect clip);
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn int PluginWindowlessWin::getWindowWidth()
-            ///
-            /// @brief  Gets the width of the window
-            ///
-            /// @return The width of the window
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            int getWindowWidth() { return m_width; }
+            int getWindowWidth() const { return m_width; }
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn int PluginWindowlessWin::getWindowHeight()
-            ///
-            /// @brief  Gets the height of the window
-            ///
-            /// @return The height of the window
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            int getWindowHeight() { return m_height; }
+            int getWindowHeight() const { return m_height; }
 
             // Converts window-space coordinates into plugin-place coordinates
-            void translateWindowToPlugin(int &x, int &y);
+            void translateWindowToPlugin(int &x, int &y) const;
 
             // Handle event given to us from NPAPI (windowless plugins don't intercept raw Windows events)
-            int16_t HandleEvent(NPEvent* evt);
+            bool HandleEvent(uint32_t event, uint32_t wParam, uint32_t lParam, LRESULT& lRes);
 
-            // Invalidate the window from *the plugin's* thread
-            void InvalidateWindow();
-            // Invalidate the window from any thread (useful for drawing)
-            void AsyncInvalidateWindow();
+            // Invalidate the window (Call from any thread)
+            void InvalidateWindow() const;
 
         protected:
             HDC m_hdc;
             HWND m_browserHwnd;
-            Npapi::NpapiBrowserHostPtr m_npHost;
             int m_x, m_y, m_width, m_height; 
             int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
+            InvalidateWindowFunc m_invalidateWindow;
     };    
 };
 

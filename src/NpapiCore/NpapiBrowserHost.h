@@ -100,6 +100,7 @@ namespace FB { namespace Npapi {
         NPError GetValue(NPNVariable variable, void *value) const;
         NPError SetValue(NPPVariable variable, void *value) const;
         void InvalidateRect(NPRect *invalidRect) const;
+        void InvalidateRect2(const NPRect& invalidRect) const;
         void InvalidateRegion(NPRegion invalidRegion) const;
         void ForceRedraw() const;
         void PushPopupsEnabledState(NPBool enabled) const;
