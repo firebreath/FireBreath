@@ -37,7 +37,7 @@ namespace FB {
 
         void setContext(NP_CGContext* context);
         int16_t HandleEvent(EventRecord* evt);
-        void InvalidateWindow();
+        void InvalidateWindow() const;
 
     public:
         NP_CGContext* m_npCGContext;

@@ -36,8 +36,8 @@ void PluginWindowMacCarbon::setWindowClipping(uint16_t top, uint16_t left, uint1
     SendEvent(&ev);
 }
 
-NPRect PluginWindowMacCarbon::getWindowPosition() {
-    NPRect windRect;
+FB::Rect PluginWindowMacCarbon::getWindowPosition() const {
+	FB::Rect windRect;
     windRect.left = m_x;
     windRect.top = m_y;
     windRect.right = m_x + m_width;
@@ -45,8 +45,8 @@ NPRect PluginWindowMacCarbon::getWindowPosition() {
     return windRect;
 }
 
-NPRect PluginWindowMacCarbon::getWindowClipping() {
-    NPRect clipRect;
+FB::Rect PluginWindowMacCarbon::getWindowClipping() const {
+	FB::Rect clipRect;
     clipRect.left = m_clipLeft;
     clipRect.right = m_clipRight;
     clipRect.top = m_clipTop;
@@ -54,12 +54,12 @@ NPRect PluginWindowMacCarbon::getWindowClipping() {
     return clipRect;    
 }
 
-int PluginWindowMacCarbon::getWindowHeight() {
-    return this->m_height;
+int PluginWindowMacCarbon::getWindowHeight() const {
+    return m_height;
 }
 
-int PluginWindowMacCarbon::getWindowWidth() {
-    return this->m_width;
+int PluginWindowMacCarbon::getWindowWidth() const {
+    return m_width;
 }
 
 void PluginWindowMacCarbon::clearWindow() {

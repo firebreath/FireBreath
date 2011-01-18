@@ -165,7 +165,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     return false;
 }
 
-void PluginWindowMacCarbonCG::InvalidateWindow() {
+void PluginWindowMacCarbonCG::InvalidateWindow() const {
     NPRect rect = { 0, 0, m_height, m_width };
     m_npHost->InvalidateRect(&rect);
 }

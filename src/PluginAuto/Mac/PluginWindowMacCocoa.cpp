@@ -147,21 +147,21 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
     return false;
 }
 
-NPRect PluginWindowMacCocoa::getWindowPosition() {
-    NPRect r = { m_y, m_x, m_y + m_height, m_x + m_width };
+FB::Rect PluginWindowMacCocoa::getWindowPosition() const {
+	FB::Rect r = { m_y, m_x, m_y + m_height, m_x + m_width };
     return r;
 }
 
-NPRect PluginWindowMacCocoa::getWindowClipping() {
-    NPRect r = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
+FB::Rect PluginWindowMacCocoa::getWindowClipping() const {
+	FB::Rect r = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
     return r;
 }
 
-int PluginWindowMacCocoa::getWindowHeight() {
+int PluginWindowMacCocoa::getWindowHeight() const {
     return m_height;
 }
 
-int PluginWindowMacCocoa::getWindowWidth() {
+int PluginWindowMacCocoa::getWindowWidth() const {
     return m_width;
 }
 
@@ -201,7 +201,7 @@ void PluginWindowMacCocoa::unscheduleTimer(int timerId) {
     } 
 }
 
-void PluginWindowMacCocoa::InvalidateWindow() {
+void PluginWindowMacCocoa::InvalidateWindow() const {
     // This Rect is in plugin coordinates, not window coordinates
     NPRect rect = { 0, 0, m_height, m_width };
     m_npHost->InvalidateRect(&rect);

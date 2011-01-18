@@ -39,48 +39,48 @@ namespace FB {
     /// @brief  Mac OS X Cocoa specific implementation of PluginWindow
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginWindowMacCocoa : public PluginWindow {
-        public:
-            PluginWindowMacCocoa();
-            virtual ~PluginWindowMacCocoa();
+	public:
+		PluginWindowMacCocoa();
+		virtual ~PluginWindowMacCocoa();
 
-            virtual int16_t HandleEvent(NPCocoaEvent* evt);
-            virtual void InvalidateWindow();
-            
-            // Set this window's browser host
-            void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
+		virtual int16_t HandleEvent(NPCocoaEvent* evt);
+		virtual void InvalidateWindow() const;
+		
+		// Set this window's browser host
+		void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn     int PluginWindowMacCocoa::scheduleTimer(int interval, bool repeat)
-            ///
-            /// @brief  Schedule a Cocoa timer to notify you on the given interval or period
-            /// 
-            /// @param  interval    Numer of milliseconds before the timer event is first called
-            /// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            virtual int scheduleTimer(int interval, bool repeat);
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn     int PluginWindowMacCocoa::scheduleTimer(int interval, bool repeat)
+		///
+		/// @brief  Schedule a Cocoa timer to notify you on the given interval or period
+		/// 
+		/// @param  interval    Numer of milliseconds before the timer event is first called
+		/// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual int scheduleTimer(int interval, bool repeat);
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
-            ///
-            /// @brief  Unschedule a previously scheduled timer
-            /// 
-            /// @param  timerId     The id of the previously scheduled timer
-            ////////////////////////////////////////////////////////////////////////////////////////////////////
-            virtual void unscheduleTimer(int timerId);
-            // Handles a timer event 
-            virtual void handleTimerEvent();
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		/// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
+		///
+		/// @brief  Unschedule a previously scheduled timer
+		/// 
+		/// @param  timerId     The id of the previously scheduled timer
+		////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual void unscheduleTimer(int timerId);
+		// Handles a timer event 
+		virtual void handleTimerEvent();
 
-            virtual NPRect getWindowPosition();
-            virtual NPRect getWindowClipping();
-            virtual int getWindowHeight();
-            virtual int getWindowWidth();
-            virtual void setWindowPosition(int32_t x, int32_t y, int32_t width, int32_t height);
-            virtual void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
+		virtual FB::Rect getWindowPosition() const;
+		virtual FB::Rect getWindowClipping() const;
+		virtual int getWindowHeight() const;
+		virtual int getWindowWidth() const;
+		virtual void setWindowPosition(int32_t x, int32_t y, int32_t width, int32_t height);
+		virtual void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
 
-        protected:
-            int m_x, m_y, m_width, m_height;
-            int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
-            Npapi::NpapiBrowserHostPtr m_npHost;
+	protected:
+		int m_x, m_y, m_width, m_height;
+		int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
+		Npapi::NpapiBrowserHostPtr m_npHost;
     };
 };
 

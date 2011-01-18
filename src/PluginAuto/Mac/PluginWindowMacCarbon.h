@@ -36,10 +36,10 @@ namespace FB {
         virtual void clearWindow();
 
         // Accessors 
-        NPRect getWindowPosition();
-        NPRect getWindowClipping();
-        int getWindowHeight();
-        int getWindowWidth();
+		FB::Rect getWindowPosition() const;
+		FB::Rect getWindowClipping() const;
+        int getWindowHeight() const;
+        int getWindowWidth() const;
 
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
         void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);

@@ -31,11 +31,15 @@ namespace FB
 
         int16_t HandleEvent(EventRecord* evt);
         void setWindowPosition(int x, int y, int w, int h);
-        void getWindowPosition(int &x, int &y, int &w, int &h);
+        void getWindowPosition(int &x, int &y, int &w, int &h) const;
+		int getWindowWidth() const { return m_width; }
+		int getWindowHeight() const { return m_height; }
+		FB::Rect getWindowPosition() const;
         void setWindowClipping(int t, int l, int b, int r);
-        void getWindowClipping(int &t, int &l, int &b, int &r);
-        void InvalidateWindow() {}
-        CGrafPtr getPort() { return m_port; }
+        void getWindowClipping(int &t, int &l, int &b, int &r) const;
+		FB::Rect getWindowClipping() const;
+        void InvalidateWindow() const {}
+        CGrafPtr getPort() const { return m_port; }
     protected:
         CGrafPtr m_port;
         int m_x;
