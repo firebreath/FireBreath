@@ -39,10 +39,14 @@ namespace FB {
 
 //         int16_t HandleEvent(EventRecord* evt);
         void setWindowPosition(int x, int y, int w, int h);
-        void getWindowPosition(int &x, int &y, int &w, int &h);
+        void getWindowPosition(int &x, int &y, int &w, int &h) const;
+        FB::Rect getWindowPosition() const;
         void setWindowClipping(int t, int l, int b, int r);
-        void getWindowClipping(int &t, int &l, int &b, int &r);
-        virtual void InvalidateWindow();
+        void getWindowClipping(int &t, int &l, int &b, int &r) const;
+        FB::Rect getWindowClipping() const;
+        virtual void InvalidateWindow() const;
+        int getWindowWidth() const { return m_width; }
+        int getWindowHeight() const { return m_height; }
 
 #if FB_GUI_DISABLED != 1
     public:

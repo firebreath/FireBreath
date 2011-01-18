@@ -79,12 +79,18 @@ PluginWindowX11::~PluginWindowX11()
 {
 }
 
-void PluginWindowX11::getWindowPosition(int &x, int &y, int &w, int &h)
+void PluginWindowX11::getWindowPosition(int &x, int &y, int &w, int &h) const
 {
     x = m_x;
     y = m_y;
     w = m_width;
     h = m_height;
+}
+
+FB::Rect PluginWindowX11::getWindowPosition() const
+{
+    FB::Rect rect = {m_y, m_x, m_y+m_height, m_x+m_width};
+    return rect;
 }
 
 void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
@@ -102,12 +108,18 @@ void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowX11::getWindowClipping(int &t, int &l, int &b, int &r)
+void PluginWindowX11::getWindowClipping(int &t, int &l, int &b, int &r) const
 {
     t = m_clipTop;
     l = m_clipLeft;
     b = m_clipBottom;
     r = m_clipRight;
+}
+
+FB::Rect PluginWindowX11::getWindowClipping() const
+{
+    FB::Rect rect = {m_clipTop, m_clipLeft, m_clipBottom, m_clipRight};
+    return rect;
 }
 
 void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
@@ -234,7 +246,7 @@ GdkNativeWindow PluginWindowX11::getWindow()
 
 #endif
 
-void PluginWindowX11::InvalidateWindow()
+void PluginWindowX11::InvalidateWindow() const
 {
     // Doesn't exist yet
 }
