@@ -2,7 +2,6 @@
 #ifndef WinMessageWindow_h__
 #define WinMessageWindow_h__
 
-#include "win_common.h"
 #include <boost/noncopyable.hpp>
 
 namespace FB {

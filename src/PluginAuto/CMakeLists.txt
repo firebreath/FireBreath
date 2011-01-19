@@ -34,6 +34,7 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${PLUGINCORE_SOURCE_DIR}
     ${NPAPICORE_SOURCE_DIR}
+    ${ATL_INCLUDE_DIRS}
     ${CONFIG_DIR}
     )
 

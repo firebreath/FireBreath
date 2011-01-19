@@ -34,6 +34,7 @@ include_directories(
     ${CONFIG_DIR}
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${Boost_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     )
 
 add_definitions(
@@ -67,6 +68,10 @@ set (SOURCES
     )
 
 add_executable(${PROJNAME} ${SOURCES})
+
+set_target_properties (${PROJNAME} PROPERTIES
+    LINK_FLAGS "${LINK_FLAGS}"
+    )
 
 target_link_libraries (${PROJNAME}
     ActiveXCore
