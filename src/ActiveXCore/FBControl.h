@@ -333,8 +333,11 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::shutdown()
         {
-            pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL;
+            if (pluginMain)
+				pluginMain->ClearWindow();
+			if (pluginWin) {
+				delete pluginWin; pluginWin = NULL;
+			}
             m_api.reset(); // Once we release this, pluginMain releasing should free it
             pluginMain.reset(); // This should delete the plugin object
             m_propNotify.Release();
