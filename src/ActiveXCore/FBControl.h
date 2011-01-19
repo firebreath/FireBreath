@@ -344,7 +344,8 @@ namespace FB {
 			m_webBrowser.Release();
 			m_serviceProvider.Release();
             m_connPtMap.clear();
-            m_host->shutdown();
+			if (m_host)
+				m_host->shutdown();
 			m_host.reset();
         }
 
