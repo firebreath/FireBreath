@@ -1,18 +1,10 @@
-/**********************************************************\
-  Default auto-generated np_winmain.cpp
-
-  This file contains the entrypoints for a windows NPAPI
-  plugin.  Don't change this unless you know what you're
-  doing!
-\**********************************************************/
-
 #include "win_common.h"
 
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
 
 using namespace FB::Npapi;
-FB::Npapi::NpapiPluginModule *module = NULL;
+FB::Npapi::NpapiPluginModule * module = NULL;
 
 void initPluginModule()
 {
