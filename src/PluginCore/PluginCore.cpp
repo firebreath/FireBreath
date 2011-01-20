@@ -134,7 +134,9 @@ void PluginCore::setReady()
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
-            method->InvokeAsync("", FB::variant_list_of(getRootJSAPI()));
+            if(method) {
+                method->InvokeAsync("", FB::variant_list_of(getRootJSAPI()));
+            }
         }
     } catch(...) {
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
