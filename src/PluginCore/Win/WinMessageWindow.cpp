@@ -1,5 +1,6 @@
 
-#include "win_common.h"
+#include "win_targetver.h"
+#include <windows.h>
 #include "AsyncFunctionCall.h"
 #include <ShlGuid.h>
 #include "logging.h"

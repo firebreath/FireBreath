@@ -32,6 +32,7 @@ include_directories(
     ${NPAPICORE_SOURCE_DIR}
     ${ACTIVEXCORE_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     ${CONFIG_DIR}
     )
 

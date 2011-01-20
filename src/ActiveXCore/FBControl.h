@@ -3,11 +3,11 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 17, 2009
 License:    Dual license model; choose one of two:
-            New BSD License
-            http://www.opensource.org/licenses/bsd-license.php
-            - or -
-            GNU Lesser General Public License, version 2.1
-            http://www.gnu.org/licenses/lgpl-2.1.html
+New BSD License
+http://www.opensource.org/licenses/bsd-license.php
+- or -
+GNU Lesser General Public License, version 2.1
+http://www.gnu.org/licenses/lgpl-2.1.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
@@ -109,10 +109,10 @@ namespace FB {
             virtual DWORD getSupportedObjectSafety();
 
             STDMETHOD(GetInterfaceSafetyOptions)(REFIID riid, DWORD *pdwSupportedOptions,
-                                                         DWORD *pdwEnabledOptions);
-            
+                DWORD *pdwEnabledOptions);
+
             STDMETHOD(SetInterfaceSafetyOptions)(REFIID riid, DWORD dwOptionSetMask,
-                                                         DWORD dwEnabledOptions);
+                DWORD dwEnabledOptions);
 
             // Note that the window has not been created yet; this is where we get
             // access to the DOM Document and Window
@@ -122,13 +122,13 @@ namespace FB {
             STDMETHOD(InPlaceActivate)(LONG iVerb, const RECT* prcPosRect);
 	
             // Called when the control is deactivated when it's time to shut down
-        	STDMETHOD(InPlaceDeactivate)(void);
+            STDMETHOD(InPlaceDeactivate)(void);
 
             /* IPersistPropertyBag calls */
             // This will be called once when the browser initializes the property bag (PARAM tags) 
             // Often (always?) this is only called if there are no items in the property bag
             STDMETHOD(InitNew)();
-            
+
             // When this is called, we load any <param> tag values there are
             STDMETHOD(Load)(IPropertyBag *pPropBag, IErrorLog *pErrorLog);
 
@@ -144,56 +144,56 @@ namespace FB {
 
         	virtual HRESULT OnDraw(_In_ ATL_DRAWINFO& di);
         public:
-        DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
+            DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
             OLEMISC_CANTLINKINSIDE |
-            OLEMISC_INSIDEOUT |
-            OLEMISC_ACTIVATEWHENVISIBLE |
-            OLEMISC_SETCLIENTSITEFIRST
-        )
+                OLEMISC_INSIDEOUT |
+                OLEMISC_ACTIVATEWHENVISIBLE |
+                OLEMISC_SETCLIENTSITEFIRST
+                )
 
-        DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
+                DECLARE_REGISTRY_RESOURCEID_EX(IDR_FBCONTROL)
 
-        BEGIN_REGMAP(CFBControlX)
-            REGMAP_UUID("LIBID", (*plibid))
-            //REGMAP_ENTRY("THREADING", "Free")
-            REGMAP_ENTRY("THREADING", "Apartment")
-            //REGMAP_ENTRY("THREADING", "Single")
-        END_REGMAP()
+            BEGIN_REGMAP(CFBControlX)
+                REGMAP_UUID("LIBID", (*plibid))
+                //REGMAP_ENTRY("THREADING", "Free")
+                REGMAP_ENTRY("THREADING", "Apartment")
+                //REGMAP_ENTRY("THREADING", "Single")
+                END_REGMAP()
 
-        DECLARE_NOT_AGGREGATABLE(CFBControlX)
+                DECLARE_NOT_AGGREGATABLE(CFBControlX)
 
-        BEGIN_COM_MAP(CFBControlX)
-            COM_INTERFACE_ENTRY_IID((*piid), ICurObjInterface)
-            COM_INTERFACE_ENTRY(IDispatch)
-            COM_INTERFACE_ENTRY(IDispatchEx)
-            COM_INTERFACE_ENTRY(IFireBreathObject)
-            COM_INTERFACE_ENTRY(IViewObjectEx)
-            COM_INTERFACE_ENTRY(IViewObject2)
-            COM_INTERFACE_ENTRY(IViewObject)
-            COM_INTERFACE_ENTRY(IOleInPlaceObjectWindowless)
-            COM_INTERFACE_ENTRY(IOleInPlaceObject)
-            COM_INTERFACE_ENTRY2(IOleWindow, IOleInPlaceObjectWindowless)
-            COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
-            COM_INTERFACE_ENTRY(IOleControl)
-            COM_INTERFACE_ENTRY(IOleObject)
-            COM_INTERFACE_ENTRY(IConnectionPointContainer)
-            COM_INTERFACE_ENTRY(IConnectionPoint)
-            COM_INTERFACE_ENTRY(IQuickActivate)
-            COM_INTERFACE_ENTRY(IObjectWithSite)
-            COM_INTERFACE_ENTRY(IObjectSafety)
+            BEGIN_COM_MAP(CFBControlX)
+                COM_INTERFACE_ENTRY_IID((*piid), ICurObjInterface)
+                COM_INTERFACE_ENTRY(IDispatch)
+                COM_INTERFACE_ENTRY(IDispatchEx)
+                COM_INTERFACE_ENTRY(IFireBreathObject)
+                COM_INTERFACE_ENTRY(IViewObjectEx)
+                COM_INTERFACE_ENTRY(IViewObject2)
+                COM_INTERFACE_ENTRY(IViewObject)
+                COM_INTERFACE_ENTRY(IOleInPlaceObjectWindowless)
+                COM_INTERFACE_ENTRY(IOleInPlaceObject)
+                COM_INTERFACE_ENTRY2(IOleWindow, IOleInPlaceObjectWindowless)
+                COM_INTERFACE_ENTRY(IOleInPlaceActiveObject)
+                COM_INTERFACE_ENTRY(IOleControl)
+                COM_INTERFACE_ENTRY(IOleObject)
+                COM_INTERFACE_ENTRY(IConnectionPointContainer)
+                COM_INTERFACE_ENTRY(IConnectionPoint)
+                COM_INTERFACE_ENTRY(IQuickActivate)
+                COM_INTERFACE_ENTRY(IObjectWithSite)
+                COM_INTERFACE_ENTRY(IObjectSafety)
 
-            COM_INTERFACE_ENTRY(IPersistPropertyBag)
-            COM_INTERFACE_ENTRY(IProvideClassInfo)
-            COM_INTERFACE_ENTRY(IProvideClassInfo2)
-        END_COM_MAP()
+                COM_INTERFACE_ENTRY(IPersistPropertyBag)
+                COM_INTERFACE_ENTRY(IProvideClassInfo)
+                COM_INTERFACE_ENTRY(IProvideClassInfo2)
+            END_COM_MAP()
 
             BOOL ProcessWindowMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult,
-                                      DWORD dwMsgMapID = 0);
+                DWORD dwMsgMapID = 0);
 
-        // IViewObjectEx
+            // IViewObjectEx
             DECLARE_VIEW_STATUS(VIEWSTATUS_SOLIDBKGND | VIEWSTATUS_OPAQUE)
 
-        // IFBControl
+            // IFBControl
             DECLARE_PROTECT_FINAL_CONSTRUCT()
 
             HRESULT FinalConstruct()
@@ -226,13 +226,14 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetClientSite( IOleClientSite *pClientSite )
         {
             HRESULT hr = IOleObjectImpl<CFBControlX>::SetClientSite (pClientSite);
-			if (!pClientSite) {
-				m_webBrowser.Release();
-				m_serviceProvider.Release();
-                m_host->shutdown();
-				m_host.reset();
+            if (!pClientSite) {
+                m_webBrowser.Release();
+                m_serviceProvider.Release();
+                if (m_host)
+                    m_host->shutdown();
+                m_host.reset();
                 return hr;
-			}
+            }
 
             m_serviceProvider = pClientSite;
             if (!m_serviceProvider)
@@ -364,16 +365,20 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::shutdown()
         {
-            pluginMain->ClearWindow();
-            delete pluginWin; pluginWin = NULL;
+            if (pluginMain)
+                pluginMain->ClearWindow();
+            if (pluginWin) {
+                delete pluginWin; pluginWin = NULL;
+            }
             m_api.reset(); // Once we release this, pluginMain releasing should free it
             pluginMain.reset(); // This should delete the plugin object
             m_propNotify.Release();
-			m_webBrowser.Release();
-			m_serviceProvider.Release();
+            m_webBrowser.Release();
+            m_serviceProvider.Release();
             m_connPtMap.clear();
-            m_host->shutdown();
-			m_host.reset();
+            if (m_host)
+                m_host->shutdown();
+            m_host.reset();
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -411,7 +416,7 @@ namespace FB {
             }
             return hr;
         }
-        
+
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetInterfaceSafetyOptions(REFIID riid, DWORD dwOptionSetMask, DWORD dwEnabledOptions)
         {
@@ -452,8 +457,8 @@ namespace FB {
                     return TRUE;
                 else if(DefaultReflectionHandler(hWnd, uMsg, wParam, lParam, lResult))
                     return TRUE;
-                } break;
-            
+                    } break;
+
             }
             return FALSE;
         }

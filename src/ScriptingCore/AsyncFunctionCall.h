@@ -16,6 +16,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_FB_NPAPI_ASYNCFUNCTIONCALL
 #define H_FB_NPAPI_ASYNCFUNCTIONCALL
 
+#ifdef FB_WIN
+#define WM_ASYNCTHREADINVOKE    WM_USER + 1
+#endif
+
 #include <boost/shared_ptr.hpp>
 
 namespace FB {

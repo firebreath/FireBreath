@@ -188,8 +188,7 @@ FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), voi
 void FB::AsyncCallManager::shutdown()
 {
     boost::recursive_mutex::scoped_lock _l(m_mutex);
-    using namespace boost::lambda;
-    std::for_each(DataList.begin(), DataList.end(), bind(&_asyncCallData::call, boost::lambda::_1));
+    std::for_each(DataList.begin(), DataList.end(), boost::lambda::bind(&_asyncCallData::call, boost::lambda::_1));
     // Store these so that they can be freed when the browserhost object is destroyed -- at that
     // point it's no longer possible for the browser to finish the async calls
     canceledDataList.insert(canceledDataList.end(), DataList.begin(), DataList.end());
@@ -198,8 +197,7 @@ void FB::AsyncCallManager::shutdown()
 
 FB::AsyncCallManager::~AsyncCallManager()
 {
-    using namespace boost::lambda;
-    std::for_each(canceledDataList.begin(), canceledDataList.end(), bind(delete_ptr(), boost::lambda::_1));
+    std::for_each(canceledDataList.begin(), canceledDataList.end(), boost::lambda::bind(boost::lambda::delete_ptr(), boost::lambda::_1));
 }
 
 
