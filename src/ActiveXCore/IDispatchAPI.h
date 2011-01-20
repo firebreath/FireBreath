@@ -53,7 +53,7 @@ namespace FB { namespace ActiveX {
 
     protected:
         ActiveXBrowserHostPtr m_browser;
-        CComQIPtr<IDispatch, &IID_IDispatch> m_obj;
+        CComQIPtr<IDispatch> m_obj;
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
 
