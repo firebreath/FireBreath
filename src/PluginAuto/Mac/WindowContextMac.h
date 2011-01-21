@@ -26,8 +26,8 @@ namespace FB
     struct WindowContextQuickDraw
     {
         CGrafPtr port;
-        int x, y;
-        WindowContextQuickDraw(CGrafPtr port, int x, int y) 
+        long x, y;
+        WindowContextQuickDraw(CGrafPtr port, long x, long y) 
           : port(port), x(x), y(y) 
         {}
     };

@@ -38,27 +38,27 @@ namespace FB {
         // Accessors 
 		FB::Rect getWindowPosition() const;
 		FB::Rect getWindowClipping() const;
-        int getWindowHeight() const;
-        int getWindowWidth() const;
+        long getWindowHeight() const;
+        long getWindowWidth() const;
 
         void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
-        void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
+        void setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right);
 
         // Set this window's browser host
         void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
 
     protected:
-        int m_x;
-        int m_y;
-        int m_width;
-        int m_height;
+        long m_x;
+        long m_y;
+        long m_width;
+        long m_height;
         
-        int m_clipLeft;
-        int m_clipRight;
-        int m_clipTop;
-        int m_clipBottom;
+        long m_clipLeft;
+        long m_clipRight;
+        long m_clipTop;
+        long m_clipBottom;
 
-        int m_old_x, m_old_y; // Keep track of mouse movement coordinates
+        long m_old_x, m_old_y; // Keep track of mouse movement coordinates
 
         Npapi::NpapiBrowserHostPtr m_npHost;
     };

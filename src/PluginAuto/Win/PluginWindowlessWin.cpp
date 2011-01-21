@@ -19,8 +19,8 @@ PluginWindowlessWin::PluginWindowlessWin(const FB::WindowContextWindowless& ctx)
 
 PluginWindowlessWin::~PluginWindowlessWin() {}
 
-void PluginWindowlessWin::translateWindowToPlugin(int &x, int &y) const {
-    int tempX, tempY;
+void PluginWindowlessWin::translateWindowToPlugin(long &x, long &y) const {
+    long tempX, tempY;
     tempX = x - m_x;
     tempY = y - m_y;
     x = tempX;
@@ -40,56 +40,56 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
     switch(event) {
         case WM_LBUTTONDOWN: 
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
             return SendEvent(&ev);
         }
         case WM_RBUTTONDOWN:
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
             return SendEvent(&ev);
         }
         case WM_MBUTTONDOWN:
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
             return SendEvent(&ev);
         }
         case WM_LBUTTONUP: 
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
             return SendEvent(&ev);
         }
         case WM_RBUTTONUP:
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
             return SendEvent(&ev);
         }
         case WM_MBUTTONUP:
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
             return SendEvent(&ev);
         }
         case WM_MOUSEMOVE:
         {
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
+            long x = GET_X_LPARAM(lParam);
+            long y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
             MouseMoveEvent ev(x, y);
             return SendEvent(&ev);
@@ -126,17 +126,15 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
 }
 
 FB::Rect PluginWindowlessWin::getWindowPosition() const {
-    int top = m_y;
-    int left = m_x;
-    int bottom = m_y + m_height;
-    int right = m_x + m_width;
-    if(top < 0) { top = 0; }
-    if(left < 0) { left = 0; }
+    long top = m_y;
+    long left = m_x;
+    long bottom = m_y + m_height;
+    long right = m_x + m_width;
     FB::Rect r = { top, left, bottom, right };
     return r;
 }
 
-void PluginWindowlessWin::setWindowPosition(int x, int y, int width, int height) {
+void PluginWindowlessWin::setWindowPosition(long x, long y, long width, long height) {
     m_x = x;
     m_y = y;
     m_height = height;
@@ -155,7 +153,7 @@ FB::Rect FB::PluginWindowlessWin::getWindowClipping() const {
     return r;
 }
 
-void PluginWindowlessWin::setWindowClipping(int top, int left, int bottom, int right) {
+void PluginWindowlessWin::setWindowClipping(long top, long left, long bottom, long right) {
     m_clipTop = top;
     m_clipLeft = left;
     m_clipBottom = bottom;

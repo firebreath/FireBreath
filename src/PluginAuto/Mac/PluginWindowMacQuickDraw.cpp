@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-PluginWindowMacQuickDraw::PluginWindowMacQuickDraw(CGrafPtr port, int x, int y)
+PluginWindowMacQuickDraw::PluginWindowMacQuickDraw(CGrafPtr port, long x, long y)
 {
     m_port = port;
     m_x = x;
@@ -31,7 +31,7 @@ PluginWindowMacQuickDraw::~PluginWindowMacQuickDraw()
 {
 }
 
-void PluginWindowMacQuickDraw::getWindowPosition(int &x, int &y, int &w, int &h)
+void PluginWindowMacQuickDraw::getWindowPosition(long &x, long &y, long &w, long &h)
 {
     x = m_x;
     y = m_y;
@@ -39,7 +39,7 @@ void PluginWindowMacQuickDraw::getWindowPosition(int &x, int &y, int &w, int &h)
     h = m_height;
 }
 
-void PluginWindowMacQuickDraw::setWindowPosition(int x, int y, int w, int h)
+void PluginWindowMacQuickDraw::setWindowPosition(long x, long y, long w, long h)
 {
     if (m_x != x
         || m_y != y
@@ -54,7 +54,7 @@ void PluginWindowMacQuickDraw::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowMacQuickDraw::getWindowClipping(int &t, int &l, int &b, int &r)
+void PluginWindowMacQuickDraw::getWindowClipping(long &t, long &l, long &b, long &r)
 {
     t = m_clipTop;
     l = m_clipLeft;
@@ -62,7 +62,7 @@ void PluginWindowMacQuickDraw::getWindowClipping(int &t, int &l, int &b, int &r)
     r = m_clipRight;
 }
 
-void PluginWindowMacQuickDraw::setWindowClipping(int t, int l, int b, int r)
+void PluginWindowMacQuickDraw::setWindowClipping(long t, long l, long b, long r)
 {
     if (m_clipTop != t
         || m_clipLeft != l

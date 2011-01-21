@@ -191,10 +191,10 @@ FB::Rect FB::PluginWindowWin::getWindowPosition() const
     RECT rect;
     ::GetWindowRect(m_hWnd, &rect);
     FB::Rect out = {
-        boost::numeric_cast<int16_t>(rect.top),
-        boost::numeric_cast<int16_t>(rect.left),
-        boost::numeric_cast<int16_t>(rect.bottom),
-        boost::numeric_cast<int16_t>(rect.right)};
+        boost::numeric_cast<int32_t>(rect.top),
+        boost::numeric_cast<int32_t>(rect.left),
+        boost::numeric_cast<int32_t>(rect.bottom),
+        boost::numeric_cast<int32_t>(rect.right)};
     return out;
 }
 
@@ -203,13 +203,13 @@ FB::Rect FB::PluginWindowWin::getWindowClipping() const
     return getWindowPosition();
 }
 
-int FB::PluginWindowWin::getWindowWidth() const
+long FB::PluginWindowWin::getWindowWidth() const
 {
     FB::Rect pos = getWindowPosition();
     return pos.right - pos.left;
 }
 
-int FB::PluginWindowWin::getWindowHeight() const
+long FB::PluginWindowWin::getWindowHeight() const
 {
     FB::Rect pos = getWindowPosition();
     return pos.bottom - pos.top;

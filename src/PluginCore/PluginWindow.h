@@ -53,22 +53,22 @@ namespace FB {
         virtual FB::Rect getWindowPosition() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual int getWindowWidth() const
+        /// @fn virtual long getWindowWidth() const
         ///
         /// @brief  Gets the width of the window
         ///
         /// @return The width of the window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getWindowWidth() const = 0;
+        virtual long getWindowWidth() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual int getWindowHeight() const
+        /// @fn virtual long getWindowHeight() const
         ///
         /// @brief  Gets the height of the window
         ///
         /// @return The height of the window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getWindowHeight() const = 0;
+        virtual long getWindowHeight() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual FP::Rect getWindowClipping() const

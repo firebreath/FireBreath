@@ -27,7 +27,7 @@ void PluginWindowMacCarbon::setWindowPosition(int32_t x, int32_t y, uint32_t wid
     m_height = height;
 }
 
-void PluginWindowMacCarbon::setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right) {
+void PluginWindowMacCarbon::setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right) {
     m_clipTop = top;
     m_clipLeft = left;
     m_clipBottom = bottom;
@@ -54,11 +54,11 @@ FB::Rect PluginWindowMacCarbon::getWindowClipping() const {
     return clipRect;    
 }
 
-int PluginWindowMacCarbon::getWindowHeight() const {
+long PluginWindowMacCarbon::getWindowHeight() const {
     return m_height;
 }
 
-int PluginWindowMacCarbon::getWindowWidth() const {
+long PluginWindowMacCarbon::getWindowWidth() const {
     return m_width;
 }
 

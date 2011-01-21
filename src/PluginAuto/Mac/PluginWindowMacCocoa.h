@@ -75,7 +75,7 @@ namespace FB {
 		virtual int getWindowHeight() const;
 		virtual int getWindowWidth() const;
 		virtual void setWindowPosition(int32_t x, int32_t y, int32_t width, int32_t height);
-		virtual void setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right);
+		virtual void setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right);
 
 	protected:
 		int m_x, m_y, m_width, m_height;

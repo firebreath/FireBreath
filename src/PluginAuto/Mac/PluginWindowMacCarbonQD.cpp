@@ -40,7 +40,7 @@ PluginWindowMacCarbonQD::~PluginWindowMacCarbonQD()
 {
 }
 
-void PluginWindowMacCarbonQD::getWindowPosition(int &x, int &y, int &w, int &h) const
+void PluginWindowMacCarbonQD::getWindowPosition(long &x, long &y, long &w, long &h) const
 {
     x = m_x;
     y = m_y;
@@ -54,7 +54,7 @@ FB::Rect PluginWindowMacCarbonQD::getWindowPosition() const
 	return rect;
 }
 
-void PluginWindowMacCarbonQD::setWindowPosition(int x, int y, int w, int h)
+void PluginWindowMacCarbonQD::setWindowPosition(long x, long y, long w, long h)
 {
     if (m_x != x
         || m_y != y
@@ -69,7 +69,7 @@ void PluginWindowMacCarbonQD::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowMacCarbonQD::getWindowClipping(int &t, int &l, int &b, int &r) const
+void PluginWindowMacCarbonQD::getWindowClipping(long &t, long &l, long &b, long &r) const
 {
     t = m_clipTop;
     l = m_clipLeft;
@@ -83,7 +83,7 @@ FB::Rect PluginWindowMacCarbonQD::getWindowClipping() const
 	return rect;
 }
 
-void PluginWindowMacCarbonQD::setWindowClipping(int t, int l, int b, int r)
+void PluginWindowMacCarbonQD::setWindowClipping(long t, long l, long b, long r)
 {
     if (m_clipTop != t
         || m_clipLeft != l

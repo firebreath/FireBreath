@@ -38,15 +38,15 @@ namespace FB {
         virtual ~PluginWindowX11();
 
 //         int16_t HandleEvent(EventRecord* evt);
-        void setWindowPosition(int x, int y, int w, int h);
-        void getWindowPosition(int &x, int &y, int &w, int &h) const;
+        void setWindowPosition(long x, long y, long w, long h);
+        void getWindowPosition(long &x, long &y, long &w, long &h) const;
         FB::Rect getWindowPosition() const;
-        void setWindowClipping(int t, int l, int b, int r);
-        void getWindowClipping(int &t, int &l, int &b, int &r) const;
+        void setWindowClipping(long t, long l, long b, long r);
+        void getWindowClipping(long &t, long &l, long &b, long &r) const;
         FB::Rect getWindowClipping() const;
         virtual void InvalidateWindow() const;
-        int getWindowWidth() const { return m_width; }
-        int getWindowHeight() const { return m_height; }
+        long getWindowWidth() const { return m_width; }
+        long getWindowHeight() const { return m_height; }
 
 #if FB_GUI_DISABLED != 1
     public:
@@ -65,15 +65,15 @@ namespace FB {
 #endif
 
     protected:
-        int m_x;
-        int m_y;
-        int m_width;
-        int m_height;
+        long m_x;
+        long m_y;
+        long m_width;
+        long m_height;
 
-        int m_clipLeft;
-        int m_clipRight;
-        int m_clipTop;
-        int m_clipBottom;
+        long m_clipLeft;
+        long m_clipRight;
+        long m_clipTop;
+        long m_clipBottom;
     };
 
 };

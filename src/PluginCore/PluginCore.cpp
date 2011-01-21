@@ -43,7 +43,8 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
      Regular Class Stuff
 \***************************/
 
-PluginCore::PluginCore() : m_paramsSet(false), m_Window(NULL)
+PluginCore::PluginCore() : m_paramsSet(false), m_Window(NULL),
+    m_windowLessParam(boost::indeterminate)
 {
     FB::Log::initLogging();
     // This class is only created on the main UI thread,
@@ -146,7 +147,7 @@ void PluginCore::setReady()
 
 bool PluginCore::isWindowless()
 {
-    if (m_windowLessParam.value != boost::tribool::indeterminate_value) {
+    if (m_windowLessParam != boost::indeterminate) {
         return m_windowLessParam;
     } else {
         FB::VariantMap::iterator itr = m_params.find("windowless");

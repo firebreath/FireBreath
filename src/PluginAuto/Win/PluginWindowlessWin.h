@@ -42,7 +42,7 @@ namespace FB {
             PluginWindowlessWin(const WindowContextWindowless&);
             ~PluginWindowlessWin();
 
-            typedef boost::function<void (uint16_t, uint16_t, uint16_t, uint16_t)> InvalidateWindowFunc;
+            typedef boost::function<void (uint32_t, uint32_t, uint32_t, uint32_t)> InvalidateWindowFunc;
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             /// @fn HDC PluginWindowlessWin::getHDC()
@@ -59,19 +59,19 @@ namespace FB {
             HWND getHWND() const { return m_browserHwnd; } 
 
             FB::Rect getWindowPosition() const;
-            void setWindowPosition(int x, int y, int width, int height);
+            void setWindowPosition(long x, long y, long width, long height);
             void setWindowPosition(FB::Rect pos);
 
             FB::Rect getWindowClipping() const;
-            void setWindowClipping(int top, int left, int bottom, int right);
+            void setWindowClipping(long top, long left, long bottom, long right);
             void setWindowClipping(FB::Rect clip);
 
-            int getWindowWidth() const { return m_width; }
+            long getWindowWidth() const { return m_width; }
 
-            int getWindowHeight() const { return m_height; }
+            long getWindowHeight() const { return m_height; }
 
             // Converts window-space coordinates into plugin-place coordinates
-            void translateWindowToPlugin(int &x, int &y) const;
+            void translateWindowToPlugin(long &x, long &y) const;
 
             // Handle event given to us from NPAPI (windowless plugins don't intercept raw Windows events)
             bool HandleEvent(uint32_t event, uint32_t wParam, uint32_t lParam, LRESULT& lRes);
@@ -82,8 +82,8 @@ namespace FB {
         protected:
             HDC m_hdc;
             HWND m_browserHwnd;
-            int m_x, m_y, m_width, m_height; 
-            int m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
+            long m_x, m_y, m_width, m_height; 
+            long m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
             InvalidateWindowFunc m_invalidateWindow;
     };    
 };

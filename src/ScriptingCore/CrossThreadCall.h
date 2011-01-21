@@ -144,9 +144,11 @@ namespace FB {
                     throw FB::script_error("Could not marshal to main thread");
                 }
 
-                while (!call->m_returned) {
+                while (!call->m_returned && !host->isShutDown()) {
                     call->m_cond.wait(lock);
                 }
+                if (host->isShutDown())
+                    throw FB::script_error("Shutting down");
                 varResult = call->m_result;
             }
         } else {

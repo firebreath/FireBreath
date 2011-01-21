@@ -79,7 +79,7 @@ PluginWindowX11::~PluginWindowX11()
 {
 }
 
-void PluginWindowX11::getWindowPosition(int &x, int &y, int &w, int &h) const
+void PluginWindowX11::getWindowPosition(long &x, long &y, long &w, long &h) const
 {
     x = m_x;
     y = m_y;
@@ -93,7 +93,7 @@ FB::Rect PluginWindowX11::getWindowPosition() const
     return rect;
 }
 
-void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
+void PluginWindowX11::setWindowPosition(long x, long y, long w, long h)
 {
     if (m_x != x
         || m_y != y
@@ -108,7 +108,7 @@ void PluginWindowX11::setWindowPosition(int x, int y, int w, int h)
     }
 }
 
-void PluginWindowX11::getWindowClipping(int &t, int &l, int &b, int &r) const
+void PluginWindowX11::getWindowClipping(long &t, long &l, long &b, long &r) const
 {
     t = m_clipTop;
     l = m_clipLeft;
@@ -122,7 +122,7 @@ FB::Rect PluginWindowX11::getWindowClipping() const
     return rect;
 }
 
-void PluginWindowX11::setWindowClipping(int t, int l, int b, int r)
+void PluginWindowX11::setWindowClipping(long t, long l, long b, long r)
 {
     if (m_clipTop != t
         || m_clipLeft != l

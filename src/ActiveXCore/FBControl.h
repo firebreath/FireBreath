@@ -24,7 +24,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
-#include "Win/WinMessageWindow.h"
 #include "JSAPI_IDispatchEx.h"
 #include "PluginInfo.h"
 
@@ -85,7 +84,6 @@ namespace FB {
             ActiveXBrowserHostPtr m_host;
 
         protected:
-            boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;
 
         public:
             // The methods in this class are positioned in this file in the
@@ -211,7 +209,14 @@ namespace FB {
         {
             if (m_bWndLess) {
                 HRESULT lRes(0);
-                static_cast<PluginWindowlessWin*>(pluginWin)->HandleEvent(WM_PAINT, reinterpret_cast<uint32_t>(di.hdcDraw), NULL, lRes);
+                PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin);
+                win->setWindowPosition(
+                    di.prcBounds->left,
+                    di.prcBounds->top,
+                    di.prcBounds->right-di.prcBounds->left,
+                    di.prcBounds->bottom-di.prcBounds->top
+                    );
+                win->HandleEvent(WM_PAINT, reinterpret_cast<uint32_t>(di.hdcDraw), NULL, lRes);
             }
     		return S_OK;
         }
@@ -244,7 +249,6 @@ namespace FB {
                 m_propNotify = m_spClientSite;
             }
 
-            m_messageWin.swap(boost::scoped_ptr<FB::WinMessageWindow>(new FB::WinMessageWindow()));
 
             clientSiteSet();
 
@@ -272,6 +276,10 @@ namespace FB {
             if (hr != S_OK)
                 return hr;
 
+            if (pluginWin) {
+                // window already created
+                return hr;
+            }
             if (m_bWndLess) {
                 pluginWin = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
             } else {
@@ -342,9 +350,8 @@ namespace FB {
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::clientSiteSet()
         {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
-            m_host->setWindow(m_messageWin->getHWND());
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
-            m_bWindowOnly = pluginMain->isWindowless() ? TRUE : FALSE;
+            m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
@@ -371,13 +378,14 @@ namespace FB {
                 delete pluginWin; pluginWin = NULL;
             }
             m_api.reset(); // Once we release this, pluginMain releasing should free it
+            // the host must be shut down before the rest to prevent deadlocks on async calls
+            if (m_host)
+                m_host->shutdown();
             pluginMain.reset(); // This should delete the plugin object
             m_propNotify.Release();
             m_webBrowser.Release();
             m_serviceProvider.Release();
             m_connPtMap.clear();
-            if (m_host)
-                m_host->shutdown();
             m_host.reset();
         }
 
@@ -444,8 +452,9 @@ namespace FB {
                 switch(uMsg)
                 {
                 case WM_MOUSEACTIVATE:
-                    lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
-                    return TRUE;
+                    break;
+                    //lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
+                    //return TRUE;
 
                 }
 
@@ -465,7 +474,5 @@ namespace FB {
 
     }
 }
-// This includes an auto-generated file that sets up the plugin with mimetypes
-//#include "global/axplugin_defs.h"
 
 #endif
