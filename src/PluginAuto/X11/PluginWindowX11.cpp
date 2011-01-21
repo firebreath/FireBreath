@@ -41,7 +41,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     m_browserWindow(0),
 #endif
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
-    m_clipTop(0), m_clipBottom(0)
+    m_clipTop(0), m_clipBottom(0), m_handler_id(0)
 {
 #if FB_GUI_DISABLED != 1
     m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
@@ -68,7 +68,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
         GDK_FOCUS_CHANGE_MASK
     );
 
-    g_signal_connect(G_OBJECT(m_canvas), "event", G_CALLBACK(&PluginWindowX11::_EventCallback), this);
+    m_handler_id = g_signal_connect(G_OBJECT(m_canvas), "event", G_CALLBACK(&PluginWindowX11::_EventCallback), this);
     gtk_widget_show(m_canvas);
     gtk_container_add(GTK_CONTAINER(m_container), m_canvas);
     gtk_widget_show(m_container);
@@ -77,6 +77,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
 
 PluginWindowX11::~PluginWindowX11()
 {
+    g_signal_handler_disconnect(G_OBJECT(m_canvas), m_handler_id);
 }
 
 void PluginWindowX11::getWindowPosition(long &x, long &y, long &w, long &h) const
