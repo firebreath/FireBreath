@@ -59,13 +59,13 @@ namespace FB {
 
         GdkNativeWindow m_window;
         GdkNativeWindow m_browserWindow;
-        int m_handler_id;
         GtkWidget *m_container;
         GtkWidget *m_canvas;
 
 #endif
 
     protected:
+        int m_handler_id;
         long m_x;
         long m_y;
         long m_width;

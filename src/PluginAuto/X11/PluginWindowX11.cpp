@@ -77,7 +77,9 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
 
 PluginWindowX11::~PluginWindowX11()
 {
+#if FB_GUI_DISABLED != 1
     g_signal_handler_disconnect(G_OBJECT(m_canvas), m_handler_id);
+#endif
 }
 
 void PluginWindowX11::getWindowPosition(long &x, long &y, long &w, long &h) const
