@@ -78,7 +78,6 @@ endforeach()
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
 set(PLUGIN_INTERNAL_DEPS
-    ${Boost_LIBRARIES}
     PluginCore
     ${PLUGIN_PREFIX}_PluginAuto
     NpapiCore
