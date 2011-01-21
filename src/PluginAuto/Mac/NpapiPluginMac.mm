@@ -563,7 +563,7 @@ int16_t NpapiPluginMac::HandleEventCarbon(void* event) {
         return 0;
     }
     
-    PluginWindowMacCarbonCG* win = static_cast<PluginWindowMacCarbonCG*>(pluginWin);
+    PluginWindowMacCarbon* win = dynamic_cast<PluginWindowMacCarbon*>(pluginWin);
     return win->HandleEvent((EventRecord*)event);
 #endif
 }
