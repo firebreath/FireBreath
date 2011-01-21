@@ -95,6 +95,10 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
         hDC = wndLess->getHDC();
     } else if (wnd) {
         hDC = BeginPaint(wnd->getHWND(), &ps);
+        pos.right -= pos.left;
+        pos.left = 0;
+        pos.bottom -= pos.top;
+        pos.top = 0;
     }
 
 	::SetTextAlign(hDC, TA_CENTER|TA_BASELINE);
@@ -106,5 +110,11 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
         EndPaint(wnd->getHWND(), &ps);
     }
 #endif
+    return true;
+}
+
+bool FBTestPlugin::isWindowless()
+{
+    // return PluginCore::isWindowless();
     return true;
 }

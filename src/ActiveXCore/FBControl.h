@@ -141,6 +141,8 @@ namespace FB {
             STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties);
 
         	virtual HRESULT OnDraw(_In_ ATL_DRAWINFO& di);
+
+            void invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom );
         public:
             DECLARE_OLEMISC_STATUS(OLEMISC_RECOMPOSEONRESIZE |
             OLEMISC_CANTLINKINSIDE |
@@ -222,6 +224,14 @@ namespace FB {
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        void FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom )
+        {
+            RECT r = { left, top, right, bottom };
+            if (m_spInPlaceSite)
+                m_spInPlaceSite->InvalidateRect(&r, TRUE);
+        }
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         DWORD FB::ActiveX::CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::getSupportedObjectSafety()
         {
             return INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/;
@@ -282,6 +292,8 @@ namespace FB {
             }
             if (m_bWndLess) {
                 pluginWin = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
+                static_cast<FB::PluginWindowlessWin*>(pluginWin)
+                    ->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
             } else {
                 pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
                 static_cast<PluginWindowWin*>(pluginWin)->setCallOldWinProc(true);

@@ -12,9 +12,12 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook Inc, Firebreath development team
 \**********************************************************/
 
+#include "FBTestPlugin.h"
+
 #include "ThreadRunnerAPI.h"
 
-ThreadRunnerAPI::ThreadRunnerAPI(FB::BrowserHostPtr host) : m_host(host)
+ThreadRunnerAPI::ThreadRunnerAPI(const FB::BrowserHostPtr& host, const FBTestPluginWeakPtr& plugin)
+    : m_plugin(plugin), m_host(host)
 {
     registerMethod("addMethod", make_method(this, &ThreadRunnerAPI::addMethod));
 
@@ -44,6 +47,14 @@ void ThreadRunnerAPI::threadRun()
                 m_queue.push(var.convert_cast<FB::JSObjectPtr>());
             }
         }
+
+        try {
+            // This serves no real useful purpose; it forces the window to redraw.
+            // Really this is here to make sure the cross-thread invalidate works
+            getPlugin()->GetWindow()->InvalidateWindow();
+        } catch (const FB::script_error&) {
+            // do nothing
+        }
         
         boost::this_thread::sleep(boost::posix_time::seconds(1));
     }
@@ -58,4 +69,13 @@ ThreadRunnerAPI::~ThreadRunnerAPI()
 void ThreadRunnerAPI::addMethod(const FB::JSObjectPtr &obj)
 {
     m_queue.push(obj);
+}
+
+FBTestPluginPtr ThreadRunnerAPI::getPlugin()
+{
+    FBTestPluginPtr ptr(m_plugin.lock());
+    if (!ptr) {
+        throw FB::script_error("Plugin closed");
+    }
+    return ptr;
 }

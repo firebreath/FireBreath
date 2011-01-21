@@ -23,17 +23,22 @@ Copyright 2010 Facebook Inc, Firebreath development team
 #ifndef H_THREADRUNNERAPI
 #define H_THREADRUNNERAPI
 
+FB_FORWARD_PTR(FBTestPlugin)
+
 class ThreadRunnerAPI : public FB::JSAPIAuto
 {
 public:
-    ThreadRunnerAPI(FB::BrowserHostPtr host);
+    ThreadRunnerAPI(const FB::BrowserHostPtr& host, const FBTestPluginWeakPtr& plugin);
     virtual ~ThreadRunnerAPI();
 
     void addMethod(const FB::JSObjectPtr &);
 protected:
     void threadRun();
 
+    FBTestPluginPtr getPlugin();
+
 protected:
+    FBTestPluginWeakPtr m_plugin;
     FB::BrowserHostPtr m_host;
     boost::thread m_thread;
     FB::SafeQueue<FB::JSObjectPtr> m_queue;

@@ -44,7 +44,7 @@ NpapiPluginWin::~NpapiPluginWin()
     delete pluginWin; pluginWin = NULL;
 }
 
-void NpapiPluginWin::invalidateWindow( uint16_t left, uint16_t top, uint16_t right, uint16_t bottom )
+void NpapiPluginWin::invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom )
 {
     NPRect r = { top, left, bottom, right };
     if (!m_npHost->isMainThread()) {

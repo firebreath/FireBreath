@@ -301,7 +301,7 @@ long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& 
 
 ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
 {
-    return boost::make_shared<ThreadRunnerAPI>(m_host);
+    return boost::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
 }
 
 const boost::optional<std::string> FBTestPluginAPI::optionalTest( const boost::optional<std::string>& str )

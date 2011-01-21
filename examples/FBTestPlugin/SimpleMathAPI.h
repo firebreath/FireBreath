@@ -21,7 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class SimpleMathAPI : public FB::JSAPIAuto
 {
 public:
-    SimpleMathAPI(FB::BrowserHostPtr host);
+    SimpleMathAPI(const FB::BrowserHostPtr& host);
     virtual ~SimpleMathAPI();
 
     // Read/Write property testString
