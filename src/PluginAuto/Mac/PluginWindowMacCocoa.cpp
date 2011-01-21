@@ -157,11 +157,11 @@ FB::Rect PluginWindowMacCocoa::getWindowClipping() const {
     return r;
 }
 
-int PluginWindowMacCocoa::getWindowHeight() const {
+long PluginWindowMacCocoa::getWindowHeight() const {
     return m_height;
 }
 
-int PluginWindowMacCocoa::getWindowWidth() const {
+long PluginWindowMacCocoa::getWindowWidth() const {
     return m_width;
 }
 
@@ -172,7 +172,7 @@ void PluginWindowMacCocoa::setWindowPosition(int32_t x, int32_t y, int32_t width
     m_height = height;
 }
 
-void PluginWindowMacCocoa::setWindowClipping(uint16_t top, uint16_t left, uint16_t bottom, uint16_t right) {
+void PluginWindowMacCocoa::setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right) {
     m_clipTop = top;
     m_clipLeft = left;
     m_clipBottom = bottom;
