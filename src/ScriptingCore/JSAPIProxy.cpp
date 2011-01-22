@@ -39,7 +39,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIWeakPtr &inner )
 FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(securityLevel, inner));
     inner->registerProxy(ptr);
 
     return ptr;
@@ -48,7 +48,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, con
 FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, const FB::JSAPIWeakPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
-    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
+    FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(securityLevel, inner));
     FB::JSAPIPtr tmp = inner.lock();
     if (tmp)
         tmp->registerProxy(ptr);
