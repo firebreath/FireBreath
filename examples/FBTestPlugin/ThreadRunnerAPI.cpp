@@ -51,7 +51,9 @@ void ThreadRunnerAPI::threadRun()
         try {
             // This serves no real useful purpose; it forces the window to redraw.
             // Really this is here to make sure the cross-thread invalidate works
-            getPlugin()->GetWindow()->InvalidateWindow();
+            FB::PluginWindow* win = getPlugin()->GetWindow();
+            if (win)
+                win->InvalidateWindow();
         } catch (const FB::script_error&) {
             // do nothing
         }

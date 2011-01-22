@@ -209,7 +209,7 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         HRESULT FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::OnDraw( _In_ ATL_DRAWINFO& di )
         {
-            if (m_bWndLess) {
+            if (m_bWndLess && FB::pluginGuiEnabled()) {
                 HRESULT lRes(0);
                 PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin);
                 win->setWindowPosition(
@@ -286,8 +286,8 @@ namespace FB {
             if (hr != S_OK)
                 return hr;
 
-            if (pluginWin) {
-                // window already created
+            if (pluginWin || !FB::pluginGuiEnabled()) {
+                // window already created or gui disabled
                 return hr;
             }
             if (m_bWndLess) {
@@ -363,7 +363,10 @@ namespace FB {
         {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
-            m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
+            if (FB::pluginGuiEnabled())
+                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
+            else
+                m_bWindowOnly = FALSE;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>

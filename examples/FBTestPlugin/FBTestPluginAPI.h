@@ -51,7 +51,7 @@ public:
     bool asBool(const FB::variant& a);
     long asInt(const FB::variant& a);
     double asDouble(const FB::variant& a);
-    const boost::optional<std::string> optionalTest(const boost::optional<std::string>& str);
+    const boost::optional<std::string> optionalTest(const std::string& test1, const boost::optional<std::string>& str);
 
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);

@@ -304,7 +304,7 @@ ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
     return boost::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
 }
 
-const boost::optional<std::string> FBTestPluginAPI::optionalTest( const boost::optional<std::string>& str )
+const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::string& test1, const boost::optional<std::string>& str )
 {
     if (str)
         m_host->htmlLog(*str);

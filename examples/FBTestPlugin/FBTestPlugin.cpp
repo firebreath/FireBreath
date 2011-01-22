@@ -115,6 +115,6 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
 
 bool FBTestPlugin::isWindowless()
 {
-    // return PluginCore::isWindowless();
+    //return PluginCore::isWindowless();
     return true;
 }
