@@ -72,6 +72,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
     // Code here diverges depending on if 
     // the plugin is windowed or windowless.
     if(pluginMain->isWindowless()) { 
+        assert(window->type == NPWindowTypeDrawable);
         PluginWindowlessWin* win = dynamic_cast<PluginWindowlessWin*>(pluginWin);
 
         if(win == NULL && pluginWin != NULL) {
@@ -101,6 +102,7 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
                                    window->clipRect.bottom, window->clipRect.right);
         }
     } else { 
+        assert(window->type == NPWindowTypeWindow);
         PluginWindowWin* win = dynamic_cast<PluginWindowWin*>(pluginWin);
         // Check to see if we've received a new HWND (new window)
         if(win != NULL && win->getHWND() != (HWND)window->window) {
@@ -115,6 +117,8 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
         }
     
         if(pluginWin == NULL) {
+            // Sanity check
+            assert(::IsWindow((HWND)window->window));
             // Create new window
             HWND browserHWND;
             m_npHost->GetValue(NPNVnetscapeWindow, (void*)&browserHWND); 
