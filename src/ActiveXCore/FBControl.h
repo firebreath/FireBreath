@@ -208,7 +208,7 @@ namespace FB {
         };
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
-        HRESULT FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::OnDraw( _In_ ATL_DRAWINFO& di )
+        HRESULT FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::OnDraw( ATL_DRAWINFO& di )
         {
             if (m_bWndLess && FB::pluginGuiEnabled()) {
                 HRESULT lRes(0);
