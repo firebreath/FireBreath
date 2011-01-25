@@ -49,6 +49,7 @@ namespace FB
     };
 
     FB_FORWARD_PTR(AsyncCallManager);
+    FB_FORWARD_PTR(BrowserStreamManager);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  BrowserHost
@@ -194,11 +195,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback, 
                                             bool cache = true, bool seekable = false, 
-                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
+                                            size_t internalBufferSize = 128 * 1024 ) const;
         
-        virtual void retainStream(const BrowserStreamPtr& stream);
-        virtual void releaseStream(const BrowserStreamPtr& stream);
-
         // Methods for accessing the DOM
     public:
 
@@ -330,6 +328,9 @@ namespace FB
         mutable AsyncCallManagerPtr _asyncManager;
         // Yes, this is supposed to be both private and pure virtual.
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
+        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback, 
+                                            bool cache = true, bool seekable = false, 
+                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
 
     public:
 
@@ -356,7 +357,7 @@ namespace FB
         mutable boost::shared_mutex m_xtmutex;
 
         mutable std::set<FB::JSAPIPtr> m_retainedObjects;
-        mutable std::set<FB::BrowserStreamPtr> m_retainedStreams;
+        BrowserStreamManagerPtr m_streamMgr;
     };
 
     

@@ -25,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserHost.h"
 #include <boost/smart_ptr/enable_shared_from_this.hpp>
+#include "../PluginCore/BrowserStreamManager.h"
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
@@ -115,7 +116,7 @@ namespace FB {
 
 FB::BrowserHost::BrowserHost()
     : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
-      m_isShutDown(false)
+      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>())
 {
 
 }
@@ -126,11 +127,7 @@ void FB::BrowserHost::shutdown()
     boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_isShutDown = true;
     _asyncManager->shutdown();
-
-    using namespace boost::lambda;
-
-    //std::for_each(m_retainedStreams.begin(), m_retainedStreams.end(), boost::lambda::bind(&BrowserStream::close, boost::lambda::_1));
-    m_retainedStreams.clear();
+    m_streamMgr.reset();
 }
 
 void FB::BrowserHost::assertMainThread() const
@@ -225,14 +222,14 @@ bool FB::BrowserHost::ScheduleAsyncCall( void (*func)(void *), void *userData ) 
     }
 }
 
-void FB::BrowserHost::retainStream( const BrowserStreamPtr& stream )
+FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
+    const PluginEventSinkPtr& callback, bool cache /*= true*/, bool seekable /*= false*/,
+    size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
-    boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
-    m_retainedStreams.insert(stream);
-}
-
-void FB::BrowserHost::releaseStream( const BrowserStreamPtr& stream )
-{
-    boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
-    m_retainedStreams.erase(stream);
+    assertMainThread();
+    FB::BrowserStreamPtr ptr(_createStream(url, callback, cache, seekable, internalBufferSize));
+    if (ptr) {
+        m_streamMgr->retainStream(ptr);
+    }
+    return ptr;
 }

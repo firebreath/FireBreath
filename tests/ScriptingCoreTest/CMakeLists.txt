@@ -48,6 +48,7 @@ add_executable(${PROJNAME} ${SOURCES})
 
 target_link_libraries (${PROJNAME}
     ScriptingCore
+    PluginCore
     UnitTest++
     )
 

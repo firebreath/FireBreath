@@ -623,10 +623,9 @@ void NpapiBrowserHost::UnscheduleTimer(int timerId)  const
     }
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
+FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                     bool cache, bool seekable, size_t internalBufferSize ) const
 {
-    assertMainThread();
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     stream->AttachObserver( callback );
 
