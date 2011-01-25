@@ -75,7 +75,7 @@ namespace FB {
     {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
+        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Starts an asynchronous HTTP get request
         ///
@@ -116,7 +116,7 @@ namespace FB {
             const bool cache = true, const size_t bufferSize = 128*1024);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
+        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP get request. 
         ///
