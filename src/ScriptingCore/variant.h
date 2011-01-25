@@ -508,7 +508,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<typename T> const T& variant::cast() const
+        /// @fn template<typename T> T& variant::cast() const
         ///
         /// @brief  returns the value cast as the given type; throws bad_variant_type if that type is
         ///         not the type of the value stored in variant
@@ -517,6 +517,19 @@ namespace FB
         ///
         /// @return value of type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        template<typename T>
+        T& cast() {
+            if (get_type() != typeid(T)) {
+                throw bad_variant_cast(get_type(), typeid(T));
+            }
+            if (sizeof(T) <= sizeof(void*)) {
+                return *reinterpret_cast<T*>(&object);
+            }
+            else {
+                return *reinterpret_cast<T*>(object);
+            }
+        }
+
         template<typename T>
         const T& cast() const {
             if (get_type() != typeid(T)) {
