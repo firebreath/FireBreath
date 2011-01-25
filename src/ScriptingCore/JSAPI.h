@@ -298,7 +298,7 @@ namespace FB
         virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEventInterface(JSObjectPtr& event)
+        /// @fn virtual void registerEventInterface(const JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to register a JSObject interface that handles events.  This is
         ///         primarily used by IE.  Objects provided to this method are called when events are fired
@@ -308,7 +308,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void unregisterEventInterface(JSObjectPtr& event)
+        /// @fn virtual void unregisterEventInterface(const JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to unregister a JSObject interface that handles events.  
         ///

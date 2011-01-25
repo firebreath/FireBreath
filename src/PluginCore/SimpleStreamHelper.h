@@ -68,14 +68,14 @@ namespace FB {
     ///
     /// This class can be used as a helper class to make HTTP requests easily using BrowserStreams
     ///
-    /// @see SimpleStreamHelper::AsyncGet
-    /// @see SimpleStreamHelper::SynchronousGet
+    /// @see FB::SimpleStreamHelper::AsyncGet
+    /// @see FB::SimpleStreamHelper::SynchronousGet
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class SimpleStreamHelper : public FB::DefaultBrowserStreamHandler
     {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
+        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
         ///
         /// @brief  Starts an asynchronous HTTP get request
         ///
@@ -116,11 +116,11 @@ namespace FB {
             const bool cache = true, const size_t bufferSize = 128*1024);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public  FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
+        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/)
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP get request. 
         ///
-        /// Call this static method to make a syncronous HTTP get request through the browser from
+        /// Call this static method to make a synchronous HTTP get request through the browser from
         /// a thread that you have started.  *IMPORTANT*: This must *never* be called on the main thread!
         ///
         /// @code
@@ -144,7 +144,7 @@ namespace FB {
         /// @since 1.4b3
         /// @see AsyncGet
         /// @see FB::URI
-        /// @see HttpStreamResponse
+        /// @see FB::HttpStreamResponse
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static HttpStreamResponsePtr SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, 
             const bool cache = true, const size_t bufferSize = 128*1024);
