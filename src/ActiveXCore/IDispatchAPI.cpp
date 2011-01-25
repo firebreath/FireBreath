@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "win_targetver.h"
 #include <boost/bind.hpp>
 #include <dispex.h>
 #include <boost/scoped_array.hpp>

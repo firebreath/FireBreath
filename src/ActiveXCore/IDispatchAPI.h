@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_IDISPATCHAPI
 
 #include "win_common.h"
-#include "win_targetver.h"
 #include "JSAPI.h"
 #include "JSObject.h"
 #include "ActiveXBrowserHost.h"
