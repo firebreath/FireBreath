@@ -25,13 +25,17 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserHost.h"
 #include <boost/smart_ptr/enable_shared_from_this.hpp>
-#include "BrowserStreamManager.h"
+#include "../PluginCore/BrowserStreamManager.h"
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
     FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
-    this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
-        new FB::AsyncLogRequest(shared_from_this(), str));
+    try {
+        this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
+            new FB::AsyncLogRequest(shared_from_this(), str));
+    } catch (const std::exception&) {
+        // This fails during shutdown; ignore it
+    }
 }
 
 void FB::BrowserHost::AsyncHtmlLog(void *logReq)
