@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FBCONTROL
 
 #include "win_common.h"
+#include "win_targetver.h"
 #include <atlctl.h>
 #include <ShlGuid.h>
 #include <boost/cast.hpp>
@@ -140,7 +141,7 @@ namespace FB {
             // ever get called
             STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties);
 
-        	virtual HRESULT OnDraw(_In_ ATL_DRAWINFO& di);
+        	virtual HRESULT OnDraw(ATL_DRAWINFO& di);
 
             void invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom );
         public:

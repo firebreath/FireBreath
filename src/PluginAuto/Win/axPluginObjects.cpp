@@ -1,4 +1,5 @@
 
+#include "win_targetver.h"
 #include "APITypes.h"
 #include "JSAPI.h"
 #include "global/resource.h"
