@@ -83,7 +83,7 @@ namespace FB {
         bool operator==(const URI& right) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public std::string FB::URI::toString(bool include_domain_part = true)
+        /// @fn public std::string FB::URI::toString(bool include_domain_part = true) const
         ///
         /// @brief  converts the FB::URI object to a string
         ///

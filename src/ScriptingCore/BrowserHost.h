@@ -136,7 +136,7 @@ namespace FB
         typename Functor::result_type CallOnMainThread(Functor func);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class C, class Functor> void ScheduleOnMainThread(boost::shared_ptr<C> obj, Functor func)
+        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func)
         ///
         /// @brief  Schedule a call to be executed on the main thread. 
         ///
