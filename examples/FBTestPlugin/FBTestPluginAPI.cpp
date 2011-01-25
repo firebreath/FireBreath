@@ -326,13 +326,13 @@ void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool succe
     }
     if (success) {
         std::string dstr(reinterpret_cast<const char*>(data.get()), size);
-        callback->Invoke("", FB::variant_list_of
+        callback->InvokeAsync("", FB::variant_list_of
             (true)
             (outHeaders)
             (dstr)
             );
     } else {
-        callback->Invoke("", FB::variant_list_of(false));
+        callback->InvokeAsync("", FB::variant_list_of(false));
     }
 }
 

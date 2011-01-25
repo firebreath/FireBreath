@@ -27,8 +27,57 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHos
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, true, false));
+    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, true, false, bufferSize));
     return ptr;
+}
+
+struct SyncGetHelper
+{
+public:
+    SyncGetHelper()
+        : done(false) { }
+    void setPtr(const FB::SimpleStreamHelperPtr& inPtr) { ptr = inPtr; }
+    
+    void getURLCallback(bool success, const FB::HeaderMap& headers,
+        const boost::shared_array<uint8_t>& data, const size_t size)
+    {
+        boost::lock_guard<boost::mutex> lock(m_mutex);
+        m_response = boost::make_shared<FB::HttpStreamResponse>(success, headers, data, size);
+        done = true;
+        m_cond.notify_all();
+    }
+    void waitForDone() {
+        boost::unique_lock<boost::mutex> lock(m_mutex);
+        while (!done) {
+            m_cond.wait(lock);
+        }
+    }
+public:
+    bool done;
+    FB::SimpleStreamHelperPtr ptr;
+    boost::condition_variable m_cond;
+    boost::mutex m_mutex;
+    FB::HttpStreamResponsePtr m_response;
+};
+
+FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::BrowserHostPtr& host,
+    const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/ )
+{
+    // We can't ever block on the main thread, so SynchronousGet can't be called from there.
+    // Also, if you could block the main thread, that still wouldn't work because the request
+    // is processed on the main thread!
+    assert(!host->isMainThread());
+    SyncGetHelper helper;
+    try {
+        FB::HttpCallback cb(boost::bind(&SyncGetHelper::getURLCallback, &helper, _1, _2, _3, _4));
+        FB::SimpleStreamHelperPtr ptr = host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncGet, 
+            host, uri, cb, cache, bufferSize));
+        helper.setPtr(ptr);
+        helper.waitForDone();
+    } catch (const std::exception&) {
+        // If anything weird happens, just return NULL (to indicate failure)
+    }
+    return helper.m_response;
 }
 
 FB::SimpleStreamHelper::SimpleStreamHelper( const BrowserHostPtr& host, const HttpCallback& callback, const size_t blockSize )

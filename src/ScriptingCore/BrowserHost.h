@@ -58,7 +58,8 @@ namespace FB
     ///
     /// In actual use, this class will be used as either a NpapiBrowserHost or a ActiveXBrowserHost.
     /// This class provides APIs for making calls to the browser of any kind.  It is also used for
-    /// making calls on the primary thread.
+    /// making calls on the primary thread. There will always be exactly one BrowserHost object per
+    /// plugin instance and it is unique to that instance
     /// @see NpapiBrowserHost
     /// @see ActiveXBrowserHost
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,14 +93,15 @@ namespace FB
         ///     void funcName(void *userData)
         /// @endcode
         ///
-        /// The provided function will be called with the userData on the main thread.
+        /// The provided function will be called with the userData on the main thread. If the 
+        /// plugin instance is shutting down this may fail and return false
         /// 
         /// NOTE: This is a low level call; it is almost always better to use ScheduleOnMainThread
         /// 
         /// @param  func     The function to call. 
         /// @param  userData The userData to pass to the function.
         ///
-        /// @returns bool true if the call was scheduled
+        /// @returns bool true if the call was scheduled, false if it could not be
         ///                  
         /// @see ScheduleOnMainThread
         /// @see CallOnMainThread
@@ -113,14 +115,20 @@ namespace FB
         ///
         /// With this template function calls can be made on the main thread like so:
         /// @code
-        ///      int result = host->CallOnMainThread(boost::bind(&ObjectType::method, obj, arg1, arg2));
+        /// try {
+        ///     int result = host->CallOnMainThread(boost::bind(&ObjectType::method, obj, arg1, arg2));
+        /// } catch (const FB::script_error&) {
+        ///     // The call will throw this exception if the browser is shutting down and it cannot
+        ///     // be completed.
+        /// }
         /// @endcode
         /// 
-        /// This is a synchronous cross-thread call, and as such may have a performance penalty
+        /// This is a synchronous cross-thread call, and as such may have a performance penalty.
         /// 
         /// @param  func    The functor to execute on the main thread created with boost::bind
         ///
         /// @return The return value from the call
+        /// @throws FB::script_error
         /// @see ScheduleOnMainThread
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -135,8 +143,13 @@ namespace FB
         /// With this template function a call can be scheduled to run asynchronously on the main thread
         /// like so:
         /// @code
-        ///      boost::shared_ptr<ObjectType> obj(get_object_sharedptr());
-        ///      host->ScheduleOnMainThread(obj, boost::bind(&ObjectType::method, obj, arg1, arg2));
+        /// try {
+        ///     boost::shared_ptr<ObjectType> obj(get_object_sharedptr());
+        ///     host->ScheduleOnMainThread(obj, boost::bind(&ObjectType::method, obj, arg1, arg2));
+        /// } catch (const FB::script_error&) {
+        ///     // The call will throw this exception if the browser is shutting down and it cannot
+        ///     // be completed.
+        /// }
         /// @endcode
         ///         
         /// Note that the first parameter should be a shared_ptr to the object the call is made on; this
@@ -145,6 +158,7 @@ namespace FB
         ///
         /// @param  obj     A boost::shared_ptr to the object that must exist when the call is made
         /// @param  func    The functor to execute on the main thread created with boost::bind
+        /// @throws FB::script_error
         /// @see CallOnMainThread
         /// @see ScheduleAsyncCall
         /// @since 1.3.0

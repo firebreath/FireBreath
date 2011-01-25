@@ -32,6 +32,7 @@ public:
     virtual ~ThreadRunnerAPI();
 
     void addMethod(const FB::JSObjectPtr &);
+    void addRequest(const std::string& url, const FB::JSObjectPtr &);
 protected:
     void threadRun();
 
@@ -42,6 +43,7 @@ protected:
     FB::BrowserHostPtr m_host;
     boost::thread m_thread;
     FB::SafeQueue<FB::JSObjectPtr> m_queue;
+    FB::SafeQueue<std::pair<std::string, FB::JSObjectPtr> > m_UrlRequestQueue;
 
     std::string m_testString;
 };
