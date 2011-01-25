@@ -81,8 +81,8 @@ set(PLUGIN_INTERNAL_DEPS
     PluginCore
     ${PLUGIN_PREFIX}_PluginAuto
     NpapiCore
-    PluginCore
     ScriptingCore
+    PluginCore
     ${Boost_LIBRARIES}
     ${FBLIB_LIBRARIES}
     )
