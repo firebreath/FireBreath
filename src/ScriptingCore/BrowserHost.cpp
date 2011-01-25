@@ -25,7 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "BrowserHost.h"
 #include <boost/smart_ptr/enable_shared_from_this.hpp>
-#include "../PluginCore/BrowserStreamManager.h"
+#include "BrowserStreamManager.h"
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
