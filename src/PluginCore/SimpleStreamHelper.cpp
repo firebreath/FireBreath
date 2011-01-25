@@ -40,7 +40,9 @@ FB::SimpleStreamHelper::SimpleStreamHelper( const BrowserHostPtr& host, const Ht
 bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, FB::BrowserStream * )
 {
     if (!evt->success) {
-        callback(false, FB::HeaderMap(), boost::shared_array<uint8_t>(), received);
+        if (callback)
+            callback(false, FB::HeaderMap(), boost::shared_array<uint8_t>(), received);
+        callback.clear();
         return false;
     }
     if (!data) {
@@ -59,7 +61,9 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         // Free all the old blocks
         blocks.clear();
     }
-    callback(true, parse_http_headers(stream->getHeaders()), data, received);
+    if (callback)
+        callback(true, parse_http_headers(stream->getHeaders()), data, received);
+    callback.clear();
     return true;
 }
 

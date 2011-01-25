@@ -53,7 +53,7 @@ namespace FB {
         boost::shared_array<uint8_t> data;
         const size_t blockSize;
         size_t received;
-        const HttpCallback callback;
+        HttpCallback callback;
 
     private:
         void keepReference(const SimpleStreamHelperPtr& ptr);
