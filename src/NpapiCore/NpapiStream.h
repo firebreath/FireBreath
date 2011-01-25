@@ -50,7 +50,6 @@ namespace FB { namespace Npapi {
         virtual NPStream*   getStream() const;
         virtual NpapiBrowserHostConstPtr   getHost() const;
     private:
-        //std::vector<char>     internalBuffer;
         NPStream*               stream;
         NpapiBrowserHostWeakConstPtr       host;
         NpapiStreamPtr m_selfReference;

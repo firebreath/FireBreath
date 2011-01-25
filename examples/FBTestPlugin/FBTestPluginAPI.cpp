@@ -21,10 +21,9 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "SimpleMathAPI.h"
 #include "ThreadRunnerAPI.h"
 #include "SimpleStreams.h"
+#include <boost/make_shared.hpp>
 
 #include "FBTestPluginAPI.h"
-
-#include <boost/make_shared.hpp>
 
 FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {    
@@ -47,6 +46,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod("getPageLocation", make_method(this, &FBTestPluginAPI::getPageLocation));
     registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
     registerMethod("optionalTest", make_method(this, &FBTestPluginAPI::optionalTest));
+    registerMethod("getURL", make_method(this, &FBTestPluginAPI::getURL));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
@@ -302,6 +302,38 @@ long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& 
 ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
 {
     return boost::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
+}
+
+void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
+{
+    FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url),
+        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+}
+
+void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,
+    const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+    FB::VariantMap outHeaders;
+    for (FB::HeaderMap::const_iterator it = headers.begin(); it != headers.end(); ++it) {
+        if (headers.count(it->first) > 1) {
+            if (outHeaders.find(it->first) != outHeaders.end()) {
+                outHeaders[it->first].cast<FB::VariantList>().push_back(it->second);
+            } else {
+                outHeaders[it->first] = FB::VariantList(FB::variant_list_of(it->second));
+            }
+        } else {
+            outHeaders[it->first] = it->second;
+        }
+    }
+    if (success) {
+        std::string dstr(reinterpret_cast<const char*>(data.get()), size);
+        callback->Invoke("", FB::variant_list_of
+            (true)
+            (outHeaders)
+            (dstr)
+            );
+    } else {
+        callback->Invoke("", FB::variant_list_of(false));
+    }
 }
 
 const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::string& test1, const boost::optional<std::string>& str )

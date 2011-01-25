@@ -63,7 +63,7 @@ bool NpapiStream::close()
         SendEvent( &ev );
     }
     setOpen( false );
-    bool result = getHost()->DestroyStream( getStream(), NPRES_DONE ) == NPERR_NO_ERROR;
+    bool result = getHost()->DestroyStream( getStream(), NPRES_USER_BREAK ) == NPERR_NO_ERROR;
     setStream( 0 );
     return result;
 }

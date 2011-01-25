@@ -39,6 +39,7 @@ endif()
 
 find_package(Threads REQUIRED)
 add_boost_library(thread)
+add_boost_library(system)
 if (WITH_SYSTEM_BOOST)
     add_boost_library(date_time)
 endif()

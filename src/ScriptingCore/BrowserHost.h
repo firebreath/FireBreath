@@ -196,6 +196,9 @@ namespace FB
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
         
+        virtual void retainStream(const BrowserStreamPtr& stream);
+        virtual void releaseStream(const BrowserStreamPtr& stream);
+
         // Methods for accessing the DOM
     public:
 
@@ -353,6 +356,7 @@ namespace FB
         mutable boost::shared_mutex m_xtmutex;
 
         mutable std::set<FB::JSAPIPtr> m_retainedObjects;
+        mutable std::set<FB::BrowserStreamPtr> m_retainedStreams;
     };
 
     

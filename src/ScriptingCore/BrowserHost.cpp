@@ -126,6 +126,11 @@ void FB::BrowserHost::shutdown()
     boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_isShutDown = true;
     _asyncManager->shutdown();
+
+    using namespace boost::lambda;
+
+    //std::for_each(m_retainedStreams.begin(), m_retainedStreams.end(), boost::lambda::bind(&BrowserStream::close, boost::lambda::_1));
+    m_retainedStreams.clear();
 }
 
 void FB::BrowserHost::assertMainThread() const
@@ -218,4 +223,16 @@ bool FB::BrowserHost::ScheduleAsyncCall( void (*func)(void *), void *userData ) 
         _asyncCallData* data = _asyncManager->makeCallback(func, userData);
         return _scheduleAsyncCall(&asyncCallWrapper, data);
     }
+}
+
+void FB::BrowserHost::retainStream( const BrowserStreamPtr& stream )
+{
+    boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
+    m_retainedStreams.insert(stream);
+}
+
+void FB::BrowserHost::releaseStream( const BrowserStreamPtr& stream )
+{
+    boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
+    m_retainedStreams.erase(stream);
 }
