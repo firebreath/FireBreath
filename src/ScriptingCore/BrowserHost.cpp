@@ -154,6 +154,10 @@ void FB::BrowserHost::freeRetainedObjects() const
     boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     // This releases all stored shared_ptr objects that the browser is holding
     m_retainedObjects.clear();
+
+    // This allows the browserhost to release any browser objects that were held by the retained
+    // objects
+    DoDeferredRelease();
 }
 
 void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
@@ -166,6 +170,7 @@ void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
     boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_retainedObjects.erase(m_retainedObjects.find(obj));
+    DoDeferredRelease();
 }
 
 void FB::_asyncCallData::call()

@@ -332,6 +332,14 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void DoDeferredRelease() const
+        ///
+        /// @brief  Releases any browser-specific objects that were destroyed on a thread other than the
+        ///         main thread.  Usually safe to just let FireBreath deal with this
+        /// @since 1.4b3
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void DoDeferredRelease() const = 0;
     public:
         virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
         virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;

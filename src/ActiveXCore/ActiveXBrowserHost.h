@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include "APITypes.h"
 #include "FBPointers.h"
+#include "SafeQueue.h"
 
 namespace FB {
     class WinMessageWindow;
@@ -75,10 +76,13 @@ namespace FB {
 
         private:
             mutable boost::shared_mutex m_xtmutex;
+            mutable FB::SafeQueue<IDispatch*> m_deferredObjects;
 
         public:
             FB::variant getVariant(const VARIANT *cVar);
             void getComVariant(VARIANT *dest, const FB::variant &var);
+            void deferred_release( IDispatch* m_obj ) const;
+            void DoDeferredRelease() const;
         };
     }
 }

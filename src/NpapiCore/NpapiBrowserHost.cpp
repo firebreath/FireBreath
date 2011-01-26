@@ -154,6 +154,24 @@ FB::DOM::ElementPtr FB::Npapi::NpapiBrowserHost::getDOMElement()
 
     return FB::DOM::Element::create(m_htmlElement);
 }
+
+void FB::Npapi::NpapiBrowserHost::deferred_release( NPObject* obj )
+{
+    m_deferredObjects.push(obj);
+    if (isMainThread()) {
+        DoDeferredRelease();
+    }
+}
+
+void FB::Npapi::NpapiBrowserHost::DoDeferredRelease() const
+{
+    assertMainThread();
+    NPObject* cur(NULL);
+    while (m_deferredObjects.try_pop(cur)) {
+        ReleaseObject(cur);
+    }
+}
+
 void NpapiBrowserHost::evaluateJavaScript(const std::string &script) 
 {
     assertMainThread();

@@ -201,6 +201,8 @@ void ActiveXBrowserHost::shutdown()
 	m_htmlWinDisp.Release();
 	m_window.reset();
 	m_document.reset();
+    DoDeferredRelease();
+    assert(m_deferredObjects.empty());
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
@@ -310,4 +312,19 @@ FB::BrowserStreamPtr ActiveXBrowserHost::_createStream(const std::string& url, c
         stream.reset();
     }
     return stream;
+}
+
+void ActiveXBrowserHost::DoDeferredRelease() const
+{
+    assertMainThread();
+    IDispatch* deferred;
+    while (m_deferredObjects.try_pop(deferred)) {
+        deferred->Release();
+    }
+}
+
+
+void FB::ActiveX::ActiveXBrowserHost::deferred_release( IDispatch* m_obj ) const
+{
+    m_deferredObjects.push(m_obj);
 }

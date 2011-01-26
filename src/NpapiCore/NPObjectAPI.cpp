@@ -41,15 +41,9 @@ NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
 
 NPObjectAPI::~NPObjectAPI(void)
 {
-    // Force this call to happen on the main thread
-    host->CallOnMainThread(boost::bind(&NPObjectAPI::releaseObject, this, obj));
-}
-
-void NPObjectAPI::releaseObject(NPObject* obj)
-{
-    if (obj != NULL) {
-        browser->ReleaseObject(obj);
-    }
+    // Schedule the NPObject for release on the main thread
+    browser->deferred_release(obj);
+    obj = NULL;
 }
 
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const

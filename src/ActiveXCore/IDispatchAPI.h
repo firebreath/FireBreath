@@ -45,15 +45,9 @@ namespace FB { namespace ActiveX {
         void getMemberNames(std::vector<std::string> &nameVector) const;
         size_t getMemberCount() const;
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief  Releases the object.  Do not call this method, it is used by the destructor, but has
-        ///         to be public so that it can be forced to run on the main thread.
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void releaseObject();
-
     protected:
         ActiveXBrowserHostPtr m_browser;
-        CComQIPtr<IDispatch> m_obj;
+        IDispatch* m_obj;
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
 

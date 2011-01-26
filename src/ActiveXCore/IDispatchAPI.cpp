@@ -32,6 +32,7 @@ boost::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * ob
 FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHostPtr& host) :
     FB::JSObject(host), m_obj(obj), m_browser(host), is_JSAPI(false)
 {
+    m_obj->AddRef();
     FB::JSAPIPtr ptr(getJSAPI());
     
     if (ptr) {
@@ -44,12 +45,8 @@ FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHos
 
 IDispatchAPI::~IDispatchAPI(void)
 {
-    host->CallOnMainThread(boost::bind(&IDispatchAPI::releaseObject, this));
-}
-
-void IDispatchAPI::releaseObject()
-{
-    m_obj.Release();
+    m_browser->deferred_release(m_obj);
+    m_obj = NULL;
 }
 
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
@@ -408,7 +405,7 @@ FB::JSAPIPtr IDispatchAPI::getJSAPI() const
     CComQIPtr<IFireBreathObject> fbObj(m_obj);
     // If it's our own element then both of these will pass!  This means it isn't us!
     CComQIPtr<IHTMLElement> testObj(m_obj);
-    if (!testObj && fbObj && (p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj.p))) {
+    if (!testObj && fbObj && (p = dynamic_cast<JSAPI_IDispatchExBase*>(m_obj))) {
         return p->getAPI();
     }
 

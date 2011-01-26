@@ -43,7 +43,6 @@ namespace FB { namespace Npapi {
         void getMemberNames(std::vector<std::string> &nameVector) const;
         size_t getMemberCount() const;
     public:
-        void releaseObject(NPObject* obj);
         virtual JSAPIPtr getJSAPI() const;
 
     protected:

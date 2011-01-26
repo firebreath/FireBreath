@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiTypes.h"
 #include "BrowserHost.h"
+#include "SafeQueue.h"
 #include <boost/thread.hpp>
 
 namespace FB { namespace Npapi {
@@ -48,6 +49,8 @@ namespace FB { namespace Npapi {
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
         virtual void *getContextID() const { return (void *)m_npp; }
+        virtual void deferred_release(NPObject* obj);
+        virtual void DoDeferredRelease() const;
 
     public:
         FB::DOM::DocumentPtr getDOMDocument();
@@ -68,6 +71,7 @@ namespace FB { namespace Npapi {
         NPObjectAPIPtr m_htmlDoc;
         NPObjectAPIPtr m_htmlWin;
         NPObjectAPIPtr m_htmlElement;
+        mutable FB::SafeQueue<NPObject*> m_deferredObjects;
 
     public:
         void* MemAlloc(uint32_t size) const;
