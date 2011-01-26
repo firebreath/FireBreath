@@ -22,6 +22,8 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include <sstream>
 #include "wininet.h"
 #include "utf8_tools.h"
+#include <boost\smart_ptr\scoped_array.hpp>
+#include <boost\smart_ptr\shared_array.hpp>
 
 using namespace FB;
 using namespace FB::ActiveX;
@@ -285,8 +287,6 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
         if (!m_pstm && pstgmed->tymed == TYMED_ISTREAM)
         {
             m_pstm = pstgmed->pstm;
-            if (m_pstm)
-                m_pstm->AddRef();
         }
     }
 
@@ -311,14 +311,14 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
         if (dwRead > 0)
         do
         {
-            std::vector<char> data( dwRead );
+            boost::shared_array<char> cur(new char[dwRead]);
 
-            hr = m_pstm->Read( &data[0], dwRead, &dwActuallyRead);
+            hr = m_pstm->Read( cur.get(), dwRead, &dwActuallyRead);
 
             // If we really read something then lets add it to the Edit box
             if (dwActuallyRead > 0)
             {
-                if ( m_request->stream ) m_request->stream->signalDataArrived( &data[0], dwActuallyRead, offset + m_cbOld );
+                if ( m_request->stream ) m_request->stream->signalDataArrived( cur.get(), dwActuallyRead, offset + m_cbOld );
                 m_cbOld += dwActuallyRead;
             }
 
@@ -330,7 +330,7 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
     {
         if (m_pstm)
         {
-            m_pstm->Release();
+            m_pstm.Release();
         }
 
         hr = S_OK;  // If it was the last data then we should return S_OK as we just finished reading everything
@@ -447,15 +447,15 @@ bool ActiveXBindStatusCallback::GetInfo(DWORD which, std::string& result)
 {
     bool ok = false;
 
-    std::vector<char> buffer(2048);
-    DWORD bufferSize = buffer.size();
+    DWORD bufferSize = 2048;
+    boost::scoped_array<char> buffer(new char[bufferSize]);
     DWORD flags(0);
 
-    IWinInetHttpInfo* httpInfo;
+    CComPtr<IWinInetHttpInfo> httpInfo;
     if ( !FAILED(m_pbinding->QueryInterface( &httpInfo ) ) )
     {
         ok = !FAILED( httpInfo->QueryInfo( which, &buffer[0], &bufferSize, &flags, 0 ) );
-        result = std::string( buffer.begin(), buffer.begin() + bufferSize );
+        result = std::string( buffer.get(), bufferSize );
     }
     
     return ok;

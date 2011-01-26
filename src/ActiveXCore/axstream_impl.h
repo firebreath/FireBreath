@@ -97,7 +97,7 @@ namespace FB { namespace ActiveX {
         // data members
         DWORD           m_cRef;
         LPBINDING       m_pbinding;
-        LPSTREAM        m_pstm;
+        CComPtr<IStream> m_pstm;
         DWORD           m_cbOld;
         BOOL            m_fRedirect; // need to be informed when we're being redirected by the server
         BINDVERB        m_dwAction;

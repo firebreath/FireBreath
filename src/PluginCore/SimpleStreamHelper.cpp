@@ -23,6 +23,10 @@ static const int MEGABYTE = 1024 * 1024;
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHostPtr& host, const FB::URI& uri,
     const HttpCallback& callback, const bool cache /*= true*/, const size_t bufferSize /*= 256*1024*/ )
 {
+    if (!host->isMainThread()) {
+        // This must be run from the main thread
+        return host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncGet, host, uri, callback, cache, bufferSize));
+    }
     FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(host, callback, bufferSize));
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
@@ -70,12 +74,12 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::Brow
     SyncGetHelper helper;
     try {
         FB::HttpCallback cb(boost::bind(&SyncGetHelper::getURLCallback, &helper, _1, _2, _3, _4));
-        FB::SimpleStreamHelperPtr ptr = host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncGet, 
-            host, uri, cb, cache, bufferSize));
+        FB::SimpleStreamHelperPtr ptr = AsyncGet(host, uri, cb, cache, bufferSize);
         helper.setPtr(ptr);
         helper.waitForDone();
     } catch (const std::exception&) {
         // If anything weird happens, just return NULL (to indicate failure)
+        return FB::HttpStreamResponsePtr();
     }
     return helper.m_response;
 }
@@ -118,10 +122,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
 
 bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * )
 {
-    if (getStream()->getLength() && !boost::algorithm::contains(getStream()->getHeaders(), "gzip")) {
-        // Phew! we know the length!
-        data = boost::shared_array<uint8_t>(new uint8_t[getStream()->getLength()]);
-    }
+    // We can't reliably find the actual length, so we won't try
     return false;
 }
 
@@ -130,42 +131,28 @@ bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *ev
     received += evt->getLength();
     const uint8_t* buf = reinterpret_cast<const uint8_t*>(evt->getData());
     const uint8_t* endbuf = buf + evt->getLength();
-    if (data) {
-        // If we know the length, we just copy it right in!
-        // Unfortunately, there are cases where we think we know the length but the web server
-        // lies to us.  We have to fix that here :-/
-        if (stream->getLength() < evt->getDataPosition() + evt->getLength()) {
-            received -= evt->getLength();
-            FB::StreamDataArrivedEvent tmp(getStream().get(), data.get(), received, 0, 0);
-            boost::shared_array<uint8_t> tmpData;
-            data.reset();
-            onStreamDataArrived(&tmp, getStream().get());
-            return onStreamDataArrived(evt, getStream().get());
+
+    int len = evt->getLength();
+    int offset = evt->getDataPosition();
+    while (buf < endbuf) {
+        size_t n = offset / blockSize;
+        size_t pos = offset % blockSize;
+        if (blocks.size() < n+1) {
+            blocks.push_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
         }
-        std::copy(buf, buf+evt->getLength(), data.get()+evt->getLength());
-    } else {
-        int len = evt->getLength();
-        int offset = evt->getDataPosition();
-        while (buf < endbuf) {
-            size_t n = offset / blockSize;
-            size_t pos = offset % blockSize;
-            if (blocks.size() < n+1) {
-                blocks.push_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
-            }
-            uint8_t *destBuf = blocks.back().get();
-            //if (pos + len > )
-            int curLen = len;
-            if (pos + len >= blockSize) {
-                // If there isn't room in the current block, copy what there is room for
-                // and loop
-                curLen = blockSize-pos;
-            }
-            // Copy the bytes that fit in this buffer
-            std::copy(buf, buf+curLen, destBuf+offset);
-            buf += curLen;
-            offset += curLen;
-            len -= curLen;
+        uint8_t *destBuf = blocks.back().get();
+        //if (pos + len > )
+        int curLen = len;
+        if (pos + len >= blockSize) {
+            // If there isn't room in the current block, copy what there is room for
+            // and loop
+            curLen = blockSize-pos;
         }
+        // Copy the bytes that fit in this buffer
+        std::copy(buf, buf+curLen, destBuf+offset);
+        buf += curLen;
+        offset += curLen;
+        len -= curLen;
     }
     return false;
 }
