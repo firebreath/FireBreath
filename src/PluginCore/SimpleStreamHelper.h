@@ -126,7 +126,7 @@ namespace FB {
         /// @code
         /// void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
         /// {
-        ///     FB::HttpStreamResponsePtr resp = FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url));
+        ///     FB::HttpStreamResponsePtr resp = FB::SimpleStreamHelper::SynchronousGet(m_host, FB::URI::fromString(url));
         ///     if (resp->success) {
         ///         std::string dstr(reinterpret_cast<const char*>(resp->data.get()), size);
         ///     } else {
