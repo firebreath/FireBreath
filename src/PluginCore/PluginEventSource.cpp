@@ -74,17 +74,19 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 bool PluginEventSource::SendEvent(PluginEvent* evt)
 {
     boost::recursive_mutex::scoped_lock _l(m_observerLock);
-    ObserverMap::iterator it = m_observers.begin();
-    while (it != m_observers.end()) {
+
+    // Sometimes the events cause an observer to be removed; we make a copy so that 
+    // it doesn't mess with our iterator.  Remember that removing an observer will only take
+    // affect on the next SendEvent call
+    ObserverMap copy(m_observers);
+    ObserverMap::iterator it = copy.begin();
+
+    while (it != copy.end()) {
         PluginEventSinkPtr tmp = it->lock();
-        if (!tmp) {
-            it = m_observers.erase(it); // Clear out weak_ptrs that don't point to anything alive
-        }
-        else if (tmp && tmp->HandleEvent(evt, this)) {
+        if (tmp && tmp->HandleEvent(evt, this)) {
             return true;    // Tell the caller that the event was handled
-        } else {
-            it++;
         }
+        it++;
     }
     return false;
 }
