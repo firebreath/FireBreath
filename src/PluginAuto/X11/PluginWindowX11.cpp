@@ -96,7 +96,7 @@ FB::Rect PluginWindowX11::getWindowPosition() const
     return rect;
 }
 
-void PluginWindowX11::setWindowPosition(int32_t x, int32_t y, int32_t w, int32_t h)
+void PluginWindowX11::setWindowPosition(int32_t x, int32_t y, uint32_t w, uint32_t h)
 {
     if (m_x != x
         || m_y != y
