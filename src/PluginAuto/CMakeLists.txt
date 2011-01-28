@@ -84,6 +84,7 @@ file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Mac.mm
     Mac/*Carbon.h
     Mac/*Carbon.cpp
+    Mac/np_*.cpp
     )
 
 file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
