@@ -70,8 +70,8 @@ namespace FB {
 
         virtual FB::Rect getWindowPosition() const;
         virtual FB::Rect getWindowClipping() const;
-        virtual long getWindowWidth() const;
-        virtual long getWindowHeight() const;
+        virtual uint32_t getWindowWidth() const;
+        virtual uint32_t getWindowHeight() const;
 
         typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
 

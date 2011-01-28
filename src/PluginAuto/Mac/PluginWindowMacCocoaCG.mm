@@ -56,35 +56,3 @@ void PluginWindowMacCocoaCG::setContext(CGContextRef context) {
 void PluginWindowMacCocoaCG::clearWindow() {
     // TODO
 }
-
-void PluginWindowMacCocoaCG::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
-    m_x = x;
-    m_y = y;
-    m_width = width;
-    m_height = height;
-}
-
-void PluginWindowMacCocoaCG::setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right) {
-    m_clipTop = top;
-    m_clipLeft = left;
-    m_clipBottom = bottom;
-    m_clipRight = right;
-}
-
-NPRect PluginWindowMacCocoaCG::getWindowPosition() {
-    NPRect windRect;
-    windRect.left = m_x;
-    windRect.top = m_y;
-    windRect.right = m_x + m_width;
-    windRect.bottom = m_y - m_height;
-    return windRect;
-}
-
-NPRect PluginWindowMacCocoaCG::getWindowClipping() {
-    NPRect clipRect;
-    clipRect.left = m_clipLeft;
-    clipRect.right = m_clipRight;
-    clipRect.top = m_clipTop;
-    clipRect.bottom = m_clipBottom;
-    return clipRect;    
-}

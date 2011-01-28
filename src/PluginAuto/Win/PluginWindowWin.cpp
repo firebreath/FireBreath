@@ -203,13 +203,13 @@ FB::Rect FB::PluginWindowWin::getWindowClipping() const
     return getWindowPosition();
 }
 
-long FB::PluginWindowWin::getWindowWidth() const
+uint32_t FB::PluginWindowWin::getWindowWidth() const
 {
     FB::Rect pos = getWindowPosition();
     return pos.right - pos.left;
 }
 
-long FB::PluginWindowWin::getWindowHeight() const
+uint32_t FB::PluginWindowWin::getWindowHeight() const
 {
     FB::Rect pos = getWindowPosition();
     return pos.bottom - pos.top;

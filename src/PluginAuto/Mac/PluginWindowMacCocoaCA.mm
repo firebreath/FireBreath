@@ -60,7 +60,7 @@ void PluginWindowMacCocoaCA::setLayer(void* layer) {
     m_impl->layer = static_cast<CALayer*>(layer);
 }
 
-void PluginWindowMacCocoaCA::InvalidateWindow() {
+void PluginWindowMacCocoaCA::InvalidateWindow() const {
     // Force a drawInContext message to be passed to the window's CALayer
     [m_impl->layer setNeedsDisplay];
 }

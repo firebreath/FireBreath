@@ -35,11 +35,6 @@ namespace FB {
             void setContext(CGContextRef context);
             CGContextRef getContext() { return m_context; }
 
-            void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
-            void setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right);
-            NPRect getWindowPosition();
-            NPRect getWindowClipping();
-
         protected:
             CGContextRef m_context;
     };

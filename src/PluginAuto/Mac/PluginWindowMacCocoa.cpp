@@ -157,11 +157,11 @@ FB::Rect PluginWindowMacCocoa::getWindowClipping() const {
     return r;
 }
 
-long PluginWindowMacCocoa::getWindowHeight() const {
+uint32_t PluginWindowMacCocoa::getWindowHeight() const {
     return m_height;
 }
 
-long PluginWindowMacCocoa::getWindowWidth() const {
+uint32_t PluginWindowMacCocoa::getWindowWidth() const {
     return m_width;
 }
 

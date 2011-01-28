@@ -265,8 +265,8 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
         // be done before SetWindowCA() since the browser will call
         // GetValue() for the CALayer before it calls SetWindow.
         PluginWindowMacCocoaICA* pluginWinICA = getFactoryInstance()->createPluginWindowCocoaICA();
-        this->pluginWin = static_cast<PluginWindow*>(pluginWinICA);
         pluginWinICA->setNpHost(m_npHost);
+        this->pluginWin = static_cast<PluginWindow*>(pluginWinICA);
         pluginMain->SetWindow(pluginWinICA);
 #endif
     } else if(enableCoreAnimation(host)) {
@@ -278,8 +278,8 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
         // be done before SetWindowCA() since the browser will call
         // GetValue() for the CALayer before it calls SetWindow.
         PluginWindowMacCocoaCA* pluginWinCA = getFactoryInstance()->createPluginWindowCocoaCA();
-        this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
         pluginWinCA->setNpHost(m_npHost);
+        this->pluginWin = static_cast<PluginWindow*>(pluginWinCA);
         pluginMain->SetWindow(pluginWinCA);
 #endif
     } else if(enableCoreGraphicsCocoa(host)) {
@@ -351,13 +351,17 @@ NPError NpapiPluginMac::SetWindowCarbonQD(NPWindow* window)
         if (pluginWin == NULL) 
         {
             win = getFactoryInstance()->createPluginWindowCarbonQD(WindowContextQuickDraw((CGrafPtr)prt->port, prt->portx, prt->porty));
+            win->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(win);
+            win->setWindowPosition(window->x, window->y, window->width, window->height);
+            win->setWindowClipping(window->clipRect.top,    window->clipRect.left,
+                                   window->clipRect.bottom, window->clipRect.right);
             pluginMain->SetWindow(win);
-        }
-        
-        win->setWindowPosition(window->x, window->y, window->width, window->height);
-        win->setWindowClipping(window->clipRect.top,    window->clipRect.left,
-                               window->clipRect.bottom, window->clipRect.right);
+        } else {
+            win->setWindowPosition(window->x, window->y, window->width, window->height);
+            win->setWindowClipping(window->clipRect.top,    window->clipRect.left,
+                                   window->clipRect.bottom, window->clipRect.right);
+        }        
     }
     else if (pluginWin != NULL) 
     {
@@ -394,6 +398,7 @@ NPError NpapiPluginMac::SetWindowCarbonCG(NPWindow* window) {
             // We have no plugin window associated with this plugin object.
             // Make a new plugin window object for FireBreath & our plugin.
             pluginWinCG = getFactoryInstance()->createPluginWindowCarbonCG(WindowContextCoreGraphics((NP_CGContext*)window->window));
+            pluginWinCG->setNpHost(m_npHost);
             pluginWin = static_cast<PluginWindow*>(pluginWinCG);
             // Initialize the window position & clipping from the newly arrived NPWindow window
             pluginWinCG->setWindowPosition(window->x, window->y, window->width, window->height);

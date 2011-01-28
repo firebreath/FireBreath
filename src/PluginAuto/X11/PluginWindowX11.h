@@ -38,15 +38,15 @@ namespace FB {
         virtual ~PluginWindowX11();
 
 //         int16_t HandleEvent(EventRecord* evt);
-        void setWindowPosition(long x, long y, long w, long h);
-        void getWindowPosition(long &x, long &y, long &w, long &h) const;
+        void setWindowPosition(int32_t x, int32_t y, uint32_t w, uint32_t h);
+        void getWindowPosition(int32_t &x, int32_t &y, uint32_t &w, uint32_t &h) const;
         FB::Rect getWindowPosition() const;
-        void setWindowClipping(long t, long l, long b, long r);
-        void getWindowClipping(long &t, long &l, long &b, long &r) const;
+        void setWindowClipping(int32_t t, int32_t l, int32_t b, int32_t r);
+        void getWindowClipping(int32_t &t, int32_t &l, int32_t &b, int32_t &r) const;
         FB::Rect getWindowClipping() const;
         virtual void InvalidateWindow() const;
-        long getWindowWidth() const { return m_width; }
-        long getWindowHeight() const { return m_height; }
+        uint32_t getWindowWidth() const { return m_width; }
+        uint32_t getWindowHeight() const { return m_height; }
 
 #if FB_GUI_DISABLED != 1
     public:
@@ -66,15 +66,15 @@ namespace FB {
 
     protected:
         int m_handler_id;
-        long m_x;
-        long m_y;
-        long m_width;
-        long m_height;
+        int32_t m_x;
+        int32_t m_y;
+        uint32_t m_width;
+        uint32_t m_height;
 
-        long m_clipLeft;
-        long m_clipRight;
-        long m_clipTop;
-        long m_clipBottom;
+        int32_t m_clipLeft;
+        int32_t m_clipRight;
+        int32_t m_clipTop;
+        int32_t m_clipBottom;
     };
 
 };

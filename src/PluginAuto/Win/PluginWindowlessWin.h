@@ -59,19 +59,19 @@ namespace FB {
             HWND getHWND() const { return m_browserHwnd; } 
 
             FB::Rect getWindowPosition() const;
-            void setWindowPosition(long x, long y, long width, long height);
+            void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
             void setWindowPosition(FB::Rect pos);
 
             FB::Rect getWindowClipping() const;
-            void setWindowClipping(long top, long left, long bottom, long right);
+            void setWindowClipping(int32_t top, int32_t left, int32_t bottom, int32_t right);
             void setWindowClipping(FB::Rect clip);
 
-            long getWindowWidth() const { return m_width; }
+            uint32_t getWindowWidth() const { return m_width; }
 
-            long getWindowHeight() const { return m_height; }
+            uint32_t getWindowHeight() const { return m_height; }
 
             // Converts window-space coordinates into plugin-place coordinates
-            void translateWindowToPlugin(long &x, long &y) const;
+            void translateWindowToPlugin(int32_t &x, int32_t &y) const;
 
             // Handle event given to us from NPAPI (windowless plugins don't intercept raw Windows events)
             bool HandleEvent(uint32_t event, uint32_t wParam, uint32_t lParam, LRESULT& lRes);
@@ -82,8 +82,9 @@ namespace FB {
         protected:
             HDC m_hdc;
             HWND m_browserHwnd;
-            long m_x, m_y, m_width, m_height; 
-            long m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
+            int32_t m_x, m_y;
+            uint32_t m_width, m_height; 
+            int32_t m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
             InvalidateWindowFunc m_invalidateWindow;
     };    
 };

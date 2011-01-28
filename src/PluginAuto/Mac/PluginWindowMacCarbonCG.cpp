@@ -125,8 +125,8 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             long py = m_height - (point->y - m_y);
             // </hack>
             // px & py have been translated to plugin window's coordinates space
-            if((px > 0) && (px < m_width)) {
-                if((py > 0) && (py < m_height)) {
+            if((px > 0) && (static_cast<uint32_t>(px) < m_width)) {
+                if((py > 0) && (static_cast<uint32_t>(py) < m_height)) {
                     if ((px == this->m_old_x) && (py == this->m_old_y)) {
                         // Mouse hasn't moved
                         CFRelease(nullEvent);
@@ -165,7 +165,3 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
     return false;
 }
 
-void PluginWindowMacCarbonCG::InvalidateWindow() const {
-    NPRect rect = { 0, 0, m_height, m_width };
-    m_npHost->InvalidateRect(&rect);
-}

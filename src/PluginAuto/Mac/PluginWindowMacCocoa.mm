@@ -166,19 +166,23 @@ FB::Rect PluginWindowMacCocoa::getWindowClipping() const {
     return r;
 }
 
-long PluginWindowMacCocoa::getWindowHeight() const {
+uint32_t PluginWindowMacCocoa::getWindowHeight() const {
     return m_height;
 }
 
-long PluginWindowMacCocoa::getWindowWidth() const {
+uint32_t PluginWindowMacCocoa::getWindowWidth() const {
     return m_width;
 }
 
 void PluginWindowMacCocoa::setWindowPosition(int32_t x, int32_t y, int32_t width, int32_t height) {
-    m_x = x;
-    m_y = y;
-    m_width = width;
-    m_height = height;
+    if (m_x != x || m_y != y || m_width != width || m_height != height) {
+        m_x = x;
+        m_y = y;
+        m_width = width;
+        m_height = height;
+        RefreshEvent ev;
+        SendEvent(&ev);
+    }
 }
 
 void PluginWindowMacCocoa::setWindowClipping(uint32_t top, uint32_t left, uint32_t bottom, uint32_t right) {
@@ -211,8 +215,13 @@ void PluginWindowMacCocoa::unscheduleTimer(int timerId) {
 }
 
 void PluginWindowMacCocoa::InvalidateWindow() const {
-    NPRect rect = { 0, 0, m_height, m_width };
-    m_npHost->InvalidateRect(&rect);
+    FB::Rect pos = getWindowPosition();
+    NPRect r = { pos.top, pos.left, pos.bottom, pos.right };
+    if (!m_npHost->isMainThread()) {
+        m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
+    } else {
+        m_npHost->InvalidateRect(&r);
+    }
 }
 
 void PluginWindowMacCocoa::handleTimerEvent() {

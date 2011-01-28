@@ -31,7 +31,7 @@ namespace FB {
 
     public:
         void clearWindow();
-        void InvalidateWindow();
+        void InvalidateWindow() const;
         void setLayer(void* layer);
         void* getLayer() const;
 
