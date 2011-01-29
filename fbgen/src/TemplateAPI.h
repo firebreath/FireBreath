@@ -17,7 +17,7 @@
 class @{PLUGIN_ident}API : public FB::JSAPIAuto
 {
 public:
-    @{PLUGIN_ident}API(@{PLUGIN_ident}Ptr plugin, FB::BrowserHostPtr host);
+    @{PLUGIN_ident}API(const @{PLUGIN_ident}Ptr& plugin, const FB::BrowserHostPtr& host);
     virtual ~@{PLUGIN_ident}API();
 
     @{PLUGIN_ident}Ptr getPlugin();

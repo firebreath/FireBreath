@@ -7,7 +7,6 @@
 
 \**********************************************************/
 
-#include "NpapiTypes.h"
 #include "@{PLUGIN_ident}API.h"
 
 #include "@{PLUGIN_ident}.h"
@@ -21,9 +20,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 void @{PLUGIN_ident}::StaticInitialize()
 {
-    // Place one-time initialization stuff here; note that there isn't an absolute guarantee that
-    // this will only execute once per process, just a guarantee that it won't execute again until
-    // after StaticDeinitialize is called
+    // Place one-time initialization stuff here; As of FireBreath 1.4 this should only
+    // be called once per process
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -35,7 +33,8 @@ void @{PLUGIN_ident}::StaticInitialize()
 ///////////////////////////////////////////////////////////////////////////////
 void @{PLUGIN_ident}::StaticDeinitialize()
 {
-    // Place one-time deinitialization stuff here
+    // Place one-time deinitialization stuff here. As of FireBreath 1.4 this should
+    // always be called just before the plugin library is unloaded
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -82,7 +81,7 @@ void @{PLUGIN_ident}::onPluginReady()
 FB::JSAPIPtr @{PLUGIN_ident}::createJSAPI()
 {
     // m_host is the BrowserHost
-    return FB::JSAPIPtr(new @{PLUGIN_ident}API(FB::ptr_cast<@{PLUGIN_ident}>(shared_ptr()), m_host));
+    return boost::make_shared<@{PLUGIN_ident}API>(FB::ptr_cast<@{PLUGIN_ident}>(shared_from_this()), m_host);
 }
 
 bool @{PLUGIN_ident}::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)

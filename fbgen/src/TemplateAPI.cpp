@@ -11,7 +11,7 @@
 #include "@{PLUGIN_ident}API.h"
 
 ///////////////////////////////////////////////////////////////////////////////
-/// @@fn @{PLUGIN_ident}API::@{PLUGIN_ident}API(@{PLUGIN_ident}Ptr plugin, FB::BrowserHostPtr host)
+/// @@fn @{PLUGIN_ident}API::@{PLUGIN_ident}API(const @{PLUGIN_ident}Ptr& plugin, const FB::BrowserHostPtr host)
 ///
 /// @@brief  Constructor for your JSAPI object.  You should register your methods, properties, and events
 ///         that should be accessible to Javascript from here.
@@ -20,7 +20,7 @@
 /// @@see FB::JSAPIAuto::registerProperty
 /// @@see FB::JSAPIAuto::registerEvent
 ///////////////////////////////////////////////////////////////////////////////
-@{PLUGIN_ident}API::@{PLUGIN_ident}API(@{PLUGIN_ident}Ptr plugin, FB::BrowserHostPtr host) : m_plugin(plugin), m_host(host)
+@{PLUGIN_ident}API::@{PLUGIN_ident}API(const @{PLUGIN_ident}Ptr& plugin, const FB::BrowserHostPtr& host) : m_plugin(plugin), m_host(host)
 {
     registerMethod("echo",      make_method(this, &@{PLUGIN_ident}API::echo));
     registerMethod("testEvent", make_method(this, &@{PLUGIN_ident}API::testEvent));
