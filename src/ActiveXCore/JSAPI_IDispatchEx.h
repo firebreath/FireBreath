@@ -564,6 +564,8 @@ namespace FB { namespace ActiveX {
         if (m_memberList.size() != api->getMemberCount()) {
             m_memberList.clear();
             api->getMemberNames(m_memberList);
+            m_memberList.push_back(L"attachEvent");
+            m_memberList.push_back(L"detachEvent");
         }
         if (m_memberList.size() == 0)
             return S_FALSE;

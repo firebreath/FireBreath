@@ -69,7 +69,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
     }
 
 	DISPID dispid = DISPID_STARTENUM;
-	while (SUCCEEDED(dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid))) {
+	while (dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid) != S_FALSE) {
 		if (dispid < 0) {
 			continue;
 		}
@@ -103,7 +103,7 @@ size_t IDispatchAPI::getMemberCount() const
 
     size_t count = 0;
     DISPID dispid = DISPID_STARTENUM;    
-    while (SUCCEEDED(dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid))) {
+    while (dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid) != S_FALSE) {
         if (dispid >= 0) {
 			++count;
 		}
