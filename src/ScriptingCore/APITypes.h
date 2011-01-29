@@ -23,17 +23,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/function.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/variant/variant_fwd.hpp>
-#include <boost/cstdint.hpp>
+#include "fb_stdint.h"
 #include "FBPointers.h"
-
-using boost::int8_t;
-using boost::int16_t;
-using boost::int32_t;
-using boost::int64_t;
-using boost::uint8_t;
-using boost::uint16_t;
-using boost::uint32_t;
-using boost::uint64_t;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @namespace  FB

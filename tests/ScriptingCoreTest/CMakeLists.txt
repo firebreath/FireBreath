@@ -30,6 +30,7 @@ include_directories(
     ${PLUGINAUTO_SOURCE_DIR}
     ${FIREBREATH_CONFIG_DIR}
     ${GEN_DIR}/gen
+    ${CONFIG_DIR}
     ${UNITTEST_FW_SOURCE_DIR}/src
     ${Boost_INCLUDE_DIRS}
     )
