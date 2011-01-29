@@ -92,6 +92,20 @@ void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunc
     m_zoneMap[name] = getZone();
 }
 
+void FB::JSAPIAuto::unregisterMethod( const std::wstring& name )
+{
+    unregisterMethod(FB::wstring_to_utf8(name));
+}
+
+void FB::JSAPIAuto::unregisterMethod( const std::string& name )
+{
+    FB::MethodFunctorMap::iterator fnd = m_methodFunctorMap.find(name);
+    if (fnd != m_methodFunctorMap.end()) {
+        m_methodFunctorMap.erase(name);
+        m_zoneMap.erase(name);
+    }
+}
+
 void FB::JSAPIAuto::registerProperty(const std::wstring& name, const PropertyFunctors& func)
 {
     registerProperty(FB::wstring_to_utf8(name), func);
@@ -102,6 +116,20 @@ void FB::JSAPIAuto::registerProperty(const std::string& name, const PropertyFunc
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     m_propertyFunctorsMap[name] = propFuncs;
     m_zoneMap[name] = getZone();
+}
+
+void FB::JSAPIAuto::unregisterProperty( const std::wstring& name )
+{
+    unregisterProperty(FB::wstring_to_utf8(name));
+}
+
+void FB::JSAPIAuto::unregisterProperty( const std::string& name )
+{
+    FB::PropertyFunctorsMap::iterator fnd = m_propertyFunctorsMap.find(name);
+    if (fnd != m_propertyFunctorsMap.end()) {
+        m_propertyFunctorsMap.erase(name);
+        m_zoneMap.erase(name);
+    }
 }
 
 void FB::JSAPIAuto::getMemberNames(std::vector<std::string> &nameVector) const

@@ -169,6 +169,20 @@ namespace FB {
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
         virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
+        virtual void unregisterMethod(const std::wstring& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void JSAPIAuto::unregisterMethod(const std::string& name)
+        ///
+        /// @brief  Unregisters a method that has been exposed to javascript 
+        ///
+        /// This is the opposite of registerMethod
+        ///
+        /// @param  name    The name that the method will have when accessed from javascript. 
+        /// @see registerMethod
+        /// @since 1.4b4
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void unregisterMethod(const std::string& name);
+
         virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
@@ -228,6 +242,20 @@ namespace FB {
         /// @param  propFuncs   The property funcs. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerProperty(const std::string& name, const PropertyFunctors& propFuncs);
+
+        virtual void unregisterProperty(const std::wstring& name);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void JSAPIAuto::unregisterProperty(const std::string& name)
+        ///
+        /// @brief  Unregisters a property that has been exposed to javascript 
+        ///
+        /// This is the opposite of registerProperty
+        ///
+        /// @param  name    The name that the method will have when accessed from javascript. 
+        /// @see registerProperty
+        /// @since 1.4b4
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void unregisterProperty(const std::string& name);
         
         virtual variant GetProperty(const std::string& propertyName);
         virtual void SetProperty(const std::string& propertyName, const variant& value);
