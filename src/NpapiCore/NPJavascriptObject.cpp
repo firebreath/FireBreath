@@ -69,7 +69,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
 {
     try {
         std::string mName = m_browser->StringFromIdentifier(name);
-
+        if (mName == "toString") return true;
         return !getAPI()->HasMethodObject(mName) && getAPI()->HasMethod(mName);
     } catch (const std::bad_cast&) {
         return false; // invalid object
