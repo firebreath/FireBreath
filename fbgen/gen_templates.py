@@ -36,7 +36,7 @@ class Base(object):
         self.keys = AttrDictSimple(
             name     = ("Name", re.compile(r"^.+$"), "Name must be at least one character, and may not contain carriage returns."),
             ident    = ("Identifier", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,}$"), "Identifier must be 3 or more alphanumeric characters (underscore allowed)."),
-            desc     = ("Description", re.compile(r"^.*$"), "Description may not contain carriage returns."),
+            desc     = ("Description", re.compile(r"^.+$"), "Description must be one or more characters long!"),
             prefix   = ("Prefix", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,4}$"), "Prefix must be 3 to 5 alphanumeric characters (underscores allowed)."),
             domain   = ("Domain", re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,4}$"), "Domain must be a valid domain name."),
             mimetype = ("MIME type", re.compile(r"^[a-zA-Z0-9]+\/[a-zA-Z0-9\-]+$"), "Please use alphanumeric characters and dashes in the format: application/x-firebreath"),
