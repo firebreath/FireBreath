@@ -30,7 +30,6 @@ public:
 
 public:
     virtual FB::JSAPIPtr createJSAPI() { return FB::JSAPIPtr(new TestObjectJSAPI()); }
-    virtual bool IsWindowless() { return false; }
     bool HandleEvent(FB::PluginEvent *,FB::PluginEventSource *) { return false; }
 
 };

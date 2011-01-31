@@ -157,7 +157,6 @@ namespace FB {
         ///         occur before the Window (if any) is set.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setReady();
-        virtual bool isWindowless();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::onPluginReady()
@@ -214,20 +213,17 @@ namespace FB {
         virtual JSAPIPtr getRootJSAPI();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool PluginCore::IsWindowless() = 0
+        /// @fn virtual bool PluginCore::isWindowless() = 0
         ///
         /// @brief  Called by the browser to query if this plugin should be windowless. 
         ///
-        /// This method *must* be implemented by all classes extending PluginCore.  It should determine
-        /// whether or not the plugin should be started in Windowless mode and return true or false 
-        /// accordingly.
-        /// 
-        /// One of the more common methods for doing this is to support a "windowless" param and check
-        /// m_params["windowless"] in this function.
+        /// The default implementation supports a "windowless" param and checks m_params["windowless"]
+        /// to determine if the plugin should be windowless or not.  To force always windowless, override
+        /// and return true. To force never windowless, override and return false.
         /// 
         /// @return true if windowless, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool IsWindowless() = 0;
+        virtual bool isWindowless();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::setFSPath(const std::string& path)
