@@ -72,7 +72,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
 
             long x_0 = point->x - m_x;
-            long y_0 = m_height - (point->y - m_y);
+            long y_0 = point->y - m_y;
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);                               
             return SendEvent(&ev);
         }
@@ -85,7 +85,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
 
             long x_0 = point->x - m_x;
-            long y_0 = m_height - (point->y - m_y);
+            long y_0 = point->y - m_y;
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x_0, y_0);
             return SendEvent(&ev);
         }
@@ -122,7 +122,7 @@ int16_t PluginWindowMacCarbonCG::HandleEvent(EventRecord* evt) {
             HIPointConvert(point.get(), kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, m_winRef);
             // <hack>
             long px = point->x - m_x;
-            long py = m_height - (point->y - m_y);
+            long py = point->y - m_y;
             // </hack>
             // px & py have been translated to plugin window's coordinates space
             if((px > 0) && (static_cast<uint32_t>(px) < m_width)) {
