@@ -48,6 +48,7 @@ if (NOT GEN_DIR)
 endif()
 
 if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/PluginConfig.cmake)
+    include(${CMAKE_DIR}/PluginConfigDefaults.cmake)
     include (${CMAKE_CURRENT_SOURCE_DIR}/PluginConfig.cmake)
 endif()
 
