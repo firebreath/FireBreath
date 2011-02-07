@@ -377,6 +377,8 @@ namespace FB
         bool m_isShutDown;
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
         mutable boost::shared_mutex m_xtmutex;
+        // Used to prevent race conditions with scheduling cross-thread calls during shutdown
+        mutable boost::resursive_mutex m_jsapimutex;
 
         mutable std::set<FB::JSAPIPtr> m_retainedObjects;
         BrowserStreamManagerPtr m_streamMgr;

@@ -151,7 +151,7 @@ bool FB::BrowserHost::isMainThread() const
 
 void FB::BrowserHost::freeRetainedObjects() const
 {
-    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
     // This releases all stored shared_ptr objects that the browser is holding
     m_retainedObjects.clear();
 
@@ -162,13 +162,13 @@ void FB::BrowserHost::freeRetainedObjects() const
 
 void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
-    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
     m_retainedObjects.insert(obj);
 }
 
 void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
-    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
     m_retainedObjects.erase(m_retainedObjects.find(obj));
     DoDeferredRelease();
 }
