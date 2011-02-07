@@ -80,12 +80,29 @@ namespace FB { namespace Log {
     };
 
     //////////////////////////////////////////////////////////////////////////
-    /// Used to specify which logging methods to use
+    /// @enum FB::Log::LogMethod
+    /// 
+    /// @brief Used to specify which logging methods should be enabled
+    ///
+    /// This enumeration is used by FB::FactoryBase::getLoggingMethods to
+    /// specify the logging methods to enable. Currently Console and File
+    /// are supported.
     //////////////////////////////////////////////////////////////////////////
     enum LogMethod {
+        // Enable Console-mode logging (Debug console on windows, system console on other)
         LogMethod_Console  = 0x01,
+        // Enable logging to a file - filename must be specified
         LogMethod_File  = 0x02
     };
+
+    //////////////////////////////////////////////////////////////////////////    
+    /// @brief Contains a list of log methods to enable
+    ///
+    /// This type is used by FB::FactoryBase::getLoggingMethods to
+    /// return the logging methods to enable. Currently Console and File
+    /// are supported. If File is desired, the string should contain the
+    /// path and filename of the logfile. For console, the string is ignored
+    //////////////////////////////////////////////////////////////////////////
     typedef std::list<std::pair<FB::Log::LogMethod, std::string> > LogMethodList;
 
 }; };
