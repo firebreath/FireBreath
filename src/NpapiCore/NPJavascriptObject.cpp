@@ -262,13 +262,15 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         for (uint32_t i = 0; i < memberList.size(); i++) {
             outList[i] = m_browser->GetStringIdentifier(memberList.at(i).c_str());
         }
-        outList[memberList.size() - 2] = m_browser->GetStringIdentifier("addEventListener");
-        outList[memberList.size() - 1] = m_browser->GetStringIdentifier("removeEventListener");
+        outList[memberList.size()] = m_browser->GetStringIdentifier("addEventListener");
+        outList[memberList.size() + 1] = m_browser->GetStringIdentifier("removeEventListener");
         *value = outList;
         return true;
     } catch (const std::bad_cast&) {
+        *count = 0;
         return false; // invalid object
     } catch (const script_error& e) {
+        *count = 0;
         m_browser->SetException(this, e.what());
         return false;
     }

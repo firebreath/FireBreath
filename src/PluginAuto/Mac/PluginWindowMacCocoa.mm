@@ -39,7 +39,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         case NPCocoaEventMouseDown: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
-            y = m_height - y; // Reposition origin to bottom left
             switch(evt->data.mouse.buttonNumber) {
                 case 0: {
                     MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
@@ -62,7 +61,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         case NPCocoaEventMouseUp: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
-            y = m_height - y; // Reposition origin to bottom left
             switch(evt->data.mouse.buttonNumber) {
                 case 0: {
                     MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
@@ -85,7 +83,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         case NPCocoaEventMouseMoved: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
-            y = m_height - y; // Reposition origin to bottom left
             MouseMoveEvent ev(x, y);
             return SendEvent(&ev);
             break;

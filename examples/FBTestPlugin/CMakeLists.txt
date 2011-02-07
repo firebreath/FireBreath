@@ -9,7 +9,6 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 include(${CMAKE_DIR}/common.cmake)
 
 set (PROJNAME ${PLUGIN_NAME})
-
 browserplugin_project(${PROJNAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

@@ -28,7 +28,6 @@ public:
 
 public:
     virtual FB::JSAPIPtr createJSAPI();
-    virtual bool IsWindowless() { return false; }
     
     std::string getPluginPath() { return m_filesystemPath; }
 

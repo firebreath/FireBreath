@@ -43,12 +43,13 @@ include(${CMAKE_DIR}/paths.cmake)
 # include the build configuration
 include(${CMAKE_DIR}/buildconfig.cmake)
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
-    include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
-endif()
-
 if (NOT GEN_DIR)
     get_filename_component (GEN_DIR "${CMAKE_CURRENT_BINARY_DIR}/../gen" ABSOLUTE)
+endif()
+
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/PluginConfig.cmake)
+    include(${CMAKE_DIR}/PluginConfigDefaults.cmake)
+    include (${CMAKE_CURRENT_SOURCE_DIR}/PluginConfig.cmake)
 endif()
 
 macro (browserplugin_project PLUGIN_NAME)
@@ -58,11 +59,11 @@ macro (browserplugin_project PLUGIN_NAME)
 
     if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
         set(CMAKE_CURRENT_PLUGIN_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+        include(${CMAKE_CURRENT_BINARY_DIR}/projectConfig.cmake)
         include(${FB_ROOT_DIR}/pluginProjects.cmake)
     endif()
 
 endmacro(browserplugin_project)
-
 
 macro (include_platform)
 
@@ -107,7 +108,6 @@ macro (add_firebreath_library project_name)
 
     foreach(LIB_DIR ${FBLIB_DIRS})
         if (EXISTS ${LIB_DIR}/${project_name}/CMakeLists.txt)
-            set (${PLUGIN_NAME}_${project_name} YES PARENT_SCOPE)
             get_target_property(library_target_exists ${project_name} TYPE)
             if (NOT library_target_exists)
                 set(FBLIB_DEFINITIONS)
@@ -118,6 +118,10 @@ macro (add_firebreath_library project_name)
             endif()
         endif()
     endforeach()
+    set (LIB_KEY ${PLUGIN_NAME}_${project_name})
+    set (${LIB_KEY} YES)
+    set (${LIB_KEY} YES PARENT_SCOPE)
+    message("Set ${LIB_KEY} to ${${LIB_KEY}}")
 
 endmacro(add_firebreath_library)
 

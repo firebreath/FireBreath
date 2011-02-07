@@ -101,7 +101,7 @@
 /*----------------------------------------------------------------------*/
 
 #define NP_VERSION_MAJOR 0
-#define NP_VERSION_MINOR 25
+#define NP_VERSION_MINOR 27
 
 
 /* The OS/2 version of Netscape uses RC_DATA to define the
@@ -377,7 +377,7 @@ typedef enum {
   , NPPVpluginCoreAnimationLayer = 1003
 #endif
 
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if (MOZ_PLATFORM_MAEMO == 5) || (MOZ_PLATFORM_MAEMO == 6)
   , NPPVpluginWindowlessLocalBool = 2002
 #endif
 } NPPVariable;
@@ -425,8 +425,10 @@ typedef enum {
   , NPNVsupportsCarbonBool = 3000 /* TRUE if the browser supports the Carbon event model */
 #endif
   , NPNVsupportsCocoaBool = 3001 /* TRUE if the browser supports the Cocoa event model */
+  , NPNVsupportsUpdatedCocoaTextInputBool = 3002 /* TRUE if the browser supports the updated
+                                                    Cocoa text input specification. */
 #endif
-#if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO == 5)
+#if (MOZ_PLATFORM_MAEMO == 5) || (MOZ_PLATFORM_MAEMO == 6)
   , NPNVSupportsWindowlessLocal = 2002
 #endif
 } NPNVariable;
@@ -691,6 +693,12 @@ enum NPEventType {
 
 #define NP_MAXREADY (((unsigned)(~0)<<1)>>1)
 
+/*
+ * Flags for NPP_ClearSiteData.
+ */
+#define NP_CLEAR_ALL   0
+#define NP_CLEAR_CACHE (1 << 0)
+
 #if !defined(__LP64__)
 #if defined(XP_MACOSX)
 #pragma options align=reset
@@ -719,6 +727,8 @@ enum NPEventType {
 #define NPERR_FILE_NOT_FOUND              (NPERR_BASE + 11)
 #define NPERR_NO_DATA                     (NPERR_BASE + 12)
 #define NPERR_STREAM_NOT_SEEKABLE         (NPERR_BASE + 13)
+#define NPERR_TIME_RANGE_NOT_SUPPORTED    (NPERR_BASE + 14)
+#define NPERR_MALFORMED_SITE              (NPERR_BASE + 15)
 
 /*
  * Values of type NPReason:
@@ -755,6 +765,8 @@ enum NPEventType {
 #define NPVERS_HAS_PRIVATE_MODE             22
 #define NPVERS_MACOSX_HAS_COCOA_EVENTS      23
 #define NPVERS_HAS_ADVANCED_KEY_HANDLING    25
+#define NPVERS_HAS_URL_REDIRECT_HANDLING    26
+#define NPVERS_HAS_CLEAR_SITE_DATA          27
 
 /*----------------------------------------------------------------------*/
 /*                        Function Prototypes                           */
@@ -776,8 +788,6 @@ extern "C" {
 char* NPP_GetMIMEDescription(void);
 #endif
 
-NPError NP_LOADDS NPP_Initialize(void);
-void    NP_LOADDS NPP_Shutdown(void);
 NPError NP_LOADDS NPP_New(NPMIMEType pluginType, NPP instance,
                           uint16_t mode, int16_t argc, char* argn[],
                           char* argv[], NPSavedData* saved);
@@ -801,6 +811,9 @@ NPError NP_LOADDS NPP_GetValue(NPP instance, NPPVariable variable, void *value);
 NPError NP_LOADDS NPP_SetValue(NPP instance, NPNVariable variable, void *value);
 NPBool  NP_LOADDS NPP_GotFocus(NPP instance, NPFocusDirection direction);
 void    NP_LOADDS NPP_LostFocus(NPP instance);
+void    NP_LOADDS NPP_URLRedirectNotify(NPP instance, const char* url, int32_t status, void* notifyData);
+NPError NP_LOADDS NPP_ClearSiteData(const char* site, uint64_t flags, uint64_t maxAge);
+char**  NP_LOADDS NPP_GetSitesWithData(void);
 
 /* NPN_* functions are provided by the navigator and called by the plugin. */
 void        NP_LOADDS NPN_Version(int* plugin_major, int* plugin_minor,
@@ -862,6 +875,7 @@ NPError     NP_LOADDS NPN_PopUpContextMenu(NPP instance, NPMenu* menu);
 NPBool      NP_LOADDS NPN_ConvertPoint(NPP instance, double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double *destX, double *destY, NPCoordinateSpace destSpace);
 NPBool      NP_LOADDS NPN_HandleEvent(NPP instance, void *event, NPBool handled);
 NPBool      NP_LOADDS NPN_UnfocusInstance(NPP instance, NPFocusDirection direction);
+void        NP_LOADDS NPN_URLRedirectResponse(NPP instance, void* notifyData, NPBool allow);
 
 #ifdef __cplusplus
 }  /* end extern "C" */
