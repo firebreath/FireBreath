@@ -36,3 +36,4 @@ bool NpapiBrowserHostAsyncWin::_scheduleAsyncCall(void (*func)(void*), void* use
     return ::PostMessage(m_messageWin->getHWND(), WM_ASYNCTHREADINVOKE, NULL, 
                   (LPARAM)new FB::AsyncFunctionCall(func, userData)) ? true : false;
 }
+

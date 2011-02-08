@@ -23,3 +23,4 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSObject.h"
 
 #endif
+

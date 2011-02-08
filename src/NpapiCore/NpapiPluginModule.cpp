@@ -205,3 +205,4 @@ void NpapiPluginModule::ReleaseObject(NPObject *npobj)
         NPNFuncs.releaseobject(npobj);
     }
 }
+

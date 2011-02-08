@@ -237,3 +237,4 @@ namespace log4cplus {
 } // namespace log4cplus
 
 #endif // LOG4CPLUS_HELPERS_STRINGHELPER_HEADER_
+

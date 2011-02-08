@@ -31,3 +31,4 @@ bool FB::ActiveX::isStaticInitialized()
     return g_Initialized;
 }
 
+

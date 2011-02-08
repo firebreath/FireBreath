@@ -387,3 +387,4 @@ bool HTTP::UploadQueue::hasFile( const std::wstring& filename )
 }
 
 void sendUpdateEvent();
+

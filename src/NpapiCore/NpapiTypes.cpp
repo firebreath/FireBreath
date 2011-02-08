@@ -120,3 +120,4 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
         // ?
     }
 }
+

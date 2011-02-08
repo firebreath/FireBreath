@@ -158,3 +158,4 @@ namespace log4cplus {
 
 
 #endif // _LOG4CPLUS_HELPERS_POINTERS_HEADER_
+

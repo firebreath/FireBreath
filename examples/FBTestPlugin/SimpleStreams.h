@@ -25,3 +25,4 @@ public:
 protected:
     FB::BrowserHostPtr host;
 };
+

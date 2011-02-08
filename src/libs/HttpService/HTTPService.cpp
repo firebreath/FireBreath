@@ -41,3 +41,4 @@ void HTTPService::terminateAllInstances() {
     }
     instances.clear();
 }
+

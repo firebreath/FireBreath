@@ -144,3 +144,4 @@ int16_t NpapiPluginWin::HandleEvent(void* event) {
     }
     return false;
 }
+

@@ -351,3 +351,4 @@ NPError NpapiPluginModule::NPP_SetValue(NPP instance, NPNVariable variable, void
         return NPERR_GENERIC_ERROR;
     }
 }
+

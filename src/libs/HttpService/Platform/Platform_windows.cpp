@@ -130,3 +130,4 @@ HTTPProxyConfig Platform::getSystemProxyConfig() {
     return HTTPProxyConfig();
   }
 }
+

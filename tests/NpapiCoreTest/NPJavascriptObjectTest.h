@@ -181,3 +181,4 @@ TEST(NPJavascriptObject_Properties)
         CHECK(false);
     }
 }
+

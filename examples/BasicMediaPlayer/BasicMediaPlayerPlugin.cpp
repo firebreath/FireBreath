@@ -92,3 +92,4 @@ bool BasicMediaPlayerPlugin::onWindowDetached(FB::DetachedEvent* evt, FB::Plugin
     m_player->setWindow(NULL);
     return true;
 }
+

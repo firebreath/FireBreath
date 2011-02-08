@@ -97,3 +97,4 @@ TEST(TypeIDMapTest_testlong)
     idMap.setIdForValue(-500, "autosize");
     idMap.setIdForValue(-501, "backcolor");
 }
+

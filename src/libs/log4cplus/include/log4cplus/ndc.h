@@ -305,3 +305,4 @@ namespace log4cplus {
 
 
 #endif // _LO4CPLUS_NDC_HEADER_
+

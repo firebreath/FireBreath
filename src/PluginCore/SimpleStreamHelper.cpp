@@ -180,3 +180,4 @@ void FB::SimpleStreamHelper::keepReference( const SimpleStreamHelperPtr& ptr )
 {
     self = ptr;
 }
+

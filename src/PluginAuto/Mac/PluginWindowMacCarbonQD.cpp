@@ -57,3 +57,4 @@ int16_t PluginWindowMacCarbonQD::HandleEvent(EventRecord* evt)
     }
     return false;
 }
+

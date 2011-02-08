@@ -44,3 +44,4 @@ void ExecuteTest(T& testObject, TestDetails const& details)
 }
 
 #endif
+

@@ -27,3 +27,4 @@ IDispatchEx* _getCOMJSWrapper( FB::BrowserHostPtr host, FB::JSAPIWeakPtr api )
 HRESULT _updateRegistry( bool res ) {
     return CFBControl0::UpdateRegistry(true);
 }
+

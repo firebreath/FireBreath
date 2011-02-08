@@ -27,3 +27,4 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define FB_UNUSED_VARIABLE(x) ((void)(x))
 
 #endif // FBPointers_h__
+

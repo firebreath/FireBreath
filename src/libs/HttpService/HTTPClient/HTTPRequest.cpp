@@ -424,3 +424,4 @@ struct _curl_static_init_t {
   ~_curl_static_init_t() { curl_global_cleanup(); }
 };
 static _curl_static_init_t _curl_static_init;
+

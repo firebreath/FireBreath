@@ -68,3 +68,4 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
         return getProperty<std::string>(attr);
     }
 }
+

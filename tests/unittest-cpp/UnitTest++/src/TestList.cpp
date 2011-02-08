@@ -37,3 +37,4 @@ ListAdder::ListAdder(TestList& list, Test* test)
 }
 
 }
+

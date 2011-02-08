@@ -172,3 +172,4 @@ void FB::PluginWindowlessWin::InvalidateWindow() const
     if (m_invalidateWindow)
         m_invalidateWindow(0, 0, getWindowWidth(), getWindowHeight());
 }
+

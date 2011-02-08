@@ -49,3 +49,4 @@ void CrossThreadCall::asyncCallbackFunctor(void *userData)
         FB_UNUSED_VARIABLE(ex);
     }
 }
+

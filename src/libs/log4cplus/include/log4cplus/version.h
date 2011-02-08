@@ -47,3 +47,4 @@ extern LOG4CPLUS_EXPORT char const versionStr[];
 }
 
 #endif
+

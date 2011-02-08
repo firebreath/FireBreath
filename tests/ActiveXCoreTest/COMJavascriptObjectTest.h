@@ -197,3 +197,4 @@ TEST(COMJavascriptObject_Properties)
     //    CHECK(false);
     //}
 }
+

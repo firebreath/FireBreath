@@ -229,3 +229,4 @@ SyncGuard<SP>::detach ()
 
 
 #endif // LOG4CPLUS_THREAD_SYNCPRIMS_H
+

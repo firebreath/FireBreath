@@ -242,3 +242,4 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
     }
     return ptr;
 }
+

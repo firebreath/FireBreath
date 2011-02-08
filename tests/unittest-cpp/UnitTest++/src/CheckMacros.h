@@ -120,3 +120,4 @@
     CHECK_THROW(expression, UnitTest::AssertException);
 
 #endif
+

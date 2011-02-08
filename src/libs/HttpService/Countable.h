@@ -33,3 +33,4 @@ inline void intrusive_ptr_add_ref(Countable* obj) {
 inline void intrusive_ptr_release(Countable* obj) {
   if ((--(obj->_refcount)) == 0) delete obj;
 }
+

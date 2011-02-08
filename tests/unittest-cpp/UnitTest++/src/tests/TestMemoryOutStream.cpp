@@ -149,3 +149,4 @@ TEST(WritingSizeTLongerThanCapacityFitsInNewBuffer)
 #endif
 
 }
+

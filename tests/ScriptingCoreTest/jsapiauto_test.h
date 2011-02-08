@@ -198,3 +198,4 @@ TEST(JSAPIAuto_Methods)
         CHECK_EQUAL(description, tmp);
     }
 }
+

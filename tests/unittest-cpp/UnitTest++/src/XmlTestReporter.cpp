@@ -125,3 +125,4 @@ void XmlTestReporter::AddFailure(std::ostream& os, DeferredTestResult const& res
 }
 
 }
+

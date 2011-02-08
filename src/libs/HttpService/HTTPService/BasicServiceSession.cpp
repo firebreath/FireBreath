@@ -170,3 +170,4 @@ void BasicService::Session::handle_response_datablock_complete(boost::system::er
     }
     async_write(sock, buffer((*resp->data.begin())->data(), (*resp->data.begin())->size()), boost::bind(&Session::handle_response_datablock_complete, BasicService::Session::ptr(this), _1, resp));
 }
+

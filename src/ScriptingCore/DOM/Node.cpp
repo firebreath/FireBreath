@@ -45,3 +45,4 @@ void FB::DOM::Node::setProperty(const int idx, const FB::variant& val) const
 {
     m_element->SetProperty(idx, val);
 }
+

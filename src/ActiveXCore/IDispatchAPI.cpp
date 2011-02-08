@@ -411,3 +411,4 @@ FB::JSAPIPtr IDispatchAPI::getJSAPI() const
 
     return FB::JSAPIPtr();
 }
+

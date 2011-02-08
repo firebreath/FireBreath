@@ -344,3 +344,4 @@ const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::str
         m_host->htmlLog("No string passed in!");
     return str;
 }
+

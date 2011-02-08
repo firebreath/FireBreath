@@ -44,3 +44,4 @@ SignalTranslator::~SignalTranslator()
 
 
 }
+

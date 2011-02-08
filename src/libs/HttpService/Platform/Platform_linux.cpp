@@ -89,3 +89,4 @@ boost::filesystem::wpath Platform::resolveShortcut(const boost::filesystem::wpat
 HTTPProxyConfig Platform::getSystemProxyConfig() {
   return HTTPProxyConfig();
 }
+

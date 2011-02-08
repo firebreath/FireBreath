@@ -116,3 +116,4 @@ FBTestPluginPtr ThreadRunnerAPI::getPlugin()
     }
     return ptr;
 }
+

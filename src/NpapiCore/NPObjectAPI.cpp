@@ -304,3 +304,4 @@ FB::JSAPIPtr NPObjectAPI::getJSAPI() const
     
     return static_cast<NPJavascriptObject*>(obj)->getAPI();
 }
+

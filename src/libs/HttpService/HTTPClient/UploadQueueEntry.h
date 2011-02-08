@@ -49,3 +49,4 @@ namespace HTTP {
 };
 
 #endif // H_HTTP_UPLOADQUEUEENTRY
+

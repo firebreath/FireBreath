@@ -57,3 +57,4 @@ bool FB::BrowserStreamManager::onStreamCompleted( FB::StreamCompletedEvent *evt,
     releaseStream(FB::ptr_cast<FB::BrowserStream>(stream->shared_from_this()));
     return false;
 }
+

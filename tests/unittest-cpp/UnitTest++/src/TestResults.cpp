@@ -58,3 +58,4 @@ int TestResults::GetFailureCount() const
 
 
 }
+

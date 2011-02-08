@@ -28,3 +28,4 @@ std::string lastError(const char* fnname);
 void throw_GetLastError(const char* fnname);
 std::string lpcwstr_to_utf8(const wchar_t* in_str);
 #endif
+

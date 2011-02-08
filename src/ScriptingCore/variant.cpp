@@ -62,3 +62,4 @@ boost::tribool FB::variant_detail::conversion::convert_variant( const FB::varian
     else
         return var.convert_cast<bool>();
 }
+

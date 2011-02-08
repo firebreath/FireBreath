@@ -98,3 +98,4 @@ namespace FB {
 };
 
 #endif // H_PLUGINWINDOWWIN
+

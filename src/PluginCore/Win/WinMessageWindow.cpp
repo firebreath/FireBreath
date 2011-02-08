@@ -72,3 +72,4 @@ FB::WinMessageWindow::~WinMessageWindow()
 {
     ::DestroyWindow(m_hWnd);
 }
+

@@ -39,3 +39,4 @@ void JSObject::InvokeAsync(const std::string& methodName, const std::vector<vari
 //{
 //    return Construct(FB::wstring_to_utf8(memberName), args);
 //}
+

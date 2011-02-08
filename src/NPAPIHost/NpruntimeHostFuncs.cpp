@@ -105,3 +105,4 @@ bool NP_LOADDS NpapiHost::NH_Construct(NPP npp, NPObject* obj, const NPVariant *
         return false;
     }
 }
+

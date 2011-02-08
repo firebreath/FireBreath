@@ -42,3 +42,4 @@ void HTTPResponseData::setNoncacheable() {
   headers.insert(std::make_pair("Cache-Control", "private, no-store, no-cache, must-revalidate, post-check=0, pre-check=0"));
   headers.insert(std::make_pair("Pragma", "no-cache"));
 }
+

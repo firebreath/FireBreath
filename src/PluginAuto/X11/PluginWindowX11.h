@@ -80,3 +80,4 @@ namespace FB {
 };
 
 #endif // H_PLUGINWINDOWX11
+

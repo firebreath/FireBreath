@@ -85,3 +85,4 @@ namespace FB {
 };
 
 #endif // H_PLUGINWINDOWMAC_COCOA
+

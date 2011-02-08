@@ -250,3 +250,4 @@ void BasicMediaPlayer::fireCurrentItemChanged()
         ("oncurrentItemChanged",
          FB::variant_list_of(m_currentIndex));
 }
+

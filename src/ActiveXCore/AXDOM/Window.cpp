@@ -55,3 +55,4 @@ std::string Window::getLocation() const
     location->get_href(&bstr);
     return FB::wstring_to_utf8(std::wstring(bstr.m_str));
 }
+

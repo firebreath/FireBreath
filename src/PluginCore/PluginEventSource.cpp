@@ -90,3 +90,4 @@ bool PluginEventSource::SendEvent(PluginEvent* evt)
     }
     return false;
 }
+

@@ -101,3 +101,4 @@ void PluginWindowMacQuickDraw::InvalidateWindow()
 {
     // Doesn't exist yet
 }
+

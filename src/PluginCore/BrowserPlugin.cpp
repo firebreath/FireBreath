@@ -32,3 +32,4 @@ void BrowserPlugin::setFSPath(const std::string& path)
     m_filesystemPath = path;
     pluginMain->setFSPath(path);
 }
+

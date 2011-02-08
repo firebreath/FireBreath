@@ -71,3 +71,4 @@ private:
     PlayList m_playlist;
     PlayList::size_type m_currentIndex;
 };
+

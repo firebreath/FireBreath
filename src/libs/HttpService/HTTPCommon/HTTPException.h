@@ -36,3 +36,4 @@ namespace HTTP {
 };
 
 #endif // H_HTTPEXCEPTION
+

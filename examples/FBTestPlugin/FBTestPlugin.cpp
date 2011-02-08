@@ -126,3 +126,4 @@ bool FBTestPlugin::isWindowless()
     return PluginCore::isWindowless();
     //return true;
 }
+

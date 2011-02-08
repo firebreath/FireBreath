@@ -214,3 +214,4 @@ uint32_t FB::PluginWindowWin::getWindowHeight() const
     FB::Rect pos = getWindowPosition();
     return pos.bottom - pos.top;
 }
+

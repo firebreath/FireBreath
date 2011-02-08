@@ -1,0 +1,19 @@
+#/bin/bash
+
+CPPFILES=`find . -type f -name '*.cpp'`
+HFILES=`find . -type f -name '*.h'`
+
+for FILE in $HFILES
+do
+    if [ -n "$(sed -n "\$p" $FILE)" ]; then
+        echo "Adding newline to $FILE"
+        echo "" >> $FILE
+    fi
+done
+for FILE in $CPPFILES
+do
+    if [ -n "$(sed -n "\$p" $FILE)" ]; then
+        echo "Adding newline to $FILE"
+        echo "" >> $FILE
+    fi
+done

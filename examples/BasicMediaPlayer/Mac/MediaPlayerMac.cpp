@@ -89,3 +89,4 @@ bool MediaPlayer::stop()
 {
     return true;
 }    
+

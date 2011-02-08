@@ -37,3 +37,4 @@ public:
 int TestPlugin::init = 0;
 
 #endif
+

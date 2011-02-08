@@ -64,3 +64,4 @@ TEST(VariantListTest)
         CHECK(sl == sl2);
     }
 }
+

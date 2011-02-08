@@ -156,3 +156,4 @@ void CheckArray2DClose(TestResults& results, Expected const& expected, Actual co
 }
 
 #endif
+

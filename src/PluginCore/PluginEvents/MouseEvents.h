@@ -81,3 +81,4 @@ namespace FB {
 };
 
 #endif // H_FB_PLUGINEVENTS_MOUSEEVENTS
+

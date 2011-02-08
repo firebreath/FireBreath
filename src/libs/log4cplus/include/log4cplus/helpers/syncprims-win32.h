@@ -193,3 +193,4 @@ ManualResetEvent::reset () const
 
 
 } } // namespace log4cplus { namespace thread {
+

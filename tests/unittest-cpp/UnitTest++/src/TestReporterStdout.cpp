@@ -44,3 +44,4 @@ void TestReporterStdout::ReportSummary(int const totalTestCount, int const faile
 }
 
 }
+

@@ -383,3 +383,4 @@ NPClass NPJavascriptObject::NPJavascriptObjectClass = {
     NPJavascriptObject::_Construct
 };
 
+

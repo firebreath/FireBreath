@@ -17,3 +17,4 @@ public:
 typedef FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJavascriptObject, &DIID_IFBComEventSource, &FB_LIBID> COMJSObject;
 #endif
 #endif // BlankFactories_h__
+

@@ -83,3 +83,4 @@ namespace log4cplus {
 #endif // UNICODE
 
 #endif // LOG4CPLUS_TSTRING_HEADER_
+

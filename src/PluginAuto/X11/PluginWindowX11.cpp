@@ -253,3 +253,4 @@ void PluginWindowX11::InvalidateWindow() const
 {
     // Doesn't exist yet
 }
+

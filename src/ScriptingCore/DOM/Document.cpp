@@ -39,3 +39,4 @@ ElementPtr Document::getBody() const
     JSObjectPtr api = getProperty<FB::JSObjectPtr>("body");
     return Element::create(api);
 }
+

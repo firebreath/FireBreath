@@ -388,3 +388,4 @@ FB::JSAPIPtr FB::JSAPI::GetMethodObject( const std::wstring& methodObjName )
 {
     return GetMethodObject(FB::wstring_to_utf8(methodObjName));
 }
+
