@@ -206,7 +206,7 @@ namespace FB
 
 #ifdef FB_WIN
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowWin* FactoryBase::createPluginWindowWin(const WindowContextWin&)
+        /// @fn virtual PluginWindowWin* FactoryBase::createPluginWindowWin(const WindowContextWin& ctx)
         ///
         /// @brief  Creates a PluginWindowWin derived plugin window object
         ///
@@ -214,10 +214,10 @@ namespace FB
         ///
         /// @return A PluginWindowWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowWin*            createPluginWindowWin(const WindowContextWin&);
+        virtual PluginWindowWin*            createPluginWindowWin(const WindowContextWin& ctx);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowlessWin* FactoryBase::createPluginWindowless(const WindowContextWin&)
+        /// @fn virtual PluginWindowlessWin* FactoryBase::createPluginWindowless(const WindowContextWindowless& ctx)
         ///
         /// @brief  Creates a PluginWindowlessWin derived plugin window object
         ///
@@ -225,7 +225,7 @@ namespace FB
         ///
         /// @return A PluginWindowlessWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowlessWin*        createPluginWindowless(const WindowContextWindowless&);
+        virtual PluginWindowlessWin*        createPluginWindowless(const WindowContextWindowless& ctx);
 
         virtual IDispatchEx*                createCOMJSObject(FB::BrowserHostPtr host, FB::JSAPIWeakPtr api);
         virtual HRESULT                     UpdateWindowsRegistry( bool install );
@@ -233,7 +233,7 @@ namespace FB
       
 #ifdef FB_MACOSX
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw&);
+        /// @fn virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw& ctx);
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for Carbon / QuickDraw
         ///
@@ -241,9 +241,9 @@ namespace FB
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw&);
+        virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw& ctx);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCarbonCG* createPluginWindowCarbonQD(const WindowContextCoreGraphics&);
+        /// @fn virtual PluginWindowMacCarbonCG* createPluginWindowCarbonQD(const WindowContextCoreGraphics& ctx);
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for Carbon / CoreGraphics
         ///
@@ -251,7 +251,7 @@ namespace FB
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCarbonCG* createPluginWindowCarbonCG(const WindowContextCoreGraphics&);
+        virtual PluginWindowMacCarbonCG* createPluginWindowCarbonCG(const WindowContextCoreGraphics& ctx);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginWindowMacCocoaCG* createPluginWindowCocoaCG();
         ///
@@ -273,8 +273,6 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for Carbon / QuickDraw
         ///
-        /// @param  Platform specific data structure for window context information
-        ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacCocoaICA* createPluginWindowCocoaICA();
@@ -282,7 +280,7 @@ namespace FB
         
 #ifdef FB_X11
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowX11* createPluginWindowX11(const WindowContextX11&)
+        /// @fn virtual PluginWindowX11* createPluginWindowX11(const WindowContextX11& ctx)
         ///
         /// @brief  Creates a PluginWindowX11 derived plugin window object for X11
         ///
@@ -290,7 +288,7 @@ namespace FB
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowX11* createPluginWindowX11(const WindowContextX11&); 
+        virtual PluginWindowX11* createPluginWindowX11(const WindowContextX11& ctx); 
 #endif
     };
 }
