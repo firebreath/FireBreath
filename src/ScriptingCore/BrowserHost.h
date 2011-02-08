@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 namespace FB
 {
@@ -378,7 +379,7 @@ namespace FB
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
         mutable boost::shared_mutex m_xtmutex;
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
-        mutable boost::resursive_mutex m_jsapimutex;
+        mutable boost::recursive_mutex m_jsapimutex;
 
         mutable std::set<FB::JSAPIPtr> m_retainedObjects;
         BrowserStreamManagerPtr m_streamMgr;
