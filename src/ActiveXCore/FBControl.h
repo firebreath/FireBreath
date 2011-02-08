@@ -260,7 +260,6 @@ namespace FB {
                 m_propNotify = m_spClientSite;
             }
 
-
             clientSiteSet();
 
             return S_OK;
@@ -364,17 +363,17 @@ namespace FB {
         {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
-            if (FB::pluginGuiEnabled())
-                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
-            else
-                m_bWindowOnly = FALSE;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::setReady()
         {
-            // This is when we can consider the plugin "ready".  The window may or may not (likely not)
-            // be around yet!
+            if (FB::pluginGuiEnabled())
+                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
+            else
+                m_bWindowOnly = FALSE;
+
+            // This is when we can consider the plugin "ready".  The window will not be around yet!
             this->setAPI(pluginMain->getRootJSAPI(), m_host);
             setReadyState(READYSTATE_COMPLETE);
             pluginMain->setReady();
