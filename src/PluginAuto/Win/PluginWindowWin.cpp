@@ -78,6 +78,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
     switch(uMsg) {
         case WM_LBUTTONDOWN: 
         {
+            SetFocus( m_hWnd ); //get key focus when the mouse is clicked on our plugin
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, 
                               GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             return SendEvent(&ev);
@@ -114,7 +115,6 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         }
         case WM_MOUSEMOVE:
         {
-            SetFocus( m_hWnd ); //get key focus, as the mouse is over our region
             MouseMoveEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
             return SendEvent(&ev);
         }
