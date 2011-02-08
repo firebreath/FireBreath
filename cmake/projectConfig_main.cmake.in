@@ -38,7 +38,7 @@ include_directories(
     )
 
 # set up the mimetype strings
-string(REPLACE ";" "\\|" FBMIMETYPE_LIST ${FBSTRING_MIMEType})
+string(REPLACE ";" "|" FBMIMETYPE_LIST "${FBSTRING_MIMEType}")
 
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
