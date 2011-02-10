@@ -169,7 +169,7 @@ void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
 void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
 {
     boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
-    std::list<FB::JSAPIPtr>::const_iterator it = std::find_if(m_retainedObjects.begin(), m_retainedObjects.end(), boost::lambda::_1 == obj);
+    std::list<FB::JSAPIPtr>::iterator it = std::find_if(m_retainedObjects.begin(), m_retainedObjects.end(), boost::lambda::_1 == obj);
     if (it != m_retainedObjects.end()) {
         m_retainedObjects.erase(it);
     }
