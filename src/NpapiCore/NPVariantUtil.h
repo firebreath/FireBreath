@@ -210,7 +210,7 @@ namespace FB { namespace Npapi
                 host->RetainObject(outObj);
             } else {
                 host->retainJSAPIPtr(obj);
-                outObj = NPJavascriptObject::NewObject(host, obj);
+                outObj = NPJavascriptObject::NewObject(host, obj, true);
             }
             
             npv.type = NPVariantType_Object;

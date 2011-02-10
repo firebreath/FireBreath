@@ -42,12 +42,13 @@ namespace FB {
             {
             }
 
-            static IDispatchEx *NewObject(ActiveXBrowserHostPtr host, FB::JSAPIWeakPtr api)
+            static IDispatchEx *NewObject(ActiveXBrowserHostPtr host, FB::JSAPIWeakPtr api, bool auto_release = false)
             {
                 CComObject<CurObjType> *obj;
                 HRESULT hr = CComObject<CurObjType>::CreateInstance(&obj);
                 
                 obj->setAPI(api, host);
+                obj->m_autoRelease = auto_release;
                 IDispatchEx *retval;
                 hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
 
@@ -78,7 +79,18 @@ namespace FB {
 
             void FinalRelease()
             {
+                if (m_autoRelease) {
+                    FB::JSAPIPtr api(m_api.lock());
+                    // If the JSAPI object is still around and we're set to autorelease, tell the BrowserHost
+                    // that we're done with it.  Otherwise it's either gone or we don't control its lifecycle
+                    if (api) {
+                        m_host->releaseJSAPIPtr(api);
+                    }
+                }
             }
+
+        private:
+            bool m_autoRelease;
         };
     };
 };

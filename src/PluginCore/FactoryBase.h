@@ -227,7 +227,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowlessWin*        createPluginWindowless(const WindowContextWindowless& ctx);
 
-        virtual IDispatchEx*                createCOMJSObject(FB::BrowserHostPtr host, FB::JSAPIWeakPtr api);
+        virtual IDispatchEx*                createCOMJSObject(const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease = false);
         virtual HRESULT                     UpdateWindowsRegistry( bool install );
 #endif
       
