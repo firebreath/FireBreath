@@ -1,48 +1,47 @@
-HKCU {
-    NoRemove Software {
-        NoRemove Classes {
+HKCR {
 @@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID)
-            ${PROGID}.${AXVERSION_NUM} = s '${FBSTRING_FileDescription}' {
-                CLSID = s '{${CUR_GUID}}'
-            }
-            ${PROGID} = s '${FBSTRING_FileDescription}' {
-                CLSID = s '{${CUR_GUID}}'
-                CurVer = s '${PROGID}.${AXVERSION_NUM}'
-            }
+    ${PROGID}.${AXVERSION_NUM} = s '${FBSTRING_FileDescription}' {
+        CLSID = s '{${CUR_GUID}}'
+    }
+    ${PROGID} = s '${FBSTRING_FileDescription}' {
+        CLSID = s '{${CUR_GUID}}'
+        CurVer = s '${PROGID}.${AXVERSION_NUM}'
+    }
 @@endforeach
-            NoRemove CLSID {
+    NoRemove CLSID {
 @@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID)
-                ForceRemove {${CUR_GUID}} = s '${FBSTRING_FileDescription}' {
-                    ProgID = s '${PROGID}.${AXVERSION_NUM}'
-                    VersionIndependentProgID = s '${PROGID}'
-                    ForceRemove 'Programmable'
-                    InprocServer32 = s '%MODULE%' {
-                        val ThreadingModel = s '%THREADING%'
-                    }
-                    val AppID = s '%APPID%'
-                    ForceRemove 'Control'
-                    'MiscStatus' = s '0' {
-                        '1' = s '131473'
-                    }
-                    'TypeLib' = s '%LIBID%'
-                    'Version' = s '${AXVERSION_NUM}'
+        ForceRemove {${CUR_GUID}} = s '${FBSTRING_FileDescription}' {
+            ProgID = s '${PROGID}.${AXVERSION_NUM}'
+            VersionIndependentProgID = s '${PROGID}'
+            ForceRemove 'Programmable'
+            InprocServer32 = s '%MODULE%' {
+                val ThreadingModel = s '%THREADING%'
+            }
+            val AppID = s '%APPID%'
+            ForceRemove 'Control'
+            'MiscStatus' = s '0' {
+                '1' = s '131473'
+            }
+            'TypeLib' = s '%LIBID%'
+            'Version' = s '${AXVERSION_NUM}'
+        }
+@@endforeach
+    }
+    NoRemove MIME {
+        NoRemove Database {
+            NoRemove 'Content Type' {
+@@foreach (FBControl_GUID CUR_GUID FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENTS)
+                '${CUR_MIMETYPE}' = s '${FBSTRING_FileDescription}' {
+                    val Extension = s '${CUR_EXTENTS}'
+                    val CLSID = s '{${CUR_GUID}}'
                 }
 @@endforeach
             }
-	        NoRemove MIME {
-	            NoRemove Database {
-	                NoRemove 'Content Type' {
-@@foreach (FBControl_GUID CUR_GUID FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENTS)
-	                    '${CUR_MIMETYPE}' = s '${FBSTRING_FileDescription}' {
-	                        val Extension = s '${CUR_EXTENTS}'
-	                        val CLSID = s '{${CUR_GUID}}'
-	                    }
-@@endforeach
-	                }
-	            }
-	        }            
         }
-
+    }            
+}
+${REGKEY_ROOT} {
+    NoRemove Software {
         NoRemove Microsoft {
             NoRemove Windows {
                 NoRemove CurrentVersion {
