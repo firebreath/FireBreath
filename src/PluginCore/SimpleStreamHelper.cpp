@@ -15,13 +15,13 @@ Copyright 2011 Richard Bateman,
 
 #include "BrowserHost.h"
 #include <boost/algorithm/string.hpp>
-
+#include <boost/bind.hpp>
 #include "SimpleStreamHelper.h"
 
 static const int MEGABYTE = 1024 * 1024;
 
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHostPtr& host, const FB::URI& uri,
-    const HttpCallback& callback, const bool cache /*= true*/, const size_t bufferSize /*= 256*1024*/ )
+    const HttpCallback& callback, bool cache /*= true*/, size_t bufferSize /*= 256*1024*/ )
 {
     if (!host->isMainThread()) {
         // This must be run from the main thread
