@@ -63,71 +63,84 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
     // wrong in your FactoryMain.cpp in your plugin project's folder
 
     PluginCore::setPlatform("Mac", "NPAPI");
-    
+
     // Get the path to the bundle
     static const std::string pluginPath = getPluginPath();      
     setFSPath(pluginPath);
+
 	// These HAVE to be called here during the NPP_New call to set the drawing and event models.
 	m_drawingModel = PluginWindowMac::initPluginWindowMac(m_npHost);
 	m_eventModel = PluginEventMac::initPluginEventMac(m_npHost, m_drawingModel);
 
 	// We can create our event model handler now.
 	pluginEvt = PluginEventMacPtr(PluginEventMac::createPluginEventMac(m_eventModel));
-    }
 }
 
+NpapiPluginMac::~NpapiPluginMac()
+{
 #if FBMAC_USE_COREANIMATION
 	if (m_layer) {
 		[(CALayer*)m_layer autorelease];
 		m_layer = NULL;
-    if(win != NULL) {
-    }
+	}
 #endif
+}
+
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
 	NPError res = NPERR_NO_ERROR;
 	if (window)
+	{
 		if (!pluginWin)
+		{
 			// If we don't have a PluginWindow, create one. It will be made for the chosen drawing model.
 			pluginWin = PluginWindowMacPtr(PluginWindowMac::createPluginWindowMac(m_drawingModel));
 			if (pluginWin)
+			{
 				pluginWin->setNpHost(m_npHost);
 				// Tell the event model which window to use for events.
 				if (pluginEvt)
 					pluginEvt->setPluginWindow(pluginWin);
-            win->setWindowClipping(window->clipRect.top,    window->clipRect.left,
+			}
+		}
 		if (pluginWin)
+		{
 #if FBMAC_USE_COREANIMATION
 			// Patch up the NPWindow before calling SetWindow for CoreAnimation to pass the CALayer.
 			if ((PluginWindowMac::DrawingModelCoreAnimation == pluginWin->getDrawingModel()) || (PluginWindowMac::DrawingModelInvalidatingCoreAnimation == pluginWin->getDrawingModel()))
 			{
 				assert(!window->window);
 				window->window = m_layer;
-    else if (pluginWin != NULL) 
+			}
+#endif
 			// Set the Window.
 			res = pluginWin->SetWindow(window);
 #if FBMAC_USE_COREANIMATION
 			if ((PluginWindowMac::DrawingModelCoreAnimation == pluginWin->getDrawingModel()) || (PluginWindowMac::DrawingModelInvalidatingCoreAnimation == pluginWin->getDrawingModel()))
 				window->window = NULL;
-    {
+#endif
 			// Notify the PluginCore about our new window. This will post an AttachedEvent.
 			if (!pluginMain->GetWindow())
 				pluginMain->SetWindow(pluginWin.get());
-        // If the handle goes to NULL, our window is gone and we need to stop using it
-            // Make a new plugin window object for FireBreath & our plugin.
+		}
+	} else {
 		// Notify the PluginCore about our missing window. This will post an DetachedEvent.
+		pluginMain->ClearWindow();
 		pluginWin.reset();
+	}
     return res;
-    } else if (pluginWin != NULL) {
-#if !FBMAC_USE_COCOA
-    return 0;
-	if (pluginEvt)
-		return pluginEvt->HandleEvent(event);
 }
 
 int16_t NpapiPluginMac::HandleEvent(void* event)
+{
+	if (pluginEvt)
+		return pluginEvt->HandleEvent(event);
+    return 0;
+}
+
+int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
 	int16_t res = NPERR_GENERIC_ERROR;
 	switch (variable) {
-{
+#if FBMAC_USE_COREANIMATION
 		case NPPVpluginCoreAnimationLayer:
 		{
 			// The BrowserPlugin owns the CALayer.
@@ -135,6 +148,7 @@ int16_t NpapiPluginMac::HandleEvent(void* event)
 			*(CALayer**) value = [(CALayer*)m_layer retain];
 			res = NPERR_NO_ERROR;
 		}	break;
+#endif
 		case NPPVpluginScriptableNPObject:
 		{
 			res = NpapiPlugin::GetValue(variable, value);
@@ -144,25 +158,11 @@ int16_t NpapiPluginMac::HandleEvent(void* event)
 		default:
 			res = NpapiPlugin::GetValue(variable, value);
 			break;
-                *((CALayer **)value) = (CALayer*)win->getLayer();
-                [(CALayer *)win->getLayer() retain];
-                return NPERR_NO_ERROR;
+	}
+	return res;
+}
+
 void NpapiPluginMac::HandleTimerEvent() {
 	if (pluginWin)
 		return pluginWin->handleTimerEvent();
-    int16_t res = NpapiPlugin::GetValue(variable, value);
-    if (res == NPERR_NO_ERROR && variable == NPPVpluginScriptableNPObject) {
-        // Ready state means that we are ready to interact with Javascript;
-        setReady();
-    }
-    return res;
-}
-
-void NpapiPluginMac::HandleCocoaTimerEvent() {
-#if !FBMAC_USE_COCOA
-    return;
-#else
-    PluginWindowMacCocoa* win = static_cast<PluginWindowMacCocoa*>(pluginWin);
-    return win->handleTimerEvent();
-#endif
 }
