@@ -5,7 +5,7 @@
         <Media Id="1" Cabinet="${PLUGIN_NAME}.cab" EmbedCab="yes" />
 
         <Directory Id="TARGETDIR" Name="SourceDir">
-            <Directory Id="AppDataFolder">
+            <Directory Id="${FB_WIX_INSTALL_LOCATION}">
                 <Directory Id="CompanyDir" Name="${COMPANY_NAME}">
                     <Component Id="CompanyDirComp" Guid="{4D6FA2C4-090F-4A69-8A38-4E7CCA3B4B0C}">
                         <RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
