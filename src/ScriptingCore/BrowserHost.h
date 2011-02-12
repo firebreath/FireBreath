@@ -381,7 +381,7 @@ namespace FB
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
         mutable boost::recursive_mutex m_jsapimutex;
 
-        mutable std::set<FB::JSAPIPtr> m_retainedObjects;
+        mutable std::list<FB::JSAPIPtr> m_retainedObjects;
         BrowserStreamManagerPtr m_streamMgr;
     };
 
@@ -393,3 +393,4 @@ namespace FB
 #include "CrossThreadCall.h"
 
 #endif
+

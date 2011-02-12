@@ -195,3 +195,4 @@ public:
 
 FB::TypeIDMap<DISPID> FB::ActiveX::AxIdMap(100);
 AxIdMapInit __AxIdInitClassDummy;
+

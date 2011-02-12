@@ -26,3 +26,4 @@ DeferredTestReporter::DeferredTestResultList& DeferredTestReporter::GetResults()
 {
     return m_results;
 }
+

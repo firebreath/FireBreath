@@ -30,3 +30,4 @@ struct DeferredTestResult
 }
 
 #endif //UNITTEST_DEFERREDTESTRESULT_H
+

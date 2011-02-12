@@ -50,3 +50,4 @@ std::string HTTP::build_cookie_header( const std::map<std::string, std::string>&
 
     return join(cookie_crumbs, ";");
 }
+

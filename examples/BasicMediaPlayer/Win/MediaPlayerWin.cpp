@@ -238,3 +238,4 @@ bool MediaPlayer::stop()
 
     return success;
 }    
+

@@ -320,3 +320,4 @@ NP_EXPORT(NPError) NP_GetValue(void *future, NPPVariable aVariable, void *aValue
 #endif
 
 #endif /* npfunctions_h_ */
+

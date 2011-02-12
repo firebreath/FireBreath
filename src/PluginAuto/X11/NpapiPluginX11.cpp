@@ -124,3 +124,4 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
     return NPERR_NO_ERROR;
 }
 
+

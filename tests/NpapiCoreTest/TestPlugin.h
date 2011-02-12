@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sep 10, 2010
@@ -37,3 +37,4 @@ public:
 int TestPlugin::init = 0;
 
 #endif
+

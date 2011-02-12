@@ -159,3 +159,4 @@ uint32_t NP_LOADDS NpapiHost::NH_ScheduleTimer(NPP npp, uint32_t interval, NPBoo
 void NP_LOADDS NpapiHost::NH_UnscheduleTimer(NPP npp, uint32_t timerID) {
 
 }
+

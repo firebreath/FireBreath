@@ -17,3 +17,4 @@ Copyright 2010 Anson MacKeracher and the Firebreath development team
 namespace FB {
     FBKeyCode CocoaKeyCodeToFBKeyCode(unsigned long cocoaKey);
 }
+

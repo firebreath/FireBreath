@@ -19,11 +19,12 @@ typedef FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJav
 // Definitions used for creating the plugins
 #include "global/axplugin_defs.inc"
 
-IDispatchEx* _getCOMJSWrapper( FB::BrowserHostPtr host, FB::JSAPIWeakPtr api )
+IDispatchEx* _getCOMJSWrapper( const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease /*= false*/ )
 {
-    return COMJSObject::NewObject(FB::ptr_cast<FB::ActiveX::ActiveXBrowserHost>(host), api);
+    return COMJSObject::NewObject(FB::ptr_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
 }
 
 HRESULT _updateRegistry( bool res ) {
     return CFBControl0::UpdateRegistry(true);
 }
+

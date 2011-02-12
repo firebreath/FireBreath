@@ -120,3 +120,4 @@ void FB::Log::fatal(const std::string& src, const std::string& msg, const char *
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
+

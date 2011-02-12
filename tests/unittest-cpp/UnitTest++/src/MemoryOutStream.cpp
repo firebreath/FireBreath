@@ -147,3 +147,4 @@ void MemoryOutStream::GrowBuffer(int const desiredCapacity)
 
 
 #endif
+

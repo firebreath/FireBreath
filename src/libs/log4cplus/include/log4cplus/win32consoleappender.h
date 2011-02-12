@@ -75,3 +75,4 @@ namespace log4cplus
 #endif
 
 #endif // LOG4CPLUS_WIN32CONSOLEAPPENDER_H
+

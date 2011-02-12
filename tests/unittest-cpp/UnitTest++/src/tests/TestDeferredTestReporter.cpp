@@ -115,3 +115,4 @@ TEST_FIXTURE(DeferredTestReporterFixture, DeferredTestReporterTakesCopyOfFailure
 }
 
 }}
+

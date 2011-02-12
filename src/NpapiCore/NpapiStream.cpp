@@ -162,3 +162,4 @@ void FB::Npapi::NpapiStream::setNotified()
         m_selfReference.reset();
     m_streamNotified = true;
 }
+

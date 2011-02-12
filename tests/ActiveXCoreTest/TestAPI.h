@@ -54,3 +54,4 @@ private:
 
     std::string m_testString;
 };
+

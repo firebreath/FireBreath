@@ -192,3 +192,4 @@ variant JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB:
         throw invalid_member(methodName);
     }    
 }
+

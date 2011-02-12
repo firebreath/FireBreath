@@ -163,3 +163,4 @@ bool PluginCore::isWindowless()
     m_windowLessParam = false;
     return m_windowLessParam;
 }
+

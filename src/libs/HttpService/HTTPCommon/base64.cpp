@@ -73,3 +73,4 @@ std::string base64_decode(const std::string& indata) {
   }
   return outdata;
 }
+

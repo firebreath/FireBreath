@@ -89,3 +89,4 @@ NPP NpapiHost::getPluginInstance()
 {
     return &m_instance;
 }
+

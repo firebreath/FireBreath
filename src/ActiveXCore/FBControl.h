@@ -117,6 +117,9 @@ namespace FB {
             // access to the DOM Document and Window
             STDMETHOD(SetClientSite)(IOleClientSite *pClientSite);
 
+            // This method will only be called if we are instantiated without a window
+            STDMETHOD(SetSite)(IUnknown *pUnkSite);
+
             STDMETHOD(SetObjectRects)(LPCRECT prcPos, LPCRECT prcClip);
             STDMETHOD(InPlaceActivate)(LONG iVerb, const RECT* prcPosRect);
 	
@@ -238,6 +241,35 @@ namespace FB {
             return INTERFACESAFE_FOR_UNTRUSTED_CALLER | INTERFACESAFE_FOR_UNTRUSTED_DATA/* | INTERFACE_USES_DISPEX*/;
         }
 
+
+        template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
+        STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetSite(IUnknown *pUnkSite)
+        {
+            HRESULT hr = IObjectWithSiteImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >::SetSite(pUnkSite);
+            if (!pUnkSite) {
+                m_webBrowser.Release();
+                m_serviceProvider.Release();
+                if (m_host)
+                    m_host->shutdown();
+                m_host.reset();
+                return hr;
+            }
+
+            m_serviceProvider = pUnkSite;
+            if (!m_serviceProvider)
+                return E_FAIL;
+            m_serviceProvider->QueryService(SID_SWebBrowserApp, IID_IWebBrowser2, reinterpret_cast<void**>(&m_webBrowser));
+
+            if (m_webBrowser) {
+                m_propNotify = m_spClientSite;
+            }
+
+            // There will be no window this time!
+            clientSiteSet();
+            setReady();
+            return S_OK;
+        }
+
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetClientSite( IOleClientSite *pClientSite )
         {
@@ -259,7 +291,6 @@ namespace FB {
             if (m_webBrowser) {
                 m_propNotify = m_spClientSite;
             }
-
 
             clientSiteSet();
 
@@ -364,17 +395,17 @@ namespace FB {
         {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
             pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
-            if (FB::pluginGuiEnabled())
-                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
-            else
-                m_bWindowOnly = FALSE;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::setReady()
         {
-            // This is when we can consider the plugin "ready".  The window may or may not (likely not)
-            // be around yet!
+            if (FB::pluginGuiEnabled())
+                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
+            else
+                m_bWindowOnly = FALSE;
+
+            // This is when we can consider the plugin "ready".  The window will not be around yet!
             this->setAPI(pluginMain->getRootJSAPI(), m_host);
             setReadyState(READYSTATE_COMPLETE);
             pluginMain->setReady();
@@ -492,3 +523,4 @@ namespace FB {
 }
 
 #endif
+

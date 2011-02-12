@@ -305,3 +305,4 @@ TEST_FIXTURE(TestRunnerFixture, TestRunnerOnlyRunsTestsInSpecifiedSuiteAndThatPa
 }
 
 }
+

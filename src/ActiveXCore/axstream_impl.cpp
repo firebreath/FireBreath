@@ -498,3 +498,4 @@ bool ActiveXStreamRequest::stop()
     if ( !bindStatusCallback ) return true;
     return bindStatusCallback->close();
 }
+

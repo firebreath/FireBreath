@@ -38,7 +38,14 @@ include_directories(
     )
 
 # set up the mimetype strings
-string(REPLACE ";" "\\|" FBMIMETYPE_LIST ${FBSTRING_MIMEType})
+string(REPLACE ";" "|" FBMIMETYPE_LIST "${FBSTRING_MIMEType}")
+if (FB_ATLREG_MACHINEWIDE)
+    set(REGKEY_ROOT "HKLM")
+    set(FB_WIX_INSTALL_LOCATION "ProgramFilesFolder")
+else()
+    set(REGKEY_ROOT "HKCU")
+    set(FB_WIX_INSTALL_LOCATION "AppDataFolder")
+endif()
 
 # configure default generated files
 file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)

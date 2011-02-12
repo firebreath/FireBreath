@@ -42,3 +42,4 @@ FB::VariantMap FB::CreateEvent( const FB::JSAPIPtr& api, const std::string& name
 {
     return FB::CreateEvent(api, name, FB::VariantMap(), arguments);
 }
+

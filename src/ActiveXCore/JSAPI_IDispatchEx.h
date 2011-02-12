@@ -480,10 +480,6 @@ namespace FB { namespace ActiveX {
                 FB::variant rVal = api->GetProperty(wsName);
 
                 m_host->getComVariant(pvarRes, rVal);
-            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
-
-                FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
-                api->SetProperty(wsName, newVal);
 
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasEvent(wsName)) {
                 
@@ -494,6 +490,11 @@ namespace FB { namespace ActiveX {
                     FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
                     api->setDefaultEventMethod(wsName, method);
                 }
+
+            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
+
+                FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
+                api->SetProperty(wsName, newVal);
 
             } else {
                 throw FB::invalid_member("Invalid method or property name");
@@ -598,3 +599,4 @@ namespace FB { namespace ActiveX {
     }
 } }
 #endif // H_JSAPI_IDISPATCHEX
+

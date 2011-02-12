@@ -27,3 +27,4 @@ FB::VariantMap HTTP::Status::asDict() const {
     if (!last_error.empty()) d["error"] = last_error;
     return d;
 }
+

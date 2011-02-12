@@ -1,17 +1,11 @@
-HKCU
+HKCR
 {
-    NoRemove Software
+    NoRemove AppID
     {
-        NoRemove Classes
+        '%APPID%' = s 'FireBreathWin'
+        '${FBSTRING_PluginFileName}'
         {
-            NoRemove AppID
-            {
-                '%APPID%' = s 'FireBreathWin'
-                'npFireBreath.dll'
-                {
-                    val AppID = s '%APPID%'
-                }
-            }
+            val AppID = s '%APPID%'
         }
     }
 }

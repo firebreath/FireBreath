@@ -157,3 +157,4 @@ void BrowserStream::setInternalBufferSize(size_t InternalBufferSize)
 BrowserStream::Range::Range(size_t Start, size_t End) : start(Start), end(End)
 {
 }
+

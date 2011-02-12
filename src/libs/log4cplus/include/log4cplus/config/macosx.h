@@ -23,3 +23,4 @@
 
 #endif // MACOSX
 #endif // LOG4CPLUS_CONFIG_MACOSX_HEADER_
+

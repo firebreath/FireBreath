@@ -51,6 +51,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
     registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
+    registerMethod("createSimpleMath", make_method(this, &FBTestPluginAPI::createSimpleMath));
 
     registerMethod("countArrayLength",  make_method(this, &FBTestPluginAPI::countArrayLength));
     // Read-write property
@@ -344,3 +345,10 @@ const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::str
         m_host->htmlLog("No string passed in!");
     return str;
 }
+
+boost::shared_ptr<SimpleMathAPI> FBTestPluginAPI::createSimpleMath()
+{
+    // Create a new simplemath object each time
+    return boost::make_shared<SimpleMathAPI>(m_host);
+}
+

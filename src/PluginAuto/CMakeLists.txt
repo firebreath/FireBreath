@@ -105,25 +105,29 @@ file (GLOB MAC_CARBON_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     )
 
 file (GLOB MAC_COCOA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+
     Mac/*Cocoa.h
     Mac/*Cocoa.mm
     Mac/*Cocoa.cpp
     )
-
 if(FBMAC_USE_COREANIMATION)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
 endif()
 if(FBMAC_USE_COREGRAPHICS)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREGRAPHICS_SOURCES})
 endif()
+
+
 if(FBMAC_USE_QUICKDRAW)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_QUICKDRAW_SOURCES})
-endif()
-if(FBMAC_USE_CARBON)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CARBON_SOURCES})
-endif()
-if(FBMAC_USE_COCOA)
+
+        set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CGCARBON_SOURCES})
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COCOA_SOURCES})
+endif()
+endif()
+if(FBMAC_USE_COREANIMATION)
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
 endif()
 
 if (WIN32)
@@ -198,7 +202,9 @@ set (SOURCES
     ${GENERATED_IDL}
     ${MAC_SOURCES}
     ${X11_SOURCES}
-    )
-
-add_library(${PROJNAME} STATIC ${SOURCES})
-
+if (WIN32)
+    target_link_libraries(${PROJNAME} psapi)
+endif()
+if (WIN32)
+    target_link_libraries(${PROJNAME} psapi)
+endif()

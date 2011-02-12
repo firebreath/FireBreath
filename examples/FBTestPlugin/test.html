@@ -107,6 +107,7 @@
             addTest("location", "Get page location test");
             addTest("mathApiAdd", "Use custom JSAPI coming in from script");
             addTest("countArray", "Count array length returned from JSAPI object");
+            addTest("simpleFireEvent", "Simple event bind and fire test");
             addTest("dialog", "Dialog callback test");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
@@ -204,6 +205,16 @@
             }
             else
                 markPassed("countArray");
+
+            plugin.onfired = function (str) {
+                if (str == "some string") {
+                    markPassed("simpleFireEvent");
+                } else {
+                    markFailed("simpleFireEvent");
+                }
+            };
+            plugin.testEvent("some string");
+
             try {
                 thread = plugin.createThreadRunner();
 

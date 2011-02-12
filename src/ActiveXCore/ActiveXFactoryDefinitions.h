@@ -25,7 +25,7 @@ namespace FB {
     FB_FORWARD_PTR(JSAPI);
 }
 
-IDispatchEx* _getCOMJSWrapper(FB::BrowserHostPtr host, FB::JSAPIWeakPtr api);
+IDispatchEx* _getCOMJSWrapper(const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease = false);
 HRESULT _updateRegistry( bool res );
 
 #endif // H_NpapiFactoryDefinitions

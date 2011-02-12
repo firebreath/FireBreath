@@ -660,3 +660,4 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
     }
     return stream;
 }
+

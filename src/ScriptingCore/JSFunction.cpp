@@ -59,3 +59,4 @@ FB::variant FB::JSFunction::Invoke( const std::string& methodName, const std::ve
         return FB::JSAPIAuto::Invoke(methodName, args);
     }
 }
+

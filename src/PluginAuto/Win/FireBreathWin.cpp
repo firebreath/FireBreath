@@ -15,11 +15,14 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // FireBreathWin.cpp : Implementation of DLL Exports.
 
 #include "win_common.h"
+#include <Psapi.h>
 #include "global/resource.h"
+#include "global/config.h"
 #include "FireBreathWin_i.h"
 #include "axmain.h"
 #include "FBControl.h"
 #include "axutil.h"
+#include <boost/algorithm/string.hpp>
 
 using FB::ActiveX::isStaticInitialized;
 using FB::ActiveX::flagStaticInitialized;
@@ -50,14 +53,31 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
 	return hr;
 }
 
+std::string getProcessName()
+{
+    TCHAR szModName[MAX_PATH];
+    DWORD count;
+    HMODULE hm[1];
+    HANDLE proc = ::GetCurrentProcess();
+    BOOL success = ::EnumProcessModules(proc, hm, sizeof(HMODULE), &count);
+    if (::GetModuleFileNameW(hm[0], szModName, sizeof(szModName) / sizeof(TCHAR))) {
+        std::wstring fname(szModName);
+        return FB::wstring_to_utf8(fname);
+    } else {
+        return "";
+    }
+}
 
+extern HINSTANCE gInstance;
 // DllRegisterServer - Adds entries to the system registry
 STDAPI DllRegisterServer(void)
 {
     //Sleep(10000);
     // registers object, typelib and all interfaces in typelib
 #ifndef FB_ATLREG_MACHINEWIDE
-    FbPerUserRegistration perUser(true);
+    if (!boost::algorithm::ends_with(getProcessName(), "heat.exe")) {
+        FbPerUserRegistration perUser(true);
+    }
 #endif
     HRESULT hr = _AtlModule.DllRegisterServer();
 
@@ -71,7 +91,9 @@ STDAPI DllRegisterServer(void)
 STDAPI DllUnregisterServer(void)
 {
 #ifndef FB_ATLREG_MACHINEWIDE
-    FbPerUserRegistration perUser(true);
+    if (!boost::algorithm::ends_with(getProcessName(), "heat.exe")) {
+        FbPerUserRegistration perUser(true);
+    }
 #endif
     HRESULT hr = _AtlModule.DllUnregisterServer();
     if (!SUCCEEDED(hr))
@@ -112,3 +134,4 @@ STDAPI DllInstall(BOOL bInstall, LPCWSTR pszCmdLine)
 
     return hr;
 }
+

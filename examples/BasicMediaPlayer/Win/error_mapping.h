@@ -21,3 +21,4 @@ Copyright 2009 Georg Fritzsche,
 std::string mapVfwError(HRESULT hr);
 
 #endif
+

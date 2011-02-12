@@ -136,3 +136,4 @@ int32_t NP_LOADDS NpapiHost::NH_IntFromIdentifier(NPIdentifier identifier)
         return 0;
     }
 }
+

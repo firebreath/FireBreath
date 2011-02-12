@@ -232,3 +232,4 @@ FB::variant FB::JSAPIProxy::Invoke( const std::string& methodName, const std::ve
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->Invoke(methodName, args);
 }
+

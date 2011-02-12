@@ -34,3 +34,4 @@ std::string HTTPException::getResponseHeader() const {
 #undef RC
     };
 }
+

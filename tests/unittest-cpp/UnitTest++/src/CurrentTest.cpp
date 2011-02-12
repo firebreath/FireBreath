@@ -16,3 +16,4 @@ const TestDetails*& CurrentTest::Details()
 }
 
 }
+

@@ -318,3 +318,4 @@ void UseWinInet2(const WCHAR* URL)
     ShowMessage( 0, "WinInet2: "+ toString(noBytes) );
 }
 #endif
+

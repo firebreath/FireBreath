@@ -33,3 +33,4 @@ namespace Platform {
   /*bool generateVideoThumbnail(const std::string& filename, const ImageProcessor::Dimension& dim, ImageProcessor::Result& res);*/
   
 }; // end namespace platform
+

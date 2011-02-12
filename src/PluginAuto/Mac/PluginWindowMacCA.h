@@ -19,7 +19,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "PluginWindowMac.h"
 
 namespace FB
-{
+    {
     class PluginWindowMacCA: public PluginWindowMac
     {
     public:

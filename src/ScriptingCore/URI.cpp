@@ -226,3 +226,4 @@ void URI::parse_query_data(const std::string& in_str) {
         else query_data[url_decode(kvp[0])] = url_decode(kvp[1]);
     }
 }
+

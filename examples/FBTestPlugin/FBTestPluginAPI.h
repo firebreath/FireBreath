@@ -45,6 +45,8 @@ public:
     long get_someInt();
 
     boost::shared_ptr<SimpleMathAPI> get_simpleMath();
+
+    boost::shared_ptr<SimpleMathAPI> createSimpleMath();
   
     FB::variant echo(const FB::variant& a);
 
@@ -89,3 +91,4 @@ private:
 
     std::string m_testString;
 };
+

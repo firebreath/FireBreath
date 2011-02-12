@@ -12,11 +12,9 @@
 #define FBSTRING_ProductName "${FBSTRING_ProductName}"
 #define FBSTRING_PluginName "${FBSTRING_PluginName}"
 
-#define FBSTRING_MIMETypeList \
-@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT)
-                              "${CURMIME}|" \
-@@endforeach
-                              ""
+#define FBSTRiNG_MIMETypeCombined 
+
+#define FBSTRING_MIMETypeList "${FBMIMETYPE_LIST}"
 
 @@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT FBSTRING_FileDescription CURDESC)
 #define FBSTRING_MIMEType${i} "${CURMIME}"
@@ -58,3 +56,4 @@
 #endif
 
 #define FB_
+

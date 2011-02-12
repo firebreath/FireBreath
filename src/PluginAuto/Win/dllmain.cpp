@@ -20,3 +20,4 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
     }
     return _AtlModule.DllMain(dwReason, lpReserved);
 }
+

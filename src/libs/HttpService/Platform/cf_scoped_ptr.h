@@ -41,3 +41,4 @@ public:
 protected:
   T px;
 };
+

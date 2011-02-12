@@ -22,3 +22,4 @@ CFireBreathWinModule::CFireBreathWinModule()
 {
 
 }
+

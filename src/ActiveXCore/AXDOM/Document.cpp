@@ -77,3 +77,4 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
 	FB::JSObjectPtr ptr(IDispatchAPI::create(disp, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
     return FB::DOM::Element::create(ptr);
 }
+

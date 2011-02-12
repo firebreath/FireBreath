@@ -175,3 +175,4 @@ std::string mapVfwError(HRESULT hr)
     ss << err << " (0x" << (void*)hr << ")";
     return ss.str();
 }
+

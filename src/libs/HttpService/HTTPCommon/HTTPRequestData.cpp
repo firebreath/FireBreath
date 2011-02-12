@@ -33,3 +33,4 @@ void HTTPRequestData::addFile(const std::string& fieldname, const std::string& f
   fe.contents = contents;
   files[fieldname] = fe;
 }
+

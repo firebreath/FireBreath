@@ -107,3 +107,4 @@ std::string FB::DOM::Element::getStringAttribute( const std::string& attr ) cons
 {
     return callMethod<std::string>("getAttribute", FB::variant_list_of(attr));
 }
+

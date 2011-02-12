@@ -140,6 +140,8 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
         LINK_FLAGS "${LINK_FLAGS}"
         )
 
+    target_link_libraries(${PROJNAME} psapi)
+
 ENDMACRO(add_windows_plugin)
 
 
@@ -154,7 +156,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
         
-        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${CMAKE_DIR}\\FixFragment.xslt")
+        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC -t "${CMAKE_DIR}\\FixFragment.xslt")
         set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)

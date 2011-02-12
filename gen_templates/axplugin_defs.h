@@ -29,3 +29,4 @@ typedef FB::ActiveX::CFBControl${i} CFBControl${i};
 OBJECT_ENTRY_AUTO(__uuidof(FBControl${i}), CFBControl${i});
 @@endforeach
 #endif
+

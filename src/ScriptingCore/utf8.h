@@ -42,3 +42,4 @@ __END_DECLS
 #endif //_WIN32
 
 #endif /* !_UTF8_H_ */
+

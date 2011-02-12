@@ -386,3 +386,4 @@ bool FB::JSAPIAuto::memberAccessible( ZoneMap::const_iterator it ) const
 {
     return (it != m_zoneMap.end()) && getZone() >= it->second;
 }
+

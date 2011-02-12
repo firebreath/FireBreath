@@ -37,3 +37,4 @@ void throw_GetLastError(const char* fnname) {
 }
 
 #endif
+

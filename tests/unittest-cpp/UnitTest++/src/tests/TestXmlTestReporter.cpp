@@ -181,3 +181,4 @@ TEST_FIXTURE(XmlTestReporterFixture, MultipleFailures)
 }
 
 }
+

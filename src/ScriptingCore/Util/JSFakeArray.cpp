@@ -88,3 +88,4 @@ const FB::VariantList& FB::JSFakeArray::Values() const
 {
     return m_values;
 }
+

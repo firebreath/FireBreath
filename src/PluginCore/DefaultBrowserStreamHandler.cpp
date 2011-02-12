@@ -78,3 +78,4 @@ void DefaultBrowserStreamHandler::clearStream()
 {
     stream.reset();
 }
+

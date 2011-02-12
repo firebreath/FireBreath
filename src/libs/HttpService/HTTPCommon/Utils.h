@@ -28,3 +28,4 @@ namespace HTTP {
     std::string build_cookie_header(const std::map<std::string, std::string>& cookies);
 }
 #endif // HTTP_Utils_h__
+

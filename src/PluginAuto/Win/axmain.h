@@ -31,3 +31,4 @@ public :
 extern class CFireBreathWinModule _AtlModule;
 
 #endif H_AXMAIN
+

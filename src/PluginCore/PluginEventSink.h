@@ -144,3 +144,4 @@ namespace FB {
 #define END_PLUGIN_EVENT_MAP() return false; }
 
 #endif
+

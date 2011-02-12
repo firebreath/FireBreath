@@ -66,3 +66,4 @@ bool FB::pluginGuiEnabled() {
     return true;
 #endif
 }
+

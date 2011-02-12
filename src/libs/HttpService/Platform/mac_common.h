@@ -12,3 +12,4 @@
 std::string conv_cfstring(CFStringRef s);
 int cfnumber_to_int(CFNumberRef n);
 #endif
+

@@ -15,17 +15,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_PLUGINWINDOWMACQD
 #define H_PLUGINWINDOWMACQD
 
-#include <Carbon/Carbon.h>
 #include "PluginWindowMac.h"
+#include <map>
 
-namespace FB 
-{    
     class PluginWindowMacQD : public PluginWindowMac
-    {
-    public:
+{    
         PluginWindowMacQD();
         virtual ~PluginWindowMacQD();
-
 		NPError SetWindow(NPWindow* window);
 
         DrawingModel getDrawingModel() const { return DrawingModelQuickDraw; }
@@ -34,9 +30,13 @@ namespace FB
 
         void InvalidateWindow() const;
 
-    protected:
         NP_Port m_port;
 		WindowRef m_window;
+
+#endif // H_PLUGINWINDOWMACQD
+    protected:
+        CGrafPtr m_port;
     };
 };
-#endif // H_PLUGINWINDOWMACQD
+#endif // H_PLUGINWINDOWMAC_CARBON_QD
+

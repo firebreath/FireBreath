@@ -32,3 +32,4 @@ int AssertException::LineNumber() const
 }
 
 }
+
