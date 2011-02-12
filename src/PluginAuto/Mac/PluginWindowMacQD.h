@@ -12,27 +12,31 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#ifndef H_PLUGINWINDOWMAC_CARBON_QD
-#define H_PLUGINWINDOWMAC_CARBON_QD
+#ifndef H_PLUGINWINDOWMACQD
+#define H_PLUGINWINDOWMACQD
 
 #include <Carbon/Carbon.h>
-#include "PluginWindowMacCarbon.h"
-#include "WindowContextMac.h"
-
-#include <map>
+#include "PluginWindowMac.h"
 
 namespace FB 
 {    
-    class PluginWindowMacCarbonQD : public PluginWindowMacCarbon
+    class PluginWindowMacQD : public PluginWindowMac
     {
     public:
-        PluginWindowMacCarbonQD(const WindowContextQuickDraw&);
-        virtual ~PluginWindowMacCarbonQD();
+        PluginWindowMacQD();
+        virtual ~PluginWindowMacQD();
 
-        int16_t HandleEvent(EventRecord* evt);
-        CGrafPtr getPort() const { return m_port; }
+		NPError SetWindow(NPWindow* window);
+
+        DrawingModel getDrawingModel() const { return DrawingModelQuickDraw; }
+		void* getDrawingPrimitive() const { return m_port.port; }
+		WindowRef getWindowRef() const { return m_window; }
+
+        void InvalidateWindow() const;
+
     protected:
-        CGrafPtr m_port;
+        NP_Port m_port;
+		WindowRef m_window;
     };
 };
-#endif // H_PLUGINWINDOWMAC_CARBON_QD
+#endif // H_PLUGINWINDOWMACQD
