@@ -18,7 +18,7 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 Project (FireBreath)
 
-set(CMAKE_DIR ${CMAKE_SOURCE_DIR}/cmake)
+set(CMAKE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(${CMAKE_DIR}/common.cmake)
 

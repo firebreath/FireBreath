@@ -34,19 +34,32 @@
     <xsl:template match="w:Component">
         <w:Component Id="{@Id}" Guid="{@Guid}" Directory="{@Directory}">
             <xsl:apply-templates select="w:File" />
+            <xsl:apply-templates select="w:ProgId" />
             <xsl:apply-templates select="w:RegistryValue" />
         </w:Component>
     </xsl:template>
 
+    <xsl:template match="w:TypeLib">
+        <w:TypeLib Id="{@Id}" Description="{@Description}" HelpDirectory="{@HelpDirectory}" Language="{@Language}" MajorVersion="{@MajorVersion}" MinorVersion="{@MinorVersion}">
+            <xsl:apply-templates select="*" />
+        </w:TypeLib>
+    </xsl:template>
+
+    <xsl:template match="w:ProgId">
+        <w:ProgId Id="{@Id}" />
+    </xsl:template>
+
     <xsl:template match="w:File">
-        <w:File Id="{@Id}" Source="{@Source}" />
+        <w:File Id="{@Id}" Source="{@Source}">
+            <xsl:apply-templates select="w:TypeLib" />
+        </w:File>
     </xsl:template>
 
     <xsl:template match="w:RegistryValue">
         <w:RegistryValue Root="{@Root}" Key="{@Key}" Value="{@Value}" Type="{@Type}" Action="{@Action}">
             <xsl:if test="@Name != ''"> <xsl:attribute name="Name"> <xsl:value-of select="@Name" /> </xsl:attribute> </xsl:if>
             <xsl:if test="@Id != ''"> <xsl:attribute name="Id"> <xsl:value-of select="@Id" /> </xsl:attribute> </xsl:if>
-            <xsl:if test="position() = 1">
+            <xsl:if test="@Name = 'Path'">
                 <xsl:attribute name="KeyPath">yes</xsl:attribute>
             </xsl:if>
         </w:RegistryValue>
