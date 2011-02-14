@@ -29,6 +29,7 @@ if (NOT VC_DIR)
 endif()
 if (NOT ATL_INCLUDE_DIR)
     set (DDK_SEARCH_PATHS 
+        "$END{DDK_PATH}"
         "$ENV{SystemDrive}/WinDDK"
         "$ENV{ProgramFiles}/WinDDK"
         "$ENV{CommonProgramFiles}/WinDDK"
