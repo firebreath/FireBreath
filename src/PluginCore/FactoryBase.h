@@ -253,6 +253,7 @@ namespace FB
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacCG* createPluginWindowMacCG();
+#ifndef NP_NO_QUICKDRAW
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginWindowMacQD* createPluginWindowMacQD();
         ///
@@ -263,9 +264,13 @@ namespace FB
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacQD* createPluginWindowMacQD();
+#endif
 		
 		virtual PluginEventMacCocoa* createPluginEventMacCocoa();
+#ifndef NP_NO_CARBON
 		virtual PluginEventMacCarbon* createPluginEventMacCarbon();
+#endif
+
 #endif
         
 #ifdef FB_X11

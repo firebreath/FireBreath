@@ -109,18 +109,22 @@ FB::PluginWindowMacCG* FB::FactoryBase::createPluginWindowMacCG()
 {
     return FB::createPluginWindowMacCG();
 }
+#ifndef NP_NO_QUICKDRAW
 FB::PluginWindowMacQD* FB::FactoryBase::createPluginWindowMacQD()
 {
     return FB::createPluginWindowMacQD();
 }
+#endif
 FB::PluginEventMacCocoa* FB::FactoryBase::createPluginEventMacCocoa()
 {
     return FB::createPluginEventMacCocoa();
 }
+#ifndef NP_NO_CARBON
 FB::PluginEventMacCarbon* FB::FactoryBase::createPluginEventMacCarbon()
 {
     return FB::createPluginEventMacCarbon();
 }
+#endif
 
 #endif
 

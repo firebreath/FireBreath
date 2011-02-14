@@ -33,7 +33,7 @@ FB::PluginWindowMacCG* FB::createPluginWindowMacCG()
 }
 #endif
 
-#if !FBMAC_USE_QUICKDRAW
+#if !FBMAC_USE_QUICKDRAW && !defined(NP_NO_QUICKDRAW)
 FB::PluginWindowMacQD* FB::createPluginWindowMacQD()
 {
     return 0;

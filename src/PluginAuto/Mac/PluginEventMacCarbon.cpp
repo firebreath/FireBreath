@@ -25,10 +25,7 @@
 
 using namespace FB;
 
-FB::PluginEventMacCarbon* FB::createPluginEventMacCarbon()
-{
-    return new PluginEventMacCarbon();
-}
+#ifndef NP_NO_CARBON
 
 PluginEventMacCarbon::PluginEventMacCarbon()
 	: PluginEventMac(), m_old_h(0.0f), m_old_v(0.0f)
@@ -157,3 +154,5 @@ int16_t PluginEventMacCarbon::HandleEvent(void* event)
     }
     return false;
 }
+
+#endif

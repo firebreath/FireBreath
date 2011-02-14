@@ -20,6 +20,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
+#ifndef NP_NO_QUICKDRAW
+
 FB::PluginWindowMacQD* FB::createPluginWindowMacQD()
 {
     return new PluginWindowMacQD();
@@ -74,3 +76,5 @@ void PluginWindowMacQD::InvalidateWindow() const
     else
         m_npHost->InvalidateRect(&r);
 }
+
+#endif // NP_NO_QUICKDRAW

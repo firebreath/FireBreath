@@ -27,11 +27,6 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 
 using namespace FB; using namespace std;
 
-FB::PluginEventMacCocoa* FB::createPluginEventMacCocoa()
-{
-    return new PluginEventMacCocoa();
-}
-
 PluginEventMacCocoa::PluginEventMacCocoa() {}
 
 PluginEventMacCocoa::~PluginEventMacCocoa() {}

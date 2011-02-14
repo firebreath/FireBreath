@@ -32,7 +32,7 @@ namespace FB
 	FB::PluginEventMacCocoa* createPluginEventMacCocoa();
 	FB::PluginEventMacCarbon* createPluginEventMacCarbon();
 #endif
-
+	
 #ifdef FB_X11
     FB::PluginWindowX11* createPluginWindowX11(const FB::WindowContextX11&);
 #endif

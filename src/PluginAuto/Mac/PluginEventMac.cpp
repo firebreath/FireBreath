@@ -18,10 +18,31 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 #include "PluginEventMacCocoa.h"
 #include "PluginEventMacCarbon.h"
 #include "PluginWindowMac.h"
+#include "ConstructDefaultPluginWindows.h"
 
 #include "PluginEventMac.h"
 
 using namespace FB;
+
+FB::PluginEventMacCarbon* FB::createPluginEventMacCarbon()
+{
+#if FBMAC_USE_CARBON && !defined(NP_NO_CARBON)
+    return new PluginEventMacCarbon();
+#else
+	assert(false);
+	return NULL;
+#endif
+}
+
+FB::PluginEventMacCocoa* FB::createPluginEventMacCocoa()
+{
+#if FBMAC_USE_COCOA
+    return new PluginEventMacCocoa();
+#else
+	assert(false);
+	return NULL;
+#endif
+}
 
 /*
 	Apple's Safari requires NPEventModelCarbon for NPDrawingModelCoreGraphics and NPDrawingModelQuickDraw.

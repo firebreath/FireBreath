@@ -18,6 +18,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <Carbon/Carbon.h>
 #include "PluginWindowMac.h"
 
+// When in 64 bit mode QuickDraw doesn't work, so the npapi headers set this flag.
+// If the flag is set, we should not compile this class
+#ifndef NP_NO_QUICKDRAW
+
 namespace FB 
 {    
     class PluginWindowMacQD : public PluginWindowMac
@@ -39,4 +43,7 @@ namespace FB
 		WindowRef m_window;
     };
 };
+
+#endif // NP_NO_QUICKDRAW
+
 #endif // H_PLUGINWINDOWMACQD

@@ -15,6 +15,8 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #ifndef H_PLUGINEVENTMACCARBON
 #define H_PLUGINEVENTMACCARBON
 
+#ifndef NP_NO_CARBON
+
 #include "PluginEventMac.h"
 
 namespace FB {
@@ -39,5 +41,7 @@ namespace FB {
 		short m_old_h, m_old_v; // Keep track of mouse movement coordinates
     };
 };
+
+#endif // NP_NO_CARBON
 
 #endif // H_PLUGINEVENTMACCARBON
