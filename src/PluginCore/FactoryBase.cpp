@@ -101,30 +101,27 @@ HRESULT FB::FactoryBase::UpdateWindowsRegistry( bool install )
 #endif
 
 #ifdef FB_MACOSX
-FB::PluginWindowMacCarbonQD* FB::FactoryBase::createPluginWindowCarbonQD(const FB::WindowContextQuickDraw& ctx)
+FB::PluginWindowMacCA* FB::FactoryBase::createPluginWindowMacCA(bool invalidating)
 {
-    return FB::createPluginWindowCarbonQD(ctx);
+    return FB::createPluginWindowMacCA(invalidating);
+}
+FB::PluginWindowMacCG* FB::FactoryBase::createPluginWindowMacCG()
+{
+    return FB::createPluginWindowMacCG();
+}
+FB::PluginWindowMacQD* FB::FactoryBase::createPluginWindowMacQD()
+{
+    return FB::createPluginWindowMacQD();
+}
+FB::PluginEventMacCocoa* FB::FactoryBase::createPluginEventMacCocoa()
+{
+    return FB::createPluginEventMacCocoa();
+}
+FB::PluginEventMacCarbon* FB::FactoryBase::createPluginEventMacCarbon()
+{
+    return FB::createPluginEventMacCarbon();
 }
 
-FB::PluginWindowMacCarbonCG* FB::FactoryBase::createPluginWindowCarbonCG(const FB::WindowContextCoreGraphics& ctx)
-{
-    return FB::createPluginWindowCarbonCG(ctx);
-}
-
-FB::PluginWindowMacCocoaCG* FB::FactoryBase::createPluginWindowCocoaCG()
-{
-    return FB::createPluginWindowCocoaCG();
-}
-
-FB::PluginWindowMacCocoaCA* FB::FactoryBase::createPluginWindowCocoaCA()
-{
-    return FB::createPluginWindowCocoaCA();
-}
-
-FB::PluginWindowMacCocoaICA* FB::FactoryBase::createPluginWindowCocoaICA()
-{
-    return FB::createPluginWindowCocoaICA();
-}
 #endif
 
 #ifdef FB_X11

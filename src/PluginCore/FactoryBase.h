@@ -233,49 +233,39 @@ namespace FB
       
 #ifdef FB_MACOSX
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw& ctx);
+        /// @fn virtual PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
         ///
-        /// @brief  Creates a PluginWindow derived plugin window object for Carbon / QuickDraw
+        /// @brief  Creates a PluginWindow derived plugin window object for CoreAnimation
         ///
-        /// @param  Platform specific data structure for window context information
-        ///
-        /// @return A pointer to the object that should handle the plugin window
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw& ctx);
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCarbonCG* createPluginWindowCarbonQD(const WindowContextCoreGraphics& ctx);
-        ///
-        /// @brief  Creates a PluginWindow derived plugin window object for Carbon / CoreGraphics
-        ///
-        /// @param  Platform specific data structure for window context information
+        /// @param  host    The BrowserHost object for the browser containing this plugin
+        /// @param  invalidating    
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCarbonCG* createPluginWindowCarbonCG(const WindowContextCoreGraphics& ctx);
+        virtual PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCocoaCG* createPluginWindowCocoaCG();
+        /// @fn virtual PluginWindowMacCG* createPluginWindowMacCG();
         ///
-        /// @brief  Creates a PluginWindow derived plugin window object for Cocoa / CoreGraphics
+        /// @brief  Creates a PluginWindow derived plugin window object for CoreGraphics
         ///
-        /// @return A pointer to the object that should handle the plugin window
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCocoaCG*  createPluginWindowCocoaCG ();
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCocoaCA* createPluginWindowCocoaCA();
-        ///
-        /// @brief  Creates a PluginWindow derived plugin window object for Cocoa / CoreGraphics
+        /// @param  host    The BrowserHost object for the browser containing this plugin
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCocoaCA*  createPluginWindowCocoaCA ();
+        virtual PluginWindowMacCG* createPluginWindowMacCG();
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCocoaICA* createPluginWindowCarbonICA();
+        /// @fn virtual PluginWindowMacQD* createPluginWindowMacQD();
         ///
-        /// @brief  Creates a PluginWindow derived plugin window object for Carbon / QuickDraw
+        /// @brief  Creates a PluginWindow derived plugin window object for QuickDraw
+        ///
+        /// @param  host    The BrowserHost object for the browser containing this plugin
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCocoaICA* createPluginWindowCocoaICA();
+        virtual PluginWindowMacQD* createPluginWindowMacQD();
+		
+		virtual PluginEventMacCocoa* createPluginEventMacCocoa();
+		virtual PluginEventMacCarbon* createPluginEventMacCarbon();
 #endif
         
 #ifdef FB_X11

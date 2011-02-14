@@ -34,14 +34,11 @@ namespace FB
 #endif
     
 #ifdef FB_MACOSX
-    class PluginWindowMacCarbonQD;
-    class PluginWindowMacCarbonCG;
-    class PluginWindowMacCocoaCG;
-    class PluginWindowMacCocoaCA;
-    class PluginWindowMacCocoaICA;
-    
-    struct WindowContextQuickDraw;
-    struct WindowContextCoreGraphics;
+    class PluginWindowMacCA;
+    class PluginWindowMacCG;
+    class PluginWindowMacQD;
+	class PluginEventMacCocoa;
+	class PluginEventMacCarbon;
 #endif 
 }
 
