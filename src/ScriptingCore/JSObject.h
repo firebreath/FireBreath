@@ -52,14 +52,16 @@ namespace FB
         ///
         /// @param  h   The BrowserHost from whence the object came. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        JSObject(BrowserHostPtr h);
+        JSObject(BrowserHostPtr h) : host(h)
+        {
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~JSObject()
         ///
         /// @brief  Finaliser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~JSObject();
+        virtual ~JSObject() {}
 
         virtual void *getEventId() const { return NULL; }
         virtual void *getEventContext() const { return NULL; }
@@ -74,7 +76,10 @@ namespace FB
         /// @param  args        The arguments. 
         /// @see Invoke
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args);
+        void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+        {
+            host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
@@ -85,7 +90,10 @@ namespace FB
         /// @param  propertyName    Name of the property. 
         /// @param  value           The value. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetPropertyAsync(const std::string& propertyName, const variant& value);
+        virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
+        {
+            host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+        }
 
         //virtual FB::JSObjectPtr Construct(const std::wstring& memberName, const std::vector<variant>& args);
         //virtual FB::JSObjectPtr Construct(const std::string& memberName, const std::vector<variant>& args) = 0;

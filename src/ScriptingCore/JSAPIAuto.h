@@ -146,7 +146,10 @@ namespace FB {
         /// @since 1.4a3
         /// @see registerAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setReserved(const std::string &name);
+        virtual void setReserved(const std::string &name)
+        {
+            m_reservedMembers.insert(name);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public bool isReserved( const std::string& propertyName ) const
@@ -161,7 +164,10 @@ namespace FB {
         /// @see setReserved
         /// @see registerAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool isReserved( const std::string& propertyName ) const;
+        bool isReserved( const std::string& propertyName ) const
+        {
+            return m_reservedMembers.find(propertyName) != m_reservedMembers.end();
+        }
 
         virtual void getMemberNames(std::vector<std::string> &nameVector) const;
         virtual size_t getMemberCount() const;
@@ -169,7 +175,10 @@ namespace FB {
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
         virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
-        virtual void unregisterMethod(const std::wstring& name);
+        virtual void unregisterMethod(const std::wstring& name)
+        {
+            unregisterMethod(FB::wstring_to_utf8(name));
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void JSAPIAuto::unregisterMethod(const std::string& name)
         ///
@@ -183,7 +192,10 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterMethod(const std::string& name);
 
-        virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func);
+        virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func)
+        {
+            registerMethod(FB::wstring_to_utf8(name), func);
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
         ///
@@ -271,7 +283,10 @@ namespace FB {
         ///         
         /// @return A string representation of this object. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::string ToString();
+        virtual std::string ToString()
+        {
+            return m_description;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool JSAPIAuto::get_valid()
@@ -281,7 +296,10 @@ namespace FB {
         ///
         /// @return true if it succeeds, false if it fails. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool get_valid();
+        virtual bool get_valid()
+        {
+            return true;
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public virtual FB::variant getAttribute(const std::string& name)
@@ -312,7 +330,10 @@ namespace FB {
         virtual void setAttribute(const std::string& name, const FB::variant& value);
 
     protected:
-        inline bool memberAccessible( ZoneMap::const_iterator it ) const;
+        bool memberAccessible( ZoneMap::const_iterator it ) const
+        {
+            return (it != m_zoneMap.end()) && getZone() >= it->second;
+        }
 
     protected:
         // Stores Method Objects -- JSAPI proxy objects for calling a method on this object

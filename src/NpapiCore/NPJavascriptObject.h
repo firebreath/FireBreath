@@ -39,7 +39,14 @@ namespace FB { namespace Npapi {
     public:
         static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIWeakPtr api, bool auto_release = false);
         void setAPI(FB::JSAPIWeakPtr api, NpapiBrowserHostPtr host);
-        FB::JSAPIPtr getAPI() const;
+        FB::JSAPIPtr getAPI() const
+        {
+            FB::JSAPIPtr ptr(m_api.lock());
+            if (!ptr)
+                throw std::bad_cast();
+            return ptr;
+        }
+
         virtual ~NPJavascriptObject(void);
 
     private:

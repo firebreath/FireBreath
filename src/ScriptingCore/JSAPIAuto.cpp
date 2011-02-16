@@ -69,32 +69,11 @@ FB::JSAPIAuto::~JSAPIAuto()
 
 }
 
-
-std::string FB::JSAPIAuto::ToString()
-{
-    return m_description;
-}
-
-bool FB::JSAPIAuto::get_valid()
-{
-    return true;
-}
-
-void FB::JSAPIAuto::registerMethod(const std::wstring& name, const CallMethodFunctor& func)
-{
-    registerMethod(FB::wstring_to_utf8(name), func);
-}
-
 void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     m_methodFunctorMap[name] = func;
     m_zoneMap[name] = getZone();
-}
-
-void FB::JSAPIAuto::unregisterMethod( const std::wstring& name )
-{
-    unregisterMethod(FB::wstring_to_utf8(name));
 }
 
 void FB::JSAPIAuto::unregisterMethod( const std::string& name )
@@ -352,16 +331,6 @@ void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::varian
     m_zoneMap[name] = getZone();
 }
 
-void FB::JSAPIAuto::setReserved( const std::string &name )
-{
-    m_reservedMembers.insert(name);
-}
-
-bool FB::JSAPIAuto::isReserved( const std::string& propertyName ) const
-{
-    return m_reservedMembers.find(propertyName) != m_reservedMembers.end();
-}
-
 FB::variant FB::JSAPIAuto::getAttribute( const std::string& name )
 {
     if (m_attributes.find(name) != m_attributes.end()) {
@@ -381,9 +350,3 @@ void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& va
         throw FB::script_error("Cannot set read-only property " + name);
     }
 }
-
-bool FB::JSAPIAuto::memberAccessible( ZoneMap::const_iterator it ) const
-{
-    return (it != m_zoneMap.end()) && getZone() >= it->second;
-}
-
