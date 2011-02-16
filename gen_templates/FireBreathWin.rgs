@@ -3,7 +3,7 @@ HKCR
     NoRemove AppID
     {
         '%APPID%' = s 'FireBreathWin'
-        '${FBSTRING_PluginFileName}'
+        '${FBSTRING_PluginFileName}.dll'
         {
             val AppID = s '%APPID%'
         }
