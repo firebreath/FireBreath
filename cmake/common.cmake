@@ -121,7 +121,6 @@ macro (add_firebreath_library project_name)
     set (LIB_KEY ${PLUGIN_NAME}_${project_name})
     set (${LIB_KEY} YES)
     set (${LIB_KEY} YES PARENT_SCOPE)
-    message("Set ${LIB_KEY} to ${${LIB_KEY}}")
 
 endmacro(add_firebreath_library)
 

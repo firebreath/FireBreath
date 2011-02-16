@@ -145,14 +145,8 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
 
 ENDMACRO(add_windows_plugin)
 
-macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
+macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
     if (WIN32)
-        get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
-        get_target_property(LIBDIR ${PROJNAME} LIBRARY_OUTPUT_DIRECTORY)
-
-        set(_PLUGFILENAME "${LIBDIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
-        message("Expecting plugin filename ${_PLUGFILENAME}")
-
         if (EXISTS ${PFXFILE})
             message("-- Plugin will be signed with ${PFXFILE}")
             if (NOT "${PASSFILE}" STREQUAL "")
@@ -172,7 +166,7 @@ macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
                 if (NOT "${TIMESTAMP_URL}" STREQUAL "")
                     set(_STCMD ${_STCMD} /t "${TIMESTAMP_URL}")
                 endif()
-                set(_STCMD ${_STCMD} "${_PLUGFILENAME}")
+                set(_STCMD ${_STCMD} "${_FILENAME}")
                 ADD_CUSTOM_COMMAND(
                     TARGET ${PROJNAME}
                     POST_BUILD
@@ -186,6 +180,17 @@ macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
         else()
             message("-- No signtool certificate found; assuming development machine (${PFXFILE})")
         endif()
+
+    endif()
+endmacro(firebreath_sign_file)
+
+macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
+    if (WIN32)
+        get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+        get_target_property(LIBDIR ${PROJNAME} LIBRARY_OUTPUT_DIRECTORY)
+
+        set(_PLUGFILENAME "${LIBDIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
+        firebreath_sign_file(${PROJNAME} ${_PLUGFILENAME} ${PFXFILE} ${PASSFILE} ${TIMESTAMP_URL})
     endif()
 endmacro(firebreath_sign_plugin)
 
