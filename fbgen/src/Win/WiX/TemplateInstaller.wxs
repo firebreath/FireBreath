@@ -19,7 +19,7 @@
         <Directory Id="TARGETDIR" Name="SourceDir">
             <Directory Id="${FB_WIX_INSTALL_LOCATION}">
                 <Directory Id="CompanyDir" Name="${COMPANY_NAME}">
-                    <Component Id="CompanyDirComp" Guid="{@{GUIDS_companydircomp}}">
+                    <Component Id="CompanyDirComp" Guid="*">
                         <RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
                     </Component>
