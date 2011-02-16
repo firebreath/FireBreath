@@ -145,6 +145,49 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
 
 ENDMACRO(add_windows_plugin)
 
+macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
+    if (WIN32)
+        get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+        get_target_property(LIBDIR ${PROJNAME} LIBRARY_OUTPUT_DIRECTORY)
+
+        set(_PLUGFILENAME "${LIBDIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
+        message("Expecting plugin filename ${_PLUGFILENAME}")
+
+        if (EXISTS ${PFXFILE})
+            message("-- Plugin will be signed with ${PFXFILE}")
+            if (NOT "${PASSFILE}" STREQUAL "")
+                message("-- Reading certificate passwork from ${PASSFILE}")
+            endif()
+            GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH)
+            find_program(SIGNTOOL signtool
+                PATHS
+                ${WINSDK_DIR}/bin
+                )
+            if (SIGNTOOL)
+                set(_STCMD signtool sign /f "${PFXFILE}")
+                if (NOT "${PASSFILE}" STREQUAL "")
+                    file(STRINGS "${PASSFILE}" PASSPHRASE LIMIT_COUNT 1)
+                    set(_STCMD ${_STCMD} /p ${PASSPHRASE})
+                endif()
+                if (NOT "${TIMESTAMP_URL}" STREQUAL "")
+                    set(_STCMD ${_STCMD} /t "${TIMESTAMP_URL}")
+                endif()
+                set(_STCMD ${_STCMD} "${_PLUGFILENAME}")
+                ADD_CUSTOM_COMMAND(
+                    TARGET ${PROJNAME}
+                    POST_BUILD
+                    COMMAND ${_STCMD}
+                    )
+                message("-- Successfully added signtool build step to ${PROJNAME}")
+            else()
+                message("Could not find signtool! Code signing disabled ${SIGNTOOL}")
+            endif()
+            set(PASSPHRASE "")
+        else()
+            message("-- No signtool certificate found; assuming development machine (${PFXFILE})")
+        endif()
+    endif()
+endmacro(firebreath_sign_plugin)
 
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
 	# WiX doesn't work with VC8 generated DLLs
