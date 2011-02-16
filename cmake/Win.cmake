@@ -148,11 +148,8 @@ ENDMACRO(add_windows_plugin)
 macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
     if (WIN32)
         if (EXISTS ${PFXFILE})
-            message("-- Plugin will be signed with ${PFXFILE}")
-            if (NOT "${PASSFILE}" STREQUAL "")
-                message("-- Reading certificate passwork from ${PASSFILE}")
-            endif()
-            GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH)
+            message("-- ${_FILENAME} will be signed with ${PFXFILE}")
+            GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
             find_program(SIGNTOOL signtool
                 PATHS
                 ${WINSDK_DIR}/bin
@@ -172,7 +169,7 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
                     POST_BUILD
                     COMMAND ${_STCMD}
                     )
-                message("-- Successfully added signtool build step to ${PROJNAME}")
+                message("-- Successfully added signtool step to sign ${_FILENAME}")
             else()
                 message("Could not find signtool! Code signing disabled ${SIGNTOOL}")
             endif()
@@ -196,7 +193,7 @@ endmacro(firebreath_sign_plugin)
 
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
 	# WiX doesn't work with VC8 generated DLLs
-    if (WIN32 AND WIX_FOUND AND NOT CMAKE_GENERATOR STREQUAL "Visual Studio 8 2005")
+    if (WIN32 AND WIX_FOUND)
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
             GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
@@ -234,4 +231,3 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
 
     endif()
 endfunction(add_wix_installer)
-
