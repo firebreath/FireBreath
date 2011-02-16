@@ -76,7 +76,7 @@ namespace FB
         /// @param  args        The arguments. 
         /// @see Invoke
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void JSObject::InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+        virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         {
             host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
         }
