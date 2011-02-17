@@ -209,3 +209,7 @@ add_library(${PROJNAME} STATIC ${SOURCES})
 if (WIN32)
     target_link_libraries(${PROJNAME} psapi)
 endif()
+
+if (NOT FB_GUI_DISABLED)
+    target_link_libraries(${PROJNAME} ${GUI_LIBRARIES})
+endif()
