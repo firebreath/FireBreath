@@ -21,17 +21,22 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NpapiPluginModule::NpapiPluginModule(void) : m_threadId(boost::this_thread::get_id())
+NpapiPluginModule::NpapiPluginModule(bool init/* = true*/)
+    : m_threadId(boost::this_thread::get_id()), m_init(init)
 {
-    FB::Log::initLogging();
-    getFactoryInstance()->globalPluginInitialize();
+    if (init) {
+        FB::Log::initLogging();
+        getFactoryInstance()->globalPluginInitialize();
+    }
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
 
 NpapiPluginModule::~NpapiPluginModule(void)
 {
-    getFactoryInstance()->globalPluginDeinitialize();
-    FB::Log::stopLogging();
+    if (m_init) {
+        getFactoryInstance()->globalPluginDeinitialize();
+        FB::Log::stopLogging();
+    }
 }
 
 void NpapiPluginModule::assertMainThread()
