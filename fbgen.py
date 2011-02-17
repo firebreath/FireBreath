@@ -67,6 +67,7 @@ def Main():
         help = "3 or more alphanumeric characters (underscores allowed after first position)")
     parser.add_option("-c", "--company-name", dest = "companyName")
     parser.add_option("-d", "--company-domain", dest = "companyDomain")
+    parser.add_option("-g", "--disable-gui", dest = "disableGUI")
     options, args = parser.parse_args()
 
 
@@ -81,7 +82,7 @@ def Main():
     cfgFile.read(cfgFilename)
 
     # Instantiate the appropriate classes
-    plugin = Plugin(name = options.pluginName, ident = options.pluginIdent)
+    plugin = Plugin(name = options.pluginName, ident = options.pluginIdent, disable_gui = options.disableGUI)
     plugin.readCfg(cfgFile)
     company = Company(name = options.companyName)
     company.readCfg(cfgFile)
