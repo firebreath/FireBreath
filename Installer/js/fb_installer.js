@@ -79,7 +79,7 @@ FB._isIEPluginInstalled = function(pluginName)
 
     var plugin = false;
     try {
-        plugin = new ActiveXControl(axname);
+        plugin = new ActiveXObject(axname);
     } catch (e) {
         if (e.message != "Object doesn't support this property or method")
         {

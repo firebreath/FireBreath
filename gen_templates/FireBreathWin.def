@@ -1,7 +1,7 @@
 
 ; FireBreathWin.def : Declares the module parameters.
 
-LIBRARY      "np${PLUGIN_NAME}.dll"
+LIBRARY      "${FBSTRING_PluginFileName}.dll"
 
 EXPORTS
 ; Needed for ActiveX

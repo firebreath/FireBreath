@@ -33,7 +33,7 @@ namespace FB {
         {
         public:
             static NpapiPluginModule *Default;
-            NpapiPluginModule();
+            NpapiPluginModule(bool init = true);
             virtual ~NpapiPluginModule(void);
 
             void setNetscapeFuncs(NPNetscapeFuncs *npnFuncs);
@@ -43,6 +43,9 @@ namespace FB {
 
         protected:
             boost::thread::id m_threadId;
+            bool m_init;
+            static volatile bool PluginModuleInitialized;
+            static volatile bool PluginModuleDeinitialized;
 
         public:
             void assertMainThread();

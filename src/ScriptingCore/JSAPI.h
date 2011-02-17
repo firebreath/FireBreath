@@ -100,7 +100,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args);
+        virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
+        {
+            FireEvent(wstring_to_utf8(eventName), args);
+        }
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args)
@@ -169,9 +172,15 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
         /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params);
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params)
+        {
+            FireJSEvent(eventName, params, FB::VariantList());
+        }
         /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments);
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments)
+        {
+            FireJSEvent(eventName, FB::VariantMap(), arguments);
+        }
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,7 +210,12 @@ namespace FB
         /// @since 1.4a3
         /// @see FB::scoped_zonelock
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void pushZone(const SecurityZone& securityLevel);
+        virtual void pushZone(const SecurityZone& securityLevel)
+        {
+            m_zoneMutex.lock();
+            m_zoneStack.push_back(securityLevel);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public  void FB::JSAPI::popZone()
         ///
@@ -213,7 +227,11 @@ namespace FB
         /// @since 1.4a3
         /// @see FB::scoped_zonelock
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void popZone();
+        virtual void popZone()
+        {
+            m_zoneStack.pop_back();
+            m_zoneMutex.unlock();
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public void setDefaultZone(const SecurityZone& securityLevel)
@@ -227,7 +245,12 @@ namespace FB
         /// @see popZone
         /// @see getDefaultZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultZone(const SecurityZone& securityLevel);
+        virtual void setDefaultZone(const SecurityZone& securityLevel)
+        {
+            assert(m_zoneStack.size() > 0);
+            m_zoneStack.pop_front();
+            m_zoneStack.push_front(securityLevel);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public virtual SecurityZone getDefaultZone() const
@@ -241,7 +264,11 @@ namespace FB
         /// @see popZone
         /// @see getDefaultZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual SecurityZone getDefaultZone() const;
+        virtual SecurityZone getDefaultZone() const
+        {
+            assert(m_zoneStack.size() > 0);
+            return m_zoneStack.front();
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public SecurityZone getZone() const
@@ -254,7 +281,12 @@ namespace FB
         /// @see pushZone
         /// @see popZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual SecurityZone getZone() const;
+        virtual SecurityZone getZone() const
+        {
+            assert(m_zoneStack.size() > 0);
+            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+            return m_zoneStack.back();
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEvent(const std::string& name)
@@ -267,7 +299,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEvent(const std::wstring& name)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEvent(const std::wstring& name);
+        virtual void registerEvent(const std::wstring& name)
+        {
+            registerEvent(wstring_to_utf8(name));
+        }
+
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
@@ -281,7 +317,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event);
+        virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
+        {
+            registerEventMethod(wstring_to_utf8(name), event);
+        }
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
@@ -295,7 +334,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event);
+        virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
+        {
+            unregisterEventMethod(wstring_to_utf8(name), event);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEventInterface(const JSObjectPtr& event)
@@ -306,7 +348,10 @@ namespace FB
         ///
         /// @param  event   The JSAPI interface 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventInterface(const JSObjectPtr& event);
+        virtual void registerEventInterface(const JSObjectPtr& event)
+        {
+            m_evtIfaces[static_cast<void*>(event.get())] = event;
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventInterface(const JSObjectPtr& event)
         ///
@@ -314,12 +359,20 @@ namespace FB
         ///
         /// @param  event   The JSAPI interface
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventInterface(const JSObjectPtr& event);
+        virtual void unregisterEventInterface(const JSObjectPtr& event)
+        {
+            EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
+            m_evtIfaces.erase(fnd);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const;
+        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
+        {
+            return getDefaultEventMethod(wstring_to_utf8(name));
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
         ///
@@ -353,10 +406,16 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event);
+        virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
+        {
+            setDefaultEventMethod(wstring_to_utf8(name), event);
+        }
 
         virtual void getMemberNames(std::vector<std::wstring> &nameVector) const;
-        virtual void getMemberNames(std::vector<std::wstring> *nameVector) const;
+        virtual void getMemberNames(std::vector<std::wstring> *nameVector) const
+        {
+            getMemberNames(*nameVector);
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) const = 0
         ///
@@ -368,7 +427,10 @@ namespace FB
         /// @param [out] nameVector  The name vector. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void getMemberNames(std::vector<std::string> &nameVector) const = 0;
-        virtual void getMemberNames(std::vector<std::string> *nameVector) const;
+        virtual void getMemberNames(std::vector<std::string> *nameVector) const
+        {
+            getMemberNames(*nameVector);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual size_t getMemberCount() const = 0
@@ -382,7 +444,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasMethod(const std::wstring& methodName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasMethod(const std::wstring& methodName) const;
+        virtual bool HasMethod(const std::wstring& methodName) const
+        {
+            return HasMethod(wstring_to_utf8(methodName));
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasMethod(const std::string& methodName) const = 0
         ///
@@ -397,7 +463,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasMethodObject(const std::wstring& methodObjName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasMethodObject(const std::wstring& methodObjName) const;
+        virtual bool HasMethodObject(const std::wstring& methodObjName) const
+        {
+            return HasMethodObject(wstring_to_utf8(methodObjName));
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasMethodObject(const std::string& methodObjName) const
         ///
@@ -415,7 +485,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasProperty(const std::wstring& propertyName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasProperty(const std::wstring& propertyName) const;
+        virtual bool HasProperty(const std::wstring& propertyName) const
+        {
+            return HasProperty(wstring_to_utf8(propertyName));
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasProperty(const std::string& propertyName) const
         ///
@@ -456,12 +529,18 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasEvent(const std::wstring& eventName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasEvent(const std::wstring& eventName) const;
+        virtual bool HasEvent(const std::wstring& eventName) const
+        {
+            return HasEvent(wstring_to_utf8(eventName));
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual JSAPIPtr GetMethodObject(const std::wstring& methodObjName)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSAPIPtr GetMethodObject(const std::wstring& methodObjName);
+        virtual JSAPIPtr GetMethodObject(const std::wstring& methodObjName)
+        {
+            return GetMethodObject(FB::wstring_to_utf8(methodObjName));
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant GetMethodObject(const std::string& methodObjName) = 0
         ///
@@ -482,7 +561,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual variant GetProperty(const std::wstring& propertyName)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant GetProperty(const std::wstring& propertyName);
+        virtual variant GetProperty(const std::wstring& propertyName)
+        {
+            return GetProperty(wstring_to_utf8(propertyName));
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant GetProperty(const std::string& propertyName) = 0
         ///
@@ -497,7 +580,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void SetProperty(const std::wstring& propertyName, const variant& value)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetProperty(const std::wstring& propertyName, const variant& value);
+        virtual void SetProperty(const std::wstring& propertyName, const variant& value)
+        {
+            SetProperty(wstring_to_utf8(propertyName), value);
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetProperty(const std::string& propertyName, const variant& value) = 0
         ///
@@ -544,7 +630,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
+        virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+        {
+            return Invoke(wstring_to_utf8(methodName), args);
+        }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant Invoke(const std::string& methodName,
         /// const std::vector<variant>& args) = 0

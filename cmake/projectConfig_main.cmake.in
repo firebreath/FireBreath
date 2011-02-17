@@ -39,6 +39,7 @@ include_directories(
 
 # set up the mimetype strings
 string(REPLACE ";" "|" FBMIMETYPE_LIST "${FBSTRING_MIMEType}")
+string(REGEX REPLACE "\\.dll$" "" FBSTRING_PluginFileName "${FBSTRING_PluginFileName}")
 if (FB_ATLREG_MACHINEWIDE)
     set(REGKEY_ROOT "HKLM")
     set(FB_WIX_INSTALL_LOCATION "ProgramFilesFolder")

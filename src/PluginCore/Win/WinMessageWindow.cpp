@@ -33,13 +33,16 @@ FB::WinMessageWindow::WinMessageWindow() {
         wc.hbrBackground = NULL;
     
         if (!(clsAtom = ::RegisterClassEx(&wc))) {
-            err = ::GetLastError();    
+            err = ::GetLastError();
+            if (err != ERROR_CLASS_ALREADY_EXISTS) {
+                throw std::runtime_error("Could not register window class");
+            }
         }
     }
     // Step 2: Creating the Window
     HWND messageWin = CreateWindowEx(
         WS_OVERLAPPED,
-        (LPCWSTR)clsAtom,
+        wszClassName,
         wszWinName,
         0,
         0, 0, 0, 0,

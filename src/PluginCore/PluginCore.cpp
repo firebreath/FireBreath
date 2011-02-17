@@ -86,44 +86,6 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
     }
 }
 
-void PluginCore::SetHost(FB::BrowserHostPtr host)
-{
-    m_host = host;
-}
-
-JSAPIPtr PluginCore::getRootJSAPI()
-{
-    if (!m_api) {
-        m_api = createJSAPI();
-    }
-
-    return m_api;
-}
-
-PluginWindow* PluginCore::GetWindow() const
-{
-    return m_Window;
-}
-
-void PluginCore::SetWindow(PluginWindow *win)
-{
-    FBLOG_TRACE("PluginCore", "Window Set");
-    if (m_Window && m_Window != win) {
-        ClearWindow();
-    }
-    m_Window = win;
-    win->AttachObserver(this);
-}
-
-void PluginCore::ClearWindow()
-{
-    FBLOG_TRACE("PluginCore", "Window Cleared");
-    if (m_Window) {
-        m_Window->DetachObserver(this);
-        m_Window = NULL;
-    }
-}
-
 // If you override this, you probably want to call it again, since this is what calls back into the page
 // to indicate that we're done.
 void PluginCore::setReady()
@@ -164,3 +126,21 @@ bool PluginCore::isWindowless()
     return m_windowLessParam;
 }
 
+void FB::PluginCore::SetWindow( PluginWindow *win )
+{
+    FBLOG_TRACE("PluginCore", "Window Set");
+    if (m_Window && m_Window != win) {
+        ClearWindow();
+    }
+    m_Window = win;
+    win->AttachObserver(this);
+}
+
+void FB::PluginCore::ClearWindow()
+{
+    FBLOG_TRACE("PluginCore", "Window Cleared");
+    if (m_Window) {
+        m_Window->DetachObserver(this);
+        m_Window = NULL;
+    }
+}

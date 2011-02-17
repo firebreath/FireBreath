@@ -43,44 +43,6 @@ void JSAPI::invalidate()
     m_valid = false;
 }
 
-// Security zone management
-void FB::JSAPI::setDefaultZone( const SecurityZone& securityLevel )
-{
-    assert(m_zoneStack.size() > 0);
-    m_zoneStack.pop_front();
-    m_zoneStack.push_front(securityLevel);
-}
-FB::SecurityZone FB::JSAPI::getDefaultZone() const
-{
-    assert(m_zoneStack.size() > 0);
-    return m_zoneStack.front();
-}
-
-void FB::JSAPI::pushZone( const SecurityZone& securityLevel )
-{
-    m_zoneMutex.lock();
-    m_zoneStack.push_back(securityLevel);
-}
-
-void FB::JSAPI::popZone( )
-{
-    m_zoneStack.pop_back();
-    m_zoneMutex.unlock();
-}
-
-FB::SecurityZone FB::JSAPI::getZone() const
-{
-    assert(m_zoneStack.size() > 0);
-    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-    return m_zoneStack.back();
-}
-
-
-void JSAPI::FireEvent(const std::wstring& eventName, const std::vector<variant>& args)
-{
-    FireEvent(wstring_to_utf8(eventName), args);
-}
-
 FB::VariantMap proxyProcessMap( const FB::VariantMap &args, const FB::JSAPIPtr& self, const FB::JSAPIPtr& proxy );
 FB::VariantList proxyProcessList( const FB::VariantList &args, FB::JSAPIPtr self, FB::JSAPIPtr proxy )
 {
@@ -209,22 +171,6 @@ void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantMap 
     }
 }
 
-void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantMap &params )
-{
-    FireJSEvent(eventName, params, FB::VariantList());
-}
-
-void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantList &arguments )
-{
-    FireJSEvent(eventName, FB::VariantMap(), arguments);
-}
-
-
-bool JSAPI::HasEvent(const std::wstring& eventName) const
-{
-    return HasEvent(wstring_to_utf8(eventName));
-}
-
 bool JSAPI::HasEvent(const std::string& eventName) const
 {
     EventSingleMap::const_iterator fnd = m_defEventMap.find(eventName);
@@ -233,11 +179,6 @@ bool JSAPI::HasEvent(const std::string& eventName) const
     } else {
         return false;
     }
-}
-
-void JSAPI::registerEventMethod(const std::wstring& name, JSObjectPtr &event)
-{
-    registerEventMethod(wstring_to_utf8(name), event);
 }
 
 void JSAPI::registerEventMethod(const std::string& name, JSObjectPtr &event)
@@ -252,10 +193,6 @@ void JSAPI::registerEventMethod(const std::string& name, JSObjectPtr &event)
     m_eventMap.insert(EventPair(name, event));
 }
 
-void JSAPI::unregisterEventMethod(const std::wstring& name, JSObjectPtr &event)
-{
-    unregisterEventMethod(wstring_to_utf8(name), event);
-}
 
 void JSAPI::unregisterEventMethod(const std::string& name, JSObjectPtr &event)
 {
@@ -269,22 +206,6 @@ void JSAPI::unregisterEventMethod(const std::string& name, JSObjectPtr &event)
     }
 }
 
-void JSAPI::registerEventInterface(const JSObjectPtr& event)
-{
-    m_evtIfaces[static_cast<void*>(event.get())] = event;
-}
-
-void JSAPI::unregisterEventInterface(const JSObjectPtr& event)
-{
-    EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
-    m_evtIfaces.erase(fnd);
-}
-
-JSObjectPtr JSAPI::getDefaultEventMethod(const std::wstring& name) const
-{
-    return getDefaultEventMethod(wstring_to_utf8(name));
-}
-
 JSObjectPtr JSAPI::getDefaultEventMethod(const std::string& name) const
 {
     EventSingleMap::const_iterator fnd = m_defEventMap.find(name);
@@ -294,10 +215,6 @@ JSObjectPtr JSAPI::getDefaultEventMethod(const std::string& name) const
     return JSObjectPtr();
 }
 
-void JSAPI::setDefaultEventMethod(const std::wstring& name, FB::JSObjectPtr event)
-{
-    setDefaultEventMethod(wstring_to_utf8(name), event);
-}
 
 void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObjectPtr event)
 {
@@ -305,11 +222,6 @@ void JSAPI::setDefaultEventMethod(const std::string& name, FB::JSObjectPtr event
         m_defEventMap.erase(name);
     else 
         m_defEventMap[name] = event;
-}
-
-void JSAPI::registerEvent(const std::wstring &name)
-{
-    registerEvent(wstring_to_utf8(name));
 }
 
 void JSAPI::registerEvent(const std::string &name)
@@ -330,36 +242,6 @@ void JSAPI::getMemberNames(std::vector<std::wstring> &nameVector) const
     }
 }
 
-bool JSAPI::HasMethod(const std::wstring& methodName) const
-{
-    return HasMethod(wstring_to_utf8(methodName));
-}
-
-bool FB::JSAPI::HasMethodObject( const std::wstring& methodObjName ) const
-{
-    return HasMethodObject(wstring_to_utf8(methodObjName));
-}
-
-bool JSAPI::HasProperty(const std::wstring& propertyName) const
-{
-    return HasProperty(wstring_to_utf8(propertyName));
-}
-
-variant JSAPI::GetProperty(const std::wstring& propertyName)
-{
-    return GetProperty(wstring_to_utf8(propertyName));
-}
-
-void JSAPI::SetProperty(const std::wstring& propertyName, const variant& value)
-{
-    SetProperty(wstring_to_utf8(propertyName), value);
-}
-
-variant JSAPI::Invoke(const std::wstring& methodName, const std::vector<variant>& args)
-{
-    return Invoke(wstring_to_utf8(methodName), args);
-}
-
 void FB::JSAPI::registerProxy( const JSAPIWeakPtr &ptr ) const
 {
     m_proxies.push_back(ptr);
@@ -373,19 +255,3 @@ void FB::JSAPI::unregisterProxy( const FB::JSAPIPtr& ptr ) const
             it = m_proxies.erase(it);
     }
 }
-
-void FB::JSAPI::getMemberNames( std::vector<std::wstring> *nameVector ) const
-{
-    getMemberNames(*nameVector);
-}
-
-void FB::JSAPI::getMemberNames( std::vector<std::string> *nameVector ) const
-{
-    getMemberNames(*nameVector);
-}
-
-FB::JSAPIPtr FB::JSAPI::GetMethodObject( const std::wstring& methodObjName )
-{
-    return GetMethodObject(FB::wstring_to_utf8(methodObjName));
-}
-

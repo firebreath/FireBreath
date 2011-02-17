@@ -29,7 +29,7 @@ if (NOT VC_DIR)
 endif()
 if (NOT ATL_INCLUDE_DIR)
     set (DDK_SEARCH_PATHS 
-        "$END{DDK_PATH}"
+        "$ENV{DDK_PATH}"
         "$ENV{SystemDrive}/WinDDK"
         "$ENV{ProgramFiles}/WinDDK"
         "$ENV{CommonProgramFiles}/WinDDK"
@@ -134,7 +134,7 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
     add_library(${PROJNAME} SHARED ${SOURCES})
 
     set_target_properties (${PROJNAME} PROPERTIES
-        OUTPUT_NAME np${PLUGIN_NAME}
+        OUTPUT_NAME ${FBSTRING_PluginFileName}
         PROJECT_LABEL ${PROJNAME}
         RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
         LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
@@ -145,10 +145,55 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
 
 ENDMACRO(add_windows_plugin)
 
+macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
+    if (WIN32)
+        if (EXISTS ${PFXFILE})
+            message("-- ${_FILENAME} will be signed with ${PFXFILE}")
+            GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
+            find_program(SIGNTOOL signtool
+                PATHS
+                ${WINSDK_DIR}/bin
+                )
+            if (SIGNTOOL)
+                set(_STCMD signtool sign /f "${PFXFILE}")
+                if (NOT "${PASSFILE}" STREQUAL "")
+                    file(STRINGS "${PASSFILE}" PASSPHRASE LIMIT_COUNT 1)
+                    set(_STCMD ${_STCMD} /p ${PASSPHRASE})
+                endif()
+                if (NOT "${TIMESTAMP_URL}" STREQUAL "")
+                    set(_STCMD ${_STCMD} /t "${TIMESTAMP_URL}")
+                endif()
+                set(_STCMD ${_STCMD} "${_FILENAME}")
+                ADD_CUSTOM_COMMAND(
+                    TARGET ${PROJNAME}
+                    POST_BUILD
+                    COMMAND ${_STCMD}
+                    )
+                message("-- Successfully added signtool step to sign ${_FILENAME}")
+            else()
+                message("Could not find signtool! Code signing disabled ${SIGNTOOL}")
+            endif()
+            set(PASSPHRASE "")
+        else()
+            message("-- No signtool certificate found; assuming development machine (${PFXFILE})")
+        endif()
+
+    endif()
+endmacro(firebreath_sign_file)
+
+macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
+    if (WIN32)
+        get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+        get_target_property(LIBDIR ${PROJNAME} LIBRARY_OUTPUT_DIRECTORY)
+
+        set(_PLUGFILENAME "${LIBDIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
+        firebreath_sign_file(${PROJNAME} ${_PLUGFILENAME} ${PFXFILE} ${PASSFILE} ${TIMESTAMP_URL})
+    endif()
+endmacro(firebreath_sign_plugin)
 
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
 	# WiX doesn't work with VC8 generated DLLs
-    if (WIN32 AND WIX_FOUND AND NOT CMAKE_GENERATOR STREQUAL "Visual Studio 8 2005")
+    if (WIN32 AND WIX_FOUND)
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
             GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
@@ -157,7 +202,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
         
-        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC -t "${CMAKE_DIR}\\FixFragment.xslt")
+        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${CMAKE_DIR}\\FixFragment.xslt")
         set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)
@@ -186,4 +231,3 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
 
     endif()
 endfunction(add_wix_installer)
-
