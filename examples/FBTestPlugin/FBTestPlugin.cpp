@@ -9,6 +9,7 @@
 
 #include <sstream>
 #include "FBTestPluginAPI.h"
+#include <stdio.h>
 
 #ifdef FB_WIN
 #include "PluginWindowWin.h"
@@ -19,12 +20,14 @@
 
 void FBTestPlugin::StaticInitialize()
 {
+    FBLOG_INFO("StaticInit", "Static Initialize");
     // Place one-time initialization stuff here; As of FireBreath 1.4 this should only
     // be called once per process
 }
 
 void FBTestPlugin::StaticDeinitialize()
 {
+    FBLOG_INFO("StaticInit", "Static Deinitialize");
     // Place one-time deinitialization stuff here. This should be called just before
     // the plugin library is unloaded
 }

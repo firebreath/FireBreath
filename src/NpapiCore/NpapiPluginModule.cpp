@@ -21,10 +21,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
+volatile bool NpapiPluginModule::PluginModuleInitialized(false);
+volatile bool NpapiPluginModule::PluginModuleDeinitialized(false);
+
 NpapiPluginModule::NpapiPluginModule(bool init/* = true*/)
     : m_threadId(boost::this_thread::get_id()), m_init(init)
 {
     if (init) {
+        assert(!PluginModuleInitialized);
+        PluginModuleInitialized = true;
         FB::Log::initLogging();
         getFactoryInstance()->globalPluginInitialize();
     }
@@ -34,6 +39,8 @@ NpapiPluginModule::NpapiPluginModule(bool init/* = true*/)
 NpapiPluginModule::~NpapiPluginModule(void)
 {
     if (m_init) {
+        assert(!PluginModuleDeinitialized);
+        PluginModuleDeinitialized = true;
         getFactoryInstance()->globalPluginDeinitialize();
         FB::Log::stopLogging();
     }
@@ -194,7 +201,6 @@ int32_t NpapiPluginModule::IntFromIdentifier(NPIdentifier identifier)
 NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 {
     assertMainThread();
-    FBLOG_DEBUG("Npapi", "Retaining object at " << boost::lexical_cast<std::string>(npobj));
     if (NPNFuncs.retainobject != NULL) {
         return NPNFuncs.retainobject(npobj);
     } else {
@@ -205,7 +211,6 @@ NPObject *NpapiPluginModule::RetainObject(NPObject *npobj)
 void NpapiPluginModule::ReleaseObject(NPObject *npobj)
 {
     assertMainThread();
-    FBLOG_DEBUG("Npapi", "Releasing object at " << boost::lexical_cast<std::string>(npobj));
     if (NPNFuncs.releaseobject != NULL) {
         NPNFuncs.releaseobject(npobj);
     }
