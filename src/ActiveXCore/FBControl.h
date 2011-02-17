@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <atlctl.h>
 #include <ShlGuid.h>
 #include <boost/cast.hpp>
+#include <boost/scoped_array.hpp>
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
