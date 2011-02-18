@@ -16,22 +16,18 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME NpapiCore)
-Project (${PROJNAME})
+Project (NpapiCore)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
 include_directories(
-    ${GECKOSDK_SOURCE_DIR}
+    ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CONFIG_DIR}
-    ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCORE_SOURCE_DIR}
-    ${FIREBREATH_CONFIG_DIR}
+    ${FB_CONFIG_DIR}
+    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${FB_PLUGINCORE_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     )
@@ -97,14 +93,17 @@ set (SOURCES
     ${X11_SOURCES}
     )
 
-add_library(${PROJNAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
 if (UNIX)
     # Link with libdl on Mac and X11
     set(LIBDL_LIBRARIES dl)
 endif()
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIBDL_LIBRARIES}
     )
+
+export(TARGETS NpapiCore ${CMAKE_THREAD_LIBS_INIT} ${Boost_LIBRARIES} ${LIBDL_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+

@@ -24,9 +24,9 @@ set (SOURCES
     ${PLATFORM}
     )
 
-add_x11_plugin(${PROJNAME} SOURCES)
+add_x11_plugin(${PROJECT_NAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     )

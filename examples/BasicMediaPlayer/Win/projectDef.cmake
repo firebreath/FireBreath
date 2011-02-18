@@ -32,10 +32,10 @@ set (SOURCES
     ${PLATFORM}
     )
 
-add_windows_plugin(${PROJNAME} SOURCES)
+add_windows_plugin(${PROJECT_NAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     Strmiids.lib
     )
@@ -50,7 +50,7 @@ set(WIX_HEAT_FLAGS
 add_wix_installer( ${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/BasicMediaPlayerInstaller.wxs
     PluginDLLGroup
-    ${BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-    ${BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/np${PLUGIN_NAME}.dll
-    ${PROJNAME}
+    ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+    ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${FBSTRING_PluginFileName}.dll
+    ${PROJECT_NAME}
     )

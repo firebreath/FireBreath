@@ -16,10 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME UnitTest_ActiveXCore)
-Project (${PROJNAME})
+Project (UnitTest_ActiveXCore)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
@@ -27,12 +24,12 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../mock
-    ${ACTIVEXCORE_SOURCE_DIR}
-    ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCORE_SOURCE_DIR}
-    ${GEN_DIR}/gen
-    ${CONFIG_DIR}
-    ${UNITTEST_FW_SOURCE_DIR}/src
+    ${FB_ACTIVEXCORE_SOURCE_DIR}
+    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${FB_GEN_DIR}/gen
+    ${FB_CONFIG_DIR}
+    ${FB_UNITTEST_FW_SOURCE_DIR}/src
     ${Boost_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     )
@@ -45,7 +42,7 @@ add_definitions(
 )
 
 file (GLOB IMPORTED RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    ${PLUGINAUTO_SOURCE_DIR}/PluginInfo.*
+    ${FB_PLUGINAUTO_SOURCE_DIR}/PluginInfo.*
     ../mock/*.cpp
 )
 
@@ -64,16 +61,16 @@ source_group(Imported FILES ${IMPORTED})
 set (SOURCES
     ${GENERAL}
     ${IMPORTED}
-    ${PLUGINAUTO_SOURCE_DIR}/null/NullLogger.cpp
+    ${FB_PLUGINAUTO_SOURCE_DIR}/null/NullLogger.cpp
     )
 
-add_executable(${PROJNAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-set_target_properties (${PROJNAME} PROPERTIES
+set_target_properties (${PROJECT_NAME} PROPERTIES
     LINK_FLAGS "${LINK_FLAGS}"
     )
 
-target_link_libraries (${PROJNAME}
+target_link_libraries (${PROJECT_NAME}
     ActiveXCore
     ScriptingCore
     NpapiCore
@@ -81,9 +78,9 @@ target_link_libraries (${PROJNAME}
     UnitTest++
     )
 
-set_target_properties(${PROJNAME} PROPERTIES
-	RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}"
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}"
 )
 
-add_custom_command(TARGET ${PROJNAME} POST_BUILD
-    COMMAND "${BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJNAME}")
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND "${FB_BIN_DIR}/${CMAKE_CFG_INTDIR}/${PROJECT_NAME}")

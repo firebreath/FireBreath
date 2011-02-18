@@ -16,8 +16,6 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
 include(FindCurl)
 
 if (CURL_FOUND)
@@ -53,4 +51,6 @@ else()
     message("Could not find Curl libraries!  Please install curl libraries and try again!" FATAL)
 endif()
 
-export_project_dependencies()
+if (FIREBREATH)
+    export_project_dependencies()
+endif()

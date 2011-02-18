@@ -7,7 +7,7 @@ REM ** shift off the first 2 params so the rest goes to cmake
 shift
 shift
 
-set PDIR=-DPROJECTS_DIR=
+set PDIR=-DFB_PROJECTS_DIR=
 set PDIR=%PDIR%%PROJDIR%
 
 IF %FB_ROOT:~-2,-1% == \ SET FB_ROOT=%FB_ROOT:~0,-2%%FB_ROOT:~-1%

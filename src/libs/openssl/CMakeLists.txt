@@ -57,4 +57,6 @@ else()
     message("Could not find OpenSSL libraries!  Please install openssl libraries and try again!" FATAL)
 endif()
 
-export_project_dependencies()
+if (FIREBREATH)
+    export_project_dependencies()
+endif()

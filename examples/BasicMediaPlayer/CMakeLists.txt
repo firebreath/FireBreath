@@ -16,11 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME ${PLUGIN_NAME})
-
-browserplugin_project(${PROJNAME})
+Project (${PLUGIN_NAME})
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cpp
@@ -28,11 +24,13 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.cmake
     )
 
+include_directories(${PLUGIN_INCLUDE_DIRS})
+
 file (GLOB GENERATED RELATIVE ${CMAKE_CURRENT_BINARY_DIR}
-    ${GEN_DIR}/gen/*.rgs
-    ${GEN_DIR}/gen/*.def
-    ${GEN_DIR}/gen/*.htm
-    ${GEN_DIR}/gen/*.rc
+    ${FB_TEMPLATE_DEST_DIR}/*.rgs
+    ${FB_TEMPLATE_DEST_DIR}/*.def
+    ${FB_TEMPLATE_DEST_DIR}/*.htm
+    ${FB_TEMPLATE_DEST_DIR}/*.rc
     )
 
 SET_SOURCE_FILES_PROPERTIES(
