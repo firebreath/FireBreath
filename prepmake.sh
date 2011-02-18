@@ -7,5 +7,5 @@ fi
 source ${0%/*}/common.sh "$@"
 
 pushd "$BUILDDIR"
-cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" "$@" "${FB_ROOT}"
+cmake -G "$GEN" -DFB_PROJECTS_DIR="${PROJDIR}" "$@" "${FB_ROOT}"
 popd
