@@ -39,7 +39,7 @@ PluginWindowMacQD::~PluginWindowMacQD()
 NPError PluginWindowMacQD::SetWindow(NPWindow* window)
 {
 	NP_Port *prt = (NP_Port*) window->window;
-	printf("%s(): NP_Port=%p\n", __func__, prt);
+	printf("%s(): NP_Port=%p CGrafPtr=%p (%d,%d) (%d,%d){%d,%d}\n", __func__, prt, prt->port, prt->portx, prt->porty, window->x, window->y, window->width, window->height);
 	if (!prt || !IsValidPort(prt->port))
 		return NPERR_INVALID_PARAM;
 	
@@ -57,8 +57,6 @@ NPError PluginWindowMacQD::SetWindow(NPWindow* window)
 		m_clipBottom = window->clipRect.bottom;
 		m_clipRight = window->clipRect.right;
 		
-		DetachedEvent evt1;
-		SendEvent(&evt1);
 		AttachedEvent evt2;
 		SendEvent(&evt2);
 		return NPERR_NO_ERROR;
