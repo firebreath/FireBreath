@@ -54,8 +54,6 @@ NPError PluginWindowMacCG::SetWindow(NPWindow* window)
 		m_clipBottom = window->clipRect.bottom;
 		m_clipRight = window->clipRect.right;
 		
-		DetachedEvent evt1;
-		SendEvent(&evt1);
 		AttachedEvent evt2;
 		SendEvent(&evt2);
 		return NPERR_NO_ERROR;
