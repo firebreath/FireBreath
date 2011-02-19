@@ -312,14 +312,16 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
 	}
 
     CComVariant arg[1];
+    VARIANTARG rawArg[1];
     DISPID namedArg[1];
     DISPPARAMS params;
     params.cArgs = 1;
     params.cNamedArgs = 1;
     params.rgdispidNamedArgs = namedArg;
-    params.rgvarg = arg;
+    params.rgvarg = rawArg;
 
     m_browser->getComVariant(&arg[0], value);
+    rawArg[0] = arg[0];
     namedArg[0] = DISPID_PROPERTYPUT;
 
     HRESULT hr;
@@ -370,14 +372,18 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
 		 throw FB::script_error("Method invoke failed");
 	}
 
-    boost::scoped_array<CComVariant> comArgs(new CComVariant[args.size()]);
+    size_t argCount(args.size());
+    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount]);
+    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount]);
     DISPPARAMS params;
     params.cArgs = args.size();
     params.cNamedArgs = 0;
-    params.rgvarg = comArgs.get();
+    params.rgvarg = rawComArgs.get();
 
     for (size_t i = 0; i < args.size(); i++) {
-        m_browser->getComVariant(&comArgs[args.size() - 1 - i], args[i]);
+        m_browser->getComVariant(&comArgs[argCount - 1 - i], args[i]);
+        // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
+        rawComArgs[argCount - 1 - i] = comArgs[argCount - 1 - i];
     }
 
     CComVariant result;
