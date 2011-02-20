@@ -210,7 +210,7 @@ namespace FB { namespace Npapi
                 host->RetainObject(outObj);
             } else {
                 host->retainJSAPIPtr(obj);
-                outObj = NPJavascriptObject::NewObject(host, obj, true);
+                outObj = host->getJSAPIWrapper(var.cast<FB::JSAPIPtr>(), true);
             }
             
             npv.type = NPVariantType_Object;
@@ -240,7 +240,7 @@ namespace FB { namespace Npapi
             } else {
                 // The big difference between returning a weak_ptr instead of a shared_ptr is
                 // that we don't have the browser object retain the weak_ptr
-                outObj = NPJavascriptObject::NewObject(host, obj);
+                outObj = host->getJSAPIWrapper(var.cast<FB::JSAPIWeakPtr>());
             }
             
             npv.type = NPVariantType_Object;

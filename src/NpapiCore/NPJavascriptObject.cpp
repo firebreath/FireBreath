@@ -37,6 +37,7 @@ NPJavascriptObject::NPJavascriptObject(NPP npp)
     : m_valid(true), m_autoRelease(false), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
     m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this))
 {
+    m_sharedRef = boost::make_shared<FB::ShareableReference<NPJavascriptObject> >(this);
 }
 
 NPJavascriptObject::~NPJavascriptObject(void)
@@ -383,5 +384,3 @@ NPClass NPJavascriptObject::NPJavascriptObjectClass = {
     NPJavascriptObject::_Enumeration,
     NPJavascriptObject::_Construct
 };
-
-

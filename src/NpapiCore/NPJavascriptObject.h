@@ -35,6 +35,7 @@ namespace FB { namespace Npapi {
         NpapiBrowserHostPtr m_browser;
         bool m_valid;
         bool m_autoRelease;
+        boost::shared_ptr<FB::ShareableReference< NPJavascriptObject > > m_sharedRef;
 
     public:
         static NPJavascriptObject *NewObject(NpapiBrowserHostPtr host, FB::JSAPIWeakPtr api, bool auto_release = false);
@@ -46,6 +47,7 @@ namespace FB { namespace Npapi {
                 throw std::bad_cast();
             return ptr;
         }
+        const boost::shared_ptr<FB::ShareableReference< NPJavascriptObject > > getWeakReference() { return m_sharedRef; }
 
         virtual ~NPJavascriptObject(void);
 

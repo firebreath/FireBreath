@@ -19,13 +19,16 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiTypes.h"
 #include "BrowserHost.h"
 #include "SafeQueue.h"
+#include "ShareableReference.h"
 #include <boost/thread.hpp>
 
 namespace FB { namespace Npapi {
 
     class NpapiPluginModule;
+    class NPJavascriptObject;
     class NPObjectAPI;
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
+    typedef boost::weak_ptr<FB::ShareableReference<NPJavascriptObject> > NPObjectWeakRef;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  NpapiBrowserHost
@@ -51,6 +54,7 @@ namespace FB { namespace Npapi {
         virtual void *getContextID() const { return (void *)m_npp; }
         virtual void deferred_release(NPObject* obj);
         virtual void DoDeferredRelease() const;
+        NPJavascriptObject* getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease = false );
 
     public:
         FB::DOM::DocumentPtr getDOMDocument();
@@ -72,6 +76,8 @@ namespace FB { namespace Npapi {
         NPObjectAPIPtr m_htmlWin;
         NPObjectAPIPtr m_htmlElement;
         mutable FB::SafeQueue<NPObject*> m_deferredObjects;
+        typedef std::map<void*, NPObjectWeakRef> NPObjectRefMap;
+        mutable NPObjectRefMap m_cachedNPObject;
 
     public:
         void* MemAlloc(uint32_t size) const;
@@ -133,7 +139,7 @@ namespace FB { namespace Npapi {
 
         int ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32_t timerID)) const;
         void UnscheduleTimer(int timerId) const;
-    };
+        };
 
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
     typedef boost::shared_ptr<const NpapiBrowserHost> NpapiBrowserHostConstPtr;

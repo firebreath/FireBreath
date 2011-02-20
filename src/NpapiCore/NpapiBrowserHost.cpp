@@ -163,12 +163,25 @@ void FB::Npapi::NpapiBrowserHost::deferred_release( NPObject* obj )
     }
 }
 
+bool isExpired(std::pair<void*, FB::Npapi::NPObjectWeakRef> cur) {
+    return cur.second.expired();
+}
+
 void FB::Npapi::NpapiBrowserHost::DoDeferredRelease() const
 {
     assertMainThread();
     NPObject* cur(NULL);
     while (m_deferredObjects.try_pop(cur)) {
         ReleaseObject(cur);
+    }
+    // Also remove any expired IDispatch WeakReferences
+    NPObjectRefMap::iterator iter = m_cachedNPObject.begin();
+    NPObjectRefMap::iterator endIter = m_cachedNPObject.end();
+    while (iter != endIter) {
+        if (isExpired(*iter))
+            iter = m_cachedNPObject.erase(iter);
+        else
+            ++iter;
     }
 }
 
@@ -661,3 +674,30 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
     return stream;
 }
 
+NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
+{
+    assertMainThread(); // This should only be called on the main thread
+    typedef boost::shared_ptr<FB::ShareableReference<NPJavascriptObject> > SharedNPObjectRef;
+    NPJavascriptObject* ret(NULL);
+    FB::JSAPIPtr ptr(api.lock());
+    if (!ptr)
+        return NPJavascriptObject::NewObject(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), api, false);
+
+    NPObjectRefMap::iterator fnd = m_cachedNPObject.find(ptr.get());
+    if (fnd != m_cachedNPObject.end()) {
+        SharedNPObjectRef ref(fnd->second.lock());
+        if (ref) {
+            // Fortunately this doesn't have to be threadsafe since this method only gets called
+            // from the main thread and the browser access happens on that thread as well!
+            ret = ref->getPtr();
+            RetainObject(ret);
+        } else {
+            m_cachedNPObject.erase(fnd);
+        }
+    }
+    if (!ret) {
+        ret = NPJavascriptObject::NewObject(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), api, true);
+        m_cachedNPObject[ptr.get()] = ret->getWeakReference();
+    }
+    return ret;
+}
