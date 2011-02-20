@@ -196,7 +196,6 @@ endif ()
 #add_subdirectory (tests)
 
 if (FIREBREATH)
-    include(${CMAKE_DIR}/common.cmake)
     LIST(APPEND FBLIB_LIBRARIES log4cplus)
     LIST(APPEND FBLIB_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/include)
     export_project_dependencies()

@@ -16,8 +16,6 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -35,8 +33,11 @@ list(APPEND SOURCES
 
 add_library (jsoncpp STATIC ${SOURCES})
 
-append_firebreath_link_library(jsoncpp)
+if (FIREBREATH)
+    append_firebreath_link_library(jsoncpp)
 
-append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR}/include)
+    append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
-export_project_dependencies()
+    export_project_dependencies()
+    export_project_dependencies()
+endif()

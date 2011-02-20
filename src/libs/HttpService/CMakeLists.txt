@@ -16,8 +16,6 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
 add_boost_library(thread)
 add_boost_library(filesystem)
 add_firebreath_library(openssl)

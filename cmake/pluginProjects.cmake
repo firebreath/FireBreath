@@ -12,5 +12,4 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-
-add_subdirectory(${PLUGINAUTO_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginAuto)
+add_subdirectory(${FB_PLUGINAUTO_SOURCE_DIR} ${FB_PROJECTS_BINARY_DIR}/${PLUGIN_NAME}/PluginAuto)

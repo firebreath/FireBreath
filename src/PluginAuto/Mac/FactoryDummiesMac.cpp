@@ -18,38 +18,24 @@
 #include "global/config.h"
 #include "ConstructDefaultPluginWindows.h"
 
-#if !FBMAC_USE_CARBON || !FBMAC_USE_QUICKDRAW
-FB::PluginWindowMacCarbonQD* FB::createPluginWindowCarbonQD(const FB::WindowContextQuickDraw&)
+#if !FBMAC_USE_COREANIMATION
+FB::PluginWindowMacCA* FB::createPluginWindowMacCA(bool invalidatin)
 {
     return 0;
 }
 #endif
 
-#if !FBMAC_USE_CARBON || !FBMAC_USE_COREGRAPHICS
-FB::PluginWindowMacCarbonCG* FB::createPluginWindowCarbonCG(const FB::WindowContextCoreGraphics&)
+
+#if !FBMAC_USE_COREGRAPHICS
+FB::PluginWindowMacCG* FB::createPluginWindowMacCG()
 {
     return 0;
 }
 #endif
 
-#if !FBMAC_USE_COCOA || !FBMAC_USE_COREGRAPHICS
-FB::PluginWindowMacCocoaCG* FB::createPluginWindowCocoaCG()
+#if !FBMAC_USE_QUICKDRAW && !defined(NP_NO_QUICKDRAW)
+FB::PluginWindowMacQD* FB::createPluginWindowMacQD()
 {
     return 0;
 }
 #endif
-
-#if !FBMAC_USE_COCOA || !FBMAC_USE_COREANIMATION
-FB::PluginWindowMacCocoaCA* FB::createPluginWindowCocoaCA()
-{
-    return 0;
-}
-#endif
-
-#if !FBMAC_USE_COCOA || !FBMAC_USE_COREANIMATION
-FB::PluginWindowMacCocoaICA* FB::createPluginWindowCocoaICA()
-{
-    return 0;
-}
-#endif
-

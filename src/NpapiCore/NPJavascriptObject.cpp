@@ -34,8 +34,8 @@ bool NPJavascriptObject::isNPJavaScriptObject(const NPObject* const npo)
 }
 
 NPJavascriptObject::NPJavascriptObject(NPP npp)
-    : m_valid(true), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
-    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this)), m_autoRelease(false)
+    : m_valid(true), m_autoRelease(false), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
+    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this))
 {
 }
 

@@ -12,33 +12,31 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Anson MacKeracher, Firebreath development team
 \**********************************************************/
 
-#ifndef H_PLUGINWINDOWMAC_COCOA_CA
-#define H_PLUGINWINDOWMAC_COCOA_CA
+#ifndef H_PLUGINWINDOWMACCA
+#define H_PLUGINWINDOWMACCA
 
-#include <QuartzCore/CoreAnimation.h>
+#include <QuartzCore/QuartzCore.h>
+#include "PluginWindowMac.h"
 
-#include "Mac/PluginWindowMacCocoa.h"
-#include "PluginEvents/MacEventCocoa.h"
-#include "NpapiTypes.h"
-#include <map>
-
-namespace FB {
-    class PluginWindowMacCocoaCA: public PluginWindowMacCocoa
+namespace FB
+    {
+    class PluginWindowMacCA: public PluginWindowMac
     {
     public:
-        PluginWindowMacCocoaCA();
-        virtual ~PluginWindowMacCocoaCA();
+        PluginWindowMacCA(bool invalidating);
+        virtual ~PluginWindowMacCA();
 
-    public:
-        void clearWindow();
+		NPError SetWindow(NPWindow* window);
+
+        DrawingModel getDrawingModel() const { return DrawingModelCoreAnimation; }
+		void* getDrawingPrimitive() const { return m_layer; }
+		WindowRef getWindowRef() const { return NULL; }
+
         void InvalidateWindow() const;
-        void setLayer(void* layer);
-        void* getLayer() const;
 
     private:
-        struct Impl;
-        std::auto_ptr<Impl> m_impl;
+		void* m_layer;
+		bool m_invalidating;		
     };
 };
-#endif // H_PLUGINWINDOWMAC_COCOA_CA
-
+#endif // H_PLUGINWINDOWMACCA

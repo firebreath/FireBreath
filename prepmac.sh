@@ -7,7 +7,7 @@ source "${0%/*}/common.sh" "$@"
 ARCH=-DCMAKE_OSX_ARCHITECTURES="i386;x86_64"
 
 pushd "$BUILDDIR"
-cmake -G "$GEN" -DPROJECTS_DIR="${PROJDIR}" ${ARCH} "$@" "${FB_ROOT}"
+cmake -G "$GEN" -DFB_PROJECTS_DIR="${PROJDIR}" ${ARCH} "$@" "${FB_ROOT}"
 if [ "$?" -ne 0 ]; then
     echo "CMake failed. Please check error messages"
     popd > /dev/null

@@ -16,12 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-#set (FB_GUI_DISABLED 1)
-
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME UnitTest_NpapiCore)
-Project (${PROJNAME})
+Project (UnitTest_NpapiCore)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
@@ -29,14 +24,14 @@ endif()
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${NPAPICORE_SOURCE_DIR}
-    ${NPAPIHOST_SOURCE_DIR}
-    ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINCORE_SOURCE_DIR}
-    ${PLUGINAUTO_SOURCE_DIR}
+    ${FB_NPAPICORE_SOURCE_DIR}
+    ${FB_NPAPIHOST_SOURCE_DIR}
+    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${FB_PLUGINAUTO_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
-    ${UNITTEST_FW_SOURCE_DIR}/src
-    ${CONFIG_DIR}
+    ${FB_UNITTEST_FW_SOURCE_DIR}/src
+    ${FB_CONFIG_DIR}
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -46,10 +41,10 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 set (SOURCES
     ${GENERAL}
-    ${PLUGINAUTO_SOURCE_DIR}/null/NullLogger.cpp
+    ${FB_PLUGINAUTO_SOURCE_DIR}/null/NullLogger.cpp
     )
 
-add_executable(${PROJNAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 
 if (APPLE)
     if (FBMAC_USE_CARBON)
@@ -75,7 +70,7 @@ endif (APPLE)
 
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
-target_link_libraries (${PROJNAME}
+target_link_libraries (${PROJECT_NAME}
     ${Boost_LIBRARIES}
     PluginCore
     NpapiCore

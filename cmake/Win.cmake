@@ -136,8 +136,8 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
     set_target_properties (${PROJNAME} PROPERTIES
         OUTPUT_NAME ${FBSTRING_PluginFileName}
         PROJECT_LABEL ${PROJNAME}
-        RUNTIME_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
-        LIBRARY_OUTPUT_DIRECTORY "${BIN_DIR}/${PLUGIN_NAME}"
+        RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
+        LIBRARY_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
         LINK_FLAGS "${LINK_FLAGS}"
         )
 
@@ -202,7 +202,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
         
-        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${CMAKE_DIR}\\FixFragment.xslt")
+        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\FixFragment.xslt")
         set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)
@@ -218,7 +218,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         set_source_files_properties(${WIXOBJ_LIST} ${WIX_DEST} PROPERTIES GENERATED 1)
         SOURCE_GROUP(Binary FILES ${WIXOBJ_LIST})
         set (WIX_SOURCES
-                ${CMAKE_DIR}/dummy.cpp
+                ${FB_ROOT}/cmake/dummy.cpp
                 ${WIX_SOURCEFILES}
                 ${SOURCELIST}
                 ${WIXOBJ_LIST}

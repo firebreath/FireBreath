@@ -29,9 +29,9 @@ set(PLIST "Mac/bundle_template/Info.plist")
 set(STRINGS "Mac/bundle_template/InfoPlist.strings")
 set(LOCALIZED "Mac/bundle_template/Localized.r")
 
-add_mac_plugin(${PROJNAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
+add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
-target_link_libraries(${PROJNAME}
+target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     )

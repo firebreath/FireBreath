@@ -16,7 +16,7 @@ Copyright 2010 Georg Fritzsche,
 #include <list>
 #include <boost/assign/list_of.hpp>
 #include "JSAPI.h"
-#include "Mac/PluginWindowMacCocoaCA.h"
+#include "Mac/PluginWindowMacCA.h"
 #include "../MediaPlayer.h"
 
 

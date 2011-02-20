@@ -16,10 +16,7 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME PluginCore)
-Project (${PROJNAME})
+Project (PluginCore)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
@@ -27,13 +24,13 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
-    ${SCRIPTINGCORE_SOURCE_DIR}
-    ${PLUGINAUTO_SOURCE_DIR}
-    ${NPAPICORE_SOURCE_DIR}
-    ${ACTIVEXCORE_SOURCE_DIR}
+    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${FB_PLUGINAUTO_SOURCE_DIR}
+    ${FB_NPAPICORE_SOURCE_DIR}
+    ${FB_ACTIVEXCORE_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
-    ${CONFIG_DIR}
+    ${FB_CONFIG_DIR}
     )
 
 file (GLOB EVENTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -90,4 +87,6 @@ set (SOURCES
     ${X11_SOURCES}
     )
 
-add_library(${PROJNAME} STATIC ${SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
+
+export(TARGETS PluginCore ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})

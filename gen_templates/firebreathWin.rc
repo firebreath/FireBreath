@@ -75,8 +75,8 @@ END
 // REGISTRY
 //
 
-IDR_FIREBREATHWIN       REGISTRY                "${GEN_DIR}/gen/FireBreathWin.rgs"
-IDR_FBCONTROL           REGISTRY                "${GEN_DIR}/gen/FBControl.rgs"
+IDR_FIREBREATHWIN       REGISTRY                "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.rgs"
+IDR_FBCONTROL           REGISTRY                "${FB_TEMPLATE_DEST_DIR}/FBControl.rgs"
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -104,7 +104,7 @@ END
 //
 // Generated from the TEXTINCLUDE 3 resource.
 //
-1 TYPELIB "${GEN_DIR}/gen/FireBreathWin.tlb"
+1 TYPELIB "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED

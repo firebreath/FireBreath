@@ -16,25 +16,24 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
-include(${CMAKE_DIR}/common.cmake)
-
-set (PROJNAME ${PLUGIN_PREFIX}_PluginAuto)
-Project (${PROJNAME})
+Project (${PLUGIN_PREFIX}_PluginAuto)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
 include_directories(
-    ${GECKOSDK_SOURCE_DIR}
+    ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${GEN_DIR}/gen
-    ${FIREBREATH_CONFIG_DIR}
+    ${FB_TEMPLATE_DEST_DIR}
+    ${FB_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
-    ${PLUGINCORE_SOURCE_DIR}
-    ${NPAPICORE_SOURCE_DIR}
+    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${FB_NPAPICORE_SOURCE_DIR}
+    ${FB_ACTIVEXCORE_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
-    ${CONFIG_DIR}
+    ${FBLIB_INCLUDE_DIRS}
     )
 
 file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -81,9 +80,16 @@ file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Mac.h
     Mac/*Mac.cpp
     Mac/*Mac.mm
-    Mac/*Carbon.h
-    Mac/*Carbon.cpp
     Mac/np_*.cpp
+    )
+
+file (GLOB MAC_COREANIMATION_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*CA.h
+    Mac/*CA.mm
+    )
+file (GLOB MAC_COREGRAPHICS_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*CG.h
+    Mac/*CG.cpp
     )
 
 file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -91,43 +97,30 @@ file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*QD.cpp
     )
 
-file (GLOB MAC_COCOAWINDOW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+file (GLOB MAC_CARBON_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*Carbon.h
+    Mac/*Carbon.cpp
+    )
+file (GLOB MAC_COCOA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Cocoa.h
     Mac/*Cocoa.mm
     Mac/*Cocoa.cpp
     )
 
-file (GLOB MAC_CGCARBON_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CarbonCG.h
-    Mac/*CarbonCG.cpp
-    )
-
-file (GLOB MAC_CGCOCOA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CocoaCG.h
-    Mac/*CocoaCG.mm
-    )
-
-file (GLOB MAC_COREANIMATION_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CA.h
-    Mac/*CA.mm
-    )  
-
+if(FBMAC_USE_COREANIMATION)
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
+endif()
+if(FBMAC_USE_COREGRAPHICS)
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREGRAPHICS_SOURCES})
+endif()
 if(FBMAC_USE_QUICKDRAW)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_QUICKDRAW_SOURCES})
 endif()
 if(FBMAC_USE_CARBON)
-    if(FBMAC_USE_COREGRAPHICS)
-        set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CGCARBON_SOURCES})
-    endif()
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CARBON_SOURCES})
 endif()
 if(FBMAC_USE_COCOA)
-    if(FBMAC_USE_COREGRAPHICS)
-        set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CGCOCOA_SOURCES})
-    endif()
-    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COCOAWINDOW_SOURCES})
-endif()
-if(FBMAC_USE_COREANIMATION)
-    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COCOA_SOURCES})
 endif()
 
 if (WIN32)
@@ -146,18 +139,18 @@ endif()
 ######
 if (WIN32)
     set (GENERATED_IDL
-        "${GEN_DIR}/gen/FireBreathWin.tlb"
-        "${GEN_DIR}/gen/FireBreathWin_i.h"
-        "${GEN_DIR}/gen/FireBreathWin_i.c"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.c"
         )
 
-    SET (IDL_FILE ${GEN_DIR}/gen/FireBreathWin.idl)
+    SET (IDL_FILE ${FB_TEMPLATE_DEST_DIR}/FireBreathWin.idl)
 
     SET_SOURCE_FILES_PROPERTIES(
         ${IDL_FILE}
-        "${GEN_DIR}/gen/FireBreathWin.tlb"
-        "${GEN_DIR}/gen/FireBreathWin_i.h"
-        "${GEN_DIR}/gen/FireBreathWin_p.c"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.c"
         PROPERTIES
             HEADER_FILE_ONLY 1
             GENERATED 1
@@ -175,7 +168,7 @@ if (WIN32)
             /D "CMAKE_INTDIR=Debug"
             /nologo /char signed /env win32
             /Oicf 
-            /out "${GEN_DIR}/gen" 
+            /out "${FB_TEMPLATE_DEST_DIR}" 
             /tlb "FireBreathWin.tlb"
             /h "FireBreathWin_i.h"
             /iid "FireBreathWin_i.c"
@@ -201,15 +194,14 @@ set (SOURCES
     ${ACTIVEX_OBJECTS}
     ${GENERATED_IDL}
     ${MAC_SOURCES}
-    ${X11_SOURCES}
-    )
-
-add_library(${PROJNAME} STATIC ${SOURCES})
-
+    ${X11_SOURCES})
+add_library(${PROJECT_NAME} STATIC ${SOURCES})
 if (WIN32)
-    target_link_libraries(${PROJNAME} psapi)
+    # psapi is needed to get the process info and check if WiX is calling
+    # us; wish there was a better way to do this, but there doesn't seem to be
+    target_link_libraries(${PROJECT_NAME} psapi)
 endif()
 
 if (NOT FB_GUI_DISABLED)
-    target_link_libraries(${PROJNAME} ${GUI_LIBRARIES})
+    target_link_libraries(${PROJECT_NAME} ${GUI_LIBRARIES})
 endif()
