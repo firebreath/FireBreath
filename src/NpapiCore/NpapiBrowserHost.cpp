@@ -179,7 +179,7 @@ void FB::Npapi::NpapiBrowserHost::DoDeferredRelease() const
     NPObjectRefMap::iterator endIter = m_cachedNPObject.end();
     while (iter != endIter) {
         if (isExpired(*iter))
-            iter = m_cachedNPObject.erase(iter);
+            m_cachedNPObject.erase(iter++);
         else
             ++iter;
     }
