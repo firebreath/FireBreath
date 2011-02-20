@@ -25,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "AXDOM/Node.h"
 
 #include "ComVariantUtil.h"
+#include "ActiveXFactoryDefinitions.h"
 
 using boost::assign::list_of;
 using namespace FB;
@@ -314,12 +315,25 @@ FB::BrowserStreamPtr ActiveXBrowserHost::_createStream(const std::string& url, c
     return stream;
 }
 
+bool isExpired(std::pair<void*, FB::WeakIDispatchRef> cur) {
+    return cur.second.expired();
+}
+
 void ActiveXBrowserHost::DoDeferredRelease() const
 {
     assertMainThread();
     IDispatch* deferred;
     while (m_deferredObjects.try_pop(deferred)) {
         deferred->Release();
+    }
+    // Also remove any expired IDispatch WeakReferences
+    IDispatchRefMap::iterator iter = m_cachedIDispatch.begin();
+    IDispatchRefMap::iterator endIter = m_cachedIDispatch.end();
+    while (iter != endIter) {
+        if (isExpired(*iter))
+            iter = m_cachedIDispatch.erase(iter);
+        else
+            ++iter;
     }
 }
 
@@ -328,4 +342,33 @@ void FB::ActiveX::ActiveXBrowserHost::deferred_release( IDispatch* m_obj ) const
 {
     m_deferredObjects.push(m_obj);
 }
+
+IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
+{
+    assertMainThread(); // This should only be called on the main thread
+    typedef boost::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
+    IDispatchEx* ret(NULL);
+    FB::JSAPIPtr ptr(api.lock());
+    if (!ptr)
+        return getFactoryInstance()->createCOMJSObject(shared_from_this(), api, false);
+
+    IDispatchRefMap::iterator fnd = m_cachedIDispatch.find(ptr.get());
+    if (fnd != m_cachedIDispatch.end()) {
+        SharedIDispatchRef ref(fnd->second.lock());
+        if (ref) {
+            // Fortunately this doesn't have to be threadsafe since this method only gets called
+            // from the main thread and the browser access happens on that thread as well!
+            ret = ref->getPtr();
+            ret->AddRef();
+        } else {
+            m_cachedIDispatch.erase(fnd);
+        }
+    }
+    if (!ret) {
+        ret = getFactoryInstance()->createCOMJSObject(shared_from_this(), api, autoRelease);
+        m_cachedIDispatch[ptr.get()] = _getWeakRefFromCOMJSWrapper(ret);
+    }
+    return ret;
+}
+
 

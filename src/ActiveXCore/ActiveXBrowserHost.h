@@ -19,10 +19,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 //#include "global/COM_config.h"
 #include <atlctl.h>
+#include <map>
 #include "BrowserHost.h"
 #include "APITypes.h"
 #include "FBPointers.h"
 #include "SafeQueue.h"
+#include "ShareableReference.h"
+#include "ActiveXFactoryDefinitions.h"
 
 namespace FB {
     class WinMessageWindow;
@@ -48,6 +51,8 @@ namespace FB {
             virtual FB::BrowserStreamPtr _createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
                                                     bool cache = true, bool seekable = false, 
                                                     size_t internalBufferSize = 128 * 1024 ) const;
+
+            IDispatchEx* getJSAPIWrapper(const FB::JSAPIWeakPtr& api, bool autoRelease = false);
 
         public:
             FB::DOM::DocumentPtr getDOMDocument();
@@ -77,6 +82,8 @@ namespace FB {
         private:
             mutable boost::shared_mutex m_xtmutex;
             mutable FB::SafeQueue<IDispatch*> m_deferredObjects;
+            typedef std::map<void*, FB::WeakIDispatchRef> IDispatchRefMap;
+            mutable IDispatchRefMap m_cachedIDispatch;
 
         public:
             FB::variant getVariant(const VARIANT *cVar);
