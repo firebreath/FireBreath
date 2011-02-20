@@ -24,14 +24,14 @@
                         <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
                     </Component>
                     <Directory Id="INSTALLDIR" Name="${PLUGIN_NAME}">
-                        <Component Id="InstallDirComp" Guid="{@{GUIDS_installdircomp}}">
+                        <Component Id="InstallDirComp" Guid="*">
                             <RemoveFolder Id="RemoveInstallDir" On="uninstall" />
                             <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
                         </Component>
 
                         <!-- Put Additional files here: -->
                         <!-- example:
-                        <Component Id="UniqueComponentId" Guid="UniqueGUID">
+                        <Component Id="UniqueComponentId" Guid="*">
                             <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
                         </Component>
                         /example -->

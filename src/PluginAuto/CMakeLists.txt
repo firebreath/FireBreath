@@ -80,9 +80,16 @@ file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Mac.h
     Mac/*Mac.cpp
     Mac/*Mac.mm
-    Mac/*Carbon.h
-    Mac/*Carbon.cpp
     Mac/np_*.cpp
+    )
+
+file (GLOB MAC_COREANIMATION_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*CA.h
+    Mac/*CA.mm
+    )
+file (GLOB MAC_COREGRAPHICS_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*CG.h
+    Mac/*CG.cpp
     )
 
 file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -90,43 +97,30 @@ file (GLOB MAC_QUICKDRAW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*QD.cpp
     )
 
-file (GLOB MAC_COCOAWINDOW_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+file (GLOB MAC_CARBON_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/*Carbon.h
+    Mac/*Carbon.cpp
+    )
+file (GLOB MAC_COCOA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Mac/*Cocoa.h
     Mac/*Cocoa.mm
     Mac/*Cocoa.cpp
     )
 
-file (GLOB MAC_CGCARBON_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CarbonCG.h
-    Mac/*CarbonCG.cpp
-    )
-
-file (GLOB MAC_CGCOCOA_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CocoaCG.h
-    Mac/*CocoaCG.mm
-    )
-
-file (GLOB MAC_COREANIMATION_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    Mac/*CA.h
-    Mac/*CA.mm
-    )  
-
+if(FBMAC_USE_COREANIMATION)
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
+endif()
+if(FBMAC_USE_COREGRAPHICS)
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREGRAPHICS_SOURCES})
+endif()
 if(FBMAC_USE_QUICKDRAW)
     set(MAC_SOURCES ${MAC_SOURCES} ${MAC_QUICKDRAW_SOURCES})
 endif()
 if(FBMAC_USE_CARBON)
-    if(FBMAC_USE_COREGRAPHICS)
-        set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CGCARBON_SOURCES})
-    endif()
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CARBON_SOURCES})
 endif()
 if(FBMAC_USE_COCOA)
-    if(FBMAC_USE_COREGRAPHICS)
-        set(MAC_SOURCES ${MAC_SOURCES} ${MAC_CGCOCOA_SOURCES})
-    endif()
-    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COCOAWINDOW_SOURCES})
-endif()
-if(FBMAC_USE_COREANIMATION)
-    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COREANIMATION_SOURCES})
+    set(MAC_SOURCES ${MAC_SOURCES} ${MAC_COCOA_SOURCES})
 endif()
 
 if (WIN32)
@@ -200,11 +194,8 @@ set (SOURCES
     ${ACTIVEX_OBJECTS}
     ${GENERATED_IDL}
     ${MAC_SOURCES}
-    ${X11_SOURCES}
-    )
-
+    ${X11_SOURCES})
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
-
 if (WIN32)
     # psapi is needed to get the process info and check if WiX is calling
     # us; wish there was a better way to do this, but there doesn't seem to be

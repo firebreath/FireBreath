@@ -24,19 +24,19 @@ namespace FB
     FB::PluginWindowWin* createPluginWindowWin(const WindowContextWin&);    
     FB::PluginWindowlessWin* createPluginWindowless(const WindowContextWindowless&);
 #endif
-    
+
 #ifdef FB_MACOSX
-    FB::PluginWindowMacCarbonQD* createPluginWindowCarbonQD(const WindowContextQuickDraw&);
-    FB::PluginWindowMacCarbonCG* createPluginWindowCarbonCG(const WindowContextCoreGraphics&);
-    FB::PluginWindowMacCocoaCG* createPluginWindowCocoaCG();    
-    FB::PluginWindowMacCocoaCA* createPluginWindowCocoaCA();
-    FB::PluginWindowMacCocoaICA* createPluginWindowCocoaICA();
+    FB::PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
+    FB::PluginWindowMacCG* createPluginWindowMacCG();
+    FB::PluginWindowMacQD* createPluginWindowMacQD();
+	FB::PluginEventMacCocoa* createPluginEventMacCocoa();
+	FB::PluginEventMacCarbon* createPluginEventMacCarbon();
 #endif
-    
+	
 #ifdef FB_X11
     FB::PluginWindowX11* createPluginWindowX11(const FB::WindowContextX11&);
 #endif
-    
+
 }
 
 #endif

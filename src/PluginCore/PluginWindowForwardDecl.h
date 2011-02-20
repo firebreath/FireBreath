@@ -19,6 +19,11 @@
 
 #include <boost/shared_ptr.hpp>
 
+#if defined(XP_MACOSX) && defined(__LP64__)
+#define NP_NO_QUICKDRAW
+#define NP_NO_CARBON
+#endif
+
 namespace FB
 {
 #ifdef FB_WIN
@@ -34,14 +39,11 @@ namespace FB
 #endif
     
 #ifdef FB_MACOSX
-    class PluginWindowMacCarbonQD;
-    class PluginWindowMacCarbonCG;
-    class PluginWindowMacCocoaCG;
-    class PluginWindowMacCocoaCA;
-    class PluginWindowMacCocoaICA;
-    
-    struct WindowContextQuickDraw;
-    struct WindowContextCoreGraphics;
+    class PluginWindowMacCA;
+    class PluginWindowMacCG;
+    class PluginWindowMacQD;
+	class PluginEventMacCocoa;
+	class PluginEventMacCarbon;
 #endif 
 }
 
