@@ -4,7 +4,6 @@ set (CMAKE_VERBOSE_MAKEFILE on)
 
 # with firebreath this target could get added mutliple times; protect against this
 get_target_property(library_target_exists log4cplus TYPE)
-message("library_target_exists ${library_target_exists}")
 if (library_target_exists)
     set(TARGET_ALREADY_EXISTS 1)
 else()
