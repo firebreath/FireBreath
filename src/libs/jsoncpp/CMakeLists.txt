@@ -16,6 +16,13 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+get_target_property(library_target_exists jsoncpp TYPE)
+if (library_target_exists)
+    set(TARGET_ALREADY_EXISTS 1)
+else()
+    set(TARGET_ALREADY_EXISTS 0)
+endif()
+
 include_directories (
 	${CMAKE_CURRENT_SOURCE_DIR}/src
 	${CMAKE_CURRENT_SOURCE_DIR}/include
@@ -31,7 +38,9 @@ list(APPEND SOURCES
     ${GENERAL_SRC}
 )
 
-add_library (jsoncpp STATIC ${SOURCES})
+if (not TARGET_ALREADY_EXISTS)
+    add_library (jsoncpp STATIC ${SOURCES})
+endif()
 
 if (FIREBREATH)
     append_firebreath_link_library(jsoncpp)
