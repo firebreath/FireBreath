@@ -23,6 +23,13 @@ add_boost_library(filesystem)
 add_firebreath_library(openssl)
 add_firebreath_library(curl)
 
+get_target_property(library_target_exists HttpService TYPE)
+if (library_target_exists)
+    set(TARGET_ALREADY_EXISTS 1)
+else()
+    set(TARGET_ALREADY_EXISTS 0)
+endif()
+
 include_directories (
     ${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
@@ -92,9 +99,13 @@ list(APPEND SOURCES
     ${CLIENT_SRC}
 )
 
-add_library (HttpService STATIC ${SOURCES})
+if (NOT TARGET_ALREADY_EXISTS)
 
-target_link_libraries(HttpService ${FBLIB_LIBRARIES})
+    add_library (HttpService STATIC ${SOURCES})
+
+    target_link_libraries(HttpService ${FBLIB_LIBRARIES})
+
+endif()
 
 append_firebreath_link_library(HttpService)
 

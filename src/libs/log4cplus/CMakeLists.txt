@@ -2,6 +2,15 @@ project (log4cplus CXX C)
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_VERBOSE_MAKEFILE on)
 
+# with firebreath this target could get added mutliple times; protect against this
+get_target_property(library_target_exists log4cplus TYPE)
+message("library_target_exists ${library_target_exists}")
+if (library_target_exists)
+    set(TARGET_ALREADY_EXISTS 1)
+else()
+    set(TARGET_ALREADY_EXISTS 0)
+endif()
+
 set (log4cplus_version_major 1)
 set (log4cplus_version_minor 0)
 set (log4cplus_version_patch 4)
@@ -104,7 +113,7 @@ endif()
 # Uncomment the following line to get locale aware string conversions.
 #add_definitions (-DLOG4CPLUS_WORKING_LOCALE)
 
-if (NOT WIN32)
+if (NOT WIN32 AND NOT TARGET_ALREADY_EXISTS)
     INCLUDE(CheckIncludeFiles)
 
     CHECK_INCLUDE_FILES ("sys/types.h" LOG4CPLUS_HAVE_SYS_TYPES_H)
@@ -144,54 +153,57 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/include/log4cplus/config/defines.hxx.
     ${CMAKE_CURRENT_SOURCE_DIR}/include/log4cplus/config/defines.hxx
     )
 
-if ("${UNIX}" OR "${CYGWIN}")
-  set (log4cplus_sources ${log4cplus_sources}
-    src/socket-unix.cxx)
-  set (log4cplus_headers ${log4cplus_headers}
-    include/log4cplus/config/defines.hxx
-    include/log4cplus/helpers/syncprims-pthreads.h)
-elseif (WIN32)
-  set (log4cplus_sources ${log4cplus_sources}
-    src/socket-win32.cxx
-    src/win32debugappender.cxx
-    src/nteventlogappender.cxx
-    src/win32consoleappender.cxx)
-  set (log4cplus_headers ${log4cplus_headers}
-    include/log4cplus/helpers/syncprims-win32.h)
+if (NOT TARGET_ALREADY_EXISTS)
 
-  # Comment out the following lines if you want non-Unicode version.
-  add_definitions (-DUNICODE -D_UNICODE -UMBCS -U_MBCS)
-  set (log4cplus_postfix "${log4cplus_postfix}U")
-  
-  #add_definitions (-DLOG4CPLUS_STATIC)
-  #set (log4cplus_postfix "${log4cplus_postfix}S")
-endif ()
+    if ("${UNIX}" OR "${CYGWIN}")
+      set (log4cplus_sources ${log4cplus_sources}
+        src/socket-unix.cxx)
+      set (log4cplus_headers ${log4cplus_headers}
+        include/log4cplus/config/defines.hxx
+        include/log4cplus/helpers/syncprims-pthreads.h)
+    elseif (WIN32)
+      set (log4cplus_sources ${log4cplus_sources}
+        src/socket-win32.cxx
+        src/win32debugappender.cxx
+        src/nteventlogappender.cxx
+        src/win32consoleappender.cxx)
+      set (log4cplus_headers ${log4cplus_headers}
+        include/log4cplus/helpers/syncprims-win32.h)
 
-if (VERBOSE)
-    message (STATUS "Headers: ${log4cplus_headers}")
-    message (STATUS "Sources: ${log4cplus_sources}")
+      # Comment out the following lines if you want non-Unicode version.
+      add_definitions (-DUNICODE -D_UNICODE -UMBCS -U_MBCS)
+      set (log4cplus_postfix "${log4cplus_postfix}U")
+      
+      #add_definitions (-DLOG4CPLUS_STATIC)
+      #set (log4cplus_postfix "${log4cplus_postfix}S")
+    endif ()
+
+    if (VERBOSE)
+        message (STATUS "Headers: ${log4cplus_headers}")
+        message (STATUS "Sources: ${log4cplus_sources}")
+    endif()
+
+    include_directories ("include")
+    set (log4cplus_all_sources ${log4cplus_sources} ${log4cplus_headers})
+
+    add_library (log4cplus STATIC ${log4cplus_all_sources})
+    #add_library (log4cplus SHARED ${log4cplus_all_sources})
+    target_link_libraries (log4cplus ${CMAKE_THREAD_LIBS_INIT})
+
+    set_target_properties (log4cplus PROPERTIES
+      VERSION "${log4cplus_version_major}.${log4cplus_version_minor}"
+      SOVERSION "${log4cplus_soversion}"
+      COMPILE_FLAGS "-DINSIDE_LOG4CPLUS")
+    if (WIN32)
+      set_target_properties (log4cplus PROPERTIES
+        DEBUG_POSTFIX "${log4cplus_postfix}D"
+        RELEASE_POSTFIX "${log4cplus_postfix}"
+        MINSIZEREL_POSTFIX "${log4cplus_postfix}"
+        RELWITHDEBINFO_POSTFIX "${log4cplus_postfix}")
+      target_link_libraries (log4cplus ws2_32 advapi32)
+    endif ()
+
 endif()
-
-include_directories ("include")
-set (log4cplus_all_sources ${log4cplus_sources} ${log4cplus_headers})
-
-add_library (log4cplus STATIC ${log4cplus_all_sources})
-#add_library (log4cplus SHARED ${log4cplus_all_sources})
-target_link_libraries (log4cplus ${CMAKE_THREAD_LIBS_INIT})
-
-set_target_properties (log4cplus PROPERTIES
-  VERSION "${log4cplus_version_major}.${log4cplus_version_minor}"
-  SOVERSION "${log4cplus_soversion}"
-  COMPILE_FLAGS "-DINSIDE_LOG4CPLUS")
-if (WIN32)
-  set_target_properties (log4cplus PROPERTIES
-    DEBUG_POSTFIX "${log4cplus_postfix}D"
-    RELEASE_POSTFIX "${log4cplus_postfix}"
-    MINSIZEREL_POSTFIX "${log4cplus_postfix}"
-    RELWITHDEBINFO_POSTFIX "${log4cplus_postfix}")
-  target_link_libraries (log4cplus ws2_32 advapi32)
-endif ()
-
 #add_subdirectory (loggingserver)
 #add_subdirectory (tests)
 

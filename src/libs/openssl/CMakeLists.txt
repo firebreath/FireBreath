@@ -21,16 +21,12 @@ include(${CMAKE_DIR}/common.cmake)
 include(FindOpenSSL)
 
 if (OPENSSL_FOUND)
-    list(APPEND FBLIB_INCLUDE_DIRECTORIES
-        ${OPENSSL_INCLUDE_DIR}
-        )
-    list(APPEND FBLIB_LIBRARIES
-        ${OPENSSL_LIBRARIES}
-        )
-    if (WIN32)
-        list(APPEND FBLIB_LIBRARIES
-            ${OPENSSL_EAY_LIBRARIES}
-            )
+    if (FIREBREATH)
+        append_firebreath_include_dir(${OPENSSL_INCLUDE_DIR})
+        append_firebreath_link_library(${OPENSSL_LIBRARIES})
+    endif()
+    if (WIN32 AND FIREBREATH)
+        append_firebreath_link_library(${OPENSSL_EAY_LIBRARIES})
     endif()
 elseif( WIN32 )
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/openssl)
@@ -46,13 +42,11 @@ elseif( WIN32 )
                 "and put them in ${CMAKE_CURRENT_SOURCE_DIR}/openssl/" FATAL)
         endif()
     endif()
-    list(APPEND FBLIB_LIBRARIES
-        ${CMAKE_CURRENT_SOURCE_DIR}/openssl/lib/libeay32.lib
-        ${CMAKE_CURRENT_SOURCE_DIR}/openssl/lib/ssleay32.lib
-        )
-    list(APPEND FBLIB_INCLUDE_DIRS
-        ${CMAKE_CURRENT_SOURCE_DIR}/openssl/include
-        )
+    if (FIREBREATH)
+        append_firebreath_link_library(${CMAKE_CURRENT_SOURCE_DIR}/openssl/lib/libeay32.lib)
+        append_firebreath_link_library(${CMAKE_CURRENT_SOURCE_DIR}/openssl/lib/ssleay32.lib)
+        append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR}/openssl/include)
+    endif()
 else()
     message("Could not find OpenSSL libraries!  Please install openssl libraries and try again!" FATAL)
 endif()
