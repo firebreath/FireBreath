@@ -52,6 +52,7 @@ include(${FB_ROOT}/cmake/buildconfig.cmake)
 
 function (add_firebreath_plugin PROJECT_PATH PROJECT_NAME)
     # This is a function so that the includes won't contaminate the parent
+    set (FB_CURRENT_PLUGIN_DIR "${PROJECT_PATH}")
     include(${FB_ROOT}/cmake/PluginConfigDefaults.cmake)
     include(${PROJECT_PATH}/PluginConfig.cmake)
     include(${FB_ROOT}/cmake/CommonPluginConfig.cmake)

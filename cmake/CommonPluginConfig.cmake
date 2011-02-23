@@ -17,8 +17,6 @@
 #   intended to assist with cleaning up configuration values, generating
 #   needed files, etc.
 
-set (FB_CURRENT_PLUGIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
-
 get_filename_component(FB_TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
 get_filename_component(FB_TEMPLATE_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/projects/${PLUGIN_NAME}/gen" ABSOLUTE)
 message("Generating plugin configuration files in ${FB_TEMPLATE_DEST_DIR}")
@@ -69,6 +67,7 @@ foreach(TemplateFile ${TEMPLATELIST})
     else()
         set (CUR_DEST ${FB_TEMPLATE_DEST_DIR})
     endif()
+    message("Checking ${FB_CURRENT_PLUGIN_DIR}/${CURFILE}")
     if (EXISTS ${FB_CURRENT_PLUGIN_DIR}/${CURFILE})
         if (VERBOSE)
             message("Configuring ${CURFILE} from project source dir")
