@@ -56,6 +56,7 @@ elseif (WIN32)
 endif()
 
 add_library (UnitTest++ STATIC ${SOURCES})
+set_target_properties(UnitTest++ PROPERTIES FOLDER "UnitTests")
 
 add_definitions(
     -D_CRT_SECURE_NO_DEPRECATE

@@ -100,6 +100,7 @@ list(APPEND SOURCES
 if (NOT TARGET_ALREADY_EXISTS)
 
     add_library (HttpService STATIC ${SOURCES})
+    set_target_properties(HttpService PROPERTIES FOLDER "Libraries")
 
     target_link_libraries(HttpService ${FBLIB_LIBRARIES})
 

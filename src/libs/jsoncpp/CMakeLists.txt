@@ -40,6 +40,7 @@ list(APPEND SOURCES
 
 if (not TARGET_ALREADY_EXISTS)
     add_library (jsoncpp STATIC ${SOURCES})
+    set_target_properties(jsoncpp PROPERTIES FOLDER "Libraries")
 endif()
 
 if (FIREBREATH)
