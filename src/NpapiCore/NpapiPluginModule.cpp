@@ -22,7 +22,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 
 volatile bool NpapiPluginModule::PluginModuleInitialized(false);
-volatile bool NpapiPluginModule::PluginModuleDeinitialized(false);
 
 NpapiPluginModule::NpapiPluginModule(bool init/* = true*/)
     : m_threadId(boost::this_thread::get_id()), m_init(init)
@@ -39,8 +38,8 @@ NpapiPluginModule::NpapiPluginModule(bool init/* = true*/)
 NpapiPluginModule::~NpapiPluginModule(void)
 {
     if (m_init) {
-        assert(!PluginModuleDeinitialized);
-        PluginModuleDeinitialized = true;
+        assert(PluginModuleInitialized);
+        PluginModuleInitialized = false;
         getFactoryInstance()->globalPluginDeinitialize();
         FB::Log::stopLogging();
     }
