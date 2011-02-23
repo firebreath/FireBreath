@@ -196,6 +196,7 @@ set (SOURCES
     ${MAC_SOURCES}
     ${X11_SOURCES})
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Generated")
 if (WIN32)
     # psapi is needed to get the process info and check if WiX is calling
     # us; wish there was a better way to do this, but there doesn't seem to be

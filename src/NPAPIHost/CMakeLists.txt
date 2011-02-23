@@ -43,3 +43,4 @@ set (SOURCES
     )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "UnitTests")

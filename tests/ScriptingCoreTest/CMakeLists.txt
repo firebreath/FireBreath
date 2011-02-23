@@ -41,6 +41,7 @@ set (SOURCES
     )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "UnitTests")
 
 target_link_libraries (${PROJECT_NAME}
     ScriptingCore

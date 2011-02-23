@@ -67,6 +67,7 @@ set (SOURCES
     )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
