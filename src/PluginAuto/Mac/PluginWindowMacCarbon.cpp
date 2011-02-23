@@ -75,8 +75,7 @@ uint32_t PluginWindowMacCarbon::getWindowWidth() const {
 }
 
 void PluginWindowMacCarbon::InvalidateWindow() const {
-    FB::Rect pos = getWindowPosition();
-    NPRect r = { pos.top, pos.left, pos.bottom, pos.right };
+    NPRect r = { 0, 0, getWindowWidth(), getWindowHeight() };
     if (!m_npHost->isMainThread()) {
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     } else {
