@@ -256,7 +256,7 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     return map;
 }
 
-boost::shared_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
+boost::weak_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }

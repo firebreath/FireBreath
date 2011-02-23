@@ -44,7 +44,7 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    boost::shared_ptr<SimpleMathAPI> get_simpleMath();
+    boost::weak_ptr<SimpleMathAPI> get_simpleMath();
 
     boost::shared_ptr<SimpleMathAPI> createSimpleMath();
   
