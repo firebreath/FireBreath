@@ -194,12 +194,6 @@ namespace FB
             else
                 return variant(FB::FBNull());
         }
-        template <class T>
-        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>,variant>::type
-        make_variant(const boost::weak_ptr<T>& ptr) {
-            boost::shared_ptr<T> tmp(ptr.lock());
-            return variant(FB::JSAPIWeakPtr(tmp), true);
-        }
 
         // Convert out
         template<class T>
