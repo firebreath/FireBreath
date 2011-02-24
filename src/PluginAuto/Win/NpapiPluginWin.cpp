@@ -46,7 +46,7 @@ NpapiPluginWin::~NpapiPluginWin()
 
 void NpapiPluginWin::invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom )
 {
-    NPRect r = { top, left, bottom, right };
+    NPRect r = { 0, 0, bottom-top, right-left };
     if (!m_npHost->isMainThread()) {
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     } else {

@@ -20,6 +20,7 @@ PluginWindowlessWin::PluginWindowlessWin(const FB::WindowContextWindowless& ctx)
 PluginWindowlessWin::~PluginWindowlessWin() {}
 
 void PluginWindowlessWin::translateWindowToPlugin(int32_t &x, int32_t &y) const {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     int32_t tempX, tempY;
     tempX = x - m_x;
     tempY = y - m_y;
@@ -29,6 +30,7 @@ void PluginWindowlessWin::translateWindowToPlugin(int32_t &x, int32_t &y) const 
 
 bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t lParam, LRESULT& lRes)
 { 
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     {
         LRESULT lres(0);
         WindowsEvent nEvt((HWND)NULL, event, wParam, lParam, lres);
@@ -126,6 +128,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
 }
 
 FB::Rect PluginWindowlessWin::getWindowPosition() const {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     int32_t top = m_y;
     int32_t left = m_x;
     int32_t bottom = m_y + m_height;
@@ -135,6 +138,7 @@ FB::Rect PluginWindowlessWin::getWindowPosition() const {
 }
 
 void PluginWindowlessWin::setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height) {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     m_x = x;
     m_y = y;
     m_height = height;
@@ -142,6 +146,7 @@ void PluginWindowlessWin::setWindowPosition(int32_t x, int32_t y, uint32_t width
 }
 
 void PluginWindowlessWin::setWindowPosition(FB::Rect pos) {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     m_x = pos.left;
     m_y = pos.top;
     m_height = pos.bottom - m_y;
@@ -149,11 +154,13 @@ void PluginWindowlessWin::setWindowPosition(FB::Rect pos) {
 }
 
 FB::Rect FB::PluginWindowlessWin::getWindowClipping() const {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     FB::Rect r = { m_clipTop, m_clipLeft, m_clipBottom, m_clipRight };
     return r;
 }
 
 void PluginWindowlessWin::setWindowClipping(int32_t top, int32_t left, int32_t bottom, int32_t right) {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     m_clipTop = top;
     m_clipLeft = left;
     m_clipBottom = bottom;
@@ -161,6 +168,7 @@ void PluginWindowlessWin::setWindowClipping(int32_t top, int32_t left, int32_t b
 }
 
 void PluginWindowlessWin::setWindowClipping(FB::Rect clip) {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     m_clipTop = clip.top;
     m_clipLeft = clip.left;
     m_clipBottom = clip.bottom;
@@ -169,7 +177,9 @@ void PluginWindowlessWin::setWindowClipping(FB::Rect clip) {
 
 void FB::PluginWindowlessWin::InvalidateWindow() const
 {
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    FB::Rect r = getWindowPosition();
     if (m_invalidateWindow)
-        m_invalidateWindow(0, 0, getWindowWidth(), getWindowHeight());
+        m_invalidateWindow(r.left, r.top, r.right, r.bottom);
 }
 

@@ -20,6 +20,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 
 #include "Win/KeyCodesWin.h"
 #include <boost/function.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 
 #include "Win/WindowContextWin.h"
 
@@ -86,6 +87,7 @@ namespace FB {
             uint32_t m_width, m_height; 
             int32_t m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
             InvalidateWindowFunc m_invalidateWindow;
+            mutable boost::recursive_mutex m_mutex;
     };    
 };
 
