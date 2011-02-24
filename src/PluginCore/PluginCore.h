@@ -49,7 +49,11 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginCore : public PluginEventSink
     {
-    protected:
+    public:
+        static int getActivePluginCount() { return ActivePluginCount; }
+        static std::string& getOS() { return OS; }
+        static std::string& getBrowser() { return Browser; }
+    private:
         static volatile int ActivePluginCount;
 
         static std::string OS;

@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axmain.h"
 #include "FBControl.h"
 #include "axutil.h"
+#include "PluginCore.h"
 #include <boost/algorithm/string.hpp>
 
 using FB::ActiveX::isStaticInitialized;
@@ -32,7 +33,10 @@ using FB::ActiveX::FbPerUserRegistration;
 STDAPI DllCanUnloadNow(void)
 {
 	HRESULT hr = _AtlModule.DllCanUnloadNow();
-	if (hr == S_OK && isStaticInitialized()) {
+	if ((hr == S_OK || !FB::PluginCore::getActivePluginCount()) && isStaticInitialized()) {
+        // We had to change this so that if this function gets called (a sure sign that the browser
+        // would like to unload the DLL) and there are no active plugins it will call Deinitialize
+        // because some systems it never returned S_OK :-( Would love to know why and fix it correctly...
 	    getFactoryInstance()->globalPluginDeinitialize();
         FB::Log::stopLogging();
 		flagStaticInitialized(false);
