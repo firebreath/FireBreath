@@ -178,7 +178,7 @@ namespace FB { namespace ActiveX
             outVar = api->getIDispatch();
         } else {
             if (obj) {
-                outVar = getFactoryInstance()->createCOMJSObject(host, var.cast<FB::JSAPIPtr>());
+                outVar = getFactoryInstance()->createCOMJSObject(host, obj);
                 outVar.pdispVal->Release();
             } else {
                 outVar.ChangeType(VT_NULL);
