@@ -182,10 +182,12 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 
 void ActiveXBrowserHost::shutdown()
 {
-    // First, make sure that no async calls are made while we're shutting down
-    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
-    // Next, kill the message window so that none that have been made go through
-    m_messageWin.reset();
+	{
+	    // First, make sure that no async calls are made while we're shutting down
+	    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+	    // Next, kill the message window so that none that have been made go through
+	    m_messageWin.reset();
+	}
 
     // Finally, run the main browser shutdown, which will fire off any cross-thread
     // calls that somehow haven't made it through yet
