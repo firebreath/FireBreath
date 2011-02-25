@@ -75,7 +75,7 @@ uint32_t PluginWindowMacCarbon::getWindowWidth() const {
 }
 
 void PluginWindowMacCarbon::InvalidateWindow() const {
-    NPRect r = { 0, 0, getWindowWidth(), getWindowHeight() };
+    NPRect r = { 0, 0, getWindowHeight(), getWindowWidth() };
     if (!m_npHost->isMainThread()) {
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     } else {
