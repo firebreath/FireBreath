@@ -149,7 +149,7 @@ bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *ev
             curLen = blockSize-pos;
         }
         // Copy the bytes that fit in this buffer
-        std::copy(buf, buf+curLen, destBuf+offset);
+        std::copy(buf, buf+curLen, destBuf+pos);
         buf += curLen;
         offset += curLen;
         len -= curLen;
