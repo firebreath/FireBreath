@@ -15,7 +15,9 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #ifndef H_PLUGINWINDOWMAC_COCOA_CA
 #define H_PLUGINWINDOWMAC_COCOA_CA
 
+#if FBMAC_USE_COREANIMATION
 #include <QuartzCore/CoreAnimation.h>
+#endif
 
 #include "Mac/PluginWindowMacCocoa.h"
 #include "PluginEvents/MacEventCocoa.h"
