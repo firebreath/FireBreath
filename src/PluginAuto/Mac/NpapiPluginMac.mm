@@ -144,8 +144,15 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
 		case NPPVpluginCoreAnimationLayer:
 		{
 			// The BrowserPlugin owns the CALayer.
-			if (!m_layer) m_layer = [[CALayer layer] retain];
-			*(CALayer**) value = [(CALayer*)m_layer retain];
+			CALayer *mlayer = (CALayer *) m_layer;
+			if (!mlayer)
+				mlayer = [[CALayer layer] retain];
+			if (mlayer) {
+				mlayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
+				mlayer.needsDisplayOnBoundsChange = YES;
+				*(CALayer**) value = [(CALayer*)mlayer retain];
+			}
+			m_layer = mlayer;
 			res = NPERR_NO_ERROR;
 		}	break;
 #endif
