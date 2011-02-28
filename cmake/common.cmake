@@ -17,6 +17,7 @@ get_filename_component (SOURCE_DIR "${CMAKE_DIR}/../src" ABSOLUTE)
 get_filename_component (TEST_DIR "${CMAKE_DIR}/../tests" ABSOLUTE)
 
 set (BIN_DIR "${CMAKE_BINARY_DIR}/bin")
+set (FB_BIN_DIR "${CMAKE_BINARY_DIR}/bin")
 set (FIREBREATH YES INTERNAL)
 
 if (WIN32)
