@@ -38,7 +38,7 @@ list(APPEND SOURCES
     ${GENERAL_SRC}
 )
 
-if (not TARGET_ALREADY_EXISTS)
+if (NOT TARGET_ALREADY_EXISTS)
     add_library (jsoncpp STATIC ${SOURCES})
 endif()
 
