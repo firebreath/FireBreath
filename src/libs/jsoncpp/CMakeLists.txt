@@ -16,6 +16,8 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+project(jsoncpp)
+
 get_target_property(library_target_exists jsoncpp TYPE)
 if (library_target_exists)
     set(TARGET_ALREADY_EXISTS 1)
