@@ -47,6 +47,7 @@
 
     <xsl:template match="w:ProgId">
         <w:ProgId Id="{@Id}" />
+        <xsl:apply-templates select="*" />
     </xsl:template>
 
     <xsl:template match="w:File">
