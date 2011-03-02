@@ -248,3 +248,15 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
     return ptr;
 }
 
+FB::BrowserStreamPtr FB::BrowserHost::createPostStream( const std::string& url,
+    const PluginEventSinkPtr& callback, std::string& postdata, bool cache /*= true*/, 
+	bool seekable /*= false*/, size_t internalBufferSize /*= 128 * 1024 */ ) const
+{
+    assertMainThread();
+    FB::BrowserStreamPtr ptr(_createPostStream(url, callback, postdata, cache, seekable, internalBufferSize));
+    if (ptr) {
+        m_streamMgr->retainStream(ptr);
+    }
+    return ptr;
+}
+

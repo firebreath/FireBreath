@@ -38,12 +38,18 @@ using namespace FB::ActiveX;
 // %%Function: ActiveXBindStatusCallback::ActiveXBindStatusCallback
 // ---------------------------------------------------------------------------
 ActiveXBindStatusCallback::ActiveXBindStatusCallback() :
-    m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false )
+    m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false ),
+	m_hDataToPost(NULL), m_cbDataToPost(0) 
 {
 }
 
 ActiveXBindStatusCallback::~ActiveXBindStatusCallback()
 {
+	if (m_hDataToPost) 
+	{
+		::GlobalFree(m_hDataToPost);
+		m_hDataToPost = NULL;
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -83,8 +89,47 @@ HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStat
 // ---------------------------------------------------------------------------
 HRESULT ActiveXBindStatusCallback::Init(ActiveXStreamRequestPtr request)
 {
+    HRESULT hr = NOERROR;
     m_request = request;
-    return NOERROR;
+
+	if(		m_request->stream
+		&&	!m_request->stream->getVerbData().empty()	)
+	{
+		// Is a post request
+		m_dwAction = BINDVERB_POST;
+		hr = InitPostData(m_request->stream->getVerbData().c_str());
+	}
+
+	m_dwAction = m_request->stream->getVerbData().empty()? BINDVERB_GET : BINDVERB_POST;
+    return hr;
+}
+
+HRESULT ActiveXBindStatusCallback::InitPostData(const char* szData)
+{
+	if (m_hDataToPost)
+	{
+		// We're already in use and don't support recycling the same instance
+		// Some other client may have a reference on us.
+		// If we were to free this data, the client might crash dereferencing the handle
+		return E_FAIL; 
+	}
+
+	if (szData)
+	{
+		// MSINTERNAL: See CINetHttp::INetAsyncSendRequest (cnethttp.cxx) that URLMON calls CINetHttp::GetDataToSend() followed by a call to WININET's HttpSendRequest(). GetDataToSend essentially pulls the data out of the BINDINFO that URLMON has cached away when it calls the host's implementation of IBindStatusCallback::GetBindInfo(). 
+		// MSINTERNAL: It doesn't attempt to lock down the HGLOBAL at all, so we need to allocated GMEM_FIXED
+		m_cbDataToPost = ::lstrlenA(szData);
+		m_hDataToPost = ::GlobalAlloc(GPTR, m_cbDataToPost+1); // GMEM_MOVEABLE won't work because URLMON doesn't attempt GlobalLock before dereferencing
+		if (!m_hDataToPost)
+		{
+			return E_OUTOFMEMORY;
+		}
+
+		// the memory was allocate fixed, so no need to lock it down
+		::lstrcpyA((char*)m_hDataToPost, szData);
+	}
+	
+	return NOERROR;
 }
 
 // ---------------------------------------------------------------------------
@@ -270,6 +315,28 @@ ActiveXBindStatusCallback::GetBindInfo(DWORD* pgrfBINDF, BINDINFO* pbindInfo)
     pbindInfo->grfBindInfoF = 0;
     pbindInfo->szCustomVerb = NULL;
 
+	// set up action-specific members
+	switch(m_dwAction)
+	{
+	case BINDVERB_POST:
+		if (m_hDataToPost)
+		{			
+			// Fill the STGMEDIUM with the data to post
+			pbindInfo->stgmedData.tymed = TYMED_HGLOBAL;	// this is the only medium urlmon supports right now
+			pbindInfo->stgmedData.hGlobal = m_hDataToPost;
+			pbindInfo->stgmedData.pUnkForRelease = (LPUNKNOWN)(LPBINDSTATUSCALLBACK)this; //  maintain control over the data. 
+			AddRef();	// It will be freed on final release
+			pbindInfo->cbstgmedData =	// this must be exact! 
+				m_cbDataToPost;			// Do not rely on GlobalSize() 
+										// which rounds up to the nearest power of two.
+		}
+		break;
+	case BINDVERB_GET:
+		break;
+	default:
+		return E_FAIL;
+	}
+
     return S_OK;
 }  // ActiveXBindStatusCallback::GetBindInfo
 
@@ -382,6 +449,12 @@ STDMETHODIMP ActiveXBindStatusCallback::BeginningTransaction(LPCWSTR szURL,
         }
         extraHeaders << L"\r\n";
     }
+
+	// This header is required when performing a POST operation
+	if (BINDVERB_POST == m_dwAction && m_hDataToPost)
+	{
+		extraHeaders << L"Content-Type: application/x-www-form-urlencoded\r\n";
+	}
 
     LPWSTR wszAdditionalHeaders = 
         (LPWSTR)CoTaskMemAlloc((extraHeaders.str().size()+1) *sizeof(WCHAR));
