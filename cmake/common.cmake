@@ -182,6 +182,10 @@ function (check_boost)
                 find_program(CURL curl)
                 find_program(WGET wget PATHS "${CMAKE_DIR}/")
                 if (NOT ${WGET} MATCHES "WGET-NOTFOUND")
+                    if (ENV{HTTP_PROXY} AND NOT ENV{HTTPS_PROXY})
+                        message("!!!! WARNING: HTTP_PROXY env var set, but we need HTTPS_PROXY. Attempting to use HTTP_PROXY FOR HTTPS_PROXY")
+                        set(ENV{HTTPS_PROXY} $ENV{HTTP_PROXY})
+                    endif()
                     execute_process(
                         COMMAND ${WGET}
                         --no-check-certificate
