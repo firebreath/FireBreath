@@ -100,6 +100,54 @@ if (typeof FireBreath === 'undefined')
 		
 		return false;
 	}
+
+    FireBreath.waitId = -1;
+    FireBreath.waitForInstall = function(pluginName, callback) {
+        if (FireBreath.isPluginInstalled(pluginName)) {
+            callback(FireBreath.isPluginInstalled(pluginName));
+            FireBreath.waitId = -1;
+        } else {
+            FireBreath.waitId = setTimeout(
+                    function() { FireBreath.waitForInstall(pluginName, callback); },
+                    FireBreath.pollInterval);
+        }
+    };
+
+    FireBreath.abortWait = function() {
+        if (FireBreath.waitId != -1) {
+            clearInterval(FBPluginMgr.waitId);
+            FireBreath.waitId = -1;
+        }
+    };
+
+    FireBreath.injectPlugin = function(pluginName, dest, id, callback, params) {
+		var info = FireBreath.pluginDefs[pluginName];
+        if (typeof(params) == "undefined") {
+            params = {};
+        }   
+        __pluginCB = callback;
+        params["onload"] = "__pluginCB";
+        var html = '<object id="' + id + '" type="' + info.mimeType + '" width="100%" height="100%">';
+        for (paramName in params) {
+            html += '<param name="' + paramName + '" value="' + params[paramName] + '" />';
+        }
+        html += '</object>';
+        dest.innerHTML = html;
+    };
+
+    FireBreath.addListener = (document.attachEvent) ?
+        function(obj, type, handler) {
+            obj.attachEvent("on" + type, handler);
+        } : function(obj, type, handler) {
+            obj.addEventListener(type, handler, false);
+        };
+
+    FireBreath.ifInstalled = function(pluginName, yes, no) {
+        if (FBPluginMgr.isPluginInstalled(pluginName))
+            yes(FBPluginMgr.isPluginInstalled(pluginName));
+        else
+            no();
+    };
 }
 
 
@@ -122,3 +170,5 @@ FireBreath.pluginDefs.${PLUGIN_NAME} = {
 				"win"   : "${PLUGIN_NAME}_installer.msi"
 			}
 	};
+FireBreath.pollInterval = 500;
+
