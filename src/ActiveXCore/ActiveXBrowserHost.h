@@ -55,7 +55,7 @@ namespace FB {
             IDispatchEx* getJSAPIWrapper(const FB::JSAPIWeakPtr& api, bool autoRelease = false);
 
             virtual FB::BrowserStreamPtr _createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                                    std::string& postdata, bool cache = true, bool seekable = false, 
+                                                    const std::string& postdata, bool cache = true, bool seekable = false, 
                                                     size_t internalBufferSize = 128 * 1024 ) const;
 
         public:
