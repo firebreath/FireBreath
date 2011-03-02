@@ -100,7 +100,6 @@ int16_t PluginWindowMacCocoa::HandleEvent(NPCocoaEvent* evt) {
         case NPCocoaEventMouseDragged: {
             double x = evt->data.mouse.pluginX;
             double y = evt->data.mouse.pluginY;
-            y = m_height - y; // Reposition origin to bottom left
             MouseMoveEvent ev(x, y);
             return SendEvent(&ev);
             break;
