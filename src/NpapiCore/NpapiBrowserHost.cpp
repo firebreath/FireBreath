@@ -662,7 +662,7 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
 }
 
 FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                    std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
+                                    const std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
 {
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     stream->AttachObserver( callback );

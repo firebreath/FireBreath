@@ -232,7 +232,7 @@ namespace FB
         /// @todo this should probably be a shared_ptr instead of a normal ptr
         /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
 		virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
-												std::string& postdata,
+												const std::string& postdata,
 												bool cache = true, bool seekable = false,
 												size_t internalBufferSize = 128 * 1024 ) const;
 
@@ -379,7 +379,7 @@ namespace FB
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
 		virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
-											std::string& postdata,
+											const std::string& postdata,
 											bool cache = true, bool seekable = false, 
 											size_t internalBufferSize = 128 * 1024 ) const = 0;
     public:
