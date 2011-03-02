@@ -674,6 +674,31 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
     return stream;
 }
 
+FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
+                                    std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
+{
+    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    stream->AttachObserver( callback );
+
+	// Add custom headers before data to post!
+	std::stringstream headers;
+	headers << "Content-type: application/x-www-form-urlencoded\n";
+	headers << "Content-Length: " << postdata.length() << "\n\n";	
+	headers << postdata;
+
+    // always use target = 0 for now
+    if ( PostURLNotify( url.c_str(), 0, headers.str().length(), headers.str().c_str(), false, stream.get() ) == NPERR_NO_ERROR )
+    {
+        stream->setCreated();
+        StreamCreatedEvent ev(stream.get());
+        stream->SendEvent( &ev );
+    }
+    else
+    {
+        stream.reset();
+    }
+    return stream;
+}
 NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread

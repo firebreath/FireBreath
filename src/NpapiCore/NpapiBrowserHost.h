@@ -49,6 +49,10 @@ namespace FB { namespace Npapi {
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
+        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
+                                            std::string& postdata, bool cache = true, bool seekable = false, 
+                                            size_t internalBufferSize = 128 * 1024 ) const;
+
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
         virtual void *getContextID() const { return (void *)m_npp; }
