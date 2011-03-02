@@ -90,10 +90,16 @@ set (SOURCES
     )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
-    )
+)
+
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
-export(TARGETS ScriptingCore ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+if (NOT WITH_SYSTEM_BOOST)
+	export(TARGETS ScriptingCore ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+else()
+	export(TARGETS ScriptingCore APPEND FILE ${FB_EXPORT_FILE})
+endif()

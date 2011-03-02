@@ -90,4 +90,8 @@ set (SOURCES
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
-export(TARGETS PluginCore ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+if (NOT WITH_SYSTEM_BOOST)
+	export(TARGETS PluginCore ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+else()
+	export(TARGETS PluginCore APPEND FILE ${FB_EXPORT_FILE})
+endif()
