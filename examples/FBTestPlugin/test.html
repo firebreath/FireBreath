@@ -109,6 +109,8 @@
             addTest("countArray", "Count array length returned from JSAPI object");
             addTest("simpleFireEvent", "Simple event bind and fire test");
             addTest("dialog", "Dialog callback test");
+            addTest("getURL", "Download stream (GET)");
+            addTest("postURL", "Download stream (POST)");            
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -228,6 +230,31 @@
             catch (e) {
                 alert (e);
             }
+            
+            var sUrl = "http://code.google.com/p/firebreath/issues/list";
+			var getUrlCallback = function(success, outheaders, data)
+			{
+                if (success) {
+                    markPassed("getURL");
+                } else {
+                    markFailed("getURL");
+                }
+				alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+			}
+			plugin.getURL(sUrl, getUrlCallback);
+
+            var sUrl = "http://code.google.com/p/firebreath/issues/list";
+			var sPostData = "can=1&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary+Stars&cells=tiles";
+			var postUrlCallback = function(success, outheaders, data)
+			{
+                if (success) {
+                    markPassed("postURL");
+                } else {
+                    markFailed("postURL");
+                }
+				alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+			}
+			plugin.postURL(sUrl, sPostData, postUrlCallback);            
         }
         function PasswordDlg(message, onComplete) 
         {
