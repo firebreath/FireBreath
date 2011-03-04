@@ -133,6 +133,8 @@ namespace FB {
 #define EVENTTYPE_CASE(eventType, methodName, srcType) else if (evt->validType<eventType>() && src->validType<srcType>()) { \
                                                 return methodName(evt->get<eventType>(), src->get_as<srcType>()); }
 
+#define PLUGIN_EVENT_MAP_CASCADE(super) else return super::HandleEvent(evt, src);
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// @def    END_PLUGIN_EVENT_MAP()
 ///
