@@ -32,6 +32,8 @@ using namespace FB::Npapi;
 
 inline GdkNativeWindow getGdkWindow(void *in)
 {
+    // This is one of the ugliest hacks known to man; it was neccesary to make 64 bit work.
+    // Don't change it without testing on 32 and 64, and don't ask -- you don't want to know
     return (char*)in - (char*)0;
 }
 
@@ -89,11 +91,11 @@ NPError NpapiPluginX11::SetWindow(NPWindow* window)
         m_npHost->GetValue(NPNVSupportsXEmbedBool, &xembedSupported);
         if (!xembedSupported)
         {
-            printf("XEmbed not supported\n");
+            FBLOG_ERROR("FB.NpapiPluginX11", "XEmbed not supported! Cannot create pluginwindow!");
             return NPERR_GENERIC_ERROR;
         }
 
-        if (pluginWin != NULL && pluginWin->getWindow() != getGdkWindow(window->window)) {
+        if (pluginWin != NULL && pluginWin->getTopLevelWindow() != getGdkWindow(window->window)) {
             pluginMain->ClearWindow();
             delete pluginWin;
             pluginWin = NULL;
