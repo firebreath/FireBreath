@@ -50,6 +50,10 @@ std::string FB::getPluginName(const std::string& mimetype)
 
 std::string FB::getPluginDescription(const std::string& mimetype)
 {
+    if (mimetype.empty()) {
+        // If no mimetype is supplied, return the first description
+        return FBSTRING_FileDescription0;
+    }
     initPluginMetadata();
 
     try {
