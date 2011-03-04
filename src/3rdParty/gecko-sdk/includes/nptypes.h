@@ -119,4 +119,3 @@
 #endif
 
 #endif /* nptypes_h_ */
-
