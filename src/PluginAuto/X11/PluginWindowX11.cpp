@@ -18,6 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
 #include "ConstructDefaultPluginWindows.h"
+#include "logging.h"
 
 #include "PluginWindowX11.h"
 
@@ -43,6 +44,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0), m_handler_id(0)
 {
+    FBLOG_INFO("FB.PluginWindowX11", "Creating new PluginWindowX11");
 #if FB_GUI_DISABLED != 1
     m_container = gtk_plug_new((GdkNativeWindow)ctx.window);
     m_canvas = gtk_drawing_area_new();
@@ -80,6 +82,7 @@ PluginWindowX11::~PluginWindowX11()
 #if FB_GUI_DISABLED != 1
     g_signal_handler_disconnect(G_OBJECT(m_canvas), m_handler_id);
 #endif
+    FBLOG_INFO("FB.PluginWindowX11", "Destroying PluginWindowX11");
 }
 
 void PluginWindowX11::getWindowPosition(int32_t &x, int32_t &y, uint32_t &w, uint32_t &h) const

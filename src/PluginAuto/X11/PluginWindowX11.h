@@ -54,6 +54,9 @@ namespace FB {
         void setBrowserWindow(GdkNativeWindow win) {  m_browserWindow = win; }
         GdkNativeWindow getBrowserWindow() { return m_browserWindow; }
         static gboolean _EventCallback(GtkWidget *widget, GdkEvent *event, gpointer user_data);
+
+        // You probably won't ever want to call this yourself.  Call getWindow instead.
+        GdkNativeWindow getTopLevelWindow() { return m_window; }
     protected:
         gboolean EventCallback(GtkWidget *widget, GdkEvent *event);
 
