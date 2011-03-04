@@ -785,7 +785,7 @@ extern "C" {
 /* NPP_* functions are provided by the plugin and called by the navigator. */
 
 #if defined(XP_UNIX)
-char* NPP_GetMIMEDescription(void);
+const char* NPP_GetMIMEDescription(void);
 #endif
 
 NPError NP_LOADDS NPP_New(NPMIMEType pluginType, NPP instance,
@@ -887,4 +887,3 @@ void        NP_LOADDS NPN_URLRedirectResponse(NPP instance, void* notifyData, NP
 #endif
 
 #endif /* npapi_h_ */
-
