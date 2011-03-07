@@ -44,40 +44,40 @@ static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, vo
 
 NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host) {
 	NPDrawingModel drawingModel = (NPDrawingModel) -1; 
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_COREANIMATION_INVALIDATING
 	if (supports(host, NPNVsupportsInvalidatingCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelInvalidatingCoreAnimation)) {
-		printf("%s(): NPDrawingModelInvalidatingCoreAnimation\n", __func__);
+		FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelInvalidatingCoreAnimation");
 		drawingModel = NPDrawingModelInvalidatingCoreAnimation;
 	} else
 #endif
 #if FBMAC_USE_COREANIMATION
 	if (supports(host, NPNVsupportsCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreAnimation)) {
-		printf("%s(): NPDrawingModelCoreAnimation\n", __func__);
+		FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreAnimation");
 		drawingModel = NPDrawingModelCoreAnimation;
 	} else
 #endif
 #if FBMAC_USE_COREGRAPHICS
 	if (supports(host, NPNVsupportsCoreGraphicsBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics)) {
-		printf("%s(): NPDrawingModelCoreGraphics\n", __func__);
+		FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreGraphics");
 		drawingModel = NPDrawingModelCoreGraphics;
 	} else
 #endif
 #if FBMAC_USE_QUICKDRAW
 #ifndef NP_NO_QUICKDRAW
 	if (supports(host, NPNVsupportsQuickDrawBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelQuickDraw)) {
-		printf("%s(): NPDrawingModelQuickDraw\n", __func__);
+		FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelQuickDraw");
 		drawingModel = NPDrawingModelQuickDraw;
 	} else
 #endif
 #endif
-		printf("%s(): NPDrawingModel NONE\n", __func__);
+		FBLOG_INFO("PluginCore", "NPDrawingModel=NONE");
 	return drawingModel;
 }
 
 FB::PluginWindowMac* PluginWindowMac::createPluginWindowMac(NPDrawingModel drawingModel) {
 	FB::PluginWindowMac* rval = NULL;
 	switch (drawingModel) {
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_COREANIMATION_INVALIDATING
 		case NPDrawingModelInvalidatingCoreAnimation:
 			rval = getFactoryInstance()->createPluginWindowMacCA(true);
 			break;

@@ -39,7 +39,7 @@ PluginWindowMacCA::~PluginWindowMacCA()
 NPError PluginWindowMacCA::SetWindow(NPWindow* window)
 {
 	CALayer *layer = (CALayer*) window->window;
-	printf("%s(): CALayer=%p\n", __func__, layer);
+//	FBLOG_TRACE("PluginCore", "PluginWindowMacCA::SetWindow() CALayer=%p", layer);
 	if (!layer)
 		return NPERR_INVALID_PARAM;
 

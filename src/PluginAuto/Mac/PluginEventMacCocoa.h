@@ -30,7 +30,7 @@ namespace FB {
 		virtual ~PluginEventMacCocoa();
 
 		int16_t HandleEvent(void* event);
-		EventModel getNPEventModel() const { return EventModelCocoa; }
+		EventModel getEventModel() const { return EventModelCocoa; }
     };
 };
 

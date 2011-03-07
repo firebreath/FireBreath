@@ -69,7 +69,7 @@ NPEventModel PluginEventMac::initPluginEventMac(const FB::Npapi::NpapiBrowserHos
 		&& supports(host, NPNVsupportsCocoaBool)
 		&& set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
 	{
-		printf("%s(): NPEventModelCocoa\n", __func__);
+		FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCocoa");
 		eventModel = NPEventModelCocoa;
 	} else
 #endif
@@ -82,12 +82,12 @@ NPEventModel PluginEventMac::initPluginEventMac(const FB::Npapi::NpapiBrowserHos
 #endif
 	)
 	{
-		printf("%s(): NPEventModelCarbon\n", __func__);
+		FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCarbon");
 		eventModel = NPEventModelCarbon;
 	} else
 #endif
 #endif
-		printf("%s(): NPEventModel NONE\n", __func__);
+		FBLOG_INFO("PluginCore", "NPEventModel=NONE");
 	return eventModel;
 }
 

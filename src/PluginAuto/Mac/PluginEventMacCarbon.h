@@ -33,7 +33,7 @@ namespace FB {
         virtual ~PluginEventMacCarbon();
         
         int16_t HandleEvent(void* event);
-		EventModel getNPEventModel() const { return EventModelCarbon; }
+		EventModel getEventModel() const { return EventModelCarbon; }
 
 	protected:
 		Point GlobalToLocal(Point location);

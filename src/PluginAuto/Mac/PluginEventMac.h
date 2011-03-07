@@ -38,7 +38,7 @@ namespace FB {
 		PluginEventMac() {}
 		virtual ~PluginEventMac() {}
 
-		virtual EventModel getNPEventModel() const = 0;
+		virtual EventModel getEventModel() const = 0;
 		virtual int16_t HandleEvent(void* event) = 0;
 		void setPluginWindow(PluginWindowMacPtr window) { m_PluginWindow = window; }
 	

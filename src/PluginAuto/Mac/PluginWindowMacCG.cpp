@@ -37,7 +37,7 @@ PluginWindowMacCG::~PluginWindowMacCG()
 NPError PluginWindowMacCG::SetWindow(NPWindow* window)
 {
 	NP_CGContext *context = (NP_CGContext*) window->window;
-	printf("%s(): NP_CGContext=%p\n", __func__, context);
+//	FBLOG_TRACE("PluginCore", "PluginWindowMacCG::SetWindow() NP_CGContext=%p", context);
 	if (!context)
 		return NPERR_INVALID_PARAM;
 

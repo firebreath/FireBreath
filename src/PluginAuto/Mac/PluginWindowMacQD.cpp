@@ -39,7 +39,7 @@ PluginWindowMacQD::~PluginWindowMacQD()
 NPError PluginWindowMacQD::SetWindow(NPWindow* window)
 {
 	NP_Port *prt = (NP_Port*) window->window;
-	printf("%s(): NP_Port=%p CGrafPtr=%p (%d,%d) (%d,%d){%d,%d}\n", __func__, prt, prt->port, prt->portx, prt->porty, window->x, window->y, window->width, window->height);
+//	FBLOG_TRACE("PluginCore", "PluginWindowMacQD::SetWindow() NP_Port=%p CGrafPtr=%p (%d,%d) (%d,%d){%d,%d}", prt, prt->port, prt->portx, prt->porty, window->x, window->y, window->width, window->height);
 	if (!prt || !IsValidPort(prt->port))
 		return NPERR_INVALID_PARAM;
 	

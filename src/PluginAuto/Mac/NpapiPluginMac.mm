@@ -100,6 +100,7 @@ NPError NpapiPluginMac::SetWindow(NPWindow* window) {
 				// Tell the event model which window to use for events.
 				if (pluginEvt)
 					pluginEvt->setPluginWindow(pluginWin);
+				pluginWin->setPluginEvent(pluginEvt);
 			}
 		}
 		if (pluginWin)

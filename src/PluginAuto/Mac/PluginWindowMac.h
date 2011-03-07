@@ -50,6 +50,8 @@ namespace FB {
 		virtual WindowRef getWindowRef() const = 0;
 		
 		void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
+		void setPluginEvent(PluginEventMacPtr event) { m_PluginEvent = event; }
+		PluginEventMacPtr getPluginEvent() { return m_PluginEvent.lock(); }
 
         FB::Rect getWindowPosition() const;
         uint32_t getWindowWidth() const;
@@ -79,8 +81,9 @@ namespace FB {
 
     protected:
         Npapi::NpapiBrowserHostPtr m_npHost;
+        PluginEventMacWeakPtr m_PluginEvent;
 		
-		int32_t m_x;
+        int32_t m_x;
         int32_t m_y;
         uint32_t m_width;
         uint32_t m_height;
