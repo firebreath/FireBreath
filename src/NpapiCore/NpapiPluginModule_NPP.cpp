@@ -330,15 +330,15 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
     // These values may depend on the mimetype of the plugin
     if (!validInstance(instance)) {
         switch (variable) {
-        case NPPVpluginNameString:
+        case NPPVpluginNameString: {
             static const std::string pluginName = getFactoryInstance()->getPluginName("");
             *((const char **)value) = pluginName.c_str();
-            break;
-        case NPPVpluginDescriptionString:
+            break; }
+        case NPPVpluginDescriptionString: {
             // If nothing is instantiated, use the first description found
             static const std::string pluginDesc = getFactoryInstance()->getPluginDescription("");
             *((const char **)value) = pluginDesc.c_str();
-            break;
+            break; }
         default:
             return NPERR_GENERIC_ERROR;
         }
