@@ -14,8 +14,9 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "win_targetver.h"
 #include <windows.h>
-#include "AsyncFunctionCall.h"
 #include <ShlGuid.h>
+#include <string>
+#include "AsyncFunctionCall.h"
 #include "logging.h"
 
 #include "WinMessageWindow.h"
@@ -26,9 +27,11 @@ FB::WinMessageWindow::WinMessageWindow() {
     WNDCLASSEX wc;
     DWORD err(0);
     static ATOM clsAtom(NULL);
+    static int count(0);
 
-    wchar_t *wszWinName = L"FireBreathEventWindow";
-    wchar_t *wszClassName = L"FBEventWindow";
+    std::wstring winName = L"FireBreathEventWindow" + count;
+    std::wstring className = L"FBEventWindow" + count;
+    ++count;
 
     if (!clsAtom) {
         //Step 1: Registering the Window Class
@@ -39,7 +42,7 @@ FB::WinMessageWindow::WinMessageWindow() {
         wc.cbWndExtra    = 0;
         wc.hInstance     = gInstance;
         wc.lpszMenuName  = NULL;
-        wc.lpszClassName = wszClassName;
+        wc.lpszClassName = className.c_str();
         wc.hIcon = NULL;
         wc.hCursor = NULL;
         wc.hIconSm = NULL;
@@ -55,8 +58,8 @@ FB::WinMessageWindow::WinMessageWindow() {
     // Step 2: Creating the Window
     HWND messageWin = CreateWindowEx(
         WS_OVERLAPPED,
-        wszClassName,
-        wszWinName,
+        className.c_str(),
+        winName.c_str(),
         0,
         0, 0, 0, 0,
         HWND_MESSAGE, NULL, gInstance, NULL);
