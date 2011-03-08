@@ -16,6 +16,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include <windows.h>
 #include <ShlGuid.h>
 #include <string>
+#include <boost/lexical_cast.hpp>
 #include "AsyncFunctionCall.h"
 #include "logging.h"
 
@@ -26,11 +27,11 @@ extern HINSTANCE gInstance;
 FB::WinMessageWindow::WinMessageWindow() {
     WNDCLASSEX wc;
     DWORD err(0);
-    static ATOM clsAtom(NULL);
+    ATOM clsAtom(NULL);
     static int count(0);
 
-    std::wstring winName = L"FireBreathEventWindow" + count;
-    std::wstring className = L"FBEventWindow" + count;
+    std::wstring winName = L"FireBreathEventWindow" + boost::lexical_cast<std::wstring>(count);
+    std::wstring className = L"FBEventWindow" + boost::lexical_cast<std::wstring>(count);
     ++count;
 
     if (!clsAtom) {
