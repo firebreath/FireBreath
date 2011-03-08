@@ -33,12 +33,12 @@ namespace FB {
         virtual ~PluginEventMacCarbon();
         
         int16_t HandleEvent(void* event);
-		EventModel getEventModel() const { return EventModelCarbon; }
+        EventModel getEventModel() const { return EventModelCarbon; }
 
-	protected:
-		Point GlobalToLocal(Point location);
+    protected:
+        Point GlobalToLocal(Point location);
 
-		short m_old_h, m_old_v; // Keep track of mouse movement coordinates
+        short m_old_h, m_old_v; // Keep track of mouse movement coordinates
     };
 };
 

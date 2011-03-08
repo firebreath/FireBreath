@@ -25,12 +25,12 @@ namespace FB {
     /// @brief  Mac OS X Cocoa specific implementation of PluginEventMac
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class PluginEventMacCocoa : public PluginEventMac {
-	public:
-		PluginEventMacCocoa();
-		virtual ~PluginEventMacCocoa();
+    public:
+        PluginEventMacCocoa();
+        virtual ~PluginEventMacCocoa();
 
-		int16_t HandleEvent(void* event);
-		EventModel getEventModel() const { return EventModelCocoa; }
+        int16_t HandleEvent(void* event);
+        EventModel getEventModel() const { return EventModelCocoa; }
     };
 };
 

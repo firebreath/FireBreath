@@ -48,7 +48,7 @@ std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(const std::string
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-			FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }

@@ -680,11 +680,11 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url,
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     stream->AttachObserver( callback );
 
-	// Add custom headers before data to post!
-	std::stringstream headers;
-	headers << "Content-type: application/x-www-form-urlencoded\n";
-	headers << "Content-Length: " << postdata.length() << "\n\n";	
-	headers << postdata;
+    // Add custom headers before data to post!
+    std::stringstream headers;
+    headers << "Content-type: application/x-www-form-urlencoded\n";
+    headers << "Content-Length: " << postdata.length() << "\n\n";   
+    headers << postdata;
 
     // always use target = 0 for now
     if ( PostURLNotify( url.c_str(), 0, headers.str().length(), headers.str().c_str(), false, stream.get() ) == NPERR_NO_ERROR )

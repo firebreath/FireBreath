@@ -258,7 +258,7 @@ namespace FB { namespace ActiveX {
         try {
             CComQIPtr<IDispatch> disp(pUnkSink);
             if (disp) {
-				IDispatchAPIPtr obj(IDispatchAPI::create(disp, m_host));
+                IDispatchAPIPtr obj(IDispatchAPI::create(disp, m_host));
                 m_connPtMap[(DWORD)obj.get()] = obj;
                 *pdwCookie = (DWORD)obj.get();
                 getAPI()->registerEventInterface(obj);

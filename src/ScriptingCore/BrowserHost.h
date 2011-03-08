@@ -223,18 +223,18 @@ namespace FB
         /// @param  url                 URL of the document to request. 
         /// @param  callback            PluginEventSink to send status updates to (usually your Plugin class
         ///                             derived from PluginCore)
-		/// @param  postdata               data to post.
-		/// @param  cache               true to cache. 
+        /// @param  postdata               data to post.
+        /// @param  cache               true to cache. 
         /// @param  seekable            true if the Stream should be seekable. 
         /// @param  internalBufferSize  Size of the internal buffer. 
         ///
         /// @return null if it fails, else BrowserStream object
         /// @todo this should probably be a shared_ptr instead of a normal ptr
         /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
-		virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
-												const std::string& postdata,
-												bool cache = true, bool seekable = false,
-												size_t internalBufferSize = 128 * 1024 ) const;
+        virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
+                                                const std::string& postdata,
+                                                bool cache = true, bool seekable = false,
+                                                size_t internalBufferSize = 128 * 1024 ) const;
 
         // Methods for accessing the DOM
     public:
@@ -378,10 +378,10 @@ namespace FB
         virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback, 
                                             bool cache = true, bool seekable = false, 
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
-		virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
-											const std::string& postdata,
-											bool cache = true, bool seekable = false, 
-											size_t internalBufferSize = 128 * 1024 ) const = 0;
+        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
+                                            const std::string& postdata,
+                                            bool cache = true, bool seekable = false, 
+                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

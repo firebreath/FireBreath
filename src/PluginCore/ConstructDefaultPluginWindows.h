@@ -29,10 +29,10 @@ namespace FB
     FB::PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
     FB::PluginWindowMacCG* createPluginWindowMacCG();
     FB::PluginWindowMacQD* createPluginWindowMacQD();
-	FB::PluginEventMacCocoa* createPluginEventMacCocoa();
-	FB::PluginEventMacCarbon* createPluginEventMacCarbon();
+    FB::PluginEventMacCocoa* createPluginEventMacCocoa();
+    FB::PluginEventMacCarbon* createPluginEventMacCarbon();
 #endif
-	
+    
 #ifdef FB_X11
     FB::PluginWindowX11* createPluginWindowX11(const FB::WindowContextX11&);
 #endif

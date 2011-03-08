@@ -149,7 +149,7 @@ void ActiveXStream::signalCacheFilename(const std::wstring& cacheFilename)
 
 std::string ActiveXStream::getVerbData() const
 {
-	return data;
+    return data;
 }
 
 #if 0

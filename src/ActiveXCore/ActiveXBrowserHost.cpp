@@ -137,7 +137,7 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 void ActiveXBrowserHost::initDOMObjects()
 {
     if (!m_window) {
-		m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
         m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
     }
 }
@@ -183,27 +183,27 @@ void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 
 void ActiveXBrowserHost::shutdown()
 {
-	{
-	    // First, make sure that no async calls are made while we're shutting down
-	    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
-	    // Next, kill the message window so that none that have been made go through
-	    m_messageWin.reset();
-	}
+    {
+        // First, make sure that no async calls are made while we're shutting down
+        boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+        // Next, kill the message window so that none that have been made go through
+        m_messageWin.reset();
+    }
 
     // Finally, run the main browser shutdown, which will fire off any cross-thread
     // calls that somehow haven't made it through yet
-	BrowserHost::shutdown();
+    BrowserHost::shutdown();
 
     // Once that's done let's release any ActiveX resources that the browserhost
     // is holding
-	m_spClientSite.Release();
-	m_htmlDoc.Release();
-	m_htmlDocDisp.Release();
-	m_htmlWin.Release();
-	m_webBrowser.Release();
-	m_htmlWinDisp.Release();
-	m_window.reset();
-	m_document.reset();
+    m_spClientSite.Release();
+    m_htmlDoc.Release();
+    m_htmlDocDisp.Release();
+    m_htmlWin.Release();
+    m_webBrowser.Release();
+    m_htmlWinDisp.Release();
+    m_window.reset();
+    m_document.reset();
     DoDeferredRelease();
     assert(m_deferredObjects.empty());
 }
@@ -256,7 +256,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-		retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_ptr()))); 
+        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_ptr()))); 
         break;
 
     case VT_ERROR:

@@ -63,7 +63,7 @@ namespace FB {
             FB::DOM::WindowPtr getDOMWindow();
             FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
-			void shutdown();
+            void shutdown();
 
         public:
             FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
@@ -73,7 +73,7 @@ namespace FB {
 
         protected:
             void initDOMObjects(); // This is const so that getDOMDocument/Window can be
-        	CComQIPtr<IOleClientSite> m_spClientSite;
+            CComQIPtr<IOleClientSite> m_spClientSite;
             CComQIPtr<IHTMLDocument2> m_htmlDoc;
             CComQIPtr<IDispatch> m_htmlDocDisp;
             CComPtr<IHTMLWindow2> m_htmlWin;

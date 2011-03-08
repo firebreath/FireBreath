@@ -23,8 +23,8 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 
 namespace FB {
 
-	FB_FORWARD_PTR(PluginEventMac);
-	FB_FORWARD_PTR(PluginWindowMac);
+    FB_FORWARD_PTR(PluginEventMac);
+    FB_FORWARD_PTR(PluginWindowMac);
 
     class PluginWindowMac : public PluginWindow
     {
@@ -37,52 +37,52 @@ namespace FB {
             DrawingModelInvalidatingCoreAnimation
         };
 
-		static NPDrawingModel initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host);
-		static FB::PluginWindowMac* createPluginWindowMac(NPDrawingModel drawingModel);
+        static NPDrawingModel initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host);
+        static FB::PluginWindowMac* createPluginWindowMac(NPDrawingModel drawingModel);
 
         PluginWindowMac();
         virtual ~PluginWindowMac() {}
 
-		virtual NPError SetWindow(NPWindow* window);
+        virtual NPError SetWindow(NPWindow* window);
 
         virtual DrawingModel getDrawingModel() const = 0;
-		virtual void* getDrawingPrimitive() const = 0;
-		virtual WindowRef getWindowRef() const = 0;
-		
-		void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
-		void setPluginEvent(PluginEventMacPtr event) { m_PluginEvent = event; }
-		PluginEventMacPtr getPluginEvent() { return m_PluginEvent.lock(); }
+        virtual void* getDrawingPrimitive() const = 0;
+        virtual WindowRef getWindowRef() const = 0;
+        
+        void setNpHost(FB::Npapi::NpapiBrowserHostPtr host) { m_npHost = host; }
+        void setPluginEvent(PluginEventMacPtr event) { m_PluginEvent = event; }
+        PluginEventMacPtr getPluginEvent() { return m_PluginEvent.lock(); }
 
         FB::Rect getWindowPosition() const;
         uint32_t getWindowWidth() const;
         uint32_t getWindowHeight() const;
         FB::Rect getWindowClipping() const;
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn     int PluginWindowMacCocoa::scheduleTimer(int interval, bool repeat)
-		///
-		/// @brief  Schedule a Cocoa timer to notify you on the given interval or period
-		/// 
-		/// @param  interval    Numer of milliseconds before the timer event is first called
-		/// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		int scheduleTimer(int interval, bool repeat);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn     int PluginWindowMacCocoa::scheduleTimer(int interval, bool repeat)
+        ///
+        /// @brief  Schedule a Cocoa timer to notify you on the given interval or period
+        /// 
+        /// @param  interval    Numer of milliseconds before the timer event is first called
+        /// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        int scheduleTimer(int interval, bool repeat);
 
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		/// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
-		///
-		/// @brief  Unschedule a previously scheduled timer
-		/// 
-		/// @param  timerId     The id of the previously scheduled timer
-		////////////////////////////////////////////////////////////////////////////////////////////////////
-		void unscheduleTimer(int timerId);
-		// Handles a timer event 
-		void handleTimerEvent();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
+        ///
+        /// @brief  Unschedule a previously scheduled timer
+        /// 
+        /// @param  timerId     The id of the previously scheduled timer
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void unscheduleTimer(int timerId);
+        // Handles a timer event 
+        void handleTimerEvent();
 
     protected:
         Npapi::NpapiBrowserHostPtr m_npHost;
         PluginEventMacWeakPtr m_PluginEvent;
-		
+        
         int32_t m_x;
         int32_t m_y;
         uint32_t m_width;

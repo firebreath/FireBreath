@@ -21,29 +21,29 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 
 namespace FB {
     
-	FB_FORWARD_PTR(PluginEventMac);
-	FB_FORWARD_PTR(PluginWindowMac);
+    FB_FORWARD_PTR(PluginEventMac);
+    FB_FORWARD_PTR(PluginWindowMac);
 
     class PluginEventMac
-	{
-	public:
-		enum EventModel
+    {
+    public:
+        enum EventModel
         {
             EventModelCarbon,
             EventModelCocoa
         };
-		static NPEventModel initPluginEventMac(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel drawingModel);
-		static FB::PluginEventMac* createPluginEventMac(NPEventModel eventModel);
+        static NPEventModel initPluginEventMac(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel drawingModel);
+        static FB::PluginEventMac* createPluginEventMac(NPEventModel eventModel);
 
-		PluginEventMac() {}
-		virtual ~PluginEventMac() {}
+        PluginEventMac() {}
+        virtual ~PluginEventMac() {}
 
-		virtual EventModel getEventModel() const = 0;
-		virtual int16_t HandleEvent(void* event) = 0;
-		void setPluginWindow(PluginWindowMacPtr window) { m_PluginWindow = window; }
-	
-	protected:
-		PluginWindowMacWeakPtr m_PluginWindow;
+        virtual EventModel getEventModel() const = 0;
+        virtual int16_t HandleEvent(void* event) = 0;
+        void setPluginWindow(PluginWindowMacPtr window) { m_PluginWindow = window; }
+    
+    protected:
+        PluginWindowMacWeakPtr m_PluginWindow;
     };
 
 };

@@ -29,8 +29,8 @@ FB::PluginEventMacCarbon* FB::createPluginEventMacCarbon()
 #if FBMAC_USE_CARBON && !defined(NP_NO_CARBON)
     return new PluginEventMacCarbon();
 #else
-	assert(false);
-	return NULL;
+    assert(false);
+    return NULL;
 #endif
 }
 
@@ -39,73 +39,73 @@ FB::PluginEventMacCocoa* FB::createPluginEventMacCocoa()
 #if FBMAC_USE_COCOA
     return new PluginEventMacCocoa();
 #else
-	assert(false);
-	return NULL;
+    assert(false);
+    return NULL;
 #endif
 }
 
 /*
-	Apple's Safari requires NPEventModelCarbon for NPDrawingModelCoreGraphics and NPDrawingModelQuickDraw.
-	Apple's Safari requires NPEventModelCocoa for NPDrawingModelCoreAnimation and NPDrawingModelInvalidatingCoreAnimation.
+    Apple's Safari requires NPEventModelCarbon for NPDrawingModelCoreGraphics and NPDrawingModelQuickDraw.
+    Apple's Safari requires NPEventModelCocoa for NPDrawingModelCoreAnimation and NPDrawingModelInvalidatingCoreAnimation.
 */
 
 static bool supports(const FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
-	NPBool value =  FALSE;        
-	// err tells us if the browser supports model negotiation
-	NPError err = host->GetValue(what, &value);
-	return (err != NPERR_NO_ERROR) ? false : (value == FALSE) ? false : true;
+    NPBool value =  FALSE;        
+    // err tells us if the browser supports model negotiation
+    NPError err = host->GetValue(what, &value);
+    return (err != NPERR_NO_ERROR) ? false : (value == FALSE) ? false : true;
 }
 
 static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, void* value) {
-	NPError err = host->SetValue(what, value);
-	return (err != NPERR_NO_ERROR) ? false : true;
+    NPError err = host->SetValue(what, value);
+    return (err != NPERR_NO_ERROR) ? false : true;
 }
 
 NPEventModel PluginEventMac::initPluginEventMac(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel drawingModel) {
-	NPEventModel eventModel = (NPEventModel) -1;
+    NPEventModel eventModel = (NPEventModel) -1;
 #if FBMAC_USE_COCOA
-	if (
-		((NPDrawingModelCoreAnimation == drawingModel) || (NPDrawingModelInvalidatingCoreAnimation == drawingModel))
-		&& supports(host, NPNVsupportsCocoaBool)
-		&& set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
-	{
-		FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCocoa");
-		eventModel = NPEventModelCocoa;
-	} else
+    if (
+        ((NPDrawingModelCoreAnimation == drawingModel) || (NPDrawingModelInvalidatingCoreAnimation == drawingModel))
+        && supports(host, NPNVsupportsCocoaBool)
+        && set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
+    {
+        FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCocoa");
+        eventModel = NPEventModelCocoa;
+    } else
 #endif
 #if FBMAC_USE_CARBON
 #ifndef NP_NO_CARBON
-	if (
-		(NPDrawingModelCoreGraphics == drawingModel)
+    if (
+        (NPDrawingModelCoreGraphics == drawingModel)
 #ifndef NP_NO_QUICKDRAW
-		|| (NPDrawingModelQuickDraw == drawingModel)
+        || (NPDrawingModelQuickDraw == drawingModel)
 #endif
-	)
-	{
-		FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCarbon");
-		eventModel = NPEventModelCarbon;
-	} else
+    )
+    {
+        FBLOG_INFO("PluginCore", "NPEventModel=NPEventModelCarbon");
+        eventModel = NPEventModelCarbon;
+    } else
 #endif
 #endif
-		FBLOG_INFO("PluginCore", "NPEventModel=NONE");
-	return eventModel;
+        FBLOG_INFO("PluginCore", "NPEventModel=NONE");
+    return eventModel;
 }
 
 FB::PluginEventMac* PluginEventMac::createPluginEventMac(NPEventModel eventModel) {
-	PluginEventMac* rval = NULL;
-	switch (eventModel) {
-		case NPEventModelCocoa: {
+    PluginEventMac* rval = NULL;
+    switch (eventModel) {
+        case NPEventModelCocoa: {
 #if FBMAC_USE_COCOA
-			rval = getFactoryInstance()->createPluginEventMacCocoa();
+            rval = getFactoryInstance()->createPluginEventMacCocoa();
 #endif
-		} break;
+        } break;
 #ifndef NP_NO_CARBON
-		case NPEventModelCarbon: {
+        case NPEventModelCarbon: {
 #if FBMAC_USE_CARBON
-			rval = getFactoryInstance()->createPluginEventMacCarbon();
+            rval = getFactoryInstance()->createPluginEventMacCarbon();
 #endif
-		} break;
+        } break;
 #endif
-	}
-	return rval;
+    }
+    return rval;
 }

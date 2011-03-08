@@ -112,9 +112,9 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
         pos.top = 0;
     }
 
-	::SetTextAlign(hDC, TA_CENTER|TA_BASELINE);
-	LPCTSTR pszText = _T("FireBreath Plugin!");
-	::TextOut(hDC, pos.left + (pos.right - pos.left) / 2, pos.top + (pos.bottom - pos.top) / 2, pszText, lstrlen(pszText));
+    ::SetTextAlign(hDC, TA_CENTER|TA_BASELINE);
+    LPCTSTR pszText = _T("FireBreath Plugin!");
+    ::TextOut(hDC, pos.left + (pos.right - pos.left) / 2, pos.top + (pos.bottom - pos.top) / 2, pszText, lstrlen(pszText));
 
     if (wnd) {
         // Release the device context

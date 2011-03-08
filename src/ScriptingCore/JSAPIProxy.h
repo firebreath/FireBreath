@@ -103,7 +103,7 @@ namespace FB
         ///
         /// @brief  Changes the wrapped JSAPIPtr to the given one
         ///
-        /// @param  inner	const FB::JSAPIPtr &	New JSAPIPtr
+        /// @param  inner   const FB::JSAPIPtr &    New JSAPIPtr
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void changeObject(const FB::JSAPIPtr &inner);
@@ -112,7 +112,7 @@ namespace FB
         ///
         /// @brief  Changes the wrapped JSAPIWeakPtr to the given one
         ///
-        /// @param  inner	FB::JSAPIWeakPtr &	    New JSAPIWeakPtr
+        /// @param  inner   FB::JSAPIWeakPtr &      New JSAPIWeakPtr
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void changeObject(const FB::JSAPIWeakPtr &inner);

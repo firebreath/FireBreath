@@ -103,9 +103,9 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             RefreshEvent ev;
             if (!SendEvent(&ev)) {
                 FB::Rect pos = getWindowPosition();
-            	::SetTextAlign(dc, TA_CENTER|TA_BASELINE);
-            	LPCTSTR pszText = _T("FireBreath Plugin");
-            	::TextOut(dc, pos.left + (pos.right - pos.left) / 2, pos.top + (pos.bottom - pos.top) / 2, pszText, lstrlen(pszText));
+                ::SetTextAlign(dc, TA_CENTER|TA_BASELINE);
+                LPCTSTR pszText = _T("FireBreath Plugin");
+                ::TextOut(dc, pos.left + (pos.right - pos.left) / 2, pos.top + (pos.bottom - pos.top) / 2, pszText, lstrlen(pszText));
             }
             return 0;
         }

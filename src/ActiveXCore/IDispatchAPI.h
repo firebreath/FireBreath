@@ -34,7 +34,7 @@ namespace FB { namespace ActiveX {
         public FB::JSObject
     {
     public:
-		static boost::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
+        static boost::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
         virtual ~IDispatchAPI(void);
 
         void *getEventId() const { return (void*)m_obj; }
@@ -74,8 +74,8 @@ namespace FB { namespace ActiveX {
     public:
         virtual FB::JSAPIPtr getJSAPI() const;
 
-	private:
-		friend boost::shared_ptr<IDispatchAPI> boost::make_shared<IDispatchAPI>(IDispatch * const &, const ActiveXBrowserHostPtr&);
+    private:
+        friend boost::shared_ptr<IDispatchAPI> boost::make_shared<IDispatchAPI>(IDispatch * const &, const ActiveXBrowserHostPtr&);
         IDispatchAPI(IDispatch *, const ActiveXBrowserHostPtr&);
     };
 } }

@@ -123,7 +123,7 @@ namespace FB {
 
             STDMETHOD(SetObjectRects)(LPCRECT prcPos, LPCRECT prcClip);
             STDMETHOD(InPlaceActivate)(LONG iVerb, const RECT* prcPosRect);
-	
+    
             // Called when the control is deactivated when it's time to shut down
             STDMETHOD(InPlaceDeactivate)(void);
 
@@ -145,7 +145,7 @@ namespace FB {
             // ever get called
             STDMETHOD(Save)(IPropertyBag *pPropBag, BOOL fClearDirty, BOOL fSaveAllProperties);
 
-        	virtual HRESULT OnDraw(ATL_DRAWINFO& di);
+            virtual HRESULT OnDraw(ATL_DRAWINFO& di);
 
             void invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom );
         public:
@@ -225,7 +225,7 @@ namespace FB {
                     );
                 win->HandleEvent(WM_PAINT, reinterpret_cast<uint32_t>(di.hdcDraw), NULL, lRes);
             }
-    		return S_OK;
+            return S_OK;
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>

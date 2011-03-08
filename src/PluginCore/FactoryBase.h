@@ -265,10 +265,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacQD* createPluginWindowMacQD();
 #endif
-		
-		virtual PluginEventMacCocoa* createPluginEventMacCocoa();
+        
+        virtual PluginEventMacCocoa* createPluginEventMacCocoa();
 #ifndef NP_NO_CARBON
-		virtual PluginEventMacCarbon* createPluginEventMacCarbon();
+        virtual PluginEventMacCarbon* createPluginEventMacCarbon();
 #endif
 
 #endif

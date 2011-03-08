@@ -98,7 +98,7 @@ namespace FB {
         /// // struri == "http://taxilian@www.firebreath.org/applications?user=taxilian#bleh"
         /// @endcode
         ///
-        /// @param  include_domain_part	bool	if false, only the path and later will be returned (no domain or http://, etc)
+        /// @param  include_domain_part bool    if false, only the path and later will be returned (no domain or http://, etc)
         /// @returns std::string
         /// @since 1.4b1
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ namespace FB {
         ///
         /// @brief  Returns a URI object from the given string
         ///
-        /// @param  in_str	string to parse to create the new URI object
+        /// @param  in_str  string to parse to create the new URI object
         /// @returns FB::URI
         /// @since 1.4b1
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,7 +189,7 @@ namespace FB {
         /// // uri.query_data["firebreath"] == "awesome"
         /// @endcode
         ///
-        /// @param  in_str	urlencoded querystring (minus the ?)
+        /// @param  in_str  urlencoded querystring (minus the ?)
         /// @returns void
         /// @since 1.4b1
         ////////////////////////////////////////////////////////////////////////////////////////////////////

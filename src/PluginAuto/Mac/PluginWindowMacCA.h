@@ -26,17 +26,17 @@ namespace FB
         PluginWindowMacCA(bool invalidating);
         virtual ~PluginWindowMacCA();
 
-		NPError SetWindow(NPWindow* window);
+        NPError SetWindow(NPWindow* window);
 
         DrawingModel getDrawingModel() const { return DrawingModelCoreAnimation; }
-		void* getDrawingPrimitive() const { return m_layer; }
-		WindowRef getWindowRef() const { return NULL; }
+        void* getDrawingPrimitive() const { return m_layer; }
+        WindowRef getWindowRef() const { return NULL; }
 
         void InvalidateWindow() const;
 
     private:
-		void* m_layer;
-		bool m_invalidating;		
+        void* m_layer;
+        bool m_invalidating;        
     };
 };
 #endif // H_PLUGINWINDOWMACCA

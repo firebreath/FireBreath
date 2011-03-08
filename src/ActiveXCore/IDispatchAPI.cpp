@@ -26,7 +26,7 @@ using namespace FB::ActiveX;
 
 boost::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * obj, const ActiveXBrowserHostPtr& host)
 {
-	return boost::make_shared<IDispatchAPI>(obj, host);
+    return boost::make_shared<IDispatchAPI>(obj, host);
 }
 
 FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHostPtr& host) :
@@ -68,17 +68,17 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
         throw FB::script_error("Cannot enumerate members; IDispatchEx not supported");
     }
 
-	DISPID dispid = DISPID_STARTENUM;
-	while (dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid) != S_FALSE) {
-		if (dispid < 0) {
-			continue;
-		}
-		CComBSTR memberName;
-		if (SUCCEEDED(dispatchEx->GetMemberName(dispid, &memberName))) {
-			std::wstring name(memberName);
-			nameVector.push_back(FB::wstring_to_utf8(name));
-		}
-	}
+    DISPID dispid = DISPID_STARTENUM;
+    while (dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid) != S_FALSE) {
+        if (dispid < 0) {
+            continue;
+        }
+        CComBSTR memberName;
+        if (SUCCEEDED(dispatchEx->GetMemberName(dispid, &memberName))) {
+            std::wstring name(memberName);
+            nameVector.push_back(FB::wstring_to_utf8(name));
+        }
+    }
 }
 
 size_t IDispatchAPI::getMemberCount() const
@@ -89,11 +89,11 @@ size_t IDispatchAPI::getMemberCount() const
 
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
-		if (!tmp) {
-			// TODO: check if this should be -1
-			return 0;
-		}
-		return tmp->getMemberCount();
+        if (!tmp) {
+            // TODO: check if this should be -1
+            return 0;
+        }
+        return tmp->getMemberCount();
     }
 
     CComQIPtr<IDispatchEx> dispatchEx(m_obj);
@@ -105,8 +105,8 @@ size_t IDispatchAPI::getMemberCount() const
     DISPID dispid = DISPID_STARTENUM;    
     while (dispatchEx->GetNextDispID(fdexEnumAll, dispid, &dispid) != S_FALSE) {
         if (dispid >= 0) {
-			++count;
-		}
+            ++count;
+        }
     }
 
     return count;
@@ -118,29 +118,29 @@ DISPID IDispatchAPI::getIDForName(const std::wstring& name) const
         return host->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
     }
 
-	if (name.empty()) {
+    if (name.empty()) {
         return DISPID_VALUE;
-	}
+    }
 
-	HRESULT hr = E_NOTIMPL;
+    HRESULT hr = E_NOTIMPL;
     DISPID dispId = DISPID_UNKNOWN;
     CComQIPtr<IDispatchEx> dispatchEx(m_obj);
     if (dispatchEx) {
         hr = dispatchEx->GetDispID(CComBSTR(name.c_str()),
             fdexNameEnsure | fdexNameCaseSensitive | 0x10000000, &dispId);
     } else {
-		const wchar_t* p = name.c_str();
+        const wchar_t* p = name.c_str();
         hr = m_obj->GetIDsOfNames(IID_NULL, const_cast<LPOLESTR*>(&p), 1, LOCALE_SYSTEM_DEFAULT, &dispId);
     }
 
-	if (FAILED(hr)) {
-		if (hr == E_NOTIMPL) {
-			return AxIdMap.getIdForValue(name); // Makes events possible
-		}
-		return DISPID_UNKNOWN;
-	}
-	
-	return dispId;
+    if (FAILED(hr)) {
+        if (hr == E_NOTIMPL) {
+            return AxIdMap.getIdForValue(name); // Makes events possible
+        }
+        return DISPID_UNKNOWN;
+    }
+    
+    return dispId;
 }
 
 bool IDispatchAPI::HasMethod(const std::wstring& methodName) const
@@ -161,11 +161,11 @@ bool IDispatchAPI::HasMethod(const std::string& methodName) const
         FB::JSAPIPtr tmp = inner.lock();
         if (!tmp) {
             return false;
-		}
-		return tmp->HasMethod(methodName);
+        }
+        return tmp->HasMethod(methodName);
     }
 
-	// This will actually just return true if the specified member exists; IDispatch doesn't really
+    // This will actually just return true if the specified member exists; IDispatch doesn't really
     // differentiate further than that
     return getIDForName(FB::utf8_to_wstring(methodName)) != -1 && !HasProperty(methodName);
 }
@@ -184,35 +184,35 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName) const
 
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
-		if (!tmp) {
-			return false;
-		}
-		return tmp->HasProperty(propertyName);
+        if (!tmp) {
+            return false;
+        }
+        return tmp->HasProperty(propertyName);
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
-	if (dispId == DISPID_UNKNOWN && propertyName != "toString") {
+    if (dispId == DISPID_UNKNOWN && propertyName != "toString") {
         return false;
-	}
+    }
 
-	DISPPARAMS params;
+    DISPPARAMS params;
     params.cArgs = 0;
     params.cNamedArgs = 0;
 
-	// the only way to find out if the property actually exists or not is to try to get it
+    // the only way to find out if the property actually exists or not is to try to get it
     HRESULT hr;
     CComVariant result;
     CComExcepInfo exceptionInfo;
     CComQIPtr<IDispatchEx> dispatchEx(m_obj);
     if (dispatchEx) {
         hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, 
-			DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
     } else {
         hr = m_obj->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
             DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
     }
 
-	return SUCCEEDED(hr);
+    return SUCCEEDED(hr);
 }
 
 bool IDispatchAPI::HasProperty(int idx) const
@@ -235,10 +235,10 @@ bool IDispatchAPI::HasEvent(const std::string& eventName) const
 
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
-		if (!tmp) {
-			return false;
-		}
-		return tmp->HasEvent(eventName);
+        if (!tmp) {
+            return false;
+        }
+        return tmp->HasEvent(eventName);
     }
 
     // This will actually just return true if the specified member exists; IDispatch doesn't really
@@ -256,18 +256,18 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
-		if (!tmp) {
+        if (!tmp) {
             return false;
-		}
-		return tmp->GetProperty(propertyName);
+        }
+        return tmp->GetProperty(propertyName);
     }
 
-	DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
-	if (dispId == DISPID_UNKNOWN && propertyName != "toString") {
-		throw FB::script_error("Could not get property");
-	}
+    DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
+    if (dispId == DISPID_UNKNOWN && propertyName != "toString") {
+        throw FB::script_error("Could not get property");
+    }
 
-	// TODO: how can toString == DISPID_UNKNOWN work?
+    // TODO: how can toString == DISPID_UNKNOWN work?
 
     DISPPARAMS params;
     params.cArgs = 0;
@@ -285,11 +285,11 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
             DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
     }
     
-	if (FAILED(hr)) {
+    if (FAILED(hr)) {
         throw FB::script_error("Could not get property");
     }
-	
-	return m_browser->getVariant(&result);
+    
+    return m_browser->getVariant(&result);
 }
 
 void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
@@ -307,9 +307,9 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
-	if (dispId == DISPID_UNKNOWN) {
-		throw FB::script_error("Could not set property");
-	}
+    if (dispId == DISPID_UNKNOWN) {
+        throw FB::script_error("Could not set property");
+    }
 
     CComVariant arg[1];
     VARIANTARG rawArg[1];
@@ -367,10 +367,10 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         return host->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
-	DISPID dispId = getIDForName(FB::utf8_to_wstring(methodName));
-	if (dispId == DISPID_UNKNOWN) {
-		 throw FB::script_error("Method invoke failed");
-	}
+    DISPID dispId = getIDForName(FB::utf8_to_wstring(methodName));
+    if (dispId == DISPID_UNKNOWN) {
+         throw FB::script_error("Method invoke failed");
+    }
 
     size_t argCount(args.size());
     boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount]);
@@ -387,14 +387,14 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     }
 
     CComVariant result;
-	CComExcepInfo exceptionInfo;
+    CComExcepInfo exceptionInfo;
     HRESULT hr = m_obj->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
         DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
     if (FAILED(hr)) {
         throw FB::script_error("Method invoke failed");
     }
-	
-	return m_browser->getVariant(&result);
+    
+    return m_browser->getVariant(&result);
 }
 
 //FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB::VariantList& args )

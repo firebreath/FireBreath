@@ -47,7 +47,7 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerMethod("createThreadRunner", make_method(this, &FBTestPluginAPI::createThreadRunner));
     registerMethod("optionalTest", make_method(this, &FBTestPluginAPI::optionalTest));
     registerMethod("getURL", make_method(this, &FBTestPluginAPI::getURL));
-	registerMethod("postURL", make_method(this, &FBTestPluginAPI::postURL));
+    registerMethod("postURL", make_method(this, &FBTestPluginAPI::postURL));
      
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
@@ -316,8 +316,8 @@ void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& call
 
 void FBTestPluginAPI::postURL(const std::string& url, const std::string& postdata, const FB::JSObjectPtr& callback)
 {
-	FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
-		boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+    FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
+        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
 }
 
 void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,

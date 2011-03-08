@@ -24,11 +24,11 @@ namespace FB {
         PluginWindowMacCG();
         virtual ~PluginWindowMacCG();
 
-		NPError SetWindow(NPWindow* window);
+        NPError SetWindow(NPWindow* window);
 
         DrawingModel getDrawingModel() const { return DrawingModelCoreGraphics; }
-		void* getDrawingPrimitive() const { return m_cgContext.context; }
-		WindowRef getWindowRef() const { return (WindowRef) m_cgContext.window; }
+        void* getDrawingPrimitive() const { return m_cgContext.context; }
+        WindowRef getWindowRef() const { return (WindowRef) m_cgContext.window; }
 
         void InvalidateWindow() const;
 

@@ -89,7 +89,7 @@ namespace FB { namespace ActiveX {
 
         static HRESULT Create(ActiveXBindStatusCallback** ppBindStatusCallback, ActiveXStreamRequestPtr request);
         HRESULT Init(ActiveXStreamRequestPtr request);
-		HRESULT InitPostData(const char* szData);
+        HRESULT InitPostData(const char* szData);
 
         bool close();
 
@@ -102,8 +102,8 @@ namespace FB { namespace ActiveX {
         DWORD           m_cbOld;
         BOOL            m_fRedirect; // need to be informed when we're being redirected by the server
         BINDVERB        m_dwAction;
-		HGLOBAL			m_hDataToPost; // data that we're going to post
-		DWORD			m_cbDataToPost;
+        HGLOBAL         m_hDataToPost; // data that we're going to post
+        DWORD           m_cbDataToPost;
         ActiveXStreamRequestPtr m_request;
         bool            m_transactionStarted;
     };

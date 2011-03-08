@@ -31,12 +31,12 @@ namespace FB { namespace Npapi {
         virtual ~NpapiPluginMac(void);
         
     protected:
-		NPEventModel m_eventModel;
-		NPDrawingModel m_drawingModel;
+        NPEventModel m_eventModel;
+        NPDrawingModel m_drawingModel;
         FB::PluginWindowMacPtr pluginWin;
         FB::PluginEventMacPtr pluginEvt;
 #if FBMAC_USE_COREANIMATION
-		void* m_layer;
+        void* m_layer;
 #endif
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
