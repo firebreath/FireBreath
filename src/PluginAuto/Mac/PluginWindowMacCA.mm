@@ -26,42 +26,42 @@ FB::PluginWindowMacCA* FB::createPluginWindowMacCA(bool invalidating)
 }
 
 PluginWindowMacCA::PluginWindowMacCA(bool invalidating)
-	: PluginWindowMac(), m_layer(NULL), m_invalidating(invalidating)
+    : PluginWindowMac(), m_layer(NULL), m_invalidating(invalidating)
 {
 }
 
 PluginWindowMacCA::~PluginWindowMacCA()
 {
-	[(CALayer*)m_layer autorelease];
-	m_layer = NULL;
+    [(CALayer*)m_layer autorelease];
+    m_layer = NULL;
 }
 
 NPError PluginWindowMacCA::SetWindow(NPWindow* window)
 {
-	CALayer *layer = (CALayer*) window->window;
-//	FBLOG_TRACE("PluginCore", "PluginWindowMacCA::SetWindow() CALayer=%p", layer);
-	if (!layer)
-		return NPERR_INVALID_PARAM;
+    CALayer *layer = (CALayer*) window->window;
+//  FBLOG_TRACE("PluginCore", "PluginWindowMacCA::SetWindow() CALayer=%p", layer);
+    if (!layer)
+        return NPERR_INVALID_PARAM;
 
-	if (m_layer != layer)
-	{
-		[(CALayer*)layer retain];
-		[(CALayer*)m_layer autorelease];
-		m_layer = layer;
-		
-		m_x = window->x;
-		m_y = window->y;
-		m_width = window->width;
-		m_height = window->height;
-		m_clipTop = window->clipRect.top;
-		m_clipLeft = window->clipRect.left;
-		m_clipBottom = window->clipRect.bottom;
-		m_clipRight = window->clipRect.right;
-		
-		AttachedEvent evt2;
-		SendEvent(&evt2);
-		return NPERR_NO_ERROR;
-	}
+    if (m_layer != layer)
+    {
+        [(CALayer*)layer retain];
+        [(CALayer*)m_layer autorelease];
+        m_layer = layer;
+        
+        m_x = window->x;
+        m_y = window->y;
+        m_width = window->width;
+        m_height = window->height;
+        m_clipTop = window->clipRect.top;
+        m_clipLeft = window->clipRect.left;
+        m_clipBottom = window->clipRect.bottom;
+        m_clipRight = window->clipRect.right;
+        
+        AttachedEvent evt2;
+        SendEvent(&evt2);
+        return NPERR_NO_ERROR;
+    }
     return PluginWindowMac::SetWindow(window);
 }
 

@@ -32,10 +32,10 @@ PluginEventMacCocoa::PluginEventMacCocoa() {}
 PluginEventMacCocoa::~PluginEventMacCocoa() {}
 
 int16_t PluginEventMacCocoa::HandleEvent(void* event) {
-	NPCocoaEvent* evt = (NPCocoaEvent*) event;
-	PluginWindowMacPtr window = m_PluginWindow.lock();
-	if (!window)
-		return false;
+    NPCocoaEvent* evt = (NPCocoaEvent*) event;
+    PluginWindowMacPtr window = m_PluginWindow.lock();
+    if (!window)
+        return false;
 
     // Let the plugin handle the event if it wants
     MacEventCocoa macEv(evt);

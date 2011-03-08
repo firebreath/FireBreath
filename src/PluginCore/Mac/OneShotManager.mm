@@ -83,29 +83,29 @@ FB::OneShotManager::~OneShotManager()
 
 void FB::OneShotManager::push(void* npp, OneShotCallback sink)
 {
-	boost::mutex::scoped_lock lock(m_mutex);
+    boost::mutex::scoped_lock lock(m_mutex);
     m_sinks.push(std::make_pair(npp, sink));
     [getHelper(this) performSelectorOnMainThread:@selector(doStuff:) withObject:nil waitUntilDone:NO];
 }
 
 void FB::OneShotManager::clear(void* npp)
 {
-	// This and push must never be called at the same time; thus, the mutex prevents that
-	// from happening.
-	boost::mutex::scoped_lock lock(m_mutex);
+    // This and push must never be called at the same time; thus, the mutex prevents that
+    // from happening.
+    boost::mutex::scoped_lock lock(m_mutex);
     SinkQueue tmp;
-	SinkPair cur;
-	// Go through all items in the queue; add all but those
-	// associated with npp to a temporary queue
-	while (m_sinks.try_pop(cur)) {
-		if (cur.first != npp) {
-			tmp.push(cur);
-		}
-	}
-	// Add the items we kept back into the queue
-	while (tmp.try_pop(cur)) {
-		m_sinks.push(cur);
-	}
+    SinkPair cur;
+    // Go through all items in the queue; add all but those
+    // associated with npp to a temporary queue
+    while (m_sinks.try_pop(cur)) {
+        if (cur.first != npp) {
+            tmp.push(cur);
+        }
+    }
+    // Add the items we kept back into the queue
+    while (tmp.try_pop(cur)) {
+        m_sinks.push(cur);
+    }
 }
 
 FB::OneShotManager& FB::OneShotManager::getInstance()
@@ -116,7 +116,7 @@ FB::OneShotManager& FB::OneShotManager::getInstance()
 
 void FB::OneShotManager::shoot()
 {
-	SinkPair val;
+    SinkPair val;
     while (m_sinks.try_pop(val))
     {
         val.second(val.first, 0);
