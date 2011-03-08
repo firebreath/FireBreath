@@ -188,8 +188,8 @@ void FB::_asyncCallData::call()
 
 void FB::AsyncCallManager::call( _asyncCallData* data )
 {
-    boost::recursive_mutex::scoped_lock _l(m_mutex);
     data->call();
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
     DataList.remove(data);
 }
 
