@@ -67,7 +67,7 @@ def Main():
         help = "3 or more alphanumeric characters (underscores allowed after first position)")
     parser.add_option("-c", "--company-name", dest = "companyName")
     parser.add_option("-d", "--company-domain", dest = "companyDomain")
-    parser.add_option("-g", "--disable-gui", dest = "disableGUI", default="false")
+    parser.add_option("-g", "--disable-gui", dest = "disableGUI")
     options, args = parser.parse_args()
 
 

@@ -26,14 +26,14 @@ class Template(string.Template):
             return obj
         assert isinstance(obj, Base), "Must provide a base FBGen class"
         retdict = AttrDictSimple([("%s_%s" % (obj.__class__.__name__.upper(), k), obj[k]) for k in obj.keys.keys() if hasattr(obj, k)])
-	if retdict.get('PLUGIN_disable_gui') != None:
-		if retdict.get('PLUGIN_disable_gui') == "true":
-			retdict.update(PLUGIN_disable_gui='set (FB_GUI_DISABLED');
-			retdict.update(PLUGIN_disable_gui_mac='0');
-		else:
-			retdict.update(PLUGIN_disable_gui='#set (FB_GUI_DISABLED');
-			retdict.update(PLUGIN_disable_gui_mac='1');
-	return retdict;
+        if retdict.get('PLUGIN_disable_gui') != None:
+            if retdict.get('PLUGIN_disable_gui') == "true":
+                retdict.update(PLUGIN_disable_gui='set (FB_GUI_DISABLED');
+                retdict.update(PLUGIN_disable_gui_mac='0');
+            else:
+                retdict.update(PLUGIN_disable_gui='#set (FB_GUI_DISABLED');
+                retdict.update(PLUGIN_disable_gui_mac='1');
+        return retdict;
 
 
 
@@ -86,20 +86,20 @@ class JSAPI_Member(Base):
     """
     Used to define a JSAPI Member. This may go away in a future version as I haven't quite decided how to deal with these yet.
     """
-    ident		= None
-    type		= None
+    ident       = None
+    type        = None
     def __init__(self):
         print "Initializing JSAPI_Member"
         self.types = AttrDictSimple(
-            string	= "std::string",
-            int		= "long",   # changed int to long since IE will pass it as a long anyway and we want to avoid issues.
+            string  = "std::string",
+            int     = "long",   # changed int to long since IE will pass it as a long anyway and we want to avoid issues.
             long    = "long",
-            double	= "double",
-            bool	= "bool",
-            variant	= "FB::variant",
-            dynamic	= "FB::VariantList",
-            JSOBJ	= "FB::JSAPIPtr",
-            API		= "FB::JSObject",
+            double  = "double",
+            bool    = "bool",
+            variant = "FB::variant",
+            dynamic = "FB::VariantList",
+            JSOBJ   = "FB::JSAPIPtr",
+            API     = "FB::JSObject",
         )
 
     def translateType(self, type):
@@ -133,7 +133,7 @@ class JSAPI_Method(JSAPI_Member):
     """
     Used to define a JSAPI Method. This may go away in a future version as I haven't quite decided how to deal with these yet.
     """
-    argTypes	= ["string"]
+    argTypes    = ["string"]
     def __init__(self, ident, type, argTypes):
         super(JSAPI_Method, self).__init__()
         self.type = type
@@ -196,7 +196,7 @@ class Plugin(Base):
         self.prefix     = self.getValue("prefix", self.prefix if name == self.name else self.makeDefaultPrefix(self.name))
         self.mimetype   = self.getValue("mimetype", self.mimetype if ident == self.ident else "application/x-%s" % self.ident.lower()).lower()
         self.desc       = self.getValue("desc", self.desc)
-        self.disable_gui = self.getValue("disable_gui", self.disable_gui)
+        self.disable_gui = self.getValue("disable_gui", self.disable_gui or "false").lower()
 
     def readCfg(self, cfg):
         if not cfg.has_section("plugin"):
@@ -206,7 +206,9 @@ class Plugin(Base):
         self.prefix     = self.prefix     or cfg.get("plugin", "prefix")
         self.mimetype   = self.mimetype   or cfg.get("plugin", "mimetype").lower()
         self.desc       = self.desc       or cfg.get("plugin", "description")
-        self.disable_gui = self.disable_gui or cfg.get("plugin", "disable_gui")
+
+        if self.disable_gui == None:
+            self.disable_gui = cfg.get("plugin", "disable_gui") or False
 
     def updateCfg(self, cfg):
         if not cfg.has_section("plugin"):
