@@ -49,7 +49,7 @@ class Base(object):
             prefix     = ("Prefix", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,4}$"), "Prefix must be 3 to 5 alphanumeric characters (underscores allowed)."),
             domain     = ("Domain", re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,4}$"), "Domain must be a valid domain name."),
             mimetype   = ("MIME type", re.compile(r"^[a-zA-Z0-9]+\/[a-zA-Z0-9\-]+$"), "Please use alphanumeric characters and dashes in the format: application/x-firebreath"),
-            disable_gui = ("Disable GUI", re.compile(r"^true$|false$"), "Please enter valid input: true or false"),
+            disable_gui = ("has no UI", re.compile(r"^true$|false$"), "Please enter valid input: true or false"),
         )
 
     def getValue(self, key, default):
