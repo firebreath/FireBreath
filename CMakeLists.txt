@@ -40,7 +40,9 @@ if (VERBOSE)
 endif()
 
 # These are required for FireBreath to run
-find_package(Threads REQUIRED)
+if (UNIX AND NOT APPLE)
+    find_package(Threads REQUIRED)
+endif()
 add_boost_library(thread)
 add_boost_library(system)
 if (WITH_SYSTEM_BOOST)
