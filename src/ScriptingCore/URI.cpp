@@ -37,9 +37,9 @@ std::string URI::url_encode(const std::string& in) {
     std::stringstream res;
     for (size_t i = 0; i < in.size(); ++i) {
         char c = in[i];
-        if (isalnum(c) ||
+        if (c > 0 && (isalnum(c) ||
             c == '$' || c == '-' || c == '_' || c == '.' || c == '!' ||
-            c == '*' || c == '\''|| c == '(' || c == ')' || c == ',' || c == '/') res << c;
+            c == '*' || c == '\''|| c == '(' || c == ')' || c == ',' || c == '/')) res << c;
         else {
             char buf[4];
             sprintf(buf, "%%%.2x", c & 0xff);
