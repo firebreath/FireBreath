@@ -85,7 +85,7 @@ file(GLOB TEMPLATELIST ${FB_CURRENT_PLUGIN_DIR}/templates/[^.]*)
 foreach(TemplateFile ${TEMPLATELIST})
     get_filename_component(CURFILE ${TemplateFile} NAME)
     message("Configuring ${CURFILE}")
-    configure_template(${FB_CURRENT_PLUGIN_DIR}/templates/${CURFILE} ${TEMPLATE_DEST_DIR}/${CURFILE})
+    configure_template(${FB_CURRENT_PLUGIN_DIR}/templates/${CURFILE} ${FB_TEMPLATE_DEST_DIR}/../templates/${CURFILE})
 endforeach()
 
 # Repititions in the following are intentional to fix linking errors due to
