@@ -65,7 +65,7 @@ NPEventModel PluginEventMac::initPluginEventMac(const FB::Npapi::NpapiBrowserHos
     NPEventModel eventModel = (NPEventModel) -1;
 #if FBMAC_USE_COCOA
     if (
-        ((NPDrawingModelCoreAnimation == drawingModel) || (NPDrawingModelInvalidatingCoreAnimation == drawingModel))
+        ((NPDrawingModelCoreAnimation == drawingModel) || (NPDrawingModelInvalidatingCoreAnimation == drawingModel) || (NPDrawingModelCoreGraphics == drawingModel))
         && supports(host, NPNVsupportsCocoaBool)
         && set(host, NPPVpluginEventModel, (void*)NPEventModelCocoa))
     {
@@ -109,3 +109,4 @@ FB::PluginEventMac* PluginEventMac::createPluginEventMac(NPEventModel eventModel
     }
     return rval;
 }
+
