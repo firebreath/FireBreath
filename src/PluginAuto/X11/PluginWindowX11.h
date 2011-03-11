@@ -69,7 +69,6 @@ namespace FB {
 #endif
 
     protected:
-        int m_handler_id;
         int32_t m_x;
         int32_t m_y;
         uint32_t m_width;
@@ -79,6 +78,8 @@ namespace FB {
         int32_t m_clipRight;
         int32_t m_clipTop;
         int32_t m_clipBottom;
+
+        int m_handler_id;
     };
 
 };
