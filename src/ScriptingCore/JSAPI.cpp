@@ -183,6 +183,9 @@ bool JSAPI::HasEvent(const std::string& eventName) const
 
 void JSAPI::registerEventMethod(const std::string& name, JSObjectPtr &event)
 {
+    if (!event)
+        throw FB::invalid_arguments();
+
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
     for (EventMultiMap::iterator it = range.first; it != range.second; it++) {
@@ -196,6 +199,9 @@ void JSAPI::registerEventMethod(const std::string& name, JSObjectPtr &event)
 
 void JSAPI::unregisterEventMethod(const std::string& name, JSObjectPtr &event)
 {
+    if (!event)
+        throw FB::invalid_arguments();
+
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(name);
 
     for (EventMultiMap::iterator it = range.first; it != range.second; it++) {
