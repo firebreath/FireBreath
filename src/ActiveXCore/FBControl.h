@@ -330,7 +330,9 @@ namespace FB {
                 pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
                 static_cast<PluginWindowWin*>(pluginWin)->setCallOldWinProc(true);
             }
-            pluginMain->SetWindow(pluginWin);
+            if (pluginMain) {
+                pluginMain->SetWindow(pluginWin);
+            }
 
             return hr;
         }
