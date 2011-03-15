@@ -79,6 +79,7 @@ if (NOT ATL_INCLUDE_DIR)
     PATHS
         ${VC_DIR}/atlmfc/include
         ${ATL_GUESSES}
+    NO_DEFAULT_PATH
     )
 
     find_file(ATLLIB
@@ -86,6 +87,7 @@ if (NOT ATL_INCLUDE_DIR)
     PATHS
         ${VC_DIR}/atlmfc/lib
         ${ATLLIB_GUESSES}
+    NO_DEFAULT_PATH
     )
 
     find_file(MFCWIN
@@ -93,6 +95,7 @@ if (NOT ATL_INCLUDE_DIR)
     PATHS
         ${VC_DIR}/atlmfc/include
         ${MFC_GUESSES}
+    NO_DEFAULT_PATH
     )
 
     if (ATLWIN AND ATLLIB)
@@ -101,7 +104,9 @@ if (NOT ATL_INCLUDE_DIR)
         find_file(ATL_LIBRARY
             atlthunk.lib
         PATHS
-            ${ATL_LIBRARY_DIR})
+            ${ATL_LIBRARY_DIR}
+        NO_DEFAULT_PATH
+            )
         if (ATL_LIBRARY)
             set (ATL_LIBRARY "atlthunk.lib" CACHE INTERNAL "Used to link extra ATL libraries on systems that need it")
         else()
