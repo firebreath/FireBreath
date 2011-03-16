@@ -189,12 +189,12 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
-    if (NpapiBrowserHostPtr host = getHost(instance)) {
-        host->shutdown();
-    }
 #ifdef FB_MACOSX
     OneShotManager::getInstance().clear(instance);
 #endif
+    if (NpapiBrowserHostPtr host = getHost(instance)) {
+        host->shutdown();
+    }
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

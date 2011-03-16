@@ -114,10 +114,10 @@ PluginWindowMac::PluginWindowMac()
 }
 
 NPError PluginWindowMac::SetWindow(NPWindow* window) {
-    if (m_x != window->x
-        || m_y != window->y
-        || m_width != window->width
-        || m_height != window->height) {
+    if ((m_x != window->x)
+        || (m_y != window->y)
+        || (m_width != window->width)
+        || (m_height != window->height)) {
         m_x = window->x;
         m_y = window->y;
         m_width = window->width;
@@ -126,10 +126,10 @@ NPError PluginWindowMac::SetWindow(NPWindow* window) {
         ResizedEvent evt;
         SendEvent(&evt);
     }
-    if (m_clipTop != window->clipRect.top
-        || m_clipLeft != window->clipRect.left
-        || m_clipBottom != window->clipRect.bottom
-        || m_clipRight != window->clipRect.right) {
+    if ((m_clipTop != window->clipRect.top)
+        || (m_clipLeft != window->clipRect.left)
+        || (m_clipBottom != window->clipRect.bottom)
+        || (m_clipRight != window->clipRect.right)) {
         m_clipTop = window->clipRect.top;
         m_clipLeft = window->clipRect.left;
         m_clipBottom = window->clipRect.bottom;

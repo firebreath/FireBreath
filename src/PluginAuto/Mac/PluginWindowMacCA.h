@@ -27,6 +27,7 @@ namespace FB
         virtual ~PluginWindowMacCA();
 
         NPError SetWindow(NPWindow* window);
+        int16_t GetValue(NPPVariable variable, void *value);
 
         DrawingModel getDrawingModel() const { return DrawingModelCoreAnimation; }
         void* getDrawingPrimitive() const { return m_layer; }
