@@ -11,25 +11,46 @@
 #include "FBTestPluginAPI.h"
 #include <stdio.h>
 
+#include "FBTestPlugin.h"
+
 #ifdef FB_WIN
 #include "PluginWindowWin.h"
 #include "PluginWindowlessWin.h"
+#ifdef HAS_LEAKFINDER
+#define XML_LEAK_FINDER
+#include "LeakFinder/LeakFinder.h"
+#endif
 #endif
 
-#include "FBTestPlugin.h"
+
+#ifdef HAS_LEAKFINDER
+boostt::scoped_ptr<LeakFinderXmlOutput> FBTestPlugin::pOut;
+#endif
 
 void FBTestPlugin::StaticInitialize()
 {
     FBLOG_INFO("StaticInit", "Static Initialize");
     // Place one-time initialization stuff here; As of FireBreath 1.4 this should only
     // be called once per process
+
+#ifdef HAS_LEAKFINDER
+#ifdef XML_LEAK_FINDER
+    pOut.swap(boost::scoped_ptr<LeakFinderXmlOutput>(new LeakFinderXmlOutput(L"C:\\code\\firebreath_mem.xml")));
+#endif
+    InitLeakFinder();
+#endif
 }
 
 void FBTestPlugin::StaticDeinitialize()
 {
+#ifdef HAS_LEAKFINDER
+    DeinitLeakFinder(pOut.get());
+    pOut.reset();
+#endif
     FBLOG_INFO("StaticInit", "Static Deinitialize");
     // Place one-time deinitialization stuff here. This should be called just before
     // the plugin library is unloaded
+
 }
 
 

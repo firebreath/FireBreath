@@ -9,12 +9,20 @@
 #ifndef H_TEMPLATEPLUGIN
 #define H_TEMPLATEPLUGIN
 
+#include <boost/scoped_ptr.hpp>
+
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/AttachedEvent.h"
 
 #include "PluginCore.h"
 #include "PluginWindow.h"
+
+#if 1
+#undef HAS_LEAKFINDER
+#endif
+
+class LeakFinderXmlOutput;
 
 class FBTestPlugin : public FB::PluginCore
 {
@@ -50,6 +58,9 @@ public:
     virtual bool onDetached(FB::DetachedEvent *evt, FB::PluginWindow*);
     virtual bool draw(FB::RefreshEvent *evt, FB::PluginWindow*);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
+#ifdef HAS_LEAKFINDER
+    static boost::scoped_ptr<LeakFinderXmlOutput> pOut;
+#endif
 };
 
 #endif
