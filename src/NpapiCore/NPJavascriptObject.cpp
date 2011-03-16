@@ -137,7 +137,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
 
 bool NPJavascriptObject::InvokeDefault(const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-    return Invoke(m_browser->GetStringIdentifier(""), args, argCount, result);
+    return Invoke(NULL, args, argCount, result);
 }
 
 bool NPJavascriptObject::HasProperty(NPIdentifier name)
