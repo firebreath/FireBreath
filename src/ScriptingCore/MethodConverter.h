@@ -418,6 +418,276 @@ namespace FB
                 return FB::variant();
             }
         };
+
+        //Added support for 15 parameter passing
+        template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class F>
+        struct method_wrapper11
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper11(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T10>::type TLast;
+                return (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertLastArgument<TLast>(in, 11));
+            }
+        };
+        template<class C, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class F>
+        struct method_wrapper11<C, void, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, F>
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper11(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T10>::type TLast;
+                (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertLastArgument<TLast>(in, 11));
+                return FB::variant();
+            }
+        };
+
+
+        
+        template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class F>
+        struct method_wrapper12
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper12(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T11>::type TLast;
+                return (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertLastArgument<TLast>(in, 12));
+            }
+        };
+        template<class C, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class F>
+        struct method_wrapper12<C, void, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11,F>
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper12(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T11>::type TLast;
+                (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertLastArgument<TLast>(in, 12));
+                return FB::variant();
+            }
+        };
+
+        
+        template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class F>
+        struct method_wrapper13
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper13(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T12>::type TLast;
+                return (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertLastArgument<TLast>(in, 13));
+            }
+        };
+        template<class C, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class F>
+        struct method_wrapper13<C, void, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, F>
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper13(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T12>::type TLast;
+                (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertLastArgument<TLast>(in, 13));
+                return FB::variant();
+            }
+        };
+
+
+
+
+        template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class F>
+        struct method_wrapper14
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper14(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T13>::type TLast;
+                return (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertArgumentSoft<typename plain_type<T12>::type>(in, 13),
+                    convertLastArgument<TLast>(in, 14));
+            }
+        };
+        template<class C, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class F>
+        struct method_wrapper14<C, void, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, F>
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper14(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T13>::type TLast;
+                (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertArgumentSoft<typename plain_type<T12>::type>(in, 13),
+                    convertLastArgument<TLast>(in, 14));
+                return FB::variant();
+            }
+        };
+
+
+
+        template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class F>
+        struct method_wrapper15
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper15(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T14>::type TLast;
+                return (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertArgumentSoft<typename plain_type<T12>::type>(in, 13),
+                    convertArgumentSoft<typename plain_type<T13>::type>(in, 14),
+                    convertLastArgument<TLast>(in, 15));
+            }
+        };
+        template<class C, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class F>
+        struct method_wrapper15<C, void, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, F>
+        {
+            typedef FB::variant result_type;
+            F f;
+            method_wrapper15(F f) : f(f) {}
+            FB::variant operator()(C* instance, const FB::VariantList& in)
+            {
+                typedef typename plain_type<T14>::type TLast;
+                (instance->*f)(
+                    convertArgumentSoft<typename plain_type<T0>::type>(in, 1),
+                    convertArgumentSoft<typename plain_type<T1>::type>(in, 2),
+                    convertArgumentSoft<typename plain_type<T2>::type>(in, 3),
+                    convertArgumentSoft<typename plain_type<T3>::type>(in, 4),
+                    convertArgumentSoft<typename plain_type<T4>::type>(in, 5),
+                    convertArgumentSoft<typename plain_type<T5>::type>(in, 6),
+                    convertArgumentSoft<typename plain_type<T6>::type>(in, 7),
+                    convertArgumentSoft<typename plain_type<T7>::type>(in, 8),
+                    convertArgumentSoft<typename plain_type<T8>::type>(in, 9),
+                    convertArgumentSoft<typename plain_type<T9>::type>(in, 10),
+                    convertArgumentSoft<typename plain_type<T10>::type>(in, 11),
+                    convertArgumentSoft<typename plain_type<T11>::type>(in, 12),
+                    convertArgumentSoft<typename plain_type<T12>::type>(in, 13),
+                    convertArgumentSoft<typename plain_type<T13>::type>(in, 14),
+                    convertLastArgument<TLast>(in, 15));
+                return FB::variant();
+            }
+        };
+
     } } // namespace detail::methods
     
     template<class C, class R>
@@ -574,8 +844,83 @@ namespace FB
         return boost::bind(FB::detail::methods::method_wrapper10<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9) const>(function), instance, _1);
     }
     
+    //Added support for 15 parameter passing
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10))
+    {
+        return boost::bind(FB::detail::methods::method_wrapper11<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10)>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) const)
+    {
+        return boost::bind(FB::detail::methods::method_wrapper11<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10) const>(function), instance, _1);
+    }
+    
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11))
+    {
+        return boost::bind(FB::detail::methods::method_wrapper12<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11)>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) const)
+    {
+        return boost::bind(FB::detail::methods::method_wrapper12<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11) const>(function), instance, _1);
+    }
+
+    
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12))
+    {
+        return boost::bind(FB::detail::methods::method_wrapper13<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12)>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) const)
+    {
+        return boost::bind(FB::detail::methods::method_wrapper13<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12) const>(function), instance, _1);
+    }
+
+    
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13))
+    {
+        return boost::bind(FB::detail::methods::method_wrapper14<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13)>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) const)
+    {
+        return boost::bind(FB::detail::methods::method_wrapper14<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13) const>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14))
+    {
+        return boost::bind(FB::detail::methods::method_wrapper15<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14)>(function), instance, _1);
+    }
+
+    template<class C, class R, class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14>
+    inline FB::CallMethodFunctor
+    make_method(C* instance, R (C::*function)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) const)
+    {
+        return boost::bind(FB::detail::methods::method_wrapper15<C, R, T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13,T14,  R (C::*)(T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14) const>(function), instance, _1);
+    }
+
+
+
 } // namespace FB
 
 #endif //METHOD_CONVERTER_H
-
-

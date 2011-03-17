@@ -197,5 +197,44 @@ TEST(JSAPIAuto_Methods)
         const std::string tmp(x->Invoke("toString", FB::VariantList()).convert_cast<std::string>());
         CHECK_EQUAL(description, tmp);
     }
+
+    
+    {
+        const std::string method("callMethodWith11Parameters");
+        CHECK(test->HasMethod(method));        
+        FB::VariantList args = FB::variant_list_of(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11);            
+        const std::string ret ( test->Invoke(method, args).convert_cast<std::string>());       
+        CHECK_EQUAL(ret, "66");        
+    }
+
+    {
+        const std::string method("callMethodWith12Parameters");
+        CHECK(test->HasMethod(method));        
+        FB::VariantList args = FB::variant_list_of(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12);            
+        const std::string ret ( test->Invoke(method, args).convert_cast<std::string>());       
+        CHECK_EQUAL(ret, "78");        
+    }
+
+    {
+        const std::string method("callMethodWith13Parameters");
+        CHECK(test->HasMethod(method));        
+        FB::VariantList args = FB::variant_list_of(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(12);            
+        const std::string ret ( test->Invoke(method, args).convert_cast<std::string>());       
+        CHECK_EQUAL(ret, "90");        
+    }
+    {
+        const std::string method("callMethodWith14Parameters");
+        CHECK(test->HasMethod(method));        
+        FB::VariantList args = FB::variant_list_of(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(12)(10);            
+        const std::string ret ( test->Invoke(method, args).convert_cast<std::string>());       
+        CHECK_EQUAL(ret, "100");        
+    }
+    {
+        const std::string method("callMethodWith15Parameters");
+        CHECK(test->HasMethod(method));        
+        FB::VariantList args = FB::variant_list_of(1)(2)(3)(4)(5)(6)(7)(8)(9)(10)(11)(12)(12)(10)(50);            
+        const std::string ret ( test->Invoke(method, args).convert_cast<std::string>());       
+        CHECK_EQUAL(ret, "150");        
+    }
 }
 
