@@ -37,6 +37,13 @@ public:
         registerMethod("getType",       make_method(this, &TestObjectJSAPIAuto::getType));
         registerMethod("accumulate",    make_method(this, &TestObjectJSAPIAuto::accumulate));
         registerMethod("container",     make_method(this, &TestObjectJSAPIAuto::container));
+
+        //Tested make_method for 11 to 15 parameter passing
+        registerMethod("callMethodWith11Parameters",     make_method(this, &TestObjectJSAPIAuto::callMethodWith11Parameters));
+        registerMethod("callMethodWith12Parameters",     make_method(this, &TestObjectJSAPIAuto::callMethodWith12Parameters));
+        registerMethod("callMethodWith13Parameters",     make_method(this, &TestObjectJSAPIAuto::callMethodWith13Parameters));
+        registerMethod("callMethodWith14Parameters",     make_method(this, &TestObjectJSAPIAuto::callMethodWith14Parameters));
+        registerMethod("callMethodWith15Parameters",     make_method(this, &TestObjectJSAPIAuto::callMethodWith15Parameters));
         
         registerProperty("message",
                          make_property(this, 
@@ -123,6 +130,43 @@ public:
         return all.value;
     }
 
+    std::string callMethodWith11Parameters(long n1, long n2,long n3, long n4,long n5, long n6,long n7, 
+        long n8,long n9, long n10,long n11)
+    {
+        std::stringstream ss;
+        ss << (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 );
+        return ss.str();
+    }
+
+    std::string callMethodWith12Parameters(long n1, long n2,long n3, long n4,long n5, long n6,long n7, 
+        long n8,long n9, long n10,long n11, long n12)
+    {
+        std::stringstream ss;       
+        ss << (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 );
+        return ss.str();
+    }
+
+    std::string callMethodWith13Parameters(long n1, long n2,long n3, long n4,long n5, long n6,long n7, 
+        long n8,long n9, long n10,long n11, long n12, long n13)
+    {
+        std::stringstream ss;
+        ss << (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 + n13);
+        return ss.str();
+    }
+    std::string callMethodWith14Parameters(long n1, long n2,long n3, long n4,long n5, long n6,long n7, 
+        long n8,long n9, long n10,long n11, long n12, long n13, long n14)
+    {
+        std::stringstream ss;
+        ss << (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 + n13 + n14 );
+        return ss.str();
+    }
+    std::string callMethodWith15Parameters(long n1, long n2,long n3, long n4,long n5, long n6,long n7, 
+        long n8,long n9, long n10, long n11, long n12, long n13, long n14, long n15)
+    {
+        std::stringstream ss;
+        ss << (n1 + n2 + n3 + n4 + n5 + n6 + n7 + n8 + n9 + n10 + n11 + n12 + n13 + n14 + n15);
+        return ss.str();
+    }
 private:
     std::string m_message;
     const std::string m_readOnlyMessage;
