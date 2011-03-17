@@ -44,13 +44,11 @@ static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, vo
 
 NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host) {
     NPDrawingModel drawingModel = (NPDrawingModel) -1; 
-#if FBMAC_USE_COREANIMATION_INVALIDATING
+#if FBMAC_USE_COREANIMATION
     if (supports(host, NPNVsupportsInvalidatingCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelInvalidatingCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelInvalidatingCoreAnimation");
         drawingModel = NPDrawingModelInvalidatingCoreAnimation;
     } else
-#endif
-#if FBMAC_USE_COREANIMATION
     if (supports(host, NPNVsupportsCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreAnimation");
         drawingModel = NPDrawingModelCoreAnimation;
@@ -77,12 +75,10 @@ NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowse
 FB::PluginWindowMac* PluginWindowMac::createPluginWindowMac(NPDrawingModel drawingModel) {
     FB::PluginWindowMac* rval = NULL;
     switch (drawingModel) {
-#if FBMAC_USE_COREANIMATION_INVALIDATING
+#if FBMAC_USE_COREANIMATION
         case NPDrawingModelInvalidatingCoreAnimation:
             rval = getFactoryInstance()->createPluginWindowMacCA(true);
             break;
-#endif
-#if FBMAC_USE_COREANIMATION
         case NPDrawingModelCoreAnimation:
             rval = getFactoryInstance()->createPluginWindowMacCA(false);
             break;
@@ -176,4 +172,13 @@ void PluginWindowMac::unscheduleTimer(int timerId) {
 void PluginWindowMac::handleTimerEvent() {
     TimerEvent ev(0, NULL);
     SendEvent(&ev);
+}
+
+void PluginWindowMac::InvalidateWindow() const {
+    FB::Rect pos = getWindowPosition();
+    NPRect r = { 0, 0, m_height, m_width };
+    if (!m_npHost->isMainThread())
+        m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
+    else
+        m_npHost->InvalidateRect(&r);
 }

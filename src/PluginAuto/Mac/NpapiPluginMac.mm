@@ -117,13 +117,14 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
     switch (variable) {
         case NPPVpluginCoreAnimationLayer:
         {
-            // The PluginWindow owns the CALayer.
-            res = pluginWin->GetValue(variable, value);
+            if (pluginWin) {
+                // The PluginWindow owns the CALayer.
+                res = pluginWin->GetValue(variable, value);
             
-            // Notify the PluginCore about our new window. This will post an AttachedEvent.
-            if (!pluginMain->GetWindow())
-                pluginMain->SetWindow(pluginWin.get());
-
+                // Notify the PluginCore about our new window. This will post an AttachedEvent.
+                if (!pluginMain->GetWindow())
+                    pluginMain->SetWindow(pluginWin.get());
+            }
             FBLOG_INFO("PluginCore", "GetValue(NPPVpluginCoreAnimationLayer)");
         }   break;
         case NPPVpluginScriptableNPObject:

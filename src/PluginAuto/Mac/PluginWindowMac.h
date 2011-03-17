@@ -43,6 +43,8 @@ namespace FB {
         PluginWindowMac();
         virtual ~PluginWindowMac() {}
 
+        virtual void InvalidateWindow() const;
+
         virtual NPError SetWindow(NPWindow* window);
         virtual int16_t GetValue(NPPVariable variable, void *value) { return NPERR_NO_ERROR; }
 
@@ -67,7 +69,7 @@ namespace FB {
         /// @param  interval    Numer of milliseconds before the timer event is first called
         /// @param  repeat      If true, timer will repeat (at a period specified by the interval parameter)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        int scheduleTimer(int interval, bool repeat);
+        virtual int scheduleTimer(int interval, bool repeat);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
@@ -76,9 +78,9 @@ namespace FB {
         /// 
         /// @param  timerId     The id of the previously scheduled timer
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void unscheduleTimer(int timerId);
+        virtual void unscheduleTimer(int timerId);
         // Handles a timer event 
-        void handleTimerEvent();
+        virtual void handleTimerEvent();
 
     protected:
         Npapi::NpapiBrowserHostPtr m_npHost;

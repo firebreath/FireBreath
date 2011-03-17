@@ -32,12 +32,12 @@ namespace FB
         DrawingModel getDrawingModel() const { return DrawingModelCoreAnimation; }
         void* getDrawingPrimitive() const { return m_layer; }
         WindowRef getWindowRef() const { return NULL; }
-
-        void InvalidateWindow() const;
+    
+        void handleTimerEvent();
 
     private:
         void* m_layer;
-        bool m_invalidating;        
+        bool m_invalidating;
     };
 };
 #endif // H_PLUGINWINDOWMACCA

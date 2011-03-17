@@ -60,13 +60,3 @@ NPError PluginWindowMacCG::SetWindow(NPWindow* window)
     }
     return PluginWindowMac::SetWindow(window);
 }
-
-void PluginWindowMacCG::InvalidateWindow() const
-{
-    FB::Rect pos = getWindowPosition();
-    NPRect r = { pos.top, pos.left, pos.bottom, pos.right };
-    if (!m_npHost->isMainThread())
-        m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
-    else
-        m_npHost->InvalidateRect(&r);
-}

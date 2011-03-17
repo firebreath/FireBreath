@@ -45,6 +45,8 @@ int16_t PluginWindowMacCA::GetValue(NPPVariable variable, void *value) {
     CALayer *mlayer = (CALayer*) m_layer;
     if (NPPVpluginCoreAnimationLayer == variable) {
         *(CALayer**) value = mlayer;
+        if (m_invalidating)
+            (void) scheduleTimer(60, true);
         FBLOG_INFO("PluginCore", "GetValue(NPPVpluginCoreAnimationLayer)=" << (void*) mlayer);
     }
     return NPERR_NO_ERROR;
@@ -61,9 +63,7 @@ NPError PluginWindowMacCA::SetWindow(NPWindow* window)
     return PluginWindowMac::SetWindow(window);
 }
 
-void PluginWindowMacCA::InvalidateWindow() const
-{
-    // Force a drawInContext message to be passed to the window's CALayer
-    CALayer *mlayer = (CALayer*) m_layer;
-    [mlayer setNeedsDisplay];
+void PluginWindowMacCA::handleTimerEvent() {
+    InvalidateWindow();
+    PluginWindowMac::handleTimerEvent();
 }

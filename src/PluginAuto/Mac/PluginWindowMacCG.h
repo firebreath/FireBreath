@@ -30,8 +30,6 @@ namespace FB {
         void* getDrawingPrimitive() const { return m_cgContext.context; }
         WindowRef getWindowRef() const { return (WindowRef) m_cgContext.window; }
 
-        void InvalidateWindow() const;
-
     public:
         NP_CGContext m_cgContext;
     };
