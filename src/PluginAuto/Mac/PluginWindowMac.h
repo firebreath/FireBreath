@@ -44,6 +44,7 @@ namespace FB {
         virtual ~PluginWindowMac() {}
 
         virtual NPError SetWindow(NPWindow* window);
+        virtual int16_t GetValue(NPPVariable variable, void *value) { return NPERR_NO_ERROR; }
 
         virtual DrawingModel getDrawingModel() const = 0;
         virtual void* getDrawingPrimitive() const = 0;

@@ -100,6 +100,11 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 {
 }
 
+void NpapiBrowserHost::shutdown() {
+    memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
+    FB::BrowserHost::shutdown();
+}
+
 bool NpapiBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
 {
     if (isShutDown())

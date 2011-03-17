@@ -35,9 +35,6 @@ namespace FB { namespace Npapi {
         NPDrawingModel m_drawingModel;
         FB::PluginWindowMacPtr pluginWin;
         FB::PluginEventMacPtr pluginEvt;
-#if FBMAC_USE_COREANIMATION
-        void* m_layer;
-#endif
     public:
         // These calls are proxied from the NpapiPluginModule to this object, and are
         // the NPP_ functions given to the browser; essentially, the entrypoints for the
