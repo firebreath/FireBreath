@@ -18,75 +18,27 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 using namespace FB;
 
-@interface PluginWindowMacICA_helper : NSObject
-{
-    PluginWindowMacICA *m_ica;
-}
-
-@property (assign) PluginWindowMacICA* ica;
-
-- (void)fired:(NSTimer*)timer;
-
-@end
-
-@implementation PluginWindowMacICA_helper
-
-@synthesize ica=m_ica;
-
-- (void)fired:(NSTimer*)timer {
-    m_ica->Invalidate();
-}
-
-@end
-
 FB::PluginWindowMacICA* FB::createPluginWindowMacICA()
 {
     return new PluginWindowMacICA();
 }
 
 PluginWindowMacICA::PluginWindowMacICA()
-    : PluginWindowMacCA(), m_timer(NULL), m_displayOnInvalidate(true)
+    : PluginWindowMacCA(), m_displayOnInvalidate(true)
 {
-    PluginWindowMacICA_helper *mhelper = [PluginWindowMacICA_helper new];
-    mhelper.ica = this;
-    m_helper = mhelper;
 }
 
-PluginWindowMacICA::~PluginWindowMacICA()
-{
-    StopAutoInvalidate();
-    
-    PluginWindowMacICA_helper *mhelper = (PluginWindowMacICA_helper*) m_helper;
-    if (mhelper) {
-        [mhelper release];
-        mhelper = NULL;
-    }
-}
-
-void PluginWindowMacICA::StartAutoInvalidate(double rate)
-{
-    StopAutoInvalidate();
-    
-    PluginWindowMacICA_helper *mhelper = (PluginWindowMacICA_helper*) m_helper;
-    m_timer = [[NSTimer scheduledTimerWithTimeInterval:rate target:mhelper selector:@selector(fired:) userInfo:NULL repeats:YES] retain];
-}
-void PluginWindowMacICA::StopAutoInvalidate()
-{
-    NSTimer *mtimer = (NSTimer*) m_timer;
-    if (mtimer) {
-        [mtimer invalidate];
-        [mtimer release];
-        mtimer = NULL;
-    }
-}
-
-void PluginWindowMacICA::Invalidate() {
+void PluginWindowMacICA::InvalidateWindow() const {
     if (m_displayOnInvalidate) {
         CALayer *mlayer = (CALayer*) m_layer;
+#if 0
         // setNeedsDisplay will draw sometime in the future.
+        // This works for FF4 and Chrome on Mac OS X 10.6
         [[mlayer sublayers] makeObjectsPerformSelector:@selector(setNeedsDisplay)];
+#else
         // display will draw now, immediately.
-//      [[mlayer sublayers] makeObjectsPerformSelector:@selector(display)];
+        [[mlayer sublayers] makeObjectsPerformSelector:@selector(display)];
+#endif
     }
-    InvalidateWindow();
+    PluginWindowMac::InvalidateWindow();
 }

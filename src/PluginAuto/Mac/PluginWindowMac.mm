@@ -31,6 +31,27 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 
 using namespace FB;
 
+@interface PluginWindowMac_helper : NSObject
+{
+    PluginWindowMac *m_ica;
+}
+
+@property (assign) PluginWindowMac* ica;
+
+- (void)fired:(NSTimer*)timer;
+
+@end
+
+@implementation PluginWindowMac_helper
+
+@synthesize ica=m_ica;
+
+- (void)fired:(NSTimer*)timer {
+    m_ica->InvalidateWindow();
+}
+
+@end
+
 static bool supports(const FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
     NPBool value =  FALSE;        
     // err tells us if the browser supports model negotiation
@@ -111,7 +132,22 @@ PluginWindowMac::PluginWindowMac()
     : PluginWindow(), m_npHost()
     , m_x(0), m_y(0), m_width(0), m_height(0)
     , m_clipTop(0), m_clipLeft(0), m_clipBottom(0), m_clipRight(0)
+    , m_timer(NULL), m_helper(NULL)
 {
+    PluginWindowMac_helper *mhelper = [PluginWindowMac_helper new];
+    mhelper.ica = this;
+    m_helper = mhelper;
+}
+
+PluginWindowMac::~PluginWindowMac()
+{
+    StopAutoInvalidate();
+    
+    PluginWindowMac_helper *mhelper = (PluginWindowMac_helper*) m_helper;
+    if (mhelper) {
+        [mhelper release];
+        mhelper = NULL;
+    }
 }
 
 NPError PluginWindowMac::SetWindow(NPWindow* window) {
@@ -179,8 +215,23 @@ void PluginWindowMac::handleTimerEvent() {
     SendEvent(&ev);
 }
 
+void PluginWindowMac::StartAutoInvalidate(double rate) {
+    StopAutoInvalidate();
+    
+    PluginWindowMac_helper *mhelper = (PluginWindowMac_helper*) m_helper;
+    m_timer = [[NSTimer scheduledTimerWithTimeInterval:rate target:mhelper selector:@selector(fired:) userInfo:NULL repeats:YES] retain];
+}
+
+void PluginWindowMac::StopAutoInvalidate() {
+    NSTimer *mtimer = (NSTimer*) m_timer;
+    if (mtimer) {
+        [mtimer invalidate];
+        [mtimer release];
+        mtimer = NULL;
+    }
+}
+
 void PluginWindowMac::InvalidateWindow() const {
-    FB::Rect pos = getWindowPosition();
     NPRect r = { 0, 0, m_height, m_width };
     if (!m_npHost->isMainThread())
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));

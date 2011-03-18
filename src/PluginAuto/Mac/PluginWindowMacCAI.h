@@ -22,21 +22,16 @@ namespace FB {
     {
     public:
         PluginWindowMacICA();
-        virtual ~PluginWindowMacICA();
+        virtual ~PluginWindowMacICA() {}
 
         DrawingModel getDrawingModel() const { return DrawingModelInvalidatingCoreAnimation; }
         
         bool displayOnInvalidate() const { return m_displayOnInvalidate; }
         void setDisplayOnInvalidate(bool value) { m_displayOnInvalidate = value; }
         
-        void StartAutoInvalidate(double rate);
-        void StopAutoInvalidate();
-        
-        void Invalidate();
+        void InvalidateWindow() const;
 
     private:
-        void* m_timer;
-        void* m_helper;
         bool m_displayOnInvalidate;
     };
 };

@@ -41,8 +41,10 @@ namespace FB {
         static FB::PluginWindowMac* createPluginWindowMac(NPDrawingModel drawingModel);
 
         PluginWindowMac();
-        virtual ~PluginWindowMac() {}
+        virtual ~PluginWindowMac();
 
+        virtual void StartAutoInvalidate(double rate);
+        virtual void StopAutoInvalidate();
         virtual void InvalidateWindow() const;
 
         virtual NPError SetWindow(NPWindow* window);
@@ -95,6 +97,9 @@ namespace FB {
         int32_t m_clipLeft;
         int32_t m_clipBottom;
         int32_t m_clipRight;
+        
+        void* m_timer;
+        void* m_helper;
     };
 };
 
