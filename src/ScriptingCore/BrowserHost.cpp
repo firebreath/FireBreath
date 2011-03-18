@@ -7,6 +7,7 @@ New BSD License
 http://www.opensource.org/licenses/bsd-license.php
 - or -
 GNU Lesser General Public License, version 2.1
+
 http://www.gnu.org/licenses/lgpl-2.1.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
@@ -26,6 +27,64 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include <boost/smart_ptr/enable_shared_from_this.hpp>
 #include "../PluginCore/BrowserStreamManager.h"
+
+//////////////////////////////////////////
+// This is used to keep async calls from
+// crashing the browser on shutdown
+//////////////////////////////////////////
+
+namespace FB {
+    struct _asyncCallData : boost::noncopyable {
+        _asyncCallData(void (*func)(void*), void* userData, int id, AsyncCallManagerPtr mgr)
+            : func(func), userData(userData), uniqId(id), called(false), mgr(mgr)
+        {}
+        void call();
+        void (*func)(void *);
+        void *userData;
+        int uniqId;
+        bool called;
+        AsyncCallManagerWeakPtr mgr;
+    };
+
+    class AsyncCallManager : public boost::enable_shared_from_this<AsyncCallManager>, boost::noncopyable {
+    public:
+        int lastId;
+        AsyncCallManager() : lastId(1) {}
+        ~AsyncCallManager();
+
+        boost::recursive_mutex m_mutex;
+        void shutdown();
+
+        _asyncCallData* makeCallback(void (*func)(void *), void * userData );
+        void call( _asyncCallData* data );
+
+        std::list<_asyncCallData*> DataList;
+        std::list<_asyncCallData*> canceledDataList;
+    };
+}
+
+volatile int FB::BrowserHost::InstanceCount(0);
+
+FB::BrowserHost::BrowserHost()
+    : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
+      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>())
+{
+    ++InstanceCount;
+}
+
+FB::BrowserHost::~BrowserHost()
+{
+    --InstanceCount;
+}
+
+void FB::BrowserHost::shutdown()
+{
+    freeRetainedObjects();
+    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
+    m_isShutDown = true;
+    _asyncManager->shutdown();
+    m_streamMgr.reset();
+}
 
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
@@ -81,57 +140,6 @@ FB::DOM::ElementPtr FB::BrowserHost::_createElement(const FB::JSObjectPtr& obj) 
 FB::DOM::NodePtr FB::BrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::NodePtr(new FB::DOM::Node(obj));
-}
-
-//////////////////////////////////////////
-// This is used to keep async calls from
-// crashing the browser on shutdown
-//////////////////////////////////////////
-
-namespace FB {
-    struct _asyncCallData : boost::noncopyable {
-        _asyncCallData(void (*func)(void*), void* userData, int id, AsyncCallManagerPtr mgr)
-            : func(func), userData(userData), uniqId(id), called(false), mgr(mgr)
-        {}
-        void call();
-        void (*func)(void *);
-        void *userData;
-        int uniqId;
-        bool called;
-        AsyncCallManagerWeakPtr mgr;
-    };
-
-    class AsyncCallManager : public boost::enable_shared_from_this<AsyncCallManager>, boost::noncopyable {
-    public:
-        int lastId;
-        AsyncCallManager() : lastId(1) {}
-        ~AsyncCallManager();
-
-        boost::recursive_mutex m_mutex;
-        void shutdown();
-
-        _asyncCallData* makeCallback(void (*func)(void *), void * userData );
-        void call( _asyncCallData* data );
-
-        std::list<_asyncCallData*> DataList;
-        std::list<_asyncCallData*> canceledDataList;
-    };
-}
-
-FB::BrowserHost::BrowserHost()
-    : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
-      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>())
-{
-
-}
-
-void FB::BrowserHost::shutdown()
-{
-    freeRetainedObjects();
-    boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
-    m_isShutDown = true;
-    _asyncManager->shutdown();
-    m_streamMgr.reset();
 }
 
 void FB::BrowserHost::assertMainThread() const

@@ -92,7 +92,7 @@ namespace FB {
         ///
         /// @return WindowPtr of the new Window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static WindowPtr create(const FB::JSObjectPtr &api) { return api->host->_createWindow(api); }
+        static WindowPtr create(const FB::JSObjectPtr &api) { return api->getHost()->_createWindow(api); }
 
     public:
 

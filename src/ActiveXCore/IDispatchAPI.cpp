@@ -45,15 +45,20 @@ FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHos
 
 IDispatchAPI::~IDispatchAPI(void)
 {
-    m_browser->deferred_release(m_obj);
+    if (!m_browser.expired())
+        getHost()->deferred_release(m_obj);
     m_obj = NULL;
 }
 
 void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
-        host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
+        browser->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
     if (is_JSAPI) {
@@ -83,8 +88,12 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
 
 size_t IDispatchAPI::getMemberCount() const
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
+    if (m_browser.expired())
+        return 0;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
     }
 
     if (is_JSAPI) {
@@ -114,8 +123,12 @@ size_t IDispatchAPI::getMemberCount() const
 
 DISPID IDispatchAPI::getIDForName(const std::wstring& name) const
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
+    if (m_browser.expired())
+        return DISPID_UNKNOWN;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
     }
 
     if (name.empty()) {
@@ -152,9 +165,13 @@ bool IDispatchAPI::HasMethod(const std::wstring& methodName) const
 
 bool IDispatchAPI::HasMethod(const std::string& methodName) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return false;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef bool (IDispatchAPI::*curtype)(const std::string&) const;
-        return host->CallOnMainThread(boost::bind((curtype)&IDispatchAPI::HasMethod, this, methodName));
+        return browser->CallOnMainThread(boost::bind((curtype)&IDispatchAPI::HasMethod, this, methodName));
     }
 
     if (is_JSAPI) {
@@ -177,9 +194,13 @@ bool IDispatchAPI::HasProperty(const std::wstring& propertyName) const
 
 bool IDispatchAPI::HasProperty(const std::string& propertyName) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return false;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&) const;
-        return host->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
+        return browser->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
     }
 
     if (is_JSAPI) {
@@ -228,9 +249,13 @@ bool IDispatchAPI::HasEvent(const std::wstring& eventName) const
 
 bool IDispatchAPI::HasEvent(const std::string& eventName) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return false;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef bool (IDispatchAPI::*HasEventType)(const std::string&) const;
-        return host->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
+        return browser->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
     }
 
     if (is_JSAPI) {
@@ -250,10 +275,14 @@ bool IDispatchAPI::HasEvent(const std::string& eventName) const
 // Methods to manage properties on the API
 FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
-    }
+    if (m_browser.expired())
+        return FB::FBVoid();
 
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
+    }
+    
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (!tmp) {
@@ -289,13 +318,17 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
         throw FB::script_error("Could not get property");
     }
     
-    return m_browser->getVariant(&result);
+    return browser->getVariant(&result);
 }
 
 void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
-    if (!host->isMainThread()) {
-        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
+    if (m_browser.expired())
+        return;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        browser->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
         return;
     }
 
@@ -320,7 +353,7 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     params.rgdispidNamedArgs = namedArg;
     params.rgvarg = rawArg;
 
-    m_browser->getComVariant(&arg[0], value);
+    browser->getComVariant(&arg[0], value);
     rawArg[0] = arg[0];
     namedArg[0] = DISPID_PROPERTYPUT;
 
@@ -352,7 +385,7 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
-            SetProperty(idx, value);
+            tmp->SetProperty(idx, value);
     }
 
     FB::variant sIdx(idx);
@@ -363,8 +396,12 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 // Methods to manage methods on the API
 FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
+    if (m_browser.expired())
+        return FB::FBVoid();
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(methodName));
@@ -381,7 +418,7 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     params.rgvarg = rawComArgs.get();
 
     for (size_t i = 0; i < args.size(); i++) {
-        m_browser->getComVariant(&comArgs[argCount - 1 - i], args[i]);
+        browser->getComVariant(&comArgs[argCount - 1 - i], args[i]);
         // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
         rawComArgs[argCount - 1 - i] = comArgs[argCount - 1 - i];
     }
@@ -394,7 +431,7 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         throw FB::script_error("Method invoke failed");
     }
     
-    return m_browser->getVariant(&result);
+    return browser->getVariant(&result);
 }
 
 //FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB::VariantList& args )

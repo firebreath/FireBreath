@@ -80,7 +80,7 @@ namespace FB
         ///
         /// @brief  Finaliser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~BrowserHost() { }
+        virtual ~BrowserHost();
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -392,11 +392,16 @@ namespace FB
         ///
         /// @return BrowerHostPtr for "this" pointer
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserHostPtr shared_ptr()
-        {
-            return shared_from_this();
-        }
-
+        BrowserHostPtr shared_ptr() { return shared_from_this(); }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn BrowserHostPtr shared_ptr()
+        ///
+        /// @brief  Returns the count of how many BrowserHost object instances are active
+        ///
+        /// @since 1.5
+        /// @return int number of BrowserHost instances that have been created and not destroyed
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static int getInstanceCount() { return InstanceCount; }
 
     private:
         // Stores the thread_id for the thread the plugin was started on
@@ -409,6 +414,7 @@ namespace FB
         mutable boost::recursive_mutex m_jsapimutex;
 
         mutable std::list<FB::JSAPIPtr> m_retainedObjects;
+        static volatile int InstanceCount;
         BrowserStreamManagerPtr m_streamMgr;
     };
 

@@ -23,12 +23,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::Npapi;
 
-NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
-    : JSObject(h), browser(h), obj(o), is_JSAPI(false)
+NPObjectAPI::NPObjectAPI(NPObject *o, const NpapiBrowserHostPtr& h)
+    : JSObject(h), m_browser(h), obj(o), is_JSAPI(false)
 {
-    assert(browser);
+    assert(!m_browser.expired());
     if (o != NULL) {
-        browser->RetainObject(obj);
+        getHost()->RetainObject(obj);
     }
     FB::JSAPIPtr ptr(getJSAPI());
     if (ptr) {
@@ -42,15 +42,20 @@ NPObjectAPI::NPObjectAPI(NPObject *o, NpapiBrowserHostPtr h)
 NPObjectAPI::~NPObjectAPI(void)
 {
     // Schedule the NPObject for release on the main thread
-    browser->deferred_release(obj);
+    if (!m_browser.expired())
+        getHost()->deferred_release(obj);
     obj = NULL;
 }
 
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
-        host->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
+        browser->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
     if (is_JSAPI) {
@@ -71,8 +76,12 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
 
 size_t NPObjectAPI::getMemberCount() const
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberCount, this));
+    if (m_browser.expired())
+        return 0;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind(&NPObjectAPI::getMemberCount, this));
     }
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -90,9 +99,13 @@ size_t NPObjectAPI::getMemberCount() const
 
 bool NPObjectAPI::HasMethod(const std::string& methodName) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return false;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
-        return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
+        return browser->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
     }
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -106,9 +119,13 @@ bool NPObjectAPI::HasMethod(const std::string& methodName) const
 
 bool NPObjectAPI::HasProperty(const std::string& propertyName) const
 {
-    if (!host->isMainThread()) {
+    if (m_browser.expired())
+        return false;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
         typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
-        return host->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
+        return browser->CallOnMainThread(boost::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
     }
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -122,6 +139,10 @@ bool NPObjectAPI::HasProperty(const std::string& propertyName) const
 
 bool NPObjectAPI::HasProperty(int idx) const
 {
+    if (m_browser.expired())
+        return false;
+
+    NpapiBrowserHostPtr browser(getHost());
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
@@ -134,6 +155,10 @@ bool NPObjectAPI::HasProperty(int idx) const
 
 bool NPObjectAPI::HasEvent(const std::string& eventName) const
 {
+    if (m_browser.expired())
+        return false;
+
+    NpapiBrowserHostPtr browser(getHost());
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
@@ -148,8 +173,12 @@ bool NPObjectAPI::HasEvent(const std::string& eventName) const
 // Methods to manage properties on the API
 FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
+    if (m_browser.expired())
+        return FB::FBVoid();
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
     }
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -170,8 +199,12 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 
 void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
 {
-    if (!host->isMainThread()) {
-        host->CallOnMainThread(boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+    if (m_browser.expired())
+        return;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        browser->CallOnMainThread(boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         return;
     }
     if (is_JSAPI) {
@@ -189,6 +222,10 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
 
 FB::variant NPObjectAPI::GetProperty(int idx)
 {
+    if (m_browser.expired())
+        return FB::FBVoid();
+
+    NpapiBrowserHostPtr browser(getHost());
     std::string strIdx(boost::lexical_cast<std::string>(idx));
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -200,6 +237,10 @@ FB::variant NPObjectAPI::GetProperty(int idx)
 
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 {
+    if (m_browser.expired())
+        return;
+
+    NpapiBrowserHostPtr browser(getHost());
     std::string strIdx(boost::lexical_cast<std::string>(idx));
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
@@ -212,8 +253,12 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 // Methods to manage methods on the API
 FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
-    if (!host->isMainThread()) {
-        return host->CallOnMainThread(boost::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
+    if (m_browser.expired())
+        return false;
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
     }
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
