@@ -96,6 +96,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         if (callback)
             callback(false, FB::HeaderMap(), boost::shared_array<uint8_t>(), received);
         callback.clear();
+        self.reset();
         return false;
     }
     if (!data) {
@@ -117,7 +118,8 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
     if (callback)
         callback(true, parse_http_headers(stream->getHeaders()), data, received);
     callback.clear();
-    return true;
+    self.reset();
+    return false;
 }
 
 bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * )
