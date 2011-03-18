@@ -31,9 +31,8 @@ PluginWindowMacICA::PluginWindowMacICA()
 void PluginWindowMacICA::InvalidateWindow() const {
     if (m_displayOnInvalidate) {
         CALayer *mlayer = (CALayer*) m_layer;
-#if 0
+#if 1
         // setNeedsDisplay will draw sometime in the future.
-        // This works for FF4 and Chrome on Mac OS X 10.6
         [[mlayer sublayers] makeObjectsPerformSelector:@selector(setNeedsDisplay)];
 #else
         // display will draw now, immediately.

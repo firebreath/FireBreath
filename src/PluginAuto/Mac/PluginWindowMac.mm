@@ -218,11 +218,13 @@ void PluginWindowMac::handleTimerEvent() {
 void PluginWindowMac::StartAutoInvalidate(double rate) {
     StopAutoInvalidate();
     
+    FBLOG_INFO("PluginCore", "AutoInvalidate STARTED " << 1/rate << "fps");
     PluginWindowMac_helper *mhelper = (PluginWindowMac_helper*) m_helper;
     m_timer = [[NSTimer scheduledTimerWithTimeInterval:rate target:mhelper selector:@selector(fired:) userInfo:NULL repeats:YES] retain];
 }
 
 void PluginWindowMac::StopAutoInvalidate() {
+    FBLOG_INFO("PluginCore", "AutoInvalidate STOPPED");
     NSTimer *mtimer = (NSTimer*) m_timer;
     if (mtimer) {
         [mtimer invalidate];
@@ -232,6 +234,7 @@ void PluginWindowMac::StopAutoInvalidate() {
 }
 
 void PluginWindowMac::InvalidateWindow() const {
+    FBLOG_TRACE("PluginCore", "InvalidateWindow");
     NPRect r = { 0, 0, m_height, m_width };
     if (!m_npHost->isMainThread())
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
