@@ -38,7 +38,10 @@ namespace FB { namespace ActiveX {
         virtual ~IDispatchAPI(void);
 
         void *getEventId() const { return (void*)m_obj; }
-        void *getEventContext() const { return m_browser->getContextID(); };
+        void *getEventContext() const {
+            if (m_browser.expired()) return NULL;
+            else return getHost()->getContextID();
+        };
         IDispatch *getIDispatch() const { return m_obj; }
 
         // Enumerate members
@@ -46,7 +49,14 @@ namespace FB { namespace ActiveX {
         size_t getMemberCount() const;
 
     protected:
-        ActiveXBrowserHostPtr m_browser;
+        ActiveXBrowserHostPtr getHost() const {
+            ActiveXBrowserHostPtr ptr(m_browser.lock());
+            if (!ptr) {
+                throw std::bad_cast("BrowserHost has shut down");
+            }
+            return ptr;
+        }
+        ActiveXBrowserHostWeakPtr m_browser;
         IDispatch* m_obj;
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;

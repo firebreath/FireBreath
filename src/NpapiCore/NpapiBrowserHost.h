@@ -23,8 +23,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB { namespace Npapi {
 
-    class NpapiPluginModule;
-    class NPObjectAPI;
+    FB_FORWARD_PTR(NpapiPluginModule);
+    FB_FORWARD_PTR(NPObjectAPI);
+    FB_FORWARD_PTR(NpapiBrowserHost);
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

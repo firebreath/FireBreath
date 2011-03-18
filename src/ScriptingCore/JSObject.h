@@ -46,13 +46,13 @@ namespace FB
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn JSObject(BrowserHostPtr h)
+        /// @fn JSObject(const BrowserHostPtr& h)
         ///
         /// @brief  Constructor
         ///
         /// @param  h   The BrowserHost from whence the object came. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        JSObject(BrowserHostPtr h) : host(h)
+        JSObject(const BrowserHostPtr& h) : m_host(h)
         {
         }
 
@@ -78,7 +78,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         {
-            host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
+            if (m_host.expired()) {
+                throw std::runtime_error("Cannot invoke asynchronously");
+            }
+            getHost()->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +95,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
         {
-            host->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+            if (m_host.expired()) {
+                throw std::runtime_error("Cannot invoke asynchronously");
+            }
+            getHost()->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         }
 
         //virtual FB::JSObjectPtr Construct(const std::wstring& memberName, const std::vector<variant>& args);
@@ -128,9 +134,11 @@ namespace FB
     public:
         /// @brief Get associated FB::JSAPI.
         virtual JSAPIPtr getJSAPI() const = 0;
+        /// @brief Get the associated FB::BrowserHost; may throw std::bad_cast
+        BrowserHostPtr getHost() { return BrowserHostPtr(m_host); }
 
     public:
-        BrowserHostPtr host;
+        BrowserHostWeakPtr m_host;
     };
 
     template<class Cont>
