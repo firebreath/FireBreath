@@ -18,6 +18,22 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 using namespace FB;
 
+@interface MyCALayer : CALayer
+{
+}
+
+@end
+
+@implementation MyCALayer
+
+- (void)dealloc {
+    [super dealloc];
+}
+
+@end
+
+
+
 FB::PluginWindowMacCA* FB::createPluginWindowMacCA()
 {
     return new PluginWindowMacCA();
@@ -26,7 +42,7 @@ FB::PluginWindowMacCA* FB::createPluginWindowMacCA()
 PluginWindowMacCA::PluginWindowMacCA()
     : PluginWindowMac(), m_layer(NULL)
 {
-    CALayer *mlayer = [[CALayer layer] retain];
+    MyCALayer *mlayer = [[MyCALayer layer] retain];
     mlayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
     mlayer.needsDisplayOnBoundsChange = YES;
     m_layer = mlayer;
@@ -34,15 +50,15 @@ PluginWindowMacCA::PluginWindowMacCA()
 
 PluginWindowMacCA::~PluginWindowMacCA()
 {
-    CALayer *mlayer = (CALayer*) m_layer;
-    [mlayer autorelease];
+    MyCALayer *mlayer = (MyCALayer*) m_layer;
+    [mlayer release];
     m_layer = NULL;
 }
 
 int16_t PluginWindowMacCA::GetValue(NPPVariable variable, void *value) {
-    CALayer *mlayer = (CALayer*) m_layer;
+    MyCALayer *mlayer = (MyCALayer*) m_layer;
     if (NPPVpluginCoreAnimationLayer == variable) {
-        *(CALayer**) value = mlayer;
+        *(CALayer**) value = [mlayer retain];
         FBLOG_INFO("PluginCore", "GetValue(NPPVpluginCoreAnimationLayer)=" << (void*) mlayer);
     }
     return NPERR_NO_ERROR;
@@ -50,7 +66,7 @@ int16_t PluginWindowMacCA::GetValue(NPPVariable variable, void *value) {
 
 NPError PluginWindowMacCA::SetWindow(NPWindow* window)
 {
-    CALayer *mlayer = (CALayer*) m_layer;
+    MyCALayer *mlayer = (MyCALayer*) m_layer;
     FBLOG_INFO("PluginCore", "PluginWindowMacCA::SetWindow() CALayer=" << (void*) mlayer);
     FBLOG_INFO("PluginCore", " bounds(" << window->x << "," << window->y << ")(" << window->x + window->width << "," << window->y + window->height << ")");
     FBLOG_INFO("PluginCore", "   clip(" << window->clipRect.left << "," << window->clipRect.top << ")(" << window->clipRect.right << "," << window->clipRect.bottom << ")");
