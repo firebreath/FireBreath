@@ -14,7 +14,7 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 
 #include "ConstructDefaultPluginWindows.h"
 
-#include "PluginWindowMacCAI.h"
+#include "PluginWindowMacICA.h"
 
 using namespace FB;
 

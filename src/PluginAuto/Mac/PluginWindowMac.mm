@@ -15,7 +15,7 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 #include "global/config.h"
 #include "FactoryBase.h"
 
-#include "PluginWindowMacCAI.h"
+#include "PluginWindowMacICA.h"
 #include "PluginWindowMacCA.h"
 #include "PluginWindowMacCG.h"
 #include "PluginWindowMacQD.h"
