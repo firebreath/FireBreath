@@ -101,9 +101,13 @@ HRESULT FB::FactoryBase::UpdateWindowsRegistry( bool install )
 #endif
 
 #ifdef FB_MACOSX
-FB::PluginWindowMacCA* FB::FactoryBase::createPluginWindowMacCA(bool invalidating)
+FB::PluginWindowMacICA* FB::FactoryBase::createPluginWindowMacICA()
 {
-    return FB::createPluginWindowMacCA(invalidating);
+    return FB::createPluginWindowMacICA();
+}
+FB::PluginWindowMacCA* FB::FactoryBase::createPluginWindowMacCA()
+{
+    return FB::createPluginWindowMacCA();
 }
 FB::PluginWindowMacCG* FB::FactoryBase::createPluginWindowMacCG()
 {

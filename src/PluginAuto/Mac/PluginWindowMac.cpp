@@ -15,6 +15,7 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 #include "global/config.h"
 #include "FactoryBase.h"
 
+#include "PluginWindowMacCAI.h"
 #include "PluginWindowMacCA.h"
 #include "PluginWindowMacCG.h"
 #include "PluginWindowMacQD.h"
@@ -44,11 +45,13 @@ static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, vo
 
 NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host) {
     NPDrawingModel drawingModel = (NPDrawingModel) -1; 
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_INVALIDATINGCOREANIMATION
     if (supports(host, NPNVsupportsInvalidatingCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelInvalidatingCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelInvalidatingCoreAnimation");
         drawingModel = NPDrawingModelInvalidatingCoreAnimation;
     } else
+#endif
+#if FBMAC_USE_COREANIMATION
     if (supports(host, NPNVsupportsCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreAnimation");
         drawingModel = NPDrawingModelCoreAnimation;
@@ -75,12 +78,14 @@ NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowse
 FB::PluginWindowMac* PluginWindowMac::createPluginWindowMac(NPDrawingModel drawingModel) {
     FB::PluginWindowMac* rval = NULL;
     switch (drawingModel) {
-#if FBMAC_USE_COREANIMATION
+#if FBMAC_USE_INVALIDATINGCOREANIMATION
         case NPDrawingModelInvalidatingCoreAnimation:
-            rval = getFactoryInstance()->createPluginWindowMacCA(true);
+            rval = getFactoryInstance()->createPluginWindowMacICA();
             break;
+#endif
+#if FBMAC_USE_COREANIMATION
         case NPDrawingModelCoreAnimation:
-            rval = getFactoryInstance()->createPluginWindowMacCA(false);
+            rval = getFactoryInstance()->createPluginWindowMacCA();
             break;
 #endif
 #if FBMAC_USE_COREGRAPHICS

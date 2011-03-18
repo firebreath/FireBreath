@@ -18,8 +18,15 @@
 #include "global/config.h"
 #include "ConstructDefaultPluginWindows.h"
 
+#if !FBMAC_USE_INVALIDATINGCOREANIMATION
+FB::PluginWindowMacICA* FB::createPluginWindowMacICA()
+{
+    return 0;
+}
+#endif
+
 #if !FBMAC_USE_COREANIMATION
-FB::PluginWindowMacCA* FB::createPluginWindowMacCA(bool invalidatin)
+FB::PluginWindowMacCA* FB::createPluginWindowMacCA()
 {
     return 0;
 }

@@ -233,16 +233,25 @@ namespace FB
       
 #ifdef FB_MACOSX
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
+        /// @fn virtual PluginWindowMacICA* createPluginWindowMacICA();
+        ///
+        /// @brief  Creates a PluginWindow derived plugin window object for Invalidating CoreAnimation
+        ///
+        /// @param  host    The BrowserHost object for the browser containing this plugin
+        ///
+        /// @return A pointer to the object that should handle the plugin window
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual PluginWindowMacICA* createPluginWindowMacICA();
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual PluginWindowMacCA* createPluginWindowMacCA();
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for CoreAnimation
         ///
         /// @param  host    The BrowserHost object for the browser containing this plugin
-        /// @param  invalidating    
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
+        virtual PluginWindowMacCA* createPluginWindowMacCA();
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual PluginWindowMacCG* createPluginWindowMacCG();
         ///

@@ -39,6 +39,7 @@ namespace FB
 #endif
     
 #ifdef FB_MACOSX
+    class PluginWindowMacICA;
     class PluginWindowMacCA;
     class PluginWindowMacCG;
     class PluginWindowMacQD;

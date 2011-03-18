@@ -13,20 +13,18 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "ConstructDefaultPluginWindows.h"
-#include "PluginEvents/AttachedEvent.h"
-#include "PluginEvents/DrawingEvents.h"
 
 #include "PluginWindowMacCA.h"
 
 using namespace FB;
 
-FB::PluginWindowMacCA* FB::createPluginWindowMacCA(bool invalidating)
+FB::PluginWindowMacCA* FB::createPluginWindowMacCA()
 {
-    return new PluginWindowMacCA(invalidating);
+    return new PluginWindowMacCA();
 }
 
-PluginWindowMacCA::PluginWindowMacCA(bool invalidating)
-    : PluginWindowMac(), m_layer(NULL), m_invalidating(invalidating)
+PluginWindowMacCA::PluginWindowMacCA()
+    : PluginWindowMac(), m_layer(NULL)
 {
     CALayer *mlayer = [[CALayer layer] retain];
     mlayer.autoresizingMask = kCALayerWidthSizable | kCALayerHeightSizable;
@@ -45,8 +43,6 @@ int16_t PluginWindowMacCA::GetValue(NPPVariable variable, void *value) {
     CALayer *mlayer = (CALayer*) m_layer;
     if (NPPVpluginCoreAnimationLayer == variable) {
         *(CALayer**) value = mlayer;
-        if (m_invalidating)
-            (void) scheduleTimer(60, true);
         FBLOG_INFO("PluginCore", "GetValue(NPPVpluginCoreAnimationLayer)=" << (void*) mlayer);
     }
     return NPERR_NO_ERROR;
@@ -61,9 +57,4 @@ NPError PluginWindowMacCA::SetWindow(NPWindow* window)
     FBLOG_INFO("PluginCore", "  layer(" << mlayer.bounds.origin.x << "," << mlayer.bounds.origin.y << ")(" << mlayer.bounds.origin.x + mlayer.bounds.size.width << "," << mlayer.bounds.origin.y + mlayer.bounds.size.height << ")");
 
     return PluginWindowMac::SetWindow(window);
-}
-
-void PluginWindowMacCA::handleTimerEvent() {
-    InvalidateWindow();
-    PluginWindowMac::handleTimerEvent();
 }

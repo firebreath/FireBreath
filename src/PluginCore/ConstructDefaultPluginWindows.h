@@ -26,7 +26,8 @@ namespace FB
 #endif
 
 #ifdef FB_MACOSX
-    FB::PluginWindowMacCA* createPluginWindowMacCA(bool invalidating);
+    FB::PluginWindowMacICA* createPluginWindowMacICA();
+    FB::PluginWindowMacCA* createPluginWindowMacCA();
     FB::PluginWindowMacCG* createPluginWindowMacCG();
     FB::PluginWindowMacQD* createPluginWindowMacQD();
     FB::PluginEventMacCocoa* createPluginEventMacCocoa();
