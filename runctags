@@ -1,0 +1,2 @@
+#!/bin/bash
+ctags -R --verbose=no cmake/ gen_templates/ src/ --exclude=boost
