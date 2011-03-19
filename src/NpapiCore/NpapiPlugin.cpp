@@ -31,7 +31,7 @@ NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mim
       m_pluginName(getFactoryInstance()->getPluginName(mimetype)),
       m_pluginDesc(getFactoryInstance()->getPluginDescription(mimetype))
 {
-    pluginMain->SetHost(ptr_cast<BrowserHost>(host));
+    pluginMain->SetHost(host);
 }
 
 NpapiPlugin::~NpapiPlugin(void)

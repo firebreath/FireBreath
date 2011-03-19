@@ -18,6 +18,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cassert>
 #include <boost/thread.hpp>
 #include "logging.h"
+#include "BrowserHost.h"
+#include "PluginCore.h"
+#include <assert.h>
 
 using namespace FB::Npapi;
 
@@ -41,6 +44,13 @@ NpapiPluginModule::~NpapiPluginModule(void)
         assert(PluginModuleInitialized);
         PluginModuleInitialized = false;
         getFactoryInstance()->globalPluginDeinitialize();
+
+        // NOTE: If this assertion fails you have some sort of memory leak; BrowserHost objects
+        // are reference counted, so you have a shared_ptr to your browserhost sometime. This
+        // can be a big problem because BrowserHost manages a lot of your memory and if you get
+        // a new one for each instances on each page (including page reloads).
+        assert(BrowserHost::getInstanceCount() == 0);
+        assert(PluginCore::getActivePluginCount() == 0);
         FB::Log::stopLogging();
     }
 }

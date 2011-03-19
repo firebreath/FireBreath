@@ -48,7 +48,7 @@ std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(const std::string
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)));
+            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }
@@ -63,7 +63,7 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
     HRESULT hr = S_OK;
     if (elem) {
         hr = elem->getAttribute(CComBSTR(FB::utf8_to_wstring(attr).c_str()), 0, &var);
-        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->host)->getVariant(&var).convert_cast<std::string>();
+        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
     } else {
         return getProperty<std::string>(attr);
     }

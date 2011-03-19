@@ -71,7 +71,7 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::NodePtr to the created Node object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static NodePtr create(const FB::JSObjectPtr &api) { return api->host->_createNode(api); }
+        static NodePtr create(const FB::JSObjectPtr &api) { return api->getHost()->_createNode(api); }
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
