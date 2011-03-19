@@ -34,7 +34,7 @@ namespace FB { namespace Npapi {
             NpapiBrowserHostPtr ptr(m_browser.lock());
             if (!ptr) {
                 Invalidate();
-                throw std::bad_cast("BrowserHost has shut down");
+                throw std::bad_cast();
             }
             return ptr;
         }
