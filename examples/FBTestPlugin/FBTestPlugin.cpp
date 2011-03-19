@@ -24,7 +24,7 @@
 
 
 #ifdef HAS_LEAKFINDER
-boostt::scoped_ptr<LeakFinderXmlOutput> FBTestPlugin::pOut;
+boost::scoped_ptr<LeakFinderXmlOutput> FBTestPlugin::pOut;
 #endif
 
 void FBTestPlugin::StaticInitialize()
