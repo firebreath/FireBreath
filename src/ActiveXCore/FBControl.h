@@ -231,9 +231,13 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom )
         {
-            RECT r = { left, top, right, bottom };
-            if (m_spInPlaceSite)
-                m_spInPlaceSite->InvalidateRect(&r, TRUE);
+            if (!m_host->isMainThread() && m_spInPlaceSite) {
+                m_host->CallOnMainThread(boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
+            } else {
+                RECT r = { left, top, right, bottom };
+                if (m_spInPlaceSite)
+                    m_spInPlaceSite->InvalidateRect(&r, TRUE);
+            }
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
