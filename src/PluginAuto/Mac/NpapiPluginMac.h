@@ -30,6 +30,8 @@ namespace FB { namespace Npapi {
         NpapiPluginMac(const NpapiBrowserHostPtr &host, const std::string& mimetype);
         virtual ~NpapiPluginMac(void);
         
+        void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);
+
     protected:
         NPEventModel m_eventModel;
         NPDrawingModel m_drawingModel;

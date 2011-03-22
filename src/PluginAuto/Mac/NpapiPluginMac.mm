@@ -60,9 +60,21 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
     // Get the path to the bundle
     static const std::string pluginPath = getPluginPath();      
     setFSPath(pluginPath);
+}
+
+NpapiPluginMac::~NpapiPluginMac()
+{
+}
+
+void NpapiPluginMac::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]) {
+    NpapiPlugin::init(pluginType, argc, argn, argv);
 
     // These HAVE to be called here during the NPP_New call to set the drawing and event models.
-    m_drawingModel = PluginWindowMac::initPluginWindowMac(m_npHost);
+    boost::optional<std::string> drawingModel = pluginMain->getParam("drawingmodel");
+    if (drawingModel)
+        m_drawingModel = PluginWindowMac::initPluginWindowMac(m_npHost, drawingModel->c_str());
+    else
+        m_drawingModel = PluginWindowMac::initPluginWindowMac(m_npHost);
     m_eventModel = PluginEventMac::initPluginEventMac(m_npHost, m_drawingModel);
 
     // We can create our event model handler now.
@@ -78,10 +90,6 @@ NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const
             pluginEvt->setPluginWindow(pluginWin);
         pluginWin->setPluginEvent(pluginEvt);
     }
-}
-
-NpapiPluginMac::~NpapiPluginMac()
-{
 }
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {

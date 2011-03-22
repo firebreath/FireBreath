@@ -280,6 +280,8 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 
         virtual void setParams(const FB::VariantMap& inParams);
+        
+        virtual boost::optional<std::string> getParam(const std::string& key);
 
     protected:
         /// The BrowserHost object for the current session

@@ -46,7 +46,7 @@ FB::PluginEventMacCocoa* FB::createPluginEventMacCocoa()
 
 /*
     Apple's Safari requires NPEventModelCarbon for NPDrawingModelCoreGraphics and NPDrawingModelQuickDraw.
-    Apple's Safari requires NPEventModelCocoa for NPDrawingModelCoreAnimation and NPDrawingModelInvalidatingCoreAnimation.
+    Apple's Safari requires NPEventModelCocoa for NPDrawingModelCoreGraphics, NPDrawingModelCoreAnimation, and NPDrawingModelInvalidatingCoreAnimation.
 */
 
 static bool supports(const FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {

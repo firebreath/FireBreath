@@ -64,36 +64,107 @@ static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, vo
     return (NPERR_NO_ERROR == err) ? true : false;
 }
 
-NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host) {
-    NPDrawingModel drawingModel = (NPDrawingModel) -1; 
 #if FBMAC_USE_INVALIDATINGCOREANIMATION
+static bool initPluginWindowMac_ICA(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel& drawingModel) {
+    drawingModel = (NPDrawingModel) -1; 
     if (supports(host, NPNVsupportsInvalidatingCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelInvalidatingCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelInvalidatingCoreAnimation");
         drawingModel = NPDrawingModelInvalidatingCoreAnimation;
-    } else
+        return true;
+    }
+    return false;
+}
 #endif
 #if FBMAC_USE_COREANIMATION
+static bool initPluginWindowMac_CA(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel& drawingModel) {
+    drawingModel = (NPDrawingModel) -1; 
     if (supports(host, NPNVsupportsCoreAnimationBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreAnimation)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreAnimation");
         drawingModel = NPDrawingModelCoreAnimation;
-    } else
+        return true;
+    }
+    return false;
+}
 #endif
 #if FBMAC_USE_COREGRAPHICS
+static bool initPluginWindowMac_CG(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel& drawingModel) {
+    drawingModel = (NPDrawingModel) -1; 
     if (supports(host, NPNVsupportsCoreGraphicsBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelCoreGraphics)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelCoreGraphics");
         drawingModel = NPDrawingModelCoreGraphics;
-    } else
+        return true;
+    }
+    return false;
+}
 #endif
 #if FBMAC_USE_QUICKDRAW
 #ifndef NP_NO_QUICKDRAW
+static bool initPluginWindowMac_QD(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel& drawingModel) {
+    drawingModel = (NPDrawingModel) -1; 
     if (supports(host, NPNVsupportsQuickDrawBool) && set(host, NPPVpluginDrawingModel, (void*)NPDrawingModelQuickDraw)) {
         FBLOG_INFO("PluginCore", "NPDrawingModel=NPDrawingModelQuickDraw");
         drawingModel = NPDrawingModelQuickDraw;
-    } else
+        return true;
+    }
+    return false;
+}
+#endif
+#endif
+
+NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& drawingModel) {
+    NPDrawingModel rval = (NPDrawingModel) -1; 
+#if FBMAC_USE_INVALIDATINGCOREANIMATION
+    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelInvalidatingCoreAnimation"))
+        (void) initPluginWindowMac_ICA(host, rval);
+    else 
+#endif
+#if FBMAC_USE_COREANIMATION
+    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelCoreAnimation"))
+        (void) initPluginWindowMac_CA(host, rval);
+    else
+#endif
+#if FBMAC_USE_COREGRAPHICS
+    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelCoreGraphics"))
+        (void) initPluginWindowMac_CG(host, rval);
+    else
+#endif
+#if FBMAC_USE_QUICKDRAW
+#ifndef NP_NO_QUICKDRAW
+    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelQuickDraw"))
+        (void) initPluginWindowMac_QD(host, rval);
+    else
 #endif
 #endif
         FBLOG_INFO("PluginCore", "NPDrawingModel=NONE");
-    return drawingModel;
+    return rval;
+}
+
+NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host) {
+    NPDrawingModel rval = (NPDrawingModel) -1; 
+#if FBMAC_USE_INVALIDATINGCOREANIMATION
+    if (initPluginWindowMac_ICA(host, rval))
+        return rval;
+    else
+#endif
+#if FBMAC_USE_COREANIMATION
+    if (initPluginWindowMac_CA(host, rval))
+        return rval;
+    else
+#endif
+#if FBMAC_USE_COREGRAPHICS
+    if (initPluginWindowMac_CG(host, rval))
+        return rval;
+    else
+#endif
+#if FBMAC_USE_QUICKDRAW
+#ifndef NP_NO_QUICKDRAW
+    if (initPluginWindowMac_QD(host, rval))
+        return rval;
+    else
+#endif
+#endif
+        FBLOG_INFO("PluginCore", "NPDrawingModel=NONE");
+    return rval;
 }
 
 FB::PluginWindowMac* PluginWindowMac::createPluginWindowMac(NPDrawingModel drawingModel) {
