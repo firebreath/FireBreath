@@ -53,6 +53,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     SafeQueue*
     JSExceptions.h
     FBPointers.h
+    Shareable*
 )
 
 file (GLOB JSAPI_OBJECTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}

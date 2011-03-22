@@ -75,6 +75,10 @@ namespace FB
             {
                 return m_m;
             }
+            operator FB::variant()
+            {
+                return FB::variant(m_m);
+            }
         private:
             std::map<T,FB::variant> m_m;
         };

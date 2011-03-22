@@ -24,6 +24,8 @@ set(FB_EXPORT_FILE FireBreath_Exports.cmake)
 get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
 
 include(${FB_ROOT}/cmake/common.cmake)
+add_subdirectory(${FB_ROOT}/cmake ${FB_BUILD_DIR}/cmake_common)
+
 if (APPLE)
     clear_xcode_patches()
 endif()
