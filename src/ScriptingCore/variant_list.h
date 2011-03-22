@@ -106,6 +106,10 @@ namespace FB
             {
                 return m_l;
             }
+            operator FB::variant()
+            {
+                return FB::variant(m_l);
+            }
         private:
             FB::VariantList m_l;
         };
