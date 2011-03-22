@@ -16,6 +16,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/assign/list_of.hpp>
 #include "APITypes.h"
 #include "variant_list.h"
+#include "variant_map.h"
 
 TEST(VariantListTest)
 {
@@ -65,3 +66,18 @@ TEST(VariantListTest)
     }
 }
 
+TEST(VariantListWithMapTest)
+{
+    PRINT_TESTNAME;
+
+    using FB::variant_list_of;
+    using FB::variant_map_of;
+    using FB::VariantList;
+    using FB::VariantMap;
+
+    VariantList testList = variant_list_of(23)("asdf")(variant_map_of<std::string>("num", 12)("bobb", "billy"));
+    CHECK(testList[0].convert_cast<int>() == 23);
+	VariantMap tmp = testList[2].convert_cast<VariantMap>();
+    CHECK(tmp["bobb"].convert_cast<std::string>() == "billy");
+    CHECK(tmp["num"].convert_cast<int>() == 12);
+}

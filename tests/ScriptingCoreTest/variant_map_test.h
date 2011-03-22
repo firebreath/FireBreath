@@ -43,3 +43,17 @@ TEST(VariantMapTest)
     }
 }
 
+TEST(VariantMapWithListTest)
+{
+    PRINT_TESTNAME;
+
+    using FB::variant_map_of;
+    using FB::variant_list_of;
+    using FB::VariantMap;
+    using FB::VariantList;
+
+    VariantMap testMap = variant_map_of<std::string>("num", 12)("bobb", "billy")("list", variant_list_of(1)(2)("asdf"));
+    CHECK(testMap["num"].convert_cast<int>() == 12);
+    CHECK(testMap["list"].cast<VariantList>()[0].convert_cast<int>() == 1);
+    CHECK(testMap["list"].cast<VariantList>()[1].convert_cast<int>() == 2);
+}
