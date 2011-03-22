@@ -100,6 +100,18 @@ set(PLUGIN_INTERNAL_DEPS
     ${FBLIB_LIBRARIES}
     )
 
+file (GLOB GENERATED
+    ${FB_TEMPLATE_DEST_DIR}/[^.]*
+    ${FB_TEMPLATE_DEST_DIR}/global/[^.]*
+    )
+
+file (GLOB WIN_GENERATED
+    ${FB_TEMPLATE_DEST_DIR}/[^.]*.rgs
+    ${FB_TEMPLATE_DEST_DIR}/[^.]*.def
+    ${FB_TEMPLATE_DEST_DIR}/[^.]*.rc
+    )
+SOURCE_GROUP(Generated FILES ${GENERATED})
+
 if (WIN32)
     set (PLUGIN_INTERNAL_DEPS
         ActiveXCore
@@ -107,14 +119,11 @@ if (WIN32)
         ${ATL_LIBRARY}
         psapi
         )
-
-    file (GLOB GENERATED
-        ${FB_TEMPLATE_DEST_DIR}/[^.]*.rgs
-        ${FB_TEMPLATE_DEST_DIR}/[^.]*.def
-        ${FB_TEMPLATE_DEST_DIR}/[^.]*.rc
-    )
-    SOURCE_GROUP(Generated FILES ${GENERATED})
-
+else()
+    set_source_files_properties(${WIN_GENERATED}
+        PROPERTIES
+            HEADER_FILE_ONLY 1
+        )
 endif(WIN32)
 
 if (APPLE)
