@@ -167,7 +167,7 @@ function (fb_check_boost)
             file(MAKE_DIRECTORY ${FB_BOOST_SOURCE_DIR})
         endif()
         if (NOT EXISTS ${FB_BOOST_SOURCE_DIR}/boost/)
-            set (FB_URL "https://github.com/firebreath/firebreath-boost/tarball/master" CACHE INTERNAL)
+            set (FB_URL "https://github.com/firebreath/firebreath-boost/tarball/master")
             message("Boost not found; downloading latest FireBreath-boost from GitHub (http://github.com/firebreath/firebreath-boost)")
             find_program(GIT git
                 PATHS
