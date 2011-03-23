@@ -24,11 +24,20 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "BasicMediaPlayerPluginMac.h"
 
 @interface MyCAOpenGLLayer : CAOpenGLLayer {}
+    GLfloat m_angle;
 @end
 
 @implementation MyCAOpenGLLayer
 
+- (id) init {
+    if ([super init]) {
+        m_angle = 0;
+    }
+    return self;
+}
+
 - (void)drawInCGLContext:(CGLContextObj)ctx pixelFormat:(CGLPixelFormatObj)pf forLayerTime:(CFTimeInterval)t displayTime:(const CVTimeStamp *)ts {
+    m_angle += 1;
 	GLsizei width = CGRectGetWidth([self bounds]), height = CGRectGetHeight([self bounds]);
     GLfloat halfWidth = width / 2, halfHeight = height / 2;
 
@@ -39,6 +48,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 	glOrtho(0, width, 0, height, -1.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+    glRotatef(m_angle, 0.0, 0.0, 1.0);
 
     // Clear the stage.
     glClearColor(0.0, 0.0, 0.0, 0.0);	     
