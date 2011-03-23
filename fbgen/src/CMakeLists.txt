@@ -34,5 +34,6 @@ SET( SOURCES
     ${GENERATED}
     )
 
-# This will include Win/projectDef.cmake, Linux/projectDef.cmake, etc
+# This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
+# depending on the platform
 include_platform()
