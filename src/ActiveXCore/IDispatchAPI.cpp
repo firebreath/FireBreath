@@ -410,23 +410,34 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
 	}
 
     size_t argCount(args.size());
-    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount]);
-    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount]);
+    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount + 1]);
+    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
     DISPPARAMS params;
-    params.cArgs = args.size();
-    params.cNamedArgs = 0;
+    DISPID tid = DISPID_THIS;
+    params.cArgs = args.size() + 1;
+    params.cNamedArgs = 1;
     params.rgvarg = rawComArgs.get();
-
-    for (size_t i = 0; i < args.size(); i++) {
-        browser->getComVariant(&comArgs[argCount - 1 - i], args[i]);
+    params.rgdispidNamedArgs = &tid; // Needed for IE9
+    
+    for (size_t i = 0; i < argCount; i++) {
+        browser->getComVariant(&comArgs[argCount - i], args[i]);
         // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
-        rawComArgs[argCount - 1 - i] = comArgs[argCount - 1 - i];
+        rawComArgs[argCount - i] = comArgs[argCount - i];
     }
+    comArgs[0] = m_obj; // Needed for IE 9
+    rawComArgs[0] = comArgs[0];
 
     CComVariant result;
 	CComExcepInfo exceptionInfo;
-    HRESULT hr = m_obj->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-        DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+    CComQIPtr<IDispatchEx> dispatchEx(m_obj);
+    HRESULT hr;
+    if (!dispatchEx) {
+        hr = m_obj->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
+            DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+    } else {
+        hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
+            DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+    }
     if (FAILED(hr)) {
         throw FB::script_error("Method invoke failed");
     }
