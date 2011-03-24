@@ -106,7 +106,8 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
         if (window->getJSObject()->HasProperty("console")) {
             FB::JSObjectPtr obj = window->getProperty<FB::JSObjectPtr>("console");
             printf("Logging: %s\n", req->m_msg.c_str());
-            obj->Invoke("log", FB::variant_list_of(req->m_msg));
+            if (obj)
+                obj->Invoke("log", FB::variant_list_of(req->m_msg));
         }
     } catch (const std::exception &) {
         // printf("Exception: %s\n", e.what());

@@ -8,7 +8,7 @@
  \**********************************************************/
 
 #include "FactoryBase.h"
-#ifdef FB_WIN32
+#if FB_WIN
 #include "BasicMediaPlayerPlugin.h"
 #else
 #include "Mac/BasicMediaPlayerPluginMac.h"
@@ -20,7 +20,7 @@ class PluginFactory : public FB::FactoryBase
 public:
     FB::PluginCorePtr createPlugin(const std::string& mimetype)
     {
-#ifdef FB_WIN32
+#if FB_WIN
         return boost::make_shared<BasicMediaPlayerPlugin>();
 #else
         return boost::make_shared<BasicMediaPlayerPluginMac>();
