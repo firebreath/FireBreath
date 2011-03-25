@@ -183,7 +183,10 @@ void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
 void FB::_asyncCallData::call()
 {
     if (func) {
-        func(userData); called = true; userData = NULL; func = NULL;
+        void (*f)(void *) = func;
+        func = NULL;
+        called = true;
+        f(userData); 
     }
 }
 
@@ -206,10 +209,11 @@ FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), voi
 void FB::AsyncCallManager::shutdown()
 {
     boost::recursive_mutex::scoped_lock _l(m_mutex);
-    std::for_each(DataList.begin(), DataList.end(), boost::lambda::bind(&_asyncCallData::call, boost::lambda::_1));
     // Store these so that they can be freed when the browserhost object is destroyed -- at that
     // point it's no longer possible for the browser to finish the async calls
     canceledDataList.insert(canceledDataList.end(), DataList.begin(), DataList.end());
+
+    std::for_each(DataList.begin(), DataList.end(), boost::lambda::bind(&_asyncCallData::call, boost::lambda::_1));
     DataList.clear();
 }
 
@@ -221,10 +225,18 @@ FB::AsyncCallManager::~AsyncCallManager()
 
 void asyncCallWrapper(void *userData)
 {
-    boost::scoped_ptr<FB::_asyncCallData> data(static_cast<FB::_asyncCallData*>(userData));
+    FB::_asyncCallData* data(static_cast<FB::_asyncCallData*>(userData));
     FB::AsyncCallManagerPtr ptr(data->mgr.lock());
     if (ptr) {
-        ptr->call(data.get());
+        ptr->call(data);
+        // Oddly enough, the callback is sometimes re-entrant, which can
+        // cause things to get moved around while the call is happening.
+        // This means that DataList may have been cleared, in which case
+        // the AsyncManager will be responsible for freeing things
+        if (ptr->DataList.size() > 0) {
+            ptr->DataList.remove(data);
+            delete data;
+        }
     }
 }
 
