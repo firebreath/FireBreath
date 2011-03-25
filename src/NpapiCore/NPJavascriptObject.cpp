@@ -23,8 +23,11 @@ NPJavascriptObject *NPJavascriptObject::NewObject(const NpapiBrowserHostPtr& hos
 {
     NPJavascriptObject *obj = static_cast<NPJavascriptObject *>(host->CreateObject(&NPJavascriptObjectClass));
 
-    obj->setAPI(api, host);
-    obj->m_autoRelease = auto_release;
+    if (obj) { // There are certain cases where this may have failed;
+               // If obj is null, return null; it's probably during shutdown
+        obj->setAPI(api, host);
+        obj->m_autoRelease = auto_release;
+    }
     return obj;
 }
 

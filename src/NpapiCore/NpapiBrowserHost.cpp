@@ -727,7 +727,8 @@ NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAP
     }
     if (!ret) {
         ret = NPJavascriptObject::NewObject(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), api, true);
-        m_cachedNPObject[ptr.get()] = ret->getWeakReference();
+        if (ret)
+            m_cachedNPObject[ptr.get()] = ret->getWeakReference();
     }
     return ret;
 }

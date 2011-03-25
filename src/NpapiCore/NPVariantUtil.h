@@ -212,9 +212,12 @@ namespace FB { namespace Npapi
                 host->retainJSAPIPtr(obj);
                 outObj = host->getJSAPIWrapper(var.cast<FB::JSAPIPtr>(), true);
             }
-            
-            npv.type = NPVariantType_Object;
-            npv.value.objectValue = outObj;
+            if (outObj) {
+                npv.type = NPVariantType_Object;
+                npv.value.objectValue = outObj;
+            } else {
+                npv.type = NPVariantType_Null;
+            }
         }
         else
         {
