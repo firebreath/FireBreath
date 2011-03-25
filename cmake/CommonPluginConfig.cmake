@@ -119,6 +119,12 @@ if (WIN32)
         ${ATL_LIBRARY}
         psapi
         )
+    file (GLOB IDL_FILES
+        ${FB_TEMPLATE_DEST_DIR}/*.idl)
+    set_source_files_properties(${IDL_FILES}
+        PROPERTIES
+            HEADER_FILE_ONLY 1
+        )
 else()
     set_source_files_properties(${WIN_GENERATED}
         PROPERTIES
