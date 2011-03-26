@@ -184,10 +184,15 @@
             addTest("attachedFireEvent", "Simple event bind attach and fire test");
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
+<<<<<<< HEAD
             addTest("postURL", "Download stream (POST)");
             //addTest("dangerousInject", "Dangerous injection");
             addTest("calltest", "Function.call method");
             addTest("applytest", "Function.apply method");
+=======
+            addTest("postURL", "Download stream (POST)");            
+            addTest("testSetTimeout", "SetTimeout Timer functionality.");
+>>>>>>> Adding Windows Timer functionality.
             markFailed("loaded");
             markFailed("loaded2");
             injectPlugin($("#pluginContainer"), pluginLoaded);
@@ -514,6 +519,10 @@
             } else {
                 markFailed("calltest");
             }
+			var setTimeoutCallback = function() {
+				console.warn("SetTimeout completed"); markPassed("testSetTimeout");}
+				// don't know how to set failed timeout.
+			plugin.setTimeout(setTimeoutCallback, 3000);
         }
         function PasswordDlg(message, onComplete) 
         {
