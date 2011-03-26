@@ -17,6 +17,11 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB;
 
+TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)
+{
+	return boost::shared_ptr<FB::Timer>(new WinTimer(_duration, _recursive, _callback));
+}
+
 std::map<unsigned, Timer *> timers;
 
 WinTimer::WinTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)

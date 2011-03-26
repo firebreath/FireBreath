@@ -13,9 +13,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "Timer.h"
-#include "Win/WinTimer.h"
-
-
 
 using namespace FB;
 
@@ -27,11 +24,6 @@ Timer::Timer(long _duration, bool _recursive, TimerCallbackFunc _callback)
 	recursive(_recursive),
 	cb(_callback)
 {
-}
-
-TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)
-{
-	return boost::shared_ptr<FB::Timer>(new WinTimer(_duration, _recursive, _callback));
 }
 
 void Timer::callback()
