@@ -46,8 +46,16 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
-            RefreshEvent ev;
-            return window->SendEvent(&ev);
+            if (window->getDrawingModel() == PluginWindowMac::DrawingModelCoreGraphics) {
+                FB::Rect bounds = { evt->data.draw.y, evt->data.draw.x,
+                    evt->data.draw.y + evt->data.draw.height,
+                    evt->data.draw.x + evt->data.draw.width };
+                CoreGraphicsDraw ev(evt->data.draw.context, bounds, bounds);
+                return window->SendEvent(&ev);
+            } else {
+                RefreshEvent ev;
+                return window->SendEvent(&ev);
+            }
             break;
         }
 

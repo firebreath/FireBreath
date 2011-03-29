@@ -143,8 +143,21 @@ int16_t PluginEventMacCarbon::HandleEvent(void* event)
     
         case updateEvt:
         {
-            RefreshEvent refEv;
-            return pluginWindow->SendEvent(&refEv);
+            FB::Rect bounds = pluginWindow->getWindowPosition(), clip = pluginWindow->getWindowClipping();
+            switch(pluginWindow->getDrawingModel()) {
+                case PluginWindowMac::DrawingModelCoreGraphics: {
+                    CoreGraphicsDraw ev((CGContextRef)pluginWindow->getDrawingPrimitive(), bounds, clip);
+                    return pluginWindow->SendEvent(&ev);
+                } break;
+                case PluginWindowMac::DrawingModelQuickDraw: {
+                    QuickDrawDraw ev((CGrafPtr) pluginWindow->getDrawingPrimitive(), bounds, clip);
+                    return pluginWindow->SendEvent(&ev);
+                } break;
+                default: {
+                    RefreshEvent ev;
+                    return pluginWindow->SendEvent(&ev);
+                } break;
+            }
             break;
         }
         default:

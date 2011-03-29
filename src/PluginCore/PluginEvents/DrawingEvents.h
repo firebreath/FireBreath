@@ -17,6 +17,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_PLUGINEVENTS_DRAWINGEVENTS
 
 #include "PluginEvent.h"
+#include "APITypes.h"
+
+#ifndef XP_MACOSX
+#define CGContextRef void*
+#else
+#include "npapi.h"
+#endif
 
 namespace FB {
 
@@ -46,6 +53,40 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class RefreshEvent : public PluginEvent
     {
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  QuickDrawDraw
+    ///
+    /// @brief  Mac QuickDraw Draw event
+    /// @since 1.5
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class QuickDrawDraw : public RefreshEvent
+    {
+    public:
+        QuickDrawDraw(CGrafPtr port, const FB::Rect& bounds, const FB::Rect& clip) 
+            : port(port), bounds(bounds), clip(clip) {}
+    public:
+        CGrafPtr port;
+        FB::Rect bounds;
+        FB::Rect clip;
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  CoreGraphicsDraw
+    ///
+    /// @brief  Mac CoreGraphics Draw event
+    /// @since 1.5
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class CoreGraphicsDraw : public RefreshEvent
+    {
+    public:
+        CoreGraphicsDraw(CGContextRef context, const FB::Rect& bounds, const FB::Rect& clip) 
+            : context(context), bounds(bounds), clip(clip) {}
+    public:
+        CGContextRef context;
+        FB::Rect bounds;
+        FB::Rect clip;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

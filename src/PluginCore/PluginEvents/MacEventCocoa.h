@@ -18,11 +18,13 @@ Copyright 2010 Firebreath development team
 
 #ifndef XP_MACOSX
 #define NPCocoaEvent void*
+#define CGContextRef void*
 #else
 #include "npapi.h"
 #endif
 
 #include "PluginEvent.h"
+#include "DrawingEvents.h"
 
 namespace FB {
 
@@ -43,25 +45,6 @@ namespace FB {
         NPCocoaEvent msg;
     };
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @class  MacEventCocoaDraw
-    ///
-    /// @brief  Cocoa Mac Draw event
-    ///
-    /// @author Richard Bateman
-    /// @date   10/15/2010
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class MacEventCocoaDraw : public PluginEvent
-    {
-    public:
-        MacEventCocoaDraw(CGContextRef context, double x, double y, 
-                          double width, double height) 
-            : m_context(context), m_x(x), m_y(y), m_width(width),   
-              m_height(height) {}
-    public:
-        CGContextRef m_context;
-        double m_x, m_y, m_width, m_height;
-    };
 };
 
 #endif

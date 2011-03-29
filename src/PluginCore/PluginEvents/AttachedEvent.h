@@ -39,6 +39,17 @@ namespace FB {
     class DetachedEvent : public PluginEvent
     {
     };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  ChangedEvent
+    ///
+    /// @brief  Fired when a PluginEventSink has changed in some fundamental way that the plugin needs
+    ///         to know about, such as a different drawing context being provided by the browser to a
+    ///         PluginWindow
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class ChangedEvent : public PluginEvent
+    {
+    };
 };
 
 #endif

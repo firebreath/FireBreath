@@ -17,6 +17,11 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "PluginEvents/MacEventCarbon.h"
 #include "PluginEvents/MacEventCocoa.h"
+#include "Mac/PluginWindowMac.h"
+#include "Mac/PluginWindowMacCG.h"
+#ifndef NP_NO_QUICKDRAW
+#include "Mac/PluginWindowMacQD.h"
+#endif
 
 #include "../BasicMediaPlayerPlugin.h"
 
@@ -27,21 +32,23 @@ public:
     virtual ~BasicMediaPlayerPluginMac();
 
     BEGIN_PLUGIN_EVENT_MAP()
-        EVENTTYPE_CASE(FB::MacEventCocoa, onMacEventCocoa, FB::PluginWindow)
-        EVENTTYPE_CASE(FB::MacEventCarbon, onMacEventCarbon, FB::PluginWindow)
+        EVENTTYPE_CASE(FB::CoreGraphicsDraw, onDrawCG, FB::PluginWindowMacCG)
+#ifndef NP_NO_QUICKDRAW
+        EVENTTYPE_CASE(FB::QuickDrawDraw, onDrawQD, FB::PluginWindowMacQD)
+#endif
 		else return BasicMediaPlayerPlugin::HandleEvent(evt, src);
     END_PLUGIN_EVENT_MAP()
 
-    virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow*);
-    virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow*);
-    virtual bool onMacEventCarbon(FB::MacEventCarbon *evt, FB::PluginWindow*);
-    virtual bool onMacEventCocoa(FB::MacEventCocoa *evt, FB::PluginWindow*);
-
+    virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMac*);
+    virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMac*);
 protected:
 #ifndef NP_NO_QUICKDRAW
+    bool onDrawQD(FB::QuickDrawDraw *evt, FB::PluginWindowMacQD*);
     void DrawQuickDraw(CGrafPtr port, const FB::Rect& bounds, const FB::Rect& clip);
 #endif
+    bool onDrawCG(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG*);
     void DrawCoreGraphics(CGContextRef context, const FB::Rect& bounds, const FB::Rect& clip);
+
     void DrawNSGraphicsContext(void *context, const FB::Rect& bounds, const FB::Rect& clip);
 
 private:

@@ -57,8 +57,8 @@ NPError PluginWindowMacQD::SetWindow(NPWindow* window)
         m_clipBottom = window->clipRect.bottom;
         m_clipRight = window->clipRect.right;
         
-        AttachedEvent evt2;
-        SendEvent(&evt2);
+        ChangedEvent evt;
+        SendEvent(&evt);
         return NPERR_NO_ERROR;
     }
     

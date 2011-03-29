@@ -106,9 +106,8 @@ BasicMediaPlayerPluginMac::~BasicMediaPlayerPluginMac()
     }
 }
 
-bool BasicMediaPlayerPluginMac::onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindow* win)
+bool BasicMediaPlayerPluginMac::onWindowAttached(FB::AttachedEvent* evt, FB::PluginWindowMac* wnd)
 {
-    FB::PluginWindowMac* wnd = dynamic_cast<FB::PluginWindowMac*>(win);
     if (FB::PluginWindowMac::DrawingModelCoreAnimation == wnd->getDrawingModel() || FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel()) {
         // Setup CAOpenGL drawing.
         MyCAOpenGLLayer* layer = [MyCAOpenGLLayer new];
@@ -128,41 +127,19 @@ bool BasicMediaPlayerPluginMac::onWindowAttached(FB::AttachedEvent* evt, FB::Plu
         txtlayer.needsDisplayOnBoundsChange = YES;
         [(CALayer*) wnd->getDrawingPrimitive() addSublayer:txtlayer];
     }
-    return BasicMediaPlayerPlugin::onWindowAttached(evt,win);
+    return BasicMediaPlayerPlugin::onWindowAttached(evt,wnd);
 }
 
-bool BasicMediaPlayerPluginMac::onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindow* win)
+bool BasicMediaPlayerPluginMac::onWindowDetached(FB::DetachedEvent* evt, FB::PluginWindowMac* wnd)
 {
-    return BasicMediaPlayerPlugin::onWindowDetached(evt,win);
-}
-
-bool BasicMediaPlayerPluginMac::onMacEventCarbon(FB::MacEventCarbon *evt, FB::PluginWindow* win) {
-    if (updateEvt == evt->msg.what) {
-        FB::PluginWindowMac* wnd = dynamic_cast<FB::PluginWindowMac*>(win);
-        FB::Rect bounds = wnd->getWindowPosition(), clip = wnd->getWindowClipping();
-#ifndef NP_NO_QUICKDRAW
-        if (FB::PluginWindowMac::DrawingModelQuickDraw == wnd->getDrawingModel())
-            DrawQuickDraw((CGrafPtr) wnd->getDrawingPrimitive(), bounds, clip);
-        else 
-#endif
-        if (FB::PluginWindowMac::DrawingModelCoreGraphics == wnd->getDrawingModel())
-            DrawCoreGraphics((CGContextRef) wnd->getDrawingPrimitive(), bounds, clip);
-    }
-    return true;
-}
-
-bool BasicMediaPlayerPluginMac::onMacEventCocoa(FB::MacEventCocoa *evt, FB::PluginWindow* win) {
-    if (NPCocoaEventDrawRect == evt->msg.type) {
-        FB::PluginWindowMac* wnd = dynamic_cast<FB::PluginWindowMac*>(win);
-        if (FB::PluginWindowMac::DrawingModelCoreGraphics == wnd->getDrawingModel()) {
-            FB::Rect bounds = { evt->msg.data.draw.y, evt->msg.data.draw.x, evt->msg.data.draw.y + evt->msg.data.draw.height, evt->msg.data.draw.x + evt->msg.data.draw.width };
-            DrawCoreGraphics(evt->msg.data.draw.context, bounds, bounds);
-        }
-    }
-    return true;
+    return BasicMediaPlayerPlugin::onWindowDetached(evt,wnd);
 }
 #ifndef NP_NO_QUICKDRAW
-void BasicMediaPlayerPluginMac::DrawQuickDraw(CGrafPtr port, const FB::Rect& bounds, const FB::Rect& clip) {
+bool BasicMediaPlayerPluginMac::onDrawQD(FB::QuickDrawDraw *evt, FB::PluginWindowMacQD* wnd)
+{
+    FB::Rect bounds(evt->bounds);
+    FB::Rect clip(evt->clip);
+    CGrafPtr port(evt->port);
 #if 0
     // Wrap a QuickDraw port with a CoreGraphics context.
     CGContextRef cgContext = NULL;
@@ -238,9 +215,15 @@ void BasicMediaPlayerPluginMac::DrawQuickDraw(CGrafPtr port, const FB::Rect& bou
         SetOrigin(portBounds.left, portBounds.top);
         if (swappedport) QDSwapPort(port, NULL);
     }
+    return true; // We have handled the event
 }
 #endif
-void BasicMediaPlayerPluginMac::DrawCoreGraphics(CGContextRef cgContext, const FB::Rect& bounds, const FB::Rect& clip) {
+bool BasicMediaPlayerPluginMac::onDrawCG(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG*)
+{
+    FB::Rect bounds(evt->bounds);
+    FB::Rect clip(evt->clip);
+    CGContextRef cgContext(evt->context);
+
 #if 0
     // Wrap a CoreGraphics context with a NSGraphics context.
     NSGraphicsContext *nsContext = [NSGraphicsContext graphicsContextWithGraphicsPort:cgContext flipped:YES];
@@ -301,6 +284,7 @@ void BasicMediaPlayerPluginMac::DrawCoreGraphics(CGContextRef cgContext, const F
         CGColorSpaceRelease(colorspace);
         CGContextRestoreGState(cgContext);
     }
+    return true; // This is handled
 }
 void BasicMediaPlayerPluginMac::DrawNSGraphicsContext(void *context, const FB::Rect& bounds, const FB::Rect& clip) {
     short width = bounds.right - bounds.left, height = bounds.bottom - bounds.top;
