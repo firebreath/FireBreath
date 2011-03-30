@@ -21,6 +21,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #ifndef XP_MACOSX
 #define CGContextRef void*
+#define CGrafPtr void*
 #else
 #include "npapi.h"
 #endif
