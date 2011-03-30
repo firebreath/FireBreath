@@ -252,8 +252,24 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
 
 bool NpapiBrowserHost::isSafari() const
 {
+    // Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_6; en-us) AppleWebKit/533.20.25 (KHTML, like Gecko) Version/5.0.4 Safari/533.20.27
     std::string agent(UserAgent());
-    return boost::algorithm::contains(agent, "Safari");
+    return boost::algorithm::contains(agent, "Safari") && !isChrome();
+}
+
+bool NpapiBrowserHost::isFirefox() const
+{
+    // Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0) Gecko/20100101 Firefox/4.0
+    // Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15 
+    std::string agent(UserAgent());
+    return boost::algorithm::contains(agent, "Firefox");
+}
+
+bool NpapiBrowserHost::isChrome() const
+{
+    // Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_6; en-US) AppleWebKit/534.16 (KHTML, like Gecko) Chrome/10.0.648.204 Safari/534.16
+    std::string agent(UserAgent());
+    return boost::algorithm::contains(agent, "Chrome");
 }
 
 void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)

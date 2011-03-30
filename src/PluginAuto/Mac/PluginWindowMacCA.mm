@@ -58,7 +58,10 @@ PluginWindowMacCA::~PluginWindowMacCA()
 int16_t PluginWindowMacCA::GetValue(NPPVariable variable, void *value) {
     MyCALayer *mlayer = (MyCALayer*) m_layer;
     if (NPPVpluginCoreAnimationLayer == variable) {
-        *(CALayer**) value = [mlayer retain];
+        if (m_npHost->isSafari())
+            *(CALayer**) value = [mlayer retain];
+        else
+            *(CALayer**) value = mlayer;
         FBLOG_INFO("PluginCore", "GetValue(NPPVpluginCoreAnimationLayer)=" << (void*) mlayer);
     }
     return NPERR_NO_ERROR;
