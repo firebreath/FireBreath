@@ -101,6 +101,7 @@ BasicMediaPlayerPluginMac::BasicMediaPlayerPluginMac() : m_layer(NULL) {}
 BasicMediaPlayerPluginMac::~BasicMediaPlayerPluginMac()
 {
     if (m_layer) {
+        [(CALayer*)m_layer removeFromSuperlayer];
         [(CALayer*)m_layer release];
         m_layer = NULL;
     }
