@@ -9,28 +9,58 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "Timer.h"
 
 using namespace FB;
 
-unsigned Timer::timerid = 0;
+TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)
+{
+	return boost::shared_ptr<FB::Timer>(new Timer(_duration, _recursive, _callback));
+}
 
 Timer::Timer(long _duration, bool _recursive, TimerCallbackFunc _callback)
-	: id(++Timer::timerid),
-	duration(_duration),
+	: duration(_duration),
 	recursive(_recursive),
-	cb(_callback)
+	cb(_callback),
+	timer(*(TimerService::instance()->getIOService()))
 {
 }
 
-void Timer::callback()
+Timer::~Timer()
 {
-	if (! this->recursive)
+	this->stop();
+}
+
+
+void Timer::callback(const boost::system::error_code& error)
+{
+	if (error)
 	{
-		this->stop();
+		if (error == boost::asio::error::operation_aborted)
+		{
+			return;
+		}
+		// TODO: prompt timer Error.
+		return;
+	}
+
+	if (this->recursive)
+	{
+		this->start();
 	}
 	if (cb) cb();
 }
+
+void Timer::start()
+{
+	timer.expires_from_now(boost::posix_time::milliseconds(duration));
+	timer.async_wait(boost::bind(&Timer::callback, this, boost::asio::placeholders::error));
+}
+bool Timer::stop()
+{
+	timer.cancel();
+	return false;
+}
+

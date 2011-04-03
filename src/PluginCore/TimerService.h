@@ -1,7 +1,7 @@
 /**********************************************************\ 
 Original Author: Mital Vora <mital.d.vora@gmail.com>
 
-Created:    Mar 26, 2011
+Created:    Apr 03, 2011
 License:    Dual license model; choose one of two:
             New BSD License
             http://www.opensource.org/licenses/bsd-license.php
@@ -11,36 +11,39 @@ License:    Dual license model; choose one of two:
 \**********************************************************/
 
 #pragma once
-#ifndef H_FB_TIMER_WIN32
-#define H_FB_TIMER_WIN32
+#ifndef H_FB_TIMER_SERVICE
+#define H_FB_TIMER_SERVICE
 
-#include <string>
-#include <windows.h>
-#include "Timer.h"
+#include <boost/asio.hpp>
+#include <boost/thread/thread.hpp>
 
 namespace FB {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @class  WinTimer
+    /// @class  TimerService
     ///
-    /// @brief  Windows Timer Utility 
+    /// @brief  TimerService Utility.
     ///         
-    /// Windows Timer Utility class which helps setting async callbacks to the same thread.
+    /// Timer Utility handles io_service and separate thread for Timer.
     /// 
     /// 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-	class WinTimer : public Timer
-    {
-	private:
-		unsigned loadTimeTimerID;
-
+	class TimerService
+	{
 	public:
-        WinTimer(long _duration, bool _recursive, TimerCallbackFunc _callback);
-        virtual ~WinTimer();
+		static TimerService* instance();
+		
+		boost::asio::io_service* getIOService();
+	protected:
+		static TimerService * inst;
+		TimerService();
+		~TimerService();
 
-		virtual void start();
-		virtual bool stop();
-    };
+	private:
+		std::auto_ptr<boost::asio::io_service> io_service;
+		std::auto_ptr<boost::asio::io_service::work> io_idlework;
+		std::auto_ptr<boost::thread> io_thread;
+	};
 };
 
 #endif

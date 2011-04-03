@@ -18,9 +18,10 @@ License:    Dual license model; choose one of two:
 #include <boost/function.hpp>
 
 #include "FBPointers.h"
-
+#include "TimerService.h"
 
 namespace FB {
+
 	FB_FORWARD_PTR(Timer);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -34,27 +35,22 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class Timer
     {
-		static unsigned timerid;
-
-	protected:
-
 		typedef boost::function<void (void)> TimerCallbackFunc;
 
-		const unsigned id;
+	private:
+		boost::asio::deadline_timer timer;
 		const long duration;
 		const bool recursive;
 		TimerCallbackFunc cb;
 
 		Timer(long _duration, bool _recursive, TimerCallbackFunc _callback);
+		void callback(const boost::system::error_code& error);
 
 	public:
-        virtual ~Timer() { };
+        ~Timer();
 
-		virtual void start()=0;
-		virtual bool stop()=0;
-		void callback();
-
-		unsigned getID() const { return id; }
+		void start();
+		bool stop();
 
 		static TimerPtr getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback);
     };
