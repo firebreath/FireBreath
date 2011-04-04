@@ -58,8 +58,8 @@ namespace FB {
         _asyncCallData* makeCallback(void (*func)(void *), void * userData );
         void call( _asyncCallData* data );
 
-        std::list<_asyncCallData*> DataList;
-        std::list<_asyncCallData*> canceledDataList;
+        std::set<_asyncCallData*> DataList;
+        std::set<_asyncCallData*> canceledDataList;
     };
 }
 
@@ -200,16 +200,26 @@ void FB::_asyncCallData::call()
 
 void FB::AsyncCallManager::call( _asyncCallData* data )
 {
-    data->call();
-    boost::recursive_mutex::scoped_lock _l(m_mutex);
-    DataList.remove(data);
+    {
+        // Verify _asyncCallData is still in DataList. If not, the _asyncCallData has already been dealt with. 
+        boost::recursive_mutex::scoped_lock _l(m_mutex);
+        std::set<_asyncCallData*>::iterator fnd = DataList.find(data);
+        if (DataList.end() != fnd)
+            DataList.erase(fnd);
+        else
+            data = NULL;
+    }
+    if (data) {
+        data->call();
+        delete data;
+    }
 }
 
 FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), void * userData)
 {
     boost::recursive_mutex::scoped_lock _l(m_mutex);
     _asyncCallData *data = new _asyncCallData(func, userData, ++lastId, shared_from_this());
-    DataList.push_back(data);
+    DataList.insert(data);
     return data;
 }
 
@@ -218,7 +228,7 @@ void FB::AsyncCallManager::shutdown()
     boost::recursive_mutex::scoped_lock _l(m_mutex);
     // Store these so that they can be freed when the browserhost object is destroyed -- at that
     // point it's no longer possible for the browser to finish the async calls
-    canceledDataList.insert(canceledDataList.end(), DataList.begin(), DataList.end());
+    canceledDataList.insert(DataList.begin(), DataList.end());
 
     std::for_each(DataList.begin(), DataList.end(), boost::lambda::bind(&_asyncCallData::call, boost::lambda::_1));
     DataList.clear();
@@ -232,18 +242,11 @@ FB::AsyncCallManager::~AsyncCallManager()
 
 void asyncCallWrapper(void *userData)
 {
+    // Verify AsyncCallManager still exists. If not, the _asyncCallData has already been dealt with.
     FB::_asyncCallData* data(static_cast<FB::_asyncCallData*>(userData));
     FB::AsyncCallManagerPtr ptr(data->mgr.lock());
     if (ptr) {
         ptr->call(data);
-        // Oddly enough, the callback is sometimes re-entrant, which can
-        // cause things to get moved around while the call is happening.
-        // This means that DataList may have been cleared, in which case
-        // the AsyncManager will be responsible for freeing things
-        if (ptr->DataList.size() > 0) {
-            ptr->DataList.remove(data);
-            delete data;
-        }
     }
 }
 
