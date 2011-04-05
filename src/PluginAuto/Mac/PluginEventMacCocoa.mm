@@ -25,9 +25,14 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "PluginWindowMac.h"
 #include "PluginEventMacCocoa.h"
 
+#include <AppKit/AppKit.h>
+
 using namespace FB; using namespace std;
 
-PluginEventMacCocoa::PluginEventMacCocoa() {}
+PluginEventMacCocoa::PluginEventMacCocoa() :
+	m_lastModifierFlags(0)
+{
+}
 
 PluginEventMacCocoa::~PluginEventMacCocoa() {}
 
@@ -37,12 +42,16 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
     if (!window)
         return false;
 
+//	if(evt) {
+//		NSLog(@"Event type: %d", evt->type);
+//	}
+	
     // Let the plugin handle the event if it wants
     MacEventCocoa macEv(evt);
     if(window->SendEvent(&macEv)) {
         return true;
     }
-
+	
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
@@ -129,9 +138,9 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         }
 
         case NPCocoaEventKeyDown: {
-            int key = (int)evt->data.key.keyCode;
-            NSString* str = (NSString *)evt->data.key.characters;
-            char character = [str characterAtIndex:0];
+            uint16_t key = (int)evt->data.key.keyCode;
+            NSString* str = (NSString *)evt->data.key.charactersIgnoringModifiers;
+            char character = [[str lowercaseString] characterAtIndex:0];
             KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), character);
             bool rtn = window->SendEvent(&ev);
             return rtn;
@@ -139,14 +148,16 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         }
 
         case NPCocoaEventKeyUp: {
-            int key = (int)evt->data.key.keyCode;
-            //char character = mapCharacter(key);
-            KeyUpEvent ev(CocoaKeyCodeToFBKeyCode(key), key);
+            uint16_t key = (int)evt->data.key.keyCode;
+            NSString* str = (NSString *)evt->data.key.charactersIgnoringModifiers;
+            char character = [[str lowercaseString] characterAtIndex:0];
+            KeyUpEvent ev(CocoaKeyCodeToFBKeyCode(key), character);
             return window->SendEvent(&ev);
             break;
         }
 
         case NPCocoaEventFlagsChanged: {
+			return ProcessModifiers(evt->data.key.modifierFlags);
             break;
         }
 
@@ -173,4 +184,65 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
 
     // Event was not handled by the plugin
     return false;
+}
+
+int16_t PluginEventMacCocoa::ProcessModifiers(uint32_t modifierFlags) {
+    PluginWindowMacPtr window = m_PluginWindow.lock();
+    if (!window)
+        return false;
+	
+	uint32_t lastModifiers = m_lastModifierFlags;
+	m_lastModifierFlags = modifierFlags;
+
+	//NSLog(@"Modifiers: %u", modifierFlags);
+	
+	// Shift
+	if (modifierFlags & NSShiftKeyMask && !(lastModifiers & NSShiftKeyMask)) {
+		NSLog(@"Shift pressed!");
+		KeyDownEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
+		return window->SendEvent(&ev);
+	}
+	if (!(modifierFlags & NSShiftKeyMask) && lastModifiers & NSShiftKeyMask) {
+		NSLog(@"Shift depressed!");
+		KeyUpEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
+		return window->SendEvent(&ev);
+	}
+	
+	// Control
+	if (modifierFlags & NSControlKeyMask && !(lastModifiers & NSControlKeyMask)) {
+		NSLog(@"Control pressed!");
+		KeyDownEvent ev(FBKEY_CONTROL, NSControlKeyMask);
+		return window->SendEvent(&ev);
+	}
+	if (!(modifierFlags & NSControlKeyMask) && lastModifiers & NSControlKeyMask) {
+		NSLog(@"Control depressed!");
+		KeyUpEvent ev(FBKEY_CONTROL, NSControlKeyMask);
+		return window->SendEvent(&ev);
+	}
+	
+	// Option
+	if (modifierFlags & NSAlternateKeyMask && !(lastModifiers & NSAlternateKeyMask)) {
+		NSLog(@"Option pressed!");
+		KeyDownEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
+		return window->SendEvent(&ev);
+	}
+	if (!(modifierFlags & NSAlternateKeyMask) && lastModifiers & NSAlternateKeyMask) {
+		NSLog(@"Option depressed!");
+		KeyUpEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
+		return window->SendEvent(&ev);
+	}
+
+	// Command
+	if (modifierFlags & NSCommandKeyMask && !(lastModifiers & NSCommandKeyMask)) {
+		NSLog(@"Command pressed!");
+		KeyDownEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
+		return window->SendEvent(&ev);
+	}
+	if (!(modifierFlags & NSCommandKeyMask) && lastModifiers & NSCommandKeyMask) {
+		NSLog(@"Command depressed!");
+		KeyUpEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
+		return window->SendEvent(&ev);
+	}
+	
+	return false;
 }
