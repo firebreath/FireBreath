@@ -317,7 +317,7 @@ bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPV
   You might look at these as the "entry points" for the NPJavascriptObject
 \****************************************************************************/
 
-NPObject *NPJavascriptObject::Allocate(NPP npp, NPClass *aClass)
+NPObject *NPJavascriptObject::_Allocate(NPP npp, NPClass *aClass)
 {
     return (NPObject *)new NPJavascriptObject(npp);
 }
@@ -391,7 +391,7 @@ bool NPJavascriptObject::_Construct(NPObject *npobj, const NPVariant *args, uint
 // when you call NPN_CreateObject, and how it knows how to call functions on it
 NPClass NPJavascriptObject::NPJavascriptObjectClass = {
     NP_CLASS_STRUCT_VERSION_CTOR,
-    NPJavascriptObject::Allocate,
+    NPJavascriptObject::_Allocate,
     NPJavascriptObject::_Deallocate,
     NPJavascriptObject::_Invalidate,
     NPJavascriptObject::_HasMethod,

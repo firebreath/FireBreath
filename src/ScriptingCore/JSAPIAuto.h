@@ -112,7 +112,7 @@ namespace FB {
         JSAPIAuto(const SecurityZone& securityLevel, const std::string& description = "<JSAPI-Auto Secure Javascript Object>");
         typedef std::deque<SecurityZone> ZoneStack;
 
-        void init( );
+        void init();
 
         virtual ~JSAPIAuto();
 
