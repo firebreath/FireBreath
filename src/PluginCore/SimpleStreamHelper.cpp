@@ -31,7 +31,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHos
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, true, false, bufferSize));
+    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, cache, false, bufferSize));
     return ptr;
 }
 
@@ -119,7 +119,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         callback(true, parse_http_headers(stream->getHeaders()), data, received);
     callback.clear();
     self.reset();
-    return false;
+    return false; // Always return false to make sure the browserhost knows to let go of the object
 }
 
 bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * )
