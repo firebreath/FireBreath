@@ -31,7 +31,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHos
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, true, false, bufferSize));
+    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, cache, false, bufferSize));
     return ptr;
 }
 
@@ -46,7 +46,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost( const FB::BrowserHo
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createPostStream(uri.toString(), ptr, postdata, true, false, bufferSize));
+    FB::BrowserStreamPtr stream(host->createPostStream(uri.toString(), ptr, postdata, cache, false, bufferSize));
     return ptr;
 }
 
