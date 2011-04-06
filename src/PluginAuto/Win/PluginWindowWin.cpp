@@ -137,9 +137,8 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             return SendEvent(&ev);
         }
         case WM_SETCURSOR:
-        {
             SetCursor(LoadCursor(NULL, IDC_ARROW));
-        }
+            break;
         case WM_KEYUP:
         {
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
