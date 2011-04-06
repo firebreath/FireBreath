@@ -329,5 +329,8 @@ void ActiveXBrowserHost::DoDeferredRelease() const
 void FB::ActiveX::ActiveXBrowserHost::deferred_release( IDispatch* m_obj ) const
 {
     m_deferredObjects.push(m_obj);
+    if (isMainThread()) {
+        DoDeferredRelease();
+    }
 }
 
