@@ -59,6 +59,10 @@ namespace FB { namespace Npapi {
 
         virtual ~NPJavascriptObject(void);
 
+        bool isValid() {
+            return m_valid && !m_api.expired() && !m_browser.expired();
+        }
+
     private:
         NPJavascriptObject(NPP npp);
 

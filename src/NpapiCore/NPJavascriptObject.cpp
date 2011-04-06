@@ -62,14 +62,15 @@ void NPJavascriptObject::Invalidate()
 {
     m_valid = false;
     try {
-        getAPI()->invalidate();
+        if (!m_api.expired())
+            getAPI()->invalidate();
     } catch(const std::bad_cast&) {
     }
 }
 
 bool NPJavascriptObject::HasMethod(NPIdentifier name)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         std::string mName = getHost()->StringFromIdentifier(name);
         if (mName == "toString") return true;
@@ -84,7 +85,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
 }
 FB::variant FB::Npapi::NPJavascriptObject::NPO_addEventListener::exec( const std::vector<variant>& args )
 {
-    if (args.size() > 1 && args.size() < 4) {
+    if (obj->isValid() && args.size() > 1 && args.size() < 4) {
         try {
             std::string evtName = "on" + args[0].convert_cast<std::string>();
             FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
@@ -100,7 +101,7 @@ FB::variant FB::Npapi::NPJavascriptObject::NPO_addEventListener::exec( const std
 
 FB::variant FB::Npapi::NPJavascriptObject::NPO_removeEventListener::exec( const std::vector<variant>& args )
 {
-    if (args.size() > 1 && args.size() < 4) {
+    if (obj->isValid() && args.size() > 1 && args.size() < 4) {
         try {
             std::string evtName = "on" + args[0].convert_cast<std::string>();
             FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
@@ -116,7 +117,7 @@ FB::variant FB::Npapi::NPJavascriptObject::NPO_removeEventListener::exec( const 
 bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     VOID_TO_NPVARIANT(*result);
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         std::string mName;
         NpapiBrowserHostPtr browser(getHost());
@@ -148,7 +149,7 @@ bool NPJavascriptObject::InvokeDefault(const NPVariant *args, uint32_t argCount,
 
 bool NPJavascriptObject::HasProperty(NPIdentifier name)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         NpapiBrowserHostPtr browser(getHost());
         // Handle numeric identifiers
@@ -178,7 +179,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
 
 bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         NpapiBrowserHostPtr browser(getHost());
         FB::variant res;
@@ -214,7 +215,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
 
 bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         NpapiBrowserHostPtr browser(getHost());
         FB::variant arg = browser->getVariant(value);
@@ -248,7 +249,7 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
 
 bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         NpapiBrowserHostPtr browser(getHost());
         if (browser->IdentifierIsString(name)) {
@@ -270,7 +271,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
 
 bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         typedef std::vector<std::string> StringArray;
         StringArray memberList;
@@ -301,7 +302,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
 
 bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-    if (!m_valid) return false;
+    if (!isValid()) return false;
     try {
         // TODO: add support for constructing
         return false;
