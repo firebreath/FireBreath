@@ -37,12 +37,20 @@ namespace FB { namespace ActiveX {
         static boost::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
         virtual ~IDispatchAPI(void);
 
-        void *getEventId() const { return (void*)m_obj; }
+        void *getEventId() const
+        {
+            IDispatchSRef sref(m_obj.lock());
+            if (sref) return (void*)sref->getPtr();
+            else return NULL;
+        }
         void *getEventContext() const {
             if (m_browser.expired()) return NULL;
             else return getHost()->getContextID();
         };
-        IDispatch *getIDispatch() const { return m_obj; }
+        IDispatch* getIDispatch() const {
+            IDispatchSRef sref(m_obj);
+            return sref->getPtr();
+        }
 
         // Enumerate members
         void getMemberNames(std::vector<std::string> &nameVector) const;
@@ -57,7 +65,7 @@ namespace FB { namespace ActiveX {
             return ptr;
         }
         ActiveXBrowserHostWeakPtr m_browser;
-        IDispatch* m_obj;
+        IDispatchWRef m_obj;
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
 

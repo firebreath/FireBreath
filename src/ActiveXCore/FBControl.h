@@ -128,6 +128,11 @@ namespace FB {
             // Called when the control is deactivated when it's time to shut down
             STDMETHOD(InPlaceDeactivate)(void);
 
+	        STDMETHOD(Close)(DWORD dwSaveOption) {
+                shutdown();
+                return IOleObjectImpl<CFBControlX>::Close(dwSaveOption);
+            }
+
             /* IPersistPropertyBag calls */
             // This will be called once when the browser initializes the property bag (PARAM tags) 
             // Often (always?) this is only called if there are no items in the property bag
@@ -254,11 +259,7 @@ namespace FB {
         {
             HRESULT hr = IObjectWithSiteImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >::SetSite(pUnkSite);
             if (!pUnkSite || !pluginMain) {
-                m_webBrowser.Release();
-                m_serviceProvider.Release();
-                if (m_host)
-                    m_host->shutdown();
-                m_host.reset();
+                shutdown();
                 return hr;
             }
             m_serviceProvider = pUnkSite;
@@ -281,11 +282,7 @@ namespace FB {
         {
             HRESULT hr = IOleObjectImpl<CFBControlX>::SetClientSite (pClientSite);
             if (!pClientSite || !pluginMain) {
-                m_webBrowser.Release();
-                m_serviceProvider.Release();
-                if (m_host)
-                    m_host->shutdown();
-                m_host.reset();
+                shutdown();
                 return hr;
             }
 
@@ -344,7 +341,10 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceDeactivate( void )
         {
-            shutdown();
+            // We have to release all event handlers and other held objects at this point, because
+            // if we don't the plugin won't shut down properly; normally it isn't an issue to do
+            // so, but note that this gets called if you move the plugin around in the DOM!
+            m_host->ReleaseAllHeldObjects();
             HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::InPlaceDeactivate();
             return hr;
         }

@@ -26,6 +26,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "ComVariantUtil.h"
 #include "ActiveXFactoryDefinitions.h"
+#include <boost/smart_ptr/make_shared.hpp>
 
 using boost::assign::list_of;
 using namespace FB;
@@ -317,7 +318,7 @@ FB::BrowserStreamPtr ActiveXBrowserHost::_createStream(const std::string& url, c
     return stream;
 }
 
-bool isExpired(std::pair<void*, FB::WeakIDispatchRef> cur) {
+bool isExpired(std::pair<void*, FB::WeakIDispatchExRef> cur) {
     return cur.second.expired();
 }
 
@@ -344,13 +345,24 @@ FB::BrowserStreamPtr ActiveXBrowserHost::_createPostStream(const std::string& ur
 void ActiveXBrowserHost::DoDeferredRelease() const
 {
     assertMainThread();
-    IDispatch* deferred;
+    IDispatchWRef deferred;
     while (m_deferredObjects.try_pop(deferred)) {
-        deferred->Release();
+        if (deferred.expired())
+            continue;
+        IDispatchSRef ptr(deferred.lock());
+        IDispatchRefList::iterator it(m_heldIDispatch.begin());
+        IDispatchRefList::iterator end(m_heldIDispatch.end());
+        while (it != end) {
+            if (*it == ptr) {
+                m_heldIDispatch.erase(it);
+                break;
+            } else ++it;
+        }
+        ptr->getPtr()->Release();
     }
-    // Also remove any expired IDispatch WeakReferences
-    IDispatchRefMap::iterator iter = m_cachedIDispatch.begin();
-    IDispatchRefMap::iterator endIter = m_cachedIDispatch.end();
+    // Also remove any expired cached IDispatch WeakReferences
+    IDispatchExRefMap::iterator iter = m_cachedIDispatch.begin();
+    IDispatchExRefMap::iterator endIter = m_cachedIDispatch.end();
     while (iter != endIter) {
         if (isExpired(*iter))
             iter = m_cachedIDispatch.erase(iter);
@@ -360,9 +372,9 @@ void ActiveXBrowserHost::DoDeferredRelease() const
 }
 
 
-void FB::ActiveX::ActiveXBrowserHost::deferred_release( IDispatch* m_obj ) const
+void FB::ActiveX::ActiveXBrowserHost::deferred_release( const IDispatchWRef& obj ) const
 {
-    m_deferredObjects.push(m_obj);
+    m_deferredObjects.push(obj);
     if (isMainThread()) {
         DoDeferredRelease();
     }
@@ -377,7 +389,7 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
     if (!ptr)
         return getFactoryInstance()->createCOMJSObject(shared_from_this(), api, false);
 
-    IDispatchRefMap::iterator fnd = m_cachedIDispatch.find(ptr.get());
+    IDispatchExRefMap::iterator fnd = m_cachedIDispatch.find(ptr.get());
     if (fnd != m_cachedIDispatch.end()) {
         SharedIDispatchRef ref(fnd->second.lock());
         if (ref) {
@@ -396,4 +408,19 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
     return ret;
 }
 
+FB::ActiveX::IDispatchWRef FB::ActiveX::ActiveXBrowserHost::getIDispatchRef( IDispatch* obj )
+{
+    IDispatchSRef ref(boost::make_shared<FB::ShareableReference<IDispatch> >(obj));
+    obj->AddRef();
+    m_heldIDispatch.push_back(ref);
+    return ref;
+}
+
+void FB::ActiveX::ActiveXBrowserHost::ReleaseAllHeldObjects()
+{
+    for (IDispatchRefList::iterator it(m_heldIDispatch.begin()); it != m_heldIDispatch.end(); ++it) {
+        (*it)->getPtr()->Release();
+    }
+    m_heldIDispatch.clear();
+}
 
