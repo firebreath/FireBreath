@@ -36,7 +36,7 @@ public:
 #ifndef NP_NO_QUICKDRAW
         EVENTTYPE_CASE(FB::QuickDrawDraw, onDrawQD, FB::PluginWindowMacQD)
 #endif
-		else return BasicMediaPlayerPlugin::HandleEvent(evt, src);
+        PLUGIN_EVENT_MAP_CASCADE(BasicMediaPlayerPlugin)
     END_PLUGIN_EVENT_MAP()
 
     virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMac*);
