@@ -189,6 +189,7 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
     }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
+        browser->ReleaseVariantValue(&retVal);
         throw script_error(propertyName.c_str());
     } else {
         FB::variant ret = browser->getVariant(&retVal);
@@ -215,7 +216,9 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
     }
     NPVariant val;
     browser->getNPVariant(&val, value);
-    if (!browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val)) {
+    bool res = browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val);
+    browser->ReleaseVariantValue(&val);
+    if (!res) {
         throw script_error(propertyName.c_str());
     }
 }
@@ -289,6 +292,7 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     }
 
     if (!res) { // If the method call failed, throw an exception
+        browser->ReleaseVariantValue(&retVal);  // Always release the return value!
         throw script_error(methodName.c_str());
     } else {
         FB::variant ret = browser->getVariant(&retVal);
