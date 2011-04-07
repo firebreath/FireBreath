@@ -83,11 +83,13 @@ namespace FB { namespace ActiveX {
 
         FB::variant GetProperty(const std::string& propertyName);
         void SetProperty(const std::string& propertyName, const FB::variant& value);
+        void RemoveProperty(const std::string& propertyName);
         FB::variant GetProperty(int idx);
         void SetProperty(int idx, const FB::variant& value);
+        void RemoveProperty(int idx);
 
         FB::variant Invoke(const std::string& methodName, const FB::VariantList& args);
-        FB::JSObjectPtr Construct(const std::string& memberName, const FB::VariantList& args);
+        FB::variant Construct(const FB::VariantList& args);
 
     public:
         virtual FB::JSAPIPtr getJSAPI() const;

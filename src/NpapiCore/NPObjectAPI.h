@@ -71,12 +71,14 @@ namespace FB { namespace Npapi {
 
         variant GetProperty(const std::string& propertyName);
         void SetProperty(const std::string& propertyName, const variant& value);
+        void RemoveProperty(const std::string& propertyName);
         variant GetProperty(int idx);
         void SetProperty(int idx, const variant& value);
+        void RemoveProperty(int idx);
 
         variant Invoke(const std::string& methodName, const std::vector<variant>& args);
 
-        //FB::JSObjectPtr Construct(const std::string& memberName, const std::vector<variant>& args);
+        variant Construct(const std::vector<variant>& args);
     };
 
 }; };

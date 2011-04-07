@@ -628,6 +628,40 @@ namespace FB
         virtual void SetProperty(int idx, const variant& value) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @overload virtual variant RemoveProperty(const std::wstring& propertyName)
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void RemoveProperty(const std::wstring& propertyName)
+        {
+            return RemoveProperty(wstring_to_utf8(propertyName));
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant RemoveProperty(const std::string& propertyName) = 0
+        ///
+        /// @brief  Removes a property
+        ///
+        /// @param  propertyName    Name of the property. 
+        /// @since 1.5
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void RemoveProperty(const std::string& propertyName) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant RemoveProperty(int idx) = 0
+        ///
+        /// @brief  Removes an indexed property. 
+        ///
+        /// This can be used for providing array-style access on your object.  For example, the following
+        /// will result in a call to RemoveProperty with idx = 12:
+        /// @code
+        ///       delete document.getElementById("plugin")[12];
+        /// @endcode 
+        ///
+        /// @param  idx Zero-based index of the property to remove
+        /// @since 1.5
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void RemoveProperty(int idx) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args)
@@ -647,6 +681,21 @@ namespace FB
         /// @return result of method call 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual variant Construct(const std::vector<variant>& args) = 0
+        ///
+        /// @brief  Called by the browser to construct the JSAPI object.
+        /// @code
+        ///       var x = new MyJSAPIObject();
+        /// @endcode 
+        ///
+        /// @param  args        The arguments. 
+        ///
+        /// @return result of constructor call, the new object
+        /// @since 1.5
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual variant Construct(const std::vector<variant>& args) = 0;
 
     public:
         virtual void registerProxy(const JSAPIWeakPtr &ptr) const;

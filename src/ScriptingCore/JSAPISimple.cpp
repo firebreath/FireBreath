@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSAPISimple.h"
 
 using namespace FB;
-JSAPISimple::JSAPISimple(void)
+JSAPISimple::JSAPISimple(void) : m_allowRemoveProperty(false)
 {
     registerMethod( "toString", (CallMethodPtr)&JSAPISimple::callToString );
     registerMethod( "testEvent", (CallMethodPtr)&JSAPISimple::callFireEvent );
@@ -148,6 +148,14 @@ void JSAPISimple::SetProperty(const std::string& propertyName, const variant& va
     }
 }
 
+void JSAPISimple::RemoveProperty(const std::string& propertyName)
+{
+    if (!m_valid)
+        throw object_invalidated();
+
+    m_propertyMap.erase(propertyName);
+}
+
 bool JSAPISimple::HasProperty(int idx) const
 {
     if (!m_valid)
@@ -178,6 +186,16 @@ void JSAPISimple::SetProperty(int idx, const variant& value)
     throw invalid_member("Array index: " + variant(idx).convert_cast<std::string>());
 }
 
+void JSAPISimple::RemoveProperty(int idx)
+{
+    if (!m_valid)
+        throw object_invalidated();
+
+    // By default do not support indexing
+    // To use array style access, override this method in your API object
+    throw invalid_member("Array index: " + variant(idx).convert_cast<std::string>());
+}
+
 
 // Methods to manage methods on the API
 variant JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
@@ -191,5 +209,13 @@ variant JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB:
     } else {
         throw invalid_member(methodName);
     }    
+}
+
+variant JSAPISimple::Construct(const std::vector<FB::variant>& args)
+{
+    if (!m_valid)
+        throw object_invalidated();
+
+    throw invalid_member("constructor");
 }
 

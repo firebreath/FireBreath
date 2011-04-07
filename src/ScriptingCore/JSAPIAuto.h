@@ -173,6 +173,7 @@ namespace FB {
         virtual size_t getMemberCount() const;
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+        virtual variant Construct(const std::vector<variant>& args);
         virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
         virtual void unregisterMethod(const std::wstring& name)
@@ -271,8 +272,10 @@ namespace FB {
         
         virtual variant GetProperty(const std::string& propertyName);
         virtual void SetProperty(const std::string& propertyName, const variant& value);
+        virtual void RemoveProperty(const std::string& propertyName);
         virtual variant GetProperty(int idx);
         virtual void SetProperty(int idx, const variant& value);
+        virtual void RemoveProperty(int idx);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
@@ -313,6 +316,7 @@ namespace FB {
         /// @since 1.4a3
         /// @see registerAttribute
         /// @see setAttribute
+        /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::variant getAttribute(const std::string& name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -326,8 +330,22 @@ namespace FB {
         /// @since 1.4a3
         /// @see registerAttribute
         /// @see getAttribute
+        /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setAttribute(const std::string& name, const FB::variant& value);
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn public virtual void removeAttribute(const std::string& name)
+        ///
+        /// @brief   Removes the attribute with the given name
+        ///
+        /// @param  name    name of the attribute to remove
+        ///
+        /// @since 1.5
+        /// @see registerAttribute
+        /// @see setAttribute
+        /// @see getAttribute
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void unregisterAttribute(const std::string& name);
 
     protected:
         bool memberAccessible( ZoneMap::const_iterator it ) const
@@ -350,6 +368,7 @@ namespace FB {
         AttributeMap m_attributes;
         FB::StringSet m_reservedMembers;
         bool m_allowDynamicAttributes;
+        bool m_allowRemoveProperties;
         bool m_allowMethodObjects;
     };
 

@@ -87,6 +87,18 @@ public:
         return m_values[m_names[index]];
     }
 
+    void RemoveProperty(const std::string& propertyName) {
+        FB::VariantMap::iterator it = m_values.find(propertyName);
+        if(it != m_values.end())
+            m_values.erase(it);
+    }
+    
+    void RemoveProperty(int idx)
+    {
+        throw FB::script_error(std::string("Cannot remove property '") + boost::lexical_cast<std::string>(idx) + "'");
+    }
+    
+    FB::variant Construct(const std::vector<FB::variant>& args) { throw FB::script_error("Constructor is not implemented"); }
 private:
     FB::VariantMap m_values;
     StringVec m_names;

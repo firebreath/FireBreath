@@ -23,6 +23,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : FB::JSAPI(SecurityScope_Public),
     m_description(description),
     m_allowDynamicAttributes(true), 
+    m_allowRemoveProperties(false),
     m_allowMethodObjects(true)
 {
     init();
@@ -240,6 +241,28 @@ void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& 
     }
 }
 
+void FB::JSAPIAuto::RemoveProperty(const std::string& propertyName)
+{
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    if(!m_valid)
+        throw object_invalidated();
+
+    // If there is nothing with this name available in the current security context, 
+    // we throw an exception -- whether or not a real property exists
+    if (!memberAccessible(m_zoneMap.find(propertyName)))
+        throw invalid_member(propertyName);
+
+    if(m_allowRemoveProperties && m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end()) {
+        unregisterProperty(propertyName);
+    } else if (m_allowDynamicAttributes && m_attributes.find(propertyName) != m_attributes.end()
+               && !m_attributes[propertyName].readonly) {
+        unregisterAttribute(propertyName);
+    }
+
+    // If nothing is found matching, we'll just let it slide -- no sense causing exceptions
+    // when the end goal is reached already.
+}
+
 FB::variant FB::JSAPIAuto::GetProperty(int idx)
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
@@ -278,6 +301,21 @@ void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
     }
 }
 
+void FB::JSAPIAuto::RemoveProperty(int idx)
+{
+    if (!m_valid)
+        throw object_invalidated();
+
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    
+    std::string id(boost::lexical_cast<std::string>(idx));
+    if (m_allowDynamicAttributes && m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly) {
+        unregisterAttribute(id);
+    } else {
+        throw invalid_member(FB::variant(idx).convert_cast<std::string>());
+    }
+}
+
 FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
@@ -301,6 +339,15 @@ FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vect
     } else {
         throw invalid_member(methodName);
     }
+}
+
+FB::variant FB::JSAPIAuto::Construct(const std::vector<variant> &args)
+{
+    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+    if(!m_valid)
+        throw object_invalidated();
+
+    throw invalid_member("constructor");
 }
 
 FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
@@ -329,6 +376,20 @@ void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::varian
     Attribute attr = {value, readonly};
     m_attributes[name] = attr;
     m_zoneMap[name] = getZone();
+}
+
+void FB::JSAPIAuto::unregisterAttribute( const std::string& name )
+{
+    AttributeMap::iterator fnd = m_attributes.find(name);
+    if ( !fnd->second.readonly ) {
+        throw FB::script_error("Cannot remove read-only property " + name);
+    } else {
+        if (fnd != m_attributes.end())
+        {
+            m_attributes.erase(fnd);
+            m_zoneMap.erase(name);
+        }
+    }
 }
 
 FB::variant FB::JSAPIAuto::getAttribute( const std::string& name )

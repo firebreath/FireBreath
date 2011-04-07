@@ -344,7 +344,7 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
-            SetProperty(propertyName, value);
+            tmp->SetProperty(propertyName, value);
         return;
     }
 
@@ -383,10 +383,63 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     }
 }
 
+void IDispatchAPI::RemoveProperty(const std::string& propertyName)
+{
+    if (m_browser.expired())
+        return;
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        browser->CallOnMainThread(boost::bind((FB::RemovePropertyType)&IDispatchAPI::RemoveProperty, this, propertyName));
+        return;
+    }
+
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            RemoveProperty(propertyName);
+        return;
+    }
+
+    DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
+    if (dispId == DISPID_UNKNOWN) {
+        return;
+    }
+
+    HRESULT hr;
+    CComQIPtr<IDispatchEx> dispatchEx(m_obj);
+    if (dispatchEx) {
+        hr = dispatchEx->DeleteMemberByDispID(dispId);
+    } else {
+        // todo: IDispatch does not support removing properties. Do SetProperty(propertyName, undefined); instead?
+        throw FB::script_error("Could not remove property");
+    }
+
+    if (FAILED(hr)) {
+        return;
+    } else {
+        // todo: we should probably remove the name from the afxmap, but this is a bit hairy as described at
+        //        http://msdn.microsoft.com/en-us/library/sky96ah7(v=vs.94).aspx . So we'll ignore it for now.
+    }
+}
+
+
 FB::variant IDispatchAPI::GetProperty(int idx)
 {
     FB::variant sIdx(idx);
     return GetProperty(sIdx.convert_cast<std::string>());
+}
+
+void IDispatchAPI::RemoveProperty(int idx)
+{
+    if (is_JSAPI) {
+        FB::JSAPIPtr tmp = inner.lock();
+        if (tmp)
+            RemoveProperty(idx);
+    }
+
+    FB::variant sIdx(idx);
+    RemoveProperty(sIdx.convert_cast<std::string>());
 }
 
 void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
@@ -454,10 +507,46 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     return browser->getVariant(&result);
 }
 
-//FB::JSObjectPtr IDispatchAPI::Construct( const std::string& memberName, const FB::VariantList& args )
-//{
-//    return FB::JSObjectPtr();
-//}
+FB::variant IDispatchAPI::Construct(const std::vector<FB::variant>& args)
+{
+    if (m_browser.expired())
+        return FB::FBVoid();
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind((FB::ConstructType)&IDispatchAPI::Construct, this, args));
+
+    }
+
+    DISPID dispId = getIDForName(FB::utf8_to_wstring(""));
+    if (dispId == DISPID_UNKNOWN) {
+         throw FB::script_error("Constructor invoke failed");
+    }
+
+    size_t argCount(args.size());
+    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount]);
+    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount]);
+    DISPPARAMS params;
+    params.cArgs = args.size();
+    params.cNamedArgs = 0;
+    params.rgvarg = rawComArgs.get();
+
+    for (size_t i = 0; i < args.size(); i++) {
+        browser->getComVariant(&comArgs[argCount - 1 - i], args[i]);
+        // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
+        rawComArgs[argCount - 1 - i] = comArgs[argCount - 1 - i];
+    }
+
+    CComVariant result;
+    CComExcepInfo exceptionInfo;
+    HRESULT hr = m_obj->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
+        DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, NULL);
+    if (FAILED(hr)) {
+        throw FB::script_error("Method invoke failed");
+    }
+    
+    return browser->getVariant(&result);
+}
 
 FB::JSAPIPtr IDispatchAPI::getJSAPI() const
 {

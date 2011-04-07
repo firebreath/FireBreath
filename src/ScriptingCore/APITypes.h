@@ -170,10 +170,14 @@ namespace FB
 
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
+    /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
+    typedef variant (JSAPI::*ConstructType)(const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
     typedef void (JSAPI::*SetPropertyType)(const std::string&, const variant&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
     typedef variant (JSAPI::*GetPropertyType)(const std::string&);
+    /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
+    typedef void (JSAPI::*RemovePropertyType)(const std::string&);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @struct CatchAll

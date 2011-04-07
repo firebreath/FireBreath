@@ -150,10 +150,17 @@ namespace FB
         virtual void SetProperty(const std::wstring& propertyName, const variant& value);
         virtual void SetProperty(const std::string& propertyName, const variant& value);
 
+        virtual void RemoveProperty(const std::wstring& propertyName);
+        virtual void RemoveProperty(const std::string& propertyName);
+        
         virtual variant GetProperty(int idx);
         virtual void SetProperty(int idx, const variant& value);
+        virtual void RemoveProperty(int idx);
+
         virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+
+        virtual variant Construct(const std::vector<variant>& args);
     };
 
 };

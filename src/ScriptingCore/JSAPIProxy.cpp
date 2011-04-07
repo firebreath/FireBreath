@@ -221,6 +221,24 @@ void FB::JSAPIProxy::SetProperty( int idx, const variant& value )
     getAPI()->SetProperty(idx, value);
 }
 
+void FB::JSAPIProxy::RemoveProperty( const std::wstring& propertyName )
+{
+    FB::scoped_zonelock _l(getAPI(), getZone());
+    getAPI()->RemoveProperty(propertyName);
+}
+
+void FB::JSAPIProxy::RemoveProperty( const std::string& propertyName )
+{
+    FB::scoped_zonelock _l(getAPI(), getZone());
+    getAPI()->RemoveProperty(propertyName);
+}
+
+void FB::JSAPIProxy::RemoveProperty( int idx )
+{
+    FB::scoped_zonelock _l(getAPI(), getZone());
+    getAPI()->RemoveProperty(idx);
+}
+
 FB::variant FB::JSAPIProxy::Invoke( const std::wstring& methodName, const std::vector<variant>& args )
 {
     FB::scoped_zonelock _l(getAPI(), getZone());
@@ -231,5 +249,11 @@ FB::variant FB::JSAPIProxy::Invoke( const std::string& methodName, const std::ve
 {
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->Invoke(methodName, args);
+}
+
+FB::variant FB::JSAPIProxy::Construct( const std::vector<variant>& args )
+{
+    FB::scoped_zonelock _l(getAPI(), getZone());
+    return getAPI()->Construct(args);
 }
 

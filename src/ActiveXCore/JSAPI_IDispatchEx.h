@@ -444,10 +444,6 @@ namespace FB { namespace ActiveX {
 
                 std::vector<FB::variant> params;
                 if (pdp->cNamedArgs > 0 && pdp->rgdispidNamedArgs[0] == DISPID_THIS) {
-                    // TODO: Figure out why default function calls have an extra argument;
-                    // My theory is that the argument is the object we're calling this on,
-                    // since the first (last, since we reverse the order) argument passed
-                    // is an IDispatch object
                     if (id == 0)
                         wsName = L"";
                     for (int i = pdp->cArgs - 1; i >= 1; i--) {
@@ -463,6 +459,27 @@ namespace FB { namespace ActiveX {
                 
                 if(pvarRes)
                     m_host->getComVariant(pvarRes, rVal);
+
+            } else if (wFlags & DISPATCH_CONSTRUCT) {
+
+                std::vector<FB::variant> params;
+                if (pdp->cNamedArgs > 0 && pdp->rgdispidNamedArgs[0] == DISPID_THIS) {
+                    if (id == 0)
+                        wsName = L"";
+                    for (int i = pdp->cArgs - 1; i >= 1; i--) {
+                        params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+                    }
+                } else {
+                    for (int i = pdp->cArgs - 1; i >= 0; i--) {
+                        params.push_back(m_host->getVariant(&pdp->rgvarg[i]));
+                    }
+                }
+                FB::variant rVal;
+                rVal = api->Construct(params);
+                
+                if(pvarRes)
+                    m_host->getComVariant(pvarRes, rVal);
+
 
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
 
@@ -529,7 +546,29 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::DeleteMemberByDispID(DISPID id)
     {
-        return E_NOTIMPL;
+        FB::JSAPIPtr api;
+        try {
+            api = getAPI();
+        } catch (...) {
+            return S_FALSE;
+        }
+        if (!AxIdMap.idExists(id)) {
+            return S_FALSE;
+        }
+
+        std::wstring wsName;
+        try 
+        {
+            wsName = AxIdMap.getValueForId<std::wstring>(id);
+            api->RemoveProperty(wsName);
+        } catch (const FB::script_error& se) {
+            FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
+            return S_FALSE;
+        } catch (...) {
+            return S_FALSE;
+        }
+
+        return S_OK;
     }
 
     template <class T, class IDISP, const IID* piid>

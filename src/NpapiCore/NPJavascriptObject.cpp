@@ -257,9 +257,13 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
             if (getAPI()->HasEvent(sName)) {
                 FB::JSObjectPtr nullEvent;
                 getAPI()->setDefaultEventMethod(sName, nullEvent);
+            } else {
+                getAPI()->RemoveProperty(sName);
             }
+        } else {
+            getAPI()->RemoveProperty(browser->IntFromIdentifier(name));
         }
-        return false;
+        return true;
     } catch (const std::bad_cast&) {
         return false; // invalid object
     } catch(const script_error& e) {
@@ -302,10 +306,19 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
 
 bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
+    VOID_TO_NPVARIANT(*result);
     if (!isValid()) return false;
     try {
-        // TODO: add support for constructing
-        return false;
+        NpapiBrowserHostPtr browser(getHost());
+
+        std::vector<FB::variant> vArgs;
+        for (unsigned int i = 0; i < argCount; i++) {
+            vArgs.push_back(browser->getVariant(&args[i]));
+        }
+        // Default method call
+        FB::variant ret = getAPI()->Construct(vArgs);
+        browser->getNPVariant(result, ret);
+        return true;
     } catch (const std::bad_cast&) {
         return false; // invalid object
     } catch (const script_error& e) {
