@@ -51,6 +51,7 @@ namespace FB { namespace ActiveX {
             IDispatchSRef sref(m_obj);
             return sref->getPtr();
         }
+        void invalidate() { m_obj.reset(); }
 
         // Enumerate members
         void getMemberNames(std::vector<std::string> &nameVector) const;
