@@ -210,7 +210,7 @@ void UploadQueue::start_next_upload() {
         }
 
         if (queue_finished_callback)
-            queue_finished_callback(shared_ptr());
+            queue_finished_callback(shared_from_this());
         
         StatusUpdateEvent evt(d);
         SendEvent(&evt);
@@ -332,7 +332,7 @@ void UploadQueue::cancel() {
 
     queue.clear();
     status = UploadQueue::UPLOAD_COMPLETE;
-    if (queue_finished_callback) queue_finished_callback(shared_ptr());
+    if (queue_finished_callback) queue_finished_callback(shared_from_this());
 }
 
 void UploadQueue::sendUpdateEvent()

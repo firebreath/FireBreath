@@ -33,7 +33,7 @@ PluginEventSource::~PluginEventSource()
 
 void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 {
-    AttachObserver(sink->shared_ptr());
+    AttachObserver(sink->shared_from_this());
 }
 
 void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
@@ -47,7 +47,7 @@ void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
 
 void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 {
-    DetachObserver(sink->shared_ptr());
+    DetachObserver(sink->shared_from_this());
 }
 
 bool PluginEventSource::_deleteObserver( PluginEventSinkPtr sink, PluginEventSinkWeakPtr wptr )

@@ -123,8 +123,8 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
         GetValue(NPNVWindowNPObject, (void**)&window);
         GetValue(NPNVPluginElementNPObject, (void**)&element);
 
-        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_ptr())));
-        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_ptr())));
+        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_from_this())));
+        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_from_this())));
     } catch (...) {
         if (window)
             ReleaseObject(window);
@@ -238,7 +238,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = JSObjectPtr(new NPObjectAPI(npVar->value.objectValue, ptr_cast<NpapiBrowserHost>(shared_ptr())));
+            retVal = JSObjectPtr(new NPObjectAPI(npVar->value.objectValue, ptr_cast<NpapiBrowserHost>(shared_from_this())));
             break;
 
         case NPVariantType_Void:
@@ -285,7 +285,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         return;
     }
     
-    *dst = (it->second)(FB::ptr_cast<NpapiBrowserHost>(shared_ptr()), var);
+    *dst = (it->second)(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), var);
 }
 
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData) const

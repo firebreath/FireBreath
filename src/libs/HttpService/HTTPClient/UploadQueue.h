@@ -41,7 +41,7 @@ namespace HTTP {
         UploadQueue(const std::string& _name);
         virtual ~UploadQueue();
 
-        UploadQueuePtr shared_ptr() { return FB::ptr_cast<UploadQueue>(FB::PluginEventSource::shared_ptr()); }
+        UploadQueuePtr shared_from_this() { return FB::ptr_cast<UploadQueue>(FB::PluginEventSource::shared_from_this()); }
     
         bool hasFile(const std::wstring& filename);
         void addFile(const UploadQueueEntry& qe);

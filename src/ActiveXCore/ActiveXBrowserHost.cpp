@@ -138,8 +138,8 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 void ActiveXBrowserHost::initDOMObjects()
 {
     if (!m_window) {
-        m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
-        m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+        m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+        m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
     }
 }
 
@@ -161,7 +161,7 @@ FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
     CComPtr<IDispatch> dispatch;
     site->GetExtendedControl(&dispatch);
     CComQIPtr<IHTMLElement2> htmlElement(dispatch);
-    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_ptr())));
+    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -257,7 +257,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_ptr()))); 
+        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_from_this()))); 
         break;
 
     case VT_ERROR:
@@ -293,7 +293,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         return;
     }
     
-    outVar = (it->second)(FB::ptr_cast<ActiveXBrowserHost>(shared_ptr()), var);
+    outVar = (it->second)(FB::ptr_cast<ActiveXBrowserHost>(shared_from_this()), var);
 
     outVar.Detach(dest);
 }

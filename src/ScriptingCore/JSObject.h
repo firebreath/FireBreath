@@ -81,7 +81,7 @@ namespace FB
             if (m_host.expired()) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            getHost()->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
+            getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::InvokeType)&JSAPI::Invoke, this, methodName, args));
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ namespace FB
             if (m_host.expired()) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            getHost()->ScheduleOnMainThread(shared_ptr(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+            getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         }
 
         //virtual FB::JSObjectPtr Construct(const std::wstring& memberName, const std::vector<variant>& args);

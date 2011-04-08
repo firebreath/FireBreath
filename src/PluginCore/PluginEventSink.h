@@ -40,20 +40,6 @@ namespace FB {
         PluginEventSink() { };
         virtual ~PluginEventSink() { };
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn PluginEventSinkPtr shared_ptr()
-        ///
-        /// @brief  Get a shared_ptr to the current class
-        ///         
-        /// To get a shared_ptr to a child class of this, such as PluginCore, you can use ptr_cast:
-        /// @code
-        ///      FB::ptr_cast<FB::PluginCore>(shared_ptr());
-        /// @endcode
-        ///
-        /// @return shared_ptr for "this" pointer
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        PluginEventSinkPtr shared_ptr() { return shared_from_this(); }
-
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

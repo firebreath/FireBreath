@@ -385,16 +385,7 @@ namespace FB
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn BrowserHostPtr shared_ptr()
-        ///
-        /// @brief  Provides a BrowserHostPtr shared_ptr for use in situations where you would normally
-        ///         provide the "this" pointer.
-        ///
-        /// @return BrowerHostPtr for "this" pointer
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserHostPtr shared_ptr() { return shared_from_this(); }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn BrowserHostPtr shared_ptr()
+        /// @fn BrowserHostPtr getInstanceCount()
         ///
         /// @brief  Returns the count of how many BrowserHost object instances are active
         ///

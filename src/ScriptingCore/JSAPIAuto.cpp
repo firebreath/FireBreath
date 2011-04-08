@@ -361,7 +361,7 @@ FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
         if (fnd != m_methodObjectMap.end()) {
             return fnd->second;
         } else {
-            FB::JSFunctionPtr ptr(boost::make_shared<FB::JSFunction>(shared_ptr(), methodObjName, getZone()));
+            FB::JSFunctionPtr ptr(boost::make_shared<FB::JSFunction>(shared_from_this(), methodObjName, getZone()));
             m_methodObjectMap[boost::make_tuple(methodObjName, getZone())] = ptr;
             return ptr;
         }

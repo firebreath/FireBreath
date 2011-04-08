@@ -45,7 +45,7 @@ namespace FB
     ///     of extending JSAPI directly.
     ///   - Any time you work with a JSAPI object you should use it with a boost::shared_ptr. 
     ///     FB::JSAPIPtr is a typedef for a boost::shared_ptr<JSAPI> which may be useful.
-    ///     -  From inside the object you can use the shared_ptr() method to get a shared_ptr for
+    ///     -  From inside the object you can use the shared_from_this() method to get a shared_ptr for
     ///        "this"
     ///   - Objects passed in from javascript, including functions, will be passed in as FB::JSObject
     ///     objects which extend JSAPI.
@@ -73,18 +73,6 @@ namespace FB
         virtual ~JSAPI(void);
 
     public:
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn JSAPIPtr shared_ptr()
-        ///
-        /// @brief  Gets the shared pointer for "this"
-        ///
-        /// @return JSAPIPtr for "this"
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        JSAPIPtr shared_ptr()
-        {
-            return shared_from_this();
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void invalidate()

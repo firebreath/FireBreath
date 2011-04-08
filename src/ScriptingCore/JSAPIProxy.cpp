@@ -91,29 +91,29 @@ FB::JSAPIProxy::~JSAPIProxy( void )
 void FB::JSAPIProxy::changeObject( const FB::JSAPIWeakPtr &inner )
 {
     if (FB::JSAPIPtr ptr = m_apiWeak.lock()) {
-        ptr->unregisterProxy(shared_ptr());
+        ptr->unregisterProxy(shared_from_this());
     }
     this->m_api.reset();
     this->m_apiWeak = inner;
     FB::JSAPIPtr ptr = inner.lock();
     if (ptr)
-        ptr->registerProxy(shared_ptr());
+        ptr->registerProxy(shared_from_this());
 }
 
 void FB::JSAPIProxy::changeObject( const FB::JSAPIPtr &inner )
 {
     if (FB::JSAPIPtr ptr = m_apiWeak.lock()) {
-        ptr->unregisterProxy(shared_ptr());
+        ptr->unregisterProxy(shared_from_this());
     }
     this->m_api = inner;
     this->m_apiWeak = inner;
-    inner->registerProxy(shared_ptr());
+    inner->registerProxy(shared_from_this());
 }
 
 void FB::JSAPIProxy::reset()
 {
     if (FB::JSAPIPtr ptr = m_apiWeak.lock()) {
-        ptr->unregisterProxy(shared_ptr());
+        ptr->unregisterProxy(shared_from_this());
     }
     
 }

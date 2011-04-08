@@ -104,7 +104,7 @@ void JSAPI::FireEvent(const std::string& eventName, const std::vector<variant>& 
         return;
 
     {
-        FB::JSAPIPtr self(shared_ptr());
+        FB::JSAPIPtr self(shared_from_this());
         ProxyList::iterator proxyIt = m_proxies.begin();
         while (proxyIt != m_proxies.end()) {
             FB::JSAPIPtr proxy(proxyIt->lock());
@@ -132,7 +132,7 @@ void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantMap 
         return;
 
     {
-        FB::JSAPIPtr self(shared_ptr());
+        FB::JSAPIPtr self(shared_from_this());
         ProxyList::iterator proxyIt = m_proxies.begin();
         while (proxyIt != m_proxies.end()) {
             FB::JSAPIPtr proxy(proxyIt->lock());
@@ -153,7 +153,7 @@ void FB::JSAPI::FireJSEvent( const std::string& eventName, const FB::VariantMap 
     }
     
     FB::VariantList args;
-    args.push_back(FB::CreateEvent(shared_ptr(), eventName, members, arguments));
+    args.push_back(FB::CreateEvent(shared_from_this(), eventName, members, arguments));
 
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap.equal_range(eventName);
     for (EventMultiMap::iterator eventIt = range.first; eventIt != range.second; eventIt++) {
