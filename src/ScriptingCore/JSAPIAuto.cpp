@@ -20,7 +20,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <cassert>
 
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
-  : FB::JSAPI(SecurityScope_Public),
+  : FB::JSAPIImpl(SecurityScope_Public),
     m_description(description),
     m_allowDynamicAttributes(true), 
     m_allowRemoveProperties(false),
@@ -30,7 +30,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
 }
 
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
-  : FB::JSAPI(securityLevel),
+  : FB::JSAPIImpl(securityLevel),
     m_description(description),
     m_allowDynamicAttributes(true), 
     m_allowMethodObjects(true)

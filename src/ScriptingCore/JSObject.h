@@ -100,9 +100,6 @@ namespace FB
             }
             getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         }
-
-        //virtual FB::JSObjectPtr Construct(const std::wstring& memberName, const std::vector<variant>& args);
-        //virtual FB::JSObjectPtr Construct(const std::string& memberName, const std::vector<variant>& args) = 0;
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Cont> static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)

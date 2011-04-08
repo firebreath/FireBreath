@@ -49,6 +49,7 @@ namespace FB { namespace Npapi {
         size_t getMemberCount() const;
     public:
         virtual JSAPIPtr getJSAPI() const;
+        void invalidate() { inner.reset(); }
 
     protected:
         NpapiBrowserHostPtr getHost() const {

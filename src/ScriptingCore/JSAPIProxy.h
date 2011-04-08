@@ -17,7 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_JSAPIProxy
 
 #include "APITypes.h"
-#include "JSAPI.h"
+#include "JSAPIImpl.h"
 
 namespace FB
 {
@@ -42,7 +42,7 @@ namespace FB
     /// @see FB::JSAPI
     /// @see FB::JSAPIAuto
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JSAPIProxy : public JSAPI
+    class JSAPIProxy : public JSAPIImpl
     {
     protected:
         JSAPIProxy(const FB::JSAPIPtr &inner);

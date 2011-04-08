@@ -62,15 +62,14 @@ namespace FB
         ///
         /// @brief  Default constructor. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        JSAPI(void);
-        JSAPI( const SecurityZone& securityLevel );
+        JSAPI(void) {}
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~JSAPI(void)
         ///
         /// @brief  Finaliser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ~JSAPI(void);
+        virtual ~JSAPI(void) {}
 
     public:
 
@@ -79,96 +78,7 @@ namespace FB
         ///
         /// @brief  Invalidates this object.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void invalidate();
-
-    protected:
-        void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
-
-    protected:
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireEvent(const std::wstring& eventName, const std::vector<variant> &args)
-        {
-            FireEvent(wstring_to_utf8(eventName), args);
-        }
-        
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args)
-        ///
-        /// @brief  Fires an event into javascript asynchronously
-        ///         
-        /// This fires an event to all handlers attached to the given event in javascript.
-        /// 
-        /// IE:
-        /// @code
-        ///      document.getElementByID("plugin").attachEvent("onload", function() { alert("loaded!"); });
-        /// @endcode
-        /// Firefox/Safari/Chrome/Opera:
-        /// @code
-        ///      // Note that the convention used by these browsers is that "on" is implied
-        ///      document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
-        /// @endcode
-        ///
-        /// You can then fire the event -- from any thread -- from the JSAPI object like so:
-        /// @code
-        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
-        /// @endcode
-        ///         
-        /// Also note that registerEvent must be called from the constructor to register the event.
-        /// @code
-        ///      registerEvent("onload");
-        /// @endcode
-        /// 
-        /// @param  eventName   Name of the event.  This event must start with "on"
-        /// @param  args        The arguments that should be sent to each attached event handler
-        ///
-        /// @see registerEvent
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args);
-        
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @brief  Fires an event into javascript asynchronously using a W3C-compliant event parameter
-        ///         
-        /// This fires an event to all handlers attached to the given event in javascript. With a
-        /// W3C-compliant event parameter
-        /// 
-        /// IE:
-        /// @code
-        ///      document.getElementByID("plugin").attachEvent("onload", function() { alert("loaded!"); });
-        /// @endcode
-        /// Firefox/Safari/Chrome/Opera:
-        /// @code
-        ///      // Note that the convention used by these browsers is that "on" is implied
-        ///      document.getElementByID("plugin").addEventListener("load", function() { alert("loaded!"); }, false);;/.
-        /// @endcode
-        ///
-        /// You can then fire the event -- from any thread -- from the JSAPI object like so:
-        /// @code
-        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
-        /// @endcode
-        ///         
-        /// Also note that registerEvent must be called from the constructor to register the event.
-        /// @code
-        ///      registerEvent("onload");
-        /// @endcode
-        /// 
-        /// @param  eventName   Name of the event.  This event must start with "on"
-        /// @param  args        The arguments that should be sent to each attached event handler
-        ///
-        /// @see registerEvent
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
-        /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params)
-        {
-            FireJSEvent(eventName, params, FB::VariantList());
-        }
-        /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments)
-        {
-            FireJSEvent(eventName, FB::VariantMap(), arguments);
-        }
+        virtual void invalidate() = 0;
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -198,11 +108,7 @@ namespace FB
         /// @since 1.4a3
         /// @see FB::scoped_zonelock
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void pushZone(const SecurityZone& securityLevel)
-        {
-            m_zoneMutex.lock();
-            m_zoneStack.push_back(securityLevel);
-        }
+        virtual void pushZone(const SecurityZone& securityLevel) { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public  void FB::JSAPI::popZone()
@@ -215,11 +121,7 @@ namespace FB
         /// @since 1.4a3
         /// @see FB::scoped_zonelock
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void popZone()
-        {
-            m_zoneStack.pop_back();
-            m_zoneMutex.unlock();
-        }
+        virtual void popZone() { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public void setDefaultZone(const SecurityZone& securityLevel)
@@ -233,12 +135,7 @@ namespace FB
         /// @see popZone
         /// @see getDefaultZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultZone(const SecurityZone& securityLevel)
-        {
-            assert(m_zoneStack.size() > 0);
-            m_zoneStack.pop_front();
-            m_zoneStack.push_front(securityLevel);
-        }
+        virtual void setDefaultZone(const SecurityZone& securityLevel) { }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public virtual SecurityZone getDefaultZone() const
@@ -252,11 +149,7 @@ namespace FB
         /// @see popZone
         /// @see getDefaultZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual SecurityZone getDefaultZone() const
-        {
-            assert(m_zoneStack.size() > 0);
-            return m_zoneStack.front();
-        }
+        virtual SecurityZone getDefaultZone() const { return SecurityScope_Public; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public SecurityZone getZone() const
@@ -269,29 +162,7 @@ namespace FB
         /// @see pushZone
         /// @see popZone
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual SecurityZone getZone() const
-        {
-            assert(m_zoneStack.size() > 0);
-            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-            return m_zoneStack.back();
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEvent(const std::string& name)
-        ///
-        /// @brief  Register event so that event listeners can be added/attached from javascript
-        ///
-        /// @param  name    The name of the event to register.  This event must start with "on"
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEvent(const std::string& name);
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual void registerEvent(const std::wstring& name)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEvent(const std::wstring& name)
-        {
-            registerEvent(wstring_to_utf8(name));
-        }
-
+        virtual SecurityZone getZone() const { return SecurityScope_Public; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
@@ -301,7 +172,11 @@ namespace FB
         /// @param  name            The name. 
         /// @param  event           The event handler method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
+        {
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -318,7 +193,11 @@ namespace FB
         /// @param  name            The name. 
         /// @param  event           The event handler method to unregister. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
+        {
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -338,7 +217,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event)
         {
-            m_evtIfaces[static_cast<void*>(event.get())] = event;
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventInterface(const JSObjectPtr& event)
@@ -349,8 +229,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventInterface(const JSObjectPtr& event)
         {
-            EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
-            m_evtIfaces.erase(fnd);
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -375,7 +255,11 @@ namespace FB
         ///
         /// @return The default event method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const;
+        virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
+        {
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event)
@@ -390,7 +274,11 @@ namespace FB
         /// @param  name    The event name
         /// @param  event   The event handler method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event);
+        virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event)
+        {
+            // TODO: add support for this in IDispatchAPI and NPObjectAPI
+            throw FB::script_error("Not implemented");
+        }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -399,7 +287,18 @@ namespace FB
             setDefaultEventMethod(wstring_to_utf8(name), event);
         }
 
-        virtual void getMemberNames(std::vector<std::wstring> &nameVector) const;
+        virtual void getMemberNames(std::vector<std::wstring> &nameVector) const
+        {
+            nameVector.clear();
+            std::vector<std::string> utf8Vector;
+            getMemberNames(utf8Vector);
+            for (std::vector<std::string>::const_iterator it = utf8Vector.begin();
+                    it != utf8Vector.end(); ++it) {
+                std::wstring wStrVal(utf8_to_wstring(*it));
+                nameVector.push_back(wStrVal);
+            }
+        }
+
         virtual void getMemberNames(std::vector<std::wstring> *nameVector) const
         {
             getMemberNames(*nameVector);
@@ -513,7 +412,7 @@ namespace FB
         ///
         /// @return true if event registered, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasEvent(const std::string& eventName) const;
+        virtual bool HasEvent(const std::string& eventName) const { return false; }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasEvent(const std::wstring& eventName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -684,27 +583,6 @@ namespace FB
         /// @since 1.5
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Construct(const std::vector<variant>& args) = 0;
-
-    public:
-        virtual void registerProxy(const JSAPIWeakPtr &ptr) const;
-        virtual void unregisterProxy( const FB::JSAPIPtr& ptr ) const;
-
-    protected:
-        typedef std::deque<SecurityZone> ZoneStack;
-        // Stores event handlers
-        EventMultiMap m_eventMap;       
-        // Stores event-as-property event handlers
-        EventSingleMap m_defEventMap;   
-        // Stores event interfaces
-        EventIFaceMap m_evtIfaces;      
-
-        typedef std::vector<JSAPIWeakPtr> ProxyList;
-        mutable ProxyList m_proxies;
-
-        mutable boost::recursive_mutex m_zoneMutex;
-        ZoneStack m_zoneStack;
-                
-        bool m_valid;                   // Tracks if this object has been invalidated
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

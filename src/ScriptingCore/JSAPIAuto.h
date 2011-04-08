@@ -16,7 +16,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef JSAPIAUTO_H
 #define JSAPIAUTO_H
 
-#include "JSAPI.h"
+#include "JSAPIImpl.h"
 #include "MethodConverter.h"
 #include "PropertyConverter.h"
 #include <deque>
@@ -90,7 +90,7 @@ namespace FB {
     /// @see PluginCore
     /// @author Georg Fritzsche
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JSAPIAuto : public JSAPI
+    class JSAPIAuto : public JSAPIImpl
     {
     protected:
         struct Attribute {
