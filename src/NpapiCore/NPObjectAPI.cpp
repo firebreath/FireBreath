@@ -320,6 +320,59 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     }
 }
 
+void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, const FB::VariantList& args, const std::vector<JSObjectPtr>& direct, const std::vector<JSObjectPtr>& ifaces )
+{
+    if (!isValid())
+        throw FB::script_error("Error calling handlers");
+
+    NpapiBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind(&NPObjectAPI::callMultipleFunctions, this, name, args, direct, ifaces));
+    }
+    NPVariant retVal;
+
+    // Convert the arguments to NPVariants
+    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size()]);
+    for (unsigned int i = 0; i < args.size(); i++) {
+        browser->getNPVariant(&npargs[i], args[i]);
+    }
+
+    bool res = false;
+    std::vector<JSObjectPtr>::const_iterator it(direct.begin());
+    std::vector<JSObjectPtr>::const_iterator end(direct.end());
+    for (it; it != end; ++it) {
+        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+        if (ptr->is_JSAPI) {
+            FB::JSAPIPtr tmp = ptr->inner.lock();
+            if (tmp) {
+                tmp->Invoke("", args);
+                continue;
+            }
+        }
+        res = browser->InvokeDefault(ptr->getNPObject(), npargs.get(), args.size(), &retVal);
+        browser->ReleaseVariantValue(&retVal);
+    }
+    it = ifaces.begin();
+    end = ifaces.end();
+    NPIdentifier id(browser->GetStringIdentifier(name.c_str()));
+    for (it; it != end; ++it) {
+        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+        if (ptr->is_JSAPI) {
+            FB::JSAPIPtr tmp = ptr->inner.lock();
+            if (tmp) {
+                tmp->Invoke("", args);
+                continue;
+            }
+        }
+        res = browser->Invoke(ptr->getNPObject(), id, npargs.get(), args.size(), &retVal);
+        browser->ReleaseVariantValue(&retVal);
+    }
+    // Free the NPVariants that we earlier allocated
+    for (unsigned int i = 0; i < args.size(); i++) {
+        browser->ReleaseVariantValue(&npargs[i]);
+    }
+}
+
 FB::variant NPObjectAPI::Construct( const FB::VariantList& args )
 {
     if (m_browser.expired())

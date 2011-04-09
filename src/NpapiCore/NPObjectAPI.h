@@ -51,6 +51,10 @@ namespace FB { namespace Npapi {
         virtual JSAPIPtr getJSAPI() const;
         void invalidate() { inner.reset(); }
         bool isValid() { return !m_browser.expired(); }
+        virtual bool supportsOptimizedCalls() const { return true; }
+        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+                                           const std::vector<JSObjectPtr>& direct,
+                                           const std::vector<JSObjectPtr>& ifaces);
 
     protected:
         NpapiBrowserHostPtr getHost() const {
