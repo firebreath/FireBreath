@@ -28,6 +28,7 @@ FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func
 
 void FB::JSFunction::init()
 {
+    m_allowMethodObjects = false;
     // There are no reserved members on this object
     m_reservedMembers.clear();
 }
@@ -42,9 +43,28 @@ FB::variant FB::JSFunction::exec( const std::vector<variant>& args )
     return api->Invoke(m_methodName, args);
 }
 
+FB::variant FB::JSFunction::call( const std::vector<variant>& args )
+{
+    FB::VariantList list;
+    if (args.size() >= 1) {
+        list.insert(list.end(), args.begin()+1, args.end());
+    }
+    return exec(list);
+}
+
+FB::variant FB::JSFunction::apply( const std::vector<variant>& args )
+{
+    FB::VariantList list;
+    if (args.size() >= 2) {
+        list = args[1].convert_cast<FB::VariantList>();
+    }
+    return exec(list);
+}
+
+
 bool FB::JSFunction::HasMethod( const std::string& methodName ) const
 {
-    if (methodName == "") {
+    if (methodName == "" || methodName == "apply" || methodName == "call") {
         return true;
     } else {
         return FB::JSAPIAuto::HasMethod(methodName);
@@ -55,8 +75,23 @@ FB::variant FB::JSFunction::Invoke( const std::string& methodName, const std::ve
 {
     if (methodName == "") {
         return exec(args);
+    } else if (methodName == "call") {
+        return call(args);
+    } else if (methodName == "apply") {
+        return apply(args);
     } else {
         return FB::JSAPIAuto::Invoke(methodName, args);
     }
 }
+
+bool FB::JSFunction::HasProperty( const std::string& propName ) const
+{
+    if (propName == "call" || propName == "apply")
+        return false;
+    else
+        return FB::JSAPIAuto::HasProperty(propName);
+}
+
+
+
 

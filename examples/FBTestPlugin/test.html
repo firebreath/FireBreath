@@ -123,8 +123,10 @@
             addTest("attachedFireEvent", "Simple event bind attach and fire test");
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
-            addTest("postURL", "Download stream (POST)");            
+            addTest("postURL", "Download stream (POST)");
             addTest("dangerousInject", "Dangerous injection");
+            addTest("calltest", "Function.call method");
+            addTest("applytest", "Function.apply method");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -292,6 +294,17 @@
                 testDiv.innerHTML = "";
             }
             dangerousInjection(testDiv, testcb);
+
+            if (plugin.add.apply(window, [1, 2]) == 3) {
+                markPassed("applytest");
+            } else {
+                markFailed("applytest");
+            }
+            if (plugin.add.call(window, 1, 2) == 3) {
+                markPassed("calltest");
+            } else {
+                markFailed("calltest");
+            }
         }
         function PasswordDlg(message, onComplete) 
         {
