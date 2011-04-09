@@ -82,6 +82,17 @@
             dest[0].innerHTML = html;
         }
 
+        function dangerousInjection(dest, callback) {
+            pluginCB = callback;
+            var paramNode = document.createElement("param");
+            paramNode.setAttribute("name", "onload");
+            paramNode.setAttribute("value", "pluginCB");
+            var pluginObjectNode = document.createElement("object");
+            pluginObjectNode.appendChild(paramNode);
+            pluginObjectNode.setAttribute("type", mimeType);
+            dest.appendChild(pluginObjectNode);
+        }
+
         function addTest(id, text) {
             $("#testResults ul")
                 .append("<li id='" + id + "'>" + text + "...</li>")
@@ -113,6 +124,7 @@
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
             addTest("postURL", "Download stream (POST)");            
+            addTest("dangerousInject", "Dangerous injection");
             markFailed("loaded");
             injectPlugin($("#pluginContainer"), pluginLoaded);
         }
@@ -253,7 +265,7 @@
                 } else {
                     markFailed("getURL");
                 }
-				alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+				//alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
 			}
 			plugin.getURL(sUrl, getUrlCallback);
 
@@ -266,9 +278,20 @@
                 } else {
                     markFailed("postURL");
                 }
-				alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+				//alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
 			}
-			plugin.postURL(sUrl, sPostData, postUrlCallback);            
+            plugin.postURL(sUrl, sPostData, postUrlCallback);
+
+            testDiv = document.getElementById("test");
+            var testcb = function(nplug) {
+                if (nplug.valid) {
+                    markPassed("dangerousInject");
+                } else {
+                    markFailed("dangerousInject");
+                }
+                testDiv.innerHTML = "";
+            }
+            dangerousInjection(testDiv, testcb);
         }
         function PasswordDlg(message, onComplete) 
         {
@@ -339,5 +362,6 @@
         <ul>
         </ul>
     </div>
+    <div id="test"></div>
 </body>
 </html>
