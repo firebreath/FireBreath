@@ -18,10 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <boost/preprocessor/repetition.hpp>
 #include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/cat.hpp>
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/arithmetic/sub.hpp>
-#include <boost/type_traits/function_traits.hpp>
 
 #define __FB_EVTFUNC_NAME(evt) BOOST_PP_CAT(fire_, evt)
 #define __FB_EVTPARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
