@@ -77,6 +77,8 @@ namespace FB {
         boost::shared_ptr<C> reference;
     };
 
+    FB_FORWARD_PTR(CrossThreadCall);
+
     class CrossThreadCall
     {
     public:
@@ -136,16 +138,19 @@ namespace FB {
         if (!host->isMainThread())
         {
             // Synchronous call means that we want call to go away when this scope ends
-            boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
+            CrossThreadCallPtr call(new CrossThreadCall(funct));
+            CrossThreadCallWeakPtr *callWeak = new CrossThreadCallWeakPtr(call);
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get())) {
+                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, callWeak)) {
                     // Browser probably shutting down, but cross thread call failed.
+                    delete callWeak;
                     throw FB::script_error("Could not marshal to main thread");
                 }
 
                 while (!call->m_returned && !host->isShutDown()) {
-                    call->m_cond.wait(lock);
+                    boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(10);
+                    call->m_cond.timed_wait(lock, wait_duration);
                 }
                 if (host->isShutDown())
                     throw FB::script_error("Shutting down");
@@ -155,11 +160,11 @@ namespace FB {
             funct->call();
         }
         
-        if (varResult.get_type() == typeid(boost::shared_ptr<FB::script_error>)) {
-            boost::shared_ptr<FB::script_error> tmp(varResult.cast<boost::shared_ptr<FB::script_error> >());
-            varResult.reset();
+        if (varResult.get_type() == typeid(FB::script_error*)) {
+            FB::script_error* tmp(varResult.cast<FB::script_error*>());
             std::string msg = tmp->what();
-            throw FB::script_error(msg);
+            delete tmp;
+            throw FB::script_error(varResult.cast<const FB::script_error>().what());
         }
     }
 
@@ -174,17 +179,23 @@ namespace FB {
         boost::shared_ptr<FunctorCallImpl<Functor, bool> > funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
-            boost::scoped_ptr<CrossThreadCall> call(new CrossThreadCall(funct));
+            // Synchronous call means that we want call to go away when this scope ends
+            CrossThreadCallPtr call(new CrossThreadCall(funct));
+            CrossThreadCallWeakPtr *callWeak = new CrossThreadCallWeakPtr(call);
             {
                 boost::unique_lock<boost::mutex> lock(call->m_mutex);
-                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, call.get())) {
+                if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, callWeak)) {
                     // Browser probably shutting down, but cross thread call failed.
+                    delete callWeak;
                     throw FB::script_error("Could not marshal to main thread");
                 }
 
-                while (!call->m_returned) {
-                    call->m_cond.wait(lock);
+                while (!call->m_returned && !host->isShutDown()) {
+                    boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(10);
+                    call->m_cond.timed_wait(lock, wait_duration);
                 }
+                if (host->isShutDown())
+                    throw FB::script_error("Shutting down");
                 result = funct->getResult();
                 varResult = call->m_result;
             }
@@ -192,10 +203,10 @@ namespace FB {
             funct->call();
             result = funct->getResult();
         }
-        if (varResult.get_type() == typeid(boost::shared_ptr<FB::script_error>)) {
-            boost::shared_ptr<FB::script_error> tmp(varResult.cast<boost::shared_ptr<FB::script_error> >());
-            varResult.reset();
+        if (varResult.get_type() == typeid(FB::script_error*)) {
+            FB::script_error* tmp(varResult.cast<FB::script_error*>());
             std::string msg = tmp->what();
+            delete tmp;
             throw FB::script_error(msg);
         }
         return result;
