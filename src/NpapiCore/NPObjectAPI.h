@@ -50,6 +50,7 @@ namespace FB { namespace Npapi {
     public:
         virtual JSAPIPtr getJSAPI() const;
         void invalidate() { inner.reset(); }
+        bool isValid() { return !m_browser.expired(); }
 
     protected:
         NpapiBrowserHostPtr getHost() const {

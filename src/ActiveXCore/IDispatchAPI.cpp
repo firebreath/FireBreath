@@ -477,6 +477,75 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     return browser->getVariant(&result);
 }
 
+void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::VariantList& args, 
+                                          const std::vector<FB::JSObjectPtr>& direct, const std::vector<FB::JSObjectPtr>& ifaces )
+{
+    if (!isValid())
+        throw FB::script_error("Error calling handlers");
+
+    ActiveXBrowserHostPtr browser(getHost());
+    if (!browser->isMainThread()) {
+        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::callMultipleFunctions, this, name, args, direct, ifaces));
+    }
+
+    size_t argCount(args.size());
+    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount + 1]);
+    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
+    DISPPARAMS params;
+    DISPID tid = DISPID_THIS;
+    params.cArgs = args.size() + 1;
+    params.cNamedArgs = 1;
+    params.rgvarg = rawComArgs.get();
+    params.rgdispidNamedArgs = &tid; // Needed for IE9
+    
+    for (size_t i = 0; i < argCount; i++) {
+        browser->getComVariant(&comArgs[argCount - i], args[i]);
+        // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
+        rawComArgs[argCount - i] = comArgs[argCount - i];
+    }
+    comArgs[0] = getIDispatch(); // Needed for IE 9
+    rawComArgs[0] = comArgs[0];
+
+    CComVariant result;
+    CComExcepInfo exceptionInfo;
+    std::vector<FB::JSObjectPtr>::const_iterator it(direct.begin());
+    std::vector<FB::JSObjectPtr>::const_iterator endit(direct.end());
+    for (it; it != endit; ++it) {
+        IDispatchAPIPtr ptr(boost::static_pointer_cast<IDispatchAPI>(*it));
+        DISPID dispId = ptr->getIDForName(std::wstring(L""));
+        if (dispId == DISPID_UNKNOWN) {
+             continue;
+        }
+        CComQIPtr<IDispatchEx> dispatchEx(ptr->getIDispatch());
+        HRESULT hr;
+        if (!dispatchEx) {
+            hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+        } else {
+            hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+        }
+    }
+    it = ifaces.begin();
+    endit = ifaces.end();
+    for (it; it != endit; ++it) {
+        IDispatchAPIPtr ptr(boost::static_pointer_cast<IDispatchAPI>(*it));
+        DISPID dispId = getIDForName(FB::utf8_to_wstring(name));
+        if (dispId == DISPID_UNKNOWN) {
+             continue;
+        }
+        CComQIPtr<IDispatchEx> dispatchEx(ptr->getIDispatch());
+        HRESULT hr;
+        if (!dispatchEx) {
+            hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+        } else {
+            hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+        }
+    }
+}
+
 FB::variant IDispatchAPI::Construct(const std::vector<FB::variant>& args)
 {
     if (m_browser.expired())

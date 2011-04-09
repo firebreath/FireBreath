@@ -109,6 +109,7 @@
             addTest("mathApiAdd", "Use custom JSAPI coming in from script");
             addTest("countArray", "Count array length returned from JSAPI object");
             addTest("simpleFireEvent", "Simple event bind and fire test");
+            addTest("attachedFireEvent", "Simple event bind attach and fire test");
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
             addTest("postURL", "Download stream (POST)");            
@@ -216,6 +217,18 @@
                     markFailed("simpleFireEvent");
                 }
             };
+            var tmpFired = function (str) {
+                if (str == "some string") {
+                    markPassed("attachedFireEvent");
+                } else {
+                    markFailed("attachedFireEvent");
+                }
+            }
+            if (plugin.attachEvent) {
+                plugin.attachEvent("onfired", tmpFired);
+            } else {
+                plugin.addEventListener("fired", tmpFired, false);
+            }
             plugin.testEvent("some string");
 
             try {

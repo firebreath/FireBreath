@@ -39,6 +39,7 @@ public:
 
     FB::JSAPIPtr getJSAPI() const { return FB::JSAPIPtr(); }
     void invalidate() { m_values.clear(); }
+    bool isValid() { return true; }
     
     bool HasMethod(const std::string&) const { return false; }
     void SetProperty(int, const FB::variant&) {}

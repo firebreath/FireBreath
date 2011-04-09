@@ -296,7 +296,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event)
         {
-            m_evtIfaces[static_cast<void*>(event.get())] = event;
+            m_evtIfaces[event->getEventContext()][static_cast<void*>(event.get())] = event;
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventInterface(const JSObjectPtr& event)
@@ -307,8 +307,8 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventInterface(const JSObjectPtr& event)
         {
-            EventIFaceMap::iterator fnd = m_evtIfaces.find(static_cast<void*>(event.get()));
-            m_evtIfaces.erase(fnd);
+            EventIFaceMap::iterator fnd = m_evtIfaces[event->getEventContext()].find(static_cast<void*>(event.get()));
+            m_evtIfaces[event->getEventContext()].erase(fnd);
         }
 
     public:
@@ -317,10 +317,12 @@ namespace FB
 
     protected:
         typedef std::deque<SecurityZone> ZoneStack;
+        typedef std::map<void*, EventMultiMap> EventContextMap;
         // Stores event handlers
-        EventMultiMap m_eventMap;       
+        EventContextMap m_eventMap;
+        typedef std::map<void*, EventIFaceMap> EventIfaceContextMap;
         // Stores event interfaces
-        EventIFaceMap m_evtIfaces;      
+        EventIfaceContextMap m_evtIfaces;      
 
         typedef std::vector<JSAPIImplWeakPtr> ProxyList;
         mutable ProxyList m_proxies;

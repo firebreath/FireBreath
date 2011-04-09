@@ -51,6 +51,11 @@ namespace FB { namespace ActiveX {
             IDispatchSRef sref(m_obj);
             return sref->getPtr();
         }
+        bool isValid() { return !m_obj.expired() && !m_browser.expired(); }
+        virtual bool supportsOptimizedCalls() const { return true; }
+        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+                                           const std::vector<JSObjectPtr>& direct,
+                                           const std::vector<JSObjectPtr>& ifaces);
         void invalidate() { m_obj.reset(); }
 
         // Enumerate members

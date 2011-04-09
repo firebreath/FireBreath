@@ -66,6 +66,12 @@ namespace FB
         virtual void *getEventId() const { return NULL; }
         virtual void *getEventContext() const { return NULL; }
 
+        virtual bool supportsOptimizedCalls() const { return false; }
+        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+                                           const std::vector<JSObjectPtr>& direct,
+                                           const std::vector<JSObjectPtr>& ifaces) {};
+        virtual bool isValid() = 0;
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         ///
