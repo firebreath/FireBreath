@@ -68,7 +68,6 @@ namespace FB { namespace Npapi {
         bool HasMethod(const std::string& methodName) const;
         bool HasProperty(const std::string& propertyName) const;
         bool HasProperty(int idx) const;
-        bool HasEvent(const std::string& eventName) const;
 
         variant GetProperty(const std::string& propertyName);
         void SetProperty(const std::string& propertyName, const variant& value);

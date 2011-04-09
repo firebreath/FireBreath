@@ -247,36 +247,6 @@ bool IDispatchAPI::HasProperty(int idx) const
     return getIDForName(name.convert_cast<std::wstring>()) != -1;
 }
 
-bool IDispatchAPI::HasEvent(const std::wstring& eventName) const
-{
-    return getIDForName(eventName) != -1;
-}
-
-bool IDispatchAPI::HasEvent(const std::string& eventName) const
-{
-    if (m_browser.expired() || m_obj.expired())
-        return false;
-
-    ActiveXBrowserHostPtr browser(getHost());
-    if (!browser->isMainThread()) {
-        typedef bool (IDispatchAPI::*HasEventType)(const std::string&) const;
-        return browser->CallOnMainThread(boost::bind((HasEventType)&IDispatchAPI::HasEvent, this, eventName));
-    }
-
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (!tmp) {
-            return false;
-        }
-        return tmp->HasEvent(eventName);
-    }
-
-    // This will actually just return true if the specified member exists; IDispatch doesn't really
-    // differentiate further than that
-    return getIDForName(FB::utf8_to_wstring(eventName)) != -1;
-}
-
-
 // Methods to manage properties on the API
 FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
 {

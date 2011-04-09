@@ -141,9 +141,6 @@ namespace FB
         virtual bool HasProperty(const std::string& propertyName) const;
         virtual bool HasProperty(int idx) const;
 
-        virtual bool HasEvent(const std::string& eventName) const;
-        virtual bool HasEvent(const std::wstring& eventName) const;
-
         virtual variant GetProperty(const std::wstring& propertyName);
         virtual variant GetProperty(const std::string& propertyName);
 

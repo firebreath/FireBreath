@@ -71,8 +71,6 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerProperty("pluginPath",
                      make_property(this, &FBTestPluginAPI::get_pluginPath));
 
-    registerEvent("onfired");
-
     m_simpleMath = boost::make_shared<SimpleMathAPI>(m_host);
 }
 
@@ -126,7 +124,7 @@ long FBTestPluginAPI::add(long a, long b)
 // test firing an event
 void FBTestPluginAPI::testEvent(const std::string& param)
 {
-    this->FireEvent("onfired", FB::variant_list_of(param));
+    fire_fired(param);
 }
 
 FB::variant FBTestPluginAPI::echo(const FB::variant& a)

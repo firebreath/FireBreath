@@ -77,7 +77,7 @@ namespace FB
         void invalidate();
 
     protected:
-        void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+        virtual void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
 
     protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -178,8 +178,6 @@ namespace FB
             m_zoneMutex.unlock();
         }
 
-        bool HasEvent(const std::string& eventName) const;
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public void setDefaultZone(const SecurityZone& securityLevel)
         ///
@@ -241,8 +239,9 @@ namespace FB
         /// @brief  Register event so that event listeners can be added/attached from javascript
         ///
         /// @param  name    The name of the event to register.  This event must start with "on"
+        /// @deprecated 1.5
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEvent(const std::string& name);
+        virtual void registerEvent(const std::string& name) {}
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEvent(const std::wstring& name)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -312,52 +311,6 @@ namespace FB
             m_evtIfaces.erase(fnd);
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
-        {
-            return getDefaultEventMethod(wstring_to_utf8(name));
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
-        ///
-        /// @brief  Called by the browser to get the default event handler method for an event.
-        ///         
-        /// This is called when the following occurs iff onload is a registered event:
-        /// @code
-        ///      var handler = document.getElementByID("plugin").onload;
-        /// @endcode
-        ///         
-        /// @param  name    The event name. 
-        ///
-        /// @return The default event method. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event)
-        ///
-        /// @brief  Called by the browser to set the default event handler method for an event.
-        ///
-        /// This is called when the following occurs iff onload is a registered event:
-        /// @code
-        ///      document.getElementByID("plugin").onload = function() { alert("loaded"); };
-        /// @endcode
-        ///
-        /// @param  name    The event name
-        /// @param  event   The event handler method. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event);
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
-        {
-            setDefaultEventMethod(wstring_to_utf8(name), event);
-        }
-
     public:
         virtual void registerProxy(const JSAPIImplWeakPtr &ptr) const;
         virtual void unregisterProxy( const FB::JSAPIImplPtr& ptr ) const;
@@ -366,8 +319,6 @@ namespace FB
         typedef std::deque<SecurityZone> ZoneStack;
         // Stores event handlers
         EventMultiMap m_eventMap;       
-        // Stores event-as-property event handlers
-        EventSingleMap m_defEventMap;   
         // Stores event interfaces
         EventIFaceMap m_evtIfaces;      
 

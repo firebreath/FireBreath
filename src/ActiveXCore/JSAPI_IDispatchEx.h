@@ -343,7 +343,7 @@ namespace FB { namespace ActiveX {
             FB::JSAPIPtr api(getAPI());
             if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
                 *pid = AxIdMap.getIdForValue(wsName);
-            } else if (api->HasProperty(wsName) || api->HasMethod(wsName) || api->HasEvent(wsName)) {
+            } else if (api->HasProperty(wsName) || api->HasMethod(wsName)) {
                 *pid = AxIdMap.getIdForValue(wsName);
             } else {
                 *pid = -1;
@@ -498,16 +498,6 @@ namespace FB { namespace ActiveX {
                 FB::variant rVal = api->GetProperty(wsName);
 
                 m_host->getComVariant(pvarRes, rVal);
-
-            } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasEvent(wsName)) {
-                
-                FB::variant newVal = m_host->getVariant(&pdp->rgvarg[0]);
-                if (newVal.empty()) {
-                    api->setDefaultEventMethod(wsName, FB::JSObjectPtr());
-                } else {
-                    FB::JSObjectPtr method(newVal.cast<FB::JSObjectPtr>());
-                    api->setDefaultEventMethod(wsName, method);
-                }
 
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
 

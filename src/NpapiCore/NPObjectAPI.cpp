@@ -153,23 +153,6 @@ bool NPObjectAPI::HasProperty(int idx) const
     return browser->HasProperty(obj, browser->GetIntIdentifier(idx));
 }
 
-bool NPObjectAPI::HasEvent(const std::string& eventName) const
-{
-    if (m_browser.expired())
-        return false;
-
-    NpapiBrowserHostPtr browser(getHost());
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->HasEvent(eventName);
-        else 
-            return false;
-    }
-    return false;
-}
-
-
 // Methods to manage properties on the API
 FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
 {

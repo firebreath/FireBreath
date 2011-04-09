@@ -167,7 +167,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         } else if (sName != "toString" && getAPI()->HasMethodObject(sName))
             return true;
         else
-            return !HasMethod(name) && (getAPI()->HasEvent(sName) || getAPI()->HasProperty(sName));
+            return !HasMethod(name) && getAPI()->HasProperty(sName);
     } catch (const std::bad_cast&) {
         return false; // invalid object
     } catch (const script_error& e) {
@@ -189,10 +189,6 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
                 res = m_addEventFunc;
             } else if (sName == "removeEventListener") {
                 res = m_removeEventFunc;
-            } else if (getAPI()->HasEvent(sName)) {
-                FB::JSObjectPtr tmp(getAPI()->getDefaultEventMethod(sName));
-                if (tmp != NULL)
-                    res = tmp;
             } else if (getAPI()->HasMethodObject(sName)) {
                 res = getAPI()->GetMethodObject(sName);
             } else {
@@ -221,15 +217,7 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
         FB::variant arg = browser->getVariant(value);
         if (browser->IdentifierIsString(name)) {
             std::string sName(browser->StringFromIdentifier(name));
-            if (getAPI()->HasEvent(sName)) {
-                if(value->type == NPVariantType_Null) {
-                    FB::JSObjectPtr nullEvent;
-                    getAPI()->setDefaultEventMethod(sName, nullEvent);
-                } else if(value->type == NPVariantType_Object) {
-                    FB::JSObjectPtr tmp(arg.cast<FB::JSObjectPtr>());
-                    getAPI()->setDefaultEventMethod(sName, tmp);
-                }
-            } else if (getAPI()->HasMethodObject(sName)) {
+            if (getAPI()->HasMethodObject(sName)) {
                 throw FB::script_error("This property cannot be changed");
             } else {
                 getAPI()->SetProperty(sName, arg);
@@ -254,12 +242,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
         NpapiBrowserHostPtr browser(getHost());
         if (browser->IdentifierIsString(name)) {
             std::string sName(browser->StringFromIdentifier(name));
-            if (getAPI()->HasEvent(sName)) {
-                FB::JSObjectPtr nullEvent;
-                getAPI()->setDefaultEventMethod(sName, nullEvent);
-            } else {
-                getAPI()->RemoveProperty(sName);
-            }
+            getAPI()->RemoveProperty(sName);
         } else {
             getAPI()->RemoveProperty(browser->IntFromIdentifier(name));
         }

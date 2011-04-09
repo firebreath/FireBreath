@@ -17,6 +17,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "boost/thread/mutex.hpp"
 #include "boost/make_shared.hpp"
 #include "JSFunction.h"
+#include "JSEvent.h"
 #include <cassert>
 
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
@@ -409,5 +410,33 @@ void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& va
         m_zoneMap[name] = getZone();
     } else {
         throw FB::script_error("Cannot set read-only property " + name);
+    }
+}
+
+void FB::JSAPIAuto::FireJSEvent( const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments )
+{
+    JSAPIImpl::FireJSEvent(eventName, members, arguments);
+    FB::variant evt(getAttribute(eventName));
+    if (evt.is_of_type<FB::JSObjectPtr>()) {
+        VariantList args;
+        args.push_back(FB::CreateEvent(shared_from_this(), eventName, members, arguments));
+        try {
+            evt.cast<JSObjectPtr>()->InvokeAsync("", args);
+        } catch (...) {
+            // Apparently either this isn't really an event handler or something failed.
+        }
+    }
+}
+
+void FB::JSAPIAuto::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args )
+{
+    JSAPIImpl::fireAsyncEvent(eventName, args);
+    FB::variant evt(getAttribute(eventName));
+    if (evt.is_of_type<FB::JSObjectPtr>()) {
+        try {
+            evt.cast<JSObjectPtr>()->InvokeAsync("", args);
+        } catch (...) {
+            // Apparently either this isn't really an event handler or something failed.
+        }
     }
 }

@@ -87,11 +87,6 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
     for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; eventIt++) {
         eventIt->second->InvokeAsync("", args);
     }
-    EventSingleMap::const_iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end() && fnd->second != NULL && fnd->second->getEventId() != NULL) {
-        fnd->second->InvokeAsync("", args);
-    }
-
     // Some events are registered as a jsapi object with a method of the same name as the event
     for (EventIFaceMap::const_iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
         ifaceIt->second->InvokeAsync(eventName, args);
@@ -160,24 +155,9 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
         eventIt->second->InvokeAsync("", args);
     }
 
-    EventSingleMap::iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end() && fnd->second != NULL && fnd->second->getEventId() != NULL) {
-        fnd->second->InvokeAsync("", args);
-    }
-
     // Some events are registered as a jsapi object with a method of the same name as the event
     for (EventIFaceMap::iterator ifaceIt = m_evtIfaces.begin(); ifaceIt != m_evtIfaces.end(); ifaceIt++) {
         ifaceIt->second->InvokeAsync(eventName, args);
-    }
-}
-
-bool JSAPIImpl::HasEvent(const std::string& eventName) const
-{
-    EventSingleMap::const_iterator fnd = m_defEventMap.find(eventName);
-    if (fnd != m_defEventMap.end()) {
-        return true;
-    } else {
-        return false;
     }
 }
 
@@ -210,30 +190,6 @@ void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &even
             return;
         }
     }
-}
-
-JSObjectPtr JSAPIImpl::getDefaultEventMethod(const std::string& name) const
-{
-    EventSingleMap::const_iterator fnd = m_defEventMap.find(name);
-    if (fnd != m_defEventMap.end()) {
-        return fnd->second;
-    }
-    return JSObjectPtr();
-}
-
-
-void JSAPIImpl::setDefaultEventMethod(const std::string& name, JSObjectPtr event)
-{
-    if(event == NULL)
-        m_defEventMap.erase(name);
-    else 
-        m_defEventMap[name] = event;
-}
-
-void JSAPIImpl::registerEvent(const std::string &name)
-{
-    if(m_defEventMap.find(name) == m_defEventMap.end())
-        m_defEventMap[name] = JSObjectPtr();
 }
 
 void JSAPIImpl::registerProxy( const JSAPIImplWeakPtr &ptr ) const

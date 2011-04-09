@@ -79,8 +79,6 @@ namespace FB { namespace ActiveX {
         bool HasProperty(const std::string& propertyName) const;
         bool HasProperty(const std::wstring& propertyName) const;
         bool HasProperty(int idx) const;
-        bool HasEvent(const std::string& eventName) const;
-        bool HasEvent(const std::wstring& eventName) const;
 
         FB::variant GetProperty(const std::string& propertyName);
         void SetProperty(const std::string& propertyName, const FB::variant& value);

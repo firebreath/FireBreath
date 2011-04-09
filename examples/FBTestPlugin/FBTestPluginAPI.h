@@ -20,6 +20,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
 #include <boost/optional.hpp>
+#include "Util/typesafe_event.h"
 #include "SimpleStreamHelper.h"
 
 FB_FORWARD_PTR(ThreadRunnerAPI);
@@ -31,6 +32,8 @@ class FBTestPluginAPI : public FB::JSAPIAuto
 public:
     FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
+
+    FB_JSAPI_EVENT(fired, 1, (const std::string));
 
     FBTestPluginPtr getPlugin();
     

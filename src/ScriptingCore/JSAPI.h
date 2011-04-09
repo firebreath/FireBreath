@@ -233,60 +233,6 @@ namespace FB
             throw FB::script_error("Not implemented");
         }
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::wstring& name) const
-        {
-            return getDefaultEventMethod(wstring_to_utf8(name));
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
-        ///
-        /// @brief  Called by the browser to get the default event handler method for an event.
-        ///         
-        /// This is called when the following occurs iff onload is a registered event:
-        /// @code
-        ///      var handler = document.getElementByID("plugin").onload;
-        /// @endcode
-        ///         
-        /// @param  name    The event name. 
-        ///
-        /// @return The default event method. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual JSObjectPtr getDefaultEventMethod(const std::string& name) const
-        {
-            // TODO: add support for this in IDispatchAPI and NPObjectAPI
-            throw FB::script_error("Not implemented");
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event)
-        ///
-        /// @brief  Called by the browser to set the default event handler method for an event.
-        ///
-        /// This is called when the following occurs iff onload is a registered event:
-        /// @code
-        ///      document.getElementByID("plugin").onload = function() { alert("loaded"); };
-        /// @endcode
-        ///
-        /// @param  name    The event name
-        /// @param  event   The event handler method. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::string& name, JSObjectPtr event)
-        {
-            // TODO: add support for this in IDispatchAPI and NPObjectAPI
-            throw FB::script_error("Not implemented");
-        }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setDefaultEventMethod(const std::wstring& name, JSObjectPtr event)
-        {
-            setDefaultEventMethod(wstring_to_utf8(name), event);
-        }
-
         virtual void getMemberNames(std::vector<std::wstring> &nameVector) const
         {
             nameVector.clear();
@@ -402,24 +348,6 @@ namespace FB
         /// @return true if property exists, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(int idx) const = 0;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasEvent(const std::string& eventName) const
-        ///
-        /// @brief  Query if the event 'eventName' has been registered
-        ///
-        /// @param  eventName   Name of the event. 
-        ///
-        /// @return true if event registered, false if not. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasEvent(const std::string& eventName) const { return false; }
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasEvent(const std::wstring& eventName) const
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasEvent(const std::wstring& eventName) const
-        {
-            return HasEvent(wstring_to_utf8(eventName));
-        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual JSAPIPtr GetMethodObject(const std::wstring& methodObjName)

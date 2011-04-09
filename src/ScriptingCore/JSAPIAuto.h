@@ -277,6 +277,9 @@ namespace FB {
         virtual void SetProperty(int idx, const variant& value);
         virtual void RemoveProperty(int idx);
 
+        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
+        virtual void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
         ///

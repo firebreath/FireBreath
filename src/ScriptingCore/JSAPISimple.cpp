@@ -67,17 +67,12 @@ void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
         it != m_propertyMap.end(); it++) {
         nameVector.push_back(it->first);
     }
-    for (FB::EventSingleMap::const_iterator it = m_defEventMap.begin();
-        it != m_defEventMap.end(); it++) {
-        nameVector.push_back(it->first);
-    }
 }
 
 size_t JSAPISimple::getMemberCount() const
 {
     return m_methodMap.size()
-        + m_propertyMap.size()
-        + m_defEventMap.size();
+        + m_propertyMap.size();
 }
 
 // Methods for registering properties and functions to the auto-table
