@@ -124,7 +124,7 @@
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
             addTest("postURL", "Download stream (POST)");
-            addTest("dangerousInject", "Dangerous injection");
+            //addTest("dangerousInject", "Dangerous injection");
             addTest("calltest", "Function.call method");
             addTest("applytest", "Function.apply method");
             markFailed("loaded");
@@ -284,16 +284,16 @@
 			}
             plugin.postURL(sUrl, sPostData, postUrlCallback);
 
-            testDiv = document.getElementById("test");
-            var testcb = function(nplug) {
-                if (nplug.valid) {
-                    markPassed("dangerousInject");
-                } else {
-                    markFailed("dangerousInject");
-                }
-                testDiv.innerHTML = "";
-            }
-            dangerousInjection(testDiv, testcb);
+            //testDiv = document.getElementById("test");
+            //var testcb = function(nplug) {
+                //if (nplug.valid) {
+                    //markPassed("dangerousInject");
+                //} else {
+                    //markFailed("dangerousInject");
+                //}
+                //testDiv.innerHTML = "";
+            //}
+            //dangerousInjection(testDiv, testcb);
 
             if (plugin.add.apply(window, [1, 2]) == 3) {
                 markPassed("applytest");
