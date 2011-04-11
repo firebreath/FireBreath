@@ -194,19 +194,27 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
+    NpapiBrowserHostWeakPtr weakHost;
     
     if (NpapiPDataHolder* holder = getHolder(instance)) {
-        if (NpapiBrowserHostPtr host = holder->getHost())
+        NpapiBrowserHostPtr host(holder->getHost());
+        weakHost = host;
+        if (host)
             host->shutdown();
 
         if (NpapiPluginPtr plugin = holder->getPlugin())
             plugin->shutdown();
         
         instance->pdata = NULL;
-        delete holder;
+        delete holder; // Destroy plugin
+        // host should be destroyed when it goes out of scope here
     } else {    
         return NPERR_GENERIC_ERROR;
     }
+    // If this assertion fails, you probably have a circular reference
+    // to your BrowserHost object somewhere -- the host should be gone
+    // by this point. This assertion is warning you of a bug.
+    assert(weakHost.expired());
 
     return NPERR_NO_ERROR;
 }

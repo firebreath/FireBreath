@@ -130,6 +130,8 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 
         m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_from_this())));
         m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_from_this())));
+        ReleaseObject(window);
+        ReleaseObject(element);
     } catch (...) {
         if (window && !m_htmlWin)
             ReleaseObject(window);
@@ -390,22 +392,16 @@ uint32_t NpapiBrowserHost::MemFlush(uint32_t size) const
 
 NPObject *NpapiBrowserHost::RetainObject(NPObject *npobj) const
 {
-    if (isShutDown())
-        return NULL;
     assertMainThread();
     return module->RetainObject(npobj);
 }
 void NpapiBrowserHost::ReleaseObject(NPObject *npobj) const
 {
-    if (isShutDown())
-        return;
     assertMainThread();
     return module->ReleaseObject(npobj);
 }
 void NpapiBrowserHost::ReleaseVariantValue(NPVariant *variant) const
 {
-    if (isShutDown())
-        return;
     assertMainThread();
     return module->ReleaseVariantValue(variant);
 }
