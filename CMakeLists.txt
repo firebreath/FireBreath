@@ -18,12 +18,13 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 set_property(GLOBAL PROPERTY USE_FOLDERS On)
 
 Project (FireBreath)
-set(FB_EXPORT_FILE FireBreath_Exports.cmake)
 
 # First, find FB_ROOT
 get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
 
 include(${FB_ROOT}/cmake/common.cmake)
+set(FB_EXPORT_FILE ${CMAKE_BINARY_DIR}/FireBreath_Exports.cmake)
+file(REMOVE ${FB_EXPORT_FILE})
 add_subdirectory(${FB_ROOT}/cmake ${FB_BUILD_DIR}/cmake_common)
 
 if (APPLE)
@@ -45,10 +46,21 @@ endif()
 if (UNIX AND NOT APPLE)
     find_package(Threads REQUIRED)
 endif()
+
+if (EXISTS ${FB_ROOT}/bin/FireBreath_Exports.cmake AND NOT FB_BINONLY)
+    set(FIREBREATH_LIBDIR "${FB_ROOT}/bin")
+endif()
+
+if (FIREBREATH_LIBDIR)
+    include(${FIREBREATH_LIBDIR}/FireBreath_Exports.cmake)
+endif()
+
 add_boost_library(thread)
 add_boost_library(system)
 if (WITH_SYSTEM_BOOST)
     add_boost_library(date_time)
+elseif(NOT FIREBREATH_LIBDIR)
+    export(TARGETS ${Boost_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
 endif()
 
 # Common core projects -- projects that don't have any plugin specific code,
@@ -66,29 +78,33 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
     endif()
 endif()
 
-# search the project src dir for plugin project directories
-file (GLOB PLUGIN_PROJECTS 
-    ${FB_PROJECTS_DIR}/[^.]*
-    )
+if (NOT FB_BINONLY)
+    # search the project src dir for plugin project directories
+    file (GLOB PLUGIN_PROJECTS 
+        ${FB_PROJECTS_DIR}/[^.]*
+        )
 
-if (VERBOSE)
-    message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
-endif()
-
-# loop through the found directories and add any with a CMakeLists.txt and a PluginConfig.cmake
-# as a subproject
-foreach (CURPROJECT ${PLUGIN_PROJECTS})
-    if (EXISTS "${CURPROJECT}/CMakeLists.txt" AND EXISTS "${CURPROJECT}/PluginConfig.cmake")
-      set (FOUND_PROJECTS 1)
-      get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
-      if (VERBOSE)
-          message("Configuring plugin project ${CURPROJECT} in ${FB_PROJECTS_BINARY_DIR}/${PROJNAME}")
-      endif()
-      add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
-    else()
-        message("${CURPROJECT}/ does not seem to be a FireBreath Plugin")
+    if (VERBOSE)
+        message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
     endif()
-endforeach()
+
+    # loop through the found directories and add any with a CMakeLists.txt and a PluginConfig.cmake
+    # as a subproject
+    foreach (CURPROJECT ${PLUGIN_PROJECTS})
+        if (EXISTS "${CURPROJECT}/CMakeLists.txt" AND EXISTS "${CURPROJECT}/PluginConfig.cmake")
+          set (FOUND_PROJECTS 1)
+          get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
+          if (VERBOSE)
+              message("Configuring plugin project ${CURPROJECT} in ${FB_PROJECTS_BINARY_DIR}/${PROJNAME}")
+          endif()
+          add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
+        else()
+            message("${CURPROJECT}/ does not seem to be a FireBreath Plugin")
+        endif()
+    endforeach()
+else()
+    message("Projects configured to build FireBreath binaries")
+endif()
 
 # Common projects -- projects that don't have any plugin specific code
 if (NOT FB_SCRIPTINGCORE_LOADED)
@@ -101,9 +117,11 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
     #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 endif()
 
-if (NOT FOUND_PROJECTS AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
-    # If this file is the root file then we should have a projects directory
-    MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
-    MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
+if (NOT FB_BINONLY)
+    if (NOT FOUND_PROJECTS AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
+        # If this file is the root file then we should have a projects directory
+        MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
+        MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
+    endif()
 endif()
 

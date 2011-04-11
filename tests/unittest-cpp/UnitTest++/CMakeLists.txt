@@ -57,6 +57,7 @@ endif()
 
 add_library (UnitTest++ STATIC ${SOURCES})
 set_target_properties(UnitTest++ PROPERTIES FOLDER "UnitTests")
+export(TARGETS UnitTest++ APPEND FILE ${FB_EXPORT_FILE})
 
 add_definitions(
     -D_CRT_SECURE_NO_DEPRECATE

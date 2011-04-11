@@ -22,3 +22,4 @@ src/libs/openssl/openssl
 *.kdev*
 .kdev*
 tags
+bin
