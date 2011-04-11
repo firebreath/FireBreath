@@ -34,7 +34,7 @@ endif()
 #check to make sure we're either using WITH_SYSTEM_BOOST or have the firebreath-boost lib installed
 fb_check_boost()
 
-if (FB_PROJECTS_DIR AND NOT EXISTS ${FB_PROJECTS_DIR})
+if (NOT FB_BINONLY AND FB_PROJECTS_DIR AND NOT EXISTS ${FB_PROJECTS_DIR})
     message(FATAL_ERROR "The specified project directory ${FB_PROJECTS_DIR} is not found")
 endif()
 
