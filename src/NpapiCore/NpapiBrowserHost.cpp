@@ -103,6 +103,11 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 void NpapiBrowserHost::shutdown() {
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
     FB::BrowserHost::shutdown();
+    
+    // Release these now as the BrowserHost will be expired when the they go out of scope in the destructor.
+    m_htmlWin.reset();
+    m_htmlElement.reset();
+    m_htmlDoc.reset();
 }
 
 bool NpapiBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
@@ -126,9 +131,9 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
         m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_from_this())));
         m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_from_this())));
     } catch (...) {
-        if (window)
+        if (window && !m_htmlWin)
             ReleaseObject(window);
-        if (element)
+        if (element && !m_htmlElement)
             ReleaseObject(element);
     }
     if (m_htmlWin) {
