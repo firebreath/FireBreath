@@ -32,6 +32,11 @@ public:
     // Method echo
     FB::variant echo(const FB::variant& msg);
     
+    // Event helpers
+    FB_JSAPI_EVENT(fired, 3, (const FB::variant&, bool, int));
+    FB_JSAPI_EVENT(echo, 2, (const FB::variant&, const int));
+    FB_JSAPI_EVENT(notify, 0, ());
+
     // Method test-event
     void testEvent(const FB::variant& s);
 

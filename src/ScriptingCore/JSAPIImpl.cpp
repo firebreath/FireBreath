@@ -86,7 +86,7 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
     {
         EventContextMap::iterator it(m_eventMap.begin());
         EventContextMap::iterator end(m_eventMap.end());
-        for (it; it != end; ++it) {
+        for (; it != end; ++it) {
             bool first(true);
             std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
             for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; ++eventIt) {
@@ -119,7 +119,7 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
     {
         EventIfaceContextMap::iterator it(m_evtIfaces.begin());
         EventIfaceContextMap::iterator end(m_evtIfaces.end());
-        for (it; it != end; ++it) {
+        for (; it != end; ++it) {
             if (contexts.find(it->first) != contexts.end())
                 continue; // We've already handled these
             bool first(false);

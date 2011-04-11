@@ -20,7 +20,6 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
 #include <boost/optional.hpp>
-#include "Util/typesafe_event.h"
 #include "SimpleStreamHelper.h"
 
 FB_FORWARD_PTR(ThreadRunnerAPI);

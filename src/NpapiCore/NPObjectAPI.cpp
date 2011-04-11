@@ -340,7 +340,7 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     bool res = false;
     std::vector<JSObjectPtr>::const_iterator it(direct.begin());
     std::vector<JSObjectPtr>::const_iterator end(direct.end());
-    for (it; it != end; ++it) {
+    for (; it != end; ++it) {
         NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
         if (ptr->is_JSAPI) {
             FB::JSAPIPtr tmp = ptr->inner.lock();
@@ -355,7 +355,7 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     it = ifaces.begin();
     end = ifaces.end();
     NPIdentifier id(browser->GetStringIdentifier(name.c_str()));
-    for (it; it != end; ++it) {
+    for (; it != end; ++it) {
         NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
         if (ptr->is_JSAPI) {
             FB::JSAPIPtr tmp = ptr->inner.lock();

@@ -35,9 +35,6 @@
     registerProperty("version",
                      make_property(this,
                         &@{PLUGIN_ident}API::get_version));
-    
-    
-    registerEvent("onfired");    
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -89,11 +86,13 @@ std::string @{PLUGIN_ident}API::get_version()
 // Method echo
 FB::variant @{PLUGIN_ident}API::echo(const FB::variant& msg)
 {
+    static int n(0);
+    fire_echo(msg, n++);
     return msg;
 }
 
 void @{PLUGIN_ident}API::testEvent(const FB::variant& var)
 {
-    FireEvent("onfired", FB::variant_list_of(var)(true)(1));
+    fire_fired(var, true, 1);
 }
 

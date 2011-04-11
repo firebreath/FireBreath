@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Georg Fritzsche
 
 Created:    November 7, 2009
@@ -16,15 +16,16 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef JSAPIAUTO_H
 #define JSAPIAUTO_H
 
-#include "JSAPIImpl.h"
-#include "MethodConverter.h"
-#include "PropertyConverter.h"
 #include <deque>
 #include <vector>
 #include <string>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/tuple/tuple_comparison.hpp> 
+#include "JSAPIImpl.h"
+#include "MethodConverter.h"
+#include "PropertyConverter.h"
+#include "Util/typesafe_event.h"
 
 namespace FB {
     FB_FORWARD_PTR(JSFunction);
