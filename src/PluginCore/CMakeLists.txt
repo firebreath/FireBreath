@@ -91,3 +91,10 @@ add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
 export(TARGETS PluginCore APPEND FILE ${FB_EXPORT_FILE})
+if (FB_RELEASE)
+    install (TARGETS PluginCore
+        EXPORT FireBreath_Exports
+        DESTINATION bin/\${BUILD_TYPE}
+        COMPONENT FBCORE
+        )
+endif()

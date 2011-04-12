@@ -107,3 +107,10 @@ target_link_libraries(${PROJECT_NAME}
     )
 
 export(TARGETS NpapiCore APPEND FILE ${FB_EXPORT_FILE})
+if (FB_RELEASE)
+    install (TARGETS NpapiCore
+        EXPORT FireBreath_Exports
+        DESTINATION bin/\${BUILD_TYPE}
+        COMPONENT FBCORE
+        )
+endif()

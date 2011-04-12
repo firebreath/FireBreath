@@ -22,6 +22,8 @@ Project (FireBreath)
 # First, find FB_ROOT
 get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
 
+set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+
 include(${FB_ROOT}/cmake/common.cmake)
 set(FB_EXPORT_FILE ${CMAKE_BINARY_DIR}/FireBreath_Exports.cmake)
 file(REMOVE ${FB_EXPORT_FILE})
@@ -34,7 +36,7 @@ endif()
 #check to make sure we're either using WITH_SYSTEM_BOOST or have the firebreath-boost lib installed
 fb_check_boost()
 
-if (NOT FB_BINONLY AND FB_PROJECTS_DIR AND NOT EXISTS ${FB_PROJECTS_DIR})
+if (NOT FB_RELEASE AND FB_PROJECTS_DIR AND NOT EXISTS ${FB_PROJECTS_DIR})
     message(FATAL_ERROR "The specified project directory ${FB_PROJECTS_DIR} is not found")
 endif()
 
@@ -47,7 +49,7 @@ if (UNIX AND NOT APPLE)
     find_package(Threads REQUIRED)
 endif()
 
-if (EXISTS ${FB_ROOT}/bin/FireBreath_Exports.cmake AND NOT FB_BINONLY)
+if (EXISTS ${FB_ROOT}/bin/FireBreath_Exports.cmake AND NOT FB_RELEASE)
     set(FIREBREATH_LIBDIR "${FB_ROOT}/bin")
 endif()
 
@@ -78,7 +80,7 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
     endif()
 endif()
 
-if (NOT FB_BINONLY)
+if (NOT FB_RELEASE)
     # search the project src dir for plugin project directories
     file (GLOB PLUGIN_PROJECTS 
         ${FB_PROJECTS_DIR}/[^.]*
@@ -117,11 +119,15 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
     #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 endif()
 
-if (NOT FB_BINONLY)
+if (NOT FB_RELEASE)
     if (NOT FOUND_PROJECTS AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
         # If this file is the root file then we should have a projects directory
         MESSAGE("No projects found in ${PROJECTS_SOURCE_DIR}/.")
         MESSAGE(FATAL_ERROR "To build examples, run 'prep<ver> examples'")
     endif()
+else()
+    install(EXPORT FireBreath_Exports DESTINATION "cmake")
 endif()
+
+
 

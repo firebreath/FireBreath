@@ -77,3 +77,10 @@ target_link_libraries(${PROJECT_NAME}
     ScriptingCore
 )
 export(TARGETS ActiveXCore ${CMAKE_THREAD_LIBS_INIT} ${LIBDL_LIBRARIES} APPEND FILE ${FB_EXPORT_FILE})
+if (FB_RELEASE)
+    install (TARGETS ActiveXCore
+        EXPORT FireBreath_Exports
+        DESTINATION bin/\${BUILD_TYPE}
+        COMPONENT FBCORE
+        )
+endif()

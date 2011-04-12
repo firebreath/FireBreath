@@ -100,3 +100,11 @@ target_link_libraries(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
 export(TARGETS ScriptingCore APPEND FILE ${FB_EXPORT_FILE})
+if (FB_RELEASE)
+    install (TARGETS ScriptingCore
+        EXPORT FireBreath_Exports
+        DESTINATION bin/\${BUILD_TYPE}
+        COMPONENT FBCORE
+        )
+endif()
+
