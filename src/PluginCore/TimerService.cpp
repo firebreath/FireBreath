@@ -16,10 +16,11 @@ License:    Dual license model; choose one of two:
 using namespace FB;
 
 TimerService * TimerService::inst = NULL;
+boost::mutex TimerService::instance_mutex;
 
 TimerService* TimerService::instance()
 {
-	// TODO: protect instance creation by mutex.
+	boost::mutex::scoped_lock lock(instance_mutex);
 	if(inst == NULL)
 	{
 		inst = new TimerService();

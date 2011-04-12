@@ -16,6 +16,7 @@ License:    Dual license model; choose one of two:
 
 #include <string>
 #include <boost/function.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "FBPointers.h"
 #include "TimerService.h"
@@ -33,7 +34,7 @@ namespace FB {
     /// 
     /// 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class Timer
+	class Timer : public boost::enable_shared_from_this<Timer>
     {
 		typedef boost::function<void (void)> TimerCallbackFunc;
 

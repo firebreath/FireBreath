@@ -15,6 +15,7 @@ License:    Dual license model; choose one of two:
 #define H_FB_TIMER_SERVICE
 
 #include <boost/asio.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
 namespace FB {
@@ -36,6 +37,7 @@ namespace FB {
 		boost::asio::io_service* getIOService();
 	protected:
 		static TimerService * inst;
+		static boost::mutex instance_mutex;
 		TimerService();
 		~TimerService();
 
