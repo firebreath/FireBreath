@@ -180,6 +180,18 @@ namespace FB {
         /// @since 1.3 RC2 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void onPluginReady() {};
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void PluginCore::shutdown()
+        ///
+        /// @brief  This is called when the plugin needs to shut down to give it a chance to stop all
+        ///         threads; the destructor would be too late for thread shutdown
+        ///         
+        /// This should occur after the detachedEvent is fired. When this function returns there should be
+        /// no shared_ptr references to the plugin object other than ones held by FireBreath core
+        ///
+        /// @since 1.5
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void shutdown() {};
 
     protected:
 

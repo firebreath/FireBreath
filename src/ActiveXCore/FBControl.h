@@ -425,8 +425,10 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::shutdown()
         {
-            if (pluginMain)
+            if (pluginMain) {
                 pluginMain->ClearWindow();
+                pluginMain->shutdown();
+            }
             if (pluginWin) {
                 delete pluginWin; pluginWin = NULL;
             }

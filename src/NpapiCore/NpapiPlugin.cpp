@@ -68,6 +68,7 @@ NPObject *NpapiPlugin::getScriptableObject()
 void NpapiPlugin::shutdown(void)
 {
     pluginMain->ClearWindow();
+    pluginMain->shutdown();
 }
 
 void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[])
