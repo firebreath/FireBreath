@@ -81,29 +81,41 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
 endif()
 
 if (NOT FB_RELEASE)
-    # search the project src dir for plugin project directories
-    file (GLOB PLUGIN_PROJECTS 
-        ${FB_PROJECTS_DIR}/[^.]*
-        )
-
-    if (VERBOSE)
-        message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
-    endif()
-
-    # loop through the found directories and add any with a CMakeLists.txt and a PluginConfig.cmake
-    # as a subproject
-    foreach (CURPROJECT ${PLUGIN_PROJECTS})
-        if (EXISTS "${CURPROJECT}/CMakeLists.txt" AND EXISTS "${CURPROJECT}/PluginConfig.cmake")
-          set (FOUND_PROJECTS 1)
-          get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
-          if (VERBOSE)
-              message("Configuring plugin project ${CURPROJECT} in ${FB_PROJECTS_BINARY_DIR}/${PROJNAME}")
-          endif()
-          add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
-        else()
-            message("${CURPROJECT}/ does not seem to be a FireBreath Plugin")
+    message("project dir: ${FB_PROJECTS_DIR}")
+    if (EXISTS "${FB_PROJECTS_DIR}/CMakeLists.txt" AND EXISTS "${FB_PROJECTS_DIR}/PluginConfig.cmake")
+        message("Single project: ${FB_PROJECTS_DIR}")
+        set(CURPROJECT ${FB_PROJECTS_DIR})
+        set (FOUND_PROJECTS 1)
+        get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
+        if (VERBOSE)
+            message("Configuring plugin project ${CURPROJECT} in ${FB_PROJECTS_BINARY_DIR}/${PROJNAME}")
         endif()
-    endforeach()
+        add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
+    else()
+        # search the project src dir for plugin project directories
+        file (GLOB PLUGIN_PROJECTS 
+            ${FB_PROJECTS_DIR}/[^.]*
+            )
+
+        if (VERBOSE)
+            message("Searching ${PROJECTS_SOURCE_DIR}/*: found ${PLUGIN_PROJECTS}")
+        endif()
+
+        # loop through the found directories and add any with a CMakeLists.txt and a PluginConfig.cmake
+        # as a subproject
+        foreach (CURPROJECT ${PLUGIN_PROJECTS})
+            if (EXISTS "${CURPROJECT}/CMakeLists.txt" AND EXISTS "${CURPROJECT}/PluginConfig.cmake")
+              set (FOUND_PROJECTS 1)
+              get_filename_component(PROJNAME ${CURPROJECT} NAME_WE)
+              if (VERBOSE)
+                  message("Configuring plugin project ${CURPROJECT} in ${FB_PROJECTS_BINARY_DIR}/${PROJNAME}")
+              endif()
+              add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
+            else()
+                message("${CURPROJECT}/ does not seem to be a FireBreath Plugin")
+            endif()
+        endforeach()
+    endif()
 else()
     message("Projects configured to build FireBreath binaries")
 endif()
