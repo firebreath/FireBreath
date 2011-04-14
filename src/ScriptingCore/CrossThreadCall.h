@@ -155,8 +155,8 @@ namespace FB {
             funct->call();
         }
         
-        if (varResult.get_type() == typeid(FB::script_error*)) {
-            boost::scoped_ptr<FB::script_error> tmp(varResult.cast<FB::script_error*>());
+        if (varResult.get_type() == typeid(boost::shared_ptr<FB::script_error>)) {
+            boost::shared_ptr<FB::script_error> tmp(varResult.cast<boost::shared_ptr<FB::script_error> >());
             varResult.reset();
             std::string msg = tmp->what();
             throw FB::script_error(msg);
@@ -192,8 +192,8 @@ namespace FB {
             funct->call();
             result = funct->getResult();
         }
-        if (varResult.get_type() == typeid(FB::script_error*)) {
-            boost::scoped_ptr<FB::script_error> tmp(varResult.cast<FB::script_error*>());
+        if (varResult.get_type() == typeid(boost::shared_ptr<FB::script_error>)) {
+            boost::shared_ptr<FB::script_error> tmp(varResult.cast<boost::shared_ptr<FB::script_error> >());
             varResult.reset();
             std::string msg = tmp->what();
             throw FB::script_error(msg);
