@@ -49,10 +49,7 @@ void Window::alert(const std::string& str) const
 std::string Window::getLocation() const
 {
     CComBSTR bstr;
-    //m_webBrowser->get_LocationURL(&bstr);
-    CComPtr<IHTMLLocation> location;
-    m_htmlWin->get_location(&location);
-    location->get_href(&bstr);
+    m_webBrowser->get_LocationURL(&bstr);
     return FB::wstring_to_utf8(std::wstring(bstr.m_str));
 }
 
