@@ -29,6 +29,7 @@ public:
 
 public:
     void onPluginReady();
+    void shutdown();
     virtual FB::JSAPIPtr createJSAPI();
     // If you want your plugin to always be windowless, set this to true
     // If you want your plugin to be optionally windowless based on the
