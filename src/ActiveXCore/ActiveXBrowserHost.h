@@ -64,6 +64,9 @@ namespace FB {
         public:
             FB::DOM::DocumentPtr getDOMDocument();
             FB::DOM::WindowPtr getDOMWindow();
+            //  GJS  ---
+            bool hasHTMLWindow() { return m_htmlWin != NULL; }
+            //  GJS  ---
             FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
             void shutdown();

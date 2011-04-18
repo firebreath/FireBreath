@@ -303,6 +303,13 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetObjectRects(LPCRECT prcPos, LPCRECT prcClip)
         {
+			//  GJS  ---
+			if (!pluginMain->isWindowless())
+			{
+				m_bWndLess = false;
+				m_bWasOnceWindowless = false;
+			}
+			//  GJS  ---
             HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::SetObjectRects(prcPos, prcClip);
 
             if (m_bWndLess && pluginWin) {
@@ -344,7 +351,8 @@ namespace FB {
             // We have to release all event handlers and other held objects at this point, because
             // if we don't the plugin won't shut down properly; normally it isn't an issue to do
             // so, but note that this gets called if you move the plugin around in the DOM!
-            m_host->ReleaseAllHeldObjects();
+            if (m_host)	//  GJS ---
+				m_host->ReleaseAllHeldObjects();
             HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::InPlaceDeactivate();
             return hr;
         }
