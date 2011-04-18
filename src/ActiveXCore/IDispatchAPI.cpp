@@ -485,7 +485,7 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::callMultipleFunctions, this, name, args, direct, ifaces));
+        return browser->ScheduleOnMainThread(shared_from_this(), boost::bind(&IDispatchAPI::callMultipleFunctions, this, name, args, direct, ifaces));
     }
 
     size_t argCount(args.size());
