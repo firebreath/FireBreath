@@ -47,7 +47,8 @@ namespace FB
         
     private:
         OneShotManager();
-        
+        bool npp_nextCallback(SinkPair& callback);
+
         mutable boost::mutex m_mutex;
         Sinks m_sinks;
         void* m_helper;

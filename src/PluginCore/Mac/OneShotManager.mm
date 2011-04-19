@@ -85,26 +85,29 @@ void FB::OneShotManager::npp_scheduleAsyncCallback(void* instance, OneShotCallba
     }
 }
 
+bool FB::OneShotManager::npp_nextCallback(SinkPair& callback) {
+    // return the next callback.
+    boost::mutex::scoped_lock lock(m_mutex);
+    std::map<void*,SinkQueue*>::iterator sink = m_sinks.begin();
+    while (m_sinks.end() != sink) {
+        SinkQueue::iterator call = sink->second->begin();
+        if (sink->second->end() != call) {
+            callback = *call;
+            sink->second->erase(call);
+            return true;
+        }
+        sink++;
+    }
+    return false;
+}
+
 void FB::OneShotManager::npp_asyncCallback() {
     // Must be on main thread.
-    // Copy all callbacks to a tmp deque and clear the callbacks.
-    SinkQueue calls;
-    {
-        boost::mutex::scoped_lock lock(m_mutex);
-        std::map<void*,SinkQueue*>::iterator sink = m_sinks.begin();
-        while (m_sinks.end() != sink) {
-            calls.insert(calls.end(), sink->second->begin(), sink->second->end());
-            sink->second->clear();
-            sink++;
-        }
-        m_shot = false;
-    }
-    // Call all the callbacks.
-    SinkQueue::iterator call = calls.begin();
-    while (calls.end() != call) {
-        (*call).second((*call).first);
-        call++;
-    }
+    // This is done this way because Safari may call NPP_Destroy during the callback.
+    m_shot = false;
+    SinkPair callback;
+    while (npp_nextCallback(callback))
+        callback.second(callback.first);
 }
 
 FB::OneShotManager& FB::OneShotManager::getInstance()
