@@ -348,6 +348,8 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceDeactivate( void )
         {
+            if (pluginMain)
+                pluginMain->ClearWindow();
             // We have to release all event handlers and other held objects at this point, because
             // if we don't the plugin won't shut down properly; normally it isn't an issue to do
             // so, but note that this gets called if you move the plugin around in the DOM!
