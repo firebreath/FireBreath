@@ -77,7 +77,7 @@ namespace FB {
             typedef CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> CFBControlX;
 
         protected:
-            FB::PluginWindow *pluginWin;
+            boost::scoped_ptr<FB::PluginWindow> pluginWin;
             CComQIPtr<IServiceProvider> m_serviceProvider;
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
@@ -92,7 +92,7 @@ namespace FB {
             // The methods in this class are positioned in this file in the
             // rough order that they will be called in.
             CFBControl() : JSAPI_IDispatchEx<CFBControlX, ICurObjInterface, piid>(pMT), FB::BrowserPlugin(pMT),
-                pluginWin(NULL), m_mimetype(pMT)
+                m_mimetype(pMT)
             {
                 FB::PluginCore::setPlatform("Windows", "IE");
                 setFSPath(g_dllPath);
@@ -222,7 +222,7 @@ namespace FB {
         {
             if (pluginWin && m_bWndLess && FB::pluginGuiEnabled()) {
                 HRESULT lRes(0);
-                PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin);
+                PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin.get());
                 win->setWindowPosition(
                     di.prcBounds->left,
                     di.prcBounds->top,
@@ -313,7 +313,7 @@ namespace FB {
             HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::SetObjectRects(prcPos, prcClip);
 
             if (m_bWndLess && pluginWin) {
-                FB::PluginWindowlessWin* ptr(static_cast<FB::PluginWindowlessWin*>(pluginWin));
+                FB::PluginWindowlessWin* ptr(static_cast<FB::PluginWindowlessWin*>(pluginWin.get()));
                 ptr->setWindowClipping(prcClip->top, prcClip->left, prcClip->bottom, prcClip->right);
                 ptr->setWindowPosition(prcPos->left, prcPos->top, prcPos->right-prcPos->left, prcPos->bottom-prcPos->top);
             }
@@ -333,14 +333,14 @@ namespace FB {
                 return hr;
             }
             if (m_bWndLess) {
-                pluginWin = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
-                static_cast<FB::PluginWindowlessWin*>(pluginWin)
+                pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL))));
+                static_cast<FB::PluginWindowlessWin*>(pluginWin.get())
                     ->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
             } else {
-                pluginWin = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
-                static_cast<PluginWindowWin*>(pluginWin)->setCallOldWinProc(true);
+                pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd))));
+                static_cast<PluginWindowWin*>(pluginWin.get())->setCallOldWinProc(true);
             }
-            pluginMain->SetWindow(pluginWin);
+            pluginMain->SetWindow(pluginWin.get());
 
             return hr;
         }
@@ -348,8 +348,10 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceDeactivate( void )
         {
-            if (pluginMain)
+            if (pluginMain) {
                 pluginMain->ClearWindow();
+                pluginWin.reset();
+            }
             // We have to release all event handlers and other held objects at this point, because
             // if we don't the plugin won't shut down properly; normally it isn't an issue to do
             // so, but note that this gets called if you move the plugin around in the DOM!
@@ -445,8 +447,7 @@ namespace FB {
             }
 
             if (pluginWin) {
-                delete pluginWin;
-                pluginWin = NULL;
+                pluginWin.reset();
             }
 
             m_api.reset(); // Once we release this, pluginMain releasing should free it
@@ -529,7 +530,7 @@ namespace FB {
 
                 if (bHandled)
                     return TRUE;
-                else if (m_bWndLess && pluginWin && static_cast<PluginWindowlessWin*>(pluginWin)->HandleEvent(uMsg, wParam, lParam, lResult))
+                else if (m_bWndLess && pluginWin && static_cast<PluginWindowlessWin*>(pluginWin.get())->HandleEvent(uMsg, wParam, lParam, lResult))
                     return TRUE;
                 else if(CComControl<CFBControlX>::ProcessWindowMessage(hWnd, uMsg, wParam, lParam, lResult))
                     return TRUE;
