@@ -435,17 +435,21 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::shutdown()
         {
-            if (pluginMain) {
-                pluginMain->ClearWindow();
-                pluginMain->shutdown();
-            }
-            if (pluginWin) {
-                delete pluginWin; pluginWin = NULL;
-            }
-            m_api.reset(); // Once we release this, pluginMain releasing should free it
             // the host must be shut down before the rest to prevent deadlocks on async calls
             if (m_host)
                 m_host->shutdown();
+
+            if (pluginMain) {
+                pluginMain->ClearWindow(); //Already done during InPlaceDeactivate
+                pluginMain->shutdown();
+            }
+
+            if (pluginWin) {
+                delete pluginWin;
+                pluginWin = NULL;
+            }
+
+            m_api.reset(); // Once we release this, pluginMain releasing should free it
             pluginMain.reset(); // This should delete the plugin object
             m_propNotify.Release();
             m_webBrowser.Release();
