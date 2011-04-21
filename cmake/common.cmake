@@ -162,6 +162,28 @@ macro (export_project_dependencies)
     set (Boost_INCLUDE_DIRS ${Boost_INCLUDE_DIRS} PARENT_SCOPE)
 endmacro (export_project_dependencies)
 
+# Warn if the http_proxy is set but not the https_proxy
+# Check for both uppercase (windows) and lowercase (linux) variants
+# CMake can't use the ENV function directly in conditional statements (so create temporary local variables to do the check)
+# http://marc.info/?l=cmake&m=119419263535736&w=2
+function(proxy_setup)
+    SET( HTTP_PROXY $ENV{HTTP_PROXY} )
+    SET( HTTPS_PROXY $ENV{HTTPS_PROXY} )
+    SET( http_proxy $ENV{http_proxy} )
+    SET( https_proxy $ENV{https_proxy} )
+    if(HTTP_PROXY AND NOT HTTPS_PROXY)
+        message("!!!! WARNING: HTTP_PROXY env var set, but we need HTTPS_PROXY. Attempting to use HTTP_PROXY FOR HTTPS_PROXY")
+        set(ENV{HTTPS_PROXY} ${HTTP_PROXY})
+    endif()
+    
+    if(http_proxy AND NOT https_proxy)
+        message("!!!! WARNING: http_proxy env var set, but we need https_proxy. Attempting to use http_proxy FOR https_proxy")
+        set(ENV{https_proxy} ${http_proxy})
+    endif()
+    #message($ENV{https_proxy})
+    #message($ENV{HTTPS_PROXY})
+endfunction(proxy_setup)
+
 function (fb_check_boost)
     if (NOT WITH_SYSTEM_BOOST)
         if (NOT EXISTS ${FB_BOOST_SOURCE_DIR})
@@ -186,11 +208,8 @@ function (fb_check_boost)
                 message("Downloading...")
                 find_program(CURL curl)
                 find_program(WGET wget PATHS "${FB_ROOT}/cmake/")
+                proxy_setup()
                 if (NOT ${WGET} MATCHES "WGET-NOTFOUND")
-                    if (ENV{HTTP_PROXY} AND NOT ENV{HTTPS_PROXY})
-                        message("!!!! WARNING: HTTP_PROXY env var set, but we need HTTPS_PROXY. Attempting to use HTTP_PROXY FOR HTTPS_PROXY")
-                        set(ENV{HTTPS_PROXY} $ENV{HTTP_PROXY})
-                    endif()
                     execute_process(
                         COMMAND ${WGET}
                         --no-check-certificate
