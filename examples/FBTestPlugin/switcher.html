@@ -1,0 +1,138 @@
+<html>
+    <head>
+        <title>Switcher page</title>
+        <style type="text/css">
+            iframe { border: 1px solid black; width: 100%; height: 60%; overflow: auto; }
+            p { margin: 0.3em; }
+            .urlInput { clear: right; width: 400px; }
+            #pluginVersion { float: right; }
+            #plugin { width: 100%; height: 10px; }
+            .hidden { display: none; }
+            #delay { width: 100px; border: none; }
+            #counters span { margin-right: 80px; font-size: 120pt; }
+            #browserVersion { font-size: 18pt; color: #336699; }
+        </style>
+        <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                if (navigator.plugins) {
+                    // Make sure the newest version of the plugin will be found.
+                    navigator.plugins.refresh(false);
+                }
+                var ua = $.browser;
+                var uaVersion = parseFloat(ua.version);
+                var browser = "";
+                var getUrlParameters = function() {
+                    var map = {};
+                    var parts = window.location.href.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(m,key,value) {
+                        map[key] = value;
+                    });
+                    return map;
+                };
+                var params = getUrlParameters();
+                var decode = function(str) {
+                    return unescape(str.replace(/\+/g, " "));
+                };
+                if (ua.mozilla) {
+                    var r = RegExp(/(Firefox)\/([0-9.]+)/);
+                    var matches = navigator.userAgent.match(r);
+                    browser = matches[0].replace('/', ' ');
+                } else if (ua.webkit) {
+                    var chrome = RegExp(/Chrome\/([0-9.]+)/);
+                    var safari = RegExp(/Version\/([0-9.]+)/);
+                    if (navigator.userAgent.match(chrome)) {
+                        browser = "Chrome " + navigator.userAgent.match(chrome)[1];
+                    } else {
+                        browser = "Safari " + navigator.userAgent.match(safari)[1];
+                    }
+                } else if (ua.msie) {
+                    browser = "Internet Explorer " + ua.version;
+                } else {
+                    browser = "Unknown";
+                }
+                var autoSwitch = false;
+                var nextSrc = "srcA";
+                var updateDelay = function() {
+                    var delay = Math.floor(Math.random() * 4000);
+                    $("#delay")[0].value = delay;
+                    return delay;
+                };
+                var plugin = document.getElementById("plugin");
+                var timeoutHandler = function() {
+                    $("#switch").trigger("click");
+                };
+                
+                $("#browserVersion").html(browser);
+                $("#pluginVersion").html("Plugin Version: " + plugin.pluginVersion);
+                $("#switch").click(function() {
+                    var elem = $(this);
+                    $("#content")[0].src = $("#" + nextSrc)[0].value;
+                    var countElem = $("#count_" + nextSrc);
+                    countElem.html(parseInt(countElem.html(), 10) + 1);
+                    nextSrc = (nextSrc == "srcA") ? "srcB" : "srcA";
+                    if (autoSwitch) {
+                        autoSwitch = setTimeout(timeoutHandler, updateDelay());
+                    }
+                });
+                $("#cancel").click(function() {
+                    if (!autoSwitch) {
+                        return;
+                    }
+                    clearTimeout(autoSwitch);
+                    autoSwitch = false;
+                    $(this).addClass("hidden");
+                    $("#delayGroup").addClass("hidden");
+                    $("#start").removeClass("hidden");
+                });
+                $("#start").click(function() {
+                    if (autoSwitch) {
+                        return;
+                    }
+                    autoSwitch = true;
+                    $("#switch").click();
+                    $(this).addClass("hidden");
+                    $("#cancel").removeClass("hidden");
+                    $("#delayGroup").removeClass("hidden");
+                });
+                $("#cancel").addClass("hidden");
+                $("#delayGroup").addClass("hidden");
+                if (params.srcA) {
+                    $("#srcA")[0].value = decode(params.srcA);
+                };
+                if (params.srcB) {
+                    $("#srcB")[0].value = decode(params.srcB);
+                };
+                if (params.start) {
+                    $("#start").click();
+                }
+            });
+        </script>
+    </head>
+    <body>
+        <div id="browserVersion"></div>
+        <iframe id="content" src=""></iframe>
+        <p id="pluginVersion">
+            <object type="application/x-fbtestplugin" id="plugin"></object>
+        </p>
+        <p>
+            <label for="srcA">A:</label>
+            <input id="srcA" class="urlInput" type="text" value="test.html" />
+        </p>
+        <p>
+            <label for="srcB">B:</label>
+            <input id="srcB" class="urlInput" type="text" value="place_holder.html" />
+        </p>
+        <button id="switch">Switch source</button>
+        <button id="cancel">Cancel auto-switch</button>
+        <button id="start">Begin auto-switch</button>
+        <span id="delayGroup">
+            <label for="delay">Next switch in:</label>
+            <input id="delay" readonly="true" type="text" value="" />
+        </span>
+        <p id="counters">
+            A: <span id="count_srcA">0</span>
+            B: <span id="count_srcB">0</span>
+        </p>
+    </body>
+</html>
+
