@@ -40,7 +40,7 @@
 
 @end
 
-FB::OneShotManager::OneShotManager() : m_helper(NULL), m_shot(false)
+FB::OneShotManager::OneShotManager() : m_helper(NULL), m_shots(0)
 {
     OneShotManagerHelper* mHelper = [OneShotManagerHelper new];
     mHelper.manager = this;
@@ -66,6 +66,7 @@ void FB::OneShotManager::npp_unregister(void* instance) {
     boost::mutex::scoped_lock lock(m_mutex);
 	std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
 	if (m_sinks.end() != sink) {
+        m_shots -= sink->second->size();
         delete sink->second;
         m_sinks.erase(sink);
     }
@@ -77,11 +78,11 @@ void FB::OneShotManager::npp_scheduleAsyncCallback(void* instance, OneShotCallba
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
     if (m_sinks.end() != sink) {
         sink->second->push_back(std::make_pair(userData, func));
-        if (!m_shot) {
+        if (!m_shots) {
             OneShotManagerHelper* mHelper = (OneShotManagerHelper*) m_helper;
             [mHelper performSelectorOnMainThread:@selector(shoot:) withObject:NULL waitUntilDone:NO];
-             m_shot = true;
-       }
+        }
+        m_shots++;
     }
 }
 
@@ -94,6 +95,7 @@ bool FB::OneShotManager::npp_nextCallback(SinkPair& callback) {
         if (sink->second->end() != call) {
             callback = *call;
             sink->second->erase(call);
+            m_shots--;
             return true;
         }
         sink++;
@@ -104,7 +106,6 @@ bool FB::OneShotManager::npp_nextCallback(SinkPair& callback) {
 void FB::OneShotManager::npp_asyncCallback() {
     // Must be on main thread.
     // This is done this way because Safari may call NPP_Destroy during the callback.
-    m_shot = false;
     SinkPair callback;
     while (npp_nextCallback(callback))
         callback.second(callback.first);

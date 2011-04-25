@@ -138,8 +138,10 @@ int16_t NpapiPluginMac::GetValue(NPPVariable variable, void *value) {
         case NPPVpluginScriptableNPObject:
         {
             res = NpapiPlugin::GetValue(variable, value);
-            if (NPERR_NO_ERROR == res)
-                setReady(); // Ready state means that we are ready to interact with Javascript;
+            if (NPERR_NO_ERROR == res) {
+                bool readySet = setReady(); // Ready state means that we are ready to interact with Javascript;
+                if (readySet) FBLOG_ERROR("Issue27", "NpapiPluginMac::" << FBLOG_FUNCTION() << "setReady()");
+            }
             FBLOG_INFO("PluginCore", "GetValue(NPPVpluginScriptableNPObject)");
         }   break;
         default:

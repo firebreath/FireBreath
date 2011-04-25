@@ -41,12 +41,12 @@ NpapiPlugin::~NpapiPlugin(void)
     }
 }
 
-void NpapiPlugin::setReady()
+bool NpapiPlugin::setReady()
 {
-    if (!m_isReady) {
-        pluginMain->setReady();
-        m_isReady = true;
-    }
+    bool rval = false;
+    if (!m_isReady)
+        rval = m_isReady = pluginMain->setReady();
+    return rval;
 }
 
 NPObject *NpapiPlugin::getScriptableObject()
@@ -93,12 +93,14 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
 #endif
     } 
-    setReady();
+    bool readySet = setReady();
+    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
-    setReady();
+    bool readySet = setReady();
+    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
     return NPERR_NO_ERROR;
 }
 

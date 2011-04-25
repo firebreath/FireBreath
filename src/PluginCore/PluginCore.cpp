@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -96,23 +96,27 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
 
 // If you override this, you probably want to call it again, since this is what calls back into the page
 // to indicate that we're done.
-void PluginCore::setReady()
+bool PluginCore::setReady()
 {
-    FBLOG_INFO("PluginCore", "Plugin Ready");
+    bool rval = false;
+    FBLOG_TRACE("PluginCore", "Plugin Ready");
     // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
-    getRootJSAPI(); 
+    getRootJSAPI();
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
             if(method) {
+                FBLOG_TRACE("PluginCore", "InvokeAsync(onload)");
                 method->InvokeAsync("", FB::variant_list_of(getRootJSAPI()));
+                rval = true;
             }
         }
     } catch(...) {
         // Usually this would be if it isn't a JSObjectPtr or the object can't be called
     }
     onPluginReady();
+    return rval;
 }
 
 bool PluginCore::isWindowless()

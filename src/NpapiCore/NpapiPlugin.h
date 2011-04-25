@@ -44,7 +44,7 @@ namespace FB {
         virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);
         virtual void shutdown();
 
-        virtual void setReady();
+        virtual bool setReady();
 
     protected:
         NPJavascriptObject *m_obj;

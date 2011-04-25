@@ -166,7 +166,7 @@ namespace FB {
         ///         plugin is now ready to interact with the Browser via Javascript.  This may or may not
         ///         occur before the Window (if any) is set.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setReady();
+        virtual bool setReady();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::onPluginReady()
