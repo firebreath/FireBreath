@@ -10,6 +10,7 @@
                 OnlyDetect="no" IgnoreRemoveFailure="yes"
                 MigrateFeatures="yes" />
         </Upgrade>
+		<Property Id="MSIRESTARTMANAGERCONTROL" Value="Disable" />
         <InstallExecuteSequence>
             <RemoveExistingProducts After="InstallInitialize" />
             <InstallExecute After="RemoveExistingProducts" />
@@ -21,21 +22,45 @@
                 <Directory Id="CompanyDir" Name="${COMPANY_NAME}">
                     <Component Id="CompanyDirComp" Guid="*">
                         <RemoveFolder Id="RemoveCompanyDir" On="uninstall" />
-                        <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
+                        <RegistryValue
+                            Root="HKCU"
+                            Key="SOFTWARE\${COMPANY_NAME}"
+                            Name="Uninstall"
+                            Type="string"
+                            Value="${FBSTRING_PLUGIN_VERSION}"
+                            KeyPath="yes" />
                     </Component>
-                    <Directory Id="INSTALLDIR" Name="${PLUGIN_NAME}">
-                        <Component Id="InstallDirComp" Guid="*">
-                            <RemoveFolder Id="RemoveInstallDir" On="uninstall" />
-                            <RegistryValue Root="HKCU" Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}" Name="Uninstall" Type="string" Value="${FBSTRING_PLUGIN_VERSION}" KeyPath="yes" />
+                    <Directory Id="PluginNameDir" Name="${PLUGIN_NAME}">
+                        <Component Id="PluginNameDirComp" Guid="*">
+                            <RemoveFolder Id="RemovePluginNameDir" On="uninstall" />
+                            <RegistryValue
+                                Root="HKCU"
+                                Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+                                Name="Uninstall"
+                                Type="string"
+                                Value="${FBSTRING_PLUGIN_VERSION}"
+                                KeyPath="yes" />
                         </Component>
+                        <Directory Id="INSTALLDIR" Name="${FBSTRING_PLUGIN_VERSION}">
+                            <Component Id="InstallDirComp" Guid="*">
+                                <RemoveFolder Id="RemoveInstallDir" On="uninstall" />
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}\${FBSTRING_PLUGIN_VERSION}"
+                                    Name="Uninstall"
+                                    Type="string"
+                                    Value="${FBSTRING_PLUGIN_VERSION}"
+                                    KeyPath="yes" />
+                            </Component>
 
-                        <!-- Put Additional files here: -->
-                        <!-- example:
-                        <Component Id="UniqueComponentId" Guid="*">
-                            <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
-                        </Component>
-                        /example -->
-                        <!--  -->
+                            <!-- Put Additional files here: -->
+                            <!-- example:
+                            <Component Id="UniqueComponentId" Guid="*">
+                                <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
+                            </Component>
+                            /example -->
+                            <!--  -->
+                        </Directory>
                     </Directory>
                 </Directory>
             </Directory>
@@ -43,6 +68,7 @@
 
         <Feature Id="MainPluginFeature" Title="${FBSTRING_ProductName}" Level="1">
             <ComponentRef Id="InstallDirComp"/>
+            <ComponentRef Id="PluginNameDirComp"/>
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
         </Feature>
