@@ -374,6 +374,10 @@ namespace FB {
         bool m_allowDynamicAttributes;
         bool m_allowRemoveProperties;
         bool m_allowMethodObjects;
+    public:
+        static bool s_allowDynamicAttributes;
+        static bool s_allowRemoveProperties;
+        static bool s_allowMethodObjects;
     };
 
 };

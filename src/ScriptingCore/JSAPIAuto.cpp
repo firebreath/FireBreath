@@ -20,12 +20,16 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include "JSEvent.h"
 #include <cassert>
 
+bool FB::JSAPIAuto::s_allowDynamicAttributes = true;
+bool FB::JSAPIAuto::s_allowRemoveProperties = false;
+bool FB::JSAPIAuto::s_allowMethodObjects = true;
+
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : FB::JSAPIImpl(SecurityScope_Public),
     m_description(description),
-    m_allowDynamicAttributes(true), 
-    m_allowRemoveProperties(false),
-    m_allowMethodObjects(true)
+    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes), 
+    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
+    m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
 {
     init();
 }
@@ -33,8 +37,9 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
   : FB::JSAPIImpl(securityLevel),
     m_description(description),
-    m_allowDynamicAttributes(true), 
-    m_allowMethodObjects(true)
+    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes), 
+    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
+    m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
 {
     init();
 }
