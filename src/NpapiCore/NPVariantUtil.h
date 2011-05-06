@@ -1,4 +1,3 @@
-
 /**********************************************************\
  Original Author: Georg Fritzsche
  
@@ -293,7 +292,7 @@ namespace FB { namespace Npapi
                 return &makeNPVariant<bool>;
             }
             
-            if ((sizeof(T) <= sizeof(int32_t)) || (boost::is_unsigned<T>::value && (sizeof(T) <= sizeof(int32_t)/2))) {
+            if ((boost::is_signed<T>::value && (sizeof(T) <= sizeof(int32_t))) || (boost::is_unsigned<T>::value && (sizeof(T) <= sizeof(int32_t)/2))) {
                 // max value of T fits into int32_t
                 return &makeNPVariant<int32_t>;
             }
