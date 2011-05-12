@@ -527,8 +527,9 @@ bool ActiveXBindStatusCallback::GetInfo(DWORD which, std::string& result)
     CComPtr<IWinInetHttpInfo> httpInfo;
     if ( !FAILED(m_pbinding->QueryInterface( &httpInfo ) ) )
     {
-        ok = !FAILED( httpInfo->QueryInfo( which, &buffer[0], &bufferSize, &flags, 0 ) );
-        result = std::string( buffer.get(), bufferSize );
+		ok = ( S_OK == httpInfo->QueryInfo( which, &buffer[0], &bufferSize, &flags, 0 ) );
+		if( ok )
+			result = std::string( buffer.get(), bufferSize );
     }
     
     return ok;
