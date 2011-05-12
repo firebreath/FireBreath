@@ -30,6 +30,13 @@ namespace HTTP {
 
     class UploadQueue : public FB::PluginEventSource {
     public:
+        class UploadErrorEvent : public FB::PluginEvent {
+        public:
+            UploadErrorEvent(const FB::VariantMap& status) : status(status) { }
+            virtual ~UploadErrorEvent() {}
+
+            FB::VariantMap status;
+        };
         class StatusUpdateEvent : public FB::PluginEvent {
         public:
             StatusUpdateEvent(const FB::VariantMap& status) : status(status) { }
