@@ -273,7 +273,7 @@ void UseWinInet(const WCHAR* URL)
     /*HRESULT uoshr = URLOpenStream( 0, L"http://www.myurl.com/Resources.zip", 0, ibscb );
     ShowMessage( hwnd, "URLOpenStream: " + toString(uoshr) );*/
     IMoniker* FMoniker;
-    CreateURLMoniker(0, URL, &FMoniker);
+    CreateURLMonikerEx(0, URL, &FMoniker, URL_MK_UNIFORM );
 
     IBindCtx* FBindCtx;
     CreateAsyncBindCtx(0, ibscb, 0, &FBindCtx);
