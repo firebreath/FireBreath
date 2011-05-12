@@ -64,7 +64,7 @@ namespace FB
     /// @see NpapiBrowserHost
     /// @see ActiveXBrowserHost
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class BrowserHost : public boost::enable_shared_from_this<BrowserHost>
+    class BrowserHost : public boost::enable_shared_from_this<BrowserHost>, boost::noncopyable
     {
     public:
 

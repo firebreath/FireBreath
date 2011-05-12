@@ -192,6 +192,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setDefaultZone(const SecurityZone& securityLevel)
         {
+            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
             assert(m_zoneStack.size() > 0);
             m_zoneStack.pop_front();
             m_zoneStack.push_front(securityLevel);
@@ -211,6 +212,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual SecurityZone getDefaultZone() const
         {
+            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
             assert(m_zoneStack.size() > 0);
             return m_zoneStack.front();
         }
@@ -296,6 +298,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event)
         {
+            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
             m_evtIfaces[event->getEventContext()][static_cast<void*>(event.get())] = event;
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -307,6 +310,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventInterface(const JSObjectPtr& event)
         {
+            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
             EventIFaceMap::iterator fnd = m_evtIfaces[event->getEventContext()].find(static_cast<void*>(event.get()));
             m_evtIfaces[event->getEventContext()].erase(fnd);
         }
@@ -327,6 +331,8 @@ namespace FB
         typedef std::vector<JSAPIImplWeakPtr> ProxyList;
         mutable ProxyList m_proxies;
 
+        mutable boost::recursive_mutex m_eventMutex;
+        mutable boost::recursive_mutex m_proxyMutex;
         mutable boost::recursive_mutex m_zoneMutex;
         ZoneStack m_zoneStack;
                 
