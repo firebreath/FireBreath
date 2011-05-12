@@ -105,7 +105,7 @@ function(configure_template filename outputfile)
     # If the output file is newer than the input file then we don't
     # need/want to regenerate it
     if (NOT EXISTS "${outputfile}" OR "${filename}" IS_NEWER_THAN "${outputfile}")
-        message ("Configuring template ${filename} to ${outputfile}")
+        #message ("Configuring template ${filename} to ${outputfile}")
         file(WRITE "${outputfile}" "")
         # Read the file into a loop
         FILE(READ "${filename}" file_contents)
