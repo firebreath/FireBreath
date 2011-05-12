@@ -55,6 +55,18 @@ else()
     set(FB_WIX_INSTALL_LOCATION "AppDataFolder")
 endif()
 
+set(FB_VERSION_SPLIT ${FBSTRING_PLUGIN_VERSION})
+string(REPLACE "." ";" FB_VERSION_SPLIT ${FB_VERSION_SPLIT})
+LIST(LENGTH FB_VERSION_SPLIT _LEN)
+
+list(GET FB_VERSION_SPLIT 0 FBSTRING_VERSION_MAJOR)
+list(GET FB_VERSION_SPLIT 1 FBSTRING_VERSION_MINOR)
+if (_LEN GREATER 2)
+    list(GET FB_VERSION_SPLIT 2 FBSTRING_VERSION_BUILD)
+endif()
+if (_LEN GREATER 3)
+    list(GET FB_VERSION_SPLIT 3 FBSTRING_VERSION_PATCH)
+endif()
 
 # configure default generated files
 # TODO: Fix this to not need configure_template; it is suboptimal
