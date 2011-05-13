@@ -19,6 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
+#include <boost/format.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
@@ -121,6 +122,50 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
 void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
 {
     evaluateJavaScript(FB::wstring_to_utf8(script));
+}
+
+void FB::BrowserHost::initJS(const void* inst)
+{
+	// Inject javascript helper function into the page; this is neccesary to help
+	// with some browser compatibility issues.
+	
+	const char* javascriptMethod = 
+		"window.__FB_CALL_%1% = "
+		"function(delay, f, args, fname) {"
+		"   if (arguments.length == 3)"
+		"	    setTimeout(function() { f.apply(args); }, delay);"
+		"   else"
+		"		setTimeout(function() { f[fname].apply(args); }, delay);"
+		"};";
+	
+	// I'm open to suggestions on a better way to get a unique key for this plugin instance
+	uint32_t inst_key;
+	memcpy(&inst_key, &inst, 4);
+	inst_key >>= 1; // Make sure nobody could use this to get a valid pointer
+	inst_key *= 2.5;
+	unique_key = boost::lexical_cast<std::string>(inst_key);
+	
+	call_delegate = (boost::format("__FB_CALL_%1%") % inst_key).str();
+	
+	evaluateJavaScript((boost::format(javascriptMethod) % inst_key).str());
+}
+
+void FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+									const FB::VariantList& args, const std::string& fname)
+{
+	FB::JSObjectPtr delegate = getDelayedInvokeDelegate();
+	if (fname.empty())
+		delegate->Invoke("", FB::variant_list_of(delayms)(func)(args));
+	else
+		delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)(fname));
+}
+
+FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
+	if (call_delegate.empty()) {
+		// initJS wasn't called (yet?)!
+		assert(false);
+	}
+	return getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
 }
 
 FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj) const

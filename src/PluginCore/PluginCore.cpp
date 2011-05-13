@@ -98,6 +98,8 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
 // to indicate that we're done.
 bool PluginCore::setReady()
 {
+	m_host->initJS(this);
+	
     bool rval = false;
     FBLOG_TRACE("PluginCore", "Plugin Ready");
     // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
@@ -107,8 +109,8 @@ bool PluginCore::setReady()
         if (fnd != m_params.end()) {
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
             if(method) {
-                FBLOG_TRACE("PluginCore", "InvokeAsync(onload)");
-                method->InvokeAsync("", FB::variant_list_of(getRootJSAPI()));
+                FBLOG_TRACE("PluginCore", "InvokeDelayed(onload)");
+				m_host->delayedInvoke(250, method, FB::variant_list_of(getRootJSAPI()));
                 rval = true;
             }
         }
@@ -121,6 +123,7 @@ bool PluginCore::setReady()
 
 bool PluginCore::isWindowless()
 {
+	m_host->initJS(this);
     if (m_windowLessParam != boost::indeterminate) {
         return m_windowLessParam;
     } else {

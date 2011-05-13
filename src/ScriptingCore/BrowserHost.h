@@ -301,6 +301,29 @@ namespace FB
         virtual void evaluateJavaScript(const std::wstring &script);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+		///						   const FB::VariantList& args, const std::string& fname = "");
+        ///
+        /// @brief  Executes the provided method object after a delay using window.setTimeout
+        ///
+		/// This is basically a wrapper for the Javascript setTimeout function that allows passing
+		/// parameters to the function you want called after a delay. This is used behind the scenes
+		/// by InvokeAsync with the delayms set to 0
+		///
+        /// @param  delayms Delay time in milliseconds
+		/// @param  func	Javascript object (or function)
+		/// @param  args    Array of arguments to pass to the function
+		/// @param  fname   If provided, the func.fname method will be called instead of invoking
+		///					func as a function
+		///
+		/// @since 1.5.2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+		void delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+						   const FB::VariantList& args, const std::string& fname = "");
+		FB::JSObjectPtr getDelayedInvokeDelegate();
+		virtual void initJS(const void* inst);
+		
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void htmlLog(const std::string& str)
         ///
         /// @brief  Sends a log message to the containing web page using Console.log (firebug)
@@ -407,6 +430,9 @@ namespace FB
         mutable std::list<FB::JSAPIPtr> m_retainedObjects;
         static volatile int InstanceCount;
         BrowserStreamManagerPtr m_streamMgr;
+		
+		std::string unique_key;
+		std::string call_delegate;
     };
 
     

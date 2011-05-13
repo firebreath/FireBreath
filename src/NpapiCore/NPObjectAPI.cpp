@@ -22,6 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cassert>
 
 using namespace FB::Npapi;
+using boost::static_pointer_cast;
 
 NPObjectAPI::NPObjectAPI(NPObject *o, const NpapiBrowserHostPtr& h)
     : JSObject(h), m_browser(h), obj(o), is_JSAPI(false)
@@ -331,46 +332,54 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     }
     NPVariant retVal;
 
-    // Convert the arguments to NPVariants
-    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size()]);
-    for (unsigned int i = 0; i < args.size(); i++) {
-        browser->getNPVariant(&npargs[i], args[i]);
-    }
+	// We make these calls through a delegate javascript function that is injected into
+	// the page on startup.  The reason we do this is to prevent some weird reentrance bugs
+	// particularly in FF4.
+	
+	NPObjectAPIPtr d = static_pointer_cast<NPObjectAPI>(browser->getDelayedInvokeDelegate());
+	NPObject* delegate(d->getNPObject());
 
-    bool res = false;
-    std::vector<JSObjectPtr>::const_iterator it(direct.begin());
-    std::vector<JSObjectPtr>::const_iterator end(direct.end());
-    for (; it != end; ++it) {
-        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
-        if (ptr->is_JSAPI) {
-            FB::JSAPIPtr tmp = ptr->inner.lock();
-            if (tmp) {
-                tmp->Invoke("", args);
-                continue;
-            }
-        }
-        res = browser->InvokeDefault(ptr->getNPObject(), npargs.get(), args.size(), &retVal);
-        browser->ReleaseVariantValue(&retVal);
-    }
-    it = ifaces.begin();
-    end = ifaces.end();
-    NPIdentifier id(browser->GetStringIdentifier(name.c_str()));
-    for (; it != end; ++it) {
-        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
-        if (ptr->is_JSAPI) {
-            FB::JSAPIPtr tmp = ptr->inner.lock();
-            if (tmp) {
-                tmp->Invoke("", args);
-                continue;
-            }
-        }
-        res = browser->Invoke(ptr->getNPObject(), id, npargs.get(), args.size(), &retVal);
-        browser->ReleaseVariantValue(&retVal);
-    }
-    // Free the NPVariants that we earlier allocated
-    for (unsigned int i = 0; i < args.size(); i++) {
-        browser->ReleaseVariantValue(&npargs[i]);
-    }
+	// Allocate the arguments
+	boost::scoped_array<NPVariant> npargs(new NPVariant[4]);
+	browser->getNPVariant(&npargs[0], 0);
+	browser->getNPVariant(&npargs[2], args);
+	browser->getNPVariant(&npargs[3], name);
+	
+	bool res = false;
+	std::vector<JSObjectPtr>::const_iterator it(direct.begin());
+	std::vector<JSObjectPtr>::const_iterator end(direct.end());
+	for (; it != end; ++it) {
+		NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+		if (ptr->is_JSAPI) {
+			FB::JSAPIPtr tmp = ptr->inner.lock();
+			if (tmp) {
+				tmp->Invoke("", args);
+				continue;
+			}
+		}
+		browser->getNPVariant(&npargs[1], ptr);
+		res = browser->InvokeDefault(delegate, npargs.get(), 3, &retVal);
+		browser->ReleaseVariantValue(&retVal);
+		browser->ReleaseVariantValue(&npargs[1]);
+	}
+	
+	it = ifaces.begin();
+	end = ifaces.end();
+	for (; it != end; ++it) {
+		NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+		if (ptr->is_JSAPI) {
+			FB::JSAPIPtr tmp = ptr->inner.lock();
+			if (tmp) {
+				tmp->Invoke("", args);
+				continue;
+			}
+		}
+		browser->getNPVariant(&npargs[1], ptr);
+		res = browser->InvokeDefault(delegate, npargs.get(), 4, &retVal);
+		browser->ReleaseVariantValue(&retVal);
+		browser->ReleaseVariantValue(&npargs[1]);
+	}
+	browser->ReleaseVariantValue(&npargs[3]);
 }
 
 FB::variant NPObjectAPI::Construct( const FB::VariantList& args )
