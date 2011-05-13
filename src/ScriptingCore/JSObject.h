@@ -91,7 +91,7 @@ namespace FB
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
             
-            getHost()->CallOnMainThread(boost::bind(&JSObject::_invokeAsync, this, args, methodName));
+            getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind(&JSObject::_invokeAsync, this, args, methodName));
         }
 
     private:

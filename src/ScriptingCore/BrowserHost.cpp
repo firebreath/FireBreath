@@ -128,6 +128,7 @@ void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
 
 void FB::BrowserHost::initJS(const void* inst)
 {
+    assertMainThread();
     // Inject javascript helper function into the page; this is neccesary to help
     // with some browser compatibility issues.
     
@@ -155,7 +156,9 @@ void FB::BrowserHost::initJS(const void* inst)
 int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
                                     const FB::VariantList& args, const std::string& fname)
 {
+    assertMainThread();
     FB::JSObjectPtr delegate = getDelayedInvokeDelegate();
+    assert(delegate);
     if (fname.empty())
         return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)).convert_cast<int>();
     else
@@ -167,7 +170,13 @@ FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
         // initJS wasn't called (yet?)!
         assert(false);
     }
-    return getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
+    FB::JSObjectPtr delegate(getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate));
+    if (!delegate) {
+        initJS(this);
+        delegate = getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
+        assert(delegate);
+    }
+    return delegate;
 }
 
 FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj) const
