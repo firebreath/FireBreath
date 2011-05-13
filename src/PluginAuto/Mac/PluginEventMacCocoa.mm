@@ -30,7 +30,7 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 using namespace FB; using namespace std;
 
 PluginEventMacCocoa::PluginEventMacCocoa() :
-	m_lastModifierFlags(0)
+    m_lastModifierFlags(0)
 {
 }
 
@@ -42,16 +42,16 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
     if (!window)
         return false;
 
-//	if(evt) {
-//		NSLog(@"Event type: %d", evt->type);
-//	}
-	
+//  if(evt) {
+//      NSLog(@"Event type: %d", evt->type);
+//  }
+    
     // Let the plugin handle the event if it wants
     MacEventCocoa macEv(evt);
     if(window->SendEvent(&macEv)) {
         return true;
     }
-	
+    
     // Otherwise process the event into FB platform agnostic events
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
@@ -157,7 +157,7 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         }
 
         case NPCocoaEventFlagsChanged: {
-			return ProcessModifiers(evt->data.key.modifierFlags);
+            return ProcessModifiers(evt->data.key.modifierFlags);
             break;
         }
 
@@ -190,59 +190,59 @@ int16_t PluginEventMacCocoa::ProcessModifiers(uint32_t modifierFlags) {
     PluginWindowMacPtr window = m_PluginWindow.lock();
     if (!window)
         return false;
-	
-	uint32_t lastModifiers = m_lastModifierFlags;
-	m_lastModifierFlags = modifierFlags;
+    
+    uint32_t lastModifiers = m_lastModifierFlags;
+    m_lastModifierFlags = modifierFlags;
 
-	//NSLog(@"Modifiers: %u", modifierFlags);
-	
-	// Shift
-	if (modifierFlags & NSShiftKeyMask && !(lastModifiers & NSShiftKeyMask)) {
-		NSLog(@"Shift pressed!");
-		KeyDownEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
-		return window->SendEvent(&ev);
-	}
-	if (!(modifierFlags & NSShiftKeyMask) && lastModifiers & NSShiftKeyMask) {
-		NSLog(@"Shift depressed!");
-		KeyUpEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
-		return window->SendEvent(&ev);
-	}
-	
-	// Control
-	if (modifierFlags & NSControlKeyMask && !(lastModifiers & NSControlKeyMask)) {
-		NSLog(@"Control pressed!");
-		KeyDownEvent ev(FBKEY_CONTROL, NSControlKeyMask);
-		return window->SendEvent(&ev);
-	}
-	if (!(modifierFlags & NSControlKeyMask) && lastModifiers & NSControlKeyMask) {
-		NSLog(@"Control depressed!");
-		KeyUpEvent ev(FBKEY_CONTROL, NSControlKeyMask);
-		return window->SendEvent(&ev);
-	}
-	
-	// Option
-	if (modifierFlags & NSAlternateKeyMask && !(lastModifiers & NSAlternateKeyMask)) {
-		NSLog(@"Option pressed!");
-		KeyDownEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
-		return window->SendEvent(&ev);
-	}
-	if (!(modifierFlags & NSAlternateKeyMask) && lastModifiers & NSAlternateKeyMask) {
-		NSLog(@"Option depressed!");
-		KeyUpEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
-		return window->SendEvent(&ev);
-	}
+    //NSLog(@"Modifiers: %u", modifierFlags);
+    
+    // Shift
+    if (modifierFlags & NSShiftKeyMask && !(lastModifiers & NSShiftKeyMask)) {
+        NSLog(@"Shift pressed!");
+        KeyDownEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
+        return window->SendEvent(&ev);
+    }
+    if (!(modifierFlags & NSShiftKeyMask) && lastModifiers & NSShiftKeyMask) {
+        NSLog(@"Shift depressed!");
+        KeyUpEvent ev(FBKEY_SHIFT, NSShiftKeyMask);
+        return window->SendEvent(&ev);
+    }
+    
+    // Control
+    if (modifierFlags & NSControlKeyMask && !(lastModifiers & NSControlKeyMask)) {
+        NSLog(@"Control pressed!");
+        KeyDownEvent ev(FBKEY_CONTROL, NSControlKeyMask);
+        return window->SendEvent(&ev);
+    }
+    if (!(modifierFlags & NSControlKeyMask) && lastModifiers & NSControlKeyMask) {
+        NSLog(@"Control depressed!");
+        KeyUpEvent ev(FBKEY_CONTROL, NSControlKeyMask);
+        return window->SendEvent(&ev);
+    }
+    
+    // Option
+    if (modifierFlags & NSAlternateKeyMask && !(lastModifiers & NSAlternateKeyMask)) {
+        NSLog(@"Option pressed!");
+        KeyDownEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
+        return window->SendEvent(&ev);
+    }
+    if (!(modifierFlags & NSAlternateKeyMask) && lastModifiers & NSAlternateKeyMask) {
+        NSLog(@"Option depressed!");
+        KeyUpEvent ev(FBKEY_OPTION, NSAlternateKeyMask);
+        return window->SendEvent(&ev);
+    }
 
-	// Command
-	if (modifierFlags & NSCommandKeyMask && !(lastModifiers & NSCommandKeyMask)) {
-		NSLog(@"Command pressed!");
-		KeyDownEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
-		return window->SendEvent(&ev);
-	}
-	if (!(modifierFlags & NSCommandKeyMask) && lastModifiers & NSCommandKeyMask) {
-		NSLog(@"Command depressed!");
-		KeyUpEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
-		return window->SendEvent(&ev);
-	}
-	
-	return false;
+    // Command
+    if (modifierFlags & NSCommandKeyMask && !(lastModifiers & NSCommandKeyMask)) {
+        NSLog(@"Command pressed!");
+        KeyDownEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
+        return window->SendEvent(&ev);
+    }
+    if (!(modifierFlags & NSCommandKeyMask) && lastModifiers & NSCommandKeyMask) {
+        NSLog(@"Command depressed!");
+        KeyUpEvent ev(FBKEY_COMMAND, NSCommandKeyMask);
+        return window->SendEvent(&ev);
+    }
+    
+    return false;
 }

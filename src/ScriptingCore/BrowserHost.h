@@ -302,28 +302,28 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-		///						  const FB::VariantList& args, const std::string& fname = "");
+        ///                       const FB::VariantList& args, const std::string& fname = "");
         ///
         /// @brief  Executes the provided method object after a delay using window.setTimeout
         ///
-		/// This is basically a wrapper for the Javascript setTimeout function that allows passing
-		/// parameters to the function you want called after a delay. This is used behind the scenes
-		/// by InvokeAsync with the delayms set to 0
-		///
+        /// This is basically a wrapper for the Javascript setTimeout function that allows passing
+        /// parameters to the function you want called after a delay. This is used behind the scenes
+        /// by InvokeAsync with the delayms set to 0
+        ///
         /// @param  delayms Delay time in milliseconds
-		/// @param  func	Javascript object (or function)
-		/// @param  args    Array of arguments to pass to the function
-		/// @param  fname   If provided, the func.fname method will be called instead of invoking
-		///					func as a function
-		/// @return id returned by setTimeout
-		///
-		/// @since 1.5.2
+        /// @param  func    Javascript object (or function)
+        /// @param  args    Array of arguments to pass to the function
+        /// @param  fname   If provided, the func.fname method will be called instead of invoking
+        ///                 func as a function
+        /// @return id returned by setTimeout
+        ///
+        /// @since 1.5.2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-						  const FB::VariantList& args, const std::string& fname = "");
-		FB::JSObjectPtr getDelayedInvokeDelegate();
-		virtual void initJS(const void* inst);
-		
+        int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+                          const FB::VariantList& args, const std::string& fname = "");
+        FB::JSObjectPtr getDelayedInvokeDelegate();
+        virtual void initJS(const void* inst);
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void htmlLog(const std::string& str)
         ///
@@ -431,9 +431,9 @@ namespace FB
         mutable std::list<FB::JSAPIPtr> m_retainedObjects;
         static volatile int InstanceCount;
         BrowserStreamManagerPtr m_streamMgr;
-		
-		std::string unique_key;
-		std::string call_delegate;
+        
+        std::string unique_key;
+        std::string call_delegate;
     };
 
     

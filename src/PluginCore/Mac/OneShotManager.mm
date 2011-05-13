@@ -57,15 +57,15 @@ FB::OneShotManager::~OneShotManager()
 void FB::OneShotManager::npp_register(void* instance) {
     // If there isn't a deque for the instance, create it.
     boost::mutex::scoped_lock lock(m_mutex);
-	std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
-	if (m_sinks.end() == sink)
+    std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
+    if (m_sinks.end() == sink)
         m_sinks[instance] = new SinkQueue();
 }
 void FB::OneShotManager::npp_unregister(void* instance) {
     // If there is a deque for the instance, destroy it and all callbacks.
     boost::mutex::scoped_lock lock(m_mutex);
-	std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
-	if (m_sinks.end() != sink) {
+    std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
+    if (m_sinks.end() != sink) {
         m_shots -= sink->second->size();
         delete sink->second;
         m_sinks.erase(sink);

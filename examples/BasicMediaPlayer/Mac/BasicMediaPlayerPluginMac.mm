@@ -38,21 +38,21 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 - (void)drawInCGLContext:(CGLContextObj)ctx pixelFormat:(CGLPixelFormatObj)pf forLayerTime:(CFTimeInterval)t displayTime:(const CVTimeStamp *)ts {
     m_angle += 1;
-	GLsizei width = CGRectGetWidth([self bounds]), height = CGRectGetHeight([self bounds]);
+    GLsizei width = CGRectGetWidth([self bounds]), height = CGRectGetHeight([self bounds]);
     GLfloat halfWidth = width / 2, halfHeight = height / 2;
 
-	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glScalef(1.0f, -1.0f, 1.0f);
-	glOrtho(0, width, 0, height, -1.0, 1.0);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glScalef(1.0f, -1.0f, 1.0f);
+    glOrtho(0, width, 0, height, -1.0, 1.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
     glRotatef(m_angle, 0.0, 0.0, 1.0);
 
     // Clear the stage.
-    glClearColor(0.0, 0.0, 0.0, 0.0);	     
+    glClearColor(0.0, 0.0, 0.0, 0.0);        
     glClear(GL_COLOR_BUFFER_BIT);
     
     // Draw UL Quadrant 25% Red
@@ -88,7 +88,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
         glVertex3f(width / 4, height / 4, -1.0f);
         glVertex3f(3 * width / 4, height / 4, -1.0f);
         glVertex3f(3 * width / 4, 3 * height / 4, -1.0f);
-        glVertex3f(width / 4,	3 * height / 4, -1.0f);
+        glVertex3f(width / 4,   3 * height / 4, -1.0f);
     glEnd();
     
     [super drawInCGLContext:ctx pixelFormat:pf forLayerTime:t displayTime:ts];

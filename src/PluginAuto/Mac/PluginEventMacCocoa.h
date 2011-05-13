@@ -31,12 +31,12 @@ namespace FB {
 
         int16_t HandleEvent(void* event);
         EventModel getEventModel() const { return EventModelCocoa; }
-		
-	protected:
-		int16_t ProcessModifiers(uint32_t modifierFlags);
-		
-	private:
-		uint32_t m_lastModifierFlags;
+        
+    protected:
+        int16_t ProcessModifiers(uint32_t modifierFlags);
+        
+    private:
+        uint32_t m_lastModifierFlags;
     };
 };
 

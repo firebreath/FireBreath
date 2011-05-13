@@ -50,8 +50,8 @@ namespace FB { namespace ActiveX
     
     typedef CComVariant (*ComVariantBuilder)(const ActiveXBrowserHostPtr&, const FB::variant&);    
     typedef std::map<std::type_info const*, ComVariantBuilder, type_info_less> ComVariantBuilderMap;
-	//  GJS  ---
-	//  I would probably put the ComVariantBuilderMap code into ComVariantUtil.cpp?
+    //  GJS  ---
+    //  I would probably put the ComVariantBuilderMap code into ComVariantUtil.cpp?
     template<class T>
     ComVariantBuilderMap::value_type makeBuilderEntry()
     {
@@ -99,7 +99,7 @@ namespace FB { namespace ActiveX
         static const ComVariantBuilderMap tdm = makeComVariantBuilderMap();
         return tdm;
     }
-	//  GJS  ---
+    //  GJS  ---
     
     template<class T>
     CComVariant makeArithmeticComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
@@ -161,81 +161,81 @@ namespace FB { namespace ActiveX
     template<> inline
     CComVariant makeComVariant<FB::VariantList>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
-		//  GJS  ---
-		CComVariant outVar;
-		FB::VariantList inArr = var.cast<FB::VariantList>();
-		if (host->hasHTMLWindow())
-		{
-			FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
-			for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
-				FB::VariantList vl = boost::assign::list_of(*it);
-				outArr->Invoke("push", vl);
-			}
-			IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(outArr);
-			if (api) {
-				return api->getIDispatch();
-			} 
-		}
-		else
-		{
-			CComSafeArray<VARIANT> sa;
-			const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
-			for (FB::VariantList::iterator itr = inArr.begin(); itr != inArr.end(); itr++) {
-				const std::type_info& type = itr->get_type();
-				ComVariantBuilderMap::const_iterator found = builderMap.find(&type);
+        //  GJS  ---
+        CComVariant outVar;
+        FB::VariantList inArr = var.cast<FB::VariantList>();
+        if (host->hasHTMLWindow())
+        {
+            FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
+            for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
+                FB::VariantList vl = boost::assign::list_of(*it);
+                outArr->Invoke("push", vl);
+            }
+            IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(outArr);
+            if (api) {
+                return api->getIDispatch();
+            } 
+        }
+        else
+        {
+            CComSafeArray<VARIANT> sa;
+            const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
+            for (FB::VariantList::iterator itr = inArr.begin(); itr != inArr.end(); itr++) {
+                const std::type_info& type = itr->get_type();
+                ComVariantBuilderMap::const_iterator found = builderMap.find(&type);
 
-				if (found == builderMap.end())
-					continue;
+                if (found == builderMap.end())
+                    continue;
 
-				CComVariant var = (found->second)(host, *itr);
-				sa.Add(var);
-			}
+                CComVariant var = (found->second)(host, *itr);
+                sa.Add(var);
+            }
 
-			outVar = sa.Detach();
-		}
-		return outVar;
-		//  GJS  ---
+            outVar = sa.Detach();
+        }
+        return outVar;
+        //  GJS  ---
     }
     
     template<> inline
     CComVariant makeComVariant<FB::VariantMap>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
-		//  GJS  ---
-		CComVariant outVar;
-		FB::VariantMap inMap = var.cast<FB::VariantMap>();
-		if (host->hasHTMLWindow())
-		{
-			FB::JSObjectPtr out = host->getDOMWindow()->createMap();
-			for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
-				out->SetProperty(it->first, it->second);
-			}
-			IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(out);
-			if (api) {
-				outVar = api->getIDispatch();
-			}
-		}
-		else
-		{
-			CComSafeArray<VARIANT> sa;
-			const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
-			for (FB::VariantMap::iterator itr = inMap.begin(); itr != inMap.end(); itr++) {
-				const std::type_info& valType = itr->second.get_type();
-				ComVariantBuilderMap::const_iterator valTypeFound = builderMap.find(&valType);
-				if (valTypeFound == builderMap.end())
-					continue;
+        //  GJS  ---
+        CComVariant outVar;
+        FB::VariantMap inMap = var.cast<FB::VariantMap>();
+        if (host->hasHTMLWindow())
+        {
+            FB::JSObjectPtr out = host->getDOMWindow()->createMap();
+            for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
+                out->SetProperty(it->first, it->second);
+            }
+            IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(out);
+            if (api) {
+                outVar = api->getIDispatch();
+            }
+        }
+        else
+        {
+            CComSafeArray<VARIANT> sa;
+            const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
+            for (FB::VariantMap::iterator itr = inMap.begin(); itr != inMap.end(); itr++) {
+                const std::type_info& valType = itr->second.get_type();
+                ComVariantBuilderMap::const_iterator valTypeFound = builderMap.find(&valType);
+                if (valTypeFound == builderMap.end())
+                    continue;
 
-				CComSafeArray<VARIANT> sa2;
-				CComVariant key = makeComVariant<std::string>(host, itr->first);
-				CComVariant val = (valTypeFound->second)(host, itr->second);
-				sa2.Add(key);
-				sa2.Add(val);
-				sa.Add(sa2.Detach());
-			}
-			if (sa.GetCount() > 0)
-				outVar = sa.Detach();
-		}
+                CComSafeArray<VARIANT> sa2;
+                CComVariant key = makeComVariant<std::string>(host, itr->first);
+                CComVariant val = (valTypeFound->second)(host, itr->second);
+                sa2.Add(key);
+                sa2.Add(val);
+                sa.Add(sa2.Detach());
+            }
+            if (sa.GetCount() > 0)
+                outVar = sa.Detach();
+        }
         return outVar;
-		//  GJS  ---
+        //  GJS  ---
     }
     
     template<> inline

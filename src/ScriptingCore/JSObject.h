@@ -72,8 +72,8 @@ namespace FB
                                            const std::vector<JSObjectPtr>& ifaces) {};
         virtual bool isValid() = 0;
 
-		JSObjectPtr shared_from_this() { return boost::static_pointer_cast<JSObject>(JSAPI::shared_from_this()); }
-		boost::shared_ptr<const JSObject> shared_from_this() const { return boost::static_pointer_cast<const JSObject>(JSAPI::shared_from_this()); }
+        JSObjectPtr shared_from_this() { return boost::static_pointer_cast<JSObject>(JSAPI::shared_from_this()); }
+        boost::shared_ptr<const JSObject> shared_from_this() const { return boost::static_pointer_cast<const JSObject>(JSAPI::shared_from_this()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
@@ -90,17 +90,17 @@ namespace FB
             if (m_host.expired()) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-			
-			getHost()->CallOnMainThread(boost::bind(&JSObject::_invokeAsync, this, args, methodName));
+            
+            getHost()->CallOnMainThread(boost::bind(&JSObject::_invokeAsync, this, args, methodName));
         }
 
-	private:
-		virtual void _invokeAsync(const std::vector<variant>& args, const std::string& methodName)
-		{
-			getHost()->delayedInvoke(0, shared_from_this(), args, methodName);
-		}
-	public:
-		
+    private:
+        virtual void _invokeAsync(const std::vector<variant>& args, const std::string& methodName)
+        {
+            getHost()->delayedInvoke(0, shared_from_this(), args, methodName);
+        }
+    public:
+        
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
         ///

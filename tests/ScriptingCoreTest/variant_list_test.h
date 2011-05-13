@@ -77,7 +77,7 @@ TEST(VariantListWithMapTest)
 
     VariantList testList = variant_list_of(23)("asdf")(variant_map_of<std::string>("num", 12)("bobb", "billy"));
     CHECK(testList[0].convert_cast<int>() == 23);
-	VariantMap tmp = testList[2].convert_cast<VariantMap>();
+    VariantMap tmp = testList[2].convert_cast<VariantMap>();
     CHECK(tmp["bobb"].convert_cast<std::string>() == "billy");
     CHECK(tmp["num"].convert_cast<int>() == 12);
 }
