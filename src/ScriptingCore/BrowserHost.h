@@ -301,7 +301,7 @@ namespace FB
         virtual void evaluateJavaScript(const std::wstring &script);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn void delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+        /// @fn int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
 		///						   const FB::VariantList& args, const std::string& fname = "");
         ///
         /// @brief  Executes the provided method object after a delay using window.setTimeout
@@ -315,10 +315,11 @@ namespace FB
 		/// @param  args    Array of arguments to pass to the function
 		/// @param  fname   If provided, the func.fname method will be called instead of invoking
 		///					func as a function
+		/// @return id returned by setTimeout
 		///
 		/// @since 1.5.2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		void delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+		int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
 						   const FB::VariantList& args, const std::string& fname = "");
 		FB::JSObjectPtr getDelayedInvokeDelegate();
 		virtual void initJS(const void* inst);

@@ -133,9 +133,9 @@ void FB::BrowserHost::initJS(const void* inst)
 		"window.__FB_CALL_%1% = "
 		"function(delay, f, args, fname) {"
 		"   if (arguments.length == 3)"
-		"	    setTimeout(function() { f.apply(args); }, delay);"
+		"	    return setTimeout(function() { f.apply(null, args); }, delay);"
 		"   else"
-		"		setTimeout(function() { f[fname].apply(args); }, delay);"
+		"		return setTimeout(function() { f[fname].apply(null, args); }, delay);"
 		"};";
 	
 	// I'm open to suggestions on a better way to get a unique key for this plugin instance
@@ -150,14 +150,14 @@ void FB::BrowserHost::initJS(const void* inst)
 	evaluateJavaScript((boost::format(javascriptMethod) % inst_key).str());
 }
 
-void FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
 									const FB::VariantList& args, const std::string& fname)
 {
 	FB::JSObjectPtr delegate = getDelayedInvokeDelegate();
 	if (fname.empty())
-		delegate->Invoke("", FB::variant_list_of(delayms)(func)(args));
+		return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)).convert_cast<int>();
 	else
-		delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)(fname));
+		return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)(fname)).convert_cast<int>();
 }
 
 FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
