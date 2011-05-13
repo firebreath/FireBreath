@@ -302,7 +302,7 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-		///						   const FB::VariantList& args, const std::string& fname = "");
+		///						  const FB::VariantList& args, const std::string& fname = "");
         ///
         /// @brief  Executes the provided method object after a delay using window.setTimeout
         ///
@@ -320,7 +320,7 @@ namespace FB
 		/// @since 1.5.2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
 		int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-						   const FB::VariantList& args, const std::string& fname = "");
+						  const FB::VariantList& args, const std::string& fname = "");
 		FB::JSObjectPtr getDelayedInvokeDelegate();
 		virtual void initJS(const void* inst);
 		

@@ -124,7 +124,7 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
         for (; it != end; ++it) {
             if (contexts.find(it->first) != contexts.end())
                 continue; // We've already handled these
-            bool first(false);
+            bool first(true);
 
             for (EventIFaceMap::const_iterator ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
                 if (first && ifaceIt->second->isValid() && ifaceIt->second->supportsOptimizedCalls()) {
