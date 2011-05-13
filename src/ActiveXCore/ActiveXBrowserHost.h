@@ -64,9 +64,12 @@ namespace FB {
         public:
             FB::DOM::DocumentPtr getDOMDocument();
             FB::DOM::WindowPtr getDOMWindow();
-            //  GJS  ---
+            
             bool hasHTMLWindow() { return m_htmlWin != NULL; }
-            //  GJS  ---
+
+            void suspend();
+            void resume(IWebBrowser2 *doc, IOleClientSite* clientSite);
+            
             FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
             void shutdown();
@@ -80,11 +83,9 @@ namespace FB {
         protected:
             void initDOMObjects(); // This is const so that getDOMDocument/Window can be
             CComQIPtr<IOleClientSite> m_spClientSite;
-            CComQIPtr<IHTMLDocument2> m_htmlDoc;
             CComQIPtr<IDispatch> m_htmlDocDisp;
             CComPtr<IHTMLWindow2> m_htmlWin;
             CComPtr<IWebBrowser2> m_webBrowser;
-            CComQIPtr<IDispatch> m_htmlWinDisp;
             mutable FB::DOM::WindowPtr m_window;
             mutable FB::DOM::DocumentPtr m_document;
             boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;

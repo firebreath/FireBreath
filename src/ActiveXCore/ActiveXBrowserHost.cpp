@@ -32,22 +32,10 @@ using boost::assign::list_of;
 using namespace FB;
 using namespace FB::ActiveX;
 
-namespace
-{   
-	//  GJS  ---
-	//  Moved to ComVariantUtil.h
-	//  GJS  ---
-}
-
 ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* site)
-    : m_spClientSite(site), m_webBrowser(doc), m_messageWin(new FB::WinMessageWindow())
+    : m_messageWin(new FB::WinMessageWindow())
 {
-    if (m_webBrowser) {
-        m_webBrowser->get_Document(&m_htmlDocDisp);
-        m_htmlDoc = m_htmlDocDisp;
-        m_htmlDoc->get_parentWindow(&m_htmlWin);
-        m_htmlWinDisp = m_htmlWin;
-    }
+    resume(doc, site);
 }
 
 ActiveXBrowserHost::~ActiveXBrowserHost(void)
@@ -122,7 +110,7 @@ FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 {
-    if(!m_htmlDoc) {
+    if(!m_htmlWin) {
         throw FB::script_error("Can't execute JavaScript: Window is NULL");
     }
 
@@ -153,16 +141,35 @@ void ActiveXBrowserHost::shutdown()
 
     // Once that's done let's release any ActiveX resources that the browserhost
     // is holding
+    suspend();
+    assert(m_deferredObjects.empty());
+}
+
+void ActiveXBrowserHost::suspend()
+{
+    // release any ActiveX resources that the browserhost is holding
+    m_webBrowser.Release();
     m_spClientSite.Release();
-    m_htmlDoc.Release();
     m_htmlDocDisp.Release();
     m_htmlWin.Release();
-    m_webBrowser.Release();
-    m_htmlWinDisp.Release();
+    
+    // These are created on demand, don't need to be restored
     m_window.reset();
     m_document.reset();
+
     DoDeferredRelease();
-    assert(m_deferredObjects.empty());
+}
+void ActiveXBrowserHost::resume(IWebBrowser2 *doc, IOleClientSite* clientSite)
+{
+    m_webBrowser = doc;
+    m_spClientSite = clientSite;
+    if (m_webBrowser && !m_htmlDocDisp) {
+        m_webBrowser->get_Document(&m_htmlDocDisp);
+        CComQIPtr<IHTMLDocument2> doc(m_htmlDocDisp);
+        assert(doc);
+        doc->get_parentWindow(&m_htmlWin);
+        assert(m_htmlWin);
+    }
 }
 
 FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
