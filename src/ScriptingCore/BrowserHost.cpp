@@ -135,7 +135,7 @@ void FB::BrowserHost::initJS(const void* inst)
         "   if (arguments.length == 3)"
         "       return setTimeout(function() { f.apply(null, args); }, delay);"
         "   else"
-        "       return setTimeout(function() { f[fname].apply(null, args); }, delay);"
+        "       return setTimeout(function() { f[fname].apply(f, args); }, delay);"
         "};";
     
     // I'm open to suggestions on a better way to get a unique key for this plugin instance
