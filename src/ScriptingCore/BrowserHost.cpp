@@ -68,7 +68,7 @@ volatile int FB::BrowserHost::InstanceCount(0);
 
 FB::BrowserHost::BrowserHost()
     : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
-      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>())
+      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>()), m_htmlLogEnabled(true)
 {
     ++InstanceCount;
 }
@@ -90,11 +90,13 @@ void FB::BrowserHost::shutdown()
 void FB::BrowserHost::htmlLog(const std::string& str)
 {
     FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
-    try {
-        this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
-            new FB::AsyncLogRequest(shared_from_this(), str));
-    } catch (const std::exception&) {
-        // This fails during shutdown; ignore it
+    if (m_htmlLogEnabled) {
+        try {
+            this->ScheduleAsyncCall(&FB::BrowserHost::AsyncHtmlLog,
+                new FB::AsyncLogRequest(shared_from_this(), str));
+        } catch (const std::exception&) {
+            // This fails during shutdown; ignore it
+        }
     }
 }
 

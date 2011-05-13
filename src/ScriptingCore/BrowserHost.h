@@ -334,6 +334,20 @@ namespace FB
         virtual void htmlLog(const std::string& str);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void setEnableHtmlLog(const bool enabled = true)
+        ///
+        /// @brief  Enables or disables the htmlLog method
+        ///
+        /// @param  enabled true if html logging should be enabled
+        ///
+        /// @see htmlLog
+        /// @since 1.5.2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setEnableHtmlLog(const bool enabled = true) {
+            m_htmlLogEnabled = enabled;
+        }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void shutdown()
         ///
         /// @brief  Notifies the browserhost object that the associated plugin object is shutting down
@@ -431,6 +445,9 @@ namespace FB
         mutable std::list<FB::JSAPIPtr> m_retainedObjects;
         static volatile int InstanceCount;
         BrowserStreamManagerPtr m_streamMgr;
+        
+        // Indicates if html logging should be enabled (default true)
+        bool m_htmlLogEnabled;
         
         std::string unique_key;
         std::string call_delegate;

@@ -12,6 +12,8 @@
 #include <stdio.h>
 
 #include "FBTestPlugin.h"
+#include "DOM/Window.h"
+#include "URI.h"
 
 #ifdef FB_WIN
 #include "PluginWindowWin.h"
@@ -151,3 +153,12 @@ bool FBTestPlugin::isWindowless()
     //return true;
 }
 
+void FBTestPlugin::onPluginReady()
+{
+    FB::URI uri = FB::URI::fromString(m_host->getDOMWindow()->getLocation());
+    if (uri.query_data.find("log") != uri.query_data.end()) {
+        m_host->setEnableHtmlLog(true);
+    } else {
+        m_host->setEnableHtmlLog(false);
+    }
+}

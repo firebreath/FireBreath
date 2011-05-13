@@ -40,6 +40,7 @@ public:
     std::string getPluginPath() { return m_filesystemPath; }
 
     bool isWindowless();
+    void onPluginReady();
 
     BEGIN_PLUGIN_EVENT_MAP()
         EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindow)
