@@ -241,9 +241,8 @@ namespace FB {
                 boost::shared_ptr<FB::ShareableReference<CFBControlX> > ref(boost::make_shared<FB::ShareableReference<CFBControlX> >(this));
                 m_host->ScheduleOnMainThread(ref, boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
             } else {
-                RECT r = { left, top, right, bottom };
                 if (m_spInPlaceSite)
-                    m_spInPlaceSite->InvalidateRect(&r, TRUE);
+                    m_spInPlaceSite->InvalidateRect(NULL, TRUE);
             }
         }
 
