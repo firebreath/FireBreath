@@ -23,15 +23,20 @@
     FB::OneShotManager* m_manager;
 }
 
-@property (assign) FB::OneShotManager* manager;
-
 - (void)shoot:(id)object;
 
 @end
 
 @implementation OneShotManagerHelper
 
-@synthesize manager=m_manager;
+- (void)setManager:(FB::OneShotManager*) manager
+{
+	m_manager = manager;
+}
+- (FB::OneShotManager*)manager
+{
+	return m_manager;
+}
 
 - (void)shoot:(id)object {
     if (m_manager)
@@ -43,7 +48,7 @@
 FB::OneShotManager::OneShotManager() : m_helper(NULL), m_shots(0)
 {
     OneShotManagerHelper* mHelper = [OneShotManagerHelper new];
-    mHelper.manager = this;
+    [mHelper setManager:this];
     m_helper = mHelper;
 }
 

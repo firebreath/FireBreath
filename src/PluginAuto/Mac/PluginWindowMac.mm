@@ -34,9 +34,11 @@ using namespace FB;
 @interface PluginWindowMac_helper : NSObject
 {
     PluginWindowMac *m_ica;
+	
 }
 
-@property (assign) PluginWindowMac* ica;
+- (void)setIca:(PluginWindowMac *)ica;
+- (PluginWindowMac *)ica;
 
 - (void)fired:(NSTimer*)timer;
 
@@ -44,7 +46,12 @@ using namespace FB;
 
 @implementation PluginWindowMac_helper
 
-@synthesize ica=m_ica;
+- (void)setIca:(PluginWindowMac *)ica {
+	m_ica = ica;
+}
+- (PluginWindowMac *)ica {
+	return m_ica;
+}
 
 - (void)fired:(NSTimer*)timer {
     m_ica->InvalidateWindow();
@@ -206,7 +213,7 @@ PluginWindowMac::PluginWindowMac()
     , m_timer(NULL), m_helper(NULL)
 {
     PluginWindowMac_helper *mhelper = [PluginWindowMac_helper new];
-    mhelper.ica = this;
+    [mhelper setIca:this];
     m_helper = mhelper;
 }
 
