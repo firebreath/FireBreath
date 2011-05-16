@@ -293,21 +293,25 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     NPVariant retVal;
 
     // Convert the arguments to NPVariants
-    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size()]);
+    // add space for nparg[0] as a "this pointer"
+    boost::scoped_array<NPVariant> npargs(new NPVariant[args.size() + 1]);
+    VOID_TO_NPVARIANT(npargs[0]);
     for (unsigned int i = 0; i < args.size(); i++) {
-        browser->getNPVariant(&npargs[i], args[i]);
+        browser->getNPVariant(&npargs[i + 1], args[i]);
     }
 
     bool res = false;
     // Invoke the method ("" means invoke default method)
     if (methodName.size() > 0) {
-        res = browser->Invoke(obj, browser->GetStringIdentifier(methodName.c_str()), npargs.get(), args.size(), &retVal);
+        // excludes nparg[0]
+        res = browser->Invoke(obj, browser->GetStringIdentifier(methodName.c_str()), npargs.get() + 1, args.size(), &retVal);
     } else {
-        res = browser->InvokeDefault(obj, npargs.get(), args.size(), &retVal);
+        browser->getNPVariant(&npargs[0], browser->getNPElement());  // include nparg[0]
+        res = browser->InvokeDefault(obj, npargs.get(), args.size() + 1, &retVal);
     }
 
     // Free the NPVariants that we earlier allocated
-    for (unsigned int i = 0; i < args.size(); i++) {
+    for (unsigned int i = 0; i < args.size() + 1; i++) {
         browser->ReleaseVariantValue(&npargs[i]);
     }
 
@@ -340,10 +344,11 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     NPObject* delegate(d->getNPObject());
 
     // Allocate the arguments
-    boost::scoped_array<NPVariant> npargs(new NPVariant[4]);
-    browser->getNPVariant(&npargs[0], 0);
-    browser->getNPVariant(&npargs[2], args);
-    browser->getNPVariant(&npargs[3], name);
+    boost::scoped_array<NPVariant> npargs(new NPVariant[5]);
+    browser->getNPVariant(&npargs[0], browser->getNPElement());
+    browser->getNPVariant(&npargs[1], 0);
+    browser->getNPVariant(&npargs[3], args);
+    browser->getNPVariant(&npargs[4], name);
     
     bool res = false;
     std::vector<JSObjectPtr>::const_iterator it(direct.begin());
@@ -357,8 +362,8 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
                 continue;
             }
         }
-        browser->getNPVariant(&npargs[1], ptr);
-        res = browser->InvokeDefault(delegate, npargs.get(), 3, &retVal);
+        browser->getNPVariant(&npargs[2], ptr);
+        res = browser->InvokeDefault(delegate, npargs.get(), 4, &retVal);
         browser->ReleaseVariantValue(&retVal);
         browser->ReleaseVariantValue(&npargs[1]);
     }
@@ -374,8 +379,8 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
                 continue;
             }
         }
-        browser->getNPVariant(&npargs[1], ptr);
-        res = browser->InvokeDefault(delegate, npargs.get(), 4, &retVal);
+        browser->getNPVariant(&npargs[2], ptr);
+        res = browser->InvokeDefault(delegate, npargs.get(), 5, &retVal);
         browser->ReleaseVariantValue(&retVal);
         browser->ReleaseVariantValue(&npargs[1]);
     }

@@ -64,7 +64,7 @@ namespace FB {
         public:
             FB::DOM::DocumentPtr getDOMDocument();
             FB::DOM::WindowPtr getDOMWindow();
-            
+            CComPtr<IDispatch> getExtendedControl();
             bool hasHTMLWindow() { return m_htmlWin != NULL; }
 
             void suspend();

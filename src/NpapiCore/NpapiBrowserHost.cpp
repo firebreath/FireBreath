@@ -162,10 +162,19 @@ FB::DOM::WindowPtr NpapiBrowserHost::getDOMWindow()
 FB::DOM::ElementPtr FB::Npapi::NpapiBrowserHost::getDOMElement()
 {
     if (!m_htmlElement)
-        throw std::runtime_error("Cannot find HTML window");
+        throw std::runtime_error("Cannot find HTML element");
 
     return FB::DOM::Element::create(m_htmlElement);
 }
+
+NPObjectAPIPtr FB::Npapi::NpapiBrowserHost::getNPElement()
+{
+    if (!m_htmlElement)
+        throw std::runtime_error("Cannot find HTML element");
+
+    return m_htmlElement;
+}
+
 
 void FB::Npapi::NpapiBrowserHost::deferred_release( NPObject* obj )
 {
