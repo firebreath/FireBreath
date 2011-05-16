@@ -119,7 +119,7 @@ namespace FB {
         ///
         /// @brief  Defines an alias representing the observer .
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        typedef std::list<boost::weak_ptr<PluginEventSink> > ObserverMap; 
+        typedef std::list<PluginEventSinkWeakPtr> ObserverMap; 
         ObserverMap m_observers; /// List of attached observers
         boost::recursive_mutex m_observerLock;
     };
