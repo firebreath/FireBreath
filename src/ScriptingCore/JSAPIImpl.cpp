@@ -168,7 +168,12 @@ void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<varian
         }
     }
 
-    fireAsyncEvent(eventName, args);
+    try {
+        fireAsyncEvent(eventName, args);
+    } catch (const FB::script_error&) {
+        // a script_error can be fired during shutdown when this is called
+        // from another thread; this should not be an error
+    }
 }
 
 void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &members, const VariantList &arguments )
@@ -197,7 +202,7 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
             proxyIt++;
         }
     }
-    
+
     VariantList args;
     args.push_back(CreateEvent(shared_from_this(), eventName, members, arguments));
 
