@@ -45,10 +45,6 @@
         </w:TypeLib>
     </xsl:template>
 
-    <xsl:template match="w:ProgId">
-        <xsl:apply-templates select="*" />
-    </xsl:template>
-
     <xsl:template match="w:File">
         <w:File Id="{@Id}" Source="{@Source}">
             <xsl:apply-templates select="w:TypeLib" />
