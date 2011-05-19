@@ -224,7 +224,7 @@ void UploadQueue::upload_request_status_changed(const HTTP::Status &status) {
     // Deliver status dict to interested observers
     sendUpdateEvent();
 
-    uint64_t this_batch_size = 0;
+    uint32_t this_batch_size = 0;
     if (status.state == HTTP::Status::HTTP_ERROR) {
         if ((++current_batch_retry) < max_retries) {
             // Retry on networking error.

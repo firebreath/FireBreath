@@ -76,15 +76,15 @@ namespace HTTP {
     
         std::list<UploadQueueEntry> queue;
         // bytes, files with status = WAITING
-        uint64_t current_queue_bytes; 
+        uint32_t current_queue_bytes; 
         // bytes (original -- pre resize or any other postprocessing), files in current batch
-        uint64_t current_batch_bytes; 
+        uint32_t current_batch_bytes; 
         // sum of bytes of files added to the queue since it was last emptied
-        uint64_t total_queue_bytes; 
+        uint32_t total_queue_bytes; 
         // count of files added to the queue since it was last emptied
-        uint64_t total_queue_files; 
+        uint32_t total_queue_files; 
         // count of files in WAITING state
-        uint64_t files_waiting; 
+        uint32_t files_waiting; 
     
         std::set<std::wstring> current_upload_files;
         HTTPRequest* current_upload_request;
