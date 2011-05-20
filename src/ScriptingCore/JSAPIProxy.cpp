@@ -126,7 +126,11 @@ void FB::JSAPIProxy::reset()
 
 void FB::JSAPIProxy::invalidate()
 {
-    getAPI()->invalidate();
+    try {
+        getAPI()->invalidate();
+    } catch (...) {
+        // If that didn't work it's already invalid
+    }
 }
 
 void FB::JSAPIProxy::getMemberNames( std::vector<std::string> &nameVector ) const
