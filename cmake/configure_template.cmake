@@ -143,7 +143,7 @@ function(configure_template filename outputfile)
     FILE(READ "${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name}" file_contents_2)
 
     if (NOT file_contents_1 STREQUAL file_contents_2)
-        FILE(WRITE ${outputfile} ${file_contents_2})
+        configure_file(${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name} ${outputfile})
         message("Generating new ${outputfile}")
     endif()
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name})
