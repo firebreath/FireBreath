@@ -27,7 +27,7 @@ namespace HTTP {
     
         HTTPDatablock* datablock; // source datablock for upload
     
-        uint64_t filesize; // given that the datablock can be an ImageDatablock which is lazy-evaluated, this might
+        uint32_t filesize; // given that the datablock can be an ImageDatablock which is lazy-evaluated, this might
         // not be an accurate size. It's just for guessing when the queue will be finished, anyway...
     
         // non-indexed variables, mutable for convenience
