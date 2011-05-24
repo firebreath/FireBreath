@@ -93,14 +93,11 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
 #endif
     } 
-    bool readySet = setReady();
-    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
+    setReady();
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
-    bool readySet = setReady();
-    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
     return NPERR_NO_ERROR;
 }
 

@@ -94,7 +94,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
                                    window->clipRect.bottom, window->clipRect.right);
             win->setInvalidateWindowFunc(boost::bind(&NpapiPluginWin::invalidateWindow, this, _1, _2, _3, _4));
             pluginMain->SetWindow(win);
-            setReady();
             pluginWin = win;
         } else {
             win->setWindowPosition(window->x, window->y, window->width, window->height);
@@ -125,7 +124,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             win = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin((HWND)window->window));
             win->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(win);
-            setReady();
             pluginWin = win;
         }    
     }
