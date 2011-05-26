@@ -69,7 +69,10 @@ PluginWindowWin::~PluginWindowWin()
 bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT & lRes)
 {
     lRes = 0;
-    // Before all else, give the plugin a chance to handle the platform specific event
+    // Before all else, give the plugin a chance to handle the platform specific event;
+    // Then give the custom winproc the chance
+    if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
+        return true;
     WindowsEvent ev(hWnd, uMsg, wParam, lParam, lRes);
     if (SendEvent(&ev)) {
         return true;
@@ -81,42 +84,56 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             SetFocus( m_hWnd ); //get key focus when the mouse is clicked on our plugin
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, 
                               GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_RBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
                               GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_MBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle,
                               GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_LBUTTONUP: 
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
                             GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_RBUTTONUP:
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Right,
                             GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_MBUTTONUP:
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle,
                             GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_MOUSEMOVE:
         {
             MouseMoveEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_PAINT:
         {
@@ -134,7 +151,9 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_TIMER:
         {
             TimerEvent ev((unsigned int)wParam, (void*)lParam);
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_SETCURSOR:
             SetCursor(LoadCursor(NULL, IDC_ARROW));
@@ -143,24 +162,27 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         {
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
             KeyUpEvent ev(fb_key, (unsigned int)wParam);
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_KEYDOWN:
         {
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
             KeyDownEvent ev(fb_key, (unsigned int)wParam);
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
         case WM_SIZE:
         {
             ResizedEvent ev;
-            return SendEvent(&ev);
+            if(SendEvent(&ev))
+                return true;
+            break;
         }
     }
 
-    if (CustomWinProc(hWnd, uMsg, wParam, lParam, lRes))
-        return true;
-        
     return false;
 }
 
