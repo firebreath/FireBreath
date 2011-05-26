@@ -22,7 +22,16 @@ Project (FireBreath)
 # First, find FB_ROOT
 get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
 
-set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+if (FB_CUSTOM_RELEASE)
+    set (FB_RELEASE 1)
+endif()
+
+if (FB_RELEASE AND NOT FB_CUSTOM_RELEASE)
+    # This is needed if you want to make a binary distribution of FireBreath;
+    # if you want to do so and need to override the install prefix for some
+    # reason you should set FB_CUSTOM_RELEASE instead of FB_RELEASE
+    set (CMAKE_INSTALL_PREFIX ${CMAKE_BINARY_DIR}/install)
+endif()
 
 include(${FB_ROOT}/cmake/common.cmake)
 set(FB_EXPORT_FILE ${CMAKE_BINARY_DIR}/FireBreath_Exports.cmake)
