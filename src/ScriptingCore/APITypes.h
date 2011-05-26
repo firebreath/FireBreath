@@ -341,7 +341,7 @@ namespace FB
     }
 
     namespace boost_variant {
-        typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> generic;
+        typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> fb_compat;
         typedef boost::variant<long, int, double, float, std::string, FB::FBNull, FB::FBVoid> primitives;
         typedef boost::variant<std::string, FB::StringSet> strings;
     }

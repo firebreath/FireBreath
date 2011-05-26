@@ -251,7 +251,7 @@ TEST(BoostVariantToVariantConversionTest)
     PRINT_TESTNAME;
     using namespace FB;
 
-    typedef FB::boost_variant::generic VtComplete;
+    typedef FB::boost_variant::fb_compat VtComplete;
 
     {
         variant a = 23;
