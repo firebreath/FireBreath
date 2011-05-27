@@ -13,10 +13,11 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#include "NpapiBrowserHostAsyncWin.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "AsyncFunctionCall.h"
 #include "Win/WinMessageWindow.h"
 
+#include "NpapiBrowserHostAsyncWin.h"
 using namespace FB::Npapi;
 
 NpapiBrowserHostAsyncWin::NpapiBrowserHostAsyncWin(NpapiPluginModule* module, NPP npp)

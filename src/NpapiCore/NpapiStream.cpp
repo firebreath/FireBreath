@@ -14,6 +14,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "NpapiPlugin.h"
 #include "NpapiStream.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #undef min
 
 using namespace FB::Npapi;

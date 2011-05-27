@@ -12,8 +12,10 @@ http://www.gnu.org/licenses/lgpl-2.1.html
 Copyright 2010 Dan Groom and the Firebreath development team
 \**********************************************************/
 
+#include "win_common.h"
+#include "../precompiled_headers.h" // On windows, everything above this line in PCH
+
 #include "KeyCodesWin.h"
-#include <Windows.h>
 
 namespace FB {
 

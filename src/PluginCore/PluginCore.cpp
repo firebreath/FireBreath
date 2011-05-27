@@ -19,6 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "BrowserHost.h"
 #include "DOM/Window.h"
 #include "logging.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "PluginCore.h"
 

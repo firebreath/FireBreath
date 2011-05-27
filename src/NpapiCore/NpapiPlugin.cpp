@@ -12,13 +12,14 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "NpapiPlugin.h"
 #include "NpapiStream.h"
 #include "FactoryBase.h"
 #include "PluginCore.h"
 #include "PluginInfo.h"
 #include "BrowserHost.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "NpapiPlugin.h"
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)

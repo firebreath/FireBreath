@@ -93,6 +93,7 @@ set (SOURCES
     ${X11_SOURCES}
     )
 
+ADD_PRECOMPILED_HEADER("precompiled_headers.h" "precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 

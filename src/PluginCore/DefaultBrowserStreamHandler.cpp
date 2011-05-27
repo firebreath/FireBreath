@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "DefaultBrowserStreamHandler.h"
 
 using namespace FB;

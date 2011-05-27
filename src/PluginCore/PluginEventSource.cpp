@@ -17,9 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "PluginEventSink.h"
 #include "PluginEventSource.h"
 #include "PluginEvents/AttachedEvent.h"
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/if.hpp>
-#include <boost/lambda/bind.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
 
@@ -38,7 +36,6 @@ void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
 {
-    using namespace boost::lambda;
     boost::recursive_mutex::scoped_lock _l(m_observerLock);
     m_observers.push_back(sink);
     AttachedEvent newEvent;
@@ -52,7 +49,6 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 {
-    using namespace boost::lambda;
     boost::recursive_mutex::scoped_lock _l(m_observerLock);
 	
 	std::list<PluginEventSinkPtr> detachedList;

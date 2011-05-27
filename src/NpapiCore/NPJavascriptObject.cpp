@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <typeinfo>
 #include "JSObject.h"
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "NPJavascriptObject.h"
 
 using namespace FB::Npapi;

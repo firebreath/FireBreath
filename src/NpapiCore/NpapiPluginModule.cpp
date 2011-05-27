@@ -14,14 +14,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <stdexcept>
 
-#include "NpapiPluginModule.h"
 #include <cassert>
 #include <boost/thread.hpp>
 #include "logging.h"
 #include "BrowserHost.h"
 #include "PluginCore.h"
 #include <assert.h>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "NpapiPluginModule.h"
 using namespace FB::Npapi;
 
 volatile bool NpapiPluginModule::PluginModuleInitialized(false);
