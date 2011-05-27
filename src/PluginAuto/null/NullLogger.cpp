@@ -14,6 +14,7 @@ Copyright 2010 Facebook, Inc
 
 #include <string>
 #include "logging.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 void FB::Log::initLogging() {};
 void FB::Log::stopLogging() {};

@@ -13,6 +13,7 @@
 #include "Win/PluginWindowlessWin.h"
 
 #include "ActiveXFactoryDefinitions.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 typedef FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJavascriptObject, &DIID_IFBComEventSource, &FB_LIBID> COMJSObject;
 

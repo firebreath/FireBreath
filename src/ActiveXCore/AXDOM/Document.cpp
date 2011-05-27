@@ -16,6 +16,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "DOM/Window.h"
 #include "DOM/Element.h"
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "Document.h"
 
 using namespace FB::ActiveX::AXDOM;

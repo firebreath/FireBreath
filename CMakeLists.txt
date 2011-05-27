@@ -132,7 +132,7 @@ endif()
 # Common projects -- projects that don't have any plugin specific code
 if (NOT FB_SCRIPTINGCORE_LOADED)
     add_subdirectory(${FB_UNITTEST_FW_SOURCE_DIR} ${FB_UNITTEST_FW_BUILD_DIR})
-    add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
+    #add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
     add_subdirectory(${FB_SCRIPTINGCORETEST_SOURCE_DIR} ${FB_SCRIPTINGCORETEST_BUILD_DIR})
     if (WIN32)
         add_subdirectory(${FB_ACTIVEXCORETEST_SOURCE_DIR} ${FB_ACTIVEXCORETEST_BUILD_DIR})

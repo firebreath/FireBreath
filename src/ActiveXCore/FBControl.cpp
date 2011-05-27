@@ -14,8 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 // FBControl.cpp : Implementation of CFBControl
 #include "FBControl.h"
-
-//#include "global/axplugin_defs.inc" // Include generated file for ActiveX mimetypes
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 namespace {
     volatile bool g_Initialized;

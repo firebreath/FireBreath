@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <boost/assign.hpp>
-#include "ActiveXBrowserHost.h"
+#include <boost/smart_ptr/make_shared.hpp>
 #include "axstream.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
@@ -26,9 +26,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "ComVariantUtil.h"
 #include "ActiveXFactoryDefinitions.h"
-#include <boost/smart_ptr/make_shared.hpp>
+#include "ActiveXBrowserHost.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
-using boost::assign::list_of;
 using namespace FB;
 using namespace FB::ActiveX;
 

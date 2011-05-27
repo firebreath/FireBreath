@@ -14,12 +14,13 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "win_targetver.h"
 #include <boost/bind.hpp>
-#include <dispex.h>
 #include <boost/scoped_array.hpp>
+#include <dispex.h>
 #include "utf8_tools.h"
 #include "JSAPI_IDispatchEx.h"
 #include "axutil.h"
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "IDispatchAPI.h"
 
 using namespace FB::ActiveX;

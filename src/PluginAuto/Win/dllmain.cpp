@@ -4,6 +4,7 @@
 #include "win_common.h"
 #include "axmain.h"
 #include "axutil.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 HINSTANCE gInstance(NULL);
 std::string g_dllPath;

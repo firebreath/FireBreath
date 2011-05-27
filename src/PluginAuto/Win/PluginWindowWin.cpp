@@ -26,6 +26,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginWindowWin.h"
 
 #include "ConstructDefaultPluginWindows.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #define WM_ASYNCTHREADINVOKE    WM_USER + 1
 

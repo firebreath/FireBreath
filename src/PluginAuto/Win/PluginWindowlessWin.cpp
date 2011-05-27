@@ -6,6 +6,7 @@
 #include "PluginEvents/DrawingEvents.h" 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/KeyboardEvents.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace std; using namespace FB;
 

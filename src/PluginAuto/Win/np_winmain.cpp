@@ -2,6 +2,7 @@
 
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB::Npapi;
 FB::Npapi::NpapiPluginModule * module = NULL;
