@@ -100,6 +100,9 @@
             $("#" + id).attr("text", text);
         }
 
+        function mark(b, id) {
+            b ? markPassed(id) : markFailed(id);
+        }
         function markPassed(id) {
             var el = $("#" + id);
             el.html(el.attr("text") + " passed!").addClass("passed").removeClass("failed");
@@ -122,6 +125,8 @@
             addTest("countArray", "Count array length returned from JSAPI object");
             addTest("simpleFireEvent", "Simple event bind and fire test");
             addTest("attachedFireEvent", "Simple event bind attach and fire test");
+            addTest("detachEvent", "Event detach test");
+            addTest("propertyEvent", "Property-style event attach and fire test");
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
             addTest("postURL", "Download stream (POST)");
@@ -232,7 +237,9 @@
                     markFailed("simpleFireEvent");
                 }
             };
+            var fireCount = 0;
             var tmpFired = function (str) {
+                fireCount++;
                 if (str == "some string") {
                     markPassed("attachedFireEvent");
                 } else {
@@ -245,6 +252,22 @@
                 plugin.addEventListener("fired", tmpFired, false);
             }
             plugin.testEvent("some string");
+
+            // test event detach (by detaching and firing again)
+            fireCount = 0;
+            if (plugin.detachEvent) {
+                plugin.detachEvent("onfired", tmpFired);
+            } else {
+                plugin.removeEventListener("fired", tmpFired);
+            }
+            plugin.testEvent("some string");
+            mark(0 == fireCount, "detachEvent");
+            
+            // test property-style event
+            plugin.onfired = function (str) {
+                mark(str == "FB!", "propertyEvent");
+            }
+            plugin.testEvent("FB!");
 
             try {
                 thread = plugin.createThreadRunner();
@@ -261,28 +284,28 @@
             }
             
             var sUrl = "http://code.google.com/p/firebreath/issues/list";
-			var getUrlCallback = function(success, outheaders, data)
-			{
+            var getUrlCallback = function(success, outheaders, data)
+            {
                 if (success) {
                     markPassed("getURL");
                 } else {
                     markFailed("getURL");
                 }
-				//alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
-			}
-			plugin.getURL(sUrl, getUrlCallback);
+                //alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+            }
+            plugin.getURL(sUrl, getUrlCallback);
 
             var sUrl = "http://code.google.com/p/firebreath/issues/list";
-			var sPostData = "can=1&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary+Stars&cells=tiles";
-			var postUrlCallback = function(success, outheaders, data)
-			{
+            var sPostData = "can=1&q=&colspec=ID+Type+Status+Priority+Milestone+Owner+Summary+Stars&cells=tiles";
+            var postUrlCallback = function(success, outheaders, data)
+            {
                 if (success) {
                     markPassed("postURL");
                 } else {
                     markFailed("postURL");
                 }
-				//alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
-			}
+                //alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
+            }
             plugin.postURL(sUrl, sPostData, postUrlCallback);
 
             //testDiv = document.getElementById("test");
