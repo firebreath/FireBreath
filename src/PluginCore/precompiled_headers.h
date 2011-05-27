@@ -1,5 +1,5 @@
 
-#ifdef FB_WIN // For now only use this on windows; eventually we'd like to have PCH cross platform
+#ifdef FB_WIN
 
 #ifdef _WIN32
 #include "win_targetver.h"
@@ -57,3 +57,4 @@
 #include "PluginInfo.h"
 
 #endif
+

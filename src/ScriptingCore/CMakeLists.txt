@@ -90,8 +90,8 @@ set (SOURCES
     ${GENERAL}
     )
 
-ADD_PRECOMPILED_HEADER("precompiled_headers.h" "precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
