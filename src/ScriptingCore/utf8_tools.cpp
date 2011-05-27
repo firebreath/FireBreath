@@ -13,11 +13,6 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Dan Weatherford, Facebook inc
 \**********************************************************/
 
-#include <stdlib.h>
-#include <limits.h>
-#include <boost/scoped_array.hpp>
-#include <stdexcept>
-
 #ifdef _WIN32
 #include <windows.h>
 #else
@@ -25,6 +20,12 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #include <xlocale.h>
 #include <wctype.h>
 #endif
+#include <stdexcept>
+
+#include <boost/scoped_array.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
+#include <limits.h>
 
 #include "utf8_tools.h"
 

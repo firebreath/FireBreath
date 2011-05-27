@@ -20,14 +20,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
 #include <boost/format.hpp>
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
 #include "logging.h"
+#include "../PluginCore/BrowserStreamManager.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserHost.h"
-#include <boost/smart_ptr/enable_shared_from_this.hpp>
-#include "../PluginCore/BrowserStreamManager.h"
 
 //////////////////////////////////////////
 // This is used to keep async calls from

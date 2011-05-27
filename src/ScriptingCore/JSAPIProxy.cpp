@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <boost/make_shared.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "JSAPIProxy.h"
 

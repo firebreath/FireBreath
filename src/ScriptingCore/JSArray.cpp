@@ -12,11 +12,13 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#include "JSArray.h"
 #include <iterator>
 #include "BrowserHost.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
+#include "JSArray.h"
 
 FB::JSArray::JSArray(const FB::JSObjectPtr& obj)
   : m_obj(obj)

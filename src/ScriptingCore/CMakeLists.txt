@@ -90,6 +90,7 @@ set (SOURCES
     ${GENERAL}
     )
 
+ADD_PRECOMPILED_HEADER("precompiled_headers.h" "precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 
 target_link_libraries(${PROJECT_NAME}

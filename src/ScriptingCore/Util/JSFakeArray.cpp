@@ -12,8 +12,10 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#include "JSFakeArray.h"
 #include <iterator>
+#include "precompiled_headers.h"
+
+#include "JSFakeArray.h"
 
 FB::JSFakeArray::JSFakeArray()
   : m_values()

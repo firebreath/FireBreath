@@ -12,6 +12,7 @@
  Copyright 2010 Richard Bateman, FaceBook inc, Firebreath development team
 \**********************************************************/
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "JSFunction.h"
 
 FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone zone)

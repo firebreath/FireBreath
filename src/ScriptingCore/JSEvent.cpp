@@ -12,8 +12,10 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "JSEvent.h"
 #include "variant.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
+#include "JSEvent.h"
 
 FB::VariantMap FB::CreateEvent( const FB::JSAPIPtr& api, const std::string& name, const FB::VariantMap &members, const FB::VariantList &arguments )
 {
