@@ -81,8 +81,11 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 
 void ActiveXBrowserHost::initDOMObjects()
 {
-    if (!m_window) {
+    // m_htmlWin/m_htmlDocDisp will be null after suspend()
+    if (!m_window && m_htmlWin) {
         m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+    }
+    if (!m_document && m_htmlDocDisp) {
         m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
     }
 }
