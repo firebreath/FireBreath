@@ -124,7 +124,6 @@ bool PluginCore::setReady()
 
 bool PluginCore::isWindowless()
 {
-    m_host->initJS(this);
     if (m_windowLessParam != boost::indeterminate) {
         return m_windowLessParam;
     } else {
