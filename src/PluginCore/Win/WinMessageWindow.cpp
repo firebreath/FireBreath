@@ -13,12 +13,14 @@ Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "win_targetver.h"
-#include <windows.h>
-#include <ShlGuid.h>
-#include <string>
+#include "win_common.h"
 #include <boost/lexical_cast.hpp>
 #include "AsyncFunctionCall.h"
 #include "logging.h"
+#include "../precompiled_headers.h" // On windows, everything above this line in PCH
+
+#include <ShlGuid.h>
+#include <string>
 
 #include "WinMessageWindow.h"
 

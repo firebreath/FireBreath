@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
+#include <boost/make_shared.hpp>
 #include "win_common.h"
 #include "NpapiTypes.h"
 #include "PluginCore.h"
@@ -20,8 +21,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Win/PluginWindowWin.h"
 #include "Win/PluginWindowlessWin.h"
 #include "NpapiPluginFactory.h"
-#include <boost/make_shared.hpp>
 #include "PluginInfo.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB::Npapi;
 
@@ -94,7 +95,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
                                    window->clipRect.bottom, window->clipRect.right);
             win->setInvalidateWindowFunc(boost::bind(&NpapiPluginWin::invalidateWindow, this, _1, _2, _3, _4));
             pluginMain->SetWindow(win);
-            setReady();
             pluginWin = win;
         } else {
             win->setWindowPosition(window->x, window->y, window->width, window->height);
@@ -125,7 +125,6 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             win = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin((HWND)window->window));
             win->setBrowserHWND(browserHWND);
             pluginMain->SetWindow(win);
-            setReady();
             pluginWin = win;
         }    
     }

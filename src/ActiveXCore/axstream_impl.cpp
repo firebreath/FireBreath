@@ -24,6 +24,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "utf8_tools.h"
 #include <boost\smart_ptr\scoped_array.hpp>
 #include <boost\smart_ptr\shared_array.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
 using namespace FB::ActiveX;

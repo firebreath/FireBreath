@@ -13,14 +13,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <cstdio>
-#include "NpapiPluginModule.h"
 #include "NpapiPlugin.h"
 #include "FactoryBase.h"
 #include "NpapiBrowserHost.h"
 #include <boost/shared_ptr.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "AsyncFunctionCall.h"
-#include "SafeQueue.h"
 #include "PluginInfo.h"
+#include "SafeQueue.h"
+#include "NpapiPluginModule.h"
 
 #if FB_WIN
 #  include "Win/NpapiBrowserHostAsyncWin.h"

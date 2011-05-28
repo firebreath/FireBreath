@@ -20,14 +20,15 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
 #include <boost/format.hpp>
+#include <boost/smart_ptr/enable_shared_from_this.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
 #include "logging.h"
+#include "../PluginCore/BrowserStreamManager.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserHost.h"
-#include <boost/smart_ptr/enable_shared_from_this.hpp>
-#include "../PluginCore/BrowserStreamManager.h"
 
 //////////////////////////////////////////
 // This is used to keep async calls from
@@ -158,7 +159,8 @@ int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& fun
 {
     assertMainThread();
     FB::JSObjectPtr delegate = getDelayedInvokeDelegate();
-    assert(delegate);
+    if (!delegate)
+        return -1;  // this is wrong (the return is meant to be the result of setTimeout)
     if (fname.empty())
         return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)).convert_cast<int>();
     else
@@ -170,11 +172,14 @@ FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
         // initJS wasn't called (yet?)!
         assert(false);
     }
-    FB::JSObjectPtr delegate(getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate));
-    if (!delegate) {
-        initJS(this);
+    FB::JSObjectPtr delegate;
+    if (getDOMWindow()) {
         delegate = getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
-        assert(delegate);
+        if (!delegate) {
+            initJS(this);
+            delegate = getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
+            assert(delegate);
+        }
     }
     return delegate;
 }

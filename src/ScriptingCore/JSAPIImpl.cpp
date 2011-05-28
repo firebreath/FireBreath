@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "JSObject.h"
 #include "utf8_tools.h"
 #include "JSEvent.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "JSAPIImpl.h"
 

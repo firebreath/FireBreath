@@ -27,6 +27,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "NPVariantUtil.h"
 

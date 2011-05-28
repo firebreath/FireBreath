@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include <boost/assign.hpp>
-#include "ActiveXBrowserHost.h"
+#include <boost/smart_ptr/make_shared.hpp>
 #include "axstream.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
@@ -26,9 +26,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "ComVariantUtil.h"
 #include "ActiveXFactoryDefinitions.h"
-#include <boost/smart_ptr/make_shared.hpp>
+#include "ActiveXBrowserHost.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
-using boost::assign::list_of;
 using namespace FB;
 using namespace FB::ActiveX;
 
@@ -81,8 +81,11 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 
 void ActiveXBrowserHost::initDOMObjects()
 {
-    if (!m_window) {
+    // m_htmlWin/m_htmlDocDisp will be null after suspend()
+    if (!m_window && m_htmlWin) {
         m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+    }
+    if (!m_document && m_htmlDocDisp) {
         m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
     }
 }

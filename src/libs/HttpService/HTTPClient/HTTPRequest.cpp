@@ -161,16 +161,27 @@ static const char* certdata_Entrust_Secure_Server_CA =
 "rQXvqzJ4h6BUcxm1XAX5Uj5tLUUL9wqT6u0G+bI=\n"
 "-----END CERTIFICATE-----\n";
 
+static std::set<std::string> CA_certs;
+
+void HTTPRequest::registerCACert(const std::string& cert)
+{
+    CA_certs.insert(cert);
+}
+
 static CURLcode sslctx_function(CURL* curl, SSL_CTX* sslctx, void* param) {
-  BIO* mem = BIO_new_mem_buf(const_cast<char*>(certdata_Entrust_Secure_Server_CA), -1);
-  BIO_set_close(mem, BIO_NOCLOSE); // don't want BIO_free() to free the buffer, it's static
-  X509* Entrust_Secure_Server_CA = PEM_read_bio_X509_AUX(mem, NULL, NULL, NULL);
-  if (Entrust_Secure_Server_CA) {
-    X509_STORE* store = SSL_CTX_get_cert_store(sslctx);
-    X509_STORE_add_cert(store, Entrust_Secure_Server_CA);
-  }
-  BIO_free(mem);
-  return CURLE_OK;
+    for(std::set<std::string>::iterator it=CA_certs.begin(); it != CA_certs.end(); ++it)
+    {
+        BIO* mem = BIO_new_mem_buf(const_cast<char*>(it->c_str()), -1);
+        BIO_set_close(mem, BIO_NOCLOSE); // don't want BIO_free() to free the buffer, it's a string
+        X509* current_CA = PEM_read_bio_X509_AUX(mem, NULL, NULL, NULL);
+        if (current_CA) {
+            X509_STORE* store = SSL_CTX_get_cert_store(sslctx);
+            X509_STORE_add_cert(store, current_CA);
+        }
+        BIO_free(mem);
+    }
+
+    return CURLE_OK;
 }
 #endif
 

@@ -19,6 +19,7 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #include <boost/algorithm/string.hpp>
 
 #include "PluginInfo.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 namespace {
     bool nameParsed = false;

@@ -19,6 +19,7 @@
 #include "ActiveXFactoryDefinitions.h"
 #endif
 #include "PluginInfo.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 FB::FactoryBase::FactoryBase()
 {

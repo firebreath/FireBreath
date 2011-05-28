@@ -14,6 +14,8 @@ Copyright 2011 Richard Bateman,
 \**********************************************************/
 
 #include "BrowserStream.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/thread/shared_mutex.hpp>

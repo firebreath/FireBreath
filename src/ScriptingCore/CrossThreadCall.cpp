@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "CrossThreadCall.h"
 
 using namespace FB;

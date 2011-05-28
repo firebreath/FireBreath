@@ -32,6 +32,7 @@ namespace HTTP {
         public:
             static HTTPRequest* create();
             static void setProxyConfig(const HTTPProxyConfig& cfg);
+            static void HTTPRequest::registerCACert(const std::string& cert);
 
             // Fire off a request in a new thread and ignore the results with this.
             static void asyncStartRequest(boost::shared_ptr<HTTPRequestData> data);

@@ -15,6 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserPlugin.h"
 #include "FactoryBase.h"
 #include "PluginCore.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
 

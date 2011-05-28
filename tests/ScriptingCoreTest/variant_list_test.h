@@ -16,7 +16,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/assign/list_of.hpp>
 #include "APITypes.h"
 #include "variant_list.h"
-#include "variant_map.h"
+#include "variant_map.h"
 
 TEST(VariantListTest)
 {

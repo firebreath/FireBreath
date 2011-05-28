@@ -6,6 +6,7 @@
 #include "PluginEvents/DrawingEvents.h" 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/KeyboardEvents.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace std; using namespace FB;
 
@@ -139,6 +140,9 @@ void PluginWindowlessWin::setWindowPosition(int32_t x, int32_t y, uint32_t width
     m_y = y;
     m_height = height;
     m_width = width;
+
+	ResizedEvent ev;
+	SendEvent(&ev);  //notify the plugin the window has changed position/size
 }
 
 void PluginWindowlessWin::setWindowPosition(FB::Rect pos) {
@@ -146,6 +150,9 @@ void PluginWindowlessWin::setWindowPosition(FB::Rect pos) {
     m_y = pos.top;
     m_height = pos.bottom - m_y;
     m_width = pos.right - m_x;
+
+	ResizedEvent ev;
+	SendEvent(&ev);  //notify the plugin the window has changed position/size
 }
 
 FB::Rect FB::PluginWindowlessWin::getWindowClipping() const {

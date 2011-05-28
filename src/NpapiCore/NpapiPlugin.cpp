@@ -12,13 +12,14 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include "NpapiPlugin.h"
 #include "NpapiStream.h"
 #include "FactoryBase.h"
 #include "PluginCore.h"
 #include "PluginInfo.h"
 #include "BrowserHost.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "NpapiPlugin.h"
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
@@ -95,14 +96,11 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
 #endif
     } 
-    bool readySet = setReady();
-    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
+    setReady();
 }
 
 NPError NpapiPlugin::SetWindow(NPWindow* window)
 {
-    bool readySet = setReady();
-    if (readySet) FBLOG_ERROR("Issue27", "NpapiPlugin::" << FBLOG_FUNCTION() << "setReady()");
     return NPERR_NO_ERROR;
 }
 

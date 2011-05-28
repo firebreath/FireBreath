@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Facebook, Inc and the Firebreath development team
 \**********************************************************/
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "Element.h"
 
 using namespace FB::ActiveX::AXDOM;

@@ -15,6 +15,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Document.h"
 #include "IDispatchAPI.h"
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "Window.h"
 
 using namespace FB::ActiveX::AXDOM;

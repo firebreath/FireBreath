@@ -43,6 +43,12 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.h
     )
 
+file (GLOB PCH_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    precompiled_headers.*
+    )
+
+list(REMOVE_ITEM GENERAL ${PCH_FILES})
+
 source_group(PluginEvents FILES ${EVENTS})
 
 file (GLOB X11_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -87,6 +93,7 @@ set (SOURCES
     ${X11_SOURCES}
     )
 
+ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 

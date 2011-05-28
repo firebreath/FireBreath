@@ -16,10 +16,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/bind.hpp>
 #include <boost/scoped_array.hpp>
 #include "NPObjectAPI.h"
-#include "NpapiBrowserHost.h"
 #include "NPJavascriptObject.h"
+#include "NpapiBrowserHost.h"
 #include "logging.h"
 #include <cassert>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB::Npapi;
 using boost::static_pointer_cast;

@@ -15,7 +15,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // FireBreathWin.cpp : Implementation of DLL Exports.
 
 #include "win_common.h"
-#include <Psapi.h>
 #include "global/resource.h"
 #include "global/config.h"
 #include "FireBreathWin_i.h"
@@ -24,6 +23,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "axutil.h"
 #include "PluginCore.h"
 #include <boost/algorithm/string.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
+#include <Psapi.h>
 
 using FB::ActiveX::isStaticInitialized;
 using FB::ActiveX::flagStaticInitialized;

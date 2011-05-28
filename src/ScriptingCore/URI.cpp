@@ -18,10 +18,11 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/asio.hpp>
 #include <boost/logic/tribool.hpp>
 #include <vector>
 #include <sstream>
+#include <boost/asio.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "URI.h"
 

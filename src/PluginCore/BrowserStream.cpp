@@ -13,6 +13,7 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "BrowserStream.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
 

@@ -41,6 +41,11 @@ file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.h
     [^.]*.txt
     )
+file (GLOB PCH_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    precompiled_headers.*
+    )
+
+list(REMOVE_ITEM COMMON ${PCH_FILES})
 
 set(LogKey "${PLUGIN_NAME}_log4cplus")
 if (${LogKey})
@@ -203,6 +208,9 @@ set (SOURCES
     ${GENERATED_IDL}
     ${MAC_SOURCES}
     ${X11_SOURCES})
+
+
+ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Generated")
 if (WIN32)

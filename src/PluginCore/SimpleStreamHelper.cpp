@@ -16,6 +16,8 @@ Copyright 2011 Richard Bateman,
 #include "BrowserHost.h"
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
+
 #include "SimpleStreamHelper.h"
 
 static const int MEGABYTE = 1024 * 1024;

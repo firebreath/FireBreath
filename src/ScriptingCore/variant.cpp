@@ -13,6 +13,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "variant.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using FB::variant;
 

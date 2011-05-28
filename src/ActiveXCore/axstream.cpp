@@ -15,6 +15,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "axstream.h"
 #include "axstream_impl.h"
 #include "PluginEvents/StreamEvents.h"
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
 using namespace FB::ActiveX;
