@@ -107,7 +107,7 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
     try {
         FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
-        if (window->getJSObject()->HasProperty("console")) {
+        if (window && window->getJSObject()->HasProperty("console")) {
             FB::JSObjectPtr obj = window->getProperty<FB::JSObjectPtr>("console");
             printf("Logging: %s\n", req->m_msg.c_str());
             if (obj)
