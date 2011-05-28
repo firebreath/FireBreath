@@ -99,17 +99,14 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
 // to indicate that we're done.
 bool PluginCore::setReady()
 {
-    m_host->initJS(this);
-    
     bool rval = false;
     FBLOG_TRACE("PluginCore", "Plugin Ready");
-    // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
-    getRootJSAPI();
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
+            m_host->initJS(this);
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
-            if(method) {
+            if (method) {
                 FBLOG_TRACE("PluginCore", "InvokeDelayed(onload)");
                 m_host->delayedInvoke(250, method, FB::variant_list_of(getRootJSAPI()));
                 rval = true;
