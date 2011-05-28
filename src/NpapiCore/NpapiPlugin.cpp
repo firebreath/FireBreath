@@ -45,10 +45,8 @@ NpapiPlugin::~NpapiPlugin(void)
 bool NpapiPlugin::setReady()
 {
     bool rval = false;
-    if (!m_isReady) {
-        rval = pluginMain->setReady();
-        m_isReady = true;
-    }
+    if (!m_isReady)
+        rval = m_isReady = pluginMain->setReady();
     return rval;
 }
 
