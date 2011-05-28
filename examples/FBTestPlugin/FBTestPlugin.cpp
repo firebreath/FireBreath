@@ -155,10 +155,15 @@ bool FBTestPlugin::isWindowless()
 
 void FBTestPlugin::onPluginReady()
 {
-    FB::URI uri = FB::URI::fromString(m_host->getDOMWindow()->getLocation());
+    FB::DOM::WindowPtr window = m_host->getDOMWindow();
+    if (!window)
+        return;
+
+    FB::URI uri = FB::URI::fromString(window->getLocation());
     if (uri.query_data.find("log") != uri.query_data.end()) {
         m_host->setEnableHtmlLog(true);
     } else {
         m_host->setEnableHtmlLog(false);
     }
+
 }
