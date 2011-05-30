@@ -1,5 +1,5 @@
 
-#ifdef FB_WIN
+#if defined(FB_WIN) && !defined(FB_UNITTEST)
 
 #ifdef _WIN32
 #include "win_targetver.h"
