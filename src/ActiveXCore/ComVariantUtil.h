@@ -53,12 +53,12 @@ namespace FB { namespace ActiveX
     //  GJS  ---
     //  I would probably put the ComVariantBuilderMap code into ComVariantUtil.cpp?
     template<class T>
-    ComVariantBuilderMap::value_type makeBuilderEntry()
+    inline ComVariantBuilderMap::value_type makeBuilderEntry()
     {
         return ComVariantBuilderMap::value_type(&typeid(T), select_ccomvariant_builder::select<T>());
     }
     
-    ComVariantBuilderMap makeComVariantBuilderMap()
+    inline ComVariantBuilderMap makeComVariantBuilderMap()
     {
         ComVariantBuilderMap tdm;
         tdm.insert(makeBuilderEntry<bool>());
@@ -94,7 +94,7 @@ namespace FB { namespace ActiveX
         return tdm;
     }
     
-    const ComVariantBuilderMap& getComVariantBuilderMap()
+    inline const ComVariantBuilderMap& getComVariantBuilderMap()
     {
         static const ComVariantBuilderMap tdm = makeComVariantBuilderMap();
         return tdm;
@@ -102,7 +102,7 @@ namespace FB { namespace ActiveX
     //  GJS  ---
     
     template<class T>
-    CComVariant makeArithmeticComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+    inline CComVariant makeArithmeticComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
         return var.convert_cast<T>();
     }
