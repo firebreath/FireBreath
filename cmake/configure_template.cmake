@@ -136,16 +136,11 @@ function(configure_template filename outputfile)
         file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/_tmp)
     endif()
 
-    configure_template_force(${filename} ${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name})
-    if (EXISTS ${outputfile})
-        FILE(READ "${outputfile}" file_contents_1)
-    endif()
-    FILE(READ "${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name}" file_contents_2)
-
-    if (NOT file_contents_1 STREQUAL file_contents_2)
-        configure_file(${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name} ${outputfile})
-        message("Generating new ${outputfile}")
-    endif()
+    configure_template_force(${filename} "${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name}")
+    execute_process(
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        "${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name}" "${outputfile}"
+        )
     file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/_tmp/${outputfile_name})
 
 endfunction()
