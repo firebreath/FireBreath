@@ -73,8 +73,6 @@ static void asyncrequest_status_handler(HTTPRequest* req, HTTP::Status status) {
   req->startRequest(data);
 }
 
-#ifdef _WIN32
-
 // The cert chain that we're looking for looks like:
 // Entrust Secure Server Certification Authority (this cert)
 // signs DigiCert High Assurance EV Root CA
@@ -162,6 +160,7 @@ static const char* certdata_Entrust_Secure_Server_CA =
 "-----END CERTIFICATE-----\n";
 
 static std::set<std::string> CA_certs;
+static bool clean_CAList(true);
 
 void HTTPRequest::registerCACert(const std::string& cert)
 {
@@ -169,13 +168,19 @@ void HTTPRequest::registerCACert(const std::string& cert)
 }
 
 static CURLcode sslctx_function(CURL* curl, SSL_CTX* sslctx, void* param) {
+    X509_STORE* store;
+    if (clean_CAList) {
+        store = X509_STORE_new();
+        SSL_CTX_set_cert_store(sslctx, store);
+    } else {
+        store = SSL_CTX_get_cert_store(sslctx);
+    }
     for(std::set<std::string>::iterator it=CA_certs.begin(); it != CA_certs.end(); ++it)
     {
         BIO* mem = BIO_new_mem_buf(const_cast<char*>(it->c_str()), -1);
         BIO_set_close(mem, BIO_NOCLOSE); // don't want BIO_free() to free the buffer, it's a string
         X509* current_CA = PEM_read_bio_X509_AUX(mem, NULL, NULL, NULL);
         if (current_CA) {
-            X509_STORE* store = SSL_CTX_get_cert_store(sslctx);
             X509_STORE_add_cert(store, current_CA);
         }
         BIO_free(mem);
@@ -183,7 +188,6 @@ static CURLcode sslctx_function(CURL* curl, SSL_CTX* sslctx, void* param) {
 
     return CURLE_OK;
 }
-#endif
 
 void HTTPRequest::_internal_threadSafeDestroy() {
   delete this;
@@ -276,12 +280,7 @@ void HTTPRequest::startRequest_thread() {
     curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuffer);
     curl_easy_setopt(req, CURLOPT_FAILONERROR, 1);
 
-#ifdef _WIN32
-    // We only need to add in the cert on windows, since we don't ship the trusted CA cert bundle there
-    // (it comes with curl on the mac and on linux)
-    // also touching the SSL_CTX on the mac tends to make things crash
     curl_easy_setopt(req, CURLOPT_SSL_CTX_FUNCTION, sslctx_function);
-#endif
 
     curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 1);
     curl_easy_setopt(req, CURLOPT_SSL_VERIFYHOST, 2);
