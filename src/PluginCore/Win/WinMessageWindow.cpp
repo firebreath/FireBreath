@@ -15,6 +15,8 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "win_targetver.h"
 #include "win_common.h"
 #include <boost/lexical_cast.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread/mutex.hpp>
 #include "AsyncFunctionCall.h"
 #include "logging.h"
 #include "../precompiled_headers.h" // On windows, everything above this line in PCH
@@ -25,6 +27,9 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "WinMessageWindow.h"
 
 extern HINSTANCE gInstance;
+
+static boost::mutex _windowMapMutex;
+static std::map<HWND, FB::WinMessageWindow*> _windowMap;
 
 FB::WinMessageWindow::WinMessageWindow() {
     WNDCLASSEX wc;
@@ -70,19 +75,25 @@ FB::WinMessageWindow::WinMessageWindow() {
         err = ::GetLastError();
         throw std::runtime_error("Could not create Message Window");
     }
+    _windowMap[messageWin] = this;
     m_hWnd = messageWin;
+    boost::mutex::scoped_lock _l(_windowMapMutex);
+    winProc = boost::bind(&FB::WinMessageWindow::DefaultWinProc, this, _1, _2, _3, _4, _5);
 }
 
 LRESULT CALLBACK FB::WinMessageWindow::_WinProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
-    if (uMsg == WM_ASYNCTHREADINVOKE) {
-        FBLOG_TRACE("PluginWindow", "Running async function call");
-        FB::AsyncFunctionCall *evt = static_cast<FB::AsyncFunctionCall*>((void*)lParam);
-        evt->func(evt->userData);
-        delete evt;
-        return S_OK;
+    LRESULT lres = S_OK;
+    FB::WinMessageWindow* self(NULL);
+    {
+        boost::mutex::scoped_lock _l(_windowMapMutex);
+        self = _windowMap[hWnd];
     }
-    return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    if (!self->winProc(hWnd, uMsg, wParam, lParam, lres)) {
+        return DefWindowProc(hWnd, uMsg, wParam, lParam);
+    } else {
+        return lres;
+    }
 }
 
 HWND FB::WinMessageWindow::getHWND()
@@ -92,6 +103,20 @@ HWND FB::WinMessageWindow::getHWND()
 
 FB::WinMessageWindow::~WinMessageWindow()
 {
+    boost::mutex::scoped_lock _l(_windowMapMutex);
+    _windowMap.erase(m_hWnd);
     ::DestroyWindow(m_hWnd);
 }
 
+bool FB::WinMessageWindow::DefaultWinProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT& lResult )
+{
+    if (uMsg == WM_ASYNCTHREADINVOKE) {
+        FBLOG_TRACE("PluginWindow", "Running async function call");
+        FB::AsyncFunctionCall *evt = static_cast<FB::AsyncFunctionCall*>((void*)lParam);
+        evt->func(evt->userData);
+        delete evt;
+        lResult = S_OK;
+        return true;
+    }
+    return false;
+}
