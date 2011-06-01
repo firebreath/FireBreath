@@ -16,7 +16,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #include <boost/lexical_cast.hpp>
 #include <boost/bind.hpp>
-#include <boost/thread/mutex.hpp>
+#include <boost/thread/recursive_mutex.hpp>
 #include "AsyncFunctionCall.h"
 #include "logging.h"
 #include "../precompiled_headers.h" // On windows, everything above this line in PCH
@@ -28,7 +28,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 extern HINSTANCE gInstance;
 
-static boost::mutex _windowMapMutex;
+static boost::recursive_mutex _windowMapMutex;
 static std::map<HWND, FB::WinMessageWindow*> _windowMap;
 
 FB::WinMessageWindow::WinMessageWindow() {
@@ -77,7 +77,7 @@ FB::WinMessageWindow::WinMessageWindow() {
     }
     _windowMap[messageWin] = this;
     m_hWnd = messageWin;
-    boost::mutex::scoped_lock _l(_windowMapMutex);
+    boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
     winProc = boost::bind(&FB::WinMessageWindow::DefaultWinProc, this, _1, _2, _3, _4, _5);
 }
 
@@ -86,7 +86,7 @@ LRESULT CALLBACK FB::WinMessageWindow::_WinProc( HWND hWnd, UINT uMsg, WPARAM wP
     LRESULT lres = S_OK;
     FB::WinMessageWindow* self(NULL);
     {
-        boost::mutex::scoped_lock _l(_windowMapMutex);
+        boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
         if (_windowMap.find(hWnd) != _windowMap.end())
             self = _windowMap[hWnd];
     }
@@ -104,7 +104,7 @@ HWND FB::WinMessageWindow::getHWND()
 
 FB::WinMessageWindow::~WinMessageWindow()
 {
-    boost::mutex::scoped_lock _l(_windowMapMutex);
+    boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
     _windowMap.erase(m_hWnd);
     ::DestroyWindow(m_hWnd);
 }
