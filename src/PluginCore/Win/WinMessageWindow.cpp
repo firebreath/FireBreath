@@ -87,9 +87,10 @@ LRESULT CALLBACK FB::WinMessageWindow::_WinProc( HWND hWnd, UINT uMsg, WPARAM wP
     FB::WinMessageWindow* self(NULL);
     {
         boost::mutex::scoped_lock _l(_windowMapMutex);
-        self = _windowMap[hWnd];
+        if (_windowMap.find(hWnd) != _windowMap.end())
+            self = _windowMap[hWnd];
     }
-    if (!self->winProc(hWnd, uMsg, wParam, lParam, lres)) {
+    if (!self || !self->winProc(hWnd, uMsg, wParam, lParam, lres)) {
         return DefWindowProc(hWnd, uMsg, wParam, lParam);
     } else {
         return lres;
