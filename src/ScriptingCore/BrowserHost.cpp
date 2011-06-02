@@ -108,7 +108,7 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
     try {
         FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
-        if (window->getJSObject()->HasProperty("console")) {
+        if (window && window->getJSObject()->HasProperty("console")) {
             FB::JSObjectPtr obj = window->getProperty<FB::JSObjectPtr>("console");
             printf("Logging: %s\n", req->m_msg.c_str());
             if (obj)
@@ -169,20 +169,15 @@ int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& fun
 }
 
 FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
-    if (call_delegate.empty()) {
-        // initJS wasn't called (yet?)!
-        assert(false);
-    }
-    FB::JSObjectPtr delegate;
     if (getDOMWindow()) {
-        delegate = getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
-        if (!delegate) {
+        if (call_delegate.empty()) {
             initJS(this);
-            delegate = getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
-            assert(delegate);
+        }
+        if (!call_delegate.empty()) {
+            return getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
         }
     }
-    return delegate;
+    return FB::JSObjectPtr();
 }
 
 FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj) const
