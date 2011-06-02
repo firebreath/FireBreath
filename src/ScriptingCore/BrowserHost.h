@@ -403,6 +403,8 @@ namespace FB
         /// @since 1.4b3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void DoDeferredRelease() const = 0;
+        
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
     public:
         virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
         virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;

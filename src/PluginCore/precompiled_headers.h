@@ -53,6 +53,7 @@
 #include "PluginEvents/AttachedEvent.h"
 #ifdef FB_WIN
 #include "ActiveXFactoryDefinitions.h"
+#include "Win/SystemProxyDetectorWin.h"
 #endif
 #include "PluginInfo.h"
 

@@ -29,6 +29,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserHost.h"
+#include "SystemProxyDetector.h"
 
 //////////////////////////////////////////
 // This is used to keep async calls from
@@ -340,3 +341,7 @@ FB::BrowserStreamPtr FB::BrowserHost::createPostStream( const std::string& url,
     return ptr;
 }
 
+bool FB::BrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, const std::string& url )
+{
+    return FB::SystemProxyDetector::get()->detectProxy(settingsMap, url);
+}

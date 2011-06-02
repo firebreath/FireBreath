@@ -69,6 +69,8 @@ namespace FB { namespace Npapi {
         bool isSafari() const;
         bool isFirefox() const;
         bool isChrome() const;
+
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
         
     public:
         void shutdown();
@@ -126,6 +128,22 @@ namespace FB { namespace Npapi {
         void PushPopupsEnabledState(NPBool enabled) const;
         void PopPopupsEnabledState() const;
         void PluginThreadAsyncCall(void (*func) (void *), void *userData) const;
+
+        NPError GetValueForURL(NPNURLVariable variable,
+                               const char *url,
+                               char **value,
+                               uint32_t *len);
+        NPError SetValueForURL(NPNURLVariable variable,
+                               const char *url, const char *value,
+                               uint32_t len);
+        NPError GetAuthenticationInfo(const char *protocol,
+                                      const char *host, int32_t port,
+                                      const char *scheme,
+                                      const char *realm,
+                                      char **username, uint32_t *ulen,
+                                      char **password,
+                                      uint32_t *plen);
+
         /* npruntime.h definitions */
         NPObject *CreateObject(NPClass *aClass) const;
         bool Invoke(NPObject *npobj, NPIdentifier methodName, const NPVariant *args,

@@ -130,6 +130,7 @@ if (WIN32)
         ${PLUGIN_INTERNAL_DEPS}
         ${ATL_LIBRARY}
         psapi
+        Wininet
         )
     file (GLOB IDL_FILES
         ${FB_TEMPLATE_DEST_DIR}/*.idl)

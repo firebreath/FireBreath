@@ -49,6 +49,12 @@ target_link_libraries (${PROJECT_NAME}
     UnitTest++
     )
 
+if (WIN32)
+    target_link_libraries (${PROJECT_NAME}
+        Wininet
+        )
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}"
 )
