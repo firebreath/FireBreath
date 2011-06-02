@@ -1,4 +1,11 @@
 
+#include <boost/scoped_ptr.hpp>
+#include <map>
+#include <string>
+
+using std::map;
+using std::string;
+
 #include "X11/SystemProxyDetectorX11.h"
 
 FB::SystemProxyDetector* FB::SystemProxyDetector::get()
