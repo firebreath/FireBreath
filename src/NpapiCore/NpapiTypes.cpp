@@ -118,7 +118,9 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
         // ?
     }
     if(srcFuncs->version >= NPVERS_HAS_URL_AND_AUTH_INFO) { // 21
-        // ?
+        dstFuncs->getvalueforurl = srcFuncs->getvalueforurl;
+        dstFuncs->setvalueforurl = srcFuncs->setvalueforurl;
+        dstFuncs->getauthenticationinfo = srcFuncs->getauthenticationinfo;
     }
 }
 

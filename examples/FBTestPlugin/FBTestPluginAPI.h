@@ -87,6 +87,8 @@ public:
     void getURLCallback(const FB::JSObjectPtr& callback, bool success, const FB::HeaderMap& headers,
         const boost::shared_array<uint8_t>& data, const size_t size);
 
+    FB::VariantMap getProxyInfo(const boost::optional<std::string>& url);
+
 private:
     FB::BrowserHostPtr m_host;
     boost::shared_ptr<SimpleMathAPI> m_simpleMath;

@@ -71,6 +71,8 @@ FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::Bro
     registerProperty("pluginPath",
                      make_property(this, &FBTestPluginAPI::get_pluginPath));
 
+    registerMethod("getProxyInfo", make_method(this, &FBTestPluginAPI::getProxyInfo));
+
     m_simpleMath = boost::make_shared<SimpleMathAPI>(m_host);
 }
 
@@ -359,3 +361,18 @@ boost::shared_ptr<SimpleMathAPI> FBTestPluginAPI::createSimpleMath()
     return boost::make_shared<SimpleMathAPI>(m_host);
 }
 
+FB::VariantMap FBTestPluginAPI::getProxyInfo(const boost::optional<std::string>& url)
+{
+    std::map<std::string, std::string> proxyInfo;
+    
+    if (url)
+        m_host->DetectProxySettings(proxyInfo, *url);
+    else
+        m_host->DetectProxySettings(proxyInfo, "http://www.firebreath.org");
+    FB::VariantMap outMap;
+    for (std::map<std::string, std::string>::iterator it = proxyInfo.begin();
+        it != proxyInfo.end(); ++it) {
+        outMap[it->first] = it->second;
+    }
+    return outMap;
+}

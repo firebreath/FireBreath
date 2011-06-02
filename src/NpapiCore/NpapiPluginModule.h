@@ -68,6 +68,7 @@ namespace FB {
             int32_t IntFromIdentifier(NPIdentifier identifier);
             NPObject *RetainObject(NPObject *npobj);
             void ReleaseObject(NPObject *npobj);
+
 #ifdef FB_MACOSX
             // This is used on Mac OS X when we don't have pluginthreadasynccall
             static void scheduleAsyncCallback(NPP npp, void (*func)(void *), void *userData);

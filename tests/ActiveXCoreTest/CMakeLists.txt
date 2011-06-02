@@ -77,6 +77,7 @@ target_link_libraries (${PROJECT_NAME}
     NpapiCore
     PluginCore
     UnitTest++
+    Wininet
     )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
