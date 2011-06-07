@@ -130,7 +130,6 @@ set(ATL_INCLUDE_DIRS
     ${MFC_INCLUDE_DIR}
     CACHE INTERNAL "ATL and MFC include dirs")
 
-
 MACRO(add_windows_plugin PROJNAME INSOURCES)
     set(SOURCES
         ${${INSOURCES}}
