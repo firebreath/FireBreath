@@ -61,6 +61,21 @@ namespace FB {
         KeyDownEvent(FBKeyCode fb_key, unsigned int os_key) :   KeyEvent(fb_key, os_key) {}
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  TextEvent
+    ///
+    /// @brief  Used at least on Mac, possibly elsewhere; gives us text
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class TextEvent : public PluginEvent
+    {
+    public:
+        TextEvent(const std::string& text) : text(text) {}
+        
+    public:
+        std::string text;
+    };
+    
+    
 };
 
 #endif // H_FB_PLUGINEVENTS_KEYBOARDEVENTS

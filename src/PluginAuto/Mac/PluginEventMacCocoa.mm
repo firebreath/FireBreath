@@ -121,11 +121,18 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         }
 
         case NPCocoaEventMouseEntered: {
+            double x = evt->data.mouse.pluginX;
+            double y = evt->data.mouse.pluginY;
+            MouseEnteredEvent ev(x, y);
+            return window->SendEvent(&ev);
             break;
-
         }
 
         case NPCocoaEventMouseExited: {
+            double x = evt->data.mouse.pluginX;
+            double y = evt->data.mouse.pluginY;
+            MouseExitedEvent ev(x, y);
+            return window->SendEvent(&ev);
             break;
         }
 
@@ -173,11 +180,15 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         }
 
         case NPCocoaEventScrollWheel: {
+            MouseScrollEvent ev(evt->data.mouse.deltaX, evt->data.mouse.deltaY);
+            return window->SendEvent(&ev);
             break;
         }
 
         case NPCocoaEventTextInput: {
-            // Not handled
+            NSString* txt = (NSString*)evt->data.text.text;
+            TextEvent ev([txt cStringUsingEncoding:[NSString defaultCStringEncoding]]);
+            return window->SendEvent(&ev);
             break;
         }
     }

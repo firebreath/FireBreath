@@ -46,7 +46,8 @@ namespace FB {
         enum MouseButton {
             MouseButton_Left,
             MouseButton_Right,
-            MouseButton_Middle
+            MouseButton_Middle,
+            MouseButton_None
         };
         MouseButtonEvent(MouseButton btn, int x, int y) : m_Btn(btn), m_x(x), m_y(y) { }
 
@@ -77,7 +78,43 @@ namespace FB {
     public:
         MouseUpEvent(MouseButton btn, int x, int y) : MouseButtonEvent(btn, x, y) { }
     };
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  MouseScrollEvent
+    ///
+    /// @brief  Fired when the user moves the scrollwheel
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class MouseScrollEvent : public PluginEvent
+    {
+    public:
+        MouseScrollEvent(double dx, double dy) : m_dx(dx), m_dy(dy) { }
+        
+    public:
+        double m_dx;
+        double m_dy;
+    };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  MouseEnteredEvent
+    ///
+    /// @brief  Fired when the user moves mouse over the plugin
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class MouseEnteredEvent : public MouseMoveEvent
+    {
+    public:
+        MouseEnteredEvent(int x, int y) : MouseMoveEvent(x,y) { }
+    };
+    
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  MouseExitedEvent
+    ///
+    /// @brief  Fired when the user moves mouse away from the plugin
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class MouseExitedEvent : public MouseMoveEvent
+    {
+    public:
+        MouseExitedEvent(int x, int y) : MouseMoveEvent(x,y) { }
+    };
 };
 
 #endif // H_FB_PLUGINEVENTS_MOUSEEVENTS
