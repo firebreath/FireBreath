@@ -37,6 +37,11 @@ set(FB_EXPORT_FILE ${CMAKE_BINARY_DIR}/FireBreath_Exports.cmake)
 file(REMOVE ${FB_EXPORT_FILE})
 add_subdirectory(${FB_ROOT}/cmake ${FB_BUILD_DIR}/cmake_common)
 
+#Express editions don't want Folders in solutions.
+if(NOT ATL_LIBRARY) 
+    set_property(GLOBAL PROPERTY USE_FOLDERS On)
+endif() 
+
 if (APPLE)
     clear_xcode_patches()
 endif()
