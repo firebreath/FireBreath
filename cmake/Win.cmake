@@ -130,6 +130,10 @@ set(ATL_INCLUDE_DIRS
     ${MFC_INCLUDE_DIR}
     CACHE INTERNAL "ATL and MFC include dirs")
 
+		#Express editions don't want Folders in solutions.
+		if(NOT ATL_LIBRARY) 
+			set_property(GLOBAL PROPERTY USE_FOLDERS On)
+		endif() 
 
 MACRO(add_windows_plugin PROJNAME INSOURCES)
     set(SOURCES
