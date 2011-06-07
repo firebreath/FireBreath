@@ -15,7 +15,10 @@
 # Written to work with cmake 2.6
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
-set_property(GLOBAL PROPERTY USE_FOLDERS On)
+# Dont set this for Express editions of VS
+if(NOT CMAKE_USING_VC_FREE_TOOLS) 
+	set_property(GLOBAL PROPERTY USE_FOLDERS On)
+endif()
 
 Project (FireBreath)
 
