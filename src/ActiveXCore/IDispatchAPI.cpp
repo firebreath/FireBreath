@@ -457,7 +457,7 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
         // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
         rawComArgs[argCount - i] = comArgs[argCount - i];
     }
-    comArgs[0] = getIDispatch(); // Needed for IE 9
+    comArgs[0] = browser->getExtendedControl(); // Needed for IE 9
     rawComArgs[0] = comArgs[0];
 
     CComVariant result;
@@ -504,7 +504,7 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
         // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
         rawComArgs[argCount - i] = comArgs[argCount - i];
     }
-    comArgs[0] = getIDispatch(); // Needed for IE 9
+    comArgs[0] = browser->getExtendedControl(); // Needed for IE 9
     rawComArgs[0] = comArgs[0];
 
     CComVariant result;
@@ -578,7 +578,7 @@ FB::variant IDispatchAPI::Construct(const std::vector<FB::variant>& args)
         // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
         rawComArgs[argCount - i] = comArgs[argCount - i];
     }
-    comArgs[0] = getIDispatch(); // Needed for IE 9
+    comArgs[0] = browser->getExtendedControl(); // Needed for IE 9
     rawComArgs[0] = comArgs[0];
 
     CComVariant result;

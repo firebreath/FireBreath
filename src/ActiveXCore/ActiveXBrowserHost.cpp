@@ -104,12 +104,18 @@ FB::DOM::WindowPtr ActiveXBrowserHost::getDOMWindow()
 
 FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
 {
+    CComQIPtr<IHTMLElement2> htmlElement(getExtendedControl());
+    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+}
+
+CComPtr<IDispatch> ActiveXBrowserHost::getExtendedControl()
+{
     CComQIPtr<IOleControlSite> site(m_spClientSite);
     CComPtr<IDispatch> dispatch;
     site->GetExtendedControl(&dispatch);
-    CComQIPtr<IHTMLElement2> htmlElement(dispatch);
-    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+    return dispatch;
 }
+
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
 {

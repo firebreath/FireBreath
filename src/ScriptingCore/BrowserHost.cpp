@@ -130,17 +130,16 @@ void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
 
 void FB::BrowserHost::initJS(const void* inst)
 {
-    assertMainThread();
     // Inject javascript helper function into the page; this is neccesary to help
     // with some browser compatibility issues.
     
     const char* javascriptMethod = 
         "window.__FB_CALL_%1% = "
-        "function(delay, f, args, fname) {"
-        "   if (arguments.length == 3)"
-        "       return setTimeout(function() { f.apply(null, args); }, delay);"
+        "function(obj, delay, f, args, fname) {"
+        "   if (arguments.length == 4)"
+        "	    return setTimeout(function() { f.apply(obj, args); }, delay);"
         "   else"
-        "       return setTimeout(function() { f[fname].apply(f, args); }, delay);"
+        "		return setTimeout(function() { f[fname].apply(obj, args); }, delay);"
         "};";
     
     // I'm open to suggestions on a better way to get a unique key for this plugin instance
