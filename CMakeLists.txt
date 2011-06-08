@@ -15,7 +15,6 @@
 # Written to work with cmake 2.6
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
-set_property(GLOBAL PROPERTY USE_FOLDERS On)
 
 Project (FireBreath)
 
@@ -37,6 +36,11 @@ include(${FB_ROOT}/cmake/common.cmake)
 set(FB_EXPORT_FILE ${CMAKE_BINARY_DIR}/FireBreath_Exports.cmake)
 file(REMOVE ${FB_EXPORT_FILE})
 add_subdirectory(${FB_ROOT}/cmake ${FB_BUILD_DIR}/cmake_common)
+
+#Visual Studio Express editions don't want Solution Folders enabled.
+if(NOT ATL_LIBRARY) 
+    set_property(GLOBAL PROPERTY USE_FOLDERS On)
+endif() 
 
 if (APPLE)
     clear_xcode_patches()
