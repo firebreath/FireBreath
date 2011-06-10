@@ -131,8 +131,16 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         // Free all the old blocks
         blocks.clear();
     }
-    if (callback)
-        callback(true, parse_http_headers(stream->getHeaders()), data, received);
+    if (callback) {
+        std::multimap<std::string, std::string> headers;
+        if (stream) {
+            headers = parse_http_headers(stream->getHeaders());
+            callback(true, headers, data, received);
+        } else {
+            // if stream is NULL then the request was unsuccessful
+            callback(false, headers, data, received);
+        }
+    }
     callback.clear();
     self.reset();
     return false; // Always return false to make sure the browserhost knows to let go of the object
