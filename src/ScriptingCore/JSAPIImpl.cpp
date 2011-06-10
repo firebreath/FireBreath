@@ -273,9 +273,12 @@ void JSAPIImpl::registerProxy( const JSAPIImplWeakPtr &ptr ) const
 void JSAPIImpl::unregisterProxy( const JSAPIImplPtr& ptr ) const
 {
     boost::recursive_mutex::scoped_lock _l(m_proxyMutex);
-    for (ProxyList::iterator it = m_proxies.begin(); it != m_proxies.end(); ++it) {
+    ProxyList::iterator it = m_proxies.begin();
+    while (it != m_proxies.end()) {
         JSAPIPtr cur(it->lock());
         if (!cur || ptr == cur)
             it = m_proxies.erase(it);
+        else
+            ++it;
     }
 }
