@@ -49,6 +49,15 @@ target_link_libraries (${PROJECT_NAME}
     UnitTest++
     )
 
+if (APPLE)
+    find_library(CARBON_FRAMEWORK Carbon) 
+    find_library(SYSCONFIG_FRAMEWORK SystemConfiguration)
+    target_link_libraries (${PROJECT_NAME}
+    	${CARBON_FRAMEWORK}
+    	${SYSCONFIG_FRAMEWORK}
+    	)
+endif()
+
 if (WIN32)
     target_link_libraries (${PROJECT_NAME}
         Wininet

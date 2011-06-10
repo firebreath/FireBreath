@@ -34,7 +34,6 @@ using namespace FB;
 @end
 
 
-
 FB::PluginWindowMacCA* FB::createPluginWindowMacCA()
 {
     return new PluginWindowMacCA();
