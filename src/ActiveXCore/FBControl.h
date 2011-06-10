@@ -337,8 +337,15 @@ namespace FB {
             }
             if (m_bWndLess) {
                 pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL))));
-                static_cast<FB::PluginWindowlessWin*>(pluginWin.get())
-                    ->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
+                FB::PluginWindowlessWin* ptr(static_cast<FB::PluginWindowlessWin*>(pluginWin.get()));
+                ptr->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
+                if (m_spInPlaceSite) {
+                    HWND hwnd = 0;
+					HRESULT hr2 = m_spInPlaceSite->GetWindow(&hwnd);
+                    if (SUCCEEDED(hr2)) {
+                        ptr->setHWND(hwnd);
+                    }
+                }
             } else {
                 pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd))));
                 static_cast<PluginWindowWin*>(pluginWin.get())->setCallOldWinProc(true);
