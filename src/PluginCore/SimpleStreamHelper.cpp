@@ -108,7 +108,7 @@ FB::SimpleStreamHelper::SimpleStreamHelper( const BrowserHostPtr& host, const Ht
 
 }
 
-bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, FB::BrowserStream * )
+bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, FB::BrowserStream *stream )
 {
     if (!evt->success) {
         if (callback)
@@ -135,13 +135,8 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
     }
     if (callback) {
         std::multimap<std::string, std::string> headers;
-        if (stream) {
-            headers = parse_http_headers(stream->getHeaders());
-            callback(true, headers, data, received);
-        } else {
-            // if stream is NULL then the request was unsuccessful
-            callback(false, headers, data, received);
-        }
+        headers = parse_http_headers(stream->getHeaders());
+        callback(true, headers, data, received);
     }
     callback.clear();
     self.reset();
