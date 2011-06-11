@@ -27,6 +27,7 @@ include_directories(
     ${FB_CONFIG_DIR}
     ${FB_PLUGINCORE_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
     )
 

@@ -28,6 +28,7 @@ include_directories(
     ${FB_CONFIG_DIR}
     ${FB_UNITTEST_FW_SOURCE_DIR}/src
     ${Boost_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     )
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -42,6 +43,10 @@ set (SOURCES
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "UnitTests")
+
+set_target_properties (${PROJECT_NAME} PROPERTIES
+    LINK_FLAGS "${LINK_FLAGS}"
+    )
 
 target_link_libraries (${PROJECT_NAME}
     ScriptingCore
