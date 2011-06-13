@@ -46,12 +46,12 @@ namespace FB { namespace Npapi {
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback, 
-                                            bool cache = true, bool seekable = false, 
+        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
+                                            bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
-        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback, 
-                                            const std::string& postdata, bool cache = true, bool seekable = false, 
+        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
+                                            const std::string& postdata, bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
     public:
@@ -71,7 +71,7 @@ namespace FB { namespace Npapi {
         bool isChrome() const;
 
         virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
-        
+
     public:
         void shutdown();
 

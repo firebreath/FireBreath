@@ -41,19 +41,19 @@ using std::vector;
 using std::string;
 using std::map;
 
-namespace 
+namespace
 {
     struct MethodCallReq
     {
         //FB::variant
     };
-    
+
     template<class T>
     NPVariantBuilderMap::value_type makeBuilderEntry()
     {
         return NPVariantBuilderMap::value_type(&typeid(T), select_npvariant_builder::select<T>());
     }
-    
+
     NPVariantBuilderMap makeNPVariantBuilderMap()
     {
         NPVariantBuilderMap tdm;
@@ -66,18 +66,18 @@ namespace
         tdm.insert(makeBuilderEntry<unsigned int>());
         tdm.insert(makeBuilderEntry<long>());
         tdm.insert(makeBuilderEntry<unsigned long>());
-        
+
 #ifndef BOOST_NO_LONG_LONG
         tdm.insert(makeBuilderEntry<long long>());
         tdm.insert(makeBuilderEntry<unsigned long long>());
 #endif
-        
+
         tdm.insert(makeBuilderEntry<float>());
         tdm.insert(makeBuilderEntry<double>());
-        
+
         tdm.insert(makeBuilderEntry<std::string>());
         tdm.insert(makeBuilderEntry<std::wstring>());
-        
+
         tdm.insert(makeBuilderEntry<FB::FBNull>());
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
         //tdm.insert(makeBuilderEntry<FB::FBDateString>());
@@ -86,10 +86,10 @@ namespace
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
         tdm.insert(makeBuilderEntry<FB::JSAPIWeakPtr>());
         tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
-        
+
         return tdm;
     }
-    
+
     const NPVariantBuilderMap& getNPVariantBuilderMap()
     {
         static const NPVariantBuilderMap tdm = makeNPVariantBuilderMap();
@@ -112,7 +112,7 @@ NpapiBrowserHost::~NpapiBrowserHost(void)
 void NpapiBrowserHost::shutdown() {
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
     FB::BrowserHost::shutdown();
-    
+
     // Release these now as the BrowserHost will be expired when the they go out of scope in the destructor.
     m_htmlWin.reset();
     m_htmlElement.reset();
@@ -206,7 +206,7 @@ void FB::Npapi::NpapiBrowserHost::DoDeferredRelease() const
     }
 }
 
-void NpapiBrowserHost::evaluateJavaScript(const std::string &script) 
+void NpapiBrowserHost::evaluateJavaScript(const std::string &script)
 {
     assertMainThread();
     NPVariant retVal;
@@ -276,7 +276,7 @@ bool NpapiBrowserHost::isSafari() const
 bool NpapiBrowserHost::isFirefox() const
 {
     // Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0) Gecko/20100101 Firefox/4.0
-    // Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15 
+    // Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.6; en-US; rv:1.9.2.15) Gecko/20110303 Firefox/3.6.15
     std::string agent(UserAgent());
     return boost::algorithm::contains(agent, "Firefox");
 }
@@ -291,16 +291,16 @@ bool NpapiBrowserHost::isChrome() const
 void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 {
     assertMainThread();
-    
+
     const NPVariantBuilderMap& builderMap = getNPVariantBuilderMap();
     const std::type_info& type = var.get_type();
     NPVariantBuilderMap::const_iterator it = builderMap.find(&type);
-    
+
     if (it == builderMap.end()) {
         // unhandled type :(
         return;
     }
-    
+
     *dst = (it->second)(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), var);
 }
 
@@ -717,7 +717,7 @@ NPError FB::Npapi::NpapiBrowserHost::GetAuthenticationInfo( const char *protocol
     }
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
+FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, const FB::PluginEventSinkPtr& callback,
                                     bool cache, bool seekable, size_t internalBufferSize ) const
 {
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
@@ -737,7 +737,7 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
     return stream;
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
+FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback,
                                     const std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
 {
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
@@ -746,7 +746,7 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url,
     // Add custom headers before data to post!
     std::stringstream headers;
     headers << "Content-type: application/x-www-form-urlencoded\n";
-    headers << "Content-Length: " << postdata.length() << "\n\n";   
+    headers << "Content-Length: " << postdata.length() << "\n\n";
     headers << postdata;
 
     // always use target = 0 for now
