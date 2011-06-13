@@ -269,6 +269,7 @@ namespace FB { namespace Npapi
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
+                host->retainJSAPIPtr(obj);
                 outObj = NPJavascriptObject::NewObject(host, obj);
             }
 
