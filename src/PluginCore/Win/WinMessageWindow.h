@@ -16,6 +16,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #define WinMessageWindow_h__
 
 #include <boost/noncopyable.hpp>
+#include <boost/function.hpp>
 
 namespace FB {
     typedef boost::function<bool (HWND, UINT, WPARAM, LPARAM, LRESULT&)> WinProcHandler;
