@@ -221,7 +221,7 @@ namespace FB {
         HRESULT FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::OnDraw( ATL_DRAWINFO& di )
         {
             if (pluginWin && m_bWndLess && FB::pluginGuiEnabled()) {
-                HRESULT lRes(0);
+                LRESULT lRes(0);
                 PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin.get());
                 win->setWindowPosition(
                     di.prcBounds->left,
