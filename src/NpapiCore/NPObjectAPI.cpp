@@ -380,6 +380,7 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
         browser->ReleaseVariantValue(&retVal);
         browser->ReleaseVariantValue(&npargs[1]);
     }
+    browser->ReleaseVariantValue(&npargs[2]);
     browser->ReleaseVariantValue(&npargs[3]);
 }
 
