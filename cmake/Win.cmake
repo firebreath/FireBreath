@@ -82,13 +82,17 @@ if (NOT ATL_INCLUDE_DIR)
     NO_DEFAULT_PATH
     )
 
-    find_file(ATLLIB
-        atls.lib
-    PATHS
-        ${VC_DIR}/atlmfc/lib
-        ${ATLLIB_GUESSES}
-    NO_DEFAULT_PATH
-    )
+	if (CMAKE_SIZEOF_VOID_P EQUAL 8)		
+		set(ATLLIB_GUESSES "${VC_DIR}/atlmfc/lib/amd64" ${ATLLIB_GUESSES})
+	else()
+		set(ATLLIB_GUESSES "${VC_DIR}/atlmfc/lib" ${ATLLIB_GUESSES})
+	endif()
+	find_file(ATLLIB
+		atls.lib
+	PATHS
+		${ATLLIB_GUESSES}
+		NO_DEFAULT_PATH
+	)
 
     find_file(MFCWIN
         winres.h
