@@ -26,8 +26,7 @@ namespace FB {
 
     class PluginEvent;
     
-    class PluginEventSink;
-    typedef boost::shared_ptr<PluginEventSink> PluginEventSinkPtr;
+    FB_FORWARD_PTR(PluginEventSink);
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginEventSink
     ///

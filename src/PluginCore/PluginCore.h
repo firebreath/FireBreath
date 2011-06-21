@@ -29,8 +29,9 @@ namespace FB {
 
     class PluginWindow;
     class PluginEvent;
-    class JSAPI;
-    class BrowserHost;
+    FB_FORWARD_PTR(PluginCore);
+    FB_FORWARD_PTR(JSAPI);
+    FB_FORWARD_PTR(BrowserHost);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  PluginCore
