@@ -531,14 +531,28 @@ namespace FB {
             switch(dwMsgMapID)
             {
             case 0: {
-                // WM_CREATE is the only message we handle here
+                // Set Focus & Capture whenever a button is pushed inside of the plugin instance.
                 switch(uMsg)
                 {
+                case WM_LBUTTONDOWN:
+                case WM_MBUTTONDOWN:
+                case WM_RBUTTONDOWN:
+                    if (m_bNegotiatedWnd && m_bWndLess && m_spInPlaceSite) {
+                        m_spInPlaceSite->SetFocus(true);
+                        m_spInPlaceSite->SetCapture(true);
+                    }
+                    break;
+                case WM_LBUTTONUP:
+                case WM_MBUTTONUP:
+                case WM_RBUTTONUP:
+                    if (m_bNegotiatedWnd && m_bWndLess && m_spInPlaceSite) {
+                        m_spInPlaceSite->SetCapture(false);
+                    }
+                    break;
                 case WM_MOUSEACTIVATE:
                     break;
                     //lResult = ::DefWindowProc(hWnd, uMsg, wParam, lParam);
                     //return TRUE;
-
                 }
 
                 if (bHandled)
