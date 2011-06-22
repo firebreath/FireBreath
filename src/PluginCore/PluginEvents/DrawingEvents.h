@@ -76,7 +76,6 @@ namespace FB {
             : RefreshEvent(bounds), port(port), clip(clip) {}
     public:
         CGrafPtr port;
-        FB::Rect bounds;
         FB::Rect clip;
     };
 
@@ -93,7 +92,6 @@ namespace FB {
             : RefreshEvent(bounds), context(context), clip(clip) {}
     public:
         CGContextRef context;
-        FB::Rect bounds;
         FB::Rect clip;
     };
 
