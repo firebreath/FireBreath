@@ -40,6 +40,8 @@ ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* site)
 
 ActiveXBrowserHost::~ActiveXBrowserHost(void)
 {
+    if (!isShutDown())
+        shutdown();
 }
 
 bool ActiveXBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
@@ -137,6 +139,7 @@ void ActiveXBrowserHost::shutdown()
         // Next, kill the message window so that none that have been made go through
         m_messageWin.reset();
     }
+    ReleaseAllHeldObjects();
 
     // Finally, run the main browser shutdown, which will fire off any cross-thread
     // calls that somehow haven't made it through yet

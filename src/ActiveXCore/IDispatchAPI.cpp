@@ -344,6 +344,10 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     if (dispatchEx) {
         hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUTREF, &params,
             &result, &exceptionInfo, NULL);
+        if (hr == DISP_E_MEMBERNOTFOUND) {
+            hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
+                NULL, &exceptionInfo, NULL);
+        }
     } else {
         hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
             DISPATCH_PROPERTYPUT, &params, &result, &exceptionInfo, NULL);
