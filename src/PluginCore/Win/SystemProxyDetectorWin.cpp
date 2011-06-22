@@ -18,20 +18,24 @@ FB::SystemProxyDetector* FB::SystemProxyDetector::get()
     return _inst.get();
 }
 
-string lastError(const char* fnname) {
-    DWORD errcode = GetLastError();
-    char* buf = NULL;
-    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-        NULL, errcode, 0, (LPSTR)&buf, 0, NULL);
+namespace {
 
-    std::stringstream stream;
-    stream << fnname << ": " << buf;
-    LocalFree(buf);
-    return stream.str();
-}
+    string lastError(const char* fnname) {
+        DWORD errcode = GetLastError();
+        char* buf = NULL;
+        FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+            NULL, errcode, 0, (LPSTR)&buf, 0, NULL);
 
-void throw_GetLastError(const char* fnname) {
-    throw std::runtime_error(lastError(fnname).c_str());
+        std::stringstream stream;
+        stream << fnname << ": " << buf;
+        LocalFree(buf);
+        return stream.str();
+    }
+
+    void throw_GetLastError(const char* fnname) {
+        throw std::runtime_error(lastError(fnname).c_str());
+    }
+
 }
 
 bool FB::SystemProxyDetectorWin::detectProxy( map<string, string>& proxyMap, const string& URL )
