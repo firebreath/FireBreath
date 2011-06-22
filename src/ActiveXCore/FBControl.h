@@ -223,13 +223,8 @@ namespace FB {
             if (pluginWin && m_bWndLess && FB::pluginGuiEnabled()) {
                 LRESULT lRes(0);
                 PluginWindowlessWin* win = static_cast<PluginWindowlessWin*>(pluginWin.get());
-                win->setWindowPosition(
-                    di.prcBounds->left,
-                    di.prcBounds->top,
-                    di.prcBounds->right-di.prcBounds->left,
-                    di.prcBounds->bottom-di.prcBounds->top
-                    );
-                win->HandleEvent(WM_PAINT, reinterpret_cast<uint32_t>(di.hdcDraw), NULL, lRes);
+                FB::Rect bounds = { di.prcBounds->top, di.prcBounds->left, di.prcBounds->bottom, di.prcBounds->right };
+                win->HandleDraw(di.hdcDraw, bounds);
             }
             return S_OK;
         }

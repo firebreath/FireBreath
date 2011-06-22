@@ -137,7 +137,19 @@ int16_t NpapiPluginWin::HandleEvent(void* event) {
     NPEvent* evt(reinterpret_cast<NPEvent*>(event));
     if(win != NULL) {
         LRESULT lRes(0);
-        if (win->HandleEvent(evt->event, evt->wParam, evt->lParam, lRes)) {
+        if (evt->event == WM_PAINT) {  //special handle drawing, as we need to pass the draw bounds through the layers
+            FB::Rect bounds;
+            if (evt->lParam) {  // some browsers pass through bounds in lParam, but Safari does not (as of 5.0.5)
+                RECT *prc = (RECT*) evt->lParam;  // not 64-bit safe, but it's how NPAPI works
+                bounds.top = prc->top;
+                bounds.left = prc->left;
+                bounds.bottom = prc->bottom;
+                bounds.right = prc->right;
+            } else {
+                bounds = win->getWindowPosition();
+            }
+            return win->HandleDraw((HDC)evt->wParam, bounds);
+        } else if (win->HandleEvent(evt->event, static_cast<uint32_t>(evt->wParam), evt->lParam, lRes)) {
             return boost::numeric_cast<int16_t>(lRes);
         }
     }

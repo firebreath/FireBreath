@@ -54,6 +54,13 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class RefreshEvent : public PluginEvent
     {
+	public:
+        RefreshEvent() { }
+
+        RefreshEvent(FB::Rect inBounds)
+            : bounds(inBounds) {}
+    public:
+        FB::Rect bounds;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -66,10 +73,9 @@ namespace FB {
     {
     public:
         QuickDrawDraw(CGrafPtr port, const FB::Rect& bounds, const FB::Rect& clip) 
-            : port(port), bounds(bounds), clip(clip) {}
+            : RefreshEvent(bounds), port(port), clip(clip) {}
     public:
         CGrafPtr port;
-        FB::Rect bounds;
         FB::Rect clip;
     };
 
@@ -83,10 +89,9 @@ namespace FB {
     {
     public:
         CoreGraphicsDraw(CGContextRef context, const FB::Rect& bounds, const FB::Rect& clip) 
-            : context(context), bounds(bounds), clip(clip) {}
+            : RefreshEvent(bounds), context(context), clip(clip) {}
     public:
         CGContextRef context;
-        FB::Rect bounds;
         FB::Rect clip;
     };
 
