@@ -144,6 +144,14 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
             break;
         }
 
+        case NPCocoaEventScrollWheel: {
+            double x = evt->data.mouse.pluginX;
+            double y = evt->data.mouse.pluginY;
+            MouseScrollEvent ev(x, y, evt->data.mouse.deltaX, evt->data.mouse.deltaY);
+            return window->SendEvent(&ev);
+            break;
+        }
+
         case NPCocoaEventKeyDown: {
             uint16_t key = (int)evt->data.key.keyCode;
             NSString* str = (NSString *)evt->data.key.charactersIgnoringModifiers;
@@ -176,12 +184,6 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
 
         case NPCocoaEventWindowFocusChanged: {
             // Not handled
-            break;
-        }
-
-        case NPCocoaEventScrollWheel: {
-            MouseScrollEvent ev(evt->data.mouse.deltaX, evt->data.mouse.deltaY);
-            return window->SendEvent(&ev);
             break;
         }
 

@@ -128,6 +128,7 @@ namespace FB { namespace WebKit
                 JSStringRef pName = JSStringCreateWithUTF8CString(it->first.c_str());
                 JSObjectSetProperty(jsContext, outObj, pName, host->JSValueRefFromVariant(it->second), 0, NULL);
                 JSStringRelease(pName);
+                ++it;
             }
             
             return outObj;

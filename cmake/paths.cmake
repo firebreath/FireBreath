@@ -44,4 +44,7 @@ set (FB_PLUGINAUTO_SOURCE_DIR "${FB_SOURCE_DIR}/PluginAuto")
 set (FB_UNITTEST_FW_SOURCE_DIR "${FB_TEST_DIR}/unittest-cpp/UnitTest++")
 set (FB_UNITTEST_FW_BUILD_DIR "${FB_BUILD_DIR}/unittest-cpp/UnitTest++")
 
+set (FB_WEBKITCORE_SOURCE_DIR "${FB_SOURCE_DIR}/WebKitCore")
+set (FB_WEBKITCORE_BUILD_DIR "${FB_BUILD_DIR}/WebKitCore")
+
 set(FBLIB_DIRS "${FB_SOURCE_DIR}/libs")

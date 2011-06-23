@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Dec 7, 2009
@@ -78,7 +78,7 @@ namespace FB {
     public:
         MouseUpEvent(MouseButton btn, int x, int y) : MouseButtonEvent(btn, x, y) { }
     };
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  MouseScrollEvent
     ///
@@ -87,9 +87,11 @@ namespace FB {
     class MouseScrollEvent : public PluginEvent
     {
     public:
-        MouseScrollEvent(double dx, double dy) : m_dx(dx), m_dy(dy) { }
-        
+        MouseScrollEvent(int x, int y, double dx, double dy) : m_dx(dx), m_dy(dy) { }
+
     public:
+        int m_x;
+        int m_y;
         double m_dx;
         double m_dy;
     };
@@ -104,7 +106,7 @@ namespace FB {
     public:
         MouseEnteredEvent(int x, int y) : MouseMoveEvent(x,y) { }
     };
-    
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  MouseExitedEvent
     ///
