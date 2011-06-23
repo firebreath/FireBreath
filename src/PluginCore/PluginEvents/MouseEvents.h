@@ -87,7 +87,7 @@ namespace FB {
     class MouseScrollEvent : public PluginEvent
     {
     public:
-        MouseScrollEvent(int x, int y, double dx, double dy) : m_dx(dx), m_dy(dy) { }
+        MouseScrollEvent(int x, int y, double dx, double dy) : m_x(x), m_y(y), m_dx(dx), m_dy(dy) { }
 
     public:
         int m_x;

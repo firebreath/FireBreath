@@ -56,10 +56,12 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
     switch(evt->type) {
         case NPCocoaEventDrawRect: {
             if (window->getDrawingModel() == PluginWindowMac::DrawingModelCoreGraphics) {
-                FB::Rect bounds = { evt->data.draw.y, evt->data.draw.x,
+                FB::Rect clipRect = { evt->data.draw.y, evt->data.draw.x,
                     evt->data.draw.y + evt->data.draw.height,
                     evt->data.draw.x + evt->data.draw.width };
-                CoreGraphicsDraw ev(evt->data.draw.context, bounds, bounds);
+                FB::Rect bounds = { 0, 0, evt->data.draw.y + evt->data.draw.height,
+                    evt->data.draw.x + evt->data.draw.width };
+                CoreGraphicsDraw ev(evt->data.draw.context, bounds, clipRect);
                 return window->SendEvent(&ev);
             } else {
                 RefreshEvent ev;
