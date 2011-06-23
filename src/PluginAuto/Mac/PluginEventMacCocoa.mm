@@ -157,8 +157,8 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         case NPCocoaEventKeyDown: {
             uint16_t key = (int)evt->data.key.keyCode;
             NSString* str = (NSString *)evt->data.key.charactersIgnoringModifiers;
-            char character = [[str lowercaseString] characterAtIndex:0];
-            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), character);
+            unsigned int character = [str characterAtIndex:0];
+            KeyDownEvent ev(CocoaKeyCodeToFBKeyCode(key), character, evt->data.key.modifierFlags);
             bool rtn = window->SendEvent(&ev);
             return rtn;
             break;
@@ -167,8 +167,8 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         case NPCocoaEventKeyUp: {
             uint16_t key = (int)evt->data.key.keyCode;
             NSString* str = (NSString *)evt->data.key.charactersIgnoringModifiers;
-            char character = [[str lowercaseString] characterAtIndex:0];
-            KeyUpEvent ev(CocoaKeyCodeToFBKeyCode(key), character);
+            unsigned int character = [str characterAtIndex:0];
+            KeyUpEvent ev(CocoaKeyCodeToFBKeyCode(key), character, evt->data.key.modifierFlags);
             return window->SendEvent(&ev);
             break;
         }
