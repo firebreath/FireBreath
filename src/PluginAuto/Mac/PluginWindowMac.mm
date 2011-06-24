@@ -59,6 +59,7 @@ using namespace FB;
 
 @end
 
+#if FBMAC_USE_INVALIDATINGCOREANIMATION || FBMAC_USE_COREANIMATION || FBMAC_USE_COREGRAPHICS || FBMAC_USE_QUICKDRAW
 static bool supports(const FB::Npapi::NpapiBrowserHostPtr &host, NPNVariable what) {
     NPBool value =  FALSE;        
     // err tells us if the browser supports model negotiation
@@ -70,6 +71,7 @@ static bool set(const FB::Npapi::NpapiBrowserHostPtr &host, NPPVariable what, vo
     NPError err = host->SetValue(what, value);
     return (NPERR_NO_ERROR == err) ? true : false;
 }
+#endif
 
 #if FBMAC_USE_INVALIDATINGCOREANIMATION
 static bool initPluginWindowMac_ICA(const FB::Npapi::NpapiBrowserHostPtr &host, NPDrawingModel& drawingModel) {
