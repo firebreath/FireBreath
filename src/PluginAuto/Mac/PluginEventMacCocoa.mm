@@ -59,8 +59,7 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
                 FB::Rect clipRect = { evt->data.draw.y, evt->data.draw.x,
                     evt->data.draw.y + evt->data.draw.height,
                     evt->data.draw.x + evt->data.draw.width };
-                FB::Rect bounds = { 0, 0, evt->data.draw.y + evt->data.draw.height,
-                    evt->data.draw.x + evt->data.draw.width };
+                FB::Rect bounds = window->getWindowPosition();
                 CoreGraphicsDraw ev(evt->data.draw.context, bounds, clipRect);
                 return window->SendEvent(&ev);
             } else {
