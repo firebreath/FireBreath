@@ -37,12 +37,18 @@ namespace FB {
 }};
 
 #ifdef __OBJC__
-@interface CoolWindow : NSPanel {
-    
+@interface FBViewWebViewWindow : NSPanel {
+    BOOL isActive;
 }
 - (BOOL)worksWhenModal;
+- (void)setIsActive:(BOOL)active;
 @end
-@implementation CoolWindow
+@implementation FBViewWebViewWindow
+
+- (void)setIsActive:(BOOL)active
+{
+    isActive = active;
+}
 
 - (BOOL)worksWhenModal
 {
@@ -51,12 +57,12 @@ namespace FB {
 
 - (BOOL)canBecomeKeyWindow
 {
-    return YES;
+    return isActive;
 }
 
 - (BOOL)isKeyWindow
 {
-    return YES;
+    return isActive;
 }
 
 //- (BOOL)isMainWindow
@@ -82,7 +88,7 @@ namespace FB {
 {
     WebView* webView;
     WebFrame* mainFrame;
-    NSWindow* hiddenWindow;
+    FBViewWebViewWindow* hiddenWindow;
     NSGraphicsContext* windowContext;
     
     FB::View::WebViewMac* controller;
@@ -127,6 +133,7 @@ namespace FB { namespace View {
             EVENTTYPE_CASE(FB::MouseEnteredEvent, onMouseEntered, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::MouseExitedEvent, onMouseExited, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindowMacCG)
+            EVENTTYPE_CASE(FB::FocusChangedEvent, onFocusChanged, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::CoreGraphicsDraw, onCoreGraphicsDraw, FB::PluginWindowMacCG)
         END_PLUGIN_EVENT_MAP()
 
@@ -139,6 +146,8 @@ namespace FB { namespace View {
         virtual bool onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWindowMacCG *);
         virtual bool onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMacCG *);
         virtual bool onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMacCG *);
+        
+        virtual bool onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMacCG *);
 
         virtual bool onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG *);
         virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMacCG *);

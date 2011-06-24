@@ -40,11 +40,12 @@ Copyright 2011 Facebook, Inc
 - (id)initWithFrame:(NSRect)frameRect {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
     NSRect windowRect = NSMakeRect(0, 0, frameRect.size.width, frameRect.size.height);
-    hiddenWindow = [[CoolWindow alloc]
+    hiddenWindow = [[FBViewWebViewWindow alloc]
         initWithContentRect:windowRect 
                   styleMask:NSBorderlessWindowMask
                     backing:NSBackingStoreBuffered
                       defer:NO];
+    [hiddenWindow setIsActive:YES];
     //[hiddenWindow makeKeyAndOrderFront:self];
     [hiddenWindow setAcceptsMouseMovedEvents:YES];
     [hiddenWindow setIgnoresMouseEvents:NO];
@@ -285,13 +286,13 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
     where.x = evt->m_x;
     where.y = wnd->getWindowHeight()-evt->m_y;
     
-    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
+//    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     
     NSEventType evtType;
     
-    std::stringstream ss;
-    ss << "Mouse down at " << where.x << ", " << where.y;
-    getParentHost()->htmlLog(ss.str());
+//    std::stringstream ss;
+//    ss << "Mouse down at " << where.x << ", " << where.y;
+//    getParentHost()->htmlLog(ss.str());
     mouseButtonState = evt->m_Btn;
     switch (evt->m_Btn) {
         case FB::MouseButtonEvent::MouseButton_Left:
@@ -315,7 +316,7 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
                                           clickCount:1 
                                             pressure:nil];
 
-    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+    //NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder mouseDown:mouseDown];
     wnd->InvalidateWindow();
     return true;
@@ -326,12 +327,12 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
     where.x = evt->m_x;
     where.y = wnd->getWindowHeight()-evt->m_y;
     
-    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
+//    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     NSEventType evtType;
     
-    std::stringstream ss;
-    ss << "Mouse up at " << where.x << ", " << where.y;
-    getParentHost()->htmlLog(ss.str());
+//    std::stringstream ss;
+//    ss << "Mouse up at " << where.x << ", " << where.y;
+//    getParentHost()->htmlLog(ss.str());
     
     mouseButtonState = FB::MouseButtonEvent::MouseButton_None;
     switch (evt->m_Btn) {
@@ -355,7 +356,7 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
                                           eventNumber:nil
                                            clickCount:1 
                                              pressure:nil];
-    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+//    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder mouseUp:mouseEvent];
     wnd->InvalidateWindow();
     return true;
@@ -388,17 +389,17 @@ bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow
                                            clickCount:0
                                              pressure:nil];
     
-    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
-    std::stringstream ss;
+    //NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+//    std::stringstream ss;
     if (evtType == NSMouseMoved) {
         [o->helper.hiddenWindow.firstResponder mouseMoved:mouseEvent];
         [o->helper.hiddenWindow.firstResponder mouseDragged:mouseEvent];
-        ss << "Mouse moved at " << where.x << ", " << where.y;
+//        ss << "Mouse moved at " << where.x << ", " << where.y;
     } else {
         [o->helper.hiddenWindow.firstResponder mouseDragged:mouseEvent];
-        ss << "Mouse dragged at " << where.x << ", " << where.y;
+//        ss << "Mouse dragged at " << where.x << ", " << where.y;
     }
-    getParentHost()->htmlLog(ss.str());
+//    getParentHost()->htmlLog(ss.str());
     
     wnd->InvalidateWindow();
     return false;
@@ -414,31 +415,31 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     int32_t yScroll = evt->m_dy*2; // Negative for down
     CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, wheelCount, yScroll, xScroll);
     
-    std::stringstream ss;
-    ss << "Scrolling at " << where.x << ", " << where.y << " to the amount of " << yScroll << " x " << xScroll;
-    getParentHost()->htmlLog(ss.str());
+//    std::stringstream ss;
+//    ss << "Scrolling at " << where.x << ", " << where.y << " to the amount of " << yScroll << " x " << xScroll;
+//    getParentHost()->htmlLog(ss.str());
 
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgEvent];
     
-    NSLog(@"Hit Test:");
-    NSView* target = [o->helper.webView hitTest:where];
+    //NSLog(@"Hit Test:");
+//    NSView* target = [o->helper.webView hitTest:where];
     
-    do {
-        NSLog(@"Next superview: %@", target);
-        [target scrollWheel:scrollEvent];
-        target = [target superview];
-    } while (target);
+//    do {
+//        NSLog(@"Next superview: %@", target);
+//        [target scrollWheel:scrollEvent];
+//        target = [target superview];
+//    } while (target);
+//    
+//    NSLog(@"Responder chain:");
+//    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
+//    
+//    do {
+//        [curResp scrollWheel:scrollEvent];
+//        NSLog(@"Next Responder: %@", curResp);
+//        curResp = [curResp nextResponder];
+//    } while (curResp);
     
-    NSLog(@"Responder chain:");
-    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
-    
-    do {
-        [curResp scrollWheel:scrollEvent];
-        NSLog(@"Next Responder: %@", curResp);
-        curResp = [curResp nextResponder];
-    } while (curResp);
-    
-    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+//    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder scrollWheel:scrollEvent]; 
     CFRelease(cgEvent);
     
@@ -478,6 +479,13 @@ bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWi
 //                                        userData:nil];
 //    [o->helper.hiddenWindow.firstResponder mouseExited:e];
     
+    return true;
+}
+
+bool FB::View::WebViewMac::onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMacCG *)
+{
+    [o->helper.hiddenWindow setIsActive:evt->hasFocus() ? YES : NO];
+    [o->helper.hiddenWindow.contentView setNeedsDisplay:YES];
     return true;
 }
 
