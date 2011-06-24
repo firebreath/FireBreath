@@ -38,23 +38,26 @@ Copyright 2011 Facebook, Inc
 }
 
 - (id)initWithFrame:(NSRect)frameRect {
-        NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSRect windowRect = NSMakeRect(-99999, -99999, frameRect.size.width, frameRect.size.height);
-    hiddenWindow = [[NSWindow alloc]
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    NSRect windowRect = NSMakeRect(0, 0, frameRect.size.width, frameRect.size.height);
+    hiddenWindow = [[CoolWindow alloc]
         initWithContentRect:windowRect 
-                  styleMask:NSTitledWindowMask | NSClosableWindowMask
-                    backing:NSBackingStoreNonretained
+                  styleMask:NSBorderlessWindowMask
+                    backing:NSBackingStoreBuffered
                       defer:NO];
-//    [hiddenWindow setAcceptsMouseMovedEvents:YES];
+    //[hiddenWindow makeKeyAndOrderFront:self];
+    [hiddenWindow setAcceptsMouseMovedEvents:YES];
+    [hiddenWindow setIgnoresMouseEvents:NO];
 
     webView = [[WebView alloc] initWithFrame:frameRect frameName:nil groupName: nil];
     [webView setFrameLoadDelegate:self];
-    [[hiddenWindow contentView] addSubview:webView];
+    [hiddenWindow setContentView:webView];
     windowContext = [[NSGraphicsContext graphicsContextWithWindow:hiddenWindow] retain];
+    [hiddenWindow makeFirstResponder:hiddenWindow.contentView];
 
     mainFrame = [webView mainFrame];
     jsWindow = [webView windowScriptObject];
-    [pool drain];
+    [pool release];
     return self;
 }
 
@@ -73,7 +76,6 @@ Copyright 2011 Facebook, Inc
 - (void)drawToCGContext:(CGContextRef)ctx asRect:(NSRect)newSize
 {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    [webView setFrame:newSize];
 
     //    //You could do this to get the bits instead of drawing directly to the context:
     //    [webView lockFocus];
@@ -90,7 +92,7 @@ Copyright 2011 Facebook, Inc
     [webView displayRectIgnoringOpacity:newSize inContext:gc];
 
     [NSGraphicsContext restoreGraphicsState];
-    [pool drain];
+    [pool release];
 }
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame
@@ -190,7 +192,7 @@ void FB::View::WebViewMac::closePage()
 void FB::View::WebViewMac::DrawToCGContext(CGContext* ctx, const FB::Rect& size)
 {
     NSAutoreleasePool * pool = [NSAutoreleasePool new];
-    NSRect newSize = NSMakeRect(size.left, size.top, size.right-size.left, size.bottom-size.top);
+    NSRect newSize = NSMakeRect(0, 0, size.right-size.left, size.bottom-size.top);
     
     [o->helper drawToCGContext:ctx asRect:newSize];
     
@@ -215,6 +217,17 @@ bool FB::View::WebViewMac::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWi
     return false;
 }
 
+bool FB::View::WebViewMac::onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMacCG *win)
+{
+    if (o->helper) {
+        FB::Rect size = win->getWindowPosition();
+        NSRect newSize = NSMakeRect(0, 0, size.right-size.left, size.bottom-size.top);
+        [o->helper.hiddenWindow setFrame:newSize display:YES];
+    }
+    
+    return true;
+}
+
 bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacCG *)
 {
     NSEventType evtType = NSKeyDown;
@@ -236,7 +249,7 @@ bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacC
                                       isARepeat:NO
                                         keyCode:0];
 
-    [[o->helper.hiddenWindow firstResponder] keyDown:keyEvt];
+    [o->helper.hiddenWindow.firstResponder keyDown:keyEvt];
     
     return true;
 }
@@ -261,7 +274,7 @@ bool FB::View::WebViewMac::onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *)
                                       isARepeat:NO
                                         keyCode:0];
 
-    [[o->helper.hiddenWindow firstResponder] keyUp:keyEvt];
+    [o->helper.hiddenWindow.firstResponder keyUp:keyEvt];
 
     return true;
 }
@@ -272,7 +285,7 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
     where.x = evt->m_x;
     where.y = wnd->getWindowHeight()-evt->m_y;
     
-    NSView* resp = [o->helper.webView hitTest:where];
+    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     
     NSEventType evtType;
     
@@ -302,7 +315,8 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
                                           clickCount:1 
                                             pressure:nil];
 
-    [resp mouseDown:mouseDown];
+    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+    [o->helper.hiddenWindow.firstResponder mouseDown:mouseDown];
     wnd->InvalidateWindow();
     return true;
 }
@@ -312,7 +326,7 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
     where.x = evt->m_x;
     where.y = wnd->getWindowHeight()-evt->m_y;
     
-    NSView* resp = [o->helper.webView hitTest:where];
+    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     NSEventType evtType;
     
     std::stringstream ss;
@@ -341,7 +355,8 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
                                           eventNumber:nil
                                            clickCount:1 
                                              pressure:nil];
-    [resp mouseUp:mouseEvent];
+    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+    [o->helper.hiddenWindow.firstResponder mouseUp:mouseEvent];
     wnd->InvalidateWindow();
     return true;
 }
@@ -352,7 +367,7 @@ bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow
     where.y = wnd->getWindowHeight()-evt->m_y;
     
     NSEventType evtType;
-    NSView* resp = [o->helper.webView hitTest:where];
+    //NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     
     if (mouseButtonState == FB::MouseButtonEvent::MouseButton_Left) {
         evtType = NSLeftMouseDragged;
@@ -373,12 +388,14 @@ bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow
                                            clickCount:0
                                              pressure:nil];
     
+    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     std::stringstream ss;
     if (evtType == NSMouseMoved) {
-        [resp mouseMoved:mouseEvent];
+        [o->helper.hiddenWindow.firstResponder mouseMoved:mouseEvent];
+        [o->helper.hiddenWindow.firstResponder mouseDragged:mouseEvent];
         ss << "Mouse moved at " << where.x << ", " << where.y;
     } else {
-        [resp mouseDragged:mouseEvent];
+        [o->helper.hiddenWindow.firstResponder mouseDragged:mouseEvent];
         ss << "Mouse dragged at " << where.x << ", " << where.y;
     }
     getParentHost()->htmlLog(ss.str());
@@ -395,54 +412,71 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     CGWheelCount wheelCount = 2; // 1 for Y-only, 2 for Y-X, 3 for Y-X-Z
     int32_t xScroll = evt->m_dx*2; // Negative for right
     int32_t yScroll = evt->m_dy*2; // Negative for down
-    CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitLine, wheelCount, yScroll, xScroll);
+    CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, wheelCount, yScroll, xScroll);
     
     std::stringstream ss;
     ss << "Scrolling at " << where.x << ", " << where.y << " to the amount of " << yScroll << " x " << xScroll;
     getParentHost()->htmlLog(ss.str());
 
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgEvent];
+    
+    NSLog(@"Hit Test:");
+    NSView* target = [o->helper.webView hitTest:where];
+    
+    do {
+        NSLog(@"Next superview: %@", target);
+        [target scrollWheel:scrollEvent];
+        target = [target superview];
+    } while (target);
+    
+    NSLog(@"Responder chain:");
+    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
+    
+    do {
+        [curResp scrollWheel:scrollEvent];
+        NSLog(@"Next Responder: %@", curResp);
+        curResp = [curResp nextResponder];
+    } while (curResp);
+    
+    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+    [o->helper.hiddenWindow.firstResponder scrollWheel:scrollEvent]; 
     CFRelease(cgEvent);
-    
-    NSView* resp = [o->helper.webView hitTest:where];
-    
-    [resp scrollWheel:scrollEvent]; 
     
     return true;
 }
 bool FB::View::WebViewMac::onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMacCG *wnd) {
-    NSPoint where;
-    where.x = evt->m_x;
-    where.y = wnd->getWindowHeight()-evt->m_y;
-    NSView* resp = [o->helper.webView hitTest:where];
-    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseEntered
-                                        location:where
-                                   modifierFlags:nil
-                                       timestamp:GetCurrentEventTime()
-                                    windowNumber:[o->helper.hiddenWindow windowNumber]
-                                         context:[o->helper context]
-                                     eventNumber:nil
-                                  trackingNumber:0
-                                        userData:nil];
-    [resp mouseEntered:e];
+//    NSPoint where;
+//    where.x = evt->m_x;
+//    where.y = wnd->getWindowHeight()-evt->m_y;
+//    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
+//    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseEntered
+//                                        location:where
+//                                   modifierFlags:nil
+//                                       timestamp:GetCurrentEventTime()
+//                                    windowNumber:[o->helper.hiddenWindow windowNumber]
+//                                         context:[o->helper context]
+//                                     eventNumber:nil
+//                                  trackingNumber:0
+//                                        userData:nil];
+//    [o->helper.hiddenWindow.firstResponder mouseEntered:e];
     
     return true;
 }
 bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMacCG *wnd) {
-    NSPoint where;
-    where.x = evt->m_x;
-    where.y = wnd->getWindowHeight()-evt->m_y;
-    NSView* resp = [o->helper.webView hitTest:where];
-    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseExited
-                                        location:where
-                                   modifierFlags:nil
-                                       timestamp:GetCurrentEventTime()
-                                    windowNumber:[o->helper.hiddenWindow windowNumber]
-                                         context:[o->helper context]
-                                     eventNumber:nil
-                                  trackingNumber:0
-                                        userData:nil];
-    [resp mouseExited:e];
+//    NSPoint where;
+//    where.x = evt->m_x;
+//    where.y = wnd->getWindowHeight()-evt->m_y;
+//    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
+//    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseExited
+//                                        location:where
+//                                   modifierFlags:nil
+//                                       timestamp:GetCurrentEventTime()
+//                                    windowNumber:[o->helper.hiddenWindow windowNumber]
+//                                         context:[o->helper context]
+//                                     eventNumber:nil
+//                                  trackingNumber:0
+//                                        userData:nil];
+//    [o->helper.hiddenWindow.firstResponder mouseExited:e];
     
     return true;
 }

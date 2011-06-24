@@ -37,6 +37,46 @@ namespace FB {
 }};
 
 #ifdef __OBJC__
+@interface CoolWindow : NSPanel {
+    
+}
+- (BOOL)worksWhenModal;
+@end
+@implementation CoolWindow
+
+- (BOOL)worksWhenModal
+{
+    return YES;
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+    return YES;
+}
+
+- (BOOL)isKeyWindow
+{
+    return YES;
+}
+
+//- (BOOL)isMainWindow
+//{
+//    return YES;
+//}
+//
+- (BOOL)acceptsMouseMovedEvents
+{
+    return YES;
+}
+
+- (BOOL)ignoresMouseEvents
+{
+    return NO;
+}
+
+@end
+
+
 @class WebView, WebFrame, NSGraphicsContext;
 @interface WebViewHelper : NSObject
 {
@@ -82,6 +122,7 @@ namespace FB { namespace View {
             EVENTTYPE_CASE(FB::KeyUpEvent, onKeyUp, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindowMacCG)
+            EVENTTYPE_CASE(FB::ResizedEvent, onWindowResized, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::MouseScrollEvent, onMouseScroll, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::MouseEnteredEvent, onMouseEntered, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::MouseExitedEvent, onMouseExited, FB::PluginWindowMacCG)
@@ -102,6 +143,7 @@ namespace FB { namespace View {
         virtual bool onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG *);
         virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMacCG *);
         virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMacCG *);
+        virtual bool onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMacCG *win);
         
         virtual void onFrameLoaded(JSContextRef jsContext, JSObjectRef window, void* frame);
         virtual void onFrameClosing(void* frame);
