@@ -15,6 +15,8 @@
 
 using std::string;
 
+using namespace HTTP;
+
 //std::list<VideoThumbnailGenerator*> VideoThumbnailGenerator::generators;
 
 boost::filesystem::wpath Platform::resolveShortcutsInPath(const std::wstring& path_to_object) {

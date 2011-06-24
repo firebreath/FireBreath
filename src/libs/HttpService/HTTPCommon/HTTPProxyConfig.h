@@ -16,16 +16,20 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #ifndef H_HTTPPROXYCONFIG
 #define H_HTTPPROXYCONFIG
 
-struct HTTPProxyConfig {
-  enum Type {
-    kNoProxy = 0,
-    kHTTPProxy = 1,
-    kSOCKS4Proxy = 2
-  } type;
-  std::string hostname;
-  unsigned short port;
-  
-  HTTPProxyConfig() : type(kNoProxy) {}
+namespace HTTP {
+        
+    struct HTTPProxyConfig {
+      enum Type {
+        kNoProxy = 0,
+        kHTTPProxy = 1,
+        kSOCKS4Proxy = 2
+      } type;
+      std::string hostname;
+      unsigned short port;
+      
+      HTTPProxyConfig() : type(kNoProxy) {}
+    };
+    
 };
 
 #endif

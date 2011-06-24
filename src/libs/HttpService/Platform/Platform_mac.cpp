@@ -20,6 +20,8 @@
 
 using std::string;
 
+using namespace HTTP;
+
 std::string Platform::getArchitectureName() {
   return "macosx";
 }

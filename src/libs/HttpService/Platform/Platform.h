@@ -14,7 +14,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/filesystem/path.hpp>
 
-namespace Platform {
+namespace HTTP { namespace Platform {
   // Implement these in platform_*.cpp
   std::string getArchitectureName();
   void unRegisterPlugins();
@@ -24,7 +24,7 @@ namespace Platform {
   bool pathIsShortcut(const boost::filesystem::wpath& path_to_investigate);
   boost::filesystem::wpath resolveShortcut(const boost::filesystem::wpath& path_to_shortcut);
 
-  HTTPProxyConfig getSystemProxyConfig();
+  HTTP::HTTPProxyConfig getSystemProxyConfig();
   
   // These functions defined in platform_common.cpp
   boost::filesystem::wpath resolveShortcutsInPath(const std::wstring& path_to_object);
@@ -32,5 +32,5 @@ namespace Platform {
   char* getRandomBytes(size_t bytecount); // caller delete[]s result.
   /*bool generateVideoThumbnail(const std::string& filename, const ImageProcessor::Dimension& dim, ImageProcessor::Result& res);*/
   
-}; // end namespace platform
+}; }; // end namespace platform
 
