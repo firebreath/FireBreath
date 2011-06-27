@@ -219,7 +219,11 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         WIX_COMPILE(SOURCELIST WIXOBJ_LIST WIXDLLWXS_LIST)
         SET (WIX_FULLOBJLIST ${WIXOBJ_LIST} )
 
-        SET (WIX_DEST ${WIX_OUTDIR}/${PROJNAME}.msi)
+        if (FB_WIX_DEST)
+            SET (WIX_DEST ${FB_WIX_DEST})
+        else()
+            SET (WIX_DEST ${WIX_OUTDIR}/${PROJNAME}.msi)
+        endif()
 
         set_source_files_properties(${SOURCELIST} PROPERTIES HEADER_FILE_ONLY 1)
         SOURCE_GROUP(Sources FILES ${WIX_SOURCEFILES})
