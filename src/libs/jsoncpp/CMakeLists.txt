@@ -61,5 +61,4 @@ if (FIREBREATH)
     append_firebreath_include_dir(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
     export_project_dependencies()
-    export_project_dependencies()
 endif()
