@@ -149,9 +149,10 @@ void UploadQueue::start_next_upload() {
             --files_waiting;
             current_queue_bytes -= qe.filesize;
 
-            std::string s = "file" + files_started;
-            qe.post_field = s;
-            data->addFile(s, FB::wstring_to_utf8(qe.filename), "application/octet-stream", qe.datablock);
+            std::stringstream ss;
+            ss << "file" << files_started;
+            qe.post_field = ss.str();
+            data->addFile(ss.str(), FB::wstring_to_utf8(qe.filename), "application/octet-stream", qe.datablock);
 
             current_upload_files.insert(qe.source_path);
             current_batch_bytes += qe.filesize;
