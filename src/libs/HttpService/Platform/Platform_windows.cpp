@@ -25,6 +25,7 @@
 #include "../HTTPCommon/HTTPProxyConfig.h"
 using std::string;
 using namespace boost::algorithm;
+usign namespace HTTP;
 
 std::string Platform::getArchitectureName() {
 #ifdef _WIN64
