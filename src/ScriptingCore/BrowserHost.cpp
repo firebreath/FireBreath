@@ -143,11 +143,11 @@ void FB::BrowserHost::initJS(const void* inst)
         "       return setTimeout(function() { f[fname].apply(f, args); }, delay);"
         "};";
     
-    // I'm open to suggestions on a better way to get a unique key for this plugin instance
-    uint32_t inst_key;
-    memcpy(&inst_key, &inst, 4);
-    inst_key >>= 1; // Make sure nobody could use this to get a valid pointer
-    inst_key *= 2.5;
+    // hash pointer to get a unique key for this plugin instance
+    std::size_t inst_key = static_cast<std::size_t>(
+        reinterpret_cast<std::ptrdiff_t>(inst));
+    inst_key += (inst_key >> 3);
+
     unique_key = boost::lexical_cast<std::string>(inst_key);
     
     call_delegate = (boost::format("__FB_CALL_%1%") % inst_key).str();
