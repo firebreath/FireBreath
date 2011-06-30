@@ -92,7 +92,9 @@ namespace FB {
                     // If the JSAPI object is still around and we're set to autorelease, tell the BrowserHost
                     // that we're done with it.  Otherwise it's either gone or we don't control its lifecycle
                     if (api) {
-                        getHost()->releaseJSAPIPtr(api);
+                        ActiveXBrowserHostPtr host = getHost();
+                        if (host)
+                            host->releaseJSAPIPtr(api);
                     }
                 }
             }

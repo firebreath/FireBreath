@@ -109,7 +109,7 @@ namespace FB { namespace ActiveX {
             return api;
         }
         ActiveXBrowserHostPtr getHost() const {
-            return ActiveXBrowserHostPtr(m_host);
+            return m_host.lock();
         }
 
         friend class IDisp_AttachEvent;
