@@ -246,6 +246,21 @@
             }
             plugin.testEvent("some string");
 
+            // now remove the async callback delegate,
+            // and trigger a callback
+            for (var i in window) {
+                if (0 == i.indexOf("__FB_CALL_")) {
+                    try {
+                        delete window[i];
+                        plugin.testEvent("die?");
+                    } catch (e) {
+                        // ie8, at least, is unhappy doing the delete,
+                        // but then, activex doesn't have this problem
+                    }
+                    break;
+               }
+            }
+
             try {
                 thread = plugin.createThreadRunner();
 
