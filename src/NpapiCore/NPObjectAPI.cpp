@@ -338,6 +338,9 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     // particularly in FF4.
     
     NPObjectAPIPtr d = static_pointer_cast<NPObjectAPI>(browser->getDelayedInvokeDelegate());
+    if (!d) {
+        throw FB::script_error("Error calling handlers (delegate disappeared)");
+    }
     NPObject* delegate(d->getNPObject());
 
     // Allocate the arguments
