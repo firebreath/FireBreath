@@ -17,8 +17,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
+#include "PluginEvents/KeyboardEvents.h"
 #include "ConstructDefaultPluginWindows.h"
 #include "logging.h"
+#include "X11/KeyCodesX11.h"
 
 #include "PluginWindowX11.h"
 
@@ -40,6 +42,7 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
 #if FB_GUI_DISABLED != 1
     m_window(ctx.window),
     m_browserWindow(0),
+    m_focus(false),
 #endif
     m_x(0), m_y(0), m_width(0), m_height(0), m_clipLeft(0), m_clipRight(0),
     m_clipTop(0), m_clipBottom(0), m_handler_id(0)
@@ -166,7 +169,6 @@ inline bool isButtonEvent(GdkEvent *event)
             return false;
     }
 }
-
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 {
     X11Event ev(widget, event);
@@ -174,12 +176,11 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         return true;
     }
 
-    GdkEventFocus *focus;
-    GdkEventMotion *motion;
     GdkEventButton *button;
     MouseButtonEvent::MouseButton btn;
 
     if (isButtonEvent(event)) {
+
         button = (GdkEventButton *)event;
 
         switch(button->button) {
@@ -201,24 +202,43 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
     {
         // Mouse button down
         case GDK_BUTTON_PRESS: {
+            if(!m_focus){
+                //When the mouse button is pressed, we can be sure,
+                //that the top window has the focus and we can request keyboard focus.
+                gtk_widget_grab_focus(widget);
+            }
             MouseDownEvent evt(btn, button->x, button->y);
             return SendEvent(&evt) ? 1 : 0;
         } break;
+
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
             MouseUpEvent evt(btn, button->x, button->y);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
+        case GDK_KEY_PRESS: {
+            GdkEventKey *key = (GdkEventKey *)event;
+            KeyDownEvent evt(GDKKeyCodeToFBKeyCode(key->keyval),key->keyval);
+            SendEvent(&evt) ? 1 : 0;
+        } break;
+
+        case GDK_KEY_RELEASE: {
+            GdkEventKey *key = (GdkEventKey *)event;
+            KeyUpEvent evt(GDKKeyCodeToFBKeyCode(key->keyval),key->keyval);
+            SendEvent(&evt) ? 1 : 0;
+        } break;
+
         case GDK_MOTION_NOTIFY: {
-            motion = (GdkEventMotion *)event;
+            GdkEventMotion *motion = (GdkEventMotion *)event;
             MouseMoveEvent evt(motion->x, motion->y);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
         case GDK_FOCUS_CHANGE: {
-            focus = (GdkEventFocus *)event;
-            FocusChangedEvent evt(focus->in ? true : false);
+            GdkEventFocus *focus = (GdkEventFocus *)event;
+            m_focus = focus->in ? true : false;
+            FocusChangedEvent evt(m_focus);
             return SendEvent(&evt) ? 1 : 0;
         }
         default:
