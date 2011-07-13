@@ -60,6 +60,7 @@ namespace FB {
 
         _asyncCallData* makeCallback(void (*func)(void *), void * userData );
         void call( _asyncCallData* data );
+        void remove( _asyncCallData* data );
 
         std::set<_asyncCallData*> DataList;
         std::set<_asyncCallData*> canceledDataList;
@@ -280,6 +281,12 @@ FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), voi
     return data;
 }
 
+void FB::AsyncCallManager::remove(_asyncCallData* data)
+{
+    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    DataList.erase(data);
+}
+
 void FB::AsyncCallManager::shutdown()
 {
     boost::recursive_mutex::scoped_lock _l(m_mutex);
@@ -313,7 +320,11 @@ bool FB::BrowserHost::ScheduleAsyncCall( void (*func)(void *), void *userData ) 
         return false;
     } else {
         _asyncCallData* data = _asyncManager->makeCallback(func, userData);
-        return _scheduleAsyncCall(&asyncCallWrapper, data);
+        bool result = _scheduleAsyncCall(&asyncCallWrapper, data);
+        if (!result) {
+            _asyncManager->remove(data);
+        }
+        return result;
     }
 }
 
