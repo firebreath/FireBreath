@@ -14,6 +14,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 
 #ifdef _WIN32
 #include "win_targetver.h"
+#include <boost/asio.hpp>
 #include "../Platform/windows_defs.h"
 #endif
 
@@ -23,7 +24,6 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <cassert>
 #include <openssl/ssl.h>
 #include <openssl/x509v3.h>
-#include <boost/asio.hpp>
 #include <curl/curl.h>
 #include "../HTTPService/BasicService.h"
 #include "../HTTPCommon/Utils.h"
