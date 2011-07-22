@@ -37,8 +37,12 @@ namespace FB {
 
     protected:
         Point GlobalToLocal(Point location);
+        bool isMouseOver(Point location);
+
+        void CarbonToNPCocoaEvent(const EventRecord* evt, NPCocoaEvent& rval);
 
         short m_old_h, m_old_v; // Keep track of mouse movement coordinates
+        bool m_mouseEntered; // Keep track of mouseEntered/mouseExited
     };
 };
 
