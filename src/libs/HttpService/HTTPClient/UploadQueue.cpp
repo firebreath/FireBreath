@@ -148,7 +148,7 @@ void UploadQueue::start_next_upload() {
             it->setStatus(UploadQueueEntry::ENTRY_IN_PROGRESS);
             --files_waiting;
             current_queue_bytes -= qe.filesize;
-
+            
             std::stringstream ss;
             ss << "file" << files_started;
             qe.post_field = ss.str();
