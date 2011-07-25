@@ -293,7 +293,7 @@ endfunction()
 MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource SourcesVar)
     IF(MSVC)
         GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-        SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
+        SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
 
         SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
             PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\" /Fp\"${__PrecompiledBinary}\" -Zm160"
