@@ -53,6 +53,7 @@ STDAPI DllGetClassObject(REFCLSID rclsid, REFIID riid, LPVOID* ppv)
     HRESULT hr = _AtlModule.DllGetClassObject(rclsid, riid, ppv);
     if (SUCCEEDED(hr) && !isStaticInitialized()) {
         FB::Log::initLogging();
+        FB::PluginCore::setPlatform("Windows", "IE");
         getFactoryInstance()->globalPluginInitialize();
         flagStaticInitialized(true);
     }

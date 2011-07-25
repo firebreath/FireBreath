@@ -94,7 +94,6 @@ namespace FB {
             CFBControl() : JSAPI_IDispatchEx<CFBControlX, ICurObjInterface, piid>(pMT), FB::BrowserPlugin(pMT),
                 m_mimetype(pMT)
             {
-                FB::PluginCore::setPlatform("Windows", "IE");
                 setFSPath(g_dllPath);
             }
 
