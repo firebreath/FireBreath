@@ -273,6 +273,7 @@ namespace FB {
 
             // There will be no window this time!
             clientSiteSet();
+            pluginMain->setScriptingOnly(true);
             setReady();
             return S_OK;
         }
