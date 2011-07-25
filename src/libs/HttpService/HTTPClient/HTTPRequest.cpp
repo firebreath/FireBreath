@@ -284,6 +284,10 @@ void HTTPRequest::startRequest_thread() {
 
     curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 1);
     curl_easy_setopt(req, CURLOPT_SSL_VERIFYHOST, 2);
+
+    // THESE ARE REALLY DANGEROUS!!!! DON'T LEAVE THEM ACTIVE!
+    //curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
+    //curl_easy_setopt(req, CURLOPT_SSL_VERIFYHOST, 0);
    
     std::map<std::string, std::string> post_data = request_data->uri.query_data;    
 

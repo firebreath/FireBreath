@@ -148,8 +148,8 @@ void UploadQueue::start_next_upload() {
             it->setStatus(UploadQueueEntry::ENTRY_IN_PROGRESS);
             --files_waiting;
             current_queue_bytes -= qe.filesize;
-
-            std::string s = "file" + files_started;
+            
+            std::string s = "file" + boost::lexical_cast<std::string>(files_started);
             qe.post_field = s;
             data->addFile(s, FB::wstring_to_utf8(qe.filename), "application/octet-stream", qe.datablock);
 
