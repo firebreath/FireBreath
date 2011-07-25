@@ -143,6 +143,30 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual public void FB::PluginCore::setScriptingOnly(const bool so)
+        ///
+        /// @brief  Called by the browser to indicate that there is no DOM element associated
+        ///         with this object
+        ///
+        /// @returns void
+        /// @since 1.6
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void setScriptingOnly(const bool so = true)
+        {
+            m_scriptingOnly = so;
+        }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual public bool FB::PluginCore::isScriptingOnly()
+        ///
+        /// @brief  Returns true if there is no DOM element associated with the plugin
+        ///
+        /// @returns bool
+        /// @since 1.6
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool isScriptingOnly() const { return m_scriptingOnly; }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::SetWindow(PluginWindow *)
         ///
         /// @brief  Called by the browser to set the window.  The default implementation fires the 
@@ -311,6 +335,7 @@ namespace FB {
         /// Don't use directly; use getRootJSAPI()
         JSAPIPtr m_api;
         boost::tribool m_windowLessParam;
+        bool m_scriptingOnly;
     };
 };
 

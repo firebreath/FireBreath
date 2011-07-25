@@ -45,7 +45,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 \***************************/
 
 PluginCore::PluginCore() : m_paramsSet(false), m_Window(NULL),
-    m_windowLessParam(boost::indeterminate)
+    m_windowLessParam(boost::indeterminate), m_scriptingOnly(false)
 {
     FB::Log::initLogging();
     // This class is only created on the main UI thread,
