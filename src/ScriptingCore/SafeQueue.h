@@ -86,6 +86,37 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn bool SafeQueue::timed_wait_and_pop(Data& popped_value, const boost::posix_time::time_duration& duration)
+        ///
+        /// @brief  Tries to pop a value off the front of the queue; if the queue is empty it will wait
+        ///         for the specified duration until something is pushed onto the back of the queue
+        ///         by another thread or until the duration times out.
+        ///
+        /// @param [out] popped_value    The popped value. 
+        /// @param duration              The duration of time for which to wait
+        ///
+        /// @return true if a value is returned, false if the queue was empty
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool timed_wait_and_pop(Data& popped_value, const boost::posix_time::time_duration& duration)
+        {
+            boost::mutex::scoped_lock lock(the_mutex);
+            if(the_queue.empty())
+            {
+                // Wait for the specified duration if no values are there
+                the_condition_variable.timed_wait(lock, duration);
+            }
+            
+            // See if a value was added; if not, we just timed out
+            if(the_queue.empty())
+            {
+                return false;
+            }
+            
+            popped_value=the_queue.front();
+            the_queue.pop();
+            return true;
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void SafeQueue::wait_and_pop(Data& popped_value)
         ///
         /// @brief  Tries to pop a value off the front of the queue; if the queue is empty it will wait
