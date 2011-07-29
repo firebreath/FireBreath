@@ -8,7 +8,7 @@
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
-#            
+#
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
@@ -17,6 +17,7 @@ set (FB_PROJECTS_BINARY_DIR "${CMAKE_BINARY_DIR}/projects")
 
 set (FB_BOOST_SOURCE_DIR ${FB_SOURCE_DIR}/3rdParty/boost)
 set (FB_GECKOSDK_SOURCE_DIR ${FB_SOURCE_DIR}/3rdParty/gecko-sdk/includes)
+set (FB_UTF8_SOURCE_DIR ${FB_SOURCE_DIR}/3rdParty/utf8)
 
 set (FB_ACTIVEXCORE_SOURCE_DIR "${FB_SOURCE_DIR}/ActiveXCore")
 set (FB_ACTIVEXCORE_BUILD_DIR "${FB_BUILD_DIR}/ActiveXCore")

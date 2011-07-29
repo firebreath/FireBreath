@@ -18,6 +18,7 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #define H_FB_UTF8
 
 #include <string>
+#include "../3rdParty/utf8/utf8.h"
 
 namespace FB {
 
@@ -31,7 +32,7 @@ namespace FB {
     ///
     /// @brief  Accepts a std::wstring and returns a UTF8-encoded std::string
     ///
-    /// @param  src Source string 
+    /// @param  src Source string
     ///
     /// @return UTF8-encoded std::string
     ////////////////////////////////////////////////////////////////////////////////////////////////////

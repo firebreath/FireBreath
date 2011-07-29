@@ -7,7 +7,7 @@
 #include "win_common.h"
 #else
 #include <boost/asio.hpp>
-#include <utf8.h>
+#include "../3rdParty/utf8/utf8.h"
 #include <xlocale.h>
 #include <wctype.h>
 #endif

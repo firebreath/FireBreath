@@ -144,26 +144,7 @@ TEST(VariantWideStringTest)
         std::wstring lstr(L"скажи");
         variant str4(lstr);
         std::string tmp = str4.convert_cast<std::string>();
-
-        // Check it with UTF8 source data
-        /*unsigned char utf8str[] = {0xc3, 0x91,
-                          0xc2, 0x81,
-                          0xc3, 0x90,
-                          0xc2, 0xba,
-                          0xc3, 0x90,
-                          0xc2, 0xb0,
-                          0xc3, 0x90,
-                          0xc2, 0xb6,
-                          0xc3, 0x90,
-                          0xc2, 0xb8,
-                          0x00, 0x00};
-        std::string tmpstr((char *)utf8str);
-
-        CHECK(tmpstr == tmp);
-
-        variant str3(tmpstr);
-        std::wstring widestr( str3.convert_cast<std::wstring>() );
-        CHECK(widestr == lstr);*/
+        CHECK(tmp == "скажи");
     }
 }
 TEST(VariantIsOfTypeTest)
