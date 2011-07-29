@@ -16,8 +16,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPAPITYPES
 #define H_NPAPITYPES
 
-#ifdef _WINDOWS
+#ifdef FB_WIN
 #include "win_common.h"
+#elseif defined(FB_MACOSX)
+#include <Carbon/Carbon.h>
 #endif
 
 #include "nptypes.h"
@@ -25,6 +27,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "npapi.h"
 #include "npruntime.h"
 #include "variant.h"
+
+#if !defined(__QUICKDRAWAPI__) && !defined(NP_NO_QUICKDRAW)
+#define NP_NO_QUICKDRAW
+#endif
 
 namespace FB { namespace Npapi {
 

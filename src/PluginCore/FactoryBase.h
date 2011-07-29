@@ -25,6 +25,14 @@
 
 #include "PluginWindowForwardDecl.h"
 
+#ifdef FB_MACOSX
+#include <Carbon/Carbon.h>
+#if !defined(__QUICKDRAWAPI__) && !defined(NP_NO_QUICKDRAW)
+#define NP_NO_QUICKDRAW 1
+#endif
+#endif
+
+
 namespace FB
 {
     FB_FORWARD_PTR(FactoryBase);

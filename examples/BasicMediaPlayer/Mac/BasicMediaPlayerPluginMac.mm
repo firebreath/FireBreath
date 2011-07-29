@@ -23,8 +23,9 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "BasicMediaPlayerPluginMac.h"
 
-@interface MyCAOpenGLLayer : CAOpenGLLayer {}
+@interface MyCAOpenGLLayer : CAOpenGLLayer {
     GLfloat m_angle;
+}
 @end
 
 @implementation MyCAOpenGLLayer
