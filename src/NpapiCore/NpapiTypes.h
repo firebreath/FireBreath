@@ -18,10 +18,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #ifdef FB_WIN
 #include "win_common.h"
-#else
-#ifdef(FB_MACOSX)
-#include <Carbon/Carbon.h>
 #endif
+#ifdef FB_MACOSX 
+#include <Carbon/Carbon.h>
 #endif
 
 #include "nptypes.h"
