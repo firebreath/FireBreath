@@ -76,11 +76,95 @@ FB::ActiveX::FbPerUserRegistration::~FbPerUserRegistration()
 
 using FB::ActiveX::AxIdMap;
 
+#define DISPID_NORMAL_FIRST                     1000
+
 class AxIdMapInit
 {
 public:
     AxIdMapInit()
     {
+        // As of IE9 some events seem to have predefined DISPIDs; let's try to define those here:
+
+        AxIdMap.setIdForValue(5, "onmousedown");
+        AxIdMap.setIdForValue(6, "onmousemove");
+        AxIdMap.setIdForValue(7, "onmouseup");
+        AxIdMap.setIdForValue(8, "onmouseout");
+        AxIdMap.setIdForValue(9, "onmouseover");
+        AxIdMap.setIdForValue(10, "onclick");
+        AxIdMap.setIdForValue(11, "ondblclick");
+        AxIdMap.setIdForValue(12, "onkeydown");
+        AxIdMap.setIdForValue(13, "onkeypress");
+        AxIdMap.setIdForValue(14, "onkeyup");
+        AxIdMap.setIdForValue(15, "onblur");
+        AxIdMap.setIdForValue(16, "onreadystatechange");
+
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST, "onabort");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 1, "onchange");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 2, "onerror");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 3, "onload");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 6, "onselect");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 7, "onsubmit");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 8, "onunload");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 9, "onbounce");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 10, "onfinish");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 11, "onstart");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 13, "onlayout");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 14, "onscroll");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 15, "onreset");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 16, "onresize");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 17, "onbeforeunload");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 18, "onchangefocus");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 19, "onchangeblur");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 20, "onpersist");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 21, "onpersistsave");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 22, "onpersistload");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 23, "oncontextmenu");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 24, "onbeforeprint");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 25, "onafterprint");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 26, "onstop");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 27, "onbeforeeditfocus");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 28, "onmousehover");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 29, "oncontentready");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 30, "onlayoutcomplete");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 31, "onpage");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 32, "onlinkedoverflow");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 33, "onmousewheel");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 34, "onbeforedeactivate");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 35, "onmove");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 36, "oncontrolselect");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 37, "onselectionchange");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 38, "onmovestart");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 39, "onmoveend");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 40, "onresizestart");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 41, "onresizeend");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 42, "onmouseenter");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 43, "onmouseleave");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 44, "onactivate");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 45, "ondeactivate");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 46, "onmultilayoutcleanup");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 47, "onbeforeactivate");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 48, "onfocusin");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 49, "onfocusout");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 50, "onvaluechange");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 51, "onselectadd");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 52, "onselectremove");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 53, "onselectwithin");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 54, "onsystemscrollingstart");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 55, "onsystemscrollingend");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 56, "onobjectcontentscrolled");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 57, "onstorage");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 58, "onstoragecommit");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 59, "onshow");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 60, "onhide");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 61, "onalert");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 62, "onpopupmenustart");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 63, "onpopupmenuend");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 64, "ononline");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 65, "onoffline");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 66, "onhashchange");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 67, "onmessage");
+        AxIdMap.setIdForValue(DISPID_NORMAL_FIRST + 68, "ondommutation");
+
         AxIdMap.setIdForValue(0, "value");
         AxIdMap.setIdForValue(-1, "toString");
         AxIdMap.setIdForValue(-3, "propertyput");
@@ -193,6 +277,7 @@ public:
         AxIdMap.setIdForValue(-5514, "securitydomain");
     }
 };
+#undef DISPID_NORMAL_FIRST
 
 FB::TypeIDMap<DISPID> FB::ActiveX::AxIdMap(100);
 AxIdMapInit __AxIdInitClassDummy;
