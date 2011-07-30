@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sept 24, 2009
@@ -8,7 +8,7 @@ License:    Dual license model; choose one of two:
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
-            
+
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
@@ -35,15 +35,15 @@ namespace FB
     ///
     /// @brief  JavaScript API class -- provides a javascript interface that can be exposed to the
     ///         browser.
-    /// 
+    ///
     /// JSAPI is the core class for all interaction with javascript.  All PluginCore-derived Plugin
     /// objects must provide a JSAPI object to provide the javascript interface for their &lt;object&gt;
     /// tag, and methods or properties of that object can return other JSAPI objects.
-    /// 
+    ///
     /// Important things to know about JSAPI objects:
     ///   - Unless you have unusual needs, you will most likely want to extend FB::JSAPIAuto instead
     ///     of extending JSAPI directly.
-    ///   - Any time you work with a JSAPI object you should use it with a boost::shared_ptr. 
+    ///   - Any time you work with a JSAPI object you should use it with a boost::shared_ptr.
     ///     FB::JSAPIPtr is a typedef for a boost::shared_ptr<JSAPI> which may be useful.
     ///     -  From inside the object you can use the shared_from_this() method to get a shared_ptr for
     ///        "this"
@@ -60,14 +60,14 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn JSAPI(void)
         ///
-        /// @brief  Default constructor. 
+        /// @brief  Default constructor.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         JSAPI(void) {}
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ~JSAPI(void)
         ///
-        /// @brief  Finaliser. 
+        /// @brief  Finaliser.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~JSAPI(void) {}
 
@@ -79,6 +79,13 @@ namespace FB
         /// @brief  Invalidates this object.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void invalidate() = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn void shutdown()
+        ///
+        /// @brief  Called to notify the object that the plugin is shutting down
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void shutdown() {}
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -169,8 +176,8 @@ namespace FB
         ///
         /// @brief  Called by the browser to register an event handler method
         ///
-        /// @param  name            The name. 
-        /// @param  event           The event handler method. 
+        /// @param  name            The name.
+        /// @param  event           The event handler method.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
         {
@@ -184,14 +191,14 @@ namespace FB
         {
             registerEventMethod(wstring_to_utf8(name), event);
         }
-        
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to unregister an event handler method
         ///
-        /// @param  name            The name. 
-        /// @param  event           The event handler method to unregister. 
+        /// @param  name            The name.
+        /// @param  event           The event handler method to unregister.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
         {
@@ -213,7 +220,7 @@ namespace FB
         ///         primarily used by IE.  Objects provided to this method are called when events are fired
         ///         by calling a method of the event name on the event interface
         ///
-        /// @param  event   The JSAPI interface 
+        /// @param  event   The JSAPI interface
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event)
         {
@@ -223,7 +230,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void unregisterEventInterface(const JSObjectPtr& event)
         ///
-        /// @brief  Called by the browser to unregister a JSObject interface that handles events.  
+        /// @brief  Called by the browser to unregister a JSObject interface that handles events.
         ///
         /// @param  event   The JSAPI interface
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,11 +260,11 @@ namespace FB
         /// @fn virtual void getMemberNames(std::vector<std::string> &nameVector) const = 0
         ///
         /// @brief  Called by the browser to enumerate the members of this JSAPI object
-        ///         
+        ///
         /// This must be implemented by anything extending JSAPI directly.  JSAPIAuto implements this
         /// for you.
         ///
-        /// @param [out] nameVector  The name vector. 
+        /// @param [out] nameVector  The name vector.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void getMemberNames(std::vector<std::string> &nameVector) const = 0;
         virtual void getMemberNames(std::vector<std::string> *nameVector) const
@@ -268,9 +275,9 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual size_t getMemberCount() const = 0
         ///
-        /// @brief  Gets the member count. 
+        /// @brief  Gets the member count.
         ///
-        /// @return The member count. 
+        /// @return The member count.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual size_t getMemberCount() const = 0;
 
@@ -285,11 +292,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasMethod(const std::string& methodName) const = 0
         ///
-        /// @brief  Query if the JSAPI object has the 'methodName' method. 
+        /// @brief  Query if the JSAPI object has the 'methodName' method.
         ///
-        /// @param  methodName  Name of the method. 
+        /// @param  methodName  Name of the method.
         ///
-        /// @return true if method exists, false if not. 
+        /// @return true if method exists, false if not.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethod(const std::string& methodName) const = 0;
 
@@ -304,13 +311,13 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasMethodObject(const std::string& methodObjName) const
         ///
-        /// @brief  Query if 'methodObjName' is a valid methodObj. 
+        /// @brief  Query if 'methodObjName' is a valid methodObj.
         ///
-        /// @param  methodObjName    Name of the method to fetch an object for. 
+        /// @param  methodObjName    Name of the method to fetch an object for.
         ///
-        /// If this feature is supported 
+        /// If this feature is supported
         ///
-        /// @return true if methodObj exists, false if not. 
+        /// @return true if methodObj exists, false if not.
         /// @since 1.4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasMethodObject(const std::string& methodObjName) const { return false; }
@@ -325,27 +332,27 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasProperty(const std::string& propertyName) const
         ///
-        /// @brief  Query if 'propertyName' is a valid property. 
+        /// @brief  Query if 'propertyName' is a valid property.
         ///
-        /// @param  propertyName    Name of the property. 
+        /// @param  propertyName    Name of the property.
         ///
-        /// @return true if property exists, false if not. 
+        /// @return true if property exists, false if not.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::string& propertyName) const = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasProperty(int idx) const = 0
         ///
         /// @brief  Query if the property at "idx" exists.
-        ///     
+        ///
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to HasProperty with idx = 12:
         /// @code
         ///       document.getElementById("plugin")[12];
-        /// @endcode 
+        /// @endcode
         ///
         /// @param  idx Zero-based index of the property to check for
         ///
-        /// @return true if property exists, false if not. 
+        /// @return true if property exists, false if not.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(int idx) const = 0;
 
@@ -366,8 +373,8 @@ namespace FB
         /// javascript, except that you can save the function object if you want to.  See
         /// FB::JSFunction for an example of how to make a function object
         ///
-        /// @param  methodObjName    Name of the methodObj. 
-        /// @return The methodObj value 
+        /// @param  methodObjName    Name of the methodObj.
+        /// @return The methodObj value
         /// @since 1.4
         /// @see FB::JSFunction
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -386,9 +393,9 @@ namespace FB
         ///
         /// @brief  Gets a property value
         ///
-        /// @param  propertyName    Name of the property. 
+        /// @param  propertyName    Name of the property.
         ///
-        /// @return The property value 
+        /// @return The property value
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(const std::string& propertyName) = 0;
 
@@ -402,43 +409,43 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetProperty(const std::string& propertyName, const variant& value) = 0
         ///
-        /// @brief  Sets the value of a property. 
+        /// @brief  Sets the value of a property.
         ///
-        /// @param  propertyName    Name of the property. 
-        /// @param  value           The value. 
+        /// @param  propertyName    Name of the property.
+        /// @param  value           The value.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(const std::string& propertyName, const variant& value) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant GetProperty(int idx) = 0
         ///
-        /// @brief  Gets the value of an indexed property. 
+        /// @brief  Gets the value of an indexed property.
         ///
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to GetProperty with idx = 12:
         /// @code
         ///       var i = document.getElementById("plugin")[12];
-        /// @endcode 
+        /// @endcode
         ///
-        /// @param  idx Zero-based index of the property to get the value of. 
+        /// @param  idx Zero-based index of the property to get the value of.
         ///
-        /// @return The property value. 
+        /// @return The property value.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant GetProperty(int idx) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetProperty(int idx, const variant& value) = 0
         ///
-        /// @brief  Sets the value of an indexed property. 
+        /// @brief  Sets the value of an indexed property.
         ///
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to SetProperty with idx = 12:
         /// @code
         ///       document.getElementById("plugin")[12] = "property value";
-        /// @endcode 
+        /// @endcode
         ///
-        /// @param  idx     Zero-based index of the property to set the value of. 
-        /// @param  value   The new property value. 
+        /// @param  idx     Zero-based index of the property to set the value of.
+        /// @param  value   The new property value.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetProperty(int idx, const variant& value) = 0;
 
@@ -455,7 +462,7 @@ namespace FB
         ///
         /// @brief  Removes a property
         ///
-        /// @param  propertyName    Name of the property. 
+        /// @param  propertyName    Name of the property.
         /// @since 1.5
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void RemoveProperty(const std::string& propertyName) = 0;
@@ -463,13 +470,13 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variant RemoveProperty(int idx) = 0
         ///
-        /// @brief  Removes an indexed property. 
+        /// @brief  Removes an indexed property.
         ///
         /// This can be used for providing array-style access on your object.  For example, the following
         /// will result in a call to RemoveProperty with idx = 12:
         /// @code
         ///       delete document.getElementById("plugin")[12];
-        /// @endcode 
+        /// @endcode
         ///
         /// @param  idx Zero-based index of the property to remove
         /// @since 1.5
@@ -490,10 +497,10 @@ namespace FB
         ///
         /// @brief  Called by the browser to invoke a method on the JSAPI object.
         ///
-        /// @param  methodName  Name of the method. 
-        /// @param  args        The arguments. 
+        /// @param  methodName  Name of the method.
+        /// @param  args        The arguments.
         ///
-        /// @return result of method call 
+        /// @return result of method call
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
 
@@ -503,9 +510,9 @@ namespace FB
         /// @brief  Called by the browser to construct the JSAPI object.
         /// @code
         ///       var x = new MyJSAPIObject();
-        /// @endcode 
+        /// @endcode
         ///
-        /// @param  args        The arguments. 
+        /// @param  args        The arguments.
         ///
         /// @return result of constructor call, the new object
         /// @since 1.5
@@ -519,7 +526,7 @@ namespace FB
     /// @brief  Provides a helper class for locking
     ///
     /// This class will call pushZone on the provided JSAPI object when instantiated and popZone
-    /// when it goes out of scope. 
+    /// when it goes out of scope.
     /// @code
     ///      // In the constructor
     ///      // Register protected members
@@ -533,7 +540,7 @@ namespace FB
     ///          registerMethod("getDirectoryListing", make_method(this, &MyPluginAPI::getDirectoryListing));
     ///      } // Zone automatically popped off
     /// @endcode
-    /// 
+    ///
     /// @since 1.4a3
     /// @see FB::JSAPI::pushZone
     /// @see FB::JSAPI::popZone
@@ -558,7 +565,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public   FB::scoped_zonelock::scoped_zonelock(JSAPI* api, const SecurityZone& zone)
         ///
-        /// @brief  
+        /// @brief
         ///
         /// @param  api     JSAPI*        JSAPI object to lock the zone for
         /// @param  zone    const SecurityZone& Zone to push

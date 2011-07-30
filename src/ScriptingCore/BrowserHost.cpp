@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
 #include <boost/format.hpp>
+#include <boost/foreach.hpp>
 #include <boost/smart_ptr/enable_shared_from_this.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
@@ -83,6 +84,10 @@ FB::BrowserHost::~BrowserHost()
 
 void FB::BrowserHost::shutdown()
 {
+    BOOST_FOREACH(FB::JSAPIPtr ptr, m_retainedObjects) {
+        // Notify each JSAPI object that we're shutting down
+        ptr->shutdown();
+    }
     freeRetainedObjects();
     boost::upgrade_lock<boost::shared_mutex> _l(m_xtmutex);
     m_isShutDown = true;
