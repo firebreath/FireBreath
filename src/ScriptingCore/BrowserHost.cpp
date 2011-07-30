@@ -170,13 +170,19 @@ int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& fun
 }
 
 FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
-    if (getDOMWindow()) {
+    FB::DOM::WindowPtr win(getDOMWindow());
+    if (win) {
         if (call_delegate.empty()) {
             initJS(this);
         }
-        if (!call_delegate.empty()) {
-            return getDOMWindow()->getProperty<FB::JSObjectPtr>(call_delegate);
+        FB::JSObjectPtr delegate(win->getProperty<FB::JSObjectPtr>(call_delegate));
+        if (!delegate) {
+            // Sometimes the first try doesn't work; for some reason retrying generally does,
+            // and from then on it works fine
+            initJS(this);
+            delegate = win->getProperty<FB::JSObjectPtr>(call_delegate);
         }
+        return delegate;
     }
     return FB::JSObjectPtr();
 }

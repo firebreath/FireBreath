@@ -252,7 +252,8 @@
                 if (0 == i.indexOf("__FB_CALL_")) {
                     try {
                         delete window[i];
-                        plugin.testEvent("die?");
+                        // if this fails, it will cause other things to appear to have failed as well
+                        plugin.testEvent("some string");
                     } catch (e) {
                         // ie8, at least, is unhappy doing the delete,
                         // but then, activex doesn't have this problem
