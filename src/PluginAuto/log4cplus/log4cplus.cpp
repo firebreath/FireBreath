@@ -62,7 +62,7 @@ void FB::Log::initLogging()
             logger.addAppender(debugAppender);
             addedAppender = true;
 #endif
-            }
+            } break;
         case FB::Log::LogMethod_File: {
             log4cplus::SharedAppenderPtr fileAppender(new log4cplus::FileAppender(FB::utf8_to_wstring(it->second)));
             std::auto_ptr<log4cplus::Layout> layout(new log4cplus::TTCCLayout());
