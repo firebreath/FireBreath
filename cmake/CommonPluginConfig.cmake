@@ -43,6 +43,26 @@ set(PLUGIN_INCLUDE_DIRS
     ${FB_CONFIG_DIR}
     )
 
+if (NOT FBMAC_USE_CARBON AND NOT FBMAC_USE_COCOA)
+    # As of Safari 5.1 we have to choose one even if we don't draw
+    set(FBMAC_USE_COCOA 1)
+endif()
+if (NOT FBMAC_USE_INVALIDATINGCOREANIMATION
+        AND NOT FBMAC_USE_COREANIMATION
+        AND NOT FBMAC_USE_COREGRAPHICS
+        AND NOT FBMAC_USE_QUICKDRAW)
+    set(FBMAC_USE_COREGRAPHICS 1)
+endif()
+
+if (NOT FBMAC_USE_CARBON AND FBMAC_USE_QUICKDRAW)
+    message("!! You can't use QuickDraw without Carbon; disabling QuickDraw (it's deprecated anyway)")
+    if (NOT FBMAC_USE_INVALIDATINGCOREANIMATION
+            AND NOT FBMAC_USE_COREANIMATION
+            AND NOT FBMAC_USE_COREGRAPHICS)
+        set(FBMAC_USE_COREGRAPHICS 1)
+    endif()
+endif()
+
 # Clean up PluginConfig values as needed
 # set up the mimetype strings
 string(REPLACE ";" "|" FBMIMETYPE_LIST "${FBSTRING_MIMEType}")
