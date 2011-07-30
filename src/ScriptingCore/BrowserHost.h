@@ -404,7 +404,26 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void DoDeferredRelease() const = 0;
 
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+        ///
+        /// @brief  Detects the proxy settings from the browser
+        ///
+        /// This will detect the proxy settings for a given URL from the web browser; in the case that
+        /// The web browser itself is not being forthcoming with proxy settings (i.e. older versions of
+        /// npapi browsers dont' support it) it will fall back to system proxy settings detection.
+        ///
+        /// settingsMap keys:
+        ///    * type - the type of proxy, will be one of: socks, http, https, ftp
+        ///    * hostname - hostname or address of the proxy
+        ///    * port - port of the proxy
+        ///
+        /// @param settingsMap (out) populated with the proxy settings in a key => value format
+        /// @param url the url for which you need proxy settings. Omit for the default proxy
+        /// @since 1.6
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+
     public:
         virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;
         virtual FB::DOM::DocumentPtr _createDocument(const FB::JSObjectPtr& obj) const;
