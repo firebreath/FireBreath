@@ -441,7 +441,10 @@ void FB::JSAPIAuto::fireAsyncEvent( const std::string& eventName, const std::vec
     FB::variant evt(getAttribute(eventName));
     if (evt.is_of_type<FB::JSObjectPtr>()) {
         try {
-            evt.cast<JSObjectPtr>()->InvokeAsync("", args);
+            FB::JSObjectPtr handler(evt.cast<JSObjectPtr>());
+            if (handler) {
+                handler->InvokeAsync("", args);
+            }
         } catch (...) {
             // Apparently either this isn't really an event handler or something failed.
         }
