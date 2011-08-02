@@ -126,7 +126,7 @@ namespace FB
         bad_variant_cast(const std::type_info& src, const std::type_info& dest)
             : from(src.name()), to(dest.name())
         { }
-        virtual const char* what() { 
+        virtual const char* what() const throw() { 
             return "bad cast"; 
         }
         const char* from;
