@@ -58,7 +58,8 @@ void NpapiPluginWin::invalidateWindow( uint32_t left, uint32_t top, uint32_t rig
 NPError NpapiPluginWin::SetWindow(NPWindow* window)
 {
     // If window == NULL then our window is gone. Stop drawing.
-    if(window == NULL || window->window == NULL) {
+    // If window->window == NULL and we're a windowed plugin then the window is gone; otherwise not
+    if(window == NULL || (window->window == NULL && window->type != NPWindowTypeDrawable)) {
         // Our window is gone
         if(pluginMain != NULL) {
             // Destroy our FireBreath window
