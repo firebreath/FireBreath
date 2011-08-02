@@ -12,6 +12,8 @@
 #include <stdexcept>
 using std::string;
 
+void throw_GetLastError(const char* fnname);
+
 string lpcwstr_to_utf8(const wchar_t* in_str) {
   int buffer_len = WideCharToMultiByte(CP_UTF8, 0, in_str, -1, NULL, 0, NULL, NULL);
   if (buffer_len == 0) throw_GetLastError("WideCharToMultiByte (lpcwstr_to_utf8)");

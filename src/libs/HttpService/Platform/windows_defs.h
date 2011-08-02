@@ -24,8 +24,10 @@
 #define MAX_UNICODE_PATH 32768 // see http://msdn.microsoft.com/en-us/library/aa365247(VS.85).aspx -- Maximum Path Length section.
 
 // these are defined in windows_common.cpp
-std::string lastError(const char* fnname);
-void throw_GetLastError(const char* fnname);
-std::string lpcwstr_to_utf8(const wchar_t* in_str);
+namespace FBPlugin {
+    std::string lastError(const char* fnname);
+    void throw_GetLastError(const char* fnname);
+    std::string lpcwstr_to_utf8(const wchar_t* in_str);
+}
 #endif
 

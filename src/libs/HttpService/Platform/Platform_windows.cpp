@@ -35,7 +35,22 @@ std::string Platform::getArchitectureName() {
 #endif
 }
 
+string FBPlugin::lastError(const char* fnname) {
+    DWORD errcode = GetLastError();
+    char* buf = NULL;
+    FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+        NULL, errcode, 0, (LPSTR)&buf, 0, NULL);
 
+    std::stringstream stream;
+    stream << fnname << ": " << buf;
+    LocalFree(buf);
+    return stream.str();
+}
+
+void FBPlugin::throw_GetLastError(const char* fnname) {
+    throw std::runtime_error(lastError(fnname).c_str());
+}
+using FBPlugin::throw_GetLastError;
 
 bool Platform::pathIsHidden(const boost::filesystem::wpath& path_to_investigate) {
   DWORD attr = GetFileAttributesW(path_to_investigate.file_string().c_str());
