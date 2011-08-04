@@ -36,6 +36,8 @@ public:
 #ifndef NP_NO_QUICKDRAW
         EVENTTYPE_CASE(FB::QuickDrawDraw, onDrawQD, FB::PluginWindowMacQD)
 #endif
+        EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindowMac)
+        EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindowMac)
         PLUGIN_EVENT_MAP_CASCADE(BasicMediaPlayerPlugin)
     END_PLUGIN_EVENT_MAP()
 
