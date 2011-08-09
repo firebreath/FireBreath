@@ -12,6 +12,10 @@
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
+# The reason 2.8.5 is required as a minimum version on Mac is that 2.8.5 is where the patch to allow
+# direct compilation of cfbundle projects in Xcode and gcc was introduced into cmake.
+cmake_minimum_required(VERSION 2.8.5)
+
 set (PATCH_DESC_FILENAME ${CMAKE_BINARY_DIR}/xcode_patch_desc.txt)
 
 if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
@@ -65,20 +69,12 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
+        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
     )
 
     add_definitions(
         -DXP_MACOSX=1
         )
-
-    add_executable( ${PROJECT_NAME} MACOSX_BUNDLE ${SOURCES} )
-
-    string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT_DIR})
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
-        XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
-        XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        LINK_FLAGS "\"-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt\"")
 
     set (RCFILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
 
@@ -86,17 +82,36 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         list(APPEND ARCHS -arch ${ARCH})
     endforeach()
 
+    # Compile the resource file
     find_program(RC_COMPILER Rez NO_DEFAULT_PATHS)
     execute_process(COMMAND
         ${RC_COMPILER} ${RCFILES} -useDF ${ARCHS} -arch x86_64 -o ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
         )
 
-    set_source_Files_properties(
-        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
-        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
+    set_source_files_properties(
+        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
+        PROPERTIES GENERATED 1
+        )
+    message("Generating ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc")
 
-    patch_xcode_plugin( "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
-    patch_xcode_plugin( "${CMAKE_BINARY_DIR}/FireBreath.xcodeproj/project.pbxproj" "${PROJECT_NAME}" )
+    add_library( ${PROJECT_NAME} MODULE
+        ${SOURCES} 
+        )
+
+    string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT_DIR})
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        BUNDLE 1
+        BUNDLE_EXTENSION plugin
+        XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
+        XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+        XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+        LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
+
+    set_source_files_properties(
+        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
+        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
+        PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
 
 ENDMACRO(add_mac_plugin)
 
