@@ -201,7 +201,6 @@ macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
 endmacro(firebreath_sign_plugin)
 
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
-	# WiX doesn't work with VC8 generated DLLs
     if (WIN32 AND WIX_FOUND)
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
@@ -210,7 +209,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
-        
+
         set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\FixFragment.xslt")
         set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
@@ -236,11 +235,14 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
                 ${SOURCELIST}
                 ${WIXOBJ_LIST}
             )
-        ADD_LIBRARY(${PROJNAME}_WiXInstall STATIC ${WIX_SOURCES})
+        if (NOT FB_WIX_SUFFIX)
+            set (FB_WIX_SUFFIX _WiXInstall)
+        endif()
+        ADD_LIBRARY(${PROJNAME}${FB_WIX_SUFFIX} STATIC ${WIX_SOURCES})
 
-        WIX_LINK(${PROJNAME}_WiXInstall ${WIX_DEST} WIX_FULLOBJLIST NONE)
+        WIX_LINK(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_DEST} WIX_FULLOBJLIST NONE)
 
-        ADD_DEPENDENCIES(${PROJNAME}_WiXInstall ${WIX_PROJDEP})
+        ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_PROJDEP})
 
     endif()
 endfunction(add_wix_installer)
