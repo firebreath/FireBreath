@@ -267,7 +267,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
 GdkNativeWindow PluginWindowX11::getWindow()
 {
-  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
+  return GDK_WINDOW_XID(GTK_WIDGET(m_canvas)->window);
 }
 
 #endif
