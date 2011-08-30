@@ -18,6 +18,9 @@ Copyright 2011 Facebook, Inc
 
 #import "WebViewMac.h"
 
+#define OFFSCREEN_ORIGIN_X -4000
+#define OFFSCREEN_ORIGIN_Y -4000
+
 @implementation WebViewHelper
 
 - (void)setController:(FB::View::WebViewMac*)c
@@ -39,7 +42,7 @@ Copyright 2011 Facebook, Inc
 
 - (id)initWithFrame:(NSRect)frameRect {
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    NSRect windowRect = NSMakeRect(0, 0, frameRect.size.width, frameRect.size.height);
+    NSRect windowRect = NSMakeRect(OFFSCREEN_ORIGIN_X, OFFSCREEN_ORIGIN_Y, frameRect.size.width, frameRect.size.height);
     hiddenWindow = [[FBViewWebViewWindow alloc]
         initWithContentRect:windowRect 
                   styleMask:NSBorderlessWindowMask
@@ -414,6 +417,8 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     int32_t xScroll = evt->m_dx*2; // Negative for right
     int32_t yScroll = evt->m_dy*2; // Negative for down
     CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, wheelCount, yScroll, xScroll);
+    CGPoint location = CGPointMake(where.x, where.y);
+    CGEventSetLocation(cgEvent, location);
     
 //    std::stringstream ss;
 //    ss << "Scrolling at " << where.x << ", " << where.y << " to the amount of " << yScroll << " x " << xScroll;
@@ -422,24 +427,24 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgEvent];
     
     //NSLog(@"Hit Test:");
-//    NSView* target = [o->helper.webView hitTest:where];
+    NSView* target = [o->helper.webView hitTest:where];
     
-//    do {
-//        NSLog(@"Next superview: %@", target);
-//        [target scrollWheel:scrollEvent];
-//        target = [target superview];
-//    } while (target);
-//    
-//    NSLog(@"Responder chain:");
-//    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
-//    
-//    do {
-//        [curResp scrollWheel:scrollEvent];
-//        NSLog(@"Next Responder: %@", curResp);
-//        curResp = [curResp nextResponder];
-//    } while (curResp);
+    do {
+        NSLog(@"Next superview: %@", target);
+        [target scrollWheel:scrollEvent];
+        target = [target superview];
+    } while (target);
     
-//    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+    NSLog(@"Responder chain:");
+    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
+    
+    do {
+        [curResp scrollWheel:scrollEvent];
+        NSLog(@"Next Responder: %@", curResp);
+        curResp = [curResp nextResponder];
+    } while (curResp);
+    
+    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder scrollWheel:scrollEvent]; 
     CFRelease(cgEvent);
     

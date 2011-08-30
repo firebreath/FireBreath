@@ -15,7 +15,6 @@
 #include "Platform.h"
 #include "mac_common.h"
 #include <sys/xattr.h>
-#include "utf8.h"
 #include "APITypes.h"
 
 using std::string;
