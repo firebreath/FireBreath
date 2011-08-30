@@ -414,35 +414,14 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     where.y = wnd->getWindowHeight()-evt->m_y;    
     
     CGWheelCount wheelCount = 2; // 1 for Y-only, 2 for Y-X, 3 for Y-X-Z
-    int32_t xScroll = evt->m_dx*2; // Negative for right
-    int32_t yScroll = evt->m_dy*2; // Negative for down
+    int32_t xScroll = evt->m_dx; // Negative for right
+    int32_t yScroll = evt->m_dy; // Negative for down
     CGEventRef cgEvent = CGEventCreateScrollWheelEvent(NULL, kCGScrollEventUnitPixel, wheelCount, yScroll, xScroll);
-    CGPoint location = CGPointMake(where.x, where.y);
+    NSScreen* mainScreen = [NSScreen mainScreen];
+    CGPoint location = CGPointMake(where.x, mainScreen.frame.size.height - where.y);
     CGEventSetLocation(cgEvent, location);
     
-//    std::stringstream ss;
-//    ss << "Scrolling at " << where.x << ", " << where.y << " to the amount of " << yScroll << " x " << xScroll;
-//    getParentHost()->htmlLog(ss.str());
-
     NSEvent *scrollEvent = [NSEvent eventWithCGEvent:cgEvent];
-    
-    //NSLog(@"Hit Test:");
-    NSView* target = [o->helper.webView hitTest:where];
-    
-    do {
-        NSLog(@"Next superview: %@", target);
-        [target scrollWheel:scrollEvent];
-        target = [target superview];
-    } while (target);
-    
-    NSLog(@"Responder chain:");
-    NSResponder* curResp = o->helper.hiddenWindow.firstResponder;
-    
-    do {
-        [curResp scrollWheel:scrollEvent];
-        NSLog(@"Next Responder: %@", curResp);
-        curResp = [curResp nextResponder];
-    } while (curResp);
     
     NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder scrollWheel:scrollEvent]; 
