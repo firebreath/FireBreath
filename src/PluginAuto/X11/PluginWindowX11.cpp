@@ -267,7 +267,11 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
 GdkNativeWindow PluginWindowX11::getWindow()
 {
+#if GTK_CHECK_VERSION(2, 14, 0)
+  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
+#else
   return GDK_WINDOW_XID(GTK_WIDGET(m_canvas)->window);
+#endif
 }
 
 #endif
