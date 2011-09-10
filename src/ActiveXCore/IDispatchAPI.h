@@ -99,7 +99,6 @@ namespace FB { namespace ActiveX {
         virtual FB::JSAPIPtr getJSAPI() const;
 
     private:
-        friend boost::shared_ptr<IDispatchAPI> boost::make_shared<IDispatchAPI>(IDispatch * const &, const ActiveXBrowserHostPtr&);
         IDispatchAPI(IDispatch *, const ActiveXBrowserHostPtr&);
     };
 } }

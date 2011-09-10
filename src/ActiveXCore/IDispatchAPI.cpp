@@ -27,7 +27,7 @@ using namespace FB::ActiveX;
 
 boost::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * obj, const ActiveXBrowserHostPtr& host)
 {
-    return boost::make_shared<IDispatchAPI>(obj, host);
+    return boost::shared_ptr<IDispatchAPI>(new IDispatchAPI(obj, host));
 }
 
 FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHostPtr& host) :
