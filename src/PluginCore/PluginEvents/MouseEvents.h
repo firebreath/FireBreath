@@ -48,12 +48,18 @@ namespace FB {
             MouseButton_Right,
             MouseButton_Middle
         };
-        MouseButtonEvent(MouseButton btn, int x, int y) : m_Btn(btn), m_x(x), m_y(y) { }
+		enum ModifierState {
+			ModifierState_Shift = 1,
+			ModifierState_Control = 2,
+			ModifierState_Menu = 4
+		};
+        MouseButtonEvent(MouseButton btn, int x, int y, unsigned int state) : m_Btn(btn), m_x(x), m_y(y), m_state(state) { }
 
     public:
         MouseButton m_Btn;
         int m_x;
         int m_y;
+		unsigned int m_state;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +70,18 @@ namespace FB {
     class MouseDownEvent : public MouseButtonEvent
     {
     public:
-        MouseDownEvent(MouseButton btn, int x, int y) : MouseButtonEvent(btn, x, y) { }
+        MouseDownEvent(MouseButton btn, int x, int y, unsigned int state) : MouseButtonEvent(btn, x, y, state) { }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  MouseDoubleClickEvent
+    ///
+    /// @brief  Fired when a mouse double click event occurs
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class MouseDoubleClickEvent : public MouseButtonEvent
+    {
+    public:
+        MouseDoubleClickEvent(MouseButton btn, int x, int y, unsigned int state) : MouseButtonEvent(btn, x, y, state) { }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,7 +92,7 @@ namespace FB {
     class MouseUpEvent : public MouseButtonEvent
     {
     public:
-        MouseUpEvent(MouseButton btn, int x, int y) : MouseButtonEvent(btn, x, y) { }
+        MouseUpEvent(MouseButton btn, int x, int y, unsigned int state) : MouseButtonEvent(btn, x, y, state) { }
     };
 
 };
