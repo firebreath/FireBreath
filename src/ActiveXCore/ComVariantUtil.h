@@ -179,6 +179,7 @@ namespace FB { namespace ActiveX
         else
         {
             CComSafeArray<VARIANT> sa;
+			sa.Create();
             const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
             for (FB::VariantList::iterator itr = inArr.begin(); itr != inArr.end(); itr++) {
                 const std::type_info& type = itr->get_type();
@@ -217,6 +218,7 @@ namespace FB { namespace ActiveX
         else
         {
             CComSafeArray<VARIANT> sa;
+			sa.Create();
             const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
             for (FB::VariantMap::iterator itr = inMap.begin(); itr != inMap.end(); itr++) {
                 const std::type_info& valType = itr->second.get_type();
@@ -231,7 +233,6 @@ namespace FB { namespace ActiveX
                 sa2.Add(val);
                 sa.Add(sa2.Detach());
             }
-            if (sa.GetCount() > 0)
                 outVar = sa.Detach();
         }
         return outVar;
