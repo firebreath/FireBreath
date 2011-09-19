@@ -193,20 +193,26 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
                 btn = MouseButtonEvent::MouseButton_Right;
                 break;
             default:
-                return 0;
+                return false;
         }
     }
 
+    unsigned int modifierState = 0;
     switch(event->type)
     {
         // Mouse button down
         case GDK_BUTTON_PRESS: {
-            MouseDownEvent evt(btn, button->x, button->y);
+            MouseDownEvent evt(btn, button->x, button->y, modifierState);
+            return SendEvent(&evt) ? 1 : 0;
+        } break;
+        // Mouse button up
+        case GDK_2BUTTON_PRESS: {
+            MouseDoubleClickEvent evt(btn, button->x, button->y, modifierState);
             return SendEvent(&evt) ? 1 : 0;
         } break;
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
-            MouseUpEvent evt(btn, button->x, button->y);
+            MouseUpEvent evt(btn, button->x, button->y, modifierState);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
