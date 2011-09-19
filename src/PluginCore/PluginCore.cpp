@@ -98,8 +98,14 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
 // to indicate that we're done.
 bool PluginCore::setReady()
 {
-    m_host->initJS(this);
-    
+	//  GJS  ---
+	try {
+	    m_host->initJS(this);
+	} catch(const FB::script_error & ex) {
+		//  No injection needed for native hosted controls - GJS
+	}
+	//  GJS  ---
+	
     bool rval = false;
     FBLOG_TRACE("PluginCore", "Plugin Ready");
     // Ensure that the JSAPI object has been created, in case the browser hasn't requested it yet.
