@@ -29,6 +29,24 @@
             margin: 0 auto;
             float: left;
         }
+        #pluginContainer2
+        {
+            width: 300px;
+            height: 300px;
+            border: 5px dotted gray;
+            text-align: center;
+            margin: 0 auto;
+            float: left;
+        }
+        #pluginContainer3
+        {
+            width: 300px;
+            height: 300px;
+            border: 5px dotted gray;
+            text-align: center;
+            margin: 0 auto;
+            float: left;
+        }
     
         #testResults
         {
@@ -69,16 +87,40 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
     <script type="text/javascript" language="Javascript">
         var mimeType = "application/x-fbtestplugin";
+        var mimeType2 = "application/x-fbtestplugin-math";
+        var mimeType3 = "application/x-fbtestmathplugin";
         var pluginCB = null;
+        var pluginCB2 = null;
+        var pluginCB3 = null;
 
         function plugin() {
             return document.getElementById("testPlugin");
         }
+        function plugin2() {
+            return document.getElementById("testPlugin2");
+        }
+        function plugin3() {
+            return document.getElementById("testPlugin3");
+        }
 
         function injectPlugin(dest, callback) {
             pluginCB = callback;
-            var html = '<object id="testPlugin" type="' + mimeType + '" width="100%" height="100%" onload="alert(\'The plugin has loaded!\');">';
+            var html = '<object id="testPlugin" type="' + mimeType + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 1!\');">';
             html += '<param name="onload" value="pluginCB" />';
+            html += '</object>';
+            dest[0].innerHTML = html;
+        }
+        function injectPlugin2(dest, callback) {
+            pluginCB2 = callback;
+            var html = '<object id="testPlugin2" type="' + mimeType2 + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 2!\');">';
+            html += '<param name="onload" value="pluginCB2" />';
+            html += '</object>';
+            dest[0].innerHTML = html;
+        }
+        function injectPlugin3(dest, callback) {
+            pluginCB3 = callback;
+            var html = '<object id="testPlugin3" type="' + mimeType3 + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 3!\');">';
+            html += '<param name="onload" value="pluginCB3" />';
             html += '</object>';
             dest[0].innerHTML = html;
         }
@@ -111,14 +153,32 @@
 
         function pageLoaded() {
             addTest("loaded", "Plugin onload event");
+            addTest("loaded2", "Plugin onload event 2");
+            addTest("loaded3", "Plugin onload event 3");
             addTest("valid", "Plugin valid test");
+            addTest("valid2", "Plugin valid test 2");
             addTest("getPluginPath", "Get plugin path");
             addTest("echo", "Plugin echo test");
             addTest("reverse", "Plugin reverse test");
             addTest("getMap", "Plugin return map test");
-            addTest("mathAPI", "Plugin return JSAPI object test");
             addTest("location", "Get page location test");
+
+            addTest("mathAPI", "Plugin return JSAPI object test");
+            addTest("mathAPI2", "Plugin *create* JSAPI object test");
+            addTest("mathAPI3", "Plugin OBJECT JSAPI object test");
+            addTest("mathAPI4", "Plugin OBJECT.self JSAPI object test");
+
+            addTest("mathAPI3B", "Plugin OBJECT JSAPI object test (SimpleMath)");
+            addTest("mathAPI4B", "Plugin OBJECT.self JSAPI object test (SimpleMath)");
+
             addTest("mathApiAdd", "Use custom JSAPI coming in from script");
+            addTest("mathApiAdd2", "Use *created* custom JSAPI coming in from script");
+            addTest("mathApiAdd3", "Use OBJECT.self custom JSAPI coming in from script");
+            addTest("mathApiAdd4", "Use OBJECT custom JSAPI coming in from script (should FAIL!)");
+
+            addTest("mathApiAdd3B", "Use OBJECT.self custom JSAPI coming in from script (SimpleMath)");
+            addTest("mathApiAdd4B", "Use OBJECT custom JSAPI coming in from script (SimpleMath) (should FAIL!)");
+
             addTest("countArray", "Count array length returned from JSAPI object");
             addTest("simpleFireEvent", "Simple event bind and fire test");
             addTest("attachedFireEvent", "Simple event bind attach and fire test");
@@ -129,12 +189,25 @@
             addTest("calltest", "Function.call method");
             addTest("applytest", "Function.apply method");
             markFailed("loaded");
+            markFailed("loaded2");
             injectPlugin($("#pluginContainer"), pluginLoaded);
+            injectPlugin2($("#pluginContainer2"), pluginLoaded2);
+            injectPlugin3($("#pluginContainer3"), pluginLoaded3);
         }
 
         function pluginLoaded() {
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
+            //setTimeout(pluginRunTests, 500);
+        }
+        function pluginLoaded2() {
+            markPassed("loaded2");
+            $("#pluginContainer2").css("border", "1px solid black");
+            //setTimeout(pluginRunTests, 500);
+        }
+        function pluginLoaded3() {
+            markPassed("loaded3");
+            $("#pluginContainer3").css("border", "1px solid black");
             setTimeout(pluginRunTests, 500);
         }
 
@@ -144,6 +217,15 @@
                 markPassed("valid");
             else
                 markFailed("valid");
+
+            var mathplugin2 = window.plugin2();
+            if (mathplugin2.valid)
+                markPassed("valid2");
+            else
+                markFailed("valid2");
+
+            // note: no valid property!
+            var mathplugin3 = window.plugin3();
                 
             try {
                 var path = plugin.pluginPath;
@@ -195,6 +277,12 @@
             else
                 markPassed("getMap");
 
+            if (plugin.getPageLocation() != window.location.href)
+                markFailed("location");
+            else
+                markPassed("location");
+                
+            // Use math object in plugin, call math methods.
             var math = plugin.simpleMath;
             if (math.add(34, 43) != 77
                 || math.sub(10, 5) != 5) {
@@ -203,11 +291,50 @@
                 markPassed("mathAPI");
             }
 
-            if (plugin.getPageLocation() != window.location.href)
-                markFailed("location");
-            else
-                markPassed("location");
-                
+            // Main object creates new math object, call math methods.
+            var math2 = plugin.createSimpleMath();
+            if (math2.add(34, 43) != 77
+                || math2.sub(10, 5) != 5) {
+                markFailed("mathAPI2");
+            } else {
+                markPassed("mathAPI2");
+            }
+            
+            // HTML OBJECT tag creates math object, call math methods.
+            if (mathplugin2.add(34, 43) != 77
+                || mathplugin2.sub(10, 5) != 5) {
+                markFailed("mathAPI3");
+            } else {
+                markPassed("mathAPI3");
+            }
+
+            // HTML OBJECT tag creates math object, call math methods on self.
+            var mathplugin2_self = mathplugin2.self;
+            if (mathplugin2_self.add(34, 43) != 77
+                || mathplugin2_self.sub(10, 5) != 5) {
+                markFailed("mathAPI4");
+            } else {
+                markPassed("mathAPI4");
+            }
+
+            // HTML OBJECT tag creates math object, call math methods.
+            if (mathplugin3.add(34, 43) != 77
+                || mathplugin3.sub(10, 5) != 5) {
+                markFailed("mathAPI3B");
+            } else {
+                markPassed("mathAPI3B");
+            }
+
+            // HTML OBJECT tag creates math object, call math methods on self.
+            var mathplugin3_self = mathplugin3.self;
+            if (mathplugin3_self.add(34, 43) != 77
+                || mathplugin3_self.sub(10, 5) != 5) {
+                markFailed("mathAPI4B");
+            } else {
+                markPassed("mathAPI4B");
+            }
+
+            // Use math object in plugin as method argument
             try {
                 if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
                     markFailed("mathApiAdd");
@@ -216,6 +343,71 @@
             } catch (e) {
                     markFailed("mathApiAdd");
             }
+
+            // Use new math object created by main plugin as method argument
+            try {
+                // Main object creates helper, can call main object with helper as an argument
+                var mathapiadd2 = plugin.createSimpleMath();
+                if (plugin.addWithSimpleMath(mathapiadd2, 23, 532) != 555)
+                    markFailed("mathApiAdd2");
+                else
+                    markPassed("mathApiAdd2");
+            } catch (e) {
+                    markFailed("mathApiAdd2");
+            }
+
+            // Use math object (SELF) created by HTML OBJECT tag as method argument
+            try {
+                // HTML OBJECT tag creates helper, can call main object with helper as an argument
+                var mathplugin2_self = mathplugin2.self;
+                // Same as mathplugin2.self:
+                // var mathplugin2_self = mathplugin2.GetSelf();
+                if (plugin.addWithSimpleMath(mathplugin2_self, 23, 532) != 555)
+                    markFailed("mathApiAdd3");
+                else
+                    markPassed("mathApiAdd3");
+            } catch (e) {
+                    markFailed("mathApiAdd3");
+            }
+
+            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
+            try {
+                // HTML OBJECT tag creates helper, can call main object with helper as an argument
+                var mathplugin2_var = mathplugin2;
+                if (plugin.addWithSimpleMath(mathplugin2_var, 23, 532) != 555)
+                    markFailed("mathApiAdd4");
+                else
+                    markPassed("mathApiAdd4");
+            } catch (e) {
+                    markFailed("mathApiAdd4");
+            }
+
+            // Use math object (SELF) created by HTML OBJECT tag as method argument
+            try {
+                // HTML OBJECT tag creates helper, can call main object with helper as an argument
+                var mathplugin3_self = mathplugin3.self;
+                // Same as mathplugin3.self:
+                // var mathplugin3_self = mathplugin3.GetSelf();
+                if (plugin.addWithSimpleMath(mathplugin3_self, 23, 532) != 555)
+                    markFailed("mathApiAdd3B");
+                else
+                    markPassed("mathApiAdd3B");
+            } catch (e) {
+                    markFailed("mathApiAdd3B");
+            }
+
+            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
+            try {
+                // HTML OBJECT tag creates helper, can call main object with helper as an argument
+                var mathplugin3_var = mathplugin3;
+                if (plugin.addWithSimpleMath(mathplugin3_var, 23, 532) != 555)
+                    markFailed("mathApiAdd4B");
+                else
+                    markPassed("mathApiAdd4B");
+            } catch (e) {
+                    markFailed("mathApiAdd4B");
+            }
+            
             var sm = plugin.simpleMath;
             var c = plugin.countArrayLength(sm);
             if (c!=4) {
@@ -387,6 +579,12 @@
     </div>
     <div id="pluginContainer">
         <br /><br /><br />Plugin will go here!
+    </div>
+    <div id="pluginContainer2">
+        <br /><br /><br />Plugin2 will go here!
+    </div>
+    <div id="pluginContainer3">
+        <br /><br /><br />Plugin3 will go here!
     </div>
     <div id="testResults">
         <ul>

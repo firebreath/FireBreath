@@ -9,6 +9,7 @@
 
 #include "FactoryBase.h"
 #include "FBTestPlugin.h"
+#include "FBTestMathPlugin.h"
 #include <boost/make_shared.hpp>
 
 class PluginFactory : public FB::FactoryBase
@@ -16,7 +17,12 @@ class PluginFactory : public FB::FactoryBase
 public:
     FB::PluginCorePtr createPlugin(const std::string& mimetype)
     {
-        return boost::make_shared<FBTestPlugin>();
+        if (!mimetype.compare("application/x-fbtestmathplugin")) {
+            return boost::make_shared<FBTestMathPlugin>(mimetype);
+        } else {
+            // handles "application/x-fbtestplugin" and  "application/x-fbtestplugin-math"
+            return boost::make_shared<FBTestPlugin>(mimetype);
+        }
     }
     
     void globalPluginInitialize()

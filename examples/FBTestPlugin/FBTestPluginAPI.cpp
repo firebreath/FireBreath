@@ -25,7 +25,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
+FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::BrowserHostPtr& host) : m_host(host), m_pluginWeak(plugin)
 {    
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
@@ -81,9 +81,9 @@ FBTestPluginAPI::~FBTestPluginAPI()
     //std::map<int,int>::capacity()
 }
 
-boost::shared_ptr<FBTestPlugin> FBTestPluginAPI::getPlugin()
+FBTestPluginPtr FBTestPluginAPI::getPlugin()
 {
-    boost::shared_ptr<FBTestPlugin> plugin = m_pluginWeak.lock();
+    FBTestPluginPtr plugin = m_pluginWeak.lock();
     if (!plugin)
         throw FB::script_error("The plugin object has been destroyed");
     return plugin;
@@ -298,9 +298,9 @@ long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso)
     long len = array.size();// array->GetProperty("length").convert_cast<long>();
     return len;
 }
-long FBTestPluginAPI::addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& math, long a, long b) 
+FB::variant FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
 {
-    return math->add(a, b);
+    return math->Invoke("add", FB::variant_list_of(a)(b));
 }
 
 ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
@@ -355,7 +355,7 @@ const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::str
     return str;
 }
 
-boost::shared_ptr<SimpleMathAPI> FBTestPluginAPI::createSimpleMath()
+SimpleMathAPIPtr FBTestPluginAPI::createSimpleMath()
 {
     // Create a new simplemath object each time
     return boost::make_shared<SimpleMathAPI>(m_host);

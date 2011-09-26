@@ -28,6 +28,9 @@ SimpleMathAPI::SimpleMathAPI(const FB::BrowserHostPtr& host) : m_host(host)
     registerMethod("mult",  make_method(this, &SimpleMathAPI::mult));
     registerMethod("div",  make_method(this, &SimpleMathAPI::div));
     registerProperty("getArray",  make_property(this, &SimpleMathAPI::getArray));
+
+    registerProperty("self",  make_property(this, &SimpleMathAPI::get_self));
+    registerMethod("GetSelf",  make_method(this, &SimpleMathAPI::GetSelf));
 }
 
 SimpleMathAPI::~SimpleMathAPI()
@@ -61,3 +64,12 @@ long SimpleMathAPI::div(long a, long b)
     return a/b;
 }
 
+const FB::JSAPIPtr SimpleMathAPI::get_self()
+{
+    return shared_from_this();
+}
+
+const FB::JSAPIPtr SimpleMathAPI::GetSelf()
+{
+    return shared_from_this();
+}

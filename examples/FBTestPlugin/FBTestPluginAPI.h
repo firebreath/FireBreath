@@ -14,13 +14,13 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include <string>
-#include <boost/shared_ptr.hpp>
 #include <sstream>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include <boost/weak_ptr.hpp>
 #include <boost/optional.hpp>
 #include "SimpleStreamHelper.h"
+#include "FBPointers.h"
 
 FB_FORWARD_PTR(ThreadRunnerAPI);
 FB_FORWARD_PTR(SimpleMathAPI);
@@ -29,7 +29,7 @@ FB_FORWARD_PTR(FBTestPlugin);
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(boost::shared_ptr<FBTestPlugin> plugin, FB::BrowserHostPtr host);
+    FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::BrowserHostPtr& host);
     virtual ~FBTestPluginAPI();
 
     FB_JSAPI_EVENT(fired, 1, (const std::string));
@@ -48,7 +48,7 @@ public:
 
     boost::weak_ptr<SimpleMathAPI> get_simpleMath();
 
-    boost::shared_ptr<SimpleMathAPI> createSimpleMath();
+    SimpleMathAPIPtr createSimpleMath();
   
     FB::variant echo(const FB::variant& a);
 
@@ -81,7 +81,7 @@ public:
     std::string get_pluginPath();
     
     void eval(std::string str);
-    long addWithSimpleMath(const boost::shared_ptr<SimpleMathAPI>& jso, long a, long b);
+    FB::variant addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
     void getURL(const std::string& url, const FB::JSObjectPtr& callback);
     void postURL(const std::string& url, const std::string& postdata, const FB::JSObjectPtr& callback);
     void getURLCallback(const FB::JSObjectPtr& callback, bool success, const FB::HeaderMap& headers,
@@ -91,8 +91,8 @@ public:
 
 private:
     FB::BrowserHostPtr m_host;
-    boost::shared_ptr<SimpleMathAPI> m_simpleMath;
-    boost::weak_ptr<FBTestPlugin> m_pluginWeak;
+    SimpleMathAPIPtr m_simpleMath;
+    FBTestPluginWeakPtr m_pluginWeak;
 
     std::string m_testString;
 };

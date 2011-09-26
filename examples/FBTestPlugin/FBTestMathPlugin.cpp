@@ -1,68 +1,48 @@
 /**********************************************************\
 
-  Auto-generated FBTestPlugin.cpp
+  FBTestMathPlugin.cpp
 
-  This file contains the auto-generated main plugin object
+  This file contains the seconday plugin object
   implementation for the ${PLUGIN.name} project
 
 \**********************************************************/
 
 #include <sstream>
-#include "FBTestPluginAPI.h"
 #include "SimpleMathAPI.h"
 #include <stdio.h>
 
-#include "FBTestPlugin.h"
+#include "FBTestMathPlugin.h"
 #include "DOM/Window.h"
 #include "URI.h"
 
 #ifdef FB_WIN
 #include "PluginWindowWin.h"
 #include "PluginWindowlessWin.h"
-#ifdef HAS_LEAKFINDER
-#define XML_LEAK_FINDER
-#include "LeakFinder/LeakFinder.h"
-#endif
 #endif
 
 
-#ifdef HAS_LEAKFINDER
-boost::scoped_ptr<LeakFinderXmlOutput> FBTestPlugin::pOut;
-#endif
-
-void FBTestPlugin::StaticInitialize()
+void FBTestMathPlugin::StaticInitialize()
 {
-    FBLOG_INFO("StaticInit", "Static Initialize");
+    FBLOG_INFO("FBTestMathPlugin::StaticInit", "Static Initialize");
     // Place one-time initialization stuff here; As of FireBreath 1.4 this should only
     // be called once per process
-
-#ifdef HAS_LEAKFINDER
-#ifdef XML_LEAK_FINDER
-    pOut.swap(boost::scoped_ptr<LeakFinderXmlOutput>(new LeakFinderXmlOutput(L"C:\\code\\firebreath_mem.xml")));
-#endif
-    InitLeakFinder();
-#endif
 }
 
-void FBTestPlugin::StaticDeinitialize()
+void FBTestMathPlugin::StaticDeinitialize()
 {
-#ifdef HAS_LEAKFINDER
-    DeinitLeakFinder(pOut.get());
-    pOut.reset();
-#endif
-    FBLOG_INFO("StaticInit", "Static Deinitialize");
+    FBLOG_INFO("FBTestMathPlugin::StaticInit", "Static Deinitialize");
     // Place one-time deinitialization stuff here. This should be called just before
     // the plugin library is unloaded
 
 }
 
 
-FBTestPlugin::FBTestPlugin(const std::string& mimetype) :
+FBTestMathPlugin::FBTestMathPlugin(const std::string& mimetype) :
     m_mimetype(mimetype)
 {
 }
 
-FBTestPlugin::~FBTestPlugin()
+FBTestMathPlugin::~FBTestMathPlugin()
 {
     // By resetting the api and then telling the host that the plugin instance is shutting down,
     // we control the lifecycle. As long as m_api isn't stored anywhere else, telling host to
@@ -71,20 +51,13 @@ FBTestPlugin::~FBTestPlugin()
     m_host->freeRetainedObjects();
 }
 
-FB::JSAPIPtr FBTestPlugin::createJSAPI()
+FB::JSAPIPtr FBTestMathPlugin::createJSAPI()
 {
-    // Return a SimpleMath object instead of a FBTestPluginAPI:
-    if (!m_mimetype.compare("application/x-fbtestplugin-math")) {
-        // Create a new simplemath object each time        
-        return boost::make_shared<SimpleMathAPI>(m_host);
-    }
-
-    // By default, return a FBTestPluginAPI object:
     // m_host is the BrowserHost
-    return boost::make_shared<FBTestPluginAPI>(FB::ptr_cast<FBTestPlugin>(shared_from_this()), m_host);
+    return boost::make_shared<SimpleMathAPI>(m_host);
 }
 
-bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
+bool FBTestMathPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
 {
     // These are just examples; if you don't need them, remove them, as htmlLog
     // does have a performance penalty!
@@ -94,7 +67,7 @@ bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
     return false;
 }
 
-bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
+bool FBTestMathPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
 {
     // These are just examples; if you don't need them, remove them, as htmlLog
     // does have a performance penalty!
@@ -104,7 +77,7 @@ bool FBTestPlugin::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindow*)
     return false;
 }
 
-bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
+bool FBTestMathPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
 {
     // These are just examples; if you don't need them, remove them, as htmlLog
     // does have a performance penalty!
@@ -114,19 +87,19 @@ bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
     return false;
 }
 
-bool FBTestPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* )
+bool FBTestMathPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* )
 {
     // This is called when the window is attached; don't start drawing before this!
     return false;
 }
 
-bool FBTestPlugin::onDetached( FB::DetachedEvent *evt, FB::PluginWindow* )
+bool FBTestMathPlugin::onDetached( FB::DetachedEvent *evt, FB::PluginWindow* )
 {
     // This is called when the window is detached! You must not draw after this!
     return false;
 }
 
-bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
+bool FBTestMathPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
 {
     FB::Rect pos = win->getWindowPosition();
 #if FB_WIN
@@ -145,11 +118,7 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
     }
 
     ::SetTextAlign(hDC, TA_CENTER|TA_BASELINE);
-    LPCTSTR pszText = _T("FireBreath Plugin!");
-    if (!m_mimetype.compare("application/x-fbtestplugin-math")) {
-        // Mark 2nd mimetype differently than main mimetype
-        pszText =  _T("FireBreath Plugin (Math)!");
-    }
+    LPCTSTR pszText = _T("FireBreath SimpleMath Plugin!");
     ::TextOut(hDC, pos.left + (pos.right - pos.left) / 2, pos.top + (pos.bottom - pos.top) / 2, pszText, lstrlen(pszText));
 
     if (wnd) {
@@ -160,13 +129,13 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
     return true;
 }
 
-bool FBTestPlugin::isWindowless()
+bool FBTestMathPlugin::isWindowless()
 {
     return PluginCore::isWindowless();
     //return true;
 }
 
-void FBTestPlugin::onPluginReady()
+void FBTestMathPlugin::onPluginReady()
 {
     FB::DOM::WindowPtr window = m_host->getDOMWindow();
     if (!window)

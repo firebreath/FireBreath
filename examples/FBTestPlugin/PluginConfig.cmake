@@ -36,22 +36,27 @@ set(FBSTRING_ProductName "FBTestPlugin")
 set(FBSTRING_PluginName "FBTestPlugin")
 
 #these should be lists if we are going to support multiple MIME types:
+# x-fbtestplugin is main plugin, x-fbtestplugin-math is math object from main plugin, x-fbtestmathplugin is math plugin
 set(FBSTRING_MIMEType
     "application/x-fbtestplugin"
-    "application/x-fbtestplugin2"
+    "application/x-fbtestplugin-math"
+    "application/x-fbtestmathplugin"
     )
 set(ACTIVEX_PROGID
     "FBDevTeam.FBTestPlugin"
-    "FBDevTeam.FBTestPlugin_2"
+    "FBDevTeam.FBTestPlugin_Math"
+    "FBDevTeam.FBTestMathPlugin"
     )
 set(FBControl_GUID
     9E506282-69D3-5ABA-9C1D-15994B37F4AC
     9E506282-69D3-5ABA-9C1D-15994B37F4AD
+    9E506282-69D3-5ABA-9C1D-15994B37F4AE
     )
 set(FBSTRING_FileExtents "")
 set(FBSTRING_FileDescription
     "Firebreath Test Plugin - Plugin for testing all interfaces and features"
-    "Firebreath Test Plugin Secondary - Helper for testing all interfaces and features"
+    "Firebreath Test Plugin Math - Helper created from Main Plugin Object"
+    "Firebreath Test Plugin SimpleMath - Helper created from Second Plugin Object"
     )
 
 # If you want to register per-machine, uncomment this line

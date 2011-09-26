@@ -1,0 +1,40 @@
+
+Modified original FBTestPlugin as follows to support multiple mimetypes
+in a single codebase:
+
+1.  Edit PluginConfig.cmake, add multiple entries for the following
+    entries: FBSTRING_MIMEType, ACTIVEX_PROGID, FBControl_GUID, and
+    FBSTRING_FileDescription.  Make sure that you provide unique values for
+    all entries, including the GUIDs in FBControl_GUID.
+
+2.  Edit Factory.cpp, modify PluginFactory::createPlugin() and add code
+    to check mimetype and create the appropriate object.  Also add
+    "mimetype" as a parameter to
+    "boost::make_shared<FBTestPlugin>(mimetype)".  The new code can construct
+    the "standard" FBTestPlugin plugin, or a new "SimpleMath" plugin from
+    either the FBTestPlugin or FBTestMathPlugin C++ objects.
+
+3.  In FBTestPlugin.h, modify the FBTestPlugin constructor to take
+    "const std::string& mimetype" as an argument.  Add "std::string
+    m_mimetype;" as a private variable to FBTestPlugin.
+
+4.  In FBTestPlugin.cpp, modify the FBTestPlugin constructor to take
+    "const std::string& mimetype" as an argument and to set m_mimetype from
+    the mimetype parameter.  Modify createJSAPI() to return 
+    "boost::make_shared<SimpleMathAPI>(m_host)"
+    instead of 
+        "boost::make_shared<FBTestPluginAPI>(FB::ptr_cast<FBTestPlugin>(shared_from_this()), m_host)"
+    depending on the mimetype.  Include "SimpleMath.h".
+    Modify the plugin text in the drawing code depending on the mimetype for visual feedback to user.
+
+5.  Modify SimpleMathAPI.h and SimpleMathAPI.cpp to add "self" property
+    and "GetSelf()" method, both of which return shared_from_this().
+
+6.  Copy FBTestPlugin.* to FBTestMathPlugin.* and change object name.
+    Simplify FBTestMathPlugin by removing the LeakFinder.  Modify
+    createJSAPI() to return only the SimpleMathAPI object.  Modify the
+    plugin text in the drawing code for visual feedback to user.
+
+7.  Modified test code in test.html to test multiple mimetypes.  Create
+    three plugins, and test math functions using all three.
+

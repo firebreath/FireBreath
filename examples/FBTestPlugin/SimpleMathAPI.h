@@ -31,6 +31,10 @@ public:
     // Read-only property someInt
     int get_someInt();
 
+    // Read-only self (property, method)
+    const FB::JSAPIPtr get_self();
+    const FB::JSAPIPtr GetSelf();
+
     // Method add
     long add(long a, long b);
     long sub(long a, long b);
