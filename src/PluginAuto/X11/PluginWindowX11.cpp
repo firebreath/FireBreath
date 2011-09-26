@@ -198,22 +198,23 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         }
     }
 
+    unsigned int modifierState = 0;  //TODO
     switch(event->type)
     {
         // Mouse button down
         case GDK_BUTTON_PRESS: {
+            MouseDownEvent evt(btn, button->x, button->y, modifierState);
             if(!m_focus){
                 //When the mouse button is pressed, we can be sure,
                 //that the top window has the focus and we can request keyboard focus.
                 gtk_widget_grab_focus(widget);
             }
-            MouseDownEvent evt(btn, button->x, button->y);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
-            MouseUpEvent evt(btn, button->x, button->y);
+            MouseUpEvent evt(btn, button->x, button->y, modifierState);
             return SendEvent(&evt) ? 1 : 0;
         } break;
 

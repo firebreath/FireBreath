@@ -38,13 +38,16 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             return TRUE;
         }
     }
+	unsigned int modifierState = (GetKeyState(VK_SHIFT) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
+	modifierState += (GetKeyState(VK_CONTROL) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
+	modifierState += (GetKeyState(VK_MENU) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
     switch(event) {
         case WM_LBUTTONDOWN: 
         {
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_RBUTTONDOWN:
@@ -52,7 +55,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Right, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_MBUTTONDOWN:
@@ -60,7 +63,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
+            MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_LBUTTONUP: 
@@ -68,7 +71,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Left, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_RBUTTONUP:
@@ -76,7 +79,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Right, x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Right, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_MBUTTONUP:
@@ -84,7 +87,7 @@ bool PluginWindowlessWin::HandleEvent(uint32_t event, uint32_t wParam, uint32_t 
             int32_t x = GET_X_LPARAM(lParam);
             int32_t y = GET_Y_LPARAM(lParam);
             translateWindowToPlugin(x, y);
-            MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle, x, y);
+            MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle, x, y, modifierState);
             return SendEvent(&ev);
         }
         case WM_MOUSEMOVE:

@@ -79,6 +79,9 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         return true;
     }
 
+	unsigned int modifierState = (GetKeyState(VK_SHIFT) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
+	modifierState += (GetKeyState(VK_CONTROL) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
+	modifierState += (GetKeyState(VK_MENU) & 0x8000) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
     switch(uMsg) {
 		case WM_MOUSEACTIVATE:
 		{
@@ -120,7 +123,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_LBUTTONDOWN: 
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Left, 
-                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
@@ -128,7 +131,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_RBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
-                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
@@ -136,7 +139,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_MBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Middle,
-                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
@@ -144,7 +147,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_LBUTTONUP: 
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Left,
-                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
@@ -152,7 +155,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_RBUTTONUP:
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Right,
-                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
@@ -160,7 +163,7 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_MBUTTONUP:
         {
             MouseUpEvent ev(MouseButtonEvent::MouseButton_Middle,
-                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                            GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
