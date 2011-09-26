@@ -35,10 +35,10 @@ namespace
 {
     bool needAsyncCallsWorkaround(NPP npp, NPNetscapeFuncs* funcs)
     {
+        bool result(false);
         // work-around detection here
 #if FB_WIN
         const char* const cstrUserAgent = funcs->uagent(npp);
-        bool result(false);
         if(cstrUserAgent) {
             const std::string userAgent(cstrUserAgent);
             // Safari 5.1 NPN_PluginThreadAsyncCall doesn't seem to work anymore; use the workaround
