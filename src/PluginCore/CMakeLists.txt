@@ -94,7 +94,7 @@ set (SOURCES
     )
 
 if (APPLE)
-    FIND_LIBRARY(CORE_FOUNDATION NAMES foundation)
+    FIND_LIBRARY(FOUNDATION NAMES foundation)
     include_directories(${FOUNDATION}/Headers)
 endif()
 
