@@ -15,6 +15,11 @@ Copyright 2011 GradeCam, Inc and the Firebreath development team
 #include "../SystemHelpers.h"
 #include "shlobj.h"
 
+#ifndef REFKNOWNFOLDERID
+typedef GUID KNOWNFOLDERID;
+#define REFKNOWNFOLDERID const KNOWNFOLDERID &
+#endif
+
 using std::string;
 
 typedef HRESULT (WINAPI*GetKnownFolderPathFunc)(REFKNOWNFOLDERID, DWORD, HANDLE hToken, PWSTR *ppszPath); // free *ppszPath with CoTaskMemFree
