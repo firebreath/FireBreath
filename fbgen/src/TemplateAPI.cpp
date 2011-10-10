@@ -7,6 +7,7 @@
 #include "JSObject.h"
 #include "variant_list.h"
 #include "DOM/Document.h"
+#include "global/config.h"
 
 #include "@{PLUGIN_ident}API.h"
 
@@ -80,7 +81,7 @@ void @{PLUGIN_ident}API::set_testString(const std::string& val)
 // Read-only property version
 std::string @{PLUGIN_ident}API::get_version()
 {
-    return "CURRENT_VERSION";
+    return FBSTRING_PLUGIN_VERSION;
 }
 
 // Method echo
