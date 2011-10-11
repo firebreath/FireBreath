@@ -79,11 +79,11 @@ extern HINSTANCE gInstance;
 // DllRegisterServer - Adds entries to the system registry
 STDAPI DllRegisterServer(void)
 {
-    //Sleep(10000);
-    // registers object, typelib and all interfaces in typelib
+	//Sleep(10000);
+	boost::scoped_ptr<FbPerUserRegistration> regHolder;
 #ifndef FB_ATLREG_MACHINEWIDE
     if (!boost::algorithm::ends_with(getProcessName(), "heat.exe")) {
-        FbPerUserRegistration perUser(true);
+        regHolder.swap(boost::scoped_ptr<FbPerUserRegistration>(new FbPerUserRegistration(true)));
     }
 #endif
     HRESULT hr = _AtlModule.DllRegisterServer();
@@ -97,9 +97,10 @@ STDAPI DllRegisterServer(void)
 // DllUnregisterServer - Removes entries from the system registry
 STDAPI DllUnregisterServer(void)
 {
+	boost::scoped_ptr<FbPerUserRegistration> regHolder;
 #ifndef FB_ATLREG_MACHINEWIDE
     if (!boost::algorithm::ends_with(getProcessName(), "heat.exe")) {
-        FbPerUserRegistration perUser(true);
+        regHolder.swap(boost::scoped_ptr<FbPerUserRegistration>(new FbPerUserRegistration(true)));
     }
 #endif
     HRESULT hr = _AtlModule.DllUnregisterServer();
