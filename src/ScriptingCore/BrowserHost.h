@@ -286,6 +286,18 @@ namespace FB
         /// @see DOM::Element
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual DOM::ElementPtr getDOMElement() = 0;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual void Navigate(const std::string& url, const std::string& target)
+        ///
+        /// @brief  Instructs the browser to navigate to the specified url in the target window
+        ///
+        /// @param  url URL to navigate to
+        /// @param  target Target window (for example, "_blank" will open a new window/tab)
+        /// @since 1.6.0rc2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual void Navigate(const std::string& url, const std::string& target) {};
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void evaluateJavaScript(const std::string &script) = 0
         ///

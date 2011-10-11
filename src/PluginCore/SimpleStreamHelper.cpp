@@ -133,7 +133,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         // Free all the old blocks
         blocks.clear();
     }
-    if (callback) {
+    if (callback && stream) {
         std::multimap<std::string, std::string> headers;
         headers = parse_http_headers(stream->getHeaders());
         callback(true, headers, data, received);

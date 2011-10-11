@@ -393,3 +393,14 @@ void FB::ActiveX::ActiveXBrowserHost::ReleaseAllHeldObjects()
     m_heldIDispatch.clear();
 }
 
+void FB::ActiveX::ActiveXBrowserHost::Navigate( const std::string& url, const std::string& target )
+{
+    CComBSTR destURL(FB::utf8_to_wstring(url).c_str());
+    CComVariant targetWin(FB::utf8_to_wstring(target).c_str());
+
+    CComVariant vEmpty;
+
+    HRESULT hr = m_webBrowser->Navigate(destURL, &vEmpty, &targetWin, &vEmpty, &vEmpty);
+    assert(SUCCEEDED(hr));
+}
+

@@ -48,7 +48,8 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
     registerMethod("optionalTest", make_method(this, &FBTestPluginAPI::optionalTest));
     registerMethod("getURL", make_method(this, &FBTestPluginAPI::getURL));
     registerMethod("postURL", make_method(this, &FBTestPluginAPI::postURL));
-     
+    registerMethod("openPopup", make_method(this, &FBTestPluginAPI::openPopup));
+
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
     registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
@@ -375,4 +376,9 @@ FB::VariantMap FBTestPluginAPI::getProxyInfo(const boost::optional<std::string>&
         outMap[it->first] = it->second;
     }
     return outMap;
+}
+
+void FBTestPluginAPI::openPopup()
+{
+    m_host->Navigate("http://www.firebreath.org", "_blank");
 }
