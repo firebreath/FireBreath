@@ -65,6 +65,7 @@ namespace FB { namespace Npapi {
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
         FB::DOM::ElementPtr getDOMElement();
+        void Navigate(const std::string& url, const std::string& target);
         void evaluateJavaScript(const std::string &script);
         bool isSafari() const;
         bool isFirefox() const;

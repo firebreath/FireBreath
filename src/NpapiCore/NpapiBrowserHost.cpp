@@ -827,3 +827,10 @@ bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std
         return true;
     }
 }
+
+void FB::Npapi::NpapiBrowserHost::Navigate( const std::string& url, const std::string& target )
+{
+    PushPopupsEnabledState(true);
+    GetURL(url.c_str(), target.c_str());
+    PopPopupsEnabledState();
+}

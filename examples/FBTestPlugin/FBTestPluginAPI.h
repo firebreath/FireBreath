@@ -89,6 +89,8 @@ public:
 
     FB::VariantMap getProxyInfo(const boost::optional<std::string>& url);
 
+    void openPopup();
+
 private:
     FB::BrowserHostPtr m_host;
     SimpleMathAPIPtr m_simpleMath;

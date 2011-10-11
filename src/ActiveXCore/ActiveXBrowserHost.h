@@ -64,13 +64,14 @@ namespace FB {
         public:
             FB::DOM::DocumentPtr getDOMDocument();
             FB::DOM::WindowPtr getDOMWindow();
+            FB::DOM::ElementPtr getDOMElement();
+            void Navigate(const std::string& url, const std::string& target);
             
             bool hasHTMLWindow() { return m_htmlWin != NULL; }
 
             void suspend();
             void resume(IWebBrowser2 *doc, IOleClientSite* clientSite);
             
-            FB::DOM::ElementPtr getDOMElement();
             void evaluateJavaScript(const std::string &script);
             void shutdown();
 
