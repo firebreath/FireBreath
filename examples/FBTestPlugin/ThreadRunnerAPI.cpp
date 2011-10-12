@@ -16,6 +16,7 @@ Copyright 2010 Facebook Inc, Firebreath development team
 #include "SimpleStreamHelper.h"
 #include "variant_list.h"
 #include <utility>
+#include "logging.h"
 
 #include "ThreadRunnerAPI.h"
 
@@ -68,8 +69,10 @@ void ThreadRunnerAPI::threadRun()
 
         std::pair<std::string, FB::JSObjectPtr> val;
         if (m_UrlRequestQueue.try_pop(val)) {
-            FB::HttpStreamResponsePtr ret = FB::SimpleStreamHelper::SynchronousGet(m_host,
-                FB::URI::fromString(val.first));
+            FBLOG_WARN("ThreadRunner", "Beginning request of " << val.first);
+            FB::HttpStreamResponsePtr ret = FB::SimpleStreamHelper::SynchronousPost(m_host,
+                FB::URI::fromString(val.first), "");
+            FBLOG_WARN("ThreadRunner", "Finished request of " << val.first << " and got " << ret->success);
             FB::VariantMap outHeaders;
             for (FB::HeaderMap::const_iterator it = ret->headers.begin(); it != ret->headers.end(); ++it) {
                 if (ret->headers.count(it->first) > 1) {
