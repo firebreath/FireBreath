@@ -16,9 +16,51 @@ Copyright 2011 GradeCam, Inc and the Firebreath development team
 
 namespace FB {
     namespace System {
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn std::string FB::System::getHomeDirPath()
+        ///
+        /// @brief  Returns the current user's homedir
+        ///
+        /// @returns std::string
+        /// @since 1.6rc2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
         std::string getHomeDirPath();
-        std::string getLocalAppDataPath(const std::string& appName);
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn std::string FB::System::getAppDataPath(const std::string& appName)
+        ///
+        /// @brief  Returns a path to a directory suitable for storing application-specific data
+        ///
+        /// @returns std::string
+        /// @since 1.6rc2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        
         std::string getAppDataPath(const std::string& appName);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn std::string FB::System::getAppDataPath(const std::string& appName)
+        ///
+        /// @brief  Returns a path to a local directory suitable for storing application-specific data
+        ///
+        /// The directory returned by this function will be local. This can be useful in configurations where profile data resides remotely, e.g. in Windows Server domains.
+        ///
+        /// @returns std::string
+        /// @since 1.6rc2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        std::string getLocalAppDataPath(const std::string& appName);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn std::string FB::System::getTempPath()
+        ///
+        /// @brief  Returns a path to a directory suitable for temporary files
+        ///
+        /// @returns std::string
+        /// @since 1.6rc2
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+
         std::string getTempPath();
     };
 };
