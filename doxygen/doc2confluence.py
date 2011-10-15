@@ -14,7 +14,7 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 the Firebreath development team
 """
-import os, sys, xmlrpclib
+import os, sys, SOAPpy
 from xml.dom import minidom
 from itertools import izip
 
@@ -28,8 +28,9 @@ class Doxygen2Confluence:
     pathMap = {}
     baseUrl = "/display/documentation/%s"
     classDocsUrl = "http://classdocs.firebreath.org/"
-    server = xmlrpclib.ServerProxy("http://www.firebreath.org/rpc/xmlrpc")
-    rpc = server.confluence1
+    url = "http://www.firebreath.org/rpc/soap-axis/confluenceservice-v2?wsdl"
+    server = SOAPpy.SOAPProxy(url)
+    rpc = SOAPpy.WSDL.Proxy(url)
     token = ""
     space = "documentation"
     topPages = {
@@ -81,17 +82,27 @@ class Doxygen2Confluence:
             except:
                 page = {"space": self.space, "title": pageName}
 
-        page["parentId"] = self.parents[refId]
         if kind == "file":
             filename = "%s_source.html" % refId
         else:
             filename = "%s.html" % refId
-        page["content"] = "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename
+
+        npage = {
+            "content": "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename,
+            "space": page["space"],
+            "title": page["title"],
+        }
+
+        if hasattr(page, 'id'):
+            npage["id"] = int(page["id"])
+            npage["parentId"] = int(self.parents[refId])
+            npage["version"] = int(page["version"])
 
         n = 0
         while n < 10:
             try:
-                page = self.rpc.storePage(self.token, page)
+                npage["content"] = self.rpc.convertWikiToStorageFormat(self.token, npage['content'])
+                page = self.rpc.storePage(self.token, npage)
                 self.createdPages.append(page["id"])
                 self.rpc.setContentPermissions(self.token, page["id"], "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
@@ -165,7 +176,10 @@ class Doxygen2Confluence:
 
         for id, url in izip(self.pathMap.keys(), self.pathMap.values()):
             #print "Changing %s to %s" % (id, url)
-            fileText = fileText.replace(id, url)
+            try:
+                fileText = fileText.replace(id, url)
+            except UnicodeDecodeError:
+                fileText = fileText.replace(id.encode('utf8'), url.encode('utf8'))
         fileText = fileText.replace(r'img src="', r'img src="http://classdocs.firebreath.org/')
 
         nf = open(os.path.join(outPath, filename), "w")
