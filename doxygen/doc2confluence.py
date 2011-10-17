@@ -67,10 +67,10 @@ class Doxygen2Confluence:
         return retVal.replace("<", "(").replace(">", ")").replace("/", " ")
 
     def makeFirstPageInConfluence(self, pageId, targetPageId):
-        children = self.rpc.getChildren(self.token, pageId)
+        children = self.rpc.getChildren(self.token, SOAPpy.Types.longType(long(pageId)))
         if children[0]["id"] != targetPageId:
             print "Moving %s to before %s" % (targetPageId, children[0]["id"])
-            self.rpc.movePage(self.token, targetPageId, children[0]["id"], "above")
+            self.rpc.movePage(self.token, SOAPpy.Types.longType(long(targetPageId)), SOAPpy.Types.longType(long(children[0]["id"])), "above")
 
     def exportToConfluence(self, refId, pageName, kind):
         try:
@@ -118,11 +118,11 @@ class Doxygen2Confluence:
     def cleanConfluence(self):
         for kind, id in self.topPages.items():
             print "Scanning pages for %s (id %s)" % (kind, id)
-            pages = self.rpc.getDescendents(self.token, id)
+            pages = self.rpc.getDescendents(self.token, SOAPpy.Types.longType(long(id)))
             for page in pages:
                 if (page["id"] not in self.createdPages) and (page["id"] not in self.topPages.values()):
                     print "Removing defunct page: %s (%s)" % (page["title"], page["id"])
-                    self.rpc.removePage(self.token, page["id"])
+                    self.rpc.removePage(self.token, SOAPpy.Types.longType(long(page["id"])))
 
     def processDirectory(self, path):
         xml = minidom.parse("docs/xml/index.xml")
