@@ -51,6 +51,7 @@ class Doxygen2Confluence:
         self.token = self.rpc.login(self.username, self.password)
 
     def __init__(self, username, password):
+        SOAPpy.Parser._parseSOAP = self.confluence_soap_parser
         self.username = username
         self.password = password
         self.login()
@@ -235,6 +236,12 @@ class Doxygen2Confluence:
                 membersPageId = self.exportToConfluence("%s-members" % refid, "%s Members" % item["name"], "members")
                 self.makeFirstPageInConfluence(pageId, membersPageId)
         self.cleanConfluence()
+
+
+    def confluence_soap_parser(self, xml_str, rules=None, parser=SOAPpy.Parser._parseSOAP):
+        attribute = 'xsi:type="soapenc:Array"'
+        xml_str = xml_str.replace('%s %s' % (attribute, attribute), attribute)
+        return parser(xml_str, rules=rules)
 
 
 def Main():
