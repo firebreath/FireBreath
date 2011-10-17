@@ -103,7 +103,7 @@ class Doxygen2Confluence:
             try:
                 npage["content"] = self.rpc.convertWikiToStorageFormat(self.token, npage['content'])
                 npage = self.rpc.storePage(self.token, npage)
-                self.createdPages.append(npage["id"])
+                self.createdPages.append(SOAPpy.Types.longType(long(npage["id"])))
                 self.rpc.setContentPermissions(self.token, SOAPpy.Types.longType(long(npage["id"])), "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
             except Exception as ex:
