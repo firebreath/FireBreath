@@ -40,7 +40,7 @@ namespace FB {
         std::string getAppDataPath(const std::string& appName);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn std::string FB::System::getAppDataPath(const std::string& appName)
+        /// @fn std::string FB::System::getLocalAppDataPath(const std::string& appName)
         ///
         /// @brief  Returns a path to a local directory suitable for storing application-specific data
         ///
