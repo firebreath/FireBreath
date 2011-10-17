@@ -75,7 +75,7 @@ namespace FB {
         virtual int scheduleTimer(int interval, bool repeat);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn     int PluginWindowMacCocoa::unscheduleTimer(int timerId)
+        /// @fn     void PluginWindowMacCocoa::unscheduleTimer(int timerId)
         ///
         /// @brief  Unschedule a previously scheduled timer
         /// 

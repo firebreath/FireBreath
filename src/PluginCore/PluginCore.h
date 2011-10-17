@@ -118,7 +118,7 @@ namespace FB {
         virtual ~PluginCore();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void PluginCore::SetHost(FB::BrowserHostPtr)
+        /// @fn virtual void PluginCore::SetHost(const FB::BrowserHostPtr& host)
         ///
         /// @brief  Called by the browser during startup to provide a Browser Host object. 
         ///
@@ -157,7 +157,7 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual public bool FB::PluginCore::isScriptingOnly()
+        /// @fn virtual public bool FB::PluginCore::isScriptingOnly() const
         ///
         /// @brief  Returns true if there is no DOM element associated with the plugin
         ///

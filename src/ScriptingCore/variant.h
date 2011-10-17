@@ -372,7 +372,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template <typename T> variant& variant::assign(const T& x)
+        /// @fn template <typename T> variant& variant::assign(const T& x, bool)
         ///
         /// @brief  Assigns a value of arbitrary type
         ///

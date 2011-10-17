@@ -155,7 +155,8 @@ namespace FB
         /// @endcode
         /// 
         /// @param  eventName   Name of the event.  This event must start with "on"
-        /// @param  args        The arguments that should be sent to each attached event handler
+        /// @param  members
+        /// @param  arguments        The arguments that should be sent to each attached event handler
         ///
         /// @see registerEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////

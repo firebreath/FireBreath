@@ -45,7 +45,7 @@ namespace FB {
             typedef boost::function<void (uint32_t, uint32_t, uint32_t, uint32_t)> InvalidateWindowFunc;
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
-            /// @fn HDC PluginWindowlessWin::getHDC()
+            /// @fn HDC PluginWindowlessWin::getHDC() const
             ///
             /// @brief  Gets the HDC of the plugin window
             ///

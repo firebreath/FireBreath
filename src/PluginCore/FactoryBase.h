@@ -188,6 +188,7 @@ namespace FB
         ///         this method.
         ///
         /// @param  host    The BrowserHost object for the browser containing this plugin
+        /// @param  mimetype
         ///
         /// @return An NpapiPluginPtr containing an NpapiPlugin derived plugin handler
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -218,7 +219,7 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindowWin derived plugin window object
         ///
-        /// @param  Platform specific data structure for window context information (including the HWND usually) 
+        /// @param  ctx	Platform specific data structure for window context information (including the HWND usually) 
         ///
         /// @return A PluginWindowWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -229,7 +230,7 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindowlessWin derived plugin window object
         ///
-        /// @param  Platform specific data structure for window context information (including the HDC usually) 
+        /// @param  ctx	Platform specific data structure for window context information (including the HDC usually) 
         ///
         /// @return A PluginWindowlessWin* to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -245,8 +246,6 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for Invalidating CoreAnimation
         ///
-        /// @param  host    The BrowserHost object for the browser containing this plugin
-        ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacICA* createPluginWindowMacICA();
@@ -255,8 +254,6 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for CoreAnimation
         ///
-        /// @param  host    The BrowserHost object for the browser containing this plugin
-        ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowMacCA* createPluginWindowMacCA();
@@ -264,8 +261,6 @@ namespace FB
         /// @fn virtual PluginWindowMacCG* createPluginWindowMacCG();
         ///
         /// @brief  Creates a PluginWindow derived plugin window object for CoreGraphics
-        ///
-        /// @param  host    The BrowserHost object for the browser containing this plugin
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -296,7 +291,7 @@ namespace FB
         ///
         /// @brief  Creates a PluginWindowX11 derived plugin window object for X11
         ///
-        /// @param  Platform specific data structure for window context information
+        /// @param  ctx	Platform specific data structure for window context information
         ///
         /// @return A pointer to the object that should handle the plugin window
         ////////////////////////////////////////////////////////////////////////////////////////////////////

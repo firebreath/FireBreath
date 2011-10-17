@@ -195,7 +195,7 @@ namespace FB {
         
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache = true, const size_t bufferSize = 128*1024)
+        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP POST request. 
         ///

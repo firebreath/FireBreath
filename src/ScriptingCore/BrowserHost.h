@@ -214,7 +214,7 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-        /// str::string postdata, bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
+        /// const str::string postdata, bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
         /// @brief  Creates a BrowserStream.
         ///
