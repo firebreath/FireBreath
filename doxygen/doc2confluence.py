@@ -69,7 +69,7 @@ class Doxygen2Confluence:
 
     def makeFirstPageInConfluence(self, pageId, targetPageId):
         children = self.rpc.getChildren(self.token, SOAPpy.Types.longType(long(pageId)))
-        if children and children[0]["id"] != targetPageId:
+        if len(children) and children[0]["id"] != targetPageId:
             print "Moving %s to before %s" % (targetPageId, children[0]["id"])
             self.rpc.movePage(self.token, SOAPpy.Types.longType(long(targetPageId)), SOAPpy.Types.longType(long(children[0]["id"])), "above")
 
@@ -95,8 +95,8 @@ class Doxygen2Confluence:
         }
 
         if hasattr(page, 'id'):
-            npage["id"] = SOAPpy.Types.intType(int(page["id"]))
-            npage["parentId"] = SOAPpy.Types.intType(int(self.parents[refId]))
+            npage["id"] = SOAPpy.Types.longType(long(page["id"]))
+            npage["parentId"] = SOAPpy.Types.longType(long(self.parents[refId]))
             npage["version"] = SOAPpy.Types.intType(int(page["version"]))
 
         n = 0
@@ -104,7 +104,7 @@ class Doxygen2Confluence:
             try:
                 npage["content"] = self.rpc.convertWikiToStorageFormat(self.token, npage['content'])
                 npage = self.rpc.storePage(self.token, npage)
-                self.createdPages.append(SOAPpy.Types.longType(long(npage["id"])))
+                self.createdPages.append(npage["id"])
                 self.rpc.setContentPermissions(self.token, SOAPpy.Types.longType(long(npage["id"])), "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
             except Exception as ex:
