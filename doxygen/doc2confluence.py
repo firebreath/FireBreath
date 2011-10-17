@@ -88,23 +88,23 @@ class Doxygen2Confluence:
             filename = "%s.html" % refId
 
         npage = {
-            "content": "{doxygen_init}{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename,
+            "content": "{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename,
             "space": page["space"],
             "title": page["title"],
         }
 
         if hasattr(page, 'id'):
-            npage["id"] = int(page["id"])
-            npage["parentId"] = int(self.parents[refId])
-            npage["version"] = int(page["version"])
+            npage["id"] = SOAPpy.Types.intType(int(page["id"]))
+            npage["parentId"] = SOAPpy.Types.intType(int(self.parents[refId]))
+            npage["version"] = SOAPpy.Types.intType(int(page["version"]))
 
         n = 0
         while n < 10:
             try:
                 npage["content"] = self.rpc.convertWikiToStorageFormat(self.token, npage['content'])
-                page = self.rpc.storePage(self.token, npage)
-                self.createdPages.append(page["id"])
-                self.rpc.setContentPermissions(self.token, page["id"], "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
+                npage = self.rpc.storePage(self.token, npage)
+                self.createdPages.append(npage["id"])
+                self.rpc.setContentPermissions(self.token, SOAPpy.Types.longType(long(npage["id"])), "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
             except Exception as ex:
                 self.login()
@@ -113,7 +113,7 @@ class Doxygen2Confluence:
                 print ex
                 pass
 
-        return page["id"]
+        return npage["id"]
 
     def cleanConfluence(self):
         for kind, id in self.topPages.items():
