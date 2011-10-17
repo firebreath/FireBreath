@@ -69,7 +69,7 @@ class Doxygen2Confluence:
 
     def makeFirstPageInConfluence(self, pageId, targetPageId):
         children = self.rpc.getChildren(self.token, SOAPpy.Types.longType(long(pageId)))
-        if children[0]["id"] != targetPageId:
+        if children and children[0]["id"] != targetPageId:
             print "Moving %s to before %s" % (targetPageId, children[0]["id"])
             self.rpc.movePage(self.token, SOAPpy.Types.longType(long(targetPageId)), SOAPpy.Types.longType(long(children[0]["id"])), "above")
 
@@ -237,7 +237,8 @@ class Doxygen2Confluence:
                 self.makeFirstPageInConfluence(pageId, membersPageId)
         self.cleanConfluence()
 
-
+    # This parser is due to this bug https://jira.atlassian.com/browse/CONF-6720
+    #   once that bug is fixed this parser can be retired
     def confluence_soap_parser(self, xml_str, rules=None, parser=SOAPpy.Parser._parseSOAP):
         attribute = 'xsi:type="soapenc:Array"'
         xml_str = xml_str.replace('%s %s' % (attribute, attribute), attribute)
