@@ -1,4 +1,3 @@
 _NP_GetEntryPoints
 _NP_Initialize
 _NP_Shutdown
-_main
