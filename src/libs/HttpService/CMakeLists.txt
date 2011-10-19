@@ -37,6 +37,7 @@ include_directories (
     ${FB_PLUGINAUTO_SOURCE_DIR}
     ${FB_PLUGINCORE_SOURCE_DIR}
     ${FBLIB_INCLUDE_DIRS}
+    ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
 )
 
@@ -112,6 +113,7 @@ append_firebreath_link_library(HttpService)
 
 if (WIN32)
     append_firebreath_link_library(Wininet)
+    append_firebreath_link_library(${ATL_LIBRARY})
 elseif (UNIX)
     if (APPLE)
         find_library(CORE_SERVICES CoreServices)
