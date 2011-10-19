@@ -16,7 +16,11 @@ FB::PluginWindowlessWin* FB::createPluginWindowless(const FB::WindowContextWindo
 }
 
 PluginWindowlessWin::PluginWindowlessWin(const FB::WindowContextWindowless& ctx)
-    : m_hdc(ctx.drawable), m_browserHwnd(NULL) {}
+    : m_hdc(ctx.drawable)
+    , m_browserHwnd(NULL) 
+    , m_x(0), m_y(0), m_width(0), m_height(0)
+    , m_clipTop(0), m_clipLeft(0), m_clipBottom(0), m_clipRight(0) 
+{}
 
 PluginWindowlessWin::~PluginWindowlessWin() {}
 
