@@ -52,9 +52,17 @@
     </xsl:template>
 
     <xsl:template match="w:RegistryValue">
-        <w:RegistryValue Root="{@Root}" Key="{@Key}" Value="{@Value}" Type="{@Type}" Action="{@Action}">
+        <w:RegistryValue Key="{@Key}" Value="{@Value}" Type="{@Type}" Action="{@Action}">
             <xsl:if test="@Name != ''"> <xsl:attribute name="Name"> <xsl:value-of select="@Name" /> </xsl:attribute> </xsl:if>
             <xsl:if test="@Id != ''"> <xsl:attribute name="Id"> <xsl:value-of select="@Id" /> </xsl:attribute> </xsl:if>
+            <xsl:choose>
+                <xsl:when test="@Root='HKLM'">
+                    <xsl:attribute name="Root">HKCU</xsl:attribute>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:attribute name="Root"><xsl:value-of select="@Root" /></xsl:attribute>
+                </xsl:otherwise>
+            </xsl:choose>
             <xsl:if test="@Name = 'Path'">
                 <xsl:attribute name="KeyPath">yes</xsl:attribute>
             </xsl:if>

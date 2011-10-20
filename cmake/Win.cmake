@@ -210,7 +210,13 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
 
-        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\FixFragment.xslt")
+        if (WIX_FORCE_PER STREQUAL "machine")
+            set(_WIX_HEAT_TRANSFORM "FixFragment_HKLM.xslt")
+        else()
+            set(_WIX_HEAT_TRANSFORM "FixFragment_HKCU.xslt")
+        endif()
+
+        set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\${_WIX_HEAT_TRANSFORM}")
         set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)

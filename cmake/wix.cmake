@@ -134,7 +134,11 @@ if (WIN32)
 
             SET (SOURCE_WIX_FILE ${_tmp_FILE} )
 
-            SET (OUTPUT_WIXOBJ ${_basename}.wxs )
+            if (NOT WIX_HEAT_SUFFIX)
+                set(WIX_HEAT_SUFFIX "_auto")
+            endif()
+
+            SET (OUTPUT_WIXOBJ ${_basename}${WIX_HEAT_SUFFIX}.wxs )
 
             DBG_MSG("WIX output: ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
             DBG_MSG("WIX command: ${WIX_HEAT}")
