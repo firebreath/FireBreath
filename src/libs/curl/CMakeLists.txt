@@ -32,7 +32,7 @@ if (CURL_FOUND)
     endif()
 elseif( WIN32 )
     if (NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/curl)
-        find_program(GIT git DOC "location of the git executable")
+        find_program(GIT git PATHS "$ENV{ProgramFiles(x86)}/git/bin" "$ENV{ProgramFiles}/git/bin" DOC "location of the git executable")
         if (GIT)
             execute_process(
                 COMMAND ${GIT}
