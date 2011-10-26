@@ -83,11 +83,18 @@ VariantMap proxyProcessMap( const VariantMap &args, const JSAPIImplPtr& self, co
 
 void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args )
 {
-    std::set<void*> contexts;
+    EventContextMap eventMap;
+    EventIfaceContextMap evtIfaces;
     {
         boost::recursive_mutex::scoped_lock _l(m_eventMutex);
-        EventContextMap::iterator it(m_eventMap.begin());
-        EventContextMap::iterator end(m_eventMap.end());
+        eventMap = m_eventMap;
+        evtIfaces = m_evtIfaces;
+    }
+
+    std::set<void*> contexts;
+    {
+        EventContextMap::iterator it(eventMap.begin());
+        EventContextMap::iterator end(eventMap.end());
         for (; it != end; ++it) {
             bool first(true);
             std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
@@ -99,8 +106,8 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
                     for (EventMultiMap::const_iterator inIt(range.first); inIt != range.second; ++inIt) {
                         handlers.push_back(inIt->second);
                     }
-                    EventIfaceContextMap::iterator ifCtx(m_evtIfaces.find(it->first));
-                    if (ifCtx != m_evtIfaces.end()) {
+                    EventIfaceContextMap::iterator ifCtx(evtIfaces.find(it->first));
+                    if (ifCtx != evtIfaces.end()) {
                         for (EventIFaceMap::const_iterator ifaceIt(ifCtx->second.begin()); ifaceIt != ifCtx->second.end(); ++ifaceIt) {
                             ifaces.push_back(ifaceIt->second);
                         }
@@ -119,16 +126,14 @@ void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<
 
     // Some events are registered as a jsapi object with a method of the same name as the event
     {
-        boost::recursive_mutex::scoped_lock _l(m_eventMutex);
-        EventIfaceContextMap::iterator it(m_evtIfaces.begin());
-        EventIfaceContextMap::iterator end(m_evtIfaces.end());
+        EventIfaceContextMap::iterator it(evtIfaces.begin());
+        EventIfaceContextMap::iterator end(evtIfaces.end());
         for (; it != end; ++it) {
             if (contexts.find(it->first) != contexts.end())
                 continue; // We've already handled these
-            bool first(true);
 
             for (EventIFaceMap::const_iterator ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
-                if (first && ifaceIt->second->isValid() && ifaceIt->second->supportsOptimizedCalls()) {
+                if (ifaceIt->second->isValid() && ifaceIt->second->supportsOptimizedCalls()) {
                     std::vector<FB::JSObjectPtr> handlers;
                     std::vector<FB::JSObjectPtr> ifaces;
                     for (EventIFaceMap::const_iterator inIt = it->second.begin(); inIt != it->second.end(); ++inIt) {
@@ -208,8 +213,13 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
     args.push_back(CreateEvent(shared_from_this(), eventName, members, arguments));
 
     {
-        boost::recursive_mutex::scoped_lock _l(m_eventMutex);
-        EventContextMap::iterator it(m_eventMap.begin());
+        EventContextMap eventMap;
+        {
+            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            eventMap = m_eventMap;
+        }
+
+        EventContextMap::iterator it(eventMap.begin());
         while (it != m_eventMap.end()) {
             std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
             for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; eventIt++) {
@@ -221,9 +231,14 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
 
     // Some events are registered as a jsapi object with a method of the same name as the event
     {
-        boost::recursive_mutex::scoped_lock _l(m_eventMutex);
-        EventIfaceContextMap::iterator it(m_evtIfaces.begin());
-        while (it != m_evtIfaces.end()) {
+        EventIfaceContextMap evtIfaces;
+        {
+            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            evtIfaces = m_evtIfaces;
+        }
+
+        EventIfaceContextMap::iterator it(evtIfaces.begin());
+        while (it != evtIfaces.end()) {
             for (EventIFaceMap::const_iterator ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ifaceIt++) {
                 ifaceIt->second->InvokeAsync(eventName, args);
             }
