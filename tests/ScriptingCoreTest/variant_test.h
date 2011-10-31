@@ -265,3 +265,40 @@ TEST(BoostVariantToVariantConversionTest)
     }
 }
 
+class SomeTest
+{
+    char isCtored;
+public:
+    SomeTest() : isCtored(true) {};
+    ~SomeTest() { isCtored = false; }
+    SomeTest& operator=(SomeTest const& other) {
+        CHECK(isCtored);
+        return *this;
+    }
+    bool operator<(const SomeTest& rh) const {
+        return ((void*)this) < ((void*)&rh);
+    }
+};
+
+TEST(TestVariantWithFunkyAssignmentOperator)
+{
+    PRINT_TESTNAME;
+    using namespace FB;
+
+    SomeTest t1;
+    SomeTest t2;
+    SomeTest t3;
+
+    FB::variant a(t1, true);
+    FB::variant b(t2, true);
+    FB::variant c;
+    c.assign(t3, true);
+
+    a.assign(t3, true);
+    b.assign(t1, true);
+    c.assign(t2, true);
+
+    a = b;
+    b = c;
+    c = a;
+}
