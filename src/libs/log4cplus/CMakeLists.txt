@@ -112,7 +112,7 @@ endif()
 # Uncomment the following line to get locale aware string conversions.
 #add_definitions (-DLOG4CPLUS_WORKING_LOCALE)
 
-if (NOT WIN32 AND NOT TARGET_ALREADY_EXISTS)
+if (NOT TARGET_ALREADY_EXISTS)
     if (APPLE)
         include_directories(${CMAKE_OSX_SYSROOT}/usr/include)
         set(CMAKE_REQUIRED_INCLUDES ${CMAKE_OSX_SYSROOT}/usr/include)
