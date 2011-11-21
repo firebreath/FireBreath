@@ -8,7 +8,7 @@ License:    Dual license model; choose one of two:
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
-
+            
 Copyright 2010 Facebook, Inc
 \**********************************************************/
 
@@ -30,7 +30,7 @@ Copyright 2010 Facebook, Inc
 #include "log4cplus/consoleappender.h"
 #include "log4cplus/nullappender.h"
 
-namespace
+namespace 
 {
     bool logging_started = false;
 }
@@ -86,7 +86,7 @@ void FB::Log::initLogging()
         nullAppender->setLayout(layout3);
         logger.addAppender(nullAppender);
     }
-
+    
     logging_started = true;
 }
 
