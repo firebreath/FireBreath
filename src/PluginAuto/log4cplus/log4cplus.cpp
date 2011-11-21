@@ -35,6 +35,8 @@ namespace
     bool logging_started = false;
 }
 
+static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll);
+
 void FB::Log::initLogging()
 {
     if (logging_started)
@@ -43,6 +45,10 @@ void FB::Log::initLogging()
     bool addedAppender = false;
 
     log4cplus::Logger logger = log4cplus::Logger::getInstance(L"FireBreath");
+
+    FB::Log::LogLevel ll = getFactoryInstance()->getLogLevel();
+    logger.setLogLevel(translate_logLevel(ll));
+
     FB::Log::LogMethodList mlist;
     getFactoryInstance()->getLoggingMethods(mlist);
 
@@ -89,6 +95,22 @@ void FB::Log::stopLogging()
     log4cplus::Logger logger = log4cplus::Logger::getInstance(L"FireBreath");
     logger.shutdown();
     logging_started = false;
+}
+
+static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll){
+
+    switch(ll) {
+        case(FB::Log::LogLevel_Trace) :
+            return log4cplus::TRACE_LOG_LEVEL;
+        case(FB::Log::LogLevel_Debug) :
+            return log4cplus::DEBUG_LOG_LEVEL;
+        case(FB::Log::LogLevel_Info) :
+            return log4cplus::INFO_LOG_LEVEL;
+        case(FB::Log::LogLevel_Warn) :
+            return log4cplus::WARN_LOG_LEVEL;
+        case(FB::Log::LogLevel_Error) :
+            return log4cplus::ERROR_LOG_LEVEL;
+    }
 }
 
 void FB::Log::trace(const std::string& msg, const char *file, int line, const char *fn)
