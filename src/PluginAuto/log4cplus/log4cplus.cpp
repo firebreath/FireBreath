@@ -97,6 +97,32 @@ void FB::Log::stopLogging()
     logging_started = false;
 }
 
+<<<<<<< HEAD
+void FB::Log::trace(const std::string& msg, const char *file, int line, const char *fn)
+{
+    trace("",msg,file,line,fn);
+}
+void FB::Log::debug(const std::string& msg, const char *file, int line, const char *fn)
+{
+    debug("",msg,file,line,fn);
+}
+void FB::Log::info(const std::string& msg, const char *file, int line, const char *fn)
+{
+    info("",msg,file,line,fn);
+}
+void FB::Log::warn(const std::string& msg, const char *file, int line, const char *fn)
+{
+    warn("",msg,file,line,fn);
+}
+void FB::Log::error(const std::string& msg, const char *file, int line, const char *fn)
+{
+    error("",msg,file,line,fn);
+}
+void FB::Log::fatal(const std::string& msg, const char *file, int line, const char *fn)
+{
+    fatal("",msg,file,line,fn);
+}
+
 static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll){
     
     switch(ll) {
@@ -143,4 +169,3 @@ void FB::Log::fatal(const std::string& src, const std::string& msg, const char *
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-
