@@ -41,6 +41,9 @@ endif()
 # include the Chrome package generation function
 include(${FB_ROOT}/cmake/chrome.cmake)
 
+# include the XPI generation function
+include(${FB_ROOT}/cmake/xpi.cmake)
+
 # include file with the crazy configure_template function
 include(${FB_ROOT}/cmake/configure_template.cmake)
 
