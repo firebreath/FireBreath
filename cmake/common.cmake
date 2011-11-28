@@ -38,6 +38,9 @@ elseif(UNIX)
     include(${FB_ROOT}/cmake/X11.cmake)
 endif()
 
+# include the XPI generation function
+include(${FB_ROOT}/cmake/xpi.cmake)
+
 # include file with the crazy configure_template function
 include(${FB_ROOT}/cmake/configure_template.cmake)
 
