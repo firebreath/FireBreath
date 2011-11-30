@@ -110,6 +110,8 @@ static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll){
             return log4cplus::WARN_LOG_LEVEL;
         case(FB::Log::LogLevel_Error) : 
             return log4cplus::ERROR_LOG_LEVEL;
+        default:
+            return log4cplus::WARN_LOG_LEVEL;
     }
 }
 
