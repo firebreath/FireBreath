@@ -29,12 +29,12 @@ namespace FB {
     class TimerEvent : public PluginEvent
     {
     public:
-        TimerEvent(unsigned int timer_id, void *opaquePointer)
+        TimerEvent(uint32_t timer_id, void *opaquePointer)
             : timerId(timer_id), opaquePointer(opaquePointer)
         { }
 
     public:
-        unsigned int timerId;   // The ID of the timer
+        uint32_t timerId;   // The ID of the timer
         void *opaquePointer;    // The opaque pointer associated with the timer
     };
 };
