@@ -55,13 +55,13 @@ namespace FB {
 			ModifierState_Control = 2,
 			ModifierState_Menu = 4
 		};
-        MouseButtonEvent(MouseButton btn, int x, int y, unsigned int state = ModifierState_None) : m_Btn(btn), m_x(x), m_y(y), m_state(state) { }
+        MouseButtonEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : m_Btn(btn), m_x(x), m_y(y), m_state(state) { }
 
     public:
         MouseButton m_Btn;
         int m_x;
         int m_y;
-		unsigned int m_state;
+		uint32_t m_state;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +72,7 @@ namespace FB {
     class MouseDownEvent : public MouseButtonEvent
     {
     public:
-        MouseDownEvent(MouseButton btn, int x, int y, unsigned int state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
+        MouseDownEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +83,7 @@ namespace FB {
     class MouseDoubleClickEvent : public MouseButtonEvent
     {
     public:
-        MouseDoubleClickEvent(MouseButton btn, int x, int y, unsigned int state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
+        MouseDoubleClickEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +94,7 @@ namespace FB {
     class MouseUpEvent : public MouseButtonEvent
     {
     public:
-        MouseUpEvent(MouseButton btn, int x, int y, unsigned int state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
+        MouseUpEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : MouseButtonEvent(btn, x, y, state) { }
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

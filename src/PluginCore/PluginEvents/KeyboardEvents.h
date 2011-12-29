@@ -36,7 +36,7 @@ namespace FB {
 
     public:
         FBKeyCode m_key_code;
-        unsigned int m_os_key_code;
+        uint32_t m_os_key_code;
         uint32_t m_modifierFlags;
     };
 
@@ -48,7 +48,7 @@ namespace FB {
     class KeyUpEvent : public KeyEvent
     {
     public:
-        KeyUpEvent(FBKeyCode fb_key, unsigned int os_key, uint32_t modifiers = 0)
+        KeyUpEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0)
             : KeyEvent(fb_key, os_key, modifiers) {}
     };
 
@@ -60,7 +60,7 @@ namespace FB {
     class KeyDownEvent : public KeyEvent
     {
     public:
-        KeyDownEvent(FBKeyCode fb_key, unsigned int os_key, uint32_t modifiers = 0)
+        KeyDownEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0)
             : KeyEvent(fb_key, os_key, modifiers) {}
     };
 
