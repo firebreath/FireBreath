@@ -20,6 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <map>
 #include <stdexcept>
 #include <boost/cast.hpp>
+#include "APITypes.h"
 
 namespace FB {
 
