@@ -11,9 +11,22 @@ License:    Dual license model; choose one of two:
 
 \**********************************************************/
 
+#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "Timer.h"
+#include "TimerService.h"
 
 using namespace FB;
+
+namespace FB {
+    class TimerPimpl {
+    public:
+        TimerPimpl() : timerService(TimerService::instance()), timer(*timerService->getIOService()) {
+        }
+
+        TimerServicePtr timerService;
+		boost::asio::deadline_timer timer;
+    };
+};
 
 TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)
 {
@@ -23,8 +36,7 @@ TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _cal
 Timer::Timer(long _duration, bool _recursive, TimerCallbackFunc _callback)
 	: duration(_duration),
 	recursive(_recursive),
-	cb(_callback),
-	timer(*(TimerService::instance()->getIOService()))
+	cb(_callback), pimpl(new TimerPimpl)
 {
 }
 
@@ -55,12 +67,12 @@ void Timer::callback(const boost::system::error_code& error)
 
 void Timer::start()
 {
-	timer.expires_from_now(boost::posix_time::milliseconds(duration));
-	timer.async_wait(boost::bind(&Timer::callback, this, boost::asio::placeholders::error));
+	pimpl->timer.expires_from_now(boost::posix_time::milliseconds(duration));
+	pimpl->timer.async_wait(boost::bind(&Timer::callback, this, boost::asio::placeholders::error));
 }
 bool Timer::stop()
 {
-	timer.cancel();
+	pimpl->timer.cancel();
 	return false;
 }
 

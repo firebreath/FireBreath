@@ -16,14 +16,16 @@ License:    Dual license model; choose one of two:
 
 #include <string>
 #include <boost/function.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/system/error_code.hpp>
 
 #include "FBPointers.h"
-#include "TimerService.h"
 
 namespace FB {
 
 	FB_FORWARD_PTR(Timer);
+    class TimerPimpl;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  Timer
@@ -39,10 +41,10 @@ namespace FB {
 		typedef boost::function<void (void)> TimerCallbackFunc;
 
 	private:
-		boost::asio::deadline_timer timer;
 		const long duration;
 		const bool recursive;
 		TimerCallbackFunc cb;
+        boost::scoped_ptr<TimerPimpl> pimpl;
 
 		Timer(long _duration, bool _recursive, TimerCallbackFunc _callback);
 		void callback(const boost::system::error_code& error);

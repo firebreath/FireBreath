@@ -14,12 +14,17 @@ License:    Dual license model; choose one of two:
 #ifndef H_FB_TIMER_SERVICE
 #define H_FB_TIMER_SERVICE
 
-#include <boost/asio.hpp>
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
 
+#include "FBPointers.h"
+
+namespace boost { namespace asio { class io_service; } }
+
 namespace FB {
 
+    class TimerServicePimpl;
+    FB_FORWARD_PTR(TimerService);
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  TimerService
     ///
@@ -32,19 +37,17 @@ namespace FB {
 	class TimerService
 	{
 	public:
-		static TimerService* instance();
+		static TimerServicePtr instance();
+		~TimerService();
 		
 		boost::asio::io_service* getIOService();
 	protected:
-		static TimerService * inst;
+		static TimerServiceWeakPtr inst;
 		static boost::mutex instance_mutex;
 		TimerService();
-		~TimerService();
 
 	private:
-		std::auto_ptr<boost::asio::io_service> io_service;
-		std::auto_ptr<boost::asio::io_service::work> io_idlework;
-		std::auto_ptr<boost::thread> io_thread;
+        boost::scoped_ptr<TimerServicePimpl> pimpl;
 	};
 };
 

@@ -3,6 +3,7 @@
 
 #ifdef _WIN32
 #include "win_targetver.h"
+#include <boost/asio.hpp>
 #include "win_common.h"
 #else
 #include <utf8.h>
