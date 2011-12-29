@@ -19,16 +19,10 @@ Copyright 2010 Facebook, Inc
 void FB::Log::initLogging() {};
 void FB::Log::stopLogging() {};
 
-void FB::Log::trace(const std::string&, const char *file, int line, const char*) {}
-void FB::Log::debug(const std::string&, const char *file, int line, const char*) {}
-void FB::Log::info(const std::string&, const char *file, int line, const char*) {}
-void FB::Log::warn(const std::string&, const char *file, int line, const char*) {}
-void FB::Log::error(const std::string&, const char *file, int line, const char*) {}
-void FB::Log::fatal(const std::string&, const char *file, int line, const char*) {}
-
 void FB::Log::trace(const std::string&, const std::string&, const char *file, int line, const char*) {}
 void FB::Log::debug(const std::string&, const std::string&, const char *file, int line, const char*) {}
 void FB::Log::info(const std::string&, const std::string&, const char *file, int line, const char*) {}
 void FB::Log::warn(const std::string&, const std::string&, const char *file, int line, const char*) {}
 void FB::Log::error(const std::string&, const std::string&, const char *file, int line, const char*) {}
 void FB::Log::fatal(const std::string&, const std::string&, const char *file, int line, const char*) {}
+

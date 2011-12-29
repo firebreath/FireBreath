@@ -27,13 +27,7 @@ Copyright 2010 Facebook, Inc
 #  else
 #    define FBLOG_FUNCTION() __func__
 #  endif
-#  define FBLOG_LOG_BODY1(type, msg) \
-    do { \
-        std::ostringstream os; \
-        os << msg; \
-        FB::Log:: type (os.str(), __FILE__, __LINE__, FBLOG_FUNCTION()); \
-    } while(0)
-#  define FBLOG_LOG_BODY2(type, src, msg) \
+#  define FBLOG_LOG_BODY(type, src, msg) \
     do { \
         std::ostringstream os; \
         os << msg; \
@@ -42,34 +36,25 @@ Copyright 2010 Facebook, Inc
 #endif
 
 #if !FB_NO_LOGGING_MACROS
-#  define GET_3RD_ARG(arg1, arg2, arg3, ...) arg3
-#  define CHOOSE(...) GET_3RD_ARG(__VA_ARGS__, FBLOG_LOG_BODY2, FBLOG_LOG_BODY1)
-#  define FBLOG_TRACE(...) CHOOSE(__VA_ARGS__)(trace,__VA_ARGS__)
-#  define FBLOG_DEBUG(...) CHOOSE(__VA_ARGS__)(debug,__VA_ARGS__)
-#  define FBLOG_INFO(...)  CHOOSE(__VA_ARGS__)(info,__VA_ARGS__)
-#  define FBLOG_WARN(...)  CHOOSE(__VA_ARGS__)(warn,__VA_ARGS__)
-#  define FBLOG_ERROR(...) CHOOSE(__VA_ARGS__)(error,__VA_ARGS__)
-#  define FBLOG_FATAL(...) CHOOSE(__VA_ARGS__)(fatal,__VA_ARGS__)
-#else
-#  define FBLOG_TRACE(...)
-#  define FBLOG_DEBUG(...)
-#  define FBLOG_INFO(...)
-#  define FBLOG_WARN(...)
-#  define FBLOG_ERROR(...)
-#  define FBLOG_FATAL(...)
+#  define FBLOG_TRACE(src, msg) FBLOG_LOG_BODY(trace, src, msg)
+#  define FBLOG_DEBUG(src, msg) FBLOG_LOG_BODY(debug, src, msg)
+#  define FBLOG_INFO(src, msg) FBLOG_LOG_BODY(info, src, msg)
+#  define FBLOG_WARN(src, msg) FBLOG_LOG_BODY(warn, src, msg)
+#  define FBLOG_ERROR(src, msg) FBLOG_LOG_BODY(error, src, msg)
+#  define FBLOG_FATAL(src, msg) FBLOG_LOG_BODY(fatal, src, msg)
+#else 
+#  define FBLOG_TRACE(src, msg) 
+#  define FBLOG_DEBUG(src, msg)
+#  define FBLOG_INFO(src, msg)
+#  define FBLOG_WARN(src, msg)
+#  define FBLOG_ERROR(src, msg)
+#  define FBLOG_FATAL(src, msg)
 #endif
 
 namespace FB { namespace Log {
 
     void initLogging();
     void stopLogging();
-
-    void trace(const std::string& msg, const char *file, int line, const char *fn);
-    void debug(const std::string& msg, const char *file, int line, const char *fn);
-    void  info(const std::string& msg, const char *file, int line, const char *fn);
-    void  warn(const std::string& msg, const char *file, int line, const char *fn);
-    void error(const std::string& msg, const char *file, int line, const char *fn);
-    void fatal(const std::string& msg, const char *file, int line, const char *fn);
 
     void trace(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
     void debug(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
@@ -123,3 +108,4 @@ namespace FB { namespace Log {
 }; };
 
 #endif
+
