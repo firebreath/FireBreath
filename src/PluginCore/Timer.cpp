@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Mital Vora <mital.d.vora@gmail.com>
 
 Created:    Mar 26, 2011
@@ -12,6 +12,7 @@ License:    Dual license model; choose one of two:
 \**********************************************************/
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
+#include <boost/asio.hpp>
 #include "Timer.h"
 #include "TimerService.h"
 

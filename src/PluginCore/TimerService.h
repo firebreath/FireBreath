@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Mital Vora <mital.d.vora@gmail.com>
 
 Created:    Apr 03, 2011
@@ -16,6 +16,7 @@ License:    Dual license model; choose one of two:
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include "FBPointers.h"
 
@@ -29,17 +30,17 @@ namespace FB {
     /// @class  TimerService
     ///
     /// @brief  TimerService Utility.
-    ///         
+    ///
     /// Timer Utility handles io_service and separate thread for Timer.
-    /// 
-    /// 
+    ///
+    ///
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 	class TimerService
 	{
 	public:
 		static TimerServicePtr instance();
 		~TimerService();
-		
+
 		boost::asio::io_service* getIOService();
 	protected:
 		static TimerServiceWeakPtr inst;
