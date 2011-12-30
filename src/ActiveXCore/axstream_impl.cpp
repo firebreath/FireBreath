@@ -569,8 +569,10 @@ bool ActiveXStreamRequest::start()
 
 bool ActiveXStreamRequest::stop()
 {
-    stream.reset();
     if ( !bindStatusCallback ) return true;
-    return bindStatusCallback->close();
+    bool retVal = bindStatusCallback->close();
+    bindStatusCallback.Release();
+    stream.reset();
+    return retVal;
 }
 
