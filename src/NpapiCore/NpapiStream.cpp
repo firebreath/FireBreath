@@ -152,15 +152,15 @@ void FB::Npapi::NpapiStream::setCreated()
 
 void FB::Npapi::NpapiStream::setDestroyed()
 {
+    m_streamDestroyed = true;
     if (m_streamNotified)
         m_selfReference.reset();
-    m_streamDestroyed = true;
 }
 
 void FB::Npapi::NpapiStream::setNotified()
 {
+    m_streamNotified = true;
     if (m_streamDestroyed)
         m_selfReference.reset();
-    m_streamNotified = true;
 }
 
