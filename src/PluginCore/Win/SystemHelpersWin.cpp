@@ -20,6 +20,13 @@ typedef GUID KNOWNFOLDERID;
 #define REFKNOWNFOLDERID const KNOWNFOLDERID &
 #endif
 
+#ifndef DEFINE_KNOWN_FOLDER
+#define DEFINE_KNOWN_FOLDER(name, l, w1, w2, b1, b2, b3, b4, b5, b6, b7, b8) \
+        EXTERN_C static const GUID name
+DEFINE_KNOWN_FOLDER(FOLDERID_LocalAppDataLow,     0xA520A1A4, 0x1780, 0x4FF6, 0xBD, 0x18, 0x16, 0x73, 0x43, 0xC5, 0xAF, 0x16);
+#undef DEFINE_KNOWN_FOLDER
+#endif
+
 using std::string;
 
 typedef HRESULT (WINAPI*GetKnownFolderPathFunc)(REFKNOWNFOLDERID, DWORD, HANDLE hToken, PWSTR *ppszPath); // free *ppszPath with CoTaskMemFree
