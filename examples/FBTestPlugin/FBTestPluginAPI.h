@@ -89,6 +89,7 @@ public:
     void getURLCallback(const FB::JSObjectPtr& callback, bool success, const FB::HeaderMap& headers,
         const boost::shared_array<uint8_t>& data, const size_t size);
 	void SetTimeout(const FB::JSObjectPtr& callback, long timeout);
+    FB::VariantMap systemHelpersTest();
 	void timerCallback(const FB::JSObjectPtr& callback);
 
     FB::VariantMap getProxyInfo(const boost::optional<std::string>& url);
