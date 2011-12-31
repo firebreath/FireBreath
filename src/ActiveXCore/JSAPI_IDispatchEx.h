@@ -46,6 +46,19 @@ namespace FB { namespace ActiveX {
     public:
         FB_FORWARD_PTR(IDisp_AttachEvent);
         FB_FORWARD_PTR(IDisp_DetachEvent);
+        FB_FORWARD_PTR(IDisp_GetLastException);
+        class IDisp_GetLastException : public FB::JSFunction
+        {
+        public:
+            IDisp_GetLastException()
+                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", FB::SecurityScope_Public) { }
+            FB::variant exec(const std::vector<variant>& args) {
+                return m_msg;
+            }
+			void setMessage(const FB::variant& msg) { m_msg = msg; }
+        private:
+			static FB::variant m_msg;
+        };
         class IDisp_AttachEvent : public FB::JSFunction
         {
         public:
@@ -93,7 +106,8 @@ namespace FB { namespace ActiveX {
     public:
         JSAPI_IDispatchExBase() 
             : m_attachFunc(boost::make_shared<IDisp_AttachEvent>(this)), 
-              m_detachFunc(boost::make_shared<IDisp_DetachEvent>(this))
+              m_detachFunc(boost::make_shared<IDisp_DetachEvent>(this)),
+			  m_getLastExceptionFunc(boost::make_shared<IDisp_GetLastException>())
         { }
         void setAPI(FB::JSAPIWeakPtr api, const ActiveXBrowserHostPtr& host)
         {
@@ -119,6 +133,7 @@ namespace FB { namespace ActiveX {
         FB::JSAPIWeakPtr m_api;
         IDisp_AttachEventPtr m_attachFunc;
         IDisp_DetachEventPtr m_detachFunc;
+        IDisp_GetLastExceptionPtr m_getLastExceptionFunc;
 
         ActiveXBrowserHostWeakPtr m_host;
     };
@@ -344,7 +359,7 @@ namespace FB { namespace ActiveX {
 
         try {
             FB::JSAPIPtr api(getAPI());
-            if ((wsName == L"attachEvent") || (wsName == L"detachEvent")) {
+            if ((wsName == L"attachEvent") || (wsName == L"detachEvent") || (wsName == L"getLastException")) {
                 *pid = AxIdMap.getIdForValue(wsName);
             } else if (api->HasProperty(wsName) || api->HasMethod(wsName)) {
                 *pid = AxIdMap.getIdForValue(wsName);
@@ -422,7 +437,19 @@ namespace FB { namespace ActiveX {
                 }
             }
 
-            if (wsName == L"attachEvent" || wsName == L"detachEvent") {
+			if (wsName == L"getLastException") {
+				if (wFlags & DISPATCH_METHOD) {
+					FB::VariantList params;
+	                FB::variant rVal;
+	                rVal = m_getLastExceptionFunc->exec(params);
+	                
+	                if(pvarRes)
+	                    host->getComVariant(pvarRes, rVal);
+				} else if (wFlags & DISPATCH_PROPERTYGET) {
+					FB::variant rVal(m_getLastExceptionFunc);
+					host->getComVariant(pvarRes, rVal);
+				}
+			} else if (wsName == L"attachEvent" || wsName == L"detachEvent") {
                 if (wFlags & DISPATCH_METHOD) {
                     std::vector<FB::variant> params;
                     for (int i = pdp->cArgs - 1; i >= 0; i--) {
@@ -511,11 +538,13 @@ namespace FB { namespace ActiveX {
             } else {
                 throw FB::invalid_member("Invalid method or property name");
             }
-        } catch (const FB::invalid_member&) {
+        } catch (const FB::invalid_member& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "No such member: \"" << FB::wstring_to_utf8(wsName) << "\"");
+			m_getLastExceptionFunc->setMessage(se.what());
             return DISP_E_MEMBERNOTFOUND;
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
+			m_getLastExceptionFunc->setMessage(se.what());
             if (pei != NULL) {
                 pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
                 pei->bstrDescription = CComBSTR(se.what()).Detach();
@@ -557,6 +586,7 @@ namespace FB { namespace ActiveX {
             api->RemoveProperty(wsName);
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
+			m_getLastExceptionFunc->setMessage(se.what());
             return S_FALSE;
         } catch (...) {
             return S_FALSE;
@@ -601,6 +631,7 @@ namespace FB { namespace ActiveX {
             api->getMemberNames(m_memberList);
             m_memberList.push_back(L"attachEvent");
             m_memberList.push_back(L"detachEvent");
+			m_memberList.push_back(L"getLastException");
         }
         if (m_memberList.size() == 0)
             return S_FALSE;

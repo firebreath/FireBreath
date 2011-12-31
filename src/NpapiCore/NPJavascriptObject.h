@@ -96,10 +96,12 @@ namespace FB { namespace Npapi {
     public:
         FB_FORWARD_PTR(NPO_addEventListener);
         FB_FORWARD_PTR(NPO_removeEventListener);
+        FB_FORWARD_PTR(NPO_getLastException);
         friend class NPO_addEventListener;
         friend class NPO_removeEventListener;
         NPO_addEventListenerPtr m_addEventFunc;
         NPO_removeEventListenerPtr m_removeEventFunc;
+		NPO_getLastExceptionPtr m_getLastExceptionFunc;
 
         class NPO_addEventListener : public FB::JSFunction
         {
@@ -118,6 +120,17 @@ namespace FB { namespace Npapi {
             FB::variant exec(const std::vector<variant>& args);
         private:
             NPJavascriptObject* obj;
+        };
+        class NPO_getLastException : public FB::JSFunction
+        {
+        public:
+            NPO_getLastException(NPJavascriptObject* ptr)
+                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", SecurityScope_Public), obj(ptr) { }
+			FB::variant exec(const FB::VariantList& args) { return m_msg; }
+			void setMessage(const FB::variant& msg) { m_msg = msg; }
+        private:
+            NPJavascriptObject* obj;
+			static FB::variant m_msg;
         };
     };
 

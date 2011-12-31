@@ -39,7 +39,8 @@ bool NPJavascriptObject::isNPJavaScriptObject(const NPObject* const npo)
 
 NPJavascriptObject::NPJavascriptObject(NPP npp)
     : m_valid(true), m_autoRelease(false), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
-    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this))
+    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this)),
+	m_getLastExceptionFunc(boost::make_shared<NPO_getLastException>(this))
 {
     m_sharedRef = boost::make_shared<FB::ShareableReference<NPJavascriptObject> >(this);
 }
@@ -81,6 +82,7 @@ bool NPJavascriptObject::HasMethod(NPIdentifier name)
     } catch (const script_error& e) {
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -115,6 +117,9 @@ FB::variant FB::Npapi::NPJavascriptObject::NPO_removeEventListener::exec( const 
         throw FB::invalid_arguments();
     }
 }
+
+FB::variant FB::Npapi::NPJavascriptObject::NPO_getLastException::m_msg;
+
 bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
     VOID_TO_NPVARIANT(*result);
@@ -139,6 +144,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
     } catch (const script_error& e) {
         if (!m_browser.expired()) 
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -163,7 +169,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
         // We check for events of that name as well in order to allow setting of an event handler in the
         // old javascript style, i.e. plugin.onload = function() .....;
 
-        if (sName == "addEventListener" || sName == "removeEventListener") {
+        if (sName == "addEventListener" || sName == "removeEventListener" || sName == "getLastException") {
             return true;
         } else if (sName != "toString" && getAPI()->HasMethodObject(sName))
             return true;
@@ -174,6 +180,7 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
     } catch (const script_error& e) {
         if (!m_browser.expired()) 
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -190,6 +197,8 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
                 res = m_addEventFunc;
             } else if (sName == "removeEventListener") {
                 res = m_removeEventFunc;
+			} else if (sName == "getLastException") {
+				res = m_getLastExceptionFunc;
             } else if (getAPI()->HasMethodObject(sName)) {
                 res = getAPI()->GetMethodObject(sName);
             } else {
@@ -206,6 +215,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
     } catch (const script_error& e) {
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -232,6 +242,7 @@ bool NPJavascriptObject::SetProperty(NPIdentifier name, const NPVariant *value)
     } catch(const script_error& e) {
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -253,6 +264,7 @@ bool NPJavascriptObject::RemoveProperty(NPIdentifier name)
     } catch(const script_error& e) {
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -264,7 +276,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         typedef std::vector<std::string> StringArray;
         StringArray memberList;
         getAPI()->getMemberNames(memberList);
-        *count = memberList.size() + 2;
+        *count = memberList.size() + 3;
         NPIdentifier *outList(NULL);
 
         NpapiBrowserHostPtr browser(getHost());
@@ -275,6 +287,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         }
         outList[memberList.size()] = browser->GetStringIdentifier("addEventListener");
         outList[memberList.size() + 1] = browser->GetStringIdentifier("removeEventListener");
+        outList[memberList.size() + 2] = browser->GetStringIdentifier("getLastException");
         *value = outList;
         return true;
     } catch (const std::bad_cast&) {
@@ -284,6 +297,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
         *count = 0;
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
@@ -308,6 +322,7 @@ bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPV
     } catch (const script_error& e) {
         if (!m_browser.expired())
             getHost()->SetException(this, e.what());
+		m_getLastExceptionFunc->setMessage(e.what());
         return false;
     }
 }
