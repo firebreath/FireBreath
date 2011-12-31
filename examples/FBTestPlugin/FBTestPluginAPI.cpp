@@ -21,6 +21,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "SimpleMathAPI.h"
 #include "ThreadRunnerAPI.h"
 #include "SimpleStreams.h"
+#include "SystemHelpers.h"
 #include <boost/make_shared.hpp>
 
 #include "FBTestPluginAPI.h"
@@ -51,6 +52,7 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
     registerMethod("postURL", make_method(this, &FBTestPluginAPI::postURL));
     registerMethod("openPopup", make_method(this, &FBTestPluginAPI::openPopup));
     registerMethod("setTimeout",  make_method(this, &FBTestPluginAPI::SetTimeout));
+    registerMethod("systemHelpersTest", make_method(this, &FBTestPluginAPI::systemHelpersTest));
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
     
     registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
@@ -375,6 +377,17 @@ void FBTestPluginAPI::timerCallback(const FB::JSObjectPtr& callback)
 {
 	callback->Invoke("", FB::variant_list_of());
 	// TODO: delete This timer
+}
+
+FB::VariantMap FBTestPluginAPI::systemHelpersTest(){
+    FB::VariantMap result;
+    
+    result["homedir"] = FB::System::getHomeDirPath();
+    result["tempdir"] = FB::System::getTempPath();
+    result["appdata"] = FB::System::getAppDataPath("FBTestPlugin");
+    result["appdata_local"] = FB::System::getLocalAppDataPath("FBTestPlugin");
+
+    return result;
 }
 
 const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::string& test1, const boost::optional<std::string>& str )
