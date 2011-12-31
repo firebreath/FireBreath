@@ -178,6 +178,8 @@
 
             addTest("mathApiAdd3B", "Use OBJECT.self custom JSAPI coming in from script (SimpleMath)");
             addTest("mathApiAdd4B", "Use OBJECT custom JSAPI coming in from script (SimpleMath) (should FAIL!)");
+            
+            addTest("systemHelpersTest", "Directory Helper functions.");
 
             addTest("countArray", "Count array length returned from JSAPI object");
             addTest("simpleFireEvent", "Simple event bind and fire test");
@@ -417,6 +419,15 @@
             }
             else
                 markPassed("countArray");
+            
+            var paths = plugin.systemHelpersTest();
+            markPassed("systemHelpersTest");
+            
+            for(var dir in paths) {
+                var value = paths[dir];                
+                $("#systemHelpersTest").append("<br>&nbsp;&nbsp;&nbsp;&nbsp;"
+                                               + dir + " = " + value);
+            }
 
             plugin.onfired = function (str) {
                 if (str == "some string") {
