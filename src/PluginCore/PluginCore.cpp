@@ -37,7 +37,7 @@ void PluginCore::setPlatform(const std::string& os, const std::string& browser)
 {
     PluginCore::OS = os;
     PluginCore::Browser = browser;
-    FBLOG_INFO("FB::PluginCore", "os: " << os << "; browser: " << browser);
+    FBLOG_INFO("PluginCore", "os: " << os << "; browser: " << browser);
 }
 
 /***************************\

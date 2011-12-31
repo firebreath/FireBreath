@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 19, 2009
@@ -58,11 +58,11 @@ NPObject *NpapiPlugin::getScriptableObject()
     /* Bugfix from Facebook: Certain older versions of webkit do a retain when
      * you return an NPObject from NPP_GetValue instead of assuming that we do
      * it before returninglike the NPAPI spec instructs; this results in a memory
-     * leak if we don't fix it.   
+     * leak if we don't fix it.
      */
     if (m_retainReturnedNPObject)
         m_npHost->RetainObject(m_obj);
-    
+
     return m_obj;
 }
 
@@ -82,18 +82,18 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
     }
     pluginMain->setParams(paramList);
     if(!FB::pluginGuiEnabled() || pluginMain->isWindowless()) {
-        /* Windowless plugins require negotiation with the browser. 
-        * If the plugin does not set this value it is assumed to be 
+        /* Windowless plugins require negotiation with the browser.
+        * If the plugin does not set this value it is assumed to be
         * a windowed plugin.
         * See: https://developer.mozilla.org/en/Gecko_Plugin_API_Reference/Drawing_and_Event_Handling
         */
 #ifndef XP_MACOSX
-        // We don't want to set these if we're in Mac OS X, otherwise Firefox 3.5 will deliver us a 
-        // null window->window in NPP_SetWindow(). 
+        // We don't want to set these if we're in Mac OS X, otherwise Firefox 3.5 will deliver us a
+        // null window->window in NPP_SetWindow().
         m_npHost->SetValue(NPPVpluginWindowBool, (void*)false);
         m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
 #endif
-    } 
+    }
     setReady();
 }
 
@@ -117,14 +117,18 @@ NPError NpapiPlugin::GetValue(NPPVariable variable, void *value)
     switch (variable) {
     case NPPVpluginNameString:
         *((const char **)value) = m_pluginName.c_str();
+        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginNameString)");
         break;
     case NPPVpluginDescriptionString:
         *((const char **)value) = m_pluginDesc.c_str();
+        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginDescriptionString)");
         break;
     case NPPVpluginScriptableNPObject:
         *(NPObject **)value = getScriptableObject();
+        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginScriptableNPObject)");
         break;
     default:
+        FBLOG_INFO("PluginCore", "GetValue(Unknown)");
         return NPERR_GENERIC_ERROR;
     }
     return NPERR_NO_ERROR;
@@ -156,7 +160,7 @@ streaming data, the browser can pass as much data to the instance as necessary i
 NPP_Write.
 
 If the plug-in receives a value of zero, the data flow temporarily stops. The browser checks to
-see if the plug-in can receive data again by resending the data at regular intervals. 
+see if the plug-in can receive data again by resending the data at regular intervals.
 */
 int32_t NpapiPlugin::WriteReady(NPStream* stream)
 {
@@ -199,7 +203,7 @@ When the stream is complete, the browser calls NPP_StreamAsFile to provide the i
 full path name for a local file for the stream. NPP_StreamAsFile is called for streams whose mode
 is set to NP_ASFILEONLY or NP_ASFILE only in a previous call to NPP_NewStream.
 
-If an error occurs while retrieving the data or writing the file, the file name (fname) is null. 
+If an error occurs while retrieving the data or writing the file, the file name (fname) is null.
 */
 void NpapiPlugin::StreamAsFile(NPStream* stream, const char* fname)
 {
@@ -223,7 +227,7 @@ user action (for example, clicking the Stop button), and NPRES_NETWORK_ERR, indi
 request could not be completed, perhaps because the URL could not be found.
 
 The parameter notifyData is the plug-in-private value passed as an argument by a previous
-NPN_GetURLNotify or NPN_PostURLNotify call, and can be used as an identifier for the request. 
+NPN_GetURLNotify or NPN_PostURLNotify call, and can be used as an identifier for the request.
 */
 void NpapiPlugin::URLNotify(const char* url, NPReason reason, void* notifyData)
 {
@@ -247,7 +251,7 @@ full-page plug-in.
       as printing the rest of the page. For an embedded plug-in, set the printInfo field to
       NPEmbedPrint.
     * A full-page plug-in handles all aspects of printing itself. For a full-page plug-in, set the
-      printInfo field to NPFullPrint or null. 
+      printInfo field to NPFullPrint or null.
 
 For information about printing on your platform, see your platform documentation.
 MS Windows
@@ -331,7 +335,7 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
     else *stype = NP_NORMAL;
 
     // first npp_newstream has to finish before the user may perform a RequestRead in the opened handler
-    if ( s->isSeekable() ) signalStreamOpened( s ); //m_npHost->ScheduleAsyncCall( signalStreamOpened, s );      
+    if ( s->isSeekable() ) signalStreamOpened( s ); //m_npHost->ScheduleAsyncCall( signalStreamOpened, s );
     else signalStreamOpened( s );
 
     return NPERR_NO_ERROR;
