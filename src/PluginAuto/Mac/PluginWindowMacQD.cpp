@@ -39,15 +39,15 @@ PluginWindowMacQD::~PluginWindowMacQD()
 NPError PluginWindowMacQD::SetWindow(NPWindow* window)
 {
     NP_Port *prt = (NP_Port*) window->window;
-//  FBLOG_TRACE("PluginCore", "PluginWindowMacQD::SetWindow() NP_Port=%p CGrafPtr=%p (%d,%d) (%d,%d){%d,%d}", prt, prt->port, prt->portx, prt->porty, window->x, window->y, window->width, window->height);
+//  FBLOG_TRACE("PluginCore", "NP_Port=%p CGrafPtr=%p (%d,%d) (%d,%d){%d,%d}", prt, prt->port, prt->portx, prt->porty, window->x, window->y, window->width, window->height);
     if (!prt || !IsValidPort(prt->port))
         return NPERR_INVALID_PARAM;
-    
+
     if (m_port.port != prt->port)
     {
         m_port = *prt;
         m_window = GetWindowFromPort(m_port.port);
-        
+
         m_x = window->x;
         m_y = window->y;
         m_width = window->width;
@@ -56,12 +56,12 @@ NPError PluginWindowMacQD::SetWindow(NPWindow* window)
         m_clipLeft = window->clipRect.left;
         m_clipBottom = window->clipRect.bottom;
         m_clipRight = window->clipRect.right;
-        
+
         ChangedEvent evt;
         SendEvent(&evt);
         return NPERR_NO_ERROR;
     }
-    
+
     return PluginWindowMac::SetWindow(window);
 }
 

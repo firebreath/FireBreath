@@ -89,6 +89,10 @@ void NpapiPluginMac::init(NPMIMEType pluginType, int16_t argc, char* argn[], cha
         if (pluginEvt)
             pluginEvt->setPluginWindow(pluginWin);
         pluginWin->setPluginEvent(pluginEvt);
+
+        boost::optional<std::string> showdrawingmodel = pluginMain->getParam("showdrawingmodel");
+        if (showdrawingmodel && (0 != strcmp(showdrawingmodel->c_str(), "0")))
+            pluginWin->setShowDrawingModel(true);
     }
 }
 

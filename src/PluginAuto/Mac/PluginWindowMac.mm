@@ -122,15 +122,15 @@ static bool initPluginWindowMac_QD(const FB::Npapi::NpapiBrowserHostPtr &host, N
 
 NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& drawingModel) {
     NPDrawingModel rval = (NPDrawingModel) -1; 
-#if FBMAC_USE_INVALIDATINGCOREANIMATION
-    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelInvalidatingCoreAnimation"))
-        (void) initPluginWindowMac_ICA(host, rval);
-    else 
-#endif
 #if FBMAC_USE_COREANIMATION
     if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelCoreAnimation"))
         (void) initPluginWindowMac_CA(host, rval);
     else
+#endif
+#if FBMAC_USE_INVALIDATINGCOREANIMATION
+    if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelInvalidatingCoreAnimation"))
+        (void) initPluginWindowMac_ICA(host, rval);
+    else 
 #endif
 #if FBMAC_USE_COREGRAPHICS
     if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelCoreGraphics"))
@@ -212,7 +212,7 @@ PluginWindowMac::PluginWindowMac()
     : PluginWindow(), m_npHost()
     , m_x(0), m_y(0), m_width(0), m_height(0)
     , m_clipTop(0), m_clipLeft(0), m_clipBottom(0), m_clipRight(0)
-    , m_timer(NULL), m_helper(NULL)
+    , m_timer(NULL), m_helper(NULL), m_drawLabel(false)
 {
     PluginWindowMac_helper *mhelper = [PluginWindowMac_helper new];
     [mhelper setIca:this];

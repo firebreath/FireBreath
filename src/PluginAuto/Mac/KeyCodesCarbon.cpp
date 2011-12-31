@@ -66,6 +66,7 @@ namespace CarbonConst {
         kVK_UpArrow                   = 0x7E
     };
 }
+
 namespace FB {
     FBKeyCode CarbonKeyCodeToFBKeyCode(unsigned long carbonKey) {
         FBKeyCode retVal = FBKEY_UNKNOWN;

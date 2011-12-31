@@ -1,6 +1,6 @@
 /**********************************************************\
 Original Author: Georg Fritzsche
- 
+
 Created:    Mar 26, 2010
 License:    Dual license model; choose one of two:
             New BSD License
@@ -8,13 +8,16 @@ License:    Dual license model; choose one of two:
             - or -
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
- 
+
 Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 #include "ConstructDefaultPluginWindows.h"
 #include "PluginEvents/AttachedEvent.h"
 #include "PluginEvents/DrawingEvents.h"
+#include "PluginEvents/MacEventCocoa.h"
+#include "PluginEvents/MacEventCarbon.h"
+#include "Mac/PluginWindowMacCG.h"
 
 #include "PluginWindowMacCG.h"
 
@@ -26,7 +29,7 @@ FB::PluginWindowMacCG* FB::createPluginWindowMacCG()
 }
 
 PluginWindowMacCG::PluginWindowMacCG()
-    : PluginWindowMac(), m_cgContext()
+    : PluginWindowMac(), m_cgContext(), m_count(0)
 {
 }
 
@@ -51,10 +54,61 @@ NPError PluginWindowMacCG::SetWindow(NPWindow* window)
             m_clipLeft = window->clipRect.left;
             m_clipBottom = window->clipRect.bottom;
             m_clipRight = window->clipRect.right;
-            
+
             ChangedEvent evt;
             SendEvent(&evt);
         }
     }
     return PluginWindowMac::SetWindow(window);
 }
+
+void PluginWindowMacCG::DrawLabel(CGContextRef cgContext, FB::Rect bounds) {
+    UnsignedWide currentTime; Microseconds(&currentTime);
+    m_frames.push_front(UnsignedWideToUInt64(currentTime));
+    if (m_frames.size() > 100) m_frames.pop_back(); // only keep the last 100 frames.
+    float fps = m_frames.size() / ((m_frames.front() - m_frames.back()) / 1000000.0);
+
+    CGContextSaveGState(cgContext);
+
+    CGColorRef boxColor = CGColorCreateGenericRGB(0.0, 0.0, 0.0, 1.0);
+    CGContextSetFillColorWithColor(cgContext, boxColor);
+    CGContextFillRect(cgContext, CGRectMake(0, 0, 400, 24));
+
+    char label[256];
+    sprintf(label, "CoreGraphics %.01f fps #%lld", fps, m_count++);
+    CGColorRef txtColor = CGColorCreateGenericRGB(0.0, 1.0, 0.0, 1.0);
+    CGContextSetStrokeColorWithColor(cgContext, txtColor);
+    CGContextSetFillColorWithColor(cgContext, txtColor);
+    CGColorRelease(txtColor);
+    CGContextSetTextMatrix(cgContext, CGAffineTransformMake(1.0, 0.0, 0.0, -1.0, 0.0, 0.0)); // Flip the text right-side up.
+    CGContextSelectFont(cgContext, "Helvetica", 24, kCGEncodingMacRoman);
+    CGContextShowTextAtPoint(cgContext, 0, 19, label, strlen(label));
+
+    CGContextRestoreGState(cgContext);
+}
+
+bool PluginWindowMacCG::SendEvent(PluginEvent* evt) {
+    // Let the plugin have first shot at drawing.
+    bool rval = PluginWindowMac::SendEvent(evt);
+    // Now, if we are supposed to draw the label...
+    if (m_drawLabel) {
+        // Firebreath gives plugins the chance to handle raw MacEventCocoa and MacEventCarbon events first.
+        // So if we have a CoreGraphicsDraw then the plugin didn't say they processed the raw event.
+        if (evt->validType<CoreGraphicsDraw>()) {
+            FB::CoreGraphicsDraw *event = evt->get<CoreGraphicsDraw>();
+            DrawLabel(event->context, event->bounds);
+        } else if (rval && evt->validType<MacEventCocoa>()) {
+            FB::MacEventCocoa *event = evt->get<MacEventCocoa>();
+            if (NPCocoaEventDrawRect == event->msg.type) {
+                FB::Rect bounds = { 0, 0, event->msg.data.draw.height, event->msg.data.draw.width };
+                DrawLabel(event->msg.data.draw.context, bounds);
+            }
+        } else if (rval && evt->validType<MacEventCarbon>() && rval) {
+            FB::MacEventCarbon *event = evt->get<MacEventCarbon>();
+            if (updateEvt == event->msg.what)
+                DrawLabel(m_cgContext.context, getWindowPosition());
+        }
+    }
+    return rval;
+}
+

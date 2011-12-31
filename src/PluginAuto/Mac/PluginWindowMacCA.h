@@ -1,5 +1,5 @@
 /**********************************************************\
-Original Author: Anson MacKeracher 
+Original Author: Anson MacKeracher
 
 Created:    May 5, 2010
 License:    Dual license model; choose one of two:
@@ -35,6 +35,7 @@ namespace FB
 
     protected:
         void* m_layer;
+        void* m_txtlayer;
     };
 };
 #endif // H_PLUGINWINDOWMACCA
