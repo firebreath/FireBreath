@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Dec 9, 2009
@@ -41,7 +41,7 @@ namespace FB { namespace DOM {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn ElementPtr Element::element()
         ///
-        /// @brief  Gets a FB::DOM::ElementPtr pointing to the current object 
+        /// @brief  Gets a FB::DOM::ElementPtr pointing to the current object
         ///
         /// @return FB::DOM::ElementPtr point to the current object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ namespace FB { namespace DOM {
         /// @brief  Creates a FB::DOM::Element object from a JSObjectPtr representing a DOM object.  This
         ///         will probably throw an exception and definitely not work right if the DOM object
         ///         represented is not a Element
-        ///         
+        ///
         /// @param  api The FB::JSObjectAPI object containing the element to wrap
         ///
         /// @return FB::DOM::ElementPtr to the created Element object
@@ -65,9 +65,9 @@ namespace FB { namespace DOM {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string Element::getInnerHTML() const
         ///
-        /// @brief  Gets the inner html for the element. 
+        /// @brief  Gets the inner html for the element.
         ///
-        /// @return The inner html. 
+        /// @return The inner html.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual std::string getInnerHTML() const;
 
@@ -92,7 +92,7 @@ namespace FB { namespace DOM {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setWidth(int) const
         ///
-        /// @brief  Sets the width property of the element. 
+        /// @brief  Sets the width property of the element.
         ///
         /// @param  width    The new width of the element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,9 +110,9 @@ namespace FB { namespace DOM {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getHeight() const
         ///
-        /// @brief  Gets the height property of the element. 
+        /// @brief  Gets the height property of the element.
         ///
-        /// @return The height. 
+        /// @return The height.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual int getHeight() const;
 
@@ -137,23 +137,23 @@ namespace FB { namespace DOM {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getChildNodeCount() const
         ///
-        /// @brief  Gets a child node count. 
+        /// @brief  Gets a child node count.
         ///
-        /// @return The child node count. 
+        /// @return The child node count.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual int getChildNodeCount() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getChildNode(int idx) const
         ///
-        /// @brief  Gets a child node. 
+        /// @brief  Gets a child node.
         ///
         /// @author Richard Bateman
         /// @date   10/15/2010
         ///
-        /// @param  idx Zero-based index of the node to fetch. 
+        /// @param  idx Zero-based index of the node to fetch.
         ///
-        /// @return The child node. 
+        /// @return The child node.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getChildNode(const int idx) const;
 
@@ -162,7 +162,7 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Gets the parent node of the current Element
         ///
-        /// @return The parent node. 
+        /// @return The parent node.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getParentNode() const;
 
@@ -170,7 +170,7 @@ namespace FB { namespace DOM {
         /// @fn virtual ElementPtr Element::getElement(const std::string& name) const
         ///
         /// @brief  Gets a child element of the specified name
-        ///         
+        ///
         /// This is the rough equivilent of the following javascript command
         ///
         /// @code
@@ -179,15 +179,15 @@ namespace FB { namespace DOM {
         ///      // or
         ///      var el2 = element[name];
         /// @endcode
-        /// 
-        /// @param  name    The name of the subelement. 
         ///
-        /// @return The child element. 
+        /// @param  name    The name of the subelement.
+        ///
+        /// @return The child element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getElement(const std::string& name) const
         {
             JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
-            ElementPtr retVal(new Element(api));
+            ElementPtr retVal((api) ? new Element(api) : NULL);
             return retVal;
         }
 
@@ -195,21 +195,21 @@ namespace FB { namespace DOM {
         /// @fn virtual ElementPtr Element::getElement(int idx) const
         ///
         /// @brief  Gets a child element of the specified name
-        /// 
+        ///
         /// This is the rough equivilent of the following javascript command
         ///
         /// @code
         ///      var el2 = element[idx];
         /// @endcode
-        ///         
-        /// @param  idx Zero-based index of the element to fetch. 
         ///
-        /// @return The child element. 
+        /// @param  idx Zero-based index of the element to fetch.
+        ///
+        /// @return The child element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getElement(const int idx) const
         {
             JSObjectPtr api = getProperty<FB::JSObjectPtr>(idx);
-            ElementPtr retVal(new Element(api));
+            ElementPtr retVal((api) ? new Element(api) : NULL);
             return retVal;
         }
 
@@ -220,9 +220,9 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Gets an element from the DOM with the specified id
         ///
-        /// @param  elem_id Identifier for the element. 
+        /// @param  elem_id Identifier for the element.
         ///
-        /// @return The element by identifier. 
+        /// @return The element by identifier.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getElementById(const std::string& elem_id) const;
 
@@ -231,9 +231,9 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Gets a list of all elements in the document with the specified tag name
         ///
-        /// @param  tagName Name of the tag. 
+        /// @param  tagName Name of the tag.
         ///
-        /// @return The elements by tag name. 
+        /// @return The elements by tag name.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName) const;
 

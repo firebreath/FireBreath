@@ -47,7 +47,7 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Returns the FB::JSObjectPtr that this object is wrapping
         ///
-        /// @return The js object. 
+        /// @return The js object.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::JSObjectPtr getJSObject() const { return m_element; }
 
@@ -66,7 +66,7 @@ namespace FB { namespace DOM {
         /// @brief  Creates a FB::DOM::Node object from a JSObjectPtr representing a DOM node.  This
         ///         will probably throw an exception and definitely not work right if the js object
         ///         represented is not a node
-        ///         
+        ///
         /// @param  api The FB::JSObjectAPI object containing the node to wrap
         ///
         /// @return FB::DOM::NodePtr to the created Node object
@@ -83,7 +83,7 @@ namespace FB { namespace DOM {
         /// @code
         ///      double tmp = node.callMethod<double>("pow", FB::variant_list_of(3)(2));
         /// @endcode
-        ///         
+        ///
         /// @param  name the name of the method to call
         /// @param  args a VariantList of arguments to pass ot the method
         ///
@@ -101,9 +101,23 @@ namespace FB { namespace DOM {
         template <class T>
         T callMethod(const std::wstring& name, const VariantList& args) const
         {
-            return callMethod<T>(FB::wstring_to_utf8(name), args); 
+            return callMethod<T>(FB::wstring_to_utf8(name), args);
         }
-        
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool HasProperty(const std::string& propertyName) const
+        ///
+        /// @brief  Query if 'propertyName' is a valid property.
+        ///
+        /// @param  propertyName    Name of the property.
+        ///
+        /// @return true if property exists, false if not.
+        /// @since 1.6.1
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        bool hasProperty(const std::string& propertyName) const {
+            return m_element->HasProperty(propertyName);
+        }
+
         /// @overload
         template <class T>
         T getProperty(const std::wstring& name) const
@@ -115,11 +129,11 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Templated function, gets the specified prooerty and returns it cast as the specified
         ///         type
-        /// 
+        ///
         /// @code
         ///     int width = docNode.getProperty<int>("offsetWdith");
         /// @endcode
-        /// 
+        ///
         /// @param  name the name of the property to get
         ///
         /// @return value of the requested property cast as type T
@@ -136,7 +150,7 @@ namespace FB { namespace DOM {
         ///
         /// @brief  Templated function, gets the specified prooerty by index and returns it cast as the
         ///         specified type
-        /// 
+        ///
         /// @param  idx the index of the property to get
         ///
         /// @return result of calling the method cast as type T
@@ -154,7 +168,7 @@ namespace FB { namespace DOM {
         /// @fn virtual NodePtr getNode(const std::string& name) const
         ///
         /// @brief  Gets a child node of the specified name
-        ///         
+        ///
         /// @param  name the name of the child node to fetch
         ///
         /// @return child node
@@ -165,7 +179,7 @@ namespace FB { namespace DOM {
         /// @fn virtual NodePtr getNode(int idx) const
         ///
         /// @brief  Gets a child node of the specified name by index
-        ///         
+        ///
         /// @param  idx the index of the child node to fetch
         ///
         /// @return child node
@@ -178,7 +192,7 @@ namespace FB { namespace DOM {
         /// @fn virtual void setProperty(const std::string& name, const variant& val) const
         ///
         /// @brief  Sets a property on the node to a given value
-        ///         
+        ///
         /// @param  name the name of the property to set
         /// @param  val the new value for the property
         ///
