@@ -86,6 +86,18 @@
         } \
     } else
 
+#define FB_CONVERT_ENTRY_FROM_WSTRING(_type_, _srctype_) \
+    if (*type == typeid(_srctype_)) { \
+        std::string __tmp = FB::wstring_to_utf8(var.cast<_srctype_>()); \
+        std::istringstream iss(__tmp); \
+        _type_ to; \
+        if (iss >> to) { \
+            return to; \
+        } else { \
+            throw bad_variant_cast(var.get_type(), typeid(_type_)); \
+        } \
+    } else
+
 #define FB_CONVERT_ENTRY_FROM_STRING(_type_, _srctype_) \
     if (*type == typeid(_srctype_)) { \
         typedef _srctype_::value_type char_type; \
@@ -831,7 +843,7 @@ namespace FB
                     return static_cast<T>(bval ? 1 : 0);
                 FB_CONVERT_ENTRY_COMPLEX_END();
                 FB_CONVERT_ENTRY_FROM_STRING(T, std::string)
-                FB_CONVERT_ENTRY_FROM_STRING(T, std::wstring)
+                FB_CONVERT_ENTRY_FROM_WSTRING(T, std::wstring)
                 FB_END_CONVERT_MAP(T)
             }
         }

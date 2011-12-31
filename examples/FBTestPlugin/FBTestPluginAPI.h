@@ -59,6 +59,7 @@ public:
     double asDouble(const FB::variant& a);
     const boost::optional<std::string> optionalTest(const std::string& test1, const boost::optional<std::string>& str);
 
+    std::string charArray(const std::vector<char>& arr);
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
     FB::VariantList getObjectKeys(const FB::JSObjectPtr& arr);

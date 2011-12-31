@@ -34,6 +34,7 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
     registerMethod(L"asBool",  make_method(this, &FBTestPluginAPI::asBool));
     registerMethod(L"asInt",  make_method(this, &FBTestPluginAPI::asInt));
     registerMethod("asDouble",  make_method(this, &FBTestPluginAPI::asDouble));
+    registerMethod("charArray",  make_method(this, &FBTestPluginAPI::charArray));
     registerMethod("listArray",  make_method(this, &FBTestPluginAPI::listArray));
     registerMethod("reverseArray",  make_method(this, &FBTestPluginAPI::reverseArray));
     registerMethod("getUserData",  make_method(this, &FBTestPluginAPI::getUserData));
@@ -197,6 +198,21 @@ FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
         outArr.push_back(it->second);
     }
     return outArr;
+}
+
+std::string FBTestPluginAPI::charArray(const std::vector<char>& arr)
+{
+    std::string outStr;
+    bool start(true);
+    for (std::vector<char>::const_iterator it = arr.begin(); it != arr.end(); it++)
+    {
+        if (!start) {
+            outStr += ", ";
+        }
+        start = false;
+        outStr += *it;
+    }
+    return outStr;
 }
 
 std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
