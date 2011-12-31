@@ -12,6 +12,10 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#ifdef FB_MACOSX
+#include <dlfcn.h>
+#include <mach-o/dyld.h>
+#endif
 #include <cstdio>
 #include "NpapiPlugin.h"
 #include "FactoryBase.h"
@@ -86,19 +90,19 @@ namespace
     private:
         NpapiBrowserHostPtr m_host;
         boost::shared_ptr<NpapiPlugin> m_plugin;
-        
+
     public:
         NpapiPDataHolder(NpapiBrowserHostPtr host, boost::shared_ptr<NpapiPlugin> plugin)
           : m_host(host), m_plugin(plugin)
         {
 #ifdef FB_MACOSX
             FB::OneShotManager::getInstance().npp_register(m_host->getContextID());
-#endif          
+#endif
         }
         ~NpapiPDataHolder() {
 #ifdef FB_MACOSX
             FB::OneShotManager::getInstance().npp_unregister(m_host->getContextID());
-#endif        
+#endif
         }
 
         NpapiBrowserHostPtr getHost() const {
@@ -115,7 +119,7 @@ namespace
     }
 
     NpapiPDataHolder* getHolder(NPP instance)
-    {   
+    {
         if (validInstance(instance))
             return static_cast<NpapiPDataHolder*>(instance->pdata);
         return NULL;
@@ -137,23 +141,30 @@ void NpapiPluginModule::scheduleAsyncCallback(NPP instance, void (*func)(void *)
 }
 #endif
 
-NpapiPluginModule *NpapiPluginModule::Default = NULL;
-
 // These are the static NPP_ functions; NPP_New and NPP_Destroy create and destroy the
 // plugin, the rest are wrappers that dereference NPP->pdata to get at the plugin object
 // and proxy the call to there.
 NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc,
                                    char* argn[], char* argv[], NPSavedData* saved)
 {
+    FBLOG_INFO("NPAPI", "NPP_New: " << (void*) instance);
     if (instance == NULL) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
-    try 
+    try
     {
-        NPNetscapeFuncs& npnFuncs = NpapiPluginModule::Default->NPNFuncs;
-        
-        NpapiBrowserHostPtr host(createBrowserHost(NpapiPluginModule::Default, instance));
+#ifdef FB_MACOSX
+        // Helps with certain weird embedding cases
+        NpapiPluginModule *module = NpapiPluginModule::GetModule(_dyld_get_image_header_containing_address(__builtin_return_address(0)));
+#else
+        NpapiPluginModule *module = NpapiPluginModule::GetModule(0);
+#endif
+        //printf("%p NpapiPluginModule::%s()\n", module, __func__);
+        NPNetscapeFuncs& npnFuncs = module->NPNFuncs;
+
+        NpapiBrowserHostPtr host(createBrowserHost(module, instance));
+
         host->setBrowserFuncs(&(npnFuncs));
 
         // TODO: We should probably change this and pass the MIMEType into _getNpapiPlugin instead
@@ -168,18 +179,18 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
         instance->pdata = static_cast<void*>(holder);
 
         plugin->init(pluginType, argc, argn, argv);
-    } 
-    catch (const PluginCreateError &e) 
+    }
+    catch (const PluginCreateError &e)
     {
         printf("%s\n", e.what());
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
-    catch (const std::bad_alloc& e) 
+    catch (const std::bad_alloc& e)
     {
         printf("%s\n", e.what());
         return NPERR_OUT_OF_MEMORY_ERROR;
     }
-    catch (const std::exception& e) 
+    catch (const std::exception& e)
     {
         printf("%s\n", e.what());
         return NPERR_GENERIC_ERROR;
@@ -190,11 +201,12 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
 
 NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 {
+    FBLOG_INFO("NPAPI", "NPP_Destroy: " << (void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
     NpapiBrowserHostWeakPtr weakHost;
-    
+
     if (NpapiPDataHolder* holder = getHolder(instance)) {
         NpapiBrowserHostPtr host(holder->getHost());
         weakHost = host;
@@ -203,11 +215,11 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 
         if (NpapiPluginPtr plugin = holder->getPlugin())
             plugin->shutdown();
-        
+
         instance->pdata = NULL;
         delete holder; // Destroy plugin
         // host should be destroyed when it goes out of scope here
-    } else {    
+    } else {
         return NPERR_GENERIC_ERROR;
     }
     // If this assertion fails, you probably have a circular reference
@@ -220,6 +232,7 @@ NPError NpapiPluginModule::NPP_Destroy(NPP instance, NPSavedData** save)
 
 NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
 {
+    FBLOG_TRACE("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
@@ -235,19 +248,21 @@ NPError NpapiPluginModule::NPP_SetWindow(NPP instance, NPWindow* window)
 NPError NpapiPluginModule::NPP_NewStream(NPP instance, NPMIMEType type, NPStream* stream,
                                        NPBool seekable, uint16_t* stype)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
     if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->NewStream(type, stream, seekable, stype);
-    } else {    
+    } else {
         return NPERR_GENERIC_ERROR;
     }
 }
 
 NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPReason reason)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
@@ -261,13 +276,14 @@ NPError NpapiPluginModule::NPP_DestroyStream(NPP instance, NPStream* stream, NPR
 
 int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
 {
+    FBLOG_INFO("NPAPI",(void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
 
     if (NpapiPluginPtr plugin = getPlugin(instance)) {
         return plugin->WriteReady(stream);
-    } else {    
+    } else {
         return NPERR_GENERIC_ERROR;
     }
 }
@@ -275,6 +291,7 @@ int32_t NpapiPluginModule::NPP_WriteReady(NPP instance, NPStream* stream)
 int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t offset, int32_t len,
                                  void* buffer)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }
@@ -288,6 +305,7 @@ int32_t NpapiPluginModule::NPP_Write(NPP instance, NPStream* stream, int32_t off
 
 void NpapiPluginModule::NPP_StreamAsFile(NPP instance, NPStream* stream, const char* fname)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return;
     }
@@ -299,6 +317,7 @@ void NpapiPluginModule::NPP_StreamAsFile(NPP instance, NPStream* stream, const c
 
 void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return;
     }
@@ -310,6 +329,7 @@ void NpapiPluginModule::NPP_Print(NPP instance, NPPrint* platformPrint)
 
 int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
 {
+    FBLOG_TRACE("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return 0;
     }
@@ -324,6 +344,7 @@ int16_t NpapiPluginModule::NPP_HandleEvent(NPP instance, void* event)
 void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason reason,
                                     void* notifyData)
 {
+    FBLOG_INFO("NPAPI", (void*) instance);
     if (!validInstance(instance)) {
         return;
     }
@@ -335,6 +356,7 @@ void NpapiPluginModule::NPP_URLNotify(NPP instance, const char* url, NPReason re
 
 NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void *value)
 {
+    FBLOG_TRACE("NPAPI", (void*) instance);
     // These values may depend on the mimetype of the plugin
     if (!validInstance(instance)) {
         switch (variable) {
@@ -362,6 +384,7 @@ NPError NpapiPluginModule::NPP_GetValue(NPP instance, NPPVariable variable, void
 
 NPError NpapiPluginModule::NPP_SetValue(NPP instance, NPNVariable variable, void *value)
 {
+    FBLOG_TRACE("NPAPI", (void*) instance << "variable: " << (void*)variable);
     if (!validInstance(instance)) {
         return NPERR_INVALID_INSTANCE_ERROR;
     }

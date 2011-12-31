@@ -23,7 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/thread.hpp>
 #include <boost/noncopyable.hpp>
 
-namespace FB { 
+namespace FB {
     namespace Npapi {
         FB_FORWARD_PTR(NpapiPlugin);
         // Get instance of NpapiPlugin from an NPP instance
@@ -32,9 +32,13 @@ namespace FB {
         class NpapiPluginModule : boost::noncopyable
         {
         public:
-            static NpapiPluginModule *Default;
-            NpapiPluginModule(bool init = true);
-            virtual ~NpapiPluginModule(void);
+            NpapiPluginModule();
+            virtual ~NpapiPluginModule();
+
+            typedef std::map<const void*,NpapiPluginModule*> Modules;
+            static NpapiPluginModule* GetModule(const void* key);
+            static void ReleaseModule(const void*);
+
 
             void setNetscapeFuncs(NPNetscapeFuncs *npnFuncs);
             void getPluginFuncs(NPPluginFuncs* pFuncs);
@@ -43,8 +47,9 @@ namespace FB {
 
         protected:
             boost::thread::id m_threadId;
-            bool m_init;
-            static volatile bool PluginModuleInitialized;
+            static volatile uint32_t PluginModuleInitialized;
+            static Modules m_modules;
+
 
         public:
             void assertMainThread();
@@ -95,7 +100,7 @@ namespace FB {
             static NPError NPP_GetValue(NPP instance, NPPVariable variable, void *ret_alue);
             static NPError NPP_SetValue(NPP instance, NPNVariable variable, void *ret_alue);
         };
-    }; 
+    };
 };
 
 #endif

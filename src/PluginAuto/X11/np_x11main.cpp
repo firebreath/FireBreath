@@ -11,14 +11,9 @@
 #include "NpapiPluginModule.h"
 
 using namespace FB::Npapi;
-FB::Npapi::NpapiPluginModule *module = NULL;
 
 void initPluginModule()
 {
-    if (module == NULL) {
-        module = new NpapiPluginModule();
-        NpapiPluginModule::Default = module;
-    }
 }
 
 extern "C" char * NP_GetPluginVersion()
@@ -34,24 +29,25 @@ extern "C" const char * NP_GetMIMEDescription()
 extern "C" NPError NP_GetValue(void *future, NPPVariable variable, void *value)
 {
     // Create a temporary npapipluginmodule -- false means don't initialize everything
-    NpapiPluginModule module(false);
+    NpapiPluginModule module();
     return module.NPP_GetValue((NPP_t *)future, variable, value);
 }
 
 extern "C" NPError NP_Initialize(NPNetscapeFuncs* pFuncs
                              , NPPluginFuncs *pluginFuncs)
 {
+    FBLOG_INFO("NPAPI", "");
     initPluginModule();
+    NpapiPluginModule *module = NpapiPluginModule::GetModule(0);
     module->getPluginFuncs(pluginFuncs);
     module->setNetscapeFuncs(pFuncs);
-
     return NPERR_NO_ERROR;
 }
 
 extern "C" NPError NP_Shutdown()
 {
-    delete module;
-    module = NULL;
+    FBLOG_INFO("NPAPI", "");
+    NpapiPluginModule::ReleaseModule(0);
     return NPERR_NO_ERROR;
 }
 
