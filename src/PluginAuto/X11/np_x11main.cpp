@@ -28,8 +28,7 @@ extern "C" const char * NP_GetMIMEDescription()
 
 extern "C" NPError NP_GetValue(void *future, NPPVariable variable, void *value)
 {
-    // Create a temporary npapipluginmodule -- false means don't initialize everything
-    NpapiPluginModule module();
+    NpapiPluginModule module;
     return module.NPP_GetValue((NPP_t *)future, variable, value);
 }
 
