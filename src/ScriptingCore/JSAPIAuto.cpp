@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Georg Fritzsche
 
 Created:    November 7, 2009
@@ -29,7 +29,7 @@ bool FB::JSAPIAuto::s_allowMethodObjects = true;
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : FB::JSAPIImpl(SecurityScope_Public),
     m_description(description),
-    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes), 
+    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes),
     m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
     m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
 {
@@ -39,7 +39,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
   : FB::JSAPIImpl(securityLevel),
     m_description(description),
-    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes), 
+    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes),
     m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
     m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
 {
@@ -146,14 +146,14 @@ bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
-    
+
     return (m_methodFunctorMap.find(methodName) != m_methodFunctorMap.end()) && memberAccessible(m_zoneMap.find(methodName));
 }
 
 bool FB::JSAPIAuto::HasMethodObject( const std::string& methodObjName ) const
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-    
+
     return m_allowMethodObjects && HasMethod(methodObjName);
 }
 
@@ -255,7 +255,7 @@ void FB::JSAPIAuto::RemoveProperty(const std::string& propertyName)
     if(!m_valid)
         throw object_invalidated();
 
-    // If there is nothing with this name available in the current security context, 
+    // If there is nothing with this name available in the current security context,
     // we throw an exception -- whether or not a real property exists
     if (!memberAccessible(m_zoneMap.find(propertyName)))
         throw invalid_member(propertyName);
@@ -300,7 +300,7 @@ void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
         throw object_invalidated();
 
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-    
+
     std::string id(boost::lexical_cast<std::string>(idx));
     if (m_allowDynamicAttributes || (m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly)) {
         registerAttribute(id, value);
@@ -315,7 +315,7 @@ void FB::JSAPIAuto::RemoveProperty(int idx)
         throw object_invalidated();
 
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-    
+
     std::string id(boost::lexical_cast<std::string>(idx));
     if (m_allowDynamicAttributes && m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly) {
         unregisterAttribute(id);
@@ -389,14 +389,15 @@ void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::varian
 void FB::JSAPIAuto::unregisterAttribute( const std::string& name )
 {
     AttributeMap::iterator fnd = m_attributes.find(name);
-    if ( !fnd->second.readonly ) {
-        throw FB::script_error("Cannot remove read-only property " + name);
-    } else {
-        if (fnd != m_attributes.end())
-        {
+    if ( fnd != m_attributes.end() ) {
+        if (fnd->second.readonly ) {
+            throw FB::script_error("Cannot remove read-only property " + name);
+        } else {
             m_attributes.erase(fnd);
             m_zoneMap.erase(name);
         }
+    } else {
+        return; // No attribute of that name? success!
     }
 }
 
@@ -411,7 +412,7 @@ FB::variant FB::JSAPIAuto::getAttribute( const std::string& name )
 void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& value )
 {
     AttributeMap::iterator fnd = m_attributes.find(name);
-    if (fnd != m_attributes.end() || !fnd->second.readonly) {
+    if (fnd == m_attributes.end() || !fnd->second.readonly) {
         Attribute attr = {value, false};
         m_attributes[name] = attr;
         m_zoneMap[name] = getZone();
