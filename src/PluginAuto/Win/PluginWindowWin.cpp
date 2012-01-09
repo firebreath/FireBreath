@@ -175,6 +175,14 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 return true;
             break;
         }
+        case WM_MOUSEWHEEL:
+        {
+            MouseScrollEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam),
+                                0, GET_WHEEL_DELTA_WPARAM(wParam));
+            if(SendEvent(&ev))
+                return true;
+            break;
+        }
         case WM_PAINT:
         {
             RefreshEvent ev;
