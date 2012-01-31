@@ -62,11 +62,12 @@ NPError OSCALL NP_GetEntryPoints(NPPluginFuncs* pFuncs)
 
 NPError OSCALL NP_Initialize(NPNetscapeFuncs* pFuncs)
 {
-    FBLOG_INFO("NPAPI", "");
+    /* can't use FBLOG_XXX before GetModule returns, as it calls InitLogging */
     initPluginModule();
     NpapiPluginModule *module = NpapiPluginModule::GetModule(_dyld_get_image_header_containing_address(__builtin_return_address(0)));
     module->setNetscapeFuncs(pFuncs);
 
+    FBLOG_INFO("NPAPI", "Initialization done");
     return NPERR_NO_ERROR;
 }
 
