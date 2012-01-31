@@ -35,11 +35,13 @@ extern "C" NPError NP_GetValue(void *future, NPPVariable variable, void *value)
 extern "C" NPError NP_Initialize(NPNetscapeFuncs* pFuncs
                              , NPPluginFuncs *pluginFuncs)
 {
-    FBLOG_INFO("NPAPI", "");
+    /* can't use FBLOG_XXX before GetModule returns, as it calls InitLogging */
     initPluginModule();
     NpapiPluginModule *module = NpapiPluginModule::GetModule(0);
     module->getPluginFuncs(pluginFuncs);
     module->setNetscapeFuncs(pFuncs);
+
+    FBLOG_INFO("NPAPI", "Initialization done");
     return NPERR_NO_ERROR;
 }
 
