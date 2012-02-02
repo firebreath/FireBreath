@@ -29,18 +29,25 @@ using namespace FB;
 
 PluginEventMacCarbon::PluginEventMacCarbon()
     : PluginEventMac(), m_old_h(0.0f), m_old_v(0.0f), m_mouseEntered(false)
-    , m_tisInputSource(NULL), m_tisKeyLayoutData(NULL), m_deadKeyState(0)
+    , m_tisKeyLayoutData(NULL), m_deadKeyState(0)
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
+    , m_tisInputSource(NULL)
+#endif
 {
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
     m_tisInputSource = TISCopyCurrentKeyboardInputSource();
     m_tisKeyLayoutData = (CFDataRef) TISGetInputSourceProperty(m_tisInputSource, kTISPropertyUnicodeKeyLayoutData);
+#endif
 }
 
 PluginEventMacCarbon::~PluginEventMacCarbon()
 {
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
     if (m_tisInputSource) {
         CFRelease(m_tisInputSource);
         m_tisInputSource = NULL;
     }
+#endif
 }
 
 Point PluginEventMacCarbon::GlobalToLocal(Point location) {

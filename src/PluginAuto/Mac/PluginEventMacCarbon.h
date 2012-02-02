@@ -44,9 +44,11 @@ namespace FB {
 
         short m_old_h, m_old_v; // Keep track of mouse movement coordinates
         bool m_mouseEntered; // Keep track of mouseEntered/mouseExited
-        TISInputSourceRef m_tisInputSource;
         CFDataRef m_tisKeyLayoutData;
         UInt32 m_deadKeyState;
+#if __MAC_OS_X_VERSION_MAX_ALLOWED >= 1050
+        TISInputSourceRef m_tisInputSource;
+#endif
     };
 };
 
