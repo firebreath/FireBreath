@@ -72,7 +72,7 @@ void PluginWindowMacCG::DrawLabel(CGContextRef cgContext, FB::Rect bounds) {
     CGContextSaveGState(cgContext);
     CGColorSpaceRef rgbSpace = CGColorSpaceCreateWithName(kCGColorSpaceGenericRGB);
 
-    float boxColorValues[4] = {0.0, 0.0, 0.0, 1.0};
+    CGFloat boxColorValues[4] = {0.0, 0.0, 0.0, 1.0};
     CGColorRef boxColor = CGColorCreate(rgbSpace, boxColorValues);
     CGContextSetFillColorWithColor(cgContext, boxColor);
     CGContextFillRect(cgContext, CGRectMake(0, 0, 400, 24));
@@ -80,7 +80,7 @@ void PluginWindowMacCG::DrawLabel(CGContextRef cgContext, FB::Rect bounds) {
 
     char label[256];
     sprintf(label, "CoreGraphics %.01f fps #%lld", fps, m_count++);
-    float txtColorValues[4] = {0.0, 1.0, 0.0, 1.0};
+    CGFloat txtColorValues[4] = {0.0, 1.0, 0.0, 1.0};
     CGColorRef txtColor = CGColorCreate(rgbSpace, txtColorValues);
     CGContextSetStrokeColorWithColor(cgContext, txtColor);
     CGContextSetFillColorWithColor(cgContext, txtColor);
