@@ -22,6 +22,10 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #include "PluginWindowMacCG.h"
 #include <Carbon/Carbon.h>
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 1050
+typedef float CGFloat; // hack for 10.4 sdk
+#endif
+
 using namespace FB;
 
 FB::PluginWindowMacCG* FB::createPluginWindowMacCG()
