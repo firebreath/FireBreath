@@ -26,8 +26,8 @@
         
         function load()
         {
-            addEvent(plugin(), 'fired', function(x){
-                alert('onfired() from load(): '+x)
+            addEvent(plugin(), 'test', function(){
+                alert("Received a test event from the plugin.")
             });
         }
 
@@ -37,19 +37,23 @@
         
         function addTestEvent()
         {
-            addEvent(plugin(), 'fired', function(x){
-                alert('onfired(): '+x)
+            addEvent(plugin(), 'echo', function(txt,count){
+                alert(txt+count);
             });
         }
         
         function testEvent()
         {
-            plugin().testEvent('test stuff');
+            plugin().testEvent();
         }
         
         function pluginValid()
         {
-            alert(plugin().valid);
+            if(plugin().valid){
+                alert(plugin().echo("This plugin seems to be working!"));
+            } else {
+                alert("Plugin is not working :(");
+            }
         }
     </script>
 <body onload="load()">
@@ -60,12 +64,13 @@
     <param name="onload" value="pluginLoaded" />
 </object><br />
 @@endforeach
+    
+<a href="#" onclick="javascript:pluginValid()">Click me!</a> <br />
 
-<a href="#" onclick="javascript:addTestEvent()">set event handler</a> <br />
+<a href="#" onclick="javascript:addTestEvent()">Activate click counter</a> <br />
 
-<a href="#" onclick="javascript:testEvent()">Fire event</a> <br />
+<a href="#" onclick="javascript:testEvent()">Fire a test event</a> <br />
 
-<a href="#" onclick="javascript:pluginValid()">alert plugin valid</a> <br />
 
 </body>
 </html>
