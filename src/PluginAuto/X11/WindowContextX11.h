@@ -17,7 +17,7 @@
 #ifndef H_FB_WINDOWCONTEXTX11
 #define H_FB_WINDOWCONTEXTX11
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include "NpapiTypes.h"
 
 #if FB_GUI_DISABLED == 1

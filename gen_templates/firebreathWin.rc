@@ -7,7 +7,7 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "global/resource.h"
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -108,4 +108,3 @@ END
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
-

@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2011 Eric Herrmann, Firebreath development team
 \**********************************************************/
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include "FactoryBase.h"
 
 #include "PluginEventMacCocoa.h"

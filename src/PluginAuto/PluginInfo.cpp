@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include <map>
 #include <string>
 #include <vector>

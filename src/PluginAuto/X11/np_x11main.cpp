@@ -6,7 +6,7 @@
   doing!
 \**********************************************************/
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"
 
