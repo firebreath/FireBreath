@@ -41,7 +41,7 @@
 	<key>WebPluginName</key>
 	<string>${FBSTRING_ProductName}</string>
 	<key>WebPluginDescription</key>
-	<string>${FBSTRING_FileDescription}</string>
+	<string>${FBSTRING_PluginDescription}</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
 @@foreach (FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENT FBSTRING_FileDescription CUR_DESC)
