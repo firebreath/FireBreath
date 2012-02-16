@@ -290,10 +290,11 @@ namespace FB
         SecurityZone zone;
         MethodFunctors() : call() {}
         MethodFunctors(const CallMethodFunctor& call) : call(call) {}
-        MethodFunctors(const SecurityZone& zone, const CallMethodFunctor& call) : call(call) {}
+        MethodFunctors(const SecurityZone& zone, const CallMethodFunctor& call) : call(call), zone(zone) {}
         MethodFunctors(const MethodFunctors& m) : call(m.call) {}
         MethodFunctors& operator=(const MethodFunctors& rhs) {
             call = rhs.call;
+            zone = rhs.zone;
             return *this;
         }
     };

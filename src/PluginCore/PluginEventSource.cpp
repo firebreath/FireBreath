@@ -88,7 +88,7 @@ bool PluginEventSource::SendEvent(PluginEvent* evt)
         if (tmp && tmp->HandleEvent(evt, this)) {
             return true;    // Tell the caller that the event was handled
         }
-        it++;
+        ++it;
     }
     return false;
 }

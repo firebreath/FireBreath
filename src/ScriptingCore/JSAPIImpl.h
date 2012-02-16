@@ -200,7 +200,7 @@ namespace FB
         virtual void setDefaultZone(const SecurityZone& securityLevel)
         {
             boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-            assert(m_zoneStack.size() > 0);
+            assert(!m_zoneStack.empty());
             m_zoneStack.pop_front();
             m_zoneStack.push_front(securityLevel);
         }
@@ -220,7 +220,7 @@ namespace FB
         virtual SecurityZone getDefaultZone() const
         {
             boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-            assert(m_zoneStack.size() > 0);
+            assert(!m_zoneStack.empty());
             return m_zoneStack.front();
         }
 
@@ -237,7 +237,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual SecurityZone getZone() const
         {
-            assert(m_zoneStack.size() > 0);
+            assert(!m_zoneStack.empty());
             boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
             return m_zoneStack.back();
         }

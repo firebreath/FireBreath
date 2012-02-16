@@ -368,10 +368,10 @@ ActiveXBindStatusCallback::OnDataAvailable(DWORD grfBSCF, DWORD dwSize, FORMATET
         std::string data;
         if ( GetInfo( HTTP_QUERY_CONTENT_RANGE, data ) )        // data look like bytes 0-3/4234
         {
-            size_t startPos = 6;        // "bytes "
             size_t endPos = data.find( "-" );
             if ( endPos != std::string::npos )
             {
+                size_t startPos = 6;        // "bytes "
                 offset = atol( data.substr(startPos, endPos - startPos).c_str() );
             }
         }

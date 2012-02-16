@@ -59,7 +59,7 @@ JSAPIPtr JSObjectRefAPI::getJSAPI() const
     JSObjectRefPtr o(obj.lock());
     
     if (JSObjectRefObject::isJSAPI(m_jsContext, *o->getPtr())) {
-        JSObjectRefObject *obj = (JSObjectRefObject *)JSObjectGetPrivate(*o->getPtr());
+        JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(*o->getPtr()));
         return obj->getAPI();
     }
     

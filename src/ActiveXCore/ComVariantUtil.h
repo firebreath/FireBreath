@@ -167,7 +167,7 @@ namespace FB { namespace ActiveX
         if (host->hasHTMLWindow())
         {
             FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
-            for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); it++) {
+            for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); ++it) {
                 FB::VariantList vl = boost::assign::list_of(*it);
                 outArr->Invoke("push", vl);
             }
@@ -181,7 +181,7 @@ namespace FB { namespace ActiveX
             CComSafeArray<VARIANT> sa;
 			sa.Create();
             const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
-            for (FB::VariantList::iterator itr = inArr.begin(); itr != inArr.end(); itr++) {
+            for (FB::VariantList::iterator itr = inArr.begin(); itr != inArr.end(); ++itr) {
                 const std::type_info& type = itr->get_type();
                 ComVariantBuilderMap::const_iterator found = builderMap.find(&type);
 
@@ -207,7 +207,7 @@ namespace FB { namespace ActiveX
         if (host->hasHTMLWindow())
         {
             FB::JSObjectPtr out = host->getDOMWindow()->createMap();
-            for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); it++) {
+            for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); ++it) {
                 out->SetProperty(it->first, it->second);
             }
             IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(out);
@@ -220,7 +220,7 @@ namespace FB { namespace ActiveX
             CComSafeArray<VARIANT> sa;
 			sa.Create();
             const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
-            for (FB::VariantMap::iterator itr = inMap.begin(); itr != inMap.end(); itr++) {
+            for (FB::VariantMap::iterator itr = inMap.begin(); itr != inMap.end(); ++itr) {
                 const std::type_info& valType = itr->second.get_type();
                 ComVariantBuilderMap::const_iterator valTypeFound = builderMap.find(&valType);
                 if (valTypeFound == builderMap.end())

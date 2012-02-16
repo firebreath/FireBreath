@@ -97,7 +97,7 @@ std::vector<ElementPtr> Element::getElementsByTagName(const std::string& tagName
     std::vector<FB::JSObjectPtr> tagList = callMethod<std::vector<FB::JSObjectPtr> >("getElementsByTagName", FB::variant_list_of(tagName));
     std::vector<FB::JSObjectPtr>::iterator it;
     std::vector<ElementPtr> outList;
-    for (it = tagList.begin(); it != tagList.end(); it++)
+    for (it = tagList.begin(); it != tagList.end(); ++it)
     {
         outList.push_back(Element::create(*it));
     }

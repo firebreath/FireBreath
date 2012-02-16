@@ -344,7 +344,7 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
 void NpapiPlugin::signalStreamOpened(FB::BrowserStream* stream)
 {
     NpapiStream* s = dynamic_cast<NpapiStream*>(stream);
-    if ( !s->isCompleted() ) s->signalOpened();
+    if ( s != NULL && !s->isCompleted() ) s->signalOpened();
 }
 
 
