@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_PLUGINWINDOWX11
 #define H_PLUGINWINDOWX11
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 
 #if FB_GUI_DISABLED != 1
 

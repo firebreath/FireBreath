@@ -19,7 +19,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "NpapiBrowserHost.h"
 #include "PluginCore.h"
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 
 #include "FactoryBase.h"
 

@@ -7,7 +7,7 @@
 #include "JSObject.h"
 #include "variant_list.h"
 #include "DOM/Document.h"
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 
 #include "@{PLUGIN_ident}API.h"
 

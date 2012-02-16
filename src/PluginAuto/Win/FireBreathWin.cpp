@@ -16,7 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "win_common.h"
 #include "global/resource.h"
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include "FireBreathWin_i.h"
 #include "axmain.h"
 #include "FBControl.h"

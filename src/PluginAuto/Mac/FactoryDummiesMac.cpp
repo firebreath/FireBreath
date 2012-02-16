@@ -15,7 +15,7 @@
 // Depending on the plugin config, only a part of the mac window classes are actually built.
 // This file takes care of the linking errors.
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include "ConstructDefaultPluginWindows.h"
 
 #if !FBMAC_USE_INVALIDATINGCOREANIMATION

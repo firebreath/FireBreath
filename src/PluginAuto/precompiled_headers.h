@@ -22,7 +22,7 @@
 #include <ShlGuid.h>
 #endif
 
-#include "global/config.h"
+#include "global/FireBreathConfig.h"
 #include <map>
 #include <string>
 #include <vector>
