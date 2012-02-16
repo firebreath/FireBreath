@@ -1,24 +1,23 @@
-/*
-* (C) Copyright Christopher Diggins 2005
-* (C) Copyright Pablo Aguilar 2005
-* (C) Copyright Kevlin Henney 2001
-*
-* Distributed under the Boost Software License, Version 1.0. (See
-* accompanying file LICENSE_1_0.txt or copy at
-* http://www.boost.org/LICENSE_1_0.txt)  
-*
-* This file was originally written by Christopher Diggins, and then was modified in 2008
-* by Richard Bateman for the FireBreath open source project; it was renamed to FB::variant at that
-* time.
-*/
+/**********************************************************\
+Created:    2008-2012
+License:    Dual license model; choose one of two:
+            New BSD License
+            http://www.opensource.org/licenses/bsd-license.php
+            - or -
+            GNU Lesser General Public License, version 2.1
+            http://www.gnu.org/licenses/lgpl-2.1.html
+
+Copyright 2008-2012 Richard Bateman, Firebreath development team
+\**********************************************************/
 
 #pragma once
-#ifndef CDIGGINS_ANY_HPP
-#define CDIGGINS_ANY_HPP
+#ifndef FB_VARIANT_H
+#define FB_VARIANT_H
 
 //#define ANY_IMPLICIT_CASTING    // added to enable implicit casting
 
 #include <boost/cstdint.hpp>
+#include <boost/any.hpp>
 #include <stdexcept>
 #include <typeinfo>
 #include <algorithm>
@@ -47,9 +46,6 @@
 #include "Util/meta_util.h"
 #include "utf8_tools.h"
 #include "variant_conversions.h"
-//#include "JSObject.h"
-
-
 
 #ifdef _WIN32
 #pragma warning(push)
@@ -145,109 +141,23 @@ namespace FB
         const char* to;
     };
 
-    namespace variant_detail
-    {
-        // function pointer table
-        struct fxn_ptr_table {
-            const std::type_info& (*get_type)();
-            void (*static_delete)(void**);
-            void (*clone)(void* const*, void**);
-            void (*move)(void* const*,void**);
-            bool (*less)(void* const*, void* const*);
-        };
-
-        // static functions for small value-types 
-        template<bool is_small>
-        struct fxns
-        {
-            template<typename T>
-            struct type {
-                static const std::type_info& get_type() { 
-                    return typeid(T); 
-                }
-                static void static_delete(void** x) { 
-                    reinterpret_cast<T*>(x)->~T(); 
-                }
-                static void clone(void* const* src, void** dest) { 
-                    new(dest) T(*reinterpret_cast<T const*>(src)); 
-                }
-                static void move(void* const* src, void** dest) { 
-                    reinterpret_cast<T*>(dest)->~T(); 
-                    *reinterpret_cast<T*>(dest) = *reinterpret_cast<T const*>(src); 
-                }
-                static bool lessthan(void* const* left, void* const* right) {
-                    T l(*reinterpret_cast<T const*>(left));
-                    T r(*reinterpret_cast<T const*>(right));
-
-                    return l < r;
-                }
-            };
-        };
-
-        // static functions for big value-types (bigger than a void*)
-        template<>
-        struct fxns<false>
-        {
-            template<typename T>
-            struct type {
-                static const std::type_info& get_type() { 
-                    return typeid(T); 
-                }
-                static void static_delete(void** x) { 
-                    delete(*reinterpret_cast<T**>(x)); 
-                }
-                static void clone(void* const* src, void** dest) { 
-                    *dest = new T(**reinterpret_cast<T* const*>(src)); 
-                }
-                static void move(void* const* src, void** dest) { 
-                    (*reinterpret_cast<T**>(dest))->~T(); 
-                    **reinterpret_cast<T**>(dest) = **reinterpret_cast<T* const*>(src); 
-                }
-                static bool lessthan(void* const* left, void* const* right) {
-                    return **reinterpret_cast<T* const*>(left) < **reinterpret_cast<T* const*>(right);
-                }
-            };
-        };
-
-        template<typename T>
-        struct get_table 
-        {
-            static const bool is_small = sizeof(T) <= sizeof(void*);
-
-            static fxn_ptr_table* get()
-            {
-                static fxn_ptr_table static_table = {
-                    fxns<is_small>::template type<T>::get_type
-                    , fxns<is_small>::template type<T>::static_delete
-                    , fxns<is_small>::template type<T>::clone
-                    , fxns<is_small>::template type<T>::move
-                    , fxns<is_small>::template type<T>::lessthan
-                };
-                return &static_table;
-            }
-        };
-
+    namespace variant_detail {
         struct null {
-            bool operator<(const null& rh) const
-            {
+            bool operator<(const null&) const {
                 return false;
-            }
-            template <typename T>
-            bool operator<(const T& rh) const
-            {
-                return true;
             }
         };
 
         struct empty {
-            bool operator<(const empty& rh) const
-            {
+            bool operator<(const empty&) const {
                 return false;
             }
-            template <typename T>
-            bool operator<(const T& rh) const
-            {
-                return true;
+        };
+
+        template<typename T>
+        struct lessthan {
+            static bool impl(const boost::any& l, const boost::any& r) {
+                return boost::any_cast<T>(l) < boost::any_cast<T>(r);
             }
         };
     } // namespace variant_detail
@@ -255,7 +165,7 @@ namespace FB
     class variant;
 
     template <class T>
-    variant make_variant(T t);
+    variant make_variant(T);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  variant
@@ -288,7 +198,6 @@ namespace FB
     class variant
     {
     public:
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template <typename T> variant::variant(const T& x)
         ///
@@ -298,46 +207,21 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
         variant(const T& x, bool) {
-            table = variant_detail::get_table<variant_detail::empty>::get();
-            object = NULL;
             assign(x, true);
         }
 
         template <typename T>
         variant(const T& x) {
-            table = variant_detail::get_table<variant_detail::empty>::get();
-            object = NULL;
             assign(x);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn variant::variant()
         ///
-        /// @brief  Default constructor initializes the varient to an empty value
+        /// @brief  Default constructor initializes the variant to an empty value
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant() {
-            table = variant_detail::get_table<variant_detail::empty>::get();
-            object = NULL;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant::variant(const variant& x)
-        ///
-        /// @brief  Copy constructor. 
-        ///
-        /// @param  x   The variant to copy 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        variant(const variant& x) {
-            *this = x;
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn variant::~variant()
-        ///
-        /// @brief  Finaliser. Deletes the value from memory as part of cleanup
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        ~variant() {
-            table->static_delete(&object);
+        variant()
+            : lessthan(&FB::variant::lessthan_default) {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -350,22 +234,14 @@ namespace FB
         /// @return *this
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         variant& assign(const variant& x) {
-            // are we copying between the same type?
-            if (table == x.table) {
-                // if so, we can avoid reallocation
-                table->move(&x.object, &object);
-            }
-            else {
-                reset();
-                x.table->clone(&x.object, &object);                          
-                table = x.table;
-            }
+            object = x.object;
+            lessthan = x.lessthan;
             return *this;
         }
 
         template<class T>
-        variant& assign(const T x) {
-            *this = make_variant(x);
+        variant& assign(const T& x) {
+            return assign(make_variant(x));
             // If you get an error that there are no overloads that could convert all the argument
             // types for this line, you are trying to use a type that is not known to FireBreath.
             // First, make sure you really want to use this type! If you aren't doing this on
@@ -380,7 +256,6 @@ namespace FB
             // 2. You could either create your own assignment function by either overriding
             //    FB::make_variant or FB::variant_detail::conversion::make_variant.
             //
-            return *this;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -393,34 +268,9 @@ namespace FB
         /// @return *this
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <typename T>
-        variant& assign(const T& x, bool)
-        {
-            // are we copying between the same type?
-            variant_detail::fxn_ptr_table* x_table = variant_detail::get_table<T>::get();
-            if (table == x_table) {
-                // if so, we can avoid deallocating and resuse memory 
-                if (sizeof(T) <= sizeof(void*)) {
-                    // create copy on-top of object pointer itself
-                    new(&object) T(x);
-                }
-                else {
-                    // create copy on-top of old version
-                    new(object) T(x);
-                }
-            }
-            else {        
-                reset();
-                if (sizeof(T) <= sizeof(void*)) {
-                    // create copy on-top of object pointer itself
-                    new(&object) T(x);
-                    // update table pointer 
-                    table = x_table;
-                }
-                else {
-                    object = new T(x);          
-                    table = x_table;
-                }
-            }
+        variant& assign(const T& x, bool) {
+            object = x;
+            lessthan = &FB::variant_detail::lessthan<T>::impl;
             return *this;
         }
 
@@ -430,34 +280,21 @@ namespace FB
             return assign(x);
         }
 
-        // assignment copy operator
-        variant& operator=(variant const& rh) {
-            table = variant_detail::get_table<variant_detail::empty>::get();
-            return assign(rh);
-        }
-
         // utility functions
         variant& swap(variant& x) {
-            std::swap(table, x.table);
             std::swap(object, x.object);
+            std::swap(lessthan, x.lessthan);
             return *this;
         }
 
         // comparison function
-        bool operator<(const variant& rh) const
-        {
-            return lessthan(rh);
-        }
-
-        // comparison function
-        bool lessthan(const variant& rh) const {
+        bool operator<(const variant& rh) const {
             if (get_type() == rh.get_type()) {
-                return table->less(&object, &rh.object);
-            } else {
-                std::string left = get_type().name();
-                std::string right = rh.get_type().name();
-                return left < right;
+                return lessthan(object, rh.object);
             }
+            const char* left = get_type().name();
+            const char* right = rh.get_type().name();
+            return strcmp(left, right) < 0;
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -468,7 +305,7 @@ namespace FB
         /// @return The type that can be compared with typeid()
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         const std::type_info& get_type() const {
-            return table->get_type();
+            return object.type();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -520,7 +357,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<typename T> T& variant::cast() const
+        /// @fn template<typename T> T variant::cast() const
         ///
         /// @brief  returns the value cast as the given type; throws bad_variant_type if that type is
         ///         not the type of the value stored in variant
@@ -530,29 +367,11 @@ namespace FB
         /// @return value of type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>
-        T& cast() {
+        T cast() const {
             if (get_type() != typeid(T)) {
                 throw bad_variant_cast(get_type(), typeid(T));
             }
-            if (sizeof(T) <= sizeof(void*)) {
-                return *reinterpret_cast<T*>(&object);
-            }
-            else {
-                return *reinterpret_cast<T*>(object);
-            }
-        }
-
-        template<typename T>
-        const T& cast() const {
-            if (get_type() != typeid(T)) {
-                throw bad_variant_cast(get_type(), typeid(T));
-            }
-            if (sizeof(T) <= sizeof(void*)) {
-                return *reinterpret_cast<T const*>(&object);
-            }
-            else {
-                return *reinterpret_cast<T const*>(object);
-            }
+            return boost::any_cast<T>(object);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -582,28 +401,20 @@ namespace FB
         /// @return true if empty, false if not 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool empty() const {
-            //return object == NULL;
-            return table == variant_detail::get_table<variant_detail::empty>::get();
+            return object.empty() || is_of_type<FB::FBVoid>();
         }
 
         bool is_null() const {
-            return table == variant_detail::get_table<variant_detail::null>::get();
+            return is_of_type<FB::FBNull>();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void variant::reset()
         ///
         /// @brief  Frees any value assigned and resets the variant to empty state
-        ///
-        /// @author Richard Bateman
-        /// @date   10/15/2010
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void reset()
-        {
-            if (empty()) return; 
-            table->static_delete(&object);
-            table = variant_detail::get_table<variant_detail::empty>::get();
-            object = NULL;
+        void reset() {
+            assign(variant());
         }
         
     private:
@@ -612,9 +423,13 @@ namespace FB
             return cast<T>();
         }
 
+        static bool lessthan_default(const boost::any& l, const boost::any& r) {
+            return false;
+        }
+
         // fields
-        variant_detail::fxn_ptr_table* table;      
-        void* object;
+        boost::any object;
+        bool (*lessthan)(const boost::any&, const boost::any&);
     };
 
     template <>
@@ -879,5 +694,5 @@ namespace FB
 #undef FB_CONVERT_ENTRY_COMPLEX_BEGIN
 #undef FB_CONVERT_ENTRY_COMPLEX_END
 
-#endif // CDIGGINS_ANY_HPP
+#endif // FB_VARIANT_H
 
