@@ -37,7 +37,7 @@ namespace FB {
            public:
                bool operator()(const FB::variant &x, const FB::variant &y) const
                {
-                   return x < y;
+                   return x.lessthan(y);
                }
         };
 
