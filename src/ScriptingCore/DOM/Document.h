@@ -82,7 +82,17 @@ namespace FB { namespace DOM {
         /// @return The document's body.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ElementPtr getBody() const;
-    };
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual ElementPtr Document::createElement(const std::string &name) const
+        ///
+        /// @brief  roughly equivalent to calling document.createElement(name) from javascript
+        ///
+        /// @return DOM::ElementPtr wrapping the newly created element
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+		virtual ElementPtr createElement(const std::string &name) const;
+	
+	};
 
 }; };
 
