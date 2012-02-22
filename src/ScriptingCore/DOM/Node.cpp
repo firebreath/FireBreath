@@ -13,6 +13,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "JSObject.h"
+#include "variant_list.h"
 #include "../precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "Node.h"
@@ -47,3 +48,7 @@ void FB::DOM::Node::setProperty(const int idx, const FB::variant& val) const
     m_element->SetProperty(idx, val);
 }
 
+void FB::DOM::Node::appendChild(FB::DOM::NodePtr node)
+{
+	m_element->Invoke("appendChild", FB::variant_list_of(node->getJSObject()));
+}
