@@ -46,7 +46,7 @@ namespace FB { namespace ActiveX {
             virtual FB::DOM::WindowPtr getWindow() const;
             virtual FB::DOM::ElementPtr getElementById(const std::string& elem_id) const;
             virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(const std::string& tagName) const;
-
+			virtual FB::DOM::ElementPtr createElement(const std::string &name) const;
         protected:
             CComQIPtr<IWebBrowser> m_webBrowser;
             CComQIPtr<IHTMLDocument2> m_htmlDoc;

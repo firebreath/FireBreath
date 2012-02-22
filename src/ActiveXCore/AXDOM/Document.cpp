@@ -79,3 +79,14 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
     return FB::DOM::Element::create(ptr);
 }
 
+FB::DOM::ElementPtr Document::createElement(const std::string &name) const
+{
+	CComPtr<IHTMLElement> el(NULL);
+	HRESULT hr = m_htmlDoc->createElement(CComBSTR(FB::utf8_to_wstring(name).c_str()), &el);
+	if (FAILED(hr)) {
+		throw std::runtime_error("Failed to create element!");
+	}
+	CComQIPtr<IDispatch> disp(el);
+	FB::JSObjectPtr ptr(IDispatchAPI::create(disp, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+    return FB::DOM::Element::create(ptr);
+}
