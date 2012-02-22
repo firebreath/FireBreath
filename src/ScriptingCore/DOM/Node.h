@@ -203,6 +203,8 @@ namespace FB { namespace DOM {
         /// @overload
         virtual void setProperty(const int idx, const variant& val) const;
 
+		virtual void appendChild(NodePtr node);
+
     protected:
         JSObjectPtr m_element; // The JSObject that this object wraps
     };
