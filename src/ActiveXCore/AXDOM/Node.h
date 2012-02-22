@@ -36,15 +36,11 @@ namespace FB { namespace ActiveX {
         class Node : public virtual FB::DOM::Node
         {
         public:
-            Node(const FB::JSObjectPtr& element, IWebBrowser *web)
-                : m_axNode(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
-                  m_webBrowser(web), FB::DOM::Node(element)
-            {
-            }
-            virtual ~Node() { }
+            Node(const FB::JSObjectPtr& element, IWebBrowser *web);
+            virtual ~Node();
 
         public:
-
+			virtual void appendChild(FB::DOM::NodePtr node);
         protected:
             CComQIPtr<IHTMLDOMNode> m_axNode;
             CComPtr<IWebBrowser> m_webBrowser;
