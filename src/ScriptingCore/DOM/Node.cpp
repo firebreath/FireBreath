@@ -48,7 +48,8 @@ void FB::DOM::Node::setProperty(const int idx, const FB::variant& val) const
     m_element->SetProperty(idx, val);
 }
 
-void FB::DOM::Node::appendChild(FB::DOM::NodePtr node)
+FB::DOM::NodePtr FB::DOM::Node::appendChild(FB::DOM::NodePtr node)
 {
-	m_element->Invoke("appendChild", FB::variant_list_of(node->getJSObject()));
+	FB::JSObjectPtr result = callMethod<FB::JSObjectPtr>("appendChild", FB::variant_list_of(node->getJSObject()));
+	return Node::create(result);
 }
