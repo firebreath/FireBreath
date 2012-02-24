@@ -26,7 +26,7 @@ Node::~Node()
 {
 }
 
-void Node::appendChild(FB::DOM::NodePtr node) {
+FB::DOM::NodePtr Node::appendChild(FB::DOM::NodePtr node) {
 	CComPtr<IHTMLDOMNode> newNode;
 	NodePtr actualNode = FB::ptr_cast<Node>(node);
 	if (SUCCEEDED(m_axNode->appendChild(actualNode->m_axNode, &newNode))) {
@@ -34,5 +34,6 @@ void Node::appendChild(FB::DOM::NodePtr node) {
 	} else {
 		throw std::runtime_error("failed to appendChild!");
 	}
+	return node;
 }
 
