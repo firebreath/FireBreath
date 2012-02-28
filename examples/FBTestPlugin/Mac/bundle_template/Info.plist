@@ -44,7 +44,7 @@
 	<string>${FBSTRING_ProductName}</string>
 	<key>WebPluginMIMETypes</key>
 	<dict>
-@@foreach (FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileDescription CUR_DESC)
+@@foreach (FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_PluginDescription CUR_DESC)
 		<key>${CUR_MIMETYPE}</key>
 		<dict>
             <key>WebPluginExtensions</key>

@@ -1,5 +1,5 @@
 HKCR {
-@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID FBSTRING_FileDescription CUR_DESC)
+@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID FBSTRING_PluginDescription CUR_DESC)
     ${PROGID}.${AXVERSION_NUM} = s '${CUR_DESC}' {
         CLSID = s '{${CUR_GUID}}'
     }
@@ -9,7 +9,7 @@ HKCR {
     }
 @@endforeach
     NoRemove CLSID {
-@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID FBSTRING_FileDescription CUR_DESC)
+@@foreach (ACTIVEX_PROGID PROGID FBControl_GUID CUR_GUID FBSTRING_PluginDescription CUR_DESC)
         ForceRemove {${CUR_GUID}} = s '${CUR_DESC}' {
             ProgID = s '${PROGID}.${AXVERSION_NUM}'
             VersionIndependentProgID = s '${PROGID}'
@@ -30,7 +30,7 @@ HKCR {
     NoRemove MIME {
         NoRemove Database {
             NoRemove 'Content Type' {
-@@foreach (FBControl_GUID CUR_GUID FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENTS FBSTRING_FileDescription CUR_DESC)
+@@foreach (FBControl_GUID CUR_GUID FBSTRING_MIMEType CUR_MIMETYPE FBSTRING_FileExtents CUR_EXTENTS FBSTRING_PluginDescription CUR_DESC)
                 '${CUR_MIMETYPE}' = s '${CUR_DESC}' {
                     val Extension = s '${CUR_EXTENTS}'
                     val CLSID = s '{${CUR_GUID}}'

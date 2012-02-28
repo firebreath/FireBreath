@@ -47,7 +47,7 @@
 		<key>${FBSTRING_MIMEType}</key>
 		<dict>
 			<key>WebPluginTypeDescription</key>
-			<string>${FBSTRING_FileDescription}</string>
+			<string>${FBSTRING_PluginDescription}</string>
 		</dict>
 	</dict>
 </dict>
