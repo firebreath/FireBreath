@@ -29,7 +29,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHos
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncGet, host, uri, callback, cache, bufferSize));
     }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(host, callback, bufferSize));
+    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(callback, bufferSize));
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
@@ -44,7 +44,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost( const FB::BrowserHo
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncPost, host, uri, postdata, callback, cache, bufferSize));
     }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(host, callback, bufferSize));
+    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(callback, bufferSize));
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
@@ -120,8 +120,8 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost( const FB::Bro
     return helper.m_response;
 }
 
-FB::SimpleStreamHelper::SimpleStreamHelper( const BrowserHostPtr& host, const HttpCallback& callback, const size_t blockSize )
-    : host(host), blockSize(blockSize), received(0), callback(callback)
+FB::SimpleStreamHelper::SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize )
+    : blockSize(blockSize), received(0), callback(callback)
 {
 
 }

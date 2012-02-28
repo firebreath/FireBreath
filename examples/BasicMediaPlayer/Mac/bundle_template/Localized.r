@@ -8,7 +8,7 @@ resource 'STR#' (126)
 
 resource 'STR#' (127) 
 { {
-    "${FBSTRING_FileDescription}"
+    "${FBSTRING_PluginDescription}"
 } };
 
 resource 'STR#' (128) 

@@ -33,12 +33,13 @@ set(MOZILLA_PLUGINID "@{COMPANY_domain}/@{PLUGIN_ident}")
 
 # strings
 set(FBSTRING_CompanyName "@{COMPANY_name}")
-set(FBSTRING_FileDescription "@{PLUGIN_desc}")
+set(FBSTRING_PluginDescription "@{PLUGIN_desc}")
 set(FBSTRING_PLUGIN_VERSION "1.0.0.0")
 set(FBSTRING_LegalCopyright "Copyright @{YEAR} @{COMPANY_name}")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "@{PLUGIN_name}")
 set(FBSTRING_FileExtents "")
+set(FBSTRING_FileDescription "")
 set(FBSTRING_PluginName "@{PLUGIN_name}")
 set(FBSTRING_MIMEType "@{PLUGIN_mimetype}")
 

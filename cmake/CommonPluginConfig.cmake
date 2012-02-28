@@ -97,6 +97,12 @@ else()
     set(FBSTRING_VERSION_BUILD 0)
 endif()
 
+# fallback to define FBSTRING_PluginDescription for templates if the
+# user hasn't done this in PluginConfig.cmake
+if (NOT DEFINED FBSTRING_PluginDescription)
+    set(FBSTRING_PluginDescription ${FBSTRING_FileDescription})
+endif()
+
 # configure default generated files
 # TODO: Fix this to not need configure_template; it is suboptimal
 file(GLOB TEMPLATELIST ${FB_TEMPLATE_DIR}/[^.]*)

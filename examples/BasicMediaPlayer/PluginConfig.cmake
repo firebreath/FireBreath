@@ -40,11 +40,12 @@ set(MOZILLA_PLUGINID "@firebreath.googlecode.com/Firebreath BasicMediaPlayer Plu
 
 # strings
 set(FBSTRING_CompanyName "FireBreath")
-set(FBSTRING_FileDescription "BasicMediaPlayer Plugin for the FireBreath Project")
+set(FBSTRING_PluginDescription "BasicMediaPlayer Plugin for the FireBreath Project")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2009 Firebreath development team")
 set(FBSTRING_PluginFileName "npBasicMediaPlayer.dll")
 set(FBSTRING_ProductName "FireBreath BasicMediaPlayer Plugin")
+set(FBSTRING_FileDescription "")
 set(FBSTRING_FileExtents "")
 set(FBSTRING_PluginName "FireBreath BasicMediaPlayer Plugin")
 set(FBSTRING_MIMEType "application/x-vnd.FBBasicMediaPlayer")

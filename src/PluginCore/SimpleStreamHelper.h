@@ -230,7 +230,7 @@ namespace FB {
 
 
     public:
-        SimpleStreamHelper( const BrowserHostPtr& host, const HttpCallback& callback, const size_t blockSize = 128*1024 );
+        SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize = 128*1024 );
 
         virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *);
@@ -239,7 +239,6 @@ namespace FB {
 
     protected:
         typedef std::list<boost::shared_array<uint8_t> > BlockList;
-        BrowserHostPtr host;
         BlockList blocks;
         boost::shared_array<uint8_t> data;
         const size_t blockSize;

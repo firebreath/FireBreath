@@ -51,7 +51,7 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", FBSTRING_CompanyName
-            VALUE "FileDescription", FBSTRING_FileDescription
+            VALUE "FileDescription", FBSTRING_PluginDescription
             VALUE "FileVersion", FBSTRING_PLUGIN_VERSION
             VALUE "LegalCopyright", FBSTRING_LegalCopyright
             VALUE "InternalName", FBSTRING_PluginFileName
