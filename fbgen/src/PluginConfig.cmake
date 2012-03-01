@@ -39,7 +39,6 @@ set(FBSTRING_LegalCopyright "Copyright @{YEAR} @{COMPANY_name}")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
 set(FBSTRING_ProductName "@{PLUGIN_name}")
 set(FBSTRING_FileExtents "")
-set(FBSTRING_FileDescription "")
 set(FBSTRING_PluginName "@{PLUGIN_name}")
 set(FBSTRING_MIMEType "@{PLUGIN_mimetype}")
 

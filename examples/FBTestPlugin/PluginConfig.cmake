@@ -53,7 +53,7 @@ set(FBControl_GUID
     9E506282-69D3-5ABA-9C1D-15994B37F4AE
     )
 set(FBSTRING_FileExtents "")
-set(FBSTRING_FileDescription
+set(FBSTRING_PluginDescription
     "Firebreath Test Plugin - Plugin for testing all interfaces and features"
     "Firebreath Test Plugin Math - Helper created from Main Plugin Object"
     "Firebreath Test Plugin SimpleMath - Helper created from Second Plugin Object"

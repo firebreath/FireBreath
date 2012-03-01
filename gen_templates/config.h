@@ -23,17 +23,19 @@
 
 #define FBSTRING_MIMETypeList "${FBMIMETYPE_LIST}"
 
-@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT FBSTRING_FileDescription CURDESC)
+@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT FBSTRING_PluginDescription CURDESC)
 #define FBSTRING_MIMEType${i} "${CURMIME}"
 #define FBSTRING_X11MIMEType${i} "${CURMIME}:${CUREXTENT}:${CURDESC}"
+#define FBSTRING_PluginDescription${i} "${CURDESC}"
 #define FBSTRING_FileDescription${i} "${CURDESC}"
 #define FBSTRING_FileExtents${i} "${CUREXTENT}"
 @@endforeach
 #define FBSTRING_PluginDescription "${FBSTRING_PluginDescription}"
+#define FBSTRING_FileDescription "${FBSTRING_PluginDescription}"
 #define FBSTRING_FileExtents FBSTRING_FileExtents0
 
 #define FBSTRING_X11MIMEType \
-@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT FBSTRING_FileDescription CURDESC)
+@@foreach (FBSTRING_MIMEType CURMIME FBSTRING_FileExtents CUREXTENT FBSTRING_PluginDescription CURDESC)
                             "${CURMIME}:${CUREXTENT}:${CURDESC};" \
 @@endforeach
                             ""

@@ -4,7 +4,7 @@ in a single codebase:
 
 1.  Edit PluginConfig.cmake, add multiple entries for the following
     entries: FBSTRING_MIMEType, ACTIVEX_PROGID, FBControl_GUID, and
-    FBSTRING_FileDescription.  Make sure that you provide unique values for
+    FBSTRING_PluginDescription.  Make sure that you provide unique values for
     all entries, including the GUIDs in FBControl_GUID.
 
 2.  Edit Factory.cpp, modify PluginFactory::createPlugin() and add code

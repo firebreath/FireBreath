@@ -99,7 +99,7 @@ endif()
 
 # fallback to define FBSTRING_PluginDescription for templates if the
 # user hasn't done this in PluginConfig.cmake
-if (NOT DEFINED FBSTRING_PluginDescription)
+if (NOT FBSTRING_PluginDescription)
     set(FBSTRING_PluginDescription ${FBSTRING_FileDescription})
 endif()
 

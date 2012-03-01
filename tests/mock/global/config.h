@@ -19,6 +19,7 @@
 #define FBSTRING_MIMEType0 "application/x-nothing"
 #define FBSTRING_X11MIMEType0 "application/x-nothing::Some plugin test"
 #define FBSTRING_FileDescription0 "Some plugin test"
+#define FBSTRING_PluginDescription0 "Some plugin test"
 #define FBSTRING_FileExtents0 ""
 #define FBSTRING_PluginDescription FBSTRING_FileDescription0
 #define FBSTRING_FileDescription FBSTRING_FileDescription0
