@@ -58,6 +58,9 @@ set(FBSTRING_FileDescription
     "Firebreath Test Plugin Math - Helper created from Main Plugin Object"
     "Firebreath Test Plugin SimpleMath - Helper created from Second Plugin Object"
     )
+set(FBSTRING_PluginDescription
+    "Firebreath Test Plugin - Plugin for testing all interfaces and features"
+    )
 
 # If you want to register per-machine, uncomment this line
 #set (FB_ATLREG_MACHINEWIDE 1)
