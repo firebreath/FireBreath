@@ -30,8 +30,8 @@
 #define FBSTRING_FileDescription${i} "${CURDESC}"
 #define FBSTRING_FileExtents${i} "${CUREXTENT}"
 @@endforeach
-#define FBSTRING_PluginDescription "${FBSTRING_PluginDescription}"
-#define FBSTRING_FileDescription "${FBSTRING_PluginDescription}"
+#define FBSTRING_PluginDescription FBSTRING_PluginDescription0
+#define FBSTRING_FileDescription FBSTRING_FileDescription0
 #define FBSTRING_FileExtents FBSTRING_FileExtents0
 
 #define FBSTRING_X11MIMEType \
