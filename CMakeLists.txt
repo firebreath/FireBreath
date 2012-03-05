@@ -44,6 +44,7 @@ endif()
 
 if (APPLE)
     clear_xcode_patches()
+    add_definitions(-D__ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0)
 endif()
 
 #check to make sure we're either using WITH_SYSTEM_BOOST or have the firebreath-boost lib installed
