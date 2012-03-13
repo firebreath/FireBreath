@@ -351,7 +351,8 @@ public:
         AxIdMap.setIdForValue(-5514, "securitydomain");
     }
 };
-#undef DISPID_EVENTS;
+
+#undef DISPID_EVENTS
 
 FB::TypeIDMap<DISPID> FB::ActiveX::AxIdMap(100);
 AxIdMapInit __AxIdInitClassDummy;
