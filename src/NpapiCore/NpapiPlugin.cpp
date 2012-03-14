@@ -164,7 +164,8 @@ see if the plug-in can receive data again by resending the data at regular inter
 */
 int32_t NpapiPlugin::WriteReady(NPStream* stream)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
+    if ( !s ) s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
     if ( !s ) return -1;
 
@@ -191,7 +192,8 @@ byte range requests, you can use this parameter to track NPN_RequestRead request
 */
 int32_t NpapiPlugin::Write(NPStream* stream, int32_t offset, int32_t len, void* buffer)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
+    if ( !s ) s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
     if ( !s ) return -1;
 
@@ -207,7 +209,8 @@ If an error occurs while retrieving the data or writing the file, the file name 
 */
 void NpapiPlugin::StreamAsFile(NPStream* stream, const char* fname)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
+    if ( !s ) s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
     if ( !s ) return;
 
@@ -309,8 +312,21 @@ NPN_DestroyStream.
 */
 NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
+    if ( !s ) s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
+    if ( !s )
+    {
+        // ask the plugin if it would like to create a new stream
+        FB::BrowserStreamPtr newstream;
+        if ((newstream = pluginMain->handleUnsolicitedStream(type, stream->url)))
+        {
+            // continue function using the newly created stream object
+            s = dynamic_cast<NpapiStream*> ( newstream.get() );
+            stream->pdata = static_cast<void*>( s );
+        }
+    }
+
     if ( !s ) return NPERR_NO_ERROR;
 
     s->setMimeType( type );
@@ -358,11 +374,13 @@ any further references to the stream object.
 */
 NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
+    if ( !s ) s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
     if ( !s || !s->getStream() ) return NPERR_NO_ERROR;
 
     s->setStream( 0 );
+    stream->pdata = 0;
     stream->notifyData = 0;
 
     if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );

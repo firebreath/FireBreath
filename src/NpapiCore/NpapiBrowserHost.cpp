@@ -762,6 +762,21 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url,
     }
     return stream;
 }
+
+FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const std::string& url, const FB::PluginEventSinkPtr& callback,
+                                                                bool cache, bool seekable, size_t internalBufferSize) const
+{
+    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    stream->AttachObserver( callback );
+
+    stream->setCreated();
+    // we're not waiting for a URLNotify call from this stream
+    stream->setNotified();
+    StreamCreatedEvent ev(stream.get());
+    stream->SendEvent( &ev );
+    return stream;
+}
+
 NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread
