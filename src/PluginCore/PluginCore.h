@@ -335,11 +335,20 @@ namespace FB {
         /// stream will be ignored.  To handle unsolicited streams, create a new BrowserStream by calling
         /// BrowserHost::createUnsolicitedStream and return this object.
         ///
+        /// Note that the BrowserStream is stored in a shared pointer, so the plugin should keep a copy of
+        /// anything it returns here to prevent it from getting released too quickly.
+        ///
         /// @param  mimeType            the MIME type of the new stream
+        /// @param  seekable            true if the server says the stream is seekable
         /// @param  url                 the URL of the new stream
+        /// @param  streamlen           the length of the stream, or 0 if unknown
+        /// @param  lastmodified        the timestamp associated with the stream, if available
+        /// @param  headers             the headers associated with the stream, if available
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual FB::BrowserStreamPtr handleUnsolicitedStream(const std::string& mimeType,
-                                                             const std::string& url) { return FB::BrowserStreamPtr(); }
+                                                             bool seekable, const std::string& url,
+                                                             uint32_t streamlen, uint32_t lastmodified,
+                                                             const std::string& headers) { return FB::BrowserStreamPtr(); }
 
     protected:
         /// The BrowserHost object for the current session
