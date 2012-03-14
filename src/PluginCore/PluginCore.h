@@ -17,6 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINCORE
 
 #include "PluginEventSink.h"
+#include "BrowserStream.h"
 #include "APITypes.h"
 #include <string>
 #include <set>
@@ -319,6 +320,26 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
         
         virtual boost::optional<std::string> getParam(const std::string& key);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool PluginCore::handleUnsolicitedStream(const std::string& mimeType,
+        ///                                                      const std::string& url,
+        ///                                                      PluginEventSinkPtr& callback,
+        ///                                                      bool& cache, bool& seekable,
+        ///                                                      size_t& internalBufferSize)
+        ///
+        /// @brief  Called by the browser to handle an unsolicited NPP_NewStream
+        ///
+        /// This function is called if the browser wants to send a new stream to the plugin that the plugin
+        /// hasn't requested.  The default implementation returns a null pointer, meaning that the new
+        /// stream will be ignored.  To handle unsolicited streams, create a new BrowserStream by calling
+        /// BrowserHost::createUnsolicitedStream and return this object.
+        ///
+        /// @param  mimeType            the MIME type of the new stream
+        /// @param  url                 the URL of the new stream
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual FB::BrowserStreamPtr handleUnsolicitedStream(const std::string& mimeType,
+                                                             const std::string& url) { return FB::BrowserStreamPtr(); }
 
     protected:
         /// The BrowserHost object for the current session
