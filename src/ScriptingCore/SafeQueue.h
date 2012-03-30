@@ -61,6 +61,8 @@ namespace FB {
         {
             boost::mutex::scoped_lock lock(the_mutex);
             return the_queue.empty();
+            lock.unlock();
+            the_condition_variable.notify_one();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -124,7 +126,7 @@ namespace FB {
         ///
         /// @param [out] popped_value    The popped value. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void wait_and_pop(Data& popped_value)
+        bool wait_and_pop(Data& popped_value)
         {
             boost::mutex::scoped_lock lock(the_mutex);
             while(the_queue.empty())
@@ -132,6 +134,12 @@ namespace FB {
                 the_condition_variable.wait(lock);
             }
             
+            // See if a value was added; if not, we may have been kicked out by a call to empty()
+            if(the_queue.empty())
+            {
+                return false;
+            }
+
             popped_value=the_queue.front();
             the_queue.pop();
         }
