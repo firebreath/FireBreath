@@ -36,3 +36,6 @@ add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 target_link_libraries(${PROJECT_NAME}
     ${PLUGIN_INTERNAL_DEPS}
     )
+
+#To create a DMG, include the following file
+#include(Mac/installer.cmake)
