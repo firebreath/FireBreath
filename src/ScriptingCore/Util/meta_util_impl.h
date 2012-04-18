@@ -17,6 +17,12 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #define H_META_UTIL_IMPL_22122009
 
 #include <utility>
+
+//Workaround for conflict between boost 1.48+ and Apple's AssertMacros.h
+#ifdef check
+#undef check
+#endif
+
 #include <boost/utility/enable_if.hpp>
 #include <boost/mpl/equal_to.hpp>
 #include <boost/mpl/vector.hpp>
