@@ -1,0 +1,9 @@
+{
+  "name": "@{PLUGIN_name}",
+  "version": "1.0.0.0",
+  "description": "@{PLUGIN_desc}",
+
+	"plugins": [
+    { "path": "np@{PLUGIN_ident}.dll", "public": true }
+  ]
+}
