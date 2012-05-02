@@ -311,7 +311,7 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
 {
     NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
     // check for streams we did not request or create
-    if ( !s ) return NPERR_NO_ERROR;
+    if ( !s ) return NPERR_NO_DATA;
 
     s->setMimeType( type );
     s->setStream( stream );
