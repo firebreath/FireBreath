@@ -17,6 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINCORE
 
 #include "PluginEventSink.h"
+#include "BrowserStream.h"
 #include "APITypes.h"
 #include <string>
 #include <set>
@@ -319,6 +320,35 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
         
         virtual boost::optional<std::string> getParam(const std::string& key);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool PluginCore::handleUnsolicitedStream(const std::string& mimeType,
+        ///                                                      const std::string& url,
+        ///                                                      PluginEventSinkPtr& callback,
+        ///                                                      bool& cache, bool& seekable,
+        ///                                                      size_t& internalBufferSize)
+        ///
+        /// @brief  Called by the browser to handle an unsolicited NPP_NewStream
+        ///
+        /// This function is called if the browser wants to send a new stream to the plugin that the plugin
+        /// hasn't requested.  The default implementation returns a null pointer, meaning that the new
+        /// stream will be ignored.  To handle unsolicited streams, create a new BrowserStream by calling
+        /// BrowserHost::createUnsolicitedStream and return this object.
+        ///
+        /// Note that the BrowserStream is stored in a shared pointer, so the plugin should keep a copy of
+        /// anything it returns here to prevent it from getting released too quickly.
+        ///
+        /// @param  mimeType            the MIME type of the new stream
+        /// @param  seekable            true if the server says the stream is seekable
+        /// @param  url                 the URL of the new stream
+        /// @param  streamlen           the length of the stream, or 0 if unknown
+        /// @param  lastmodified        the timestamp associated with the stream, if available
+        /// @param  headers             the headers associated with the stream, if available
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual FB::BrowserStreamPtr handleUnsolicitedStream(const std::string& mimeType,
+                                                             bool seekable, const std::string& url,
+                                                             uint32_t streamlen, uint32_t lastmodified,
+                                                             const std::string& headers) { return FB::BrowserStreamPtr(); }
 
     protected:
         /// The BrowserHost object for the current session
