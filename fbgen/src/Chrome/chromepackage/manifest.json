@@ -1,6 +1,6 @@
 {
   "name": "@{PLUGIN_name}",
-  "version": "1.0.0.0",
+  "version": "${FBSTRING_PLUGIN_VERSION}",
   "description": "@{PLUGIN_desc}",
 
 	"plugins": [
