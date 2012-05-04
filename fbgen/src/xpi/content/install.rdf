@@ -4,7 +4,7 @@
 
 		<em:id>EMAIL_ADDRESS_HERE</em:id>
 		<em:name>@{PLUGIN_ident}</em:name>
-		<em:version>1.0.0.0</em:version>
+		<em:version>${FBSTRING_PLUGIN_VERSION}</em:version>
 		<!--<em:iconURL></em:iconURL>-->
 		<!--em:updateURL>http://@{COMPANY_domain}/update.rdf</em:updateURL>
 		<em:updateKey></em:updateKey-->

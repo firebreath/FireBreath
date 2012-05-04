@@ -15,10 +15,16 @@ function (add_signed_xpi_installer PROJNAME XPI_OUTDIR DLLFILE XPISIGNERPATH PFX
 			file(STRINGS "${PASSFILE}" PASSPHRASE LIMIT_COUNT 1)
         endif()
 
+		#Replace the plugin version in the install.rdf template
+		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi)
+		message(STATUS "creating dir ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi")
+		file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xpi/content/chrome.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi)
+		configure_template(${CMAKE_CURRENT_SOURCE_DIR}/xpi/content/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi/install.rdf)
+
 		add_custom_command(
 			TARGET ${PROJNAME}${FB_XPI_SUFFIX}
 			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory "\"${CMAKE_CURRENT_SOURCE_DIR}/xpi/content\"" "\"${XPI_OUTDIR}/${FBSTRING_PluginFileName}/\""
+			COMMAND ${CMAKE_COMMAND} -E copy_directory "\"${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi\"" "\"${XPI_OUTDIR}/${FBSTRING_PluginFileName}/\""
 			COMMAND mkdir "\"${XPI_OUTDIR}/${FBSTRING_PluginFileName}/plugins/\""
 			COMMAND ${CMAKE_COMMAND} -E copy "${DLLFILE}" "\"${XPI_OUTDIR}/${FBSTRING_PluginFileName}/plugins/\""
 			COMMAND java -jar ${XPISIGNERPATH} ${PFXFILE} ${PASSPHRASE} "${XPI_OUTDIR}/${FBSTRING_PluginFileName}" "${XPI_OUTDIR}/${FBSTRING_PluginFileName}.xpi"
