@@ -17,7 +17,6 @@ function (add_signed_xpi_installer PROJNAME XPI_OUTDIR DLLFILE XPISIGNERPATH PFX
 
 		#Replace the plugin version in the install.rdf template
 		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi)
-		message(STATUS "creating dir ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi")
 		file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/xpi/content/chrome.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi)
 		configure_template(${CMAKE_CURRENT_SOURCE_DIR}/xpi/content/install.rdf ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-xpi/install.rdf)
 
