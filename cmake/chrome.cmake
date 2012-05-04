@@ -11,14 +11,14 @@ function (add_chrome_package PROJNAME CRX_OUTDIR DLLFILE KEYFILE CRX_PROJDEP)
         endif()
         ADD_LIBRARY(${PROJNAME}${FB_CRX_SUFFIX} STATIC ${CRX_SOURCES})
 
-		if (NOT "${PASSFILE}" STREQUAL "")
-			file(STRINGS "${PASSFILE}" PASSPHRASE LIMIT_COUNT 1)
-        endif()
+		#Replace the plugin version in the install.rdf template
+		file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-crx)
+		configure_template(${CMAKE_CURRENT_SOURCE_DIR}/Chrome/chromepackage/manifest.json ${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-crx/manifest.json)
 
 		add_custom_command(
 			TARGET ${PROJNAME}${FB_CRX_SUFFIX}
 			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_directory "\"${CMAKE_CURRENT_SOURCE_DIR}/Chrome/chromepackage\"" "\"${CRX_OUTDIR}/${FBSTRING_PluginFileName}/\""
+			COMMAND ${CMAKE_COMMAND} -E copy_directory "\"${CMAKE_CURRENT_BINARY_DIR}/gen/${FBSTRING_PluginFileName}-crx\"" "\"${CRX_OUTDIR}/${FBSTRING_PluginFileName}/\""
 			COMMAND ${CMAKE_COMMAND} -E copy ${DLLFILE} "\"${CRX_OUTDIR}/${FBSTRING_PluginFileName}/\""
 			COMMAND $ENV{LOCALAPPDATA}\\Google\\Chrome\\Application\\chrome.exe --pack-extension="\"${CRX_OUTDIR}/${FBSTRING_PluginFileName}\"" --pack-extension-key="\"${KEYFILE}\"" --no-message-box
 			COMMAND popd
