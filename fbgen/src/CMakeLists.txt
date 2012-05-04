@@ -44,6 +44,6 @@ include_platform()
 #   "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${FBSTRING_PluginFileName}.dll"
 # 	$ENV{XPI_PATH} 
 # 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx" 
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.pfx" 
+# 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 # 	${PROJECT_NAME})
 
