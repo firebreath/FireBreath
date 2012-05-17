@@ -310,6 +310,7 @@ void PluginWindowMac::StopAutoInvalidate() {
         [mtimer invalidate];
         [mtimer release];
         mtimer = NULL;
+        m_timer = NULL;
     }
 }
 
