@@ -249,6 +249,27 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         WIX_LINK(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_DEST} WIX_FULLOBJLIST NONE)
 
         ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_PROJDEP})
-
+        
+        # Create the EXE wrapper
+        	
+        if (FB_WIX_EXEDEST)
+            SET (WIX_EXEDEST ${FB_WIX_EXEDEST})
+        else()
+            SET (WIX_EXEDEST ${WIX_OUTDIR}/${PROJNAME}.exe)
+        endif()
+        		
+        if (NOT FB_WIX_EXE_SUFFIX)
+            set (FB_WIX_EXE_SUFFIX _WiXInstallExe)
+        endif()
+        	
+        set (WIX_EXESOURCES
+                ${FB_ROOT}/cmake/dummy.cpp
+                ${WIX_DEST}
+            )
+        ADD_LIBRARY(${PROJNAME}${FB_WIX_EXE_SUFFIX} STATIC ${WIX_EXESOURCES})
+        
+        WIX_SETUPBLD(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${WIX_EXEDEST} ${WIX_DEST})
+        
+        ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${PROJNAME}${FB_WIX_SUFFIX})
     endif()
 endfunction(add_wix_installer)
