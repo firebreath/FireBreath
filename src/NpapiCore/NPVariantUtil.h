@@ -208,7 +208,6 @@ namespace FB { namespace Npapi
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
-                host->retainJSAPIPtr(obj);
                 outObj = host->getJSAPIWrapper(var.cast<FB::JSAPIPtr>(), true);
             }
             if (outObj) {
@@ -269,8 +268,7 @@ namespace FB { namespace Npapi
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
-                host->retainJSAPIPtr(obj);
-                outObj = NPJavascriptObject::NewObject(host, obj);
+                outObj = NPJavascriptObject::NewObject(host, obj, true);
             }
 
             npv.type = NPVariantType_Object;

@@ -28,6 +28,13 @@ NPJavascriptObject *NPJavascriptObject::NewObject(const NpapiBrowserHostPtr& hos
                // If obj is null, return null; it's probably during shutdown
         obj->setAPI(api, host);
         obj->m_autoRelease = auto_release;
+        if (auto_release) {
+            // If we're autoreleasing it we need to autoretain it
+            FB::JSAPIPtr api_strong(api.lock());
+            if (api_strong) {
+                host->retainJSAPIPtr(api_strong);
+            }
+        }
     }
     return obj;
 }
