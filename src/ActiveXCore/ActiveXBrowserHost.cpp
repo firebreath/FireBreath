@@ -356,7 +356,7 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
     IDispatchEx* ret(NULL);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
-        return getFactoryInstance()->createCOMJSObject(shared_from_this(), api, false);
+        return getFactoryInstance()->createCOMJSObject(shared_from_this(), api, autoRelease);
 
     IDispatchExRefMap::iterator fnd = m_cachedIDispatch.find(ptr.get());
     if (fnd != m_cachedIDispatch.end()) {

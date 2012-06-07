@@ -251,7 +251,6 @@ namespace FB { namespace ActiveX
         } else {
             if (obj) {
                 // Add obj to the list of shared_ptrs that browserhost keeps
-                host->retainJSAPIPtr(obj);
                 outVar = host->getJSAPIWrapper(obj, true);
                 outVar.pdispVal->Release();
             } else {
@@ -273,7 +272,7 @@ namespace FB { namespace ActiveX
             outVar = api->getIDispatch();
         } else {
             if (obj) {
-                outVar = host->getJSAPIWrapper(obj);
+                outVar = host->getJSAPIWrapper(obj, false);
                 outVar.pdispVal->Release();
             } else {
                 outVar.ChangeType(VT_NULL);
@@ -295,8 +294,7 @@ namespace FB { namespace ActiveX
         } else {
             if (obj) {
                 FB::JSAPIPtr ptr(var.convert_cast<FB::JSAPIPtr>());
-                host->retainJSAPIPtr(ptr);
-                outVar = getFactoryInstance()->createCOMJSObject(host, ptr);
+                outVar = getFactoryInstance()->createCOMJSObject(host, ptr, true);
                 outVar.pdispVal->Release();
             } else {
                 outVar.ChangeType(VT_NULL);

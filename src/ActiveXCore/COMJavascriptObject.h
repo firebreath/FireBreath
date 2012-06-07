@@ -55,6 +55,13 @@ namespace FB {
                 
                 obj->setAPI(api, host);
                 obj->m_autoRelease = auto_release;
+                if (auto_release) {
+                    FB::JSAPIPtr tmp(api.lock());
+                    // If we are auto-releasing it then we need to retain it as well
+                    if (tmp) {
+                        host->releaseJSAPIPtr(tmp);
+                    }
+                }
                 IDispatchEx *retval;
                 hr = obj->QueryInterface(IID_IDispatchEx, (void **)&retval);
 
