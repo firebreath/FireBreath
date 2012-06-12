@@ -14,7 +14,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #ifdef FB_MACOSX
 #include <dlfcn.h>
-#include <mach-o/dyld.h>
 #endif
 #include <cstdio>
 #include "NpapiPlugin.h"
@@ -156,7 +155,11 @@ NPError NpapiPluginModule::NPP_New(NPMIMEType pluginType, NPP instance, uint16_t
     {
 #ifdef FB_MACOSX
         // Helps with certain weird embedding cases
-        NpapiPluginModule *module = NpapiPluginModule::GetModule(_dyld_get_image_header_containing_address(__builtin_return_address(0)));
+        Dl_info info;
+
+        dladdr(__builtin_return_address(0), &info);
+
+        NpapiPluginModule *module = NpapiPluginModule::GetModule(info.dli_fbase);
 #else
         NpapiPluginModule *module = NpapiPluginModule::GetModule(0);
 #endif
