@@ -23,7 +23,7 @@
 // Thread-safe
 std::string FB::System::getHomeDirPath()
 {
-    size_t bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+    int bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
     if(bufsize == -1)
         bufsize = 16384;        // Should be more than enough
 
