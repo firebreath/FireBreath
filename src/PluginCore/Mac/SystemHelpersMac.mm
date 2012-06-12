@@ -13,9 +13,9 @@ Copyright 2011 GradeCam, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "../SystemHelpers.h"
-#import "NSPathUtilities.h"
-#import "NSAutoreleasePool.h"
-#import "NSFileManager.h"
+#import <Foundation/NSPathUtilities.h>
+#import <Foundation/NSAutoreleasePool.h>
+#import <Foundation/NSFileManager.h>
 
 using std::string;
 
