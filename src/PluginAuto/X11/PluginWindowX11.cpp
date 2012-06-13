@@ -179,10 +179,13 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
     GdkEventButton *button;
     MouseButtonEvent::MouseButton btn;
 
+    unsigned int modifierState = 0;
     if (isButtonEvent(event)) {
 
         button = (GdkEventButton *)event;
-
+		modifierState = (button->state & GDK_SHIFT_MASK) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
+		modifierState += (button->state & GDK_CONTROL_MASK) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
+		modifierState += (button->state & GDK_MOD1_MASK) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
         switch(button->button) {
             case 1:
                 btn = MouseButtonEvent::MouseButton_Left;
@@ -198,7 +201,6 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         }
     }
 
-    unsigned int modifierState = 0;  //TODO
     switch(event->type)
     {
         // Mouse button down
