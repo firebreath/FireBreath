@@ -1,4 +1,3 @@
-
 #include "win_targetver.h"
 #include "APITypes.h"
 #include "JSAPI.h"
@@ -33,6 +32,6 @@ const FB::WeakIDispatchExRef _getWeakRefFromCOMJSWrapper(IDispatchEx* wrapper)
 }
 
 HRESULT _updateRegistry( bool res ) {
-    return CFBControl0::UpdateRegistry(true);
+    return CFBControl0::UpdateRegistry(res);
 }
 
