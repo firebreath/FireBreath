@@ -59,7 +59,7 @@ namespace FB {
                     FB::JSAPIPtr tmp(api.lock());
                     // If we are auto-releasing it then we need to retain it as well
                     if (tmp) {
-                        host->releaseJSAPIPtr(tmp);
+                        host->retainJSAPIPtr(tmp);
                     }
                 }
                 IDispatchEx *retval;
