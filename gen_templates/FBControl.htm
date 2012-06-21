@@ -17,10 +17,10 @@
 
         function addEvent(obj, name, func)
         {
-            if (window.addEventListener) {
-                obj.addEventListener(name, func, false); 
-            } else {
+            if (obj.attachEvent) {
                 obj.attachEvent("on"+name, func);
+            } else {
+                obj.addEventListener(name, func, false); 
             }
         }
         
