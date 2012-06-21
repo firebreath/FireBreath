@@ -299,12 +299,6 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::SetObjectRects(LPCRECT prcPos, LPCRECT prcClip)
         {
-            if (!pluginMain->isWindowless())
-            {
-                m_bWndLess = false;
-                m_bWasOnceWindowless = false;
-            }
-            
             HRESULT hr = IOleInPlaceObjectWindowlessImpl<CFBControlX>::SetObjectRects(prcPos, prcClip);
 
             if (m_bWndLess && pluginWin) {
@@ -318,6 +312,8 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceActivate( LONG iVerb, const RECT* prcPosRect)
         {
+            m_bWindowOnly = (FB::pluginGuiEnabled() && !pluginMain->isWindowless());
+
             HRESULT hr = CComControl<CFBControlX>::InPlaceActivate(iVerb, prcPosRect);
 
             if (m_host)
@@ -426,11 +422,6 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::setReady()
         {
-            if (FB::pluginGuiEnabled())
-                m_bWindowOnly = pluginMain->isWindowless() ? FALSE : TRUE;
-            else
-                m_bWindowOnly = FALSE;
-
             // This is when we can consider the plugin "ready".  The window will not be around yet!
             this->setAPI(pluginMain->getRootJSAPI(), m_host);
             setReadyState(READYSTATE_COMPLETE);
