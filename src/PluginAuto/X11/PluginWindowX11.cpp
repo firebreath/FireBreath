@@ -313,6 +313,6 @@ GdkNativeWindow PluginWindowX11::getWindow()
 
 void PluginWindowX11::InvalidateWindow() const
 {
-    // Doesn't exist yet
+	gdk_window_invalidate_rect(m_canvas->window, NULL, true);
 }
 
