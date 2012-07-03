@@ -20,19 +20,38 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
 
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	/// @class  MouseEvent
+	///
+	/// @brief  Fired when a mouse event occurs
+	////////////////////////////////////////////////////////////////////////////////////////////////////
+	class MouseEvent : public PluginEvent
+	{
+	public:
+		enum ModifierState {
+			ModifierState_None = 0,
+			ModifierState_Shift = 1,
+			ModifierState_Control = 2,
+			ModifierState_Menu = 4
+		};
+		MouseEvent(int x, int y, uint32_t state = ModifierState_None) :m_x(x), m_y(y), m_state(state) { }
+
+	public:
+		int m_x;
+		int m_y;
+		uint32_t m_state;
+	};
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  MouseMoveEvent
     ///
     /// @brief  Fired when the mouse moves
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class MouseMoveEvent : public PluginEvent
+    class MouseMoveEvent : public MouseEvent
     {
     public:
-        MouseMoveEvent(int x, int y) : m_x(x), m_y(y) { }
+        MouseMoveEvent(int x, int y, uint32_t state = ModifierState_None) : MouseEvent(x, y, state) { }
 
     public:
-        int m_x;
-        int m_y;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -40,7 +59,7 @@ namespace FB {
     ///
     /// @brief  Fired when a mouse button event occurs
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class MouseButtonEvent : public PluginEvent
+    class MouseButtonEvent : public MouseEvent
     {
     public:
         enum MouseButton {
@@ -49,19 +68,10 @@ namespace FB {
             MouseButton_Middle,
             MouseButton_None
         };
-		enum ModifierState {
-            ModifierState_None = 0,
-			ModifierState_Shift = 1,
-			ModifierState_Control = 2,
-			ModifierState_Menu = 4
-		};
-        MouseButtonEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : m_Btn(btn), m_x(x), m_y(y), m_state(state) { }
+        MouseButtonEvent(MouseButton btn, int x, int y, uint32_t state = ModifierState_None) : MouseEvent(x, y, state), m_Btn(btn) { }
 
     public:
         MouseButton m_Btn;
-        int m_x;
-        int m_y;
-		uint32_t m_state;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -102,14 +112,12 @@ namespace FB {
     ///
     /// @brief  Fired when the user moves the scrollwheel
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class MouseScrollEvent : public PluginEvent
+    class MouseScrollEvent : public MouseEvent
     {
     public:
-        MouseScrollEvent(int x, int y, double dx, double dy) : m_x(x), m_y(y), m_dx(dx), m_dy(dy) { }
+        MouseScrollEvent(int x, int y, double dx, double dy, uint32_t state = ModifierState_None) : MouseEvent(x, y, state), m_dx(dx), m_dy(dy) { }
 
     public:
-        int m_x;
-        int m_y;
         double m_dx;
         double m_dy;
     };

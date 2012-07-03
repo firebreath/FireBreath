@@ -17,17 +17,17 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <dlfcn.h>
 
-#include "NpapiBrowserHost.h"
+#include "NpapiTypes.h"
 #include "PluginCore.h"
-#include "global/config.h"
+#include "Mac/PluginWindowMac.h"
 
 #include "FactoryBase.h"
 
+#include "Mac/NpapiPluginMac.h"
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
 #include <string>
 
-#include "Mac/NpapiPluginMac.h"
 
 using namespace FB::Npapi;
 
