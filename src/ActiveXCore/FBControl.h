@@ -342,7 +342,7 @@ namespace FB {
                 static_cast<PluginWindowWin*>(pluginWin.get())->setCallOldWinProc(true);
             }
             pluginMain->SetWindow(pluginWin.get());
-
+            setReady();
             return hr;
         }
 
@@ -369,7 +369,6 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InitNew()
         {
             pluginMain->setParams(FB::VariantMap());
-            setReady();
             return S_OK;
         }
 
@@ -407,8 +406,6 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::Load( IPropertyBag *pPropBag, IErrorLog *pErrorLog )
         {
             pluginMain->setParams(getProperties(CComQIPtr<IPropertyBag2>(pPropBag)));
-
-            setReady();
             return S_OK;
         }
 
