@@ -85,6 +85,7 @@ namespace FB {
             DWORD m_dwCurrentSafety;
 
             ActiveXBrowserHostPtr m_host;
+            bool m_setReadyDone;
 
         protected:
 
@@ -92,7 +93,8 @@ namespace FB {
             // The methods in this class are positioned in this file in the
             // rough order that they will be called in.
             CFBControl() : JSAPI_IDispatchEx<CFBControlX, ICurObjInterface, piid>(pMT), FB::BrowserPlugin(pMT),
-                m_mimetype(pMT)
+                m_mimetype(pMT),
+                m_setReadyDone(false)
             {
                 setFSPath(g_dllPath);
             }
@@ -419,10 +421,15 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::setReady()
         {
-            // This is when we can consider the plugin "ready".  The window will not be around yet!
-            this->setAPI(pluginMain->getRootJSAPI(), m_host);
-            setReadyState(READYSTATE_COMPLETE);
-            pluginMain->setReady();
+            // This is when we can consider the plugin "ready".
+            // setReady is called at object activation, which can happen multiple times
+            // (eg: if the object is reparented in the dom); only act on the first one.
+            if (!m_setReadyDone) {
+                m_setReadyDone = true;
+                this->setAPI(pluginMain->getRootJSAPI(), m_host);
+                setReadyState(READYSTATE_COMPLETE);
+                pluginMain->setReady();
+            }
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
