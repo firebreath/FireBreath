@@ -97,7 +97,11 @@ namespace FB
     private:
         virtual void _invokeAsync(const std::vector<variant>& args, const std::string& methodName)
         {
-            getHost()->delayedInvoke(0, shared_from_this(), args, methodName);
+            try {
+                getHost()->delayedInvoke(0, shared_from_this(), args, methodName);
+            } catch (const boost::bad_weak_ptr&) {
+                // what can we do?
+            }
         }
     public:
         
