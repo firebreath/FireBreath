@@ -129,14 +129,14 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 return true;
             break;
         }
-		case WM_LBUTTONDBLCLK:
-		{
+        case WM_LBUTTONDBLCLK:
+        {
             MouseDoubleClickEvent ev(MouseButtonEvent::MouseButton_Left, 
                               GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
-		}
+        }
         case WM_RBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
