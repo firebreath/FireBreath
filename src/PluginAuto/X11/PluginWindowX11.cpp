@@ -184,6 +184,21 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         return true;
     }
 
+    switch(event->type)
+    {
+    case GDK_EXPOSE:
+        {
+            GdkEventExpose * exposeEvent = reinterpret_cast<GdkEventExpose *>(event);
+            FB::Rect rect;
+            rect.left = exposeEvent->area.x;
+            rect.top = exposeEvent->area.y;
+            rect.right = exposeEvent->area.x + exposeEvent->area.width;
+            rect.bottom = exposeEvent->area.y + exposeEvent->area.height;
+            RefreshEvent evt(rect);
+            return SendEvent(&evt) ? 1 : 0;
+        }
+    }
+
     GdkEventButton *button;
     MouseButtonEvent::MouseButton btn;
 

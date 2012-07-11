@@ -86,8 +86,8 @@ namespace FB {
         ///
         /// @return An application should set to true if it erases the background; otherwise, it should set to false (the default).  
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual void setSuppressEraseBackground(bool suppressEraseBackground) { m_suppressEraseBackground = suppressEraseBackground; }
-		virtual bool getSuppressEraseBackground() { return m_suppressEraseBackground; }
+        virtual void setSuppressEraseBackground(bool suppressEraseBackground) { m_suppressEraseBackground = suppressEraseBackground; }
+        virtual bool getSuppressEraseBackground() { return m_suppressEraseBackground; }
 
     protected:
         static PluginWindowMap m_windowMap;
@@ -97,7 +97,7 @@ namespace FB {
         bool m_callOldWinProc;
         HWND m_hWnd;
         HWND m_browserhWnd;
-		bool m_suppressEraseBackground;
+        bool m_suppressEraseBackground;
 
         virtual bool CustomWinProc(HWND hWnd,
                                    UINT uMsg,
