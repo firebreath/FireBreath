@@ -296,7 +296,7 @@ MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource So
         SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
 
         SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-            PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\" /Fp\"${__PrecompiledBinary}\" -Zm160"
+            PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\" /Fp\"${__PrecompiledBinary}\""
             OBJECT_OUTPUTS "${__PrecompiledBinary}")
         foreach(CURFILE ${${SourcesVar}})
 
@@ -304,7 +304,7 @@ MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource So
             GET_FILENAME_COMPONENT(CURFILE_NAME ${CURFILE} NAME)
             if (CURFILE_EXT STREQUAL ".cpp" AND NOT CURFILE_NAME STREQUAL PrecompiledBasename)
                 SET_SOURCE_FILES_PROPERTIES(${CURFILE}
-                    PROPERTIES COMPILE_FLAGS "/Yu\"${__PrecompiledBinary}\" /FI\"${__PrecompiledBinary}\" /Fp\"${__PrecompiledBinary}\" -Zm160"
+                    PROPERTIES COMPILE_FLAGS "/Yu\"${__PrecompiledBinary}\" /FI\"${__PrecompiledBinary}\" /Fp\"${__PrecompiledBinary}\""
                     OBJECT_DEPENDS "${__PrecompiledBinary}")  
             endif()
 

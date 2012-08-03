@@ -25,8 +25,8 @@ if (WIN32)
         message(STATUS "Balanced size/speed optimization")
     endif()
 
-    set(CMAKE_C_FLAGS                            "/GF /DWIN32 /DFB_WIN=1 /DXP_WIN=1 /W3 /wd4996 /nologo /D UNICODE /D _UNICODE /D _WINDOWS")
-    set(CMAKE_CXX_FLAGS                          "/GF /DWIN32 /DFB_WIN=1 /DXP_WIN=1 /W3 /wd4996 /nologo /EHsc /wd4290 /D UNICODE /D _UNICODE /D _WINDOWS")
+    set(CMAKE_C_FLAGS                            "/GF /DWIN32 /DFB_WIN=1 /DXP_WIN=1 /W3 /wd4996 /nologo /D UNICODE /D _UNICODE /D _WINDOWS /Zm256")
+    set(CMAKE_CXX_FLAGS                          "/GF /DWIN32 /DFB_WIN=1 /DXP_WIN=1 /W3 /wd4996 /nologo /EHsc /wd4290 /D UNICODE /D _UNICODE /D _WINDOWS /Zm256")
     set(CMAKE_C_FLAGS_RELEASE                    "/GL /MT ${FB_OPT_PARAM} /DNDEBUG")
     set(CMAKE_CXX_FLAGS_RELEASE                  "/GL /MT ${FB_OPT_PARAM} /DNDEBUG")
     # x64 does not support edit-and-continue.
