@@ -98,8 +98,8 @@ if (APPLE)
     include_directories(${FOUNDATION}/Headers)
 endif()
 
-ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
+ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
 
 export(TARGETS PluginCore APPEND FILE ${FB_EXPORT_FILE})
