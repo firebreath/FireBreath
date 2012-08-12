@@ -41,11 +41,6 @@ file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.h
     [^.]*.txt
     )
-file (GLOB PCH_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-    precompiled_headers.*
-    )
-
-list(REMOVE_ITEM COMMON ${PCH_FILES})
 
 set(LogKey "${PLUGIN_NAME}_log4cplus")
 if (${LogKey})
@@ -155,7 +150,7 @@ if (WIN32)
     set (GENERATED_IDL
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.c"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.cpp"
         )
 
     SET (IDL_FILE ${FB_TEMPLATE_DEST_DIR}/FireBreathWin.idl)
@@ -164,7 +159,7 @@ if (WIN32)
         ${IDL_FILE}
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.c"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.cpp"
         PROPERTIES
             HEADER_FILE_ONLY 1
             GENERATED 1
@@ -185,8 +180,8 @@ if (WIN32)
             /out "${FB_TEMPLATE_DEST_DIR}" 
             /tlb "FireBreathWin.tlb"
             /h "FireBreathWin_i.h"
-            /iid "FireBreathWin_i.c"
-            /proxy "FireBreathWin_p.c"
+            /iid "FireBreathWin_i.cpp"
+            /proxy "FireBreathWin_p.cpp"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         DEPENDS ${IDL_FILE}
         )

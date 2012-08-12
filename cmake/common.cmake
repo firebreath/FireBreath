@@ -303,8 +303,6 @@ MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource So
             PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
 
         # Add precompiled header to SourcesVar
-        LIST(APPEND ${SourcesVar} ${PrecompiledSource})
-        LIST(APPEND ${SourcesVar} ${PrecompiledHeader})
     elseif (APPLE)
         message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
         SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
