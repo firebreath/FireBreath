@@ -78,7 +78,7 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Factory*
     Test*
     [^.]*.py
-	precompiled_*
+    precompiled_headers.*
     )
 
 SOURCE_GROUP(JSAPI FILES ${JSAPI_OBJECTS})

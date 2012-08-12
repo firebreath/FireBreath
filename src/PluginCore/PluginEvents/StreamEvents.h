@@ -16,7 +16,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #ifndef H_FB_PLUGINEVENTS_STREAMEVENTS
 #define H_FB_PLUGINEVENTS_STREAMEVENTS
 
-#include "PluginEvent.h"
+#include "../PluginEvent.h"
 
 namespace FB {
     class BrowserStream;

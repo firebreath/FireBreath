@@ -46,6 +46,11 @@ file (GLOB PLUGIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     NpapiTypes.*
     NpapiFactory*
     )
+    
+file (GLOB PCH RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    precompiled_*
+    )
+    
 
 SOURCE_GROUP(NpapiScripting FILES ${SCRIPTING})
 
@@ -73,10 +78,6 @@ file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 SOURCE_GROUP(Mac FILES ${MAC_SOURCES})
 
-file (GLOB PCH RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-	precompiled_*
-)
-
 if (WIN32)
     set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
     set_source_files_properties(${X11_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
@@ -95,7 +96,7 @@ set (SOURCES
     ${WIN_SOURCES}
     ${MAC_SOURCES}
     ${X11_SOURCES}
-	${PCH}
+    ${PCH}
     )
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})

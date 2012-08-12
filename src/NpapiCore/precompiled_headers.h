@@ -1,6 +1,4 @@
 
-#ifdef FB_WIN
-
 #ifdef _WIN32
 #include "win_targetver.h"
 #include "win_common.h"
@@ -46,5 +44,4 @@
 #include "DOM/Window.h"
 #include "variant_list.h"
 
-#endif
 
