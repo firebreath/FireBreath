@@ -169,6 +169,14 @@ inline bool isButtonEvent(GdkEvent *event)
             return false;
     }
 }
+
+inline unsigned int getModifierState(guint state) {
+	unsigned int modifierState = (state & GDK_SHIFT_MASK) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
+	modifierState += (state & GDK_CONTROL_MASK) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
+	modifierState += (state & GDK_MOD1_MASK) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
+	return modifierState;
+}
+
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 {
     X11Event ev(widget, event);
@@ -176,16 +184,27 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         return true;
     }
 
+    switch(event->type)
+    {
+    case GDK_EXPOSE:
+        {
+            GdkEventExpose * exposeEvent = reinterpret_cast<GdkEventExpose *>(event);
+            FB::Rect rect;
+            rect.left = exposeEvent->area.x;
+            rect.top = exposeEvent->area.y;
+            rect.right = exposeEvent->area.x + exposeEvent->area.width;
+            rect.bottom = exposeEvent->area.y + exposeEvent->area.height;
+            RefreshEvent evt(rect);
+            return SendEvent(&evt) ? 1 : 0;
+        }
+    }
+
     GdkEventButton *button;
     MouseButtonEvent::MouseButton btn;
 
-    unsigned int modifierState = 0;
     if (isButtonEvent(event)) {
 
         button = (GdkEventButton *)event;
-		modifierState = (button->state & GDK_SHIFT_MASK) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
-		modifierState += (button->state & GDK_CONTROL_MASK) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
-		modifierState += (button->state & GDK_MOD1_MASK) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
         switch(button->button) {
             case 1:
                 btn = MouseButtonEvent::MouseButton_Left;
@@ -205,7 +224,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
     {
         // Mouse button down
         case GDK_BUTTON_PRESS: {
-            MouseDownEvent evt(btn, button->x, button->y, modifierState);
+            MouseDownEvent evt(btn, button->x, button->y, getModifierState(button->state));
             if(!m_focus){
                 //When the mouse button is pressed, we can be sure,
                 //that the top window has the focus and we can request keyboard focus.
@@ -216,12 +235,12 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
         // Mouse button up
         case GDK_2BUTTON_PRESS: {
-            MouseDoubleClickEvent evt(btn, button->x, button->y, modifierState);
+            MouseDoubleClickEvent evt(btn, button->x, button->y, getModifierState(button->state));
             return SendEvent(&evt) ? 1 : 0;
         } break;
         // Mouse button up
         case GDK_BUTTON_RELEASE: {
-            MouseUpEvent evt(btn, button->x, button->y, modifierState);
+            MouseUpEvent evt(btn, button->x, button->y, getModifierState(button->state));
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
@@ -240,6 +259,29 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
         case GDK_MOTION_NOTIFY: {
             GdkEventMotion *motion = (GdkEventMotion *)event;
             MouseMoveEvent evt(motion->x, motion->y);
+            return SendEvent(&evt) ? 1 : 0;
+        } break;
+
+        case GDK_SCROLL: {
+            GdkEventScroll *scroll = (GdkEventScroll *)event;
+            gdouble dx = 0;
+            gdouble dy = 0;
+            switch (scroll->direction)
+            {
+            case GDK_SCROLL_UP:
+            	dy -= 3;
+            	break;
+            case GDK_SCROLL_DOWN:
+            	dy += 3;
+            	break;
+            case GDK_SCROLL_LEFT:
+            	dx -= 3;
+            	break;
+            case GDK_SCROLL_RIGHT:
+            	dx += 3;
+            	break;
+            }
+            MouseScrollEvent evt(scroll->x, scroll->y, dx, dy, getModifierState(scroll->state));
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
@@ -286,6 +328,6 @@ GdkNativeWindow PluginWindowX11::getWindow()
 
 void PluginWindowX11::InvalidateWindow() const
 {
-    // Doesn't exist yet
+	gdk_window_invalidate_rect(m_canvas->window, NULL, true);
 }
 
