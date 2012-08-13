@@ -95,6 +95,15 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
     return rval;
 }
 
+boost::optional<FB::variant> FBVLC::getVParam(const std::string& key)
+{
+    boost::optional<FB::variant> rval;
+    FB::VariantMap::const_iterator fnd = m_params.find(key.c_str());
+    if (fnd != m_params.end())
+        rval.reset(fnd->second);
+    return rval;
+}
+
 // If you override this, you probably want to call it again, since this is what calls back into the page
 // to indicate that we're done.
 bool PluginCore::setReady()
