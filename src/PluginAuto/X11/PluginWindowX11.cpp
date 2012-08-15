@@ -281,7 +281,7 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
             	dx += 3;
             	break;
             }
-            MouseScrollEvent evt(scroll->x, scroll->y, dx, dy, getModifierState(scroll->state));
+            MouseScrollEvent evt(scroll->x, scroll->y, -dx, -dy, getModifierState(scroll->state));
             return SendEvent(&evt) ? 1 : 0;
         } break;
 
