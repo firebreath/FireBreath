@@ -46,6 +46,7 @@ PluginWindowWin::PluginWindowWin(const WindowContextWin& ctx)
   , m_browserhWnd(NULL)
   , lpOldWinProc(NULL)
   , m_callOldWinProc(false)
+  , m_suppressEraseBackground(false)
 {
     // subclass window so we can intercept window messages 
     lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)&PluginWindowWin::_WinProc);
@@ -128,6 +129,14 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
                 return true;
             break;
         }
+        case WM_LBUTTONDBLCLK:
+        {
+            MouseDoubleClickEvent ev(MouseButtonEvent::MouseButton_Left, 
+                              GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), modifierState);
+            if(SendEvent(&ev))
+                return true;
+            break;
+        }
         case WM_RBUTTONDOWN:
         {
             MouseDownEvent ev(MouseButtonEvent::MouseButton_Right,
@@ -177,15 +186,30 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         }
         case WM_MOUSEWHEEL:
         {
-            MouseScrollEvent ev(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam),
-                                0, GET_WHEEL_DELTA_WPARAM(wParam));
+            POINT p;
+            p.x = GET_X_LPARAM(lParam);
+            p.y = GET_Y_LPARAM(lParam);
+            ::ScreenToClient(m_hWnd, &p);
+            MouseScrollEvent ev(p.x, p.y,
+                                0, GET_WHEEL_DELTA_WPARAM(wParam), modifierState);
             if(SendEvent(&ev))
                 return true;
             break;
         }
+        case WM_ERASEBKGND:
+        {
+            if (getSuppressEraseBackground())
+                return 1;
+            return 0;
+        }
         case WM_PAINT:
         {
-            RefreshEvent ev;
+            FB::Rect bounds = getWindowPosition();
+            bounds.bottom -= bounds.top;
+            bounds.top = 0;
+            bounds.right -= bounds.left;
+            bounds.left = 0;
+            RefreshEvent ev(bounds);
             if (!SendEvent(&ev)) {
                 HDC hdc;
                 PAINTSTRUCT ps;
