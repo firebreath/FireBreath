@@ -117,18 +117,18 @@ NPError NpapiPlugin::GetValue(NPPVariable variable, void *value)
     switch (variable) {
     case NPPVpluginNameString:
         *((const char **)value) = m_pluginName.c_str();
-        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginNameString)");
+        FBLOG_TRACE("PluginCore", "GetValue(NPPVpluginNameString)");
         break;
     case NPPVpluginDescriptionString:
         *((const char **)value) = m_pluginDesc.c_str();
-        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginDescriptionString)");
+        FBLOG_TRACE("PluginCore", "GetValue(NPPVpluginDescriptionString)");
         break;
     case NPPVpluginScriptableNPObject:
         *(NPObject **)value = getScriptableObject();
-        FBLOG_INFO("PluginCore", "GetValue(NPPVpluginScriptableNPObject)");
+        FBLOG_TRACE("PluginCore", "GetValue(NPPVpluginScriptableNPObject)");
         break;
     default:
-        FBLOG_INFO("PluginCore", "GetValue(Unknown)");
+        FBLOG_TRACE("PluginCore", "GetValue(Unknown)");
         return NPERR_GENERIC_ERROR;
     }
     return NPERR_NO_ERROR;
