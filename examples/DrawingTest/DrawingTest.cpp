@@ -43,7 +43,6 @@ void DrawingTest::StaticDeinitialize()
 ///         the JSAPI object until the onPluginReady method is called
 ///////////////////////////////////////////////////////////////////////////////
 DrawingTest::DrawingTest()
-    : m_window(0)
 {
 }
 
@@ -114,17 +113,13 @@ bool DrawingTest::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow *)
 
 bool DrawingTest::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindow *win)
 {
-    // The window is attached, store the pointer to the window so
-    // the subclasses can invalidate it in the update thread
-    m_window = win;
+    // This is called when the window is attached; don't start drawing before this!
     return false;
 }
 
 bool DrawingTest::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindow *win)
 {
-    // The window is about to be detached. Clear the window pointer
-    // so the subclasses update thread doesn't attempt to invalidate it
-    m_window = NULL;
+    // This is called when the window is detached! You must not draw after this!
     return false;
 }
 
