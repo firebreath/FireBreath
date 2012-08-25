@@ -57,6 +57,10 @@ PluginWindowX11::PluginWindowX11(const WindowContextX11& ctx)
     gtk_widget_set_can_focus(GTK_WIDGET(m_canvas), true);
 #endif
 
+    //initialise threading in gtk so InvalidateWindow can be called outside
+    //of the main thread
+    gdk_threads_init();
+
     gtk_widget_add_events(
         m_canvas,
         GDK_BUTTON_PRESS_MASK |
@@ -284,6 +288,8 @@ GdkNativeWindow PluginWindowX11::getWindow()
 
 void PluginWindowX11::InvalidateWindow() const
 {
-    // Doesn't exist yet
+    gdk_threads_enter();
+    gtk_widget_queue_draw(m_canvas);
+    gdk_threads_leave();
 }
 
