@@ -6,7 +6,7 @@ WinDrawingTest::WinDrawingTest() :
     m_red(0)
 {
     //Create and setup the timer object to call the update function every 40 ms
-    m_timer = FB::Timer::getTimer(40, true, boost::bind(&X11DrawingTest::update, this));
+    m_timer = FB::Timer::getTimer(40, true, boost::bind(&WinDrawingTest::update, this));
 }
 
 /**
