@@ -7,10 +7,9 @@ on run args
       set current view of container window to icon view
       set toolbar visible of container window to false
       set statusbar visible of container window to false
-      set the bounds of container window to {200, 100, 1000, 500}
+      set the bounds of container window to {200, 100, 712, 612}
       set opts to the icon view options of container window
-      #Add a background picture in dmg_template/.background and uncomment the following line to activate it
-      #set background picture of opts to file ".background:background.png"
+      set background picture of opts to file ".background:background.png"
       set arrangement of opts to not arranged
       set icon size of opts to 80
       set position of item thePluginName of container window to {150, 275}
