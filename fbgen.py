@@ -108,6 +108,7 @@ def Main():
     generatedGuids.GUIDS_EVTSRC         = guid.generate("EVTSRC")
     generatedGuids.GUIDS_INSTPROD       = guid.generate("INSTPROD")
     generatedGuids.GUIDS_INSTUPGR       = guid.generate("INSTUPGR")
+    generatedGuids.GUIDS_INSTUPGR64     = guid.generate("INSTUPGR64")
     generatedGuids.GUIDS_companydircomp = guid.generate("companydircomp")
     generatedGuids.GUIDS_installdircomp = guid.generate("installdircomp")
 

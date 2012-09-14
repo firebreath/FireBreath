@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{@{GUIDS_INSTUPGR}}">
-        <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${PLUGIN_NAME} plugin" InstallScope="perUser" />
+    <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{${FBControl_WixUpgradeCode_GUID}}">
+        <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
         <Upgrade Id="{@{GUIDS_INSTUPGR}}">
             <UpgradeVersion
                 Property="OLD_VERSION_FOUND"
@@ -30,7 +30,7 @@
                             Value="${FBSTRING_PLUGIN_VERSION}"
                             KeyPath="yes" />
                     </Component>
-                    <Directory Id="PluginNameDir" Name="${PLUGIN_NAME}">
+                    <Directory Id="PluginNameDir" Name="${FBSTRING_PluginName}">
                         <Component Id="PluginNameDirComp" Guid="*">
                             <RemoveFolder Id="RemovePluginNameDir" On="uninstall" />
                             <RegistryValue

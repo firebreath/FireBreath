@@ -38,6 +38,16 @@ elseif(UNIX)
     include(${FB_ROOT}/cmake/X11.cmake)
 endif()
 
+if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    set ( FB_PLATFORM_ARCH_32 0 )
+    set ( FB_PLATFORM_ARCH_64 1 )
+    set ( FB_PLATFORM_ARCH_NAME "x86_64" )
+else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+    set ( FB_PLATFORM_ARCH_32 1 )
+    set ( FB_PLATFORM_ARCH_64 0 )
+    set ( FB_PLATFORM_ARCH_NAME "i386" )
+endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
+
 # include file with the crazy configure_template function
 include(${FB_ROOT}/cmake/configure_template.cmake)
 
