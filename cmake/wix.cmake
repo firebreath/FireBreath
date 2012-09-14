@@ -227,5 +227,5 @@ if (WIN32)
             COMMENT   "Wrapping ${_source} -> ${_target}"
             )
 
-    ENDMACRO(WIX_LINK)
+    ENDMACRO(WIX_SETUPBLD)
 endif(WIN32)
