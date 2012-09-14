@@ -53,6 +53,9 @@ target_link_libraries (${PROJECT_NAME}
     PluginCore
     UnitTest++
     )
+link_boost_library ( ${PROJECT_NAME} system )
+link_boost_library ( ${PROJECT_NAME} date_time )
+link_boost_library ( ${PROJECT_NAME} regex )
 
 if (APPLE)
     find_library(CARBON_FRAMEWORK Carbon) 
