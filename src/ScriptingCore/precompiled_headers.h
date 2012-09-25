@@ -1,4 +1,6 @@
 
+#ifdef FB_USE_PCH
+
 #ifdef _WIN32
 #include "win_targetver.h"
 #include <boost/asio.hpp>
@@ -52,3 +54,5 @@
 #include "logging.h"
 #include "BrowserHost.h"
 #include "../PluginCore/BrowserStreamManager.h"
+
+#endif // FB_USE_PCH

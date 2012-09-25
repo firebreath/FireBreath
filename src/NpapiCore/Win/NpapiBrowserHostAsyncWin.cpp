@@ -13,6 +13,8 @@ License:    Dual license model; choose one of two:
 Copyright 2010 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
+#include "win_targetver.h"
+#include "win_common.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "AsyncFunctionCall.h"
 #include "Win/WinMessageWindow.h"

@@ -12,6 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "win_targetver.h"
+#include "win_common.h"
 #include <boost/assign.hpp>
 #include <boost/smart_ptr/make_shared.hpp>
 #include "axstream.h"

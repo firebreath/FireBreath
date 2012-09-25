@@ -1,5 +1,12 @@
 
+#include "win_targetver.h"
+#include "win_common.h"
 #include "Win/SystemProxyDetectorWin.h"
+#include <boost/scoped_ptr.hpp>
+#include <boost/scoped_array.hpp>
+#include <sstream>
+#include <URI.h>
+#include "logging.h"
 #include "../precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include <boost/algorithm/string.hpp>

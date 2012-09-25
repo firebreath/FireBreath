@@ -14,6 +14,8 @@ Copyright 2011 GradeCam, Inc and the Firebreath development team
 
 #include "../SystemHelpers.h"
 #include "shlobj.h"
+#include <cassert>
+#include "utf8_tools.h"
 
 #ifndef REFKNOWNFOLDERID
 typedef GUID KNOWNFOLDERID;

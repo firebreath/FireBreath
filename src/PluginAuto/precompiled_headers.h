@@ -1,4 +1,6 @@
 
+#ifdef FB_USE_PCH
+
 #if !defined(FB_UNITTEST)
 
 #ifdef _WIN32
@@ -47,3 +49,5 @@
 
 #endif
 
+
+#endif // FB_USE_PCH
