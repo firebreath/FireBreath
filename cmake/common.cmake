@@ -291,19 +291,22 @@ function (fb_check_boost)
 endfunction()
 
 MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource SourcesVar)
-    IF(MSVC)
-        GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-        SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
+    IF(FB_USE_PCH)
+        add_definition(-D FB_USE_PCH=1)
+        IF(MSVC)
+            GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+            SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
 
-        # Found this example of setting up PCH in the cmake source code under Tests/PrecompiledHeader
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
-            COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${__PrecompiledBinary}\"")
+            # Found this example of setting up PCH in the cmake source code under Tests/PrecompiledHeader
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
+                COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${__PrecompiledBinary}\"")
 
-        SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-            PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
-    elseif (APPLE)
-        message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${PrecompiledHeader}")
-    endif()
+            SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
+                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
+        elseif (APPLE)
+            message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${PrecompiledHeader}")
+        endif()
+    ENDIF()
 ENDMACRO(ADD_PRECOMPILED_HEADER)
