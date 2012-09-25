@@ -19,7 +19,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "BrowserStreamRequest.h"
 #include "NpapiPlugin.h"
+#include "PluginEventSink.h"
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
@@ -315,10 +317,21 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
     // check for streams we did not request or create
     if ( !s )
     {
-        // ask the plugin if it would like to create a new stream
+        // Create a BrowserStreamRequest; only GET is supported
+        BrowserStreamRequest streamReq(stream->url, "GET", false);
+        streamReq.setLastModified(stream->lastmodified);
+        streamReq.setHeaders(stream->headers);
+        streamReq.setSeekable(seekable != 0);
+
+        pluginMain->handleUnsolicitedStream(streamReq);
+
         FB::BrowserStreamPtr newstream;
-        if ((newstream = pluginMain->handleUnsolicitedStream(type, seekable, stream->url, stream->end, stream->lastmodified, stream->headers)))
-        {
+        if (streamReq.wasAccepted()) {
+            newstream = m_npHost->createUnsolicitedStream(streamReq);
+            PluginEventSinkPtr sink(streamReq.getEventSink());
+            if (sink) {
+                newstream->AttachObserver(sink);
+            }
             // continue function using the newly created stream object
             s = dynamic_cast<NpapiStream*> ( newstream.get() );
             stream->pdata = static_cast<void*>( s );

@@ -26,10 +26,27 @@ DefaultBrowserStreamHandler::~DefaultBrowserStreamHandler()
 {
 }
 
-bool DefaultBrowserStreamHandler::onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream* Stream)
+bool FB::DefaultBrowserStreamHandler::onStreamAttached( FB:AttachedEvent *evt, FB::BrowserStream * Stream )
 {
     assert(Stream != NULL);
     setStream( ptr_cast<BrowserStream>(Stream->shared_from_this()) );
+    return false;
+}
+
+bool FB::DefaultBrowserStreamHandler::onStreamDetached( FB:AttachedEvent *evt, FB::BrowserStream * Stream )
+{
+    clearStream();
+    return false;
+}
+
+bool FB::DefaultBrowserStreamHandler::cancel()
+{
+    FB::BrowserStreamPtr ptr(getStream());
+    return ptr && ptr->close();
+}
+
+bool DefaultBrowserStreamHandler::onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream* Stream)
+{
     return false;
 }
 

@@ -28,6 +28,7 @@ namespace FB
     FB_FORWARD_PTR(BrowserStream);
     FB_FORWARD_PTR(PluginEventSink);
     FB_FORWARD_PTR(JSObject);
+    class BrowserStreamRequest;
 
     namespace DOM {
         FB_FORWARD_PTR(Window);
@@ -190,6 +191,20 @@ namespace FB
         virtual void *getContextID() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
+        ///
+        /// @brief  Creates a BrowserStream based on the provided BrowserStreamRequest object
+        ///
+        /// @todo   Document this better
+        ///
+        /// @param  url                 URL of the document to request.
+        ///
+        /// @return null if it fails, else BrowserStream object
+        /// @since 1.7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
         /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
@@ -241,24 +256,15 @@ namespace FB
         /// @fn virtual BrowserStreamPtr createUnsolicitedStream(const std::string& url, const PluginEventSinkPtr& callback,
         /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
-        /// @brief  Creates a BrowserStream to handle an unsolicited NPP_NewStream.
+        /// @brief  Used internally to create a BrowserStream to handle an unsolicited NPP_NewStream.
         ///
-        /// This kind of stream is created if the browser wants to send a new stream to the plugin that the
-        /// plugin hasn't requested.
+        /// You should never call this directly.
         ///
-        /// @param  url                 URL of the document that the browser wants to deliver.
-        /// @param  callback            PluginEventSink to send status updates to (usually your Plugin class
-        ///                             derived from PluginCore)
-        /// @param  cache               true to cache.
-        /// @param  seekable            true if the Stream should be seekable.
-        /// @param  internalBufferSize  Size of the internal buffer.
+        /// @param  url                 BrowserStream
         ///
-        /// @return null if it fails, else BrowserStream object
-        /// @todo this should probably be a shared_ptr instead of a normal ptr
-        /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
-        virtual BrowserStreamPtr createUnsolicitedStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                                         bool cache = true, bool seekable = false,
-                                                         size_t internalBufferSize = 128 * 1024 ) const;
+        /// @return BrowserStream object
+        /// @since 1.7.0
+        virtual BrowserStreamPtr createUnsolicitedStream( const BrowserStreamRequest& req ) const;
 
         // Methods for accessing the DOM
     public:
@@ -470,6 +476,7 @@ namespace FB
         mutable AsyncCallManagerPtr _asyncManager;
         // Yes, this is supposed to be both private and pure virtual.
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
+        virtual BrowserStreamPtr _createStream(const BrowserStreamRequest& req) = 0;
         virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
                                             bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
@@ -477,9 +484,7 @@ namespace FB
                                             const std::string& postdata,
                                             bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;
-        virtual BrowserStreamPtr _createUnsolicitedStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                                          bool cache = true, bool seekable = false,
-                                                          size_t internalBufferSize = 128 * 1024 ) const = 0;
+        virtual BrowserStreamPtr _createUnsolicitedStream( const BrowserStreamRequest& req ) const = 0;
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

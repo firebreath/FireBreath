@@ -17,6 +17,7 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "BrowserStream.h"
+#include "PluginEvents/AttachedEvent.h"
 
 namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,6 +37,8 @@ namespace FB {
     {
     public:
         BEGIN_PLUGIN_EVENT_MAP()
+            EVENTTYPE_CASE(FB::AttachedEvent, onStreamAttached, FB::BrowserStream)
+            EVENTTYPE_CASE(FB::DetachedEvent, onStreamDetached, FB::BrowserStream)
             EVENTTYPE_CASE(FB::StreamCreatedEvent, onStreamCreated, FB::BrowserStream)
             EVENTTYPE_CASE(FB::StreamDestroyedEvent, onStreamDestroyed, FB::BrowserStream)
             EVENTTYPE_CASE(FB::StreamFailedOpenEvent, onStreamFailedOpen, FB::BrowserStream)
@@ -62,6 +65,26 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual
         ~DefaultBrowserStreamHandler();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool onStreamAttached(FB:AttachedEvent *evt, FB::BrowserStream * Stream);
+        ///
+        /// @brief  Called when the stream is attached to this handler (may have already been created).
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool onStreamAttached(FB::AttachedEvent *evt, FB::BrowserStream * Stream);
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual bool onStreamDetached(FB:AttachedEvent *evt, FB::BrowserStream * Stream);
+        ///
+        /// @brief  Called when the stream is detached from this handler (may not have been destroyed).
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool onStreamDetached(FB::DetachedEvent *evt, FB::BrowserStream * Stream);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool DefaultBrowserStreamHandler::onStreamCreated(FB::StreamCreatedEvent *evt, FB::BrowserStream * Stream);
@@ -125,6 +148,16 @@ namespace FB {
         /// @author Matthias
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual const FB::BrowserStreamPtr& getStream() const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual   bool FB::DefaultBrowserStreamHandler::cancel();
+        ///
+        /// @brief  Cancels the stream
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual bool cancel();
 
     protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////

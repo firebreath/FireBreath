@@ -74,6 +74,8 @@ namespace FB {
     class SimpleStreamHelper : public FB::DefaultBrowserStreamHandler
     {
     public:
+        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostPtr& host, const BrowserStreamRequest& req );
+        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostPtr& host, const BrowserStreamPtr& stream, const BrowserStreamRequest& req );
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
@@ -248,6 +250,7 @@ namespace FB {
     private:
         void keepReference(const SimpleStreamHelperPtr& ptr);
         SimpleStreamHelperPtr self;
+        BrowserStreamPtr streamPtr;
     };
 };
 #endif // SimpleStreamHelper_h__

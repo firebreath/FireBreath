@@ -18,6 +18,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "PluginEventSink.h"
 #include "BrowserStream.h"
+#include "BrowserPlugin.h"
 #include "APITypes.h"
 #include <string>
 #include <set>
@@ -30,6 +31,7 @@ namespace FB {
 
     class PluginWindow;
     class PluginEvent;
+    class BrowserStreamRequest;
     FB_FORWARD_PTR(PluginCore);
     FB_FORWARD_PTR(JSAPI);
     FB_FORWARD_PTR(BrowserHost);
@@ -293,16 +295,16 @@ namespace FB {
         virtual void setFSPath(const std::string& path) { m_filesystemPath = path; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual std::string& getFSPath()
+        /// @fn static std::string getFSPath()
         ///
         /// @brief  Returns the path and filename of the current plugin module
         ///
         /// On Windows, this returns the path to the plugin DLL file.  On Mac, it's a .dylib. On linux a .so
         /// 
         /// @return  Full pathname of the file. 
-        /// @since 1.4
+        /// @since 1.4 (in 1.7 it became static)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::string& getFSPath() { return m_filesystemPath; }
+        static std::string getFSPath() { return BrowserPlugin::getFSPath(); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::setParams(const FB::VariantMap& inParams)
@@ -320,44 +322,32 @@ namespace FB {
         virtual void setParams(const FB::VariantMap& inParams);
         
         virtual boost::optional<std::string> getParam(const std::string& key);
+        virtual FB::variant getParamVariant(const std::string& key);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool PluginCore::handleUnsolicitedStream(const std::string& mimeType,
-        ///                                                      const std::string& url,
-        ///                                                      PluginEventSinkPtr& callback,
-        ///                                                      bool& cache, bool& seekable,
-        ///                                                      size_t& internalBufferSize)
+        /// @fn virtual bool PluginCore::handleUnsolicitedStream(const BrowserStreamRequest& req)
         ///
-        /// @brief  Called by the browser to handle an unsolicited NPP_NewStream
+        /// @brief  Called by the browser to handle an unsolicited BrowserStream
         ///
-        /// This function is called if the browser wants to send a new stream to the plugin that the plugin
-        /// hasn't requested.  The default implementation returns a null pointer, meaning that the new
-        /// stream will be ignored.  To handle unsolicited streams, create a new BrowserStream by calling
-        /// BrowserHost::createUnsolicitedStream and return this object.
+        /// If you wish to accept the request, you must call req.setEventSink() and pass in the
+        /// eventsink object you want to handle the new stream.
         ///
-        /// Note that the BrowserStream is stored in a shared pointer, so the plugin should keep a copy of
-        /// anything it returns here to prevent it from getting released too quickly.
-        ///
-        /// @param  mimeType            the MIME type of the new stream
-        /// @param  seekable            true if the server says the stream is seekable
-        /// @param  url                 the URL of the new stream
-        /// @param  streamlen           the length of the stream, or 0 if unknown
-        /// @param  lastmodified        the timestamp associated with the stream, if available
-        /// @param  headers             the headers associated with the stream, if available
+        /// @param  req            The browser request containing information about the unsolicited stream
+        /// @since 1.7.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::BrowserStreamPtr handleUnsolicitedStream(const std::string& mimeType,
-                                                             bool seekable, const std::string& url,
-                                                             uint32_t streamlen, uint32_t lastmodified,
-                                                             const std::string& headers) { return FB::BrowserStreamPtr(); }
+        virtual void handleUnsolicitedStream(const BrowserStreamRequest& req) { }
 
+    public:
+        virtual BrowserHostPtr getHost() { return m_host; }
     protected:
-        /// The BrowserHost object for the current session
+        /// The BrowserHost object for the current session; deprecated, use getHost()
         BrowserHostPtr m_host;          
-        /// Stores the value passed into setFSPath()
+        /// Stores the value passed into setFSPath(); deprecated, use getFSPath()
         std::string m_filesystemPath;
         /// Boolean value indicates if the browser has called setParams() yet or not
         bool m_paramsSet;               
-        /// Stores the list of params provided by the browser to setParams()
+        /// Stores the list of params provided by the browser to setParams(); deprecated, use
+        /// getParam insead
         FB::VariantMap m_params;        
     private:
         /// Don't use directly; use GetWindow() 
