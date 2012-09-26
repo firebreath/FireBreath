@@ -25,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
+    FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(BrowserStream);
     FB_FORWARD_PTR(PluginEventSink);
     FB_FORWARD_PTR(JSObject);
@@ -44,7 +45,7 @@ namespace FB
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct AsyncLogRequest
     {
-        AsyncLogRequest(const boost::shared_ptr<BrowserHost>& host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(const BrowserHostPtr& host, const std::string& message) : m_host(host), m_msg(message) { }
 
         const boost::shared_ptr<BrowserHost> m_host;
         std::string m_msg;
@@ -135,7 +136,7 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Functor>
-        typename Functor::result_type CallOnMainThread(Functor func);
+        typename Functor::result_type CallOnMainThread(Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class C, class Functor> void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func)
@@ -166,7 +167,7 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class C, class Functor>
-        void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func);
+        void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static void AsyncHtmlLog(void *)
@@ -476,7 +477,7 @@ namespace FB
         mutable AsyncCallManagerPtr _asyncManager;
         // Yes, this is supposed to be both private and pure virtual.
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
-        virtual BrowserStreamPtr _createStream(const BrowserStreamRequest& req) = 0;
+        virtual BrowserStreamPtr _createStream(const BrowserStreamRequest& req) const = 0;
         virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
                                             bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const = 0;

@@ -60,7 +60,7 @@ namespace FB {
         void accept() { accepted = true; }
         void setSeekable(bool s) { seekable = s; }
         void setCacheable(bool c) { cache = c; }
-        bool wasAccepted() { return accepted; }
+        bool wasAccepted() const { return accepted; }
         void addQueryData(const std::string& key, const std::string& val) {
             uri.addQueryData(key, val);
         }
@@ -71,14 +71,14 @@ namespace FB {
         void setBufferSize(size_t size) { internalBufferSize = size; }
 
         void setEventSink(const PluginEventSinkPtr& ptr) { sinkPtr = ptr; this->accept(); }
-        PluginEventSinkPtr getEventSink() { return sinkPtr; }
+        PluginEventSinkPtr getEventSink() const { return sinkPtr; }
 
         void setCallback( const HttpCallback& cb ) { callback = cb; }
-        HttpCallback getCallback() { return callback; }
+        HttpCallback getCallback() const { return callback; }
 
-        void setPostData(const std::string& data, const std::string& post_headers) { postdata = data; postheaders = post_headers; }
-        std::string getPostData();
-        std::string getPostHeaders();
+        void setPostData(const std::string& data, const std::string& post_headers = "") { postdata = data; postheaders = post_headers; }
+        std::string getPostData() const { return postdata; }
+        std::string getPostHeaders() const { return postheaders; }
     };
 
 };
