@@ -37,3 +37,11 @@ SET( SOURCES
 # This will include Win/projectDef.cmake, X11/projectDef.cmake, Mac/projectDef 
 # depending on the platform
 include_platform()
+
+#this will build a Chrome package
+#add_chrome_package(${PLUGIN_NAME}
+#	${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/ 
+#	"${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${FBSTRING_PluginFileName}.dll"
+#	"${CMAKE_CURRENT_SOURCE_DIR}/sign/package_key.pem"
+#	${PROJECT_NAME})
+
