@@ -303,6 +303,16 @@ MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource So
 
             SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
                 PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
+
+            FOREACH( src_file ${${SourcesVar}} )
+
+                GET_FILENAME_COMPONENT(src_ext ${src_file} EXT)
+                if ("${src_ext}" STREQUAL ".c")
+                    SET_SOURCE_FILES_PROPERTIES(${src_file} PROPERTIES COMPILE_FLAGS "/Y-")
+                    message("${src_file} is a C file")
+                endif()
+
+            ENDFOREACH()
         elseif (APPLE)
             message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
             SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
