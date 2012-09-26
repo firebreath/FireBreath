@@ -150,7 +150,7 @@ if (WIN32)
     set (GENERATED_IDL
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.cpp"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.c"
         )
 
     SET (IDL_FILE ${FB_TEMPLATE_DEST_DIR}/FireBreathWin.idl)
@@ -159,7 +159,7 @@ if (WIN32)
         ${IDL_FILE}
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.cpp"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.c"
         PROPERTIES
             HEADER_FILE_ONLY 1
             GENERATED 1
