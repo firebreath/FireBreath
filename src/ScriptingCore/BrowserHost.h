@@ -198,12 +198,13 @@ namespace FB
         ///
         /// @todo   Document this better
         ///
-        /// @param  url                 URL of the document to request.
+        /// @param  req             BrowserStreamRequest object for the request
+        /// @param  enable_async    Used internally to prevent excessive recursion with async callbacks
         ///
         /// @return null if it fails, else BrowserStream object
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const;
+        virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req, const bool enable_async = true ) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
@@ -478,13 +479,6 @@ namespace FB
         // Yes, this is supposed to be both private and pure virtual.
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
         virtual BrowserStreamPtr _createStream(const BrowserStreamRequest& req) const = 0;
-        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
-        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            const std::string& postdata,
-                                            bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
         virtual BrowserStreamPtr _createUnsolicitedStream( const BrowserStreamRequest& req ) const = 0;
     public:
 

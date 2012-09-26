@@ -718,11 +718,14 @@ NPError FB::Npapi::NpapiBrowserHost::GetAuthenticationInfo( const char *protocol
     }
 }
 
-FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( BrowserStreamRequest& req ) const
+FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( const BrowserStreamRequest& req ) const
 {
+    assertMainThread();
     std::string url(req.uri.toString());
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, req.cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
-    stream->AttachObserver(req.getEventSink());
+    if (req.getEventSink()) {
+        stream->AttachObserver( req.getEventSink() );
+    }
 
     NPError err;
     if (req.method == "GET") {

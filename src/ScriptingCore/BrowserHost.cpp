@@ -32,6 +32,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include "BrowserStreamRequest.h"
 #include "SystemProxyDetector.h"
+#include "SimpleStreamHelper.h"
 
 //////////////////////////////////////////
 // This is used to keep async calls from
@@ -352,14 +353,22 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
     return createStream(req);
 }
 
-FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& req ) const
+FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& req, const bool enable_async ) const
 {
     assertMainThread();
-    FB::BrowserStreamPtr ptr(_createStream(req));
-    if (ptr) {
-        m_streamMgr->retainStream(ptr);
+    if (enable_async && req.getCallback() && !req.getEventSink()) {
+        // If a callback was provided, use SimpleStreamHelper to create it;
+        // This will actually call back into this function with an event sink                        
+        BrowserStreamRequest newReq(req);
+        FB::SimpleStreamHelperPtr asyncPtr(SimpleStreamHelper::AsyncRequest(shared_from_this(), req));
+        return asyncPtr->getStream();
+    } else { // Create the stream with the EventSink
+        FB::BrowserStreamPtr ptr(_createStream(req));
+        if (ptr) {
+            m_streamMgr->retainStream(ptr);
+        }
+        return ptr;
     }
-    return ptr;
 }
 
 FB::BrowserStreamPtr FB::BrowserHost::createPostStream( const std::string& url,

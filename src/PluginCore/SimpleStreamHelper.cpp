@@ -33,8 +33,12 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHos
     return AsyncRequest(host, req);
 }
 
-FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost( const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, 
-                                                           const HttpCallback& callback, bool cache /*= true*/, size_t bufferSize /*= 256*1024*/ )
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(const FB::BrowserHostPtr& host,
+                                                            const FB::URI& uri,
+                                                            const std::string& postdata, 
+                                                            const HttpCallback& callback,
+                                                            bool cache /*= true*/,
+                                                            size_t bufferSize /*= 256*1024*/ )
 {
     BrowserStreamRequest req(uri, "POST");
     req.setPostData(postdata);
@@ -44,7 +48,8 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost( const FB::BrowserHo
     return AsyncRequest(host, req);
 }
 
-FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostPtr& host, const BrowserStreamRequest& req ) {
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostConstPtr& host,
+                                                                const BrowserStreamRequest& req ) {
     if (!req.getCallback()) {
         throw std::runtime_error("Invalid callback");
     }
@@ -52,11 +57,13 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::Browse
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&AsyncRequest, host, req));
     }
-    FB::BrowserStreamPtr stream(host->createStream(req));
+    FB::BrowserStreamPtr stream(host->createStream(req, false));
     return AsyncRequest(host, stream, req);
 }
 
-FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostPtr& host, const FB::BrowserStreamPtr& stream, const BrowserStreamRequest& req ) {
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostConstPtr& host,
+                                                                const FB::BrowserStreamPtr& stream,
+                                                                const BrowserStreamRequest& req ) {
     if (!host->isMainThread()) {
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
