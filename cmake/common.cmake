@@ -292,7 +292,7 @@ endfunction()
 
 MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource SourcesVar)
     IF(FB_USE_PCH)
-        add_definition(-D FB_USE_PCH=1)
+        add_definitions(-D FB_USE_PCH=1)
         IF(MSVC)
             GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
             SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")

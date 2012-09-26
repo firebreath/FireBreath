@@ -1,5 +1,5 @@
 
-#ifdef FB_WIN // For now only use this on windows; eventually we'd like to have PCH cross platform
+#ifdef FB_USE_PCH
 
 #include "win_targetver.h"
 #include "win_common.h"
@@ -35,6 +35,7 @@
 #include "AXDOM/Element.h"
 #include "AXDOM/Node.h"
 #include "axutil.h"
+#include "BrowserStreamRequest.h"
 
 
-#endif
+#endif // FB_USE_PCH
