@@ -68,8 +68,10 @@ if (WIN32)
             endif()
         endforeach(flag_var)
     endif()
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D BOOST_ALL_NO_LIB=1")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D BOOST_ALL_NO_LIB=1")
+    if ( NOT WITH_SYSTEM_BOOST )
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /D BOOST_ALL_NO_LIB=1")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /D BOOST_ALL_NO_LIB=1")
+    endif ( NOT WITH_SYSTEM_BOOST )
 endif()
 
 # We define preprocessor flags here in addition to other flags
