@@ -100,6 +100,7 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
 
     string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT_DIR})
     set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME ${FBSTRING_PluginName}
         BUNDLE 1
         BUNDLE_EXTENSION plugin
         XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
