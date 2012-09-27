@@ -72,6 +72,8 @@ if (WIN32)
         SET(WIX_CANDLE ${WIX_ROOT_DIR}/bin/candle.exe)
         SET(WIX_LIGHT ${WIX_ROOT_DIR}/bin/light.exe)
         SET(WIX_HEAT ${WIX_ROOT_DIR}/bin/heat.exe)
+        SET(WIX_SETUPBLD ${WIX_ROOT_DIR}/bin/setupbld.exe)
+        SET(WIX_SETUP ${WIX_ROOT_DIR}/bin/setup.exe)
         #  MESSAGE(STATUS "Windows Installer XML found.")
     ENDIF(NOT WIX_FOUND)
 
@@ -206,6 +208,23 @@ if (WIN32)
             ARGS      ${WIX_LINK_FLAGS_A} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
             DEPENDS   ${${_sources}}
             COMMENT   "Linking ${${_sources}} -> ${_target}"
+            )
+
+    ENDMACRO(WIX_LINK)
+    
+    #
+    # Create
+    #
+    # Parameters
+    #  _target - Name of target exe file
+    #  _source - Name of source msi file
+    #
+    MACRO(WIX_SETUPBLD _project _target _source )
+        ADD_CUSTOM_COMMAND( TARGET    ${_project} POST_BUILD
+            COMMAND   ${WIX_SETUPBLD}
+            ARGS      -out "${_target}" -mpsu "${_source}" -setup ${WIX_SETUP}
+            DEPENDS   ${_source}
+            COMMENT   "Wrapping ${_source} -> ${_target}"
             )
 
     ENDMACRO(WIX_LINK)
