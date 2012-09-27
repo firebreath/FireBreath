@@ -75,6 +75,39 @@ namespace FB {
     {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(const BrowserHostConstPtr& host, const BrowserStreamRequest& req);
+        ///
+        /// @brief  Creates an asynchronous HTTP request from the provided BrowserStreamRequest
+        ///
+        /// Using this method is basically the same as calling BrowserHost::createStream and providing
+        /// the same BrowserStreamRequest object. Note that a BrowserStreamRequest object passed to
+        /// this method *must* have a callback (see BrowserStreamRequest::setCallback)
+        ///
+        /// @param host  const BrowserHostConstPtr & 
+        /// @param req  const BrowserStreamRequest & 
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        /// @see FB::BrowserStreamRequest:setCallback
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostConstPtr& host, const BrowserStreamRequest& req );
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(const BrowserHostConstPtr& host, const BrowserStreamPtr& stream, const BrowserStreamRequest& req);
+        ///
+        /// @brief  Creates an asynchronous HTTP request from the provided BrowserStreamRequest and existing stream object
+        ///
+        /// This method is generally only used internally; it works on an existing (but not really started) stream object.
+        ///
+        /// @param host  const BrowserHostConstPtr & 
+        /// @param stream  const BrowserStreamPtr & 
+        /// @param req  const BrowserStreamRequest & 
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        /// @see FB::BrowserStreamRequest:setCallback
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostConstPtr& host, const BrowserStreamPtr& stream, const BrowserStreamRequest& req );
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Starts an asynchronous HTTP get request
@@ -111,6 +144,7 @@ namespace FB {
         /// @since 1.4b3
         /// @see SynchronousGet
         /// @see FB::URI
+        /// @deprecated 1.7 use AsyncRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static FB::SimpleStreamHelperPtr AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback,
             bool cache = true, size_t bufferSize = 128*1024);
@@ -154,6 +188,7 @@ namespace FB {
         /// @since 1.4b3
         /// @see SynchronousGet
         /// @see FB::URI
+        /// @deprecated 1.7 use AsyncRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static FB::SimpleStreamHelperPtr AsyncPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const HttpCallback& callback,
             bool cache = true, size_t bufferSize = 128*1024);
@@ -189,10 +224,24 @@ namespace FB {
         /// @see AsyncGet
         /// @see FB::URI
         /// @see FB::HttpStreamResponse
+        /// @deprecated 1.7 use SynchronousRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static HttpStreamResponsePtr SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, 
             const bool cache = true, const size_t bufferSize = 128*1024);
         
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn  static  FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req);
+        ///
+        /// @brief  Do not call from the main thread! Starts a Synchronous HTTP request
+        ///
+        /// @param host  const FB::BrowserHostPtr & BrowserHost to use (m_host on the plugin object)
+        /// @param req  const BrowserStreamRequest & BrowserStreamRequest describing the request to make;
+        ///             should not have a callback or eventsink
+        ///
+        /// @author taxilian
+        /// @since 1.7
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req );
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024)
@@ -225,6 +274,7 @@ namespace FB {
         /// @see SynchronousGet
         /// @see FB::URI
         /// @see FB::HttpStreamResponse
+        /// @deprecated 1.7 use SynchronousRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static HttpStreamResponsePtr SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024);
 
@@ -248,6 +298,7 @@ namespace FB {
     private:
         void keepReference(const SimpleStreamHelperPtr& ptr);
         SimpleStreamHelperPtr self;
+        BrowserStreamPtr streamPtr;
     };
 };
 #endif // SimpleStreamHelper_h__

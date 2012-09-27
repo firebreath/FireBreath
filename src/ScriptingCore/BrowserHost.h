@@ -25,9 +25,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB
 {
+    FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(BrowserStream);
     FB_FORWARD_PTR(PluginEventSink);
     FB_FORWARD_PTR(JSObject);
+    class BrowserStreamRequest;
 
     namespace DOM {
         FB_FORWARD_PTR(Window);
@@ -43,7 +45,7 @@ namespace FB
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct AsyncLogRequest
     {
-        AsyncLogRequest(const boost::shared_ptr<BrowserHost>& host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(const BrowserHostPtr& host, const std::string& message) : m_host(host), m_msg(message) { }
 
         const boost::shared_ptr<BrowserHost> m_host;
         std::string m_msg;
@@ -110,7 +112,7 @@ namespace FB
         bool ScheduleAsyncCall(void (*func)(void *), void *userData) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class Functor> typename Functor::result_type CallOnMainThread(Functor func)
+        /// @fn template<class Functor> typename Functor::result_type CallOnMainThread(Functor func) const
         ///
         /// @brief  Execute a call on the main thread, wait for the result, and return it.
         ///
@@ -134,10 +136,10 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Functor>
-        typename Functor::result_type CallOnMainThread(Functor func);
+        typename Functor::result_type CallOnMainThread(Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func)
+        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const
         ///
         /// @brief  Schedule a call to be executed on the main thread.
         ///
@@ -165,7 +167,7 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class C, class Functor>
-        void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func);
+        void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static void AsyncHtmlLog(void *)
@@ -190,12 +192,28 @@ namespace FB
         virtual void *getContextID() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
+        ///
+        /// @brief  Creates a BrowserStream based on the provided BrowserStreamRequest object
+        ///
+        /// To make a request, create a BrowserStreamRequest object and then call
+        /// BrowserStreamRequest::setCallback to get an asynchronous callback or BrowserStreamRequest::setEventSink
+        /// to provide an object to receive stream events.
+        ///
+        /// @param  req             BrowserStreamRequest object for the request
+        /// @param  enable_async    Used internally to prevent excessive recursion with async callbacks
+        ///
+        /// @return null if it fails, else BrowserStream object
+        /// @since 1.7
+        /// @see FB::BrowserStreamRequest
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req, const bool enable_async = true ) const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
         /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
-        /// @brief  Creates a BrowserStream.
-        ///
-        /// @todo   Document this better
+        /// @brief  Creates a BrowserStream (deprecated since 1.7.0)
         ///
         /// @param  url                 URL of the document to request.
         /// @param  callback            PluginEventSink to send status updates to (usually your Plugin class
@@ -205,8 +223,8 @@ namespace FB
         /// @param  internalBufferSize  Size of the internal buffer.
         ///
         /// @return null if it fails, else BrowserStream object
-        /// @todo this should probably be a shared_ptr instead of a normal ptr
-        /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
+        /// @deprecated 1.7 (use the other createStream)
+        /// @see virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
                                             bool cache = true, bool seekable = false,
@@ -229,12 +247,29 @@ namespace FB
         /// @param  internalBufferSize  Size of the internal buffer.
         ///
         /// @return null if it fails, else BrowserStream object
-        /// @todo this should probably be a shared_ptr instead of a normal ptr
-        /// @since 1.4a3 uses shared_ptrs instead of raw ptrs
+        /// @deprecated 1.7 use createStream with a BrowserRequestStream of type "POST"
+        /// @see virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
                                                 const std::string& postdata,
                                                 bool cache = true, bool seekable = false,
                                                 size_t internalBufferSize = 128 * 1024 ) const;
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual BrowserStreamPtr createUnsolicitedStream(const BrowserStreamRequest& req ) const
+        ///
+        /// @brief  Used internally to create a BrowserStream to handle an unsolicited NPP_NewStream.
+        ///
+        /// You should never call this directly. Currently only supported by NPAPI browsers
+        ///
+        /// @param  url                 BrowserStream
+        ///
+        /// @return BrowserStream object
+        /// @since 1.7.0
+        /// @see FB::BrowserStreamRequest
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual BrowserStreamPtr createUnsolicitedStream( const BrowserStreamRequest& req ) const;
 
         // Methods for accessing the DOM
     public:
@@ -446,13 +481,8 @@ namespace FB
         mutable AsyncCallManagerPtr _asyncManager;
         // Yes, this is supposed to be both private and pure virtual.
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const = 0;
-        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
-        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            const std::string& postdata,
-                                            bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const = 0;
+        virtual BrowserStreamPtr _createStream(const BrowserStreamRequest& req) const = 0;
+        virtual BrowserStreamPtr _createUnsolicitedStream( const BrowserStreamRequest& req ) const = 0;
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////

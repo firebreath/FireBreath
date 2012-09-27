@@ -1,4 +1,6 @@
 
+#ifdef FB_USE_PCH
+
 #ifdef _WIN32
 #include "win_targetver.h"
 #include <boost/asio.hpp>
@@ -55,3 +57,4 @@
 #endif
 #include "PluginInfo.h"
 
+#endif // FB_USE_PCH

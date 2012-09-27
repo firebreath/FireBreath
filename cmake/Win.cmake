@@ -136,6 +136,9 @@ set(ATL_INCLUDE_DIRS
     ${MFC_INCLUDE_DIR}
     CACHE INTERNAL "ATL and MFC include dirs")
 
+IF(NOT DEFINED CMAKE_MAKECAB)
+	SET(CMAKE_MAKECAB makecab)
+ENDIF(NOT DEFINED CMAKE_MAKECAB)
 
 MACRO(add_windows_plugin PROJNAME INSOURCES)
     set(SOURCES
@@ -251,6 +254,68 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         WIX_LINK(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_DEST} WIX_FULLOBJLIST NONE)
 
         ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_PROJDEP})
-
+        
+        # Create the EXE wrapper
+        	
+        if (FB_WIX_EXEDEST)
+            SET (WIX_EXEDEST ${FB_WIX_EXEDEST})
+        else()
+            SET (WIX_EXEDEST ${WIX_OUTDIR}/${PROJNAME}.exe)
+        endif()
+        		
+        if (NOT FB_WIX_EXE_SUFFIX)
+            set (FB_WIX_EXE_SUFFIX _WiXInstallExe)
+        endif()
+        	
+        set (WIX_EXESOURCES
+                ${FB_ROOT}/cmake/dummy.cpp
+                ${WIX_DEST}
+            )
+        ADD_LIBRARY(${PROJNAME}${FB_WIX_EXE_SUFFIX} STATIC ${WIX_EXESOURCES})
+        
+        WIX_SETUPBLD(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${WIX_EXEDEST} ${WIX_DEST})
+        
+        ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${PROJNAME}${FB_WIX_SUFFIX})
     endif()
 endfunction(add_wix_installer)
+
+function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
+	GET_FILENAME_COMPONENT(_tmp_File ${DDF} NAME)
+    configure_file(${DDF} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+    message("Configuring ${DDF} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
+    set(CAB_DDF ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+    
+    set(SOURCELIST ${CAB_DDF})
+    FOREACH(_curFile ${CAB_SOURCEFILES})
+        GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
+        configure_file(${_curFile} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+        message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
+        set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
+    ENDFOREACH()
+    
+    set (WIX_SOURCES
+            ${FB_ROOT}/cmake/dummy.cpp
+    		${DDF}
+    		${CAB_SOURCEFILES}
+            ${SOURCELIST}
+        )
+    
+    if (FB_CAB_DEST)
+        SET (CAB_DEST ${FB_CAB_DEST})
+    else()
+        SET (CAB_DEST ${CAB_OUTDIR}/${PROJNAME}.cab)
+    endif()
+     
+    if (NOT FB_CAB_SUFFIX)
+        set (FB_CAB_SUFFIX _Cab)
+    endif()
+    	
+    ADD_LIBRARY(${PROJNAME}${FB_CAB_SUFFIX} STATIC ${WIX_SOURCES})
+    ADD_CUSTOM_COMMAND( TARGET    ${PROJNAME}${FB_CAB_SUFFIX} POST_BUILD
+        COMMAND   ${CMAKE_MAKECAB}
+        ARGS      /D "OUTDIR=${CAB_OUTDIR}" /F "${CAB_DDF}"
+        DEPENDS   ${SOURCELIST}
+        COMMENT   "Create Cab ${CAB_DEST}"
+        )
+    ADD_DEPENDENCIES(${PROJNAME}${FB_CAB_SUFFIX} ${PROJDEP})
+endfunction(create_cab)

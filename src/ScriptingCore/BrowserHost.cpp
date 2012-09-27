@@ -30,7 +30,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserHost.h"
+#include "BrowserStreamRequest.h"
 #include "SystemProxyDetector.h"
+#include "SimpleStreamHelper.h"
 
 //////////////////////////////////////////
 // This is used to keep async calls from
@@ -343,20 +345,49 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
     const PluginEventSinkPtr& callback, bool cache /*= true*/, bool seekable /*= false*/,
     size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
+    BrowserStreamRequest req(url, "GET");
+    req.setEventSink(callback);
+    req.setCacheable(cache);
+    req.setSeekable(seekable);
+    req.setBufferSize(internalBufferSize);
+    return createStream(req);
+}
+
+FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& req, const bool enable_async ) const
+{
     assertMainThread();
-    FB::BrowserStreamPtr ptr(_createStream(url, callback, cache, seekable, internalBufferSize));
-    if (ptr) {
-        m_streamMgr->retainStream(ptr);
+    if (enable_async && req.getCallback() && !req.getEventSink()) {
+        // If a callback was provided, use SimpleStreamHelper to create it;
+        // This will actually call back into this function with an event sink                        
+        BrowserStreamRequest newReq(req);
+        FB::SimpleStreamHelperPtr asyncPtr(SimpleStreamHelper::AsyncRequest(shared_from_this(), req));
+        return asyncPtr->getStream();
+    } else { // Create the stream with the EventSink
+        FB::BrowserStreamPtr ptr(_createStream(req));
+        if (ptr) {
+            m_streamMgr->retainStream(ptr);
+        }
+        return ptr;
     }
-    return ptr;
 }
 
 FB::BrowserStreamPtr FB::BrowserHost::createPostStream( const std::string& url,
     const PluginEventSinkPtr& callback, const std::string& postdata, bool cache /*= true*/, 
     bool seekable /*= false*/, size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
+    BrowserStreamRequest req(url, "POST");
+    req.setEventSink(callback);
+    req.setCacheable(cache);
+    req.setSeekable(seekable);
+    req.setBufferSize(internalBufferSize);
+    req.setPostData(postdata);
+    return createStream(req);
+}
+
+FB::BrowserStreamPtr FB::BrowserHost::createUnsolicitedStream( const BrowserStreamRequest& req ) const
+{
     assertMainThread();
-    FB::BrowserStreamPtr ptr(_createPostStream(url, callback, postdata, cache, seekable, internalBufferSize));
+    FB::BrowserStreamPtr ptr(_createUnsolicitedStream(req));
     if (ptr) {
         m_streamMgr->retainStream(ptr);
     }

@@ -32,7 +32,7 @@ def getTemplateFiles(basePath, origPath=None):
     files = []
     for filename in os.listdir(basePath):
         tmpName = os.path.join(basePath, filename)
-        if filename[0:1] == '.' or tmpName is None:
+        if filename == '.' or filename == ".." or tmpName is None:
             continue
         if os.path.isdir(tmpName):
             files.extend(getTemplateFiles(tmpName, origPath) )
@@ -164,8 +164,14 @@ def Main():
             tplFile = os.path.join("fbgen", "src", tpl)
             print tplFile
             template = Template(tplFile)
-            f = open(filename, "wb")
-            f.write(template.process(plugin, company, guid, generatedGuids, templateTime))
+            #Special case for binary files
+            if(tplFilename == "background.png"):
+              input = open(tplFile, "rb")
+              output = open(filename, "wb")
+              output.write(input.read())
+            else:
+              f = open(filename, "wb")
+              f.write(template.process(plugin, company, guid, generatedGuids, templateTime))
             print "  Processed", tpl
         except:
             print "  Error processing", tpl

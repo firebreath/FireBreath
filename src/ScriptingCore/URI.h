@@ -114,6 +114,10 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static URI fromString(const std::string& in_str);
 
+        void addQueryData(const std::string& key, const std::string& val) {
+            query_data[key] = val;
+        }
+
         // The protocol used. e.g. "http", "https", "file", "ftp", etc
         std::string protocol;
         // The login name in the URI (if any)

@@ -29,6 +29,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 namespace FB {
     class WinMessageWindow;
+    class BrowserStreamRequest;
     namespace ActiveX {
         FB_FORWARD_PTR(ActiveXBrowserHost);
         FB_FORWARD_PTR(IDispatchAPI);
@@ -50,16 +51,11 @@ namespace FB {
 
             virtual void *getContextID() const;
 
-            virtual FB::BrowserStreamPtr _createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                                    bool cache = true, bool seekable = false, 
-                                                    size_t internalBufferSize = 128 * 1024 ) const;
+            virtual FB::BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
+            virtual FB::BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const { return FB::BrowserStreamPtr(); }
 
             IDispatchEx* getJSAPIWrapper(const FB::JSAPIWeakPtr& api, bool autoRelease = false);
             IDispatchWRef getIDispatchRef(IDispatch* obj);
-
-            virtual FB::BrowserStreamPtr _createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                                    const std::string& postdata, bool cache = true, bool seekable = false, 
-                                                    size_t internalBufferSize = 128 * 1024 ) const;
 
         public:
             FB::DOM::DocumentPtr getDOMDocument();

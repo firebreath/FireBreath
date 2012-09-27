@@ -19,7 +19,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserHost.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "BrowserStreamRequest.h"
 #include "NpapiPlugin.h"
+#include "PluginEventSink.h"
 using namespace FB::Npapi;
 
 NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
@@ -164,7 +166,7 @@ see if the plug-in can receive data again by resending the data at regular inter
 */
 int32_t NpapiPlugin::WriteReady(NPStream* stream)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
     // check for streams we did not request or create
     if ( !s ) return -1;
 
@@ -191,7 +193,7 @@ byte range requests, you can use this parameter to track NPN_RequestRead request
 */
 int32_t NpapiPlugin::Write(NPStream* stream, int32_t offset, int32_t len, void* buffer)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
     // check for streams we did not request or create
     if ( !s ) return -1;
 
@@ -207,7 +209,7 @@ If an error occurs while retrieving the data or writing the file, the file name 
 */
 void NpapiPlugin::StreamAsFile(NPStream* stream, const char* fname)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
     // check for streams we did not request or create
     if ( !s ) return;
 
@@ -309,9 +311,34 @@ NPN_DestroyStream.
 */
 NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekable, uint16_t* stype)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    if (stream->notifyData && !stream->pdata) stream->pdata = stream->notifyData;
+
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
     // check for streams we did not request or create
-    if ( !s ) return NPERR_NO_DATA;
+    if ( !s )
+    {
+        // Create a BrowserStreamRequest; only GET is supported
+        BrowserStreamRequest streamReq(stream->url, "GET", false);
+        streamReq.setLastModified(stream->lastmodified);
+        streamReq.setHeaders(stream->headers);
+        streamReq.setSeekable(seekable != 0);
+
+        pluginMain->handleUnsolicitedStream(streamReq);
+
+        FB::BrowserStreamPtr newstream;
+        if (streamReq.wasAccepted()) {
+            newstream = m_npHost->createUnsolicitedStream(streamReq);
+            PluginEventSinkPtr sink(streamReq.getEventSink());
+            if (sink) {
+                newstream->AttachObserver(sink);
+            }
+            // continue function using the newly created stream object
+            s = dynamic_cast<NpapiStream*> ( newstream.get() );
+            stream->pdata = static_cast<void*>( s );
+        }
+    }
+
+    if ( !s ) return NPERR_NO_ERROR;
 
     s->setMimeType( type );
     s->setStream( stream );
@@ -358,11 +385,12 @@ any further references to the stream object.
 */
 NPError NpapiPlugin::DestroyStream(NPStream* stream, NPReason reason)
 {
-    NpapiStream* s = static_cast<NpapiStream*>( stream->notifyData );
+    NpapiStream* s = static_cast<NpapiStream*>( stream->pdata );
     // check for streams we did not request or create
     if ( !s || !s->getStream() ) return NPERR_NO_ERROR;
 
     s->setStream( 0 );
+    stream->pdata = 0;
     stream->notifyData = 0;
 
     if ( !s->isCompleted() ) s->signalCompleted( reason == NPRES_DONE );

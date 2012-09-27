@@ -48,6 +48,12 @@ else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set ( FB_PLATFORM_ARCH_NAME "i386" )
 endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
+# include the Chrome package generation function
+include(${FB_ROOT}/cmake/chrome.cmake)
+
+# include the XPI generation function
+include(${FB_ROOT}/cmake/xpi.cmake)
+
 # include file with the crazy configure_template function
 include(${FB_ROOT}/cmake/configure_template.cmake)
 
@@ -306,19 +312,32 @@ function (fb_check_boost)
 endfunction()
 
 MACRO(ADD_PRECOMPILED_HEADER PROJECT_NAME PrecompiledHeader PrecompiledSource SourcesVar)
-    IF(MSVC)
-        GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-        SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
+    IF(FB_USE_PCH)
+        add_definitions(-D FB_USE_PCH=1)
+        IF(MSVC)
+            GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+            SET(__PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${PrecompiledBasename}.pch")
 
-        # Found this example of setting up PCH in the cmake source code under Tests/PrecompiledHeader
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
-            COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${__PrecompiledBinary}\"")
+            # Found this example of setting up PCH in the cmake source code under Tests/PrecompiledHeader
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES
+                COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${__PrecompiledBinary}\"")
 
-        SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-            PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
-    elseif (APPLE)
-        message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
-        SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${PrecompiledHeader}")
-    endif()
+            SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
+                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledBasename}.h\"")
+
+            FOREACH( src_file ${${SourcesVar}} )
+
+                GET_FILENAME_COMPONENT(src_ext ${src_file} EXT)
+                if ("${src_ext}" STREQUAL ".c")
+                    SET_SOURCE_FILES_PROPERTIES(${src_file} PROPERTIES COMPILE_FLAGS "/Y-")
+                    message("${src_file} is a C file")
+                endif()
+
+            ENDFOREACH()
+        elseif (APPLE)
+            message("Setting precompiled header ${PrecompiledHeader} on ${PROJECT_NAME}")
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PRECOMPILE_PREFIX_HEADER YES)
+            SET_TARGET_PROPERTIES(${PROJECT_NAME} PROPERTIES XCODE_ATTRIBUTE_GCC_PREFIX_HEADER "${PrecompiledHeader}")
+        endif()
+    ENDIF()
 ENDMACRO(ADD_PRECOMPILED_HEADER)

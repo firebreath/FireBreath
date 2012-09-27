@@ -12,8 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-
 #include "PluginEvents/X11Event.h"
+#include "PluginEvents/X11NativeGdkEvent.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
@@ -317,10 +317,20 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
 
 GdkNativeWindow PluginWindowX11::getWindow()
 {
+    return GDK_WINDOW_XID(getWidgetWindow());
+//#if GTK_CHECK_VERSION(2, 14, 0)
+//  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
+//#else
+//  return GDK_WINDOW_XID(GTK_WIDGET(m_canvas)->window);
+//#endif
+}
+
+GdkWindow* PluginWindowX11::getWidgetWindow() const
+{
 #if GTK_CHECK_VERSION(2, 14, 0)
-  return GDK_WINDOW_XID(gtk_widget_get_window(m_canvas));
+  return (gtk_widget_get_window(m_canvas));
 #else
-  return GDK_WINDOW_XID(GTK_WIDGET(m_canvas)->window);
+  return (GTK_WIDGET(m_canvas)->window);
 #endif
 }
 
@@ -328,6 +338,10 @@ GdkNativeWindow PluginWindowX11::getWindow()
 
 void PluginWindowX11::InvalidateWindow() const
 {
-    // Doesn't exist yet
+#if FB_GUI_DISABLED != 1
+    GdkWindow* gdkWindow = getWidgetWindow();
+    GdkRegion* gdkRegion = 0;
+    X11NativeGdkEventExpose expose(gdkWindow, gdkRegion, 0,0, m_width,m_height);
+    expose.SendEvent();
+#endif // FB_GUI_DISABLED != 1
 }
-

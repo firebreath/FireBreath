@@ -27,6 +27,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
+#include "BrowserStreamRequest.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "NPVariantUtil.h"
@@ -717,15 +718,33 @@ NPError FB::Npapi::NpapiBrowserHost::GetAuthenticationInfo( const char *protocol
     }
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, const FB::PluginEventSinkPtr& callback,
-                                    bool cache, bool seekable, size_t internalBufferSize ) const
+FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( const BrowserStreamRequest& req ) const
 {
-    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
-    stream->AttachObserver( callback );
+    assertMainThread();
+    std::string url(req.uri.toString());
+    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, req.cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    if (req.getEventSink()) {
+        stream->AttachObserver( req.getEventSink() );
+    }
 
-    // always use target = 0 for now
-    if ( GetURLNotify( url.c_str(), 0, stream.get() ) == NPERR_NO_ERROR )
-    {
+    NPError err;
+    if (req.method == "GET") {
+        err = GetURLNotify(url.c_str(), 0, stream.get());
+    } else {
+        std::stringstream postOutput;
+        std::string postdata = req.getPostData();
+        std::string postheaders = req.getPostHeaders();
+        if (!postheaders.empty()) {
+            postOutput << postheaders << "\n\n";
+        } else {
+            postOutput << "Content-type: application/x-www-form-urlencoded\n";
+            postOutput << "Content-Length: " << postdata.length() << "\n\n";
+        }
+        postOutput << postdata;
+        std::string out = postOutput.str();
+        err = PostURLNotify( url.c_str(), 0, out.length(), out.c_str(), false, stream.get() );
+    }
+    if (err == NPERR_NO_ERROR) {
         stream->setCreated();
         StreamCreatedEvent ev(stream.get());
         stream->SendEvent( &ev );
@@ -737,31 +756,21 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createStream(const std::string& url, con
     return stream;
 }
 
-FB::BrowserStreamPtr NpapiBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback,
-                                    const std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
+FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const FB::BrowserStreamRequest& req) const
 {
-    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, seekable, internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
-    stream->AttachObserver( callback );
+    std::string url = req.uri.toString();
+    bool cache(false);
+    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    // The observer is attached by the caller
 
-    // Add custom headers before data to post!
-    std::stringstream headers;
-    headers << "Content-type: application/x-www-form-urlencoded\n";
-    headers << "Content-Length: " << postdata.length() << "\n\n";
-    headers << postdata;
-
-    // always use target = 0 for now
-    if ( PostURLNotify( url.c_str(), 0, headers.str().length(), headers.str().c_str(), false, stream.get() ) == NPERR_NO_ERROR )
-    {
-        stream->setCreated();
-        StreamCreatedEvent ev(stream.get());
-        stream->SendEvent( &ev );
-    }
-    else
-    {
-        stream.reset();
-    }
+    stream->setCreated();
+    // we're not waiting for a URLNotify call from this stream
+    stream->setNotified();
+    StreamCreatedEvent ev(stream.get());
+    stream->SendEvent( &ev );
     return stream;
 }
+
 NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread

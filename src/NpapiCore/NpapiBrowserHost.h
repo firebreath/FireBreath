@@ -22,7 +22,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ShareableReference.h"
 #include <boost/thread.hpp>
 
-namespace FB { namespace Npapi {
+namespace FB {
+    class BrowserStreamRequest;
+    namespace Npapi {
 
     FB_FORWARD_PTR(NpapiPluginModule);
     FB_FORWARD_PTR(NPObjectAPI);
@@ -46,13 +48,9 @@ namespace FB { namespace Npapi {
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const;
+        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
 
-        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                            const std::string& postdata, bool cache = true, bool seekable = false,
-                                            size_t internalBufferSize = 128 * 1024 ) const;
+        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const;
 
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;

@@ -21,7 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #define FB_FORWARD_PTR(x) class x; \
     typedef boost::shared_ptr<x> x ## Ptr; \
-    typedef boost::weak_ptr<x> x ## WeakPtr;
+    typedef boost::weak_ptr<x> x ## WeakPtr; \
+    typedef boost::shared_ptr<const x> x ## ConstPtr;
 
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))

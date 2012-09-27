@@ -12,6 +12,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
+#include "win_targetver.h"
+#include "win_common.h"
 #include <boost/assign.hpp>
 #include <boost/smart_ptr/make_shared.hpp>
 #include "axstream.h"
@@ -27,6 +29,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "ComVariantUtil.h"
 #include "ActiveXFactoryDefinitions.h"
 #include "ActiveXBrowserHost.h"
+#include "BrowserStreamRequest.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB;
@@ -267,18 +270,25 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     outVar.Detach(dest);
 }
 
-FB::BrowserStreamPtr ActiveXBrowserHost::_createStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                    bool cache, bool seekable, size_t internalBufferSize ) const
+FB::BrowserStreamPtr FB::ActiveX::ActiveXBrowserHost::_createStream( const BrowserStreamRequest& req ) const
 {
     assertMainThread();
-    ActiveXStreamPtr stream(boost::make_shared<ActiveXStream>(url, cache, seekable, internalBufferSize));
-    stream->AttachObserver( callback );
+    std::string url(req.uri.toString());
+    ActiveXStreamPtr stream;
+    if (req.method == "POST") {
+        stream = boost::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize, req.getPostData());
+    } else {
+        stream = boost::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize);
+    }
+    if (req.getEventSink()) {
+        stream->AttachObserver( req.getEventSink() );
+    }
 
     if ( stream->init() )
     {
         StreamCreatedEvent ev(stream.get());
         stream->SendEvent( &ev );
-        if ( seekable ) stream->signalOpened();
+        if ( req.seekable ) stream->signalOpened();
     }
     else
     {
@@ -289,26 +299,6 @@ FB::BrowserStreamPtr ActiveXBrowserHost::_createStream(const std::string& url, c
 
 bool isExpired(std::pair<void*, FB::WeakIDispatchExRef> cur) {
     return cur.second.expired();
-}
-
-FB::BrowserStreamPtr ActiveXBrowserHost::_createPostStream(const std::string& url, const FB::PluginEventSinkPtr& callback, 
-                                    const std::string& postdata, bool cache, bool seekable, size_t internalBufferSize ) const
-{
-    assertMainThread();
-    ActiveXStreamPtr stream(boost::make_shared<ActiveXStream>(url, cache, seekable, internalBufferSize, postdata));
-    stream->AttachObserver( callback );
-
-    if ( stream->init() )
-    {
-        StreamCreatedEvent ev(stream.get());
-        stream->SendEvent( &ev );
-        if ( seekable ) stream->signalOpened();
-    }
-    else
-    {
-        stream.reset();
-    }
-    return stream;
 }
 
 void ActiveXBrowserHost::DoDeferredRelease() const
@@ -403,4 +393,3 @@ void FB::ActiveX::ActiveXBrowserHost::Navigate( const std::string& url, const st
     HRESULT hr = m_webBrowser->Navigate(destURL, &vEmpty, &targetWin, &vEmpty, &vEmpty);
     assert(SUCCEEDED(hr));
 }
-

@@ -12,10 +12,10 @@
 
 
 if (APPLE)
-    set (FBMAC_USE_CARBON                    1)
-    set (FBMAC_USE_COCOA                     0)
-    set (FBMAC_USE_QUICKDRAW                 1)
-    set (FBMAC_USE_COREGRAPHICS              0)
+    set (FBMAC_USE_CARBON                    0)
+    set (FBMAC_USE_COCOA                     1)
+    set (FBMAC_USE_QUICKDRAW                 0)
+    set (FBMAC_USE_COREGRAPHICS              1)
     set (FBMAC_USE_COREANIMATION             0)
     set (FBMAC_USE_INVALIDATINGCOREANIMATION 0)
 endif(APPLE)

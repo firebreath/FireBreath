@@ -69,3 +69,6 @@ set (CPACK_GENERATOR PackageMaker DragNDrop TGZ ZIP)
 set (CPACK_INSTALL_DIRECTORIES ${PLUGIN_BUILD_DIR}/Debug/${PLUGIN_FNAME}.plugin/)
 set (CPACK_OUTPUT_CONFIG_FILE ${PLUGIN_BUILD_DIR}/Debug/CPackConfig.cmake)
 include (CPack)
+
+#To create a DMG, include the following file
+#include(Mac/installer.cmake)

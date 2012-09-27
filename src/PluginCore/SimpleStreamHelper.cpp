@@ -18,6 +18,7 @@ Copyright 2011 Richard Bateman,
 #include <boost/bind.hpp>
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include "BrowserStreamRequest.h"
 #include "SimpleStreamHelper.h"
 
 static const int MEGABYTE = 1024 * 1024;
@@ -25,33 +26,55 @@ static const int MEGABYTE = 1024 * 1024;
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( const FB::BrowserHostPtr& host, const FB::URI& uri,
     const HttpCallback& callback, bool cache /*= true*/, size_t bufferSize /*= 256*1024*/ )
 {
-    if (!host->isMainThread()) {
-        // This must be run from the main thread
-        return host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncGet, host, uri, callback, cache, bufferSize));
-    }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(callback, bufferSize));
-    // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
-    // to hold a reference to it.
-    ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createStream(uri.toString(), ptr, cache, false, bufferSize));
-    return ptr;
+    BrowserStreamRequest req(uri, "GET");
+    req.setCallback(callback);
+    req.setBufferSize(bufferSize);
+    req.setCacheable(cache);
+    return AsyncRequest(host, req);
 }
 
-FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost( const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, 
-                                                           const HttpCallback& callback, bool cache /*= true*/, size_t bufferSize /*= 256*1024*/ )
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(const FB::BrowserHostPtr& host,
+                                                            const FB::URI& uri,
+                                                            const std::string& postdata, 
+                                                            const HttpCallback& callback,
+                                                            bool cache /*= true*/,
+                                                            size_t bufferSize /*= 256*1024*/ )
 {
+    BrowserStreamRequest req(uri, "POST");
+    req.setPostData(postdata);
+    req.setCallback(callback);
+    req.setBufferSize(bufferSize);
+    req.setCacheable(cache);
+    return AsyncRequest(host, req);
+}
+
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostConstPtr& host,
+                                                                const BrowserStreamRequest& req ) {
+    if (!req.getCallback()) {
+        throw std::runtime_error("Invalid callback");
+    }
     if (!host->isMainThread()) {
         // This must be run from the main thread
-        return host->CallOnMainThread(boost::bind(&FB::SimpleStreamHelper::AsyncPost, host, uri, postdata, callback, cache, bufferSize));
+        return host->CallOnMainThread(boost::bind(&AsyncRequest, host, req));
     }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(callback, bufferSize));
+    FB::BrowserStreamPtr stream(host->createStream(req, false));
+    return AsyncRequest(host, stream, req);
+}
+
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostConstPtr& host,
+                                                                const FB::BrowserStreamPtr& stream,
+                                                                const BrowserStreamRequest& req ) {
+    if (!host->isMainThread()) {
+        // This must be run from the main thread
+        return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
+    }
+    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
-    FB::BrowserStreamPtr stream(host->createPostStream(uri.toString(), ptr, postdata, cache, false, bufferSize));
+    stream->AttachObserver(ptr);
     return ptr;
 }
-
 
 struct SyncHTTPHelper
 {
@@ -82,8 +105,8 @@ public:
     FB::HttpStreamResponsePtr m_response;
 };
 
-FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::BrowserHostPtr& host,
-    const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/ )
+
+FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::BrowserHostPtr& host, const BrowserStreamRequest& req )
 {
     // We can't ever block on the main thread, so SynchronousGet can't be called from there.
     // Also, if you could block the main thread, that still wouldn't work because the request
@@ -92,7 +115,7 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::Brow
     SyncHTTPHelper helper;
     try {
         FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
-        FB::SimpleStreamHelperPtr ptr = AsyncGet(host, uri, cb, cache, bufferSize);
+        FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req);
         helper.setPtr(ptr);
         helper.waitForDone();
     } catch (const std::exception&) {
@@ -102,22 +125,23 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::Brow
     return helper.m_response;
 }
 
+FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet( const FB::BrowserHostPtr& host,
+    const FB::URI& uri, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/ )
+{
+    FB::BrowserStreamRequest req(uri, "GET");
+    req.setCacheable(cache);
+    req.setBufferSize(bufferSize);
+    return SynchronousRequest(host, req);
+}
+
 FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost( const FB::BrowserHostPtr& host,
     const FB::URI& uri, const std::string& postdata, const bool cache /*= true*/, const size_t bufferSize /*= 128*1024*/ )
 {
-    // Do not call this on the main thread.
-    assert(!host->isMainThread());
-    SyncHTTPHelper helper;
-    try {
-        FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
-        FB::SimpleStreamHelperPtr ptr = AsyncPost(host, uri, postdata, cb, cache, bufferSize);
-        helper.setPtr(ptr);
-        helper.waitForDone();
-    } catch (const std::exception&) {
-        // If anything weird happens, just return NULL (to indicate failure)
-        return FB::HttpStreamResponsePtr();
-    }
-    return helper.m_response;
+    FB::BrowserStreamRequest req(uri, "POST");
+    req.setCacheable(cache);
+    req.setBufferSize(bufferSize);
+    req.setPostData(postdata);
+    return SynchronousRequest(host, req);
 }
 
 FB::SimpleStreamHelper::SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize )

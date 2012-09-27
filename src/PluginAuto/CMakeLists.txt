@@ -147,10 +147,16 @@ endif()
 # ActiveX Support
 ######
 if (WIN32)
+    if (FB_USE_PCH)
+        set(IDLC_EXT "cpp")
+    else()
+        set(IDLC_EXT "c")
+    endif()
+
     set (GENERATED_IDL
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.cpp"
+        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.${IDLC_EXT}"
         )
 
     SET (IDL_FILE ${FB_TEMPLATE_DEST_DIR}/FireBreathWin.idl)
@@ -159,7 +165,6 @@ if (WIN32)
         ${IDL_FILE}
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin.tlb"
         "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_i.h"
-        "${FB_TEMPLATE_DEST_DIR}/FireBreathWin_p.cpp"
         PROPERTIES
             HEADER_FILE_ONLY 1
             GENERATED 1
@@ -180,8 +185,7 @@ if (WIN32)
             /out "${FB_TEMPLATE_DEST_DIR}" 
             /tlb "FireBreathWin.tlb"
             /h "FireBreathWin_i.h"
-            /iid "FireBreathWin_i.cpp"
-            /proxy "FireBreathWin_p.cpp"
+            /iid "FireBreathWin_i.${IDLC_EXT}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         DEPENDS ${IDL_FILE}
         )

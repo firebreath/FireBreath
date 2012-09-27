@@ -83,7 +83,8 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
     endforeach()
 
     # Compile the resource file
-    find_program(RC_COMPILER Rez NO_DEFAULT_PATHS)
+    firebreath_find_commands()
+    set(RC_COMPILER ${CMD_REZ})
     execute_process(COMMAND
         ${RC_COMPILER} ${RCFILES} -useDF ${ARCHS} -arch x86_64 -o ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
         )
@@ -116,3 +117,20 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
 
 ENDMACRO(add_mac_plugin)
 
+MACRO(firebreath_find_commands)
+
+    set(XCODE_TOOLS_PATHS /Developer/Tools /Applications/Xcode.app/Contents/Developer/Tools /Applications/Xcode.app/Contents/Developer/usr/bin /usr/bin)
+
+    find_program(CMD_CP cp)
+    find_program(CMD_RM rm)
+    find_program(CMD_LN ln)
+    find_program(CMD_MV mv)
+    find_program(CMD_HDIUTIL hdiutil)
+    find_program(CMD_SIPS sips)
+    find_program(CMD_SLEEP sleep)
+    find_program(CMD_OSASCRIPT osascript)
+    find_program(CMD_SETFILE SetFile ${XCODE_TOOLS_PATHS} )
+    find_program(CMD_DEREZ DeRez ${XCODE_TOOLS_PATHS} )
+    find_program(CMD_REZ Rez ${XCODE_TOOLS_PATHS} )
+
+ENDMACRO(firebreath_find_commands)
