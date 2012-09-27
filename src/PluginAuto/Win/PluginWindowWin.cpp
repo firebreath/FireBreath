@@ -46,6 +46,7 @@ PluginWindowWin::PluginWindowWin(const WindowContextWin& ctx)
   , m_browserhWnd(NULL)
   , lpOldWinProc(NULL)
   , m_callOldWinProc(false)
+  , m_suppressEraseBackground(false)
 {
     // subclass window so we can intercept window messages 
     lpOldWinProc = SubclassWindow(m_hWnd, (WNDPROC)&PluginWindowWin::_WinProc);
@@ -182,6 +183,12 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
             if(SendEvent(&ev))
                 return true;
             break;
+        }
+        case WM_ERASEBKGND:
+        {
+            if (getSuppressEraseBackground())
+                return 1;
+            return 0;
         }
         case WM_PAINT:
         {
