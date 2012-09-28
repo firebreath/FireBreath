@@ -21,6 +21,9 @@ if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
+if (FB_GUI_DISABLED)
+    add_definitions(-DFB_GUI_DISABLED=1)
+endif()
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}

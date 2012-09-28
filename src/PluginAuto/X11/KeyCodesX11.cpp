@@ -14,7 +14,9 @@ Copyright 2011 Peter Szucs and the Firebreath development team
 
 #include "KeyCodesX11.h"
 
+#if FB_GUI_DISABLED != 1
 #include <gdk/gdkkeysyms.h>
+#endif
 
 namespace FB {
 
@@ -22,6 +24,7 @@ namespace FB {
     {
         FBKeyCode retVal = FBKEY_UNKNOWN;
 
+#if FB_GUI_DISABLED != 1
         switch( key )
         {
             case GDK_KP_Add           : retVal = FBKEY_ADD;           break;
@@ -98,6 +101,7 @@ namespace FB {
             case GDK_Pause            : retVal = FBKEY_PAUSE;         break;
             case GDK_Print            : retVal = FBKEY_PRINT;         break;
         }
+#endif
 
         return retVal;
     }
