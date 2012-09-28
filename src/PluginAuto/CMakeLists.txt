@@ -24,6 +24,9 @@ endif()
 if (FB_GUI_DISABLED)
     add_definitions(-DFB_GUI_DISABLED=1)
 endif()
+
+find_firebreath_x11_deps()
+
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}

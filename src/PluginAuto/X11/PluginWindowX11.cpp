@@ -13,7 +13,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "PluginEvents/X11Event.h"
-#include "PluginEvents/X11NativeGdkEvent.h"
 #include "PluginEvents/GeneralEvents.h"
 #include "PluginEvents/DrawingEvents.h"
 #include "PluginEvents/MouseEvents.h"
@@ -26,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #if FB_GUI_DISABLED != 1
 
+#include "PluginEvents/X11NativeGdkEvent.h"
 #include <gdk/gdkx.h>
 
 #endif
@@ -171,10 +171,10 @@ inline bool isButtonEvent(GdkEvent *event)
 }
 
 inline unsigned int getModifierState(guint state) {
-	unsigned int modifierState = (state & GDK_SHIFT_MASK) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
-	modifierState += (state & GDK_CONTROL_MASK) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
-	modifierState += (state & GDK_MOD1_MASK) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
-	return modifierState;
+    unsigned int modifierState = (state & GDK_SHIFT_MASK) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
+    modifierState += (state & GDK_CONTROL_MASK) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
+    modifierState += (state & GDK_MOD1_MASK) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
+    return modifierState;
 }
 
 gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
@@ -269,17 +269,17 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
             switch (scroll->direction)
             {
             case GDK_SCROLL_UP:
-            	dy -= 3;
-            	break;
+                dy -= 3;
+                break;
             case GDK_SCROLL_DOWN:
-            	dy += 3;
-            	break;
+                dy += 3;
+                break;
             case GDK_SCROLL_LEFT:
-            	dx -= 3;
-            	break;
+                dx -= 3;
+                break;
             case GDK_SCROLL_RIGHT:
-            	dx += 3;
-            	break;
+                dx += 3;
+                break;
             }
             MouseScrollEvent evt(scroll->x, scroll->y, -dx, -dy, getModifierState(scroll->state));
             return SendEvent(&evt) ? 1 : 0;
