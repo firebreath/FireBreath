@@ -25,7 +25,9 @@ if (FB_GUI_DISABLED)
     add_definitions(-DFB_GUI_DISABLED=1)
 endif()
 
-find_firebreath_x11_deps()
+if (UNIX AND NOT APPLE)
+    find_firebreath_x11_deps()
+endif()
 
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}
