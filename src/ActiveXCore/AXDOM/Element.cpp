@@ -64,9 +64,32 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
     HRESULT hr = S_OK;
     if (elem) {
         hr = elem->getAttribute(CComBSTR(FB::utf8_to_wstring(attr).c_str()), 0, &var);
-        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
+        
     } else {
         return getProperty<std::string>(attr);
+    }
+}
+
+std::string FB::ActiveX::AXDOM::Element::getInnerHTML() const
+{
+    CComBSTR htmlStr;
+    CComQIPtr<IHTMLElement> elem(m_axDisp);
+    HRESULT hr = elem->get_innerHTML(&htmlStr);
+    if (SUCCEEDED(hr)) {
+        CComVariant var(htmlStr);
+        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
+    } else {
+        throw FB::script_error("Could not get innerhtml");
+    }
+}
+
+void FB::ActiveX::AXDOM::Element::setInnerHTML( const std::string& html ) const
+{
+    CComBSTR newHtml(html.c_str());
+    CComQIPtr<IHTMLElement> elem(m_axDisp);
+    HRESULT hr = elem->put_innerHTML(newHtml);
+    if (!SUCCEEDED(hr)) {
+        throw FB::script_error("Could not set innerHtml");
     }
 }
 
