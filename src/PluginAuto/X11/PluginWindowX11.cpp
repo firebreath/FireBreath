@@ -339,9 +339,6 @@ GdkWindow* PluginWindowX11::getWidgetWindow() const
 void PluginWindowX11::InvalidateWindow() const
 {
 #if FB_GUI_DISABLED != 1
-    GdkWindow* gdkWindow = getWidgetWindow();
-    GdkRegion* gdkRegion = 0;
-    X11NativeGdkEventExpose expose(gdkWindow, gdkRegion, 0,0, m_width,m_height);
-    expose.SendEvent();
+    gdk_window_invalidate_rect(getWidgetWindow(), NULL, true);
 #endif // FB_GUI_DISABLED != 1
 }
