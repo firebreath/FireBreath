@@ -320,7 +320,9 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
         // Create a BrowserStreamRequest; only GET is supported
         BrowserStreamRequest streamReq(stream->url, "GET", false);
         streamReq.setLastModified(stream->lastmodified);
-        streamReq.setHeaders(stream->headers);
+		if (stream->headers) {
+			streamReq.setHeaders(stream->headers);
+		}
         streamReq.setSeekable(seekable != 0);
 
         pluginMain->handleUnsolicitedStream(streamReq);
