@@ -220,9 +220,6 @@ function (fb_check_boost)
                 )
             if (FIREBREATH_AUTO_GIT AND EXISTS ${FB_ROOT_DIR}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
                 message("Using git")
-                if (${GIT} MATCHES "GIT-NOTFOUND")
-                    message(FATAL_ERROR "Can't find git in the path. Please run 'git submodule update --init --recursive' to get firebreath-boost.")
-                endif()
                 execute_process(
                     COMMAND ${GIT}
                     submodule update --recursive --init
