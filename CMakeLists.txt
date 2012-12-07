@@ -147,7 +147,7 @@ else()
 endif()
 
 # Common projects -- projects that don't have any plugin specific code
-if (NOT FB_SCRIPTINGCORE_LOADED)
+if (NOT FB_SCRIPTINGCORE_LOADED AND NOT FB_USE_AS_SUBPROJECT)
     add_subdirectory(${FB_UNITTEST_FW_SOURCE_DIR} ${FB_UNITTEST_FW_BUILD_DIR})
     #add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
     add_subdirectory(${FB_SCRIPTINGCORETEST_SOURCE_DIR} ${FB_SCRIPTINGCORETEST_BUILD_DIR})
@@ -156,6 +156,27 @@ if (NOT FB_SCRIPTINGCORE_LOADED)
     endif()
     #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 endif()
+
+if (FB_USE_AS_SUBPROJECT AND WIN32)
+	# move projects to a folder
+	set_target_properties(ActiveXCore PROPERTIES FOLDER "FireBreath/Core")
+	set_target_properties(FireBreath_Cmake PROPERTIES FOLDER "FireBreath/Core")
+	set_target_properties(NpapiCore PROPERTIES FOLDER "FireBreath/Core")
+	set_target_properties(PluginCore PROPERTIES FOLDER "FireBreath/Core")
+	set_target_properties(ScriptingCore PROPERTIES FOLDER "FireBreath/Core")
+
+	set_target_properties(AGP_PluginAuto PROPERTIES FOLDER "FireBreath/Generated")
+
+	if (NOT WITH_SYSTEM_BOOST)
+		if(TARGET boost_system)
+			set_target_properties(boost_system PROPERTIES FOLDER "FireBreath/Libraries")
+		endif()
+		if(TARGET boost_thread)
+			set_target_properties(boost_thread PROPERTIES FOLDER "FireBreath/Libraries")
+		endif()
+	endif()
+endif()	
+
 
 if (NOT FB_RELEASE)
     if (NOT FOUND_PROJECTS AND "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_CURRENT_SOURCE_DIR}")
