@@ -51,8 +51,8 @@ namespace FB {
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         BrowserStreamRequest(const std::string& uri, const std::string method = "GET", const bool accept = true)
-            : uri(uri), method(method), accepted(accept), lastModified(0), seekable(false),
-            internalBufferSize(k_DEFAULT_REQUEST_BUFFER), cache(false)
+            : uri(uri), method(method), lastModified(0), seekable(false),
+            internalBufferSize(k_DEFAULT_REQUEST_BUFFER), cache(false), accepted(accept)
         {
 
         }
@@ -70,8 +70,8 @@ namespace FB {
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         BrowserStreamRequest(const FB::URI& uri, const std::string method = "GET", const bool accept = true)
-            : uri(uri), method(method), accepted(accept), lastModified(0), seekable(false),
-            internalBufferSize(k_DEFAULT_REQUEST_BUFFER), cache(false)
+            : uri(uri), method(method), lastModified(0), seekable(false),
+            internalBufferSize(k_DEFAULT_REQUEST_BUFFER), cache(false), accepted(accept)
         {
 
         }
