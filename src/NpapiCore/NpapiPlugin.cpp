@@ -333,6 +333,13 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
             PluginEventSinkPtr sink(streamReq.getEventSink());
             if (sink) {
                 newstream->AttachObserver(sink);
+            } else {
+                HttpCallback callback(streamReq.getCallback());
+                if (callback) {
+                    SimpleStreamHelper::AsyncRequest(m_npHost, newstream, streamReq);
+                } else {
+                    FBLOG_WARN("NpapiPlugin", "Unsolicited request accepted but no callback or sink provided");
+                }
             }
             // continue function using the newly created stream object
             s = dynamic_cast<NpapiStream*> ( newstream.get() );
