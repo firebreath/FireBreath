@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sep 21, 2009
@@ -64,7 +64,7 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
     HRESULT hr = S_OK;
     if (elem) {
         hr = elem->getAttribute(CComBSTR(FB::utf8_to_wstring(attr).c_str()), 0, &var);
-        
+        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
     } else {
         return getProperty<std::string>(attr);
     }
