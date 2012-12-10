@@ -48,6 +48,9 @@ namespace {
     std::string getFolderNew(REFKNOWNFOLDERID folder) {
         PWSTR pszPath;
         HRESULT hr = (*getKnownFolderPath)(folder, 0, NULL, &pszPath);
+        if (FAILED(hr)) {
+            throw std::runtime_error("Could not find path");
+        }
 
         std::wstring path(pszPath);
         CoTaskMemFree(pszPath);
