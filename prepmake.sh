@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 if [ "${GEN}" = "" ]; then
     GEN='Unix Makefiles'
