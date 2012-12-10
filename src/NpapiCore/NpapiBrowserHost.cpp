@@ -759,6 +759,7 @@ FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( const BrowserSt
 FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const FB::BrowserStreamRequest& req) const
 {
     std::string url = req.uri.toString();
+    FBLOG_TRACE("NpapiBrowserStream", "Creating an unsolicited stream with url: " << url);
     bool cache(false);
     NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     // The observer is attached by the caller

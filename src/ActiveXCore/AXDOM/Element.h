@@ -41,6 +41,8 @@ namespace FB { namespace ActiveX {
 
             virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(const std::string& tagName) const;
             virtual std::string getStringAttribute(const std::string& attr) const;
+            virtual std::string getInnerHTML() const;
+            virtual void setInnerHTML(const std::string& html) const;
 
         public:
             CComQIPtr<IDispatch> m_axDisp;

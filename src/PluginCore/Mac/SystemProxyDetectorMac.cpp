@@ -29,7 +29,7 @@ std::string conv_cfstring(CFStringRef s) {
 
 int cfnumber_to_int(CFNumberRef n) {
     if (! n) return 0;
-    
+
     int nn;
     CFNumberGetValue(n, kCFNumberIntType, &nn);
     return nn;
@@ -45,7 +45,6 @@ bool FB::SystemProxyDetectorMac::detectProxy( map<string, string>& proxyMap, con
 {
     CFDictionaryRef proxySettings(SCDynamicStoreCopyProxies(NULL));
     if (! proxySettings) {
-        CFRelease(proxySettings);
         return false;
     }
     FB::URI uri(FB::URI::fromString(URL));
@@ -58,7 +57,7 @@ bool FB::SystemProxyDetectorMac::detectProxy( map<string, string>& proxyMap, con
      *   kSCPropNetProxiesSOCKSPort                         "SOCKSPort"                    CFNumber
      *   kSCPropNetProxiesSOCKSProxy                        "SOCKSProxy"                   CFString
      */
-    
+
     if (uri.protocol == "http" && cfnumber_to_int((CFNumberRef) CFDictionaryGetValue(proxySettings, kSCPropNetProxiesHTTPEnable))) {
         // HTTP proxy?
         proxyMap["type"] = uri.protocol;
@@ -78,7 +77,7 @@ bool FB::SystemProxyDetectorMac::detectProxy( map<string, string>& proxyMap, con
         int port = cfnumber_to_int((CFNumberRef) CFDictionaryGetValue(proxySettings, kSCPropNetProxiesSOCKSPort));
         proxyMap["port"] = boost::lexical_cast<std::string>(port);
     }
-    
+
     CFRelease(proxySettings);
     if (proxyMap.find("type") != proxyMap.end())
         return true;

@@ -335,7 +335,7 @@ namespace FB {
         /// @param  req            The browser request containing information about the unsolicited stream
         /// @since 1.7.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void handleUnsolicitedStream(const BrowserStreamRequest& req) { }
+        virtual void handleUnsolicitedStream(BrowserStreamRequest& req) { }
 
     public:
         virtual BrowserHostPtr getHost() { return m_host; }

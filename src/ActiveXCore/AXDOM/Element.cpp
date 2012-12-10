@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Sep 21, 2009
@@ -67,6 +67,29 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
         return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
     } else {
         return getProperty<std::string>(attr);
+    }
+}
+
+std::string FB::ActiveX::AXDOM::Element::getInnerHTML() const
+{
+    CComBSTR htmlStr;
+    CComQIPtr<IHTMLElement> elem(m_axDisp);
+    HRESULT hr = elem->get_innerHTML(&htmlStr);
+    if (SUCCEEDED(hr)) {
+        CComVariant var(htmlStr);
+        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
+    } else {
+        throw FB::script_error("Could not get innerhtml");
+    }
+}
+
+void FB::ActiveX::AXDOM::Element::setInnerHTML( const std::string& html ) const
+{
+    CComBSTR newHtml(html.c_str());
+    CComQIPtr<IHTMLElement> elem(m_axDisp);
+    HRESULT hr = elem->put_innerHTML(newHtml);
+    if (!SUCCEEDED(hr)) {
+        throw FB::script_error("Could not set innerHtml");
     }
 }
 
