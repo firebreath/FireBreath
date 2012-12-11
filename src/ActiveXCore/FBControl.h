@@ -371,6 +371,7 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InitNew()
         {
             pluginMain->setParams(FB::VariantMap());
+			setReady();
             return S_OK;
         }
 
@@ -408,6 +409,7 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::Load( IPropertyBag *pPropBag, IErrorLog *pErrorLog )
         {
             pluginMain->setParams(getProperties(CComQIPtr<IPropertyBag2>(pPropBag)));
+			setReady();
             return S_OK;
         }
 
