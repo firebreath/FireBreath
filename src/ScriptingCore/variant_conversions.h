@@ -35,6 +35,37 @@ namespace FB {
             template <class T>
             typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
             make_variant(const boost::shared_ptr<T>& ptr);
+
+            template<class Cont>
+            typename boost::enable_if<
+                boost::mpl::and_<
+                    FB::meta::is_non_assoc_container<Cont>,
+                    boost::mpl::not_<
+                        boost::mpl::or_<
+                               boost::mpl::or_<
+                                   boost::is_same<std::vector<variant>, Cont>,
+                                   boost::is_same<std::map<std::string, variant>, Cont>
+                                >,
+                            boost::mpl::or_<
+                                   boost::is_same<std::wstring, Cont>,
+                                   boost::is_same<std::string, Cont>
+                                >
+                            >
+                    >
+                >
+             ,variant>::type
+            make_variant(const Cont& var);
+            
+            template<class Dict>
+            typename boost::enable_if<
+                boost::mpl::and_<
+                    FB::meta::is_pair_assoc_container<Dict>,
+                    boost::mpl::not_<
+                            boost::is_same<std::map<std::string, variant>, Dict>
+                    >
+                >
+             ,variant>::type
+            make_variant(const Dict& var);
             
             template<class T>
             typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::shared_ptr<T> >::type
