@@ -25,20 +25,6 @@ set (SOURCES
     ${PLATFORM}
     )
 
-if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/LeakFinder)
-    #if the LeakFinder directory is there, use it
-    message("-- Found LeakFinder")
-    file (GLOB LEAKFINDER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-        LeakFinder/*
-        )
-    set (SOURCES
-        ${SOURCES}
-        ${LEAKFINDER}
-        )
-    source_group(LeakFinder FILES ${LEAKFINDER})
-    add_definitions(-DHAS_LEAKFINDER)
-endif()
-
 add_windows_plugin(${PROJECT_NAME} SOURCES)
 
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
