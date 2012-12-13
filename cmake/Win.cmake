@@ -127,7 +127,7 @@ if (NOT ATL_INCLUDE_DIR)
         GET_FILENAME_COMPONENT(MFC_INCLUDE_DIR ${MFCWIN} PATH CACHE)
         message("-- Found MFC include dir: ${MFC_INCLUDE_DIR}")
     else()
-        message(FATAL_ERROR "FireBreath on windows requires ATL/MFC libs to be installed.  Please download the Microsoft DDK and install the build environments in $ENV{SystemDrive}\\WinDDK")
+        message("!! WARNING: Could not find MFC, this might or might not be a problem.")
     endif()
 
 endif()
