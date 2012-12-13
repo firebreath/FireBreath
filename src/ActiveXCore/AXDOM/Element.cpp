@@ -64,7 +64,8 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
     HRESULT hr = S_OK;
     if (elem) {
         hr = elem->getAttribute(CComBSTR(FB::utf8_to_wstring(attr).c_str()), 0, &var);
-        
+        USES_CONVERSION;
+        return std::string(W2CA(var.bstrVal));
     } else {
         return getProperty<std::string>(attr);
     }
