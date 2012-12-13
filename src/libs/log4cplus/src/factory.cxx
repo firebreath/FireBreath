@@ -20,28 +20,19 @@
 
 #include <log4cplus/spi/factory.h>
 #include <log4cplus/spi/loggerfactory.h>
+#include <log4cplus/helpers/loglog.h>
+#include <log4cplus/helpers/thread-config.h>
+#include <log4cplus/helpers/property.h>
+#include <log4cplus/asyncappender.h>
 #include <log4cplus/consoleappender.h>
 #include <log4cplus/fileappender.h>
+#include <log4cplus/nteventlogappender.h>
 #include <log4cplus/nullappender.h>
 #include <log4cplus/socketappender.h>
 #include <log4cplus/syslogappender.h>
-#include <log4cplus/helpers/loglog.h>
-#include <log4cplus/helpers/threads.h>
-
-#if defined (_WIN32)
-#  if defined (LOG4CPLUS_HAVE_NT_EVENT_LOG)
-#    include <log4cplus/nteventlogappender.h>
-#  endif
-#  if defined (LOG4CPLUS_HAVE_WIN32_CONSOLE)
-#    include <log4cplus/win32consoleappender.h>
-#  endif
-#  include <log4cplus/Win32DebugAppender.h>
-#endif
-
-
-using namespace log4cplus;
-using namespace log4cplus::helpers;
-using namespace log4cplus::spi;
+#include <log4cplus/win32debugappender.h>
+#include <log4cplus/win32consoleappender.h>
+#include <log4cplus/log4judpappender.h>
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -52,75 +43,92 @@ namespace log4cplus {
     
 namespace spi {
 
-    BaseFactory::~BaseFactory()
-    { }
+BaseFactory::~BaseFactory()
+{ }
 
 
-    AppenderFactory::AppenderFactory()
-    { }
+AppenderFactory::AppenderFactory()
+{ }
 
-    AppenderFactory::~AppenderFactory()
-    { }
-
-
-    LayoutFactory::LayoutFactory()
-    { }
-
-    LayoutFactory::~LayoutFactory()
-    { }
-
-    
-    FilterFactory::FilterFactory()
-    { }
-
-    FilterFactory::~FilterFactory()
-    { }
+AppenderFactory::~AppenderFactory()
+{ }
 
 
-    LoggerFactory::~LoggerFactory()
-    { }
+LayoutFactory::LayoutFactory()
+{ }
+
+LayoutFactory::~LayoutFactory()
+{ }
 
 
-} // namespace spi
+FilterFactory::FilterFactory()
+{ }
+
+FilterFactory::~FilterFactory()
+{ }
+
+
+LocaleFactory::LocaleFactory()
+{ }
+
+LocaleFactory::~LocaleFactory()
+{ }
+
+
+LoggerFactory::~LoggerFactory()
+{ }
 
 
 namespace
 {
 
-
-template <typename ProductFactoryBase>
-class LocalFactoryBase
-    : public ProductFactoryBase
+class GlobalLocale
+    : public LocalFactoryBase<LocaleFactory>
 {
 public:
-    LocalFactoryBase (tchar const * n)
-        : name (n)
+    GlobalLocale (tchar const * n)
+        : LocalFactoryBase<LocaleFactory> (n)
     { }
 
-    virtual log4cplus::tstring getTypeName()
+    virtual
+    ProductPtr
+    createObject (const log4cplus::helpers::Properties &)
     {
-        return name;
+        return std::locale ();
     }
-
-private:
-    log4cplus::tstring name;
 };
 
 
-template <typename LocalProduct, typename ProductFactoryBase>
-class FactoryTempl
-    : public LocalFactoryBase<ProductFactoryBase>
+class UserLocale
+    : public LocalFactoryBase<LocaleFactory>
 {
 public:
-    typedef typename ProductFactoryBase::ProductPtr ProductPtr;
-
-    FactoryTempl (tchar const * n)
-        : LocalFactoryBase<ProductFactoryBase> (n)
+    UserLocale (tchar const * n)
+        : LocalFactoryBase<LocaleFactory> (n)
     { }
 
-    virtual ProductPtr createObject (Properties const & props)
+    virtual
+    ProductPtr
+    createObject (const log4cplus::helpers::Properties &)
     {
-        return ProductPtr (new LocalProduct (props));
+        return std::locale ("");
+    }
+};
+
+
+class ClassicLocale
+    : public LocalFactoryBase<LocaleFactory>
+{
+public:
+    ClassicLocale (tchar const * n)
+        : LocalFactoryBase<LocaleFactory> (n)
+    { }
+
+    virtual
+    ProductPtr
+    createObject (const log4cplus::helpers::Properties &)
+    {
+        return std::locale::classic ();
     }
 };
 
@@ -128,93 +136,52 @@ public:
 } // namespace
 
 
-#define REG_PRODUCT(reg, productprefix, productname, productns, productfact) \
-reg.put (                                                               \
-    std::auto_ptr<productfact> (                                        \
-        new FactoryTempl<productns productname, productfact> (          \
-            LOG4CPLUS_TEXT(productprefix)                               \
-            LOG4CPLUS_TEXT(#productname))))
 
 
-#define REG_APPENDER(reg, appendername)                             \
-REG_PRODUCT (reg, "log4cplus::", appendername, log4cplus::, AppenderFactory) 
-
-#define REG_LAYOUT(reg, layoutname)                                 \
-REG_PRODUCT (reg, "log4cplus::", layoutname, log4cplus::, LayoutFactory)
-
-#define REG_FILTER(reg, filtername)                                 \
-REG_PRODUCT (reg, "log4cplus::spi::", filtername, spi::, FilterFactory)
+} // namespace spi
 
 
 void initializeFactoryRegistry()
 {
-    AppenderFactoryRegistry& reg = getAppenderFactoryRegistry();
-    REG_APPENDER (reg, ConsoleAppender);
-    REG_APPENDER (reg, NullAppender);
-    REG_APPENDER (reg, FileAppender);
-    REG_APPENDER (reg, RollingFileAppender);
-    REG_APPENDER (reg, DailyRollingFileAppender);
-    REG_APPENDER (reg, SocketAppender);
+    spi::AppenderFactoryRegistry& reg = spi::getAppenderFactoryRegistry();
+    LOG4CPLUS_REG_APPENDER (reg, ConsoleAppender);
+    LOG4CPLUS_REG_APPENDER (reg, NullAppender);
+    LOG4CPLUS_REG_APPENDER (reg, FileAppender);
+    LOG4CPLUS_REG_APPENDER (reg, RollingFileAppender);
+    LOG4CPLUS_REG_APPENDER (reg, DailyRollingFileAppender);
+    LOG4CPLUS_REG_APPENDER (reg, SocketAppender);
 #if defined(_WIN32)
 #  if defined(LOG4CPLUS_HAVE_NT_EVENT_LOG)
-    REG_APPENDER (reg, NTEventLogAppender);
+    LOG4CPLUS_REG_APPENDER (reg, NTEventLogAppender);
 #  endif
 #  if defined(LOG4CPLUS_HAVE_WIN32_CONSOLE)
-    REG_APPENDER (reg, Win32ConsoleAppender);
+    LOG4CPLUS_REG_APPENDER (reg, Win32ConsoleAppender);
 #  endif
-    REG_APPENDER (reg, Win32DebugAppender);
-#elif defined(LOG4CPLUS_HAVE_SYSLOG_H)
-    REG_APPENDER (reg, SysLogAppender);
+    LOG4CPLUS_REG_APPENDER (reg, Win32DebugAppender);
 #endif
+    LOG4CPLUS_REG_APPENDER (reg, SysLogAppender);
+#ifndef LOG4CPLUS_SINGLE_THREADED
+    LOG4CPLUS_REG_APPENDER (reg, AsyncAppender);
+#endif
+    LOG4CPLUS_REG_APPENDER (reg, Log4jUdpAppender);
 
-    LayoutFactoryRegistry& reg2 = getLayoutFactoryRegistry();
-    REG_LAYOUT (reg2, SimpleLayout);
-    REG_LAYOUT (reg2, TTCCLayout);
-    REG_LAYOUT (reg2, PatternLayout);
+    spi::LayoutFactoryRegistry& reg2 = spi::getLayoutFactoryRegistry();
+    LOG4CPLUS_REG_LAYOUT (reg2, SimpleLayout);
+    LOG4CPLUS_REG_LAYOUT (reg2, TTCCLayout);
+    LOG4CPLUS_REG_LAYOUT (reg2, PatternLayout);
 
-    FilterFactoryRegistry& reg3 = getFilterFactoryRegistry();
-    REG_FILTER (reg3, DenyAllFilter);
-    REG_FILTER (reg3, LogLevelMatchFilter);
-    REG_FILTER (reg3, LogLevelRangeFilter);
-    REG_FILTER (reg3, StringMatchFilter);
+    spi::FilterFactoryRegistry& reg3 = spi::getFilterFactoryRegistry();
+    LOG4CPLUS_REG_FILTER (reg3, DenyAllFilter);
+    LOG4CPLUS_REG_FILTER (reg3, LogLevelMatchFilter);
+    LOG4CPLUS_REG_FILTER (reg3, LogLevelRangeFilter);
+    LOG4CPLUS_REG_FILTER (reg3, StringMatchFilter);
+
+    spi::LocaleFactoryRegistry& reg4 = spi::getLocaleFactoryRegistry();
+    LOG4CPLUS_REG_LOCALE (reg4, LOG4CPLUS_TEXT("GLOBAL"), spi::GlobalLocale);
+    LOG4CPLUS_REG_LOCALE (reg4, LOG4CPLUS_TEXT("DEFAULT"), spi::GlobalLocale);
+    LOG4CPLUS_REG_LOCALE (reg4, LOG4CPLUS_TEXT("USER"), spi::UserLocale);
+    LOG4CPLUS_REG_LOCALE (reg4, LOG4CPLUS_TEXT("CLASSIC"), spi::ClassicLocale);
 }
-
-
-
-
-///////////////////////////////////////////////////////////////////////////////
-// public methods
-///////////////////////////////////////////////////////////////////////////////
-
-namespace spi
-{
-
-
-AppenderFactoryRegistry&
-getAppenderFactoryRegistry()
-{
-    static AppenderFactoryRegistry singleton;
-    return singleton;
-}
-
-
-LayoutFactoryRegistry&
-getLayoutFactoryRegistry()
-{
-    static LayoutFactoryRegistry singleton;
-    return singleton;
-}
-
-
-FilterFactoryRegistry&
-getFilterFactoryRegistry()
-{
-    static FilterFactoryRegistry singleton;
-    return singleton;
-}
-
-
-} // namespace spi
 
 
 } // namespace log4cplus

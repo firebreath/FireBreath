@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    socketbuffer.h
 // Created: 5/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,56 +25,55 @@
 #define LOG4CPLUS_HELPERS_SOCKET_BUFFER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/logloguser.h>
 
 
 namespace log4cplus {
-    namespace helpers {
+namespace helpers {
 
-        /**
-         *
-         */
-        class LOG4CPLUS_EXPORT SocketBuffer : protected log4cplus::helpers::LogLogUser
-        {
-        public:
-            SocketBuffer(size_t max);
-            SocketBuffer(const SocketBuffer& rhs);
-            ~SocketBuffer();
+/**
+ *
+ */
+class LOG4CPLUS_EXPORT SocketBuffer
+{
+public:
+    explicit SocketBuffer(std::size_t max);
+    virtual ~SocketBuffer();
 
-            SocketBuffer& operator=(const SocketBuffer& rhs);
+    char *getBuffer() const { return buffer; }
+    std::size_t getMaxSize() const { return maxsize; }
+    std::size_t getSize() const { return size; }
+    void setSize(std::size_t s) { size = s; }
+    std::size_t getPos() const { return pos; }
 
-            char *getBuffer() const { return buffer; }
-            size_t getMaxSize() const { return maxsize; }
-            size_t getSize() const { return size; }
-            void setSize(size_t s) { size = s; }
-            size_t getPos() const { return pos; }
+    unsigned char readByte();
+    unsigned short readShort();
+    unsigned int readInt();
+    tstring readString(unsigned char sizeOfChar);
 
-            unsigned char readByte();
-            unsigned short readShort();
-            unsigned int readInt();
-            tstring readString(unsigned char sizeOfChar);
+    void appendByte(unsigned char val);
+    void appendShort(unsigned short val);
+    void appendInt(unsigned int val);
+    void appendString(const tstring& str);
+    void appendBuffer(const SocketBuffer& buffer);
 
-            void appendByte(unsigned char val);
-            void appendShort(unsigned short val);
-            void appendInt(unsigned int val);
-            void appendSize_t(size_t val);
-            void appendString(const tstring& str);
-            void appendBuffer(const SocketBuffer& buffer);
+private:
+    // Data
+    std::size_t maxsize;
+    std::size_t size;
+    std::size_t pos;
+    char *buffer;
 
-        private:
-          // Methods
-            void copy(const SocketBuffer& rhs);
+    SocketBuffer(SocketBuffer const & rhs);
+    SocketBuffer& operator= (SocketBuffer const& rhs);
+};
 
-          // Data
-            size_t maxsize;
-            size_t size;
-            size_t pos;
-            char *buffer;
-        };
-
-    } // end namespace helpers
+} // end namespace helpers
 } // end namespace log4cplus
 
 #endif // LOG4CPLUS_HELPERS_SOCKET_HEADER_
-

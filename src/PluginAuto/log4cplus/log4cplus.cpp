@@ -21,6 +21,7 @@ Copyright 2010 Facebook, Inc
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "log4cplus/config/defines.hxx"
+#include "log4cplus/loggingmacros.h"
 #include "log4cplus/logger.h"
 #include "log4cplus/loglevel.h"
 #include "log4cplus/layout.h"

@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    stringhelper.h
 // Created: 3/2003
@@ -24,11 +25,15 @@
 #define LOG4CPLUS_HELPERS_STRINGHELPER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
 
 #include <algorithm>
 #include <limits>
-#include <iterator>
 
 
 namespace log4cplus {
@@ -99,10 +104,10 @@ namespace log4cplus {
             {
                 // The sign of the result of the modulo operator is
                 // implementation defined. That's why we work with
-                // positive counterpart instead. Also, in twos
+                // positive counterpart instead.  Also, in twos
                 // complement arithmetic the smallest negative number
                 // does not have positive counterpart; the range is
-                // asymetric. That's why we handle the case of value
+                // asymetric.  That's why we handle the case of value
                 // == min() specially here.
                 if (value == (std::numeric_limits<intType>::min) ())
                 {
@@ -117,6 +122,13 @@ namespace log4cplus {
                 else
                     value = -value;
             }
+
+            static inline
+            bool
+            is_negative (intType val)
+            {
+                return val < 0;
+            }
         };
 
 
@@ -129,6 +141,13 @@ namespace log4cplus {
             {
                 // This will never be called for unsigned types.
             }
+
+            static inline
+            bool
+            is_negative (intType)
+            {
+                return false;
+            }
         };
 
 
@@ -138,10 +157,10 @@ namespace log4cplus {
         convertIntegerToString (tstring & str, intType value)
         {
             typedef std::numeric_limits<intType> intTypeLimits;
-            typedef ConvertIntegerToStringHelper<intType,
-                intTypeLimits::is_signed> HelperType;
+            typedef ConvertIntegerToStringHelper<intType, intTypeLimits::is_signed>
+                HelperType;
 
-            const size_t buffer_size
+            const std::size_t buffer_size
                 = intTypeLimits::digits10 + 2;
             tchar buffer[buffer_size];
             tchar * it = &buffer[buffer_size];
@@ -153,7 +172,7 @@ namespace log4cplus {
                 *it = LOG4CPLUS_TEXT('0');
             }
 
-            bool const negative = value < 0;
+            bool const negative = HelperType::is_negative (value);
             if (negative)
                 HelperType::step1 (it, value);
 
@@ -184,57 +203,8 @@ namespace log4cplus {
             return result;
         }
 
-
-
-        /**
-         * This iterator can be used in place of the back_insert_iterator
-         * for compilers that don't have a std::basic_string class that
-         * has the <code>push_back</code> method.
-         */
-        template <class Container>
-        class string_append_iterator
-            : public std::iterator<std::output_iterator_tag, void, void, void,
-                void>
-        {
-        public:
-            typedef Container container_type;
-
-            explicit string_append_iterator(container_type & c)
-                : container(&c)
-            { }
-
-            string_append_iterator<container_type> &
-            operator = (const typename container_type::value_type& value)
-            {
-                *container += value;
-                return *this;
-            }
-
-            string_append_iterator<container_type> &
-            operator * ()
-            {
-                return *this;
-            }
-
-            string_append_iterator<container_type> &
-            operator ++ ()
-            {
-                return *this;
-            }
-
-            string_append_iterator<container_type>
-            operator ++ (int)
-            {
-                return *this;
-            }
-
-        protected:
-            container_type * container;
-        };
-
     } // namespace helpers
 
 } // namespace log4cplus
 
 #endif // LOG4CPLUS_HELPERS_STRINGHELPER_HEADER_
-

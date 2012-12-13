@@ -22,10 +22,12 @@
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/spi/loggerimpl.h>
 #include <log4cplus/spi/rootlogger.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
 #include <utility>
 
-using namespace log4cplus;
-using namespace log4cplus::helpers;
+
+namespace log4cplus
+{
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -50,25 +52,24 @@ bool startsWith(tstring const & teststr, tstring const & substr)
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::Hierarchy static declarations
+// Hierarchy static declarations
 //////////////////////////////////////////////////////////////////////////////
 
-const LogLevel log4cplus::Hierarchy::DISABLE_OFF = -1;
-const LogLevel log4cplus::Hierarchy::DISABLE_OVERRIDE = -2;
+const LogLevel Hierarchy::DISABLE_OFF = -1;
+const LogLevel Hierarchy::DISABLE_OVERRIDE = -2;
 
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::Hierarchy ctor and dtor
+// Hierarchy ctor and dtor
 //////////////////////////////////////////////////////////////////////////////
 
 Hierarchy::Hierarchy()
-  : hashtable_mutex(LOG4CPLUS_MUTEX_CREATE),
-    defaultFactory(new DefaultLoggerFactory()),
-    root(NULL),
-    disableValue(DISABLE_OFF),  // Don't disable any LogLevel level by default.
-    emittedNoAppenderWarning(false),
-    emittedNoResourceBundleWarning(false)
+  : defaultFactory(new DefaultLoggerFactory())
+  , root(NULL)
+  // Don't disable any LogLevel level by default.
+  , disableValue(DISABLE_OFF)
+  , emittedNoAppenderWarning(false)
 {
     root = Logger( new spi::RootLogger(*this, DEBUG_LOG_LEVEL) );
 }
@@ -77,37 +78,36 @@ Hierarchy::Hierarchy()
 Hierarchy::~Hierarchy()
 {
     shutdown();
-    LOG4CPLUS_MUTEX_FREE( hashtable_mutex );
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::Hierarchy public methods
+// Hierarchy public methods
 //////////////////////////////////////////////////////////////////////////////
 
 void 
 Hierarchy::clear() 
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( hashtable_mutex )
-        provisionNodes.erase(provisionNodes.begin(), provisionNodes.end());
-        loggerPtrs.erase(loggerPtrs.begin(), loggerPtrs.end());
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (hashtable_mutex);
+
+    provisionNodes.erase(provisionNodes.begin(), provisionNodes.end());
+    loggerPtrs.erase(loggerPtrs.begin(), loggerPtrs.end());
 }
 
 
 bool
-Hierarchy::exists(const log4cplus::tstring& name)
+Hierarchy::exists(const tstring& name)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( hashtable_mutex )
-        LoggerMap::iterator it = loggerPtrs.find(name);
-        return it != loggerPtrs.end();
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (hashtable_mutex);
+
+    LoggerMap::iterator it = loggerPtrs.find(name);
+    return it != loggerPtrs.end();
 }
 
 
 void 
-Hierarchy::disable(const log4cplus::tstring& loglevelStr)
+Hierarchy::disable(const tstring& loglevelStr)
 {
     if(disableValue != DISABLE_OVERRIDE) {
         disableValue = getLogLevelManager().fromString(loglevelStr);
@@ -153,18 +153,18 @@ Hierarchy::enableAll()
 
 
 Logger 
-Hierarchy::getInstance(const log4cplus::tstring& name) 
+Hierarchy::getInstance(const tstring& name) 
 { 
     return getInstance(name, *defaultFactory); 
 }
 
 
 Logger 
-Hierarchy::getInstance(const log4cplus::tstring& name, spi::LoggerFactory& factory)
+Hierarchy::getInstance(const tstring& name, spi::LoggerFactory& factory)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( hashtable_mutex )
-        return getInstanceImpl(name, factory);
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (hashtable_mutex);
+
+    return getInstanceImpl(name, factory);
 }
 
 
@@ -173,16 +173,17 @@ Hierarchy::getCurrentLoggers()
 {
     LoggerList ret;
     
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( hashtable_mutex )
+    {
+        thread::MutexGuard guard (hashtable_mutex);
         initializeLoggerList(ret);
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    }
 
     return ret;
 }
 
 
 bool 
-Hierarchy::isDisabled(int level) 
+Hierarchy::isDisabled(LogLevel level) 
 { 
     return disableValue >= level; 
 }
@@ -204,11 +205,11 @@ Hierarchy::resetConfiguration()
     shutdown();
 
     LoggerList loggers = getCurrentLoggers();
-    LoggerList::iterator it = loggers.begin();
-    while(it != loggers.end()) {
-        (*it).setLogLevel(NOT_SET_LOG_LEVEL);
-        (*it).setAdditivity(true);
-        ++it;
+    for (LoggerList::iterator it = loggers.begin (); it != loggers.end(); ++it)
+    {
+        Logger & logger = *it;
+        logger.setLogLevel(NOT_SET_LOG_LEVEL);
+        logger.setAdditivity(true);
     }
 
 }
@@ -218,6 +219,13 @@ void
 Hierarchy::setLoggerFactory(std::auto_ptr<spi::LoggerFactory> factory) 
 { 
     defaultFactory = factory; 
+}
+
+
+spi::LoggerFactory *
+Hierarchy::getLoggerFactory()
+{
+    return defaultFactory.get();
 }
 
 
@@ -232,49 +240,58 @@ Hierarchy::shutdown()
     root.removeAllAppenders();
 
     // repeat
-    LoggerList::iterator it = loggers.begin();
-    while(it != loggers.end()) {
-        (*it).closeNestedAppenders();
-        (*it).removeAllAppenders();
-        ++it;
+    for (LoggerList::iterator it = loggers.begin(); it != loggers.end(); ++it)
+    {
+        Logger & logger = *it;
+        logger.closeNestedAppenders();
+        logger.removeAllAppenders();
     }
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::Hierarchy private methods
+// Hierarchy private methods
 //////////////////////////////////////////////////////////////////////////////
 
 Logger 
-Hierarchy::getInstanceImpl(const log4cplus::tstring& name, spi::LoggerFactory& factory)
+Hierarchy::getInstanceImpl(const tstring& name, spi::LoggerFactory& factory)
 {
-     LoggerMap::iterator it = loggerPtrs.find(name);
-     if(it != loggerPtrs.end()) {
-         return (*it).second;
-     }
-     else {
-         // Need to create a new logger
-         Logger logger = factory.makeNewLoggerInstance(name, *this);
-         bool inserted = loggerPtrs.insert(std::make_pair(name, logger)).second;
-         if(!inserted) {
-             getLogLog().error(LOG4CPLUS_TEXT("Hierarchy::getInstanceImpl()- Insert failed"));
-             throw std::runtime_error("Hierarchy::getInstanceImpl()- Insert failed");
-         }
-         
-         ProvisionNodeMap::iterator it2 = provisionNodes.find(name);
-         if(it2 != provisionNodes.end()) {
-             updateChildren(it2->second, logger);
-             bool deleted = (provisionNodes.erase(name) > 0);
-             if(!deleted) {
-                 getLogLog().error(LOG4CPLUS_TEXT("Hierarchy::getInstanceImpl()- Delete failed"));
-                 throw std::runtime_error("Hierarchy::getInstanceImpl()- Delete failed");
-             }
-         }
-         updateParents(logger);
-         
-         return logger;
-     }
+    Logger logger;
+    LoggerMap::iterator lm_it;
+
+    if (name.empty ())
+        logger = root;
+    else if ((lm_it = loggerPtrs.find(name)) != loggerPtrs.end())
+        logger = lm_it->second;
+    else
+    {
+        // Need to create a new logger
+        logger = factory.makeNewLoggerInstance(name, *this);
+        bool inserted = loggerPtrs.insert(std::make_pair(name, logger)).second;
+        if (! inserted)
+        {
+            helpers::getLogLog().error(
+                LOG4CPLUS_TEXT("Hierarchy::getInstanceImpl()- Insert failed"),
+                true);
+        }
+
+        ProvisionNodeMap::iterator pnm_it = provisionNodes.find(name);
+        if (pnm_it != provisionNodes.end())
+        {
+            updateChildren(pnm_it->second, logger);
+            bool deleted = (provisionNodes.erase(name) > 0);
+            if (! deleted)
+            {
+                helpers::getLogLog().error(
+                    LOG4CPLUS_TEXT("Hierarchy::getInstanceImpl()- Delete failed"),
+                    true);
+            }
+        }
+        updateParents(logger);
+    }
+
+    return logger;
 }
 
 
@@ -291,18 +308,19 @@ Hierarchy::initializeLoggerList(LoggerList& list) const
 
 
 void 
-Hierarchy::updateParents(Logger logger)
+Hierarchy::updateParents(Logger const & logger)
 {
-    log4cplus::tstring name = logger.getName();
-    size_t length = name.length();
+    tstring const & name = logger.getName();
+    std::size_t const length = name.length();
     bool parentFound = false;
+    tstring substr;
 
     // if name = "w.x.y.z", loop thourgh "w.x.y", "w.x" and "w", but not "w.x.y.z"
-    for(size_t i=name.find_last_of(LOG4CPLUS_TEXT('.'), length-1); 
-        i != log4cplus::tstring::npos; 
+    for(std::size_t i=name.find_last_of(LOG4CPLUS_TEXT('.'), length-1);
+        i != tstring::npos && i > 0; 
         i = name.find_last_of(LOG4CPLUS_TEXT('.'), i-1)) 
     {
-        log4cplus::tstring substr = name.substr(0, i);
+        substr.assign (name, 0, i);
 
         LoggerMap::iterator it = loggerPtrs.find(substr);
         if(it != loggerPtrs.end()) {
@@ -322,8 +340,9 @@ Hierarchy::updateParents(Logger logger)
                     provisionNodes.insert(std::make_pair(substr, node));
                 //bool inserted = provisionNodes.insert(std::make_pair(substr, node)).second;
                 if(!tmp.second) {
-                    getLogLog().error(LOG4CPLUS_TEXT("Hierarchy::updateParents()- Insert failed"));
-                    throw std::runtime_error("Hierarchy::updateParents()- Insert failed");
+                    helpers::getLogLog().error(
+                        LOG4CPLUS_TEXT("Hierarchy::updateParents()- Insert failed"),
+                        true);
                 }
             }
         } // end if Logger found
@@ -336,7 +355,7 @@ Hierarchy::updateParents(Logger logger)
 
 
 void 
-Hierarchy::updateChildren(ProvisionNode& pn, Logger logger)
+Hierarchy::updateChildren(ProvisionNode& pn, Logger const & logger)
 {
 
     for(ProvisionNode::iterator it=pn.begin(); it!=pn.end(); ++it) {
@@ -350,3 +369,5 @@ Hierarchy::updateChildren(ProvisionNode& pn, Logger logger)
     }
 }
 
+
+} // namespace log4cplus

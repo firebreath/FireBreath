@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    configurator.h
 // Created: 3/2003
@@ -20,14 +21,17 @@
 
 /** @file */
 
-#ifndef _CONFIGURATOR_HEADER_
-#define _CONFIGURATOR_HEADER_
+#ifndef LOG4CPLUS_CONFIGURATOR_HEADER_
+#define LOG4CPLUS_CONFIGURATOR_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/appender.h>
-#include <log4cplus/hierarchy.h>
 #include <log4cplus/logger.h>
-#include <log4cplus/helpers/logloguser.h>
 #include <log4cplus/helpers/pointer.h>
 #include <log4cplus/helpers/property.h>
 
@@ -36,6 +40,8 @@
 
 namespace log4cplus
 {
+    class Hierarchy;
+
 
     /**
      * Provides configuration from an external file.  See configure() for
@@ -54,14 +60,31 @@ namespace log4cplus
      * the ${variableName} sequence.
      */
     class LOG4CPLUS_EXPORT PropertyConfigurator
-        : protected log4cplus::helpers::LogLogUser
     {
     public:
         enum PCFlags
         {
-            fRecursiveExpansion = 0x0001,
-            fShadowEnvironment  = 0x0002,
-            fAllowEmptyVars     = 0x0004
+            fRecursiveExpansion   = (1 << 0)
+            , fShadowEnvironment  = (1 << 1)
+            , fAllowEmptyVars     = (1 << 2)
+
+            // These encoding related options occupy 2 bits of the flags
+            // and are mutually exclusive. These flags are synchronized with
+            // PFlags in Properties.
+
+            , fEncodingShift      = 3
+            , fEncodingMask       = 0x3
+            , fUnspecEncoding     = (0 << fEncodingShift)
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF8_FACET) && defined (UNICODE)
+            , fUTF8               = (1 << fEncodingShift)
+#endif
+#if (defined (LOG4CPLUS_HAVE_CODECVT_UTF16_FACET) || defined (_WIN32)) \
+    && defined (UNICODE)
+            , fUTF16              = (2 << fEncodingShift)
+#endif
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF32_FACET) && defined (UNICODE)
+            , fUTF32              = (3 << fEncodingShift)
+#endif
         };
         
         // ctor and dtor
@@ -286,12 +309,14 @@ namespace log4cplus
      * configuration see PropertyConfigurator. BasicConfigurator
      * automatically attaches ConsoleAppender to
      * <code>rootLogger</code>, with output going to standard output,
-     * using DEBUG LogLevel value.
+     * using DEBUG LogLevel value. The additional parameter
+     * logToStdErr may redirect the output to standard error.
      */
     class LOG4CPLUS_EXPORT BasicConfigurator : public PropertyConfigurator {
     public:
       // ctor and dtor
-        BasicConfigurator(Hierarchy& h = Logger::getDefaultHierarchy());
+        BasicConfigurator(Hierarchy& h = Logger::getDefaultHierarchy(),
+            bool logToStdErr = false);
         virtual ~BasicConfigurator();
 
         /**
@@ -303,7 +328,11 @@ namespace log4cplus
          * config.configure();
          * </pre></code>
          */
-        static void doConfigure(Hierarchy& h = Logger::getDefaultHierarchy());
+        static void doConfigure(Hierarchy& h = Logger::getDefaultHierarchy(),
+            bool logToStdErr = false);
+
+        //! Property name for disable override.
+        static log4cplus::tstring const DISABLE_OVERRIDE_KEY;
         
     private:
       // Disable copy
@@ -336,5 +365,5 @@ namespace log4cplus
 
 } // end namespace log4cplus
 
-#endif // _CONFIGURATOR_HEADER_
+#endif // LOG4CPLUS_CONFIGURATOR_HEADER_
 

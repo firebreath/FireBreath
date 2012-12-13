@@ -21,19 +21,19 @@
 #include <log4cplus/spi/filter.h>
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/helpers/stringhelper.h>
+#include <log4cplus/helpers/property.h>
+#include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
 
-using namespace log4cplus;
-using namespace log4cplus::spi;
-using namespace log4cplus::helpers;
 
+namespace log4cplus { namespace spi {
 
 ///////////////////////////////////////////////////////////////////////////////
 // global methods
 ///////////////////////////////////////////////////////////////////////////////
 
 FilterResult
-log4cplus::spi::checkFilter(const Filter* filter, 
-                            const InternalLoggingEvent& event)
+checkFilter(const Filter* filter, const InternalLoggingEvent& event)
 {
     const Filter* currentFilter = filter;
     while(currentFilter) {
@@ -67,12 +67,10 @@ Filter::~Filter()
 void
 Filter::appendFilter(FilterPtr filter)
 {
-    if(next.get() == 0) {
+    if (! next)
         next = filter;
-    }
-    else {
+    else
         next->appendFilter(filter);
-    }
 }
 
 
@@ -85,7 +83,7 @@ DenyAllFilter::DenyAllFilter ()
 { }
 
 
-DenyAllFilter::DenyAllFilter (const log4cplus::helpers::Properties&)
+DenyAllFilter::DenyAllFilter (const helpers::Properties&)
 { }
 
 
@@ -108,15 +106,16 @@ LogLevelMatchFilter::LogLevelMatchFilter()
 
 
 
-LogLevelMatchFilter::LogLevelMatchFilter(const Properties& properties)
+LogLevelMatchFilter::LogLevelMatchFilter(const helpers::Properties& properties)
 {
     init();
 
-    tstring tmp = properties.getProperty( LOG4CPLUS_TEXT("AcceptOnMatch") );
-    acceptOnMatch = (toLower(tmp) == LOG4CPLUS_TEXT("true"));
+    properties.getBool (acceptOnMatch = false,
+        LOG4CPLUS_TEXT("AcceptOnMatch"));
 
-    tmp = properties.getProperty( LOG4CPLUS_TEXT("LogLevelToMatch") );
-    logLevelToMatch = getLogLevelManager().fromString(tmp);
+    tstring const & log_level_to_match
+        = properties.getProperty( LOG4CPLUS_TEXT("LogLevelToMatch") );
+    logLevelToMatch = getLogLevelManager().fromString(log_level_to_match);
 }
 
 
@@ -158,18 +157,20 @@ LogLevelRangeFilter::LogLevelRangeFilter()
 
 
 
-LogLevelRangeFilter::LogLevelRangeFilter(const Properties& properties)
+LogLevelRangeFilter::LogLevelRangeFilter(const helpers::Properties& properties)
 {
     init();
 
-    tstring tmp = properties.getProperty( LOG4CPLUS_TEXT("AcceptOnMatch") );
-    acceptOnMatch = (toLower(tmp) == LOG4CPLUS_TEXT("true"));
+    properties.getBool (acceptOnMatch = false,
+        LOG4CPLUS_TEXT("AcceptOnMatch"));
 
-    tmp = properties.getProperty( LOG4CPLUS_TEXT("LogLevelMin") );
-    logLevelMin = getLogLevelManager().fromString(tmp);
+    tstring const & log_level_min
+        = properties.getProperty( LOG4CPLUS_TEXT("LogLevelMin") );
+    logLevelMin = getLogLevelManager().fromString(log_level_min);
 
-    tmp = properties.getProperty( LOG4CPLUS_TEXT("LogLevelMax") );
-    logLevelMax = getLogLevelManager().fromString(tmp);
+    tstring const & log_level_max
+        = properties.getProperty( LOG4CPLUS_TEXT("LogLevelMax") );
+    logLevelMax = getLogLevelManager().fromString(log_level_max);
 }
 
 
@@ -219,13 +220,12 @@ StringMatchFilter::StringMatchFilter()
 
 
 
-StringMatchFilter::StringMatchFilter(const Properties& properties)
+StringMatchFilter::StringMatchFilter(const helpers::Properties& properties)
 {
     init();
 
-    tstring tmp = properties.getProperty( LOG4CPLUS_TEXT("AcceptOnMatch") );
-    acceptOnMatch = (toLower(tmp) == LOG4CPLUS_TEXT("true"));
-
+    properties.getBool (acceptOnMatch = false,
+        LOG4CPLUS_TEXT("AcceptOnMatch"));
     stringToMatch = properties.getProperty( LOG4CPLUS_TEXT("StringToMatch") );
 }
 
@@ -254,3 +254,5 @@ StringMatchFilter::decide(const InternalLoggingEvent& event) const
     }
 }
 
+
+} } // namespace log4cplus { namespace spi {

@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    pointer.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,15 +26,22 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HELPERS_POINTERS_HEADER_
-#define _LOG4CPLUS_HELPERS_POINTERS_HEADER_
+#ifndef LOG4CPLUS_HELPERS_POINTERS_HEADER_
+#define LOG4CPLUS_HELPERS_POINTERS_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <memory>
-#include <stdexcept>
-#include <string>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
+#include <log4cplus/thread/syncprims.h>
 #include <algorithm>
 #include <cassert>
+#if ! defined (LOG4CPLUS_SINGLE_THREADED) \
+    && defined (LOG4CPLUS_HAVE_CXX11_ATOMICS)
+#include <atomic>
+#endif
 
 
 namespace log4cplus {
@@ -52,12 +60,12 @@ namespace log4cplus {
         protected:
           // Ctor
             SharedObject()
-                : access_mutex(LOG4CPLUS_MUTEX_CREATE)
+                : access_mutex()
                 , count(0)
             { }
 
             SharedObject(const SharedObject&)
-                : access_mutex(LOG4CPLUS_MUTEX_CREATE)
+                : access_mutex()
                 , count(0)
             { }
 
@@ -68,10 +76,19 @@ namespace log4cplus {
             SharedObject& operator=(const SharedObject&) { return *this; }
 
         public:
-            LOG4CPLUS_MUTEX_PTR_DECLARE access_mutex;
+            thread::Mutex access_mutex;
 
         private:
-            mutable int count;
+#if defined (LOG4CPLUS_SINGLE_THREADED)
+            typedef unsigned count_type;
+#elif defined (LOG4CPLUS_HAVE_CXX11_ATOMICS)
+            typedef std::atomic<unsigned> count_type;
+#elif defined (_WIN32) || defined (__CYGWIN__)
+            typedef long count_type;
+#else
+            typedef unsigned count_type;
+#endif
+            mutable count_type count;
         };
 
 
@@ -95,6 +112,20 @@ namespace log4cplus {
             {
                 addref ();
             }
+
+#if defined (LOG4CPLUS_HAVE_RVALUE_REFS)
+            SharedObjectPtr(SharedObjectPtr && rhs)
+                : pointee (std::move (rhs.pointee))
+            {
+                rhs.pointee = 0;
+            }
+
+            SharedObjectPtr & operator = (SharedObjectPtr && rhs)
+            {
+                rhs.swap (*this);
+                return *this;
+            }
+#endif
 
             // Dtor
             ~SharedObjectPtr()
@@ -157,5 +188,4 @@ namespace log4cplus {
 } // end namespace log4cplus
 
 
-#endif // _LOG4CPLUS_HELPERS_POINTERS_HEADER_
-
+#endif // LOG4CPLUS_HELPERS_POINTERS_HEADER_
