@@ -182,7 +182,11 @@ FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
         if (call_delegate.empty()) {
             initJS(this);
         }
-        FB::JSObjectPtr delegate(win->getProperty<FB::JSObjectPtr>(call_delegate));
+		FB::JSObjectPtr delegate;
+		try {
+	        delegate = win->getProperty<FB::JSObjectPtr>(call_delegate);
+		} catch (const FB::script_error&) {
+		}
         if (!delegate) {
             // Sometimes the first try doesn't work; for some reason retrying generally does,
             // and from then on it works fine
