@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    loglog.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,13 +21,18 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HELPERS_LOGLOG
-#define _LOG4CPLUS_HELPERS_LOGLOG
+#ifndef LOG4CPLUS_HELPERS_LOGLOG
+#define LOG4CPLUS_HELPERS_LOGLOG
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/threads.h>
+#include <log4cplus/streams.h>
+#include <log4cplus/thread/syncprims.h>
 
 
 namespace log4cplus {
@@ -46,14 +52,15 @@ namespace log4cplus {
          * the string "log4clus: ".
          */
         class LOG4CPLUS_EXPORT LogLog
-            : public virtual log4cplus::helpers::SharedObject 
         {
         public:
-          // Static methods
+            //! Return type of getLogLog().
+            typedef LogLog * Ptr;
+
             /**
              * Returns a reference to the <code>LogLog</code> singleton.
              */
-            static log4cplus::helpers::SharedObjectPtr<LogLog> getLogLog();
+            static Ptr getLogLog();
 
 
             /**
@@ -73,41 +80,66 @@ namespace log4cplus {
              * This method is used to output log4cplus internal debug
              * statements. Output goes to <code>std::cout</code>.
              */
-            void debug(const log4cplus::tstring& msg);
+            void debug(const log4cplus::tstring& msg) const;
+            void debug(tchar const * msg) const;
 
             /**
              * This method is used to output log4cplus internal error
-             * statements. There is no way to disable error statements.
-             * Output goes to <code>std::cerr</code>.
+             * statements. There is no way to disable error
+             * statements.  Output goes to
+             * <code>std::cerr</code>. Optionally, this method can
+             * throw std::runtime_error exception too.
              */
-            void error(const log4cplus::tstring& msg);
+            void error(const log4cplus::tstring& msg, bool throw_flag = false) const;
+            void error(tchar const * msg, bool throw_flag = false) const;
 
             /**
              * This method is used to output log4cplus internal warning
              * statements. There is no way to disable warning statements.
              * Output goes to <code>std::cerr</code>.
              */
-            void warn(const log4cplus::tstring& msg);
+            void warn(const log4cplus::tstring& msg) const;
+            void warn(tchar const * msg) const;
 
-          // Dtor
+            // Public ctor and dtor to be used only by internal::DefaultContext.
+            LogLog();
             virtual ~LogLog();
 
-          // Data
-            LOG4CPLUS_MUTEX_PTR_DECLARE mutex;
-
         private:
-          // Data
-            bool debugEnabled;
-            bool quietMode;
+            enum TriState
+            {
+                TriUndef = -1,
+                TriFalse,
+                TriTrue
+            };
 
-          // Ctors
-            LogLog();
-            LogLog(const LogLog&);
+            template <typename StringType>
+            LOG4CPLUS_PRIVATE
+            void logging_worker (tostream & os,
+                bool (LogLog:: * cond) () const, tchar const *,
+                StringType const &, bool throw_flag = false) const;
+
+            LOG4CPLUS_PRIVATE static void set_tristate_from_env (TriState *,
+                tchar const * envvar);
+
+            LOG4CPLUS_PRIVATE bool get_quiet_mode () const;
+            LOG4CPLUS_PRIVATE bool get_not_quiet_mode () const;
+            LOG4CPLUS_PRIVATE bool get_debug_mode () const;
+
+            // Data
+            mutable TriState debugEnabled;
+            mutable TriState quietMode;
+            thread::Mutex mutex;
+
+            LOG4CPLUS_PRIVATE LogLog(const LogLog&);
+            LOG4CPLUS_PRIVATE LogLog & operator = (LogLog const &);
         };
+
+        LOG4CPLUS_EXPORT LogLog & getLogLog ();
 
     } // end namespace helpers
 } // end namespace log4cplus
 
 
-#endif // _LOG4CPLUS_HELPERS_LOGLOG
+#endif // LOG4CPLUS_HELPERS_LOGLOG
 

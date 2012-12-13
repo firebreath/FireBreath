@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    logger.h
 // Created: 6/2001
@@ -21,10 +22,15 @@
 /** @file 
  * This header defines the Logger class and the logging macros. */
 
-#ifndef _LOG4CPLUS_LOGGERHEADER_
-#define _LOG4CPLUS_LOGGERHEADER_
+#ifndef LOG4CPLUS_LOGGERHEADER_
+#define LOG4CPLUS_LOGGERHEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/loglevel.h>
 #include <log4cplus/tstring.h>
 #include <log4cplus/spi/appenderattachable.h>
@@ -176,12 +182,16 @@ namespace log4cplus
         void log(LogLevel ll, const log4cplus::tstring& message,
                  const char* file=NULL, int line=-1) const;
 
+        void log(spi::InternalLoggingEvent const &) const;
+
         /**
          * This method creates a new logging event and logs the event
          * without further checks.  
          */
         void forcedLog(LogLevel ll, const log4cplus::tstring& message,
                        const char* file=NULL, int line=-1) const;
+
+        void forcedLog(spi::InternalLoggingEvent const &) const;
 
         /**
          * Call the appenders in the hierrachy starting at
@@ -227,7 +237,7 @@ namespace log4cplus
         /**
          * Return the logger name.  
          */
-        log4cplus::tstring getName() const;
+        log4cplus::tstring const & getName() const;
 
         /**
          * Get the additivity flag for this Logger instance.  
@@ -255,6 +265,10 @@ namespace log4cplus
         Logger ();
         Logger(const Logger& rhs);
         Logger& operator=(const Logger& rhs);
+#if defined (LOG4CPLUS_HAVE_RVALUE_REFS)
+        Logger (Logger && rhs);
+        Logger & operator = (Logger && rhs);
+#endif
         virtual ~Logger();
 
         void swap (Logger &);
@@ -281,7 +295,7 @@ namespace log4cplus
          * @param ptr A pointer to the Logger implementation.  This value
          *            cannot be NULL.  
          */
-        Logger(spi::LoggerImpl * ptr);
+        LOG4CPLUS_PRIVATE Logger(spi::LoggerImpl * ptr);
 
       // Friends
         friend class log4cplus::spi::LoggerImpl;
@@ -301,44 +315,7 @@ namespace log4cplus
     };
 
 
-
-    /**
-     * This class is used to produce "Trace" logging.  When an instance of
-     * this class is created, it will log a <code>"ENTER: " + msg</code>
-     * log message if TRACE_LOG_LEVEL is enabled for <code>logger</code>.
-     * When an instance of this class is destroyed, it will log a
-     * <code>"ENTER: " + msg</code> log message if TRACE_LOG_LEVEL is enabled
-     * for <code>logger</code>.
-     * 
-     * @see LOG4CPLUS_TRACE
-     */
-    class TraceLogger
-    {
-    public:
-        TraceLogger(const Logger& l, const log4cplus::tstring& _msg,
-                    const char* _file=NULL, int _line=-1) 
-          : logger(l), msg(_msg), file(_file), line(_line)
-        { if(logger.isEnabledFor(TRACE_LOG_LEVEL))
-              logger.forcedLog(TRACE_LOG_LEVEL, LOG4CPLUS_TEXT("ENTER: ") + msg, file, line); 
-        }
-
-        ~TraceLogger()
-        { if(logger.isEnabledFor(TRACE_LOG_LEVEL))
-              logger.forcedLog(TRACE_LOG_LEVEL, LOG4CPLUS_TEXT("EXIT:  ") + msg, file, line); 
-        }
-
-    private:
-        Logger logger;
-        log4cplus::tstring msg;
-        const char* file;
-        int line;
-    };
-
 } // end namespace log4cplus
 
 
-#include <log4cplus/loggingmacros.h>
-
-
-#endif // _LOG4CPLUS_LOGGERHEADER_
-
+#endif // LOG4CPLUS_LOGGERHEADER_

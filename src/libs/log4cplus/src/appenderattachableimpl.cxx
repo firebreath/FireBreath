@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <log4cplus/helpers/appenderattachableimpl.h>
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
 
 #include <algorithm>
 
@@ -51,15 +52,11 @@ namespace helpers
 //////////////////////////////////////////////////////////////////////////////
 
 AppenderAttachableImpl::AppenderAttachableImpl()
- : appender_list_mutex(LOG4CPLUS_MUTEX_CREATE)
-{
-}
+{ }
 
 
 AppenderAttachableImpl::~AppenderAttachableImpl()
-{
-   LOG4CPLUS_MUTEX_FREE( appender_list_mutex );
-}
+{ }
 
 
 
@@ -70,18 +67,18 @@ AppenderAttachableImpl::~AppenderAttachableImpl()
 void
 AppenderAttachableImpl::addAppender(SharedAppenderPtr newAppender)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        if(newAppender == NULL) {
-            getLogLog().warn( LOG4CPLUS_TEXT("Tried to add NULL appender") );
-            return;
-        }
+    if(newAppender == NULL) {
+        getLogLog().warn( LOG4CPLUS_TEXT("Tried to add NULL appender") );
+        return;
+    }
 
-        ListType::iterator it = 
-            std::find(appenderList.begin(), appenderList.end(), newAppender);
-        if(it == appenderList.end()) {
-            appenderList.push_back(newAppender);
-        }
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (appender_list_mutex);
+
+    ListType::iterator it = 
+        std::find(appenderList.begin(), appenderList.end(), newAppender);
+    if(it == appenderList.end()) {
+        appenderList.push_back(newAppender);
+    }
 }
 
 
@@ -89,9 +86,9 @@ AppenderAttachableImpl::addAppender(SharedAppenderPtr newAppender)
 AppenderAttachableImpl::ListType
 AppenderAttachableImpl::getAllAppenders()
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        return appenderList;
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (appender_list_mutex);
+    
+    return appenderList;
 }
 
 
@@ -99,18 +96,18 @@ AppenderAttachableImpl::getAllAppenders()
 SharedAppenderPtr 
 AppenderAttachableImpl::getAppender(const log4cplus::tstring& name)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        for(ListType::iterator it=appenderList.begin(); 
-            it!=appenderList.end(); 
-            ++it)
-        {
-            if((*it)->getName() == name) {
-                return *it;
-            }
-        }
+    thread::MutexGuard guard (appender_list_mutex);
 
-        return SharedAppenderPtr(NULL);
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    for(ListType::iterator it=appenderList.begin(); 
+        it!=appenderList.end(); 
+        ++it)
+    {
+        if((*it)->getName() == name) {
+            return *it;
+        }
+    }
+
+    return SharedAppenderPtr(NULL);
 }
 
 
@@ -118,9 +115,9 @@ AppenderAttachableImpl::getAppender(const log4cplus::tstring& name)
 void 
 AppenderAttachableImpl::removeAllAppenders()
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        appenderList.erase(appenderList.begin(), appenderList.end());
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (appender_list_mutex);
+
+    appenderList.erase(appenderList.begin(), appenderList.end());
 }
 
 
@@ -133,13 +130,13 @@ AppenderAttachableImpl::removeAppender(SharedAppenderPtr appender)
         return;
     }
 
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        ListType::iterator it =
-            std::find(appenderList.begin(), appenderList.end(), appender);
-        if(it != appenderList.end()) {
-            appenderList.erase(it);
-        }
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (appender_list_mutex);
+
+    ListType::iterator it =
+        std::find(appenderList.begin(), appenderList.end(), appender);
+    if(it != appenderList.end()) {
+        appenderList.erase(it);
+    }
 }
 
 
@@ -157,15 +154,15 @@ AppenderAttachableImpl::appendLoopOnAppenders(const spi::InternalLoggingEvent& e
 {
     int count = 0;
 
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( appender_list_mutex )
-        for(ListType::const_iterator it=appenderList.begin();
-            it!=appenderList.end();
-            ++it)
-        {
-            ++count;
-            (*it)->doAppend(event);
-        }
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (appender_list_mutex);
+
+    for(ListType::const_iterator it=appenderList.begin();
+        it!=appenderList.end();
+        ++it)
+    {
+        ++count;
+        (*it)->doAppend(event);
+    }
 
     return count;
 }

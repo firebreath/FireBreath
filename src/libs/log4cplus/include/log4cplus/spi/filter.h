@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    filter.h
 // Created: 5/2003
@@ -25,12 +26,24 @@
 #define LOG4CPLUS_SPI_FILTER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/helpers/pointer.h>
-#include <log4cplus/helpers/property.h>
-#include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/loglevel.h>
 
 
 namespace log4cplus {
+
+    namespace helpers
+    {
+
+        class Properties;
+
+    }
+
     namespace spi {
 
 
@@ -48,6 +61,7 @@ namespace log4cplus {
 
         // Forward Declarations
         class Filter;
+        class InternalLoggingEvent;
 
 
         /**
@@ -174,7 +188,7 @@ namespace log4cplus {
 
         private:
           // Methods
-            void init();
+            LOG4CPLUS_PRIVATE void init();
 
           // Data
             /** Do we return ACCEPT when a match occurs. Default is <code>true</code>. */
@@ -222,7 +236,7 @@ namespace log4cplus {
 
         private:
           // Methods
-            void init();
+            LOG4CPLUS_PRIVATE void init();
 
           // Data
             /** Do we return ACCEPT when a match occurs. Default is <code>true</code>. */
@@ -257,7 +271,7 @@ namespace log4cplus {
 
         private:
           // Methods
-            void init();
+            LOG4CPLUS_PRIVATE void init();
 
           // Data
             /** Do we return ACCEPT when a match occurs. Default is <code>true</code>. */

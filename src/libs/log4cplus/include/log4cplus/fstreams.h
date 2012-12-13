@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    fstreams.h
 // Created: 4/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2011 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -25,26 +26,31 @@
 
 #include <log4cplus/config.hxx>
 
-#include <fstream>
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
 
-#if defined(__DECCXX) && !defined(__USE_STD_IOSTREAM)
-#  define LOG4CPLUS_FSTREAM_NAMESPACE
+#include <log4cplus/tchar.h>
+#include <iosfwd>
+
+
+namespace log4cplus
+{
+
+
+typedef std::basic_ofstream<tchar> tofstream;
+typedef std::basic_ifstream<tchar> tifstream;
+
+//! \def LOG4CPLUS_FSTREAM_PREFERED_FILE_NAME(X)
+//! \brief Expands into expression that picks the right type for
+//! std::fstream file name parameter.
+#if defined (LOG4CPLUS_FSTREAM_ACCEPTS_WCHAR_T) && defined (UNICODE)
+#  define LOG4CPLUS_FSTREAM_PREFERED_FILE_NAME(X) (X)
 #else
-#  define LOG4CPLUS_FSTREAM_NAMESPACE std
+#  define LOG4CPLUS_FSTREAM_PREFERED_FILE_NAME(X) (LOG4CPLUS_TSTRING_TO_STRING(X))
 #endif
 
 
-#ifdef UNICODE
-    namespace log4cplus {
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::wofstream tofstream;
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::wifstream tifstream;
-    }
-#else
-    namespace log4cplus {
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::ofstream tofstream;
-        typedef LOG4CPLUS_FSTREAM_NAMESPACE::ifstream tifstream;
-    }
-#endif // UNICODE
+}
 
 #endif // LOG4CPLUS_FSTREAMS_HEADER_
-

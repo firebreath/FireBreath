@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    loglevel.h
 // Created: 6/2001
@@ -26,9 +27,14 @@
 #define LOG4CPLUS_LOGLEVEL_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <log4cplus/tstring.h>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
 
 #include <vector>
+#include <log4cplus/tstring.h>
+
 
 namespace log4cplus {
 
@@ -95,7 +101,11 @@ namespace log4cplus {
      * 
      * <b>Note:</b> Must return an empty <code>tstring</code> for unrecognized values.
      */
-    typedef log4cplus::tstring (*LogLevelToStringMethod)(LogLevel);
+    typedef log4cplus::tstring const & (*LogLevelToStringMethod)(LogLevel);
+
+    //! This function type is for log4cplus 1.0.x callbacks.
+    typedef log4cplus::tstring (*LogLevelToStringMethod_1_0) (LogLevel);
+
 
     /** 
      * This method type defined the signature of methods that convert strings
@@ -132,7 +142,7 @@ namespace log4cplus {
          * Note: It traverses the list of <code>LogLevelToStringMethod</code>
          *       to do this, so all "derived" LogLevels are recognized as well.
          */
-        log4cplus::tstring toString(LogLevel ll) const;
+        log4cplus::tstring const & toString(LogLevel ll) const;
         
         /**
          * This method is called by all classes internally to log4cplus to
@@ -152,6 +162,9 @@ namespace log4cplus {
          */
         void pushToStringMethod(LogLevelToStringMethod newToString);
 
+        //! For compatibility with log4cplus 1.0.x.
+        void pushToStringMethod(LogLevelToStringMethod_1_0 newToString);
+
         /**
          * When creating a "derived" LogLevel, a <code>StringToLogLevelMethod</code>
          * should be defined and registered with the LogLevelManager by calling
@@ -163,8 +176,21 @@ namespace log4cplus {
 
     private:
       // Data
-        void* toStringMethods;
-        void* fromStringMethods;
+        struct LogLevelToStringMethodRec
+        {
+            union
+            {
+                LogLevelToStringMethod func;
+                LogLevelToStringMethod_1_0 func_1_0;
+            };
+            bool use_1_0;
+        };
+
+        typedef std::vector<LogLevelToStringMethodRec> LogLevelToStringMethodList;
+        LogLevelToStringMethodList toStringMethods;
+
+        typedef std::vector<StringToLogLevelMethod> StringToLogLevelMethodList;
+        StringToLogLevelMethodList fromStringMethods;
 
       // Disable Copy
         LogLevelManager(const LogLevelManager&);

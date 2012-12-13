@@ -18,21 +18,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <log4cplus/config.hxx>
+
 #include <cstring>
 #if defined (UNICODE)
 #  include <cwctype>
 #else
 #  include <cctype>
 #endif
-#include <log4cplus/helpers/property.h>
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF8_FACET) \
+    || defined (LOG4CPLUS_HAVE_CODECVT_UTF16_FACET) \
+    || defined (LOG4CPLUS_HAVE_CODECVT_UTF32_FACET)
+#  include <codecvt>
+#endif
+#include <locale>
+#include <fstream>
+#include <sstream>
+#include <log4cplus/streams.h>
 #include <log4cplus/fstreams.h>
+#include <log4cplus/helpers/stringhelper.h>
+#include <log4cplus/helpers/property.h>
+#include <log4cplus/internal/internal.h>
+#include <log4cplus/internal/env.h>
+#include <log4cplus/helpers/loglog.h>
 
 
-namespace log4cplus
-{
+namespace log4cplus { namespace helpers {
 
 
-const tchar helpers::Properties::PROPERTIES_COMMENT_CHAR = LOG4CPLUS_TEXT('#');
+const tchar Properties::PROPERTIES_COMMENT_CHAR = LOG4CPLUS_TEXT('#');
 
 
 namespace
@@ -92,9 +106,6 @@ trim_ws (tstring & str)
 
 
 
-namespace helpers
-{
-
 ///////////////////////////////////////////////////////////////////////////////
 // Properties ctors and dtor
 ///////////////////////////////////////////////////////////////////////////////
@@ -112,12 +123,62 @@ Properties::Properties(tistream& input)
 
 
 
-Properties::Properties(const tstring& inputFile)
+Properties::Properties(const tstring& inputFile, unsigned flags)
 {
     if (inputFile.empty ())
         return;
 
-    tifstream file (LOG4CPLUS_TSTRING_TO_STRING(inputFile).c_str());
+    tifstream file;
+
+    switch (flags & fEncodingMask)
+    {
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF8_FACET) && defined (UNICODE)
+    case fUTF8:
+        file.imbue (
+            std::locale (file.getloc (),
+                new std::codecvt_utf8<tchar, 0x10FFFF,
+                    static_cast<std::codecvt_mode>(std::consume_header | std::little_endian)>));
+        break;
+#endif
+
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF16_FACET) && defined (UNICODE)
+    case fUTF16:
+        file.imbue (
+            std::locale (file.getloc (),
+                new std::codecvt_utf16<tchar, 0x10FFFF,
+                    static_cast<std::codecvt_mode>(std::consume_header | std::little_endian)>));
+        break;
+
+#elif defined (UNICODE) && defined (WIN32)
+    case fUTF16:
+        file.imbue (
+            std::locale (file.getloc (),
+                new std::codecvt<wchar_t, wchar_t, std::mbstate_t>));
+    break;
+
+#endif
+
+#if defined (LOG4CPLUS_HAVE_CODECVT_UTF32_FACET) && defined (UNICODE)
+    case fUTF32:
+        file.imbue (
+            std::locale (file.getloc (),
+                new std::codecvt_utf32<tchar, 0x10FFFF,
+                    static_cast<std::codecvt_mode>(std::consume_header | std::little_endian)>));
+        break;
+#endif
+
+    case fUnspecEncoding:;
+    default:
+        // Do nothing.
+        ;
+    }
+
+    file.open(LOG4CPLUS_FSTREAM_PREFERED_FILE_NAME(inputFile).c_str(),
+        std::ios::binary);
+    if (! file.good ())
+        helpers::getLogLog ().error (LOG4CPLUS_TEXT ("could not open file ")
+            + inputFile);
+
     init(file);
 }
 
@@ -165,24 +226,40 @@ Properties::~Properties()
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// Properties public methods
+// helpers::Properties public methods
 ///////////////////////////////////////////////////////////////////////////////
 
-tstring
-Properties::getProperty(const tstring& key) const 
+
+bool
+Properties::exists(const log4cplus::tstring& key) const
 {
-    StringMap::const_iterator it (data.find(key));
-    if (it == data.end())
-        return LOG4CPLUS_TEXT("");
-    else
-        return it->second;
+    return data.find(key) != data.end();
 }
 
 
+bool
+Properties::exists(tchar const * key) const
+{
+    return data.find(key) != data.end();
+}
+
+
+tstring const &
+Properties::getProperty(const tstring& key) const 
+{
+    return get_property_worker (key);
+}
+
+
+log4cplus::tstring const &
+Properties::getProperty(tchar const * key) const
+{
+    return get_property_worker (key);
+}
+
 
 tstring
-Properties::getProperty(const tstring& key,
-                                 const tstring& defaultVal) const
+Properties::getProperty(const tstring& key, const tstring& defaultVal) const
 {
     StringMap::const_iterator it (data.find (key));
     if (it == data.end ())
@@ -205,28 +282,27 @@ Properties::propertyNames() const
 
 
 void
-Properties::setProperty(const tstring& key, const tstring& value)
+Properties::setProperty(const log4cplus::tstring& key,
+    const log4cplus::tstring& value)
 {
     data[key] = value;
 }
 
 
 bool
-Properties::removeProperty(const tstring& key)
+Properties::removeProperty(const log4cplus::tstring& key)
 {
-    return (data.erase(key) > 0);
+    return data.erase(key) > 0;
 }
 
 
 Properties 
-Properties::getPropertySubset(
-    const tstring& prefix) const
+Properties::getPropertySubset(const log4cplus::tstring& prefix) const
 {
     Properties ret;
-    std::vector<tstring> const keys = propertyNames();
-    size_t const prefix_len = prefix.size ();
-    for (std::vector<tstring>::const_iterator it = keys.begin();
-        it != keys.end(); ++it)
+    std::size_t const prefix_len = prefix.size ();
+    std::vector<tstring> keys = propertyNames();
+    for (std::vector<tstring>::iterator it=keys.begin(); it!=keys.end(); ++it)
     {
         int result = it->compare (0, prefix_len, prefix);
         if (result == 0)
@@ -236,6 +312,81 @@ Properties::getPropertySubset(
     return ret;
 }
 
-} // namespace helpers
 
-} // namespace log4cplus
+bool
+Properties::getInt (int & val, log4cplus::tstring const & key) const
+{
+    return get_type_val_worker (val, key);
+}
+
+
+bool
+Properties::getUInt (unsigned & val, log4cplus::tstring const & key) const
+{
+    return get_type_val_worker (val, key);
+}
+
+
+bool
+Properties::getLong (long & val, log4cplus::tstring const & key) const
+{
+    return get_type_val_worker (val, key);
+}
+
+
+bool
+Properties::getULong (unsigned long & val, log4cplus::tstring const & key) const
+{
+    return get_type_val_worker (val, key);
+}
+
+
+bool
+Properties::getBool (bool & val, log4cplus::tstring const & key) const
+{
+    if (! exists (key))
+        return false;
+
+    log4cplus::tstring const & prop_val = getProperty (key);
+    return internal::parse_bool (val, prop_val);
+}
+
+
+template <typename StringType>
+log4cplus::tstring const &
+Properties::get_property_worker (StringType const & key) const
+{
+    StringMap::const_iterator it (data.find (key));
+    if (it == data.end ())
+        return log4cplus::internal::empty_str;
+    else
+        return it->second;
+}
+
+
+template <typename ValType>
+bool
+Properties::get_type_val_worker (ValType & val, log4cplus::tstring const & key)
+    const
+{
+    if (! exists (key))
+        return false;
+
+    log4cplus::tstring const & prop_val = getProperty (key);
+    log4cplus::tistringstream iss (prop_val);
+    ValType tmp_val;
+    tchar ch;
+
+    iss >> tmp_val;
+    if (! iss)
+        return false;
+    iss >> ch;
+    if (iss)
+        return false;
+
+    val = tmp_val;
+    return true;
+}
+
+
+} } // namespace log4cplus { namespace helpers {

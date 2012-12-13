@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    fileappender.h
 // Created: 6/2001
@@ -20,25 +21,29 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_FILE_APPENDER_HEADER_
-#define _LOG4CPLUS_FILE_APPENDER_HEADER_
+#ifndef LOG4CPLUS_FILE_APPENDER_HEADER_
+#define LOG4CPLUS_FILE_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
-#include <log4cplus/appender.h>
-#include <log4cplus/fstreams.h>
-#include <log4cplus/helpers/property.h>
-#include <log4cplus/helpers/timehelper.h>
 
-#if defined(__DECCXX)
-#   define LOG4CPLUS_OPEN_MODE_TYPE LOG4CPLUS_FSTREAM_NAMESPACE::ios::open_mode
-#else
-#   define LOG4CPLUS_OPEN_MODE_TYPE LOG4CPLUS_FSTREAM_NAMESPACE::ios::openmode
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
 #endif
 
-namespace log4cplus {
+#include <log4cplus/appender.h>
+#include <log4cplus/fstreams.h>
+#include <log4cplus/helpers/timehelper.h>
+#include <log4cplus/helpers/lockfile.h>
+#include <fstream>
+#include <locale>
+#include <memory>
+
+
+namespace log4cplus
+{
 
     /**
-     * Appends log events to a file.
+     * Appends log events to a file. 
      * 
      * <h3>Properties</h3>
      * <dl>
@@ -54,26 +59,57 @@ namespace log4cplus {
      * instead of being truncated at opening.</dd>
      *
      * <dt><tt>ReopenDelay</tt></dt>
-     * <dd>This property sets a delay after which the appender will
-     * try to reopen log file again, after last logging failure. The
-     * default value is 1 second. Setting the delay to 0 makes the
-     * appender not to try reopening the stream.
+     * <dd>This property sets a delay after which the appender will try
+     * to reopen log file again, after last logging failure.
      * </dd>
      *
      * <dt><tt>BufferSize</tt></dt>
      * <dd>Non-zero value of this property sets up buffering of output
      * stream using a buffer of given size.
      * </dd>
+     *
+     * <dt><tt>UseLockFile</tt></dt>
+     * <dd>Set this property to <tt>true</tt> if you want your output
+     * to go into a log file shared by multiple processes. When this
+     * property is set to true then log4cplus uses OS specific
+     * facilities (e.g., <code>lockf()</code>) to provide
+     * inter-process file locking.
+     * \sa Appender
+     * </dd>
+     *
+     * <dt><tt>LockFile</tt></dt>
+     * <dd>This property specifies lock file, file used for
+     * inter-process synchronization of log file access. When this
+     * property is not specified, the value is derived from
+     * <tt>File</tt> property by addition of ".lock" suffix. The
+     * property is only used when <tt>UseLockFile</tt> is set to true.
+     * \sa Appender
+     * </dd>
+     *
+     * <dt><tt>Locale</tt></dt>
+     * <dd>This property specifies a locale name that will be imbued
+     * into output stream. Locale can be specified either by system
+     * specific locale name, e.g., <tt>en_US.UTF-8</tt>, or by one of
+     * four recognized keywords: <tt>GLOBAL</tt>, <tt>DEFAULT</tt>
+     * (which is an alias for <tt>GLOBAL</tt>), <tt>USER</tt> and
+     * <tt>CLASSIC</tt>. When specified locale is not available,
+     * <tt>GLOBAL</tt> is used instead. It is possible to register
+     * additional locale keywords by registering an instance of
+     * <code>spi::LocaleFactory</code> in
+     * <code>spi::LocaleFactoryRegistry</code>.
+     * \sa spi::getLocaleFactoryRegistry()
+     * </dd>
+     *
      * </dl>
      */
     class LOG4CPLUS_EXPORT FileAppender : public Appender {
     public:
       // Ctors
         FileAppender(const log4cplus::tstring& filename, 
-                     LOG4CPLUS_OPEN_MODE_TYPE mode = LOG4CPLUS_FSTREAM_NAMESPACE::ios::trunc,
+                     std::ios_base::openmode mode = std::ios_base::trunc,
                      bool immediateFlush = true);
         FileAppender(const log4cplus::helpers::Properties& properties,
-                     LOG4CPLUS_OPEN_MODE_TYPE mode = LOG4CPLUS_FSTREAM_NAMESPACE::ios::trunc);
+                     std::ios_base::openmode mode = std::ios_base::trunc);
 
       // Dtor
         virtual ~FileAppender();
@@ -81,10 +117,17 @@ namespace log4cplus {
       // Methods
         virtual void close();
 
+      //! Redefine default locale for output stream. It may be a good idea to
+      //! provide UTF-8 locale in case UNICODE macro is defined.
+        virtual std::locale imbue(std::locale const& loc);
+
+      //! \returns Locale imbued in fstream. 
+        virtual std::locale getloc () const;
+
     protected:
         virtual void append(const spi::InternalLoggingEvent& event);
 
-        void open(LOG4CPLUS_OPEN_MODE_TYPE mode);
+        void open(std::ios_base::openmode mode);
         bool reopen();
 
       // Data
@@ -116,12 +159,14 @@ namespace log4cplus {
 
         log4cplus::tofstream out;
         log4cplus::tstring filename;
+        log4cplus::tstring localeName;
 
         log4cplus::helpers::Time reopen_time;
 
     private:
-        void init(const log4cplus::tstring& filename,
-                  LOG4CPLUS_OPEN_MODE_TYPE mode);
+        LOG4CPLUS_PRIVATE void init(const log4cplus::tstring& filename,
+            std::ios_base::openmode mode,
+            const log4cplus::tstring& lockFileName);
 
       // Disallow copying of instances of this class
         FileAppender(const FileAppender&);
@@ -164,14 +209,14 @@ namespace log4cplus {
 
     protected:
         virtual void append(const spi::InternalLoggingEvent& event);
-        void rollover();
+        void rollover(bool alreadyLocked = false);
 
       // Data
         long maxFileSize;
         int maxBackupIndex;
 
     private:
-        void init(long maxFileSize, int maxBackupIndex);
+        LOG4CPLUS_PRIVATE void init(long maxFileSize, int maxBackupIndex);
     };
 
 
@@ -217,7 +262,7 @@ namespace log4cplus {
 
     protected:
         virtual void append(const spi::InternalLoggingEvent& event);
-        void rollover();
+        void rollover(bool alreadyLocked = false);
         log4cplus::helpers::Time calculateNextRolloverTime(const log4cplus::helpers::Time& t) const;
         log4cplus::tstring getFilename(const log4cplus::helpers::Time& t) const;
 
@@ -228,10 +273,10 @@ namespace log4cplus {
         int maxBackupIndex;
 
     private:
-        void init(DailyRollingFileSchedule schedule);
+        LOG4CPLUS_PRIVATE void init(DailyRollingFileSchedule schedule);
     };
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_FILE_APPENDER_HEADER_
+#endif // LOG4CPLUS_FILE_APPENDER_HEADER_
 

@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,17 +23,37 @@
 #include <log4cplus/streams.h>
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/helpers/stringhelper.h>
+#include <log4cplus/helpers/property.h>
 #include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
+#include <ostream>
 
-using namespace std;
-using namespace log4cplus::helpers;
+
+namespace log4cplus
+{
+
+
+namespace helpers
+{
+
+extern log4cplus::thread::Mutex const & getConsoleOutputMutex ();
+
+} // namespace helpers
+
+
+log4cplus::thread::Mutex const &
+ConsoleAppender::getOutputMutex ()
+{
+    return helpers::getConsoleOutputMutex ();
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::ConsoleAppender ctors and dtor
+// ConsoleAppender ctors and dtor
 //////////////////////////////////////////////////////////////////////////////
 
-log4cplus::ConsoleAppender::ConsoleAppender(bool logToStdErr_, bool immediateFlush_)
+ConsoleAppender::ConsoleAppender(bool logToStdErr_,
+    bool immediateFlush_)
 : logToStdErr(logToStdErr_),
   immediateFlush(immediateFlush_)
 {
@@ -41,24 +61,18 @@ log4cplus::ConsoleAppender::ConsoleAppender(bool logToStdErr_, bool immediateFlu
 
 
 
-log4cplus::ConsoleAppender::ConsoleAppender(const log4cplus::helpers::Properties properties)
+ConsoleAppender::ConsoleAppender(const helpers::Properties & properties)
 : Appender(properties),
   logToStdErr(false),
   immediateFlush(false)
 {
-    tstring val = toLower(properties.getProperty(LOG4CPLUS_TEXT("logToStdErr")));
-    if(val == LOG4CPLUS_TEXT("true")) {
-        logToStdErr = true;
-    }
-    if(properties.exists( LOG4CPLUS_TEXT("ImmediateFlush") )) {
-        tstring tmp = properties.getProperty( LOG4CPLUS_TEXT("ImmediateFlush") );
-        immediateFlush = (toLower(tmp) == LOG4CPLUS_TEXT("true"));
-    }
+    properties.getBool (logToStdErr, LOG4CPLUS_TEXT("logToStdErr"));
+    properties.getBool (immediateFlush, LOG4CPLUS_TEXT("ImmediateFlush"));
 }
 
 
 
-log4cplus::ConsoleAppender::~ConsoleAppender()
+ConsoleAppender::~ConsoleAppender()
 {
     destructorImpl();
 }
@@ -66,36 +80,34 @@ log4cplus::ConsoleAppender::~ConsoleAppender()
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::ConsoleAppender public methods
+// ConsoleAppender public methods
 //////////////////////////////////////////////////////////////////////////////
 
 void 
-log4cplus::ConsoleAppender::close()
+ConsoleAppender::close()
 {
-    getLogLog().debug(LOG4CPLUS_TEXT("Entering ConsoleAppender::close().."));
+    helpers::getLogLog().debug(
+        LOG4CPLUS_TEXT("Entering ConsoleAppender::close().."));
     closed = true;
 }
 
 
 
 //////////////////////////////////////////////////////////////////////////////
-// log4cplus::ConsoleAppender protected methods
+// ConsoleAppender protected methods
 //////////////////////////////////////////////////////////////////////////////
 
-// Normally, append() methods do not need to be locked since they are
-// called by doAppend() which performs the locking.  However, this locks
-// on the LogLog instance, so we don't have multiple threads writing to
-// tcout and tcerr
 void
-log4cplus::ConsoleAppender::append(const spi::InternalLoggingEvent& event)
+ConsoleAppender::append(const spi::InternalLoggingEvent& event)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( getLogLog().mutex )
-        log4cplus::tostream& output = (logToStdErr ? tcerr : tcout);
-        layout->formatAndAppend(output, event);
-        if(immediateFlush) {
-            output.flush();
-        }
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (getOutputMutex ());
+
+    tostream& output = (logToStdErr ? tcerr : tcout);
+    layout->formatAndAppend(output, event);
+    if(immediateFlush) {
+        output.flush();
+    }
 }
 
 
+} // namespace log4cplus

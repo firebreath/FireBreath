@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
 #include <log4cplus/hierarchy.h>
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/spi/loggerimpl.h>
+#include <utility>
 
 
 namespace log4cplus
@@ -44,9 +45,7 @@ DefaultLoggerFactory::makeNewLoggerInstance (const log4cplus::tstring & name,
 Hierarchy & 
 Logger::getDefaultHierarchy ()
 {
-    static Hierarchy defaultHierarchy;
-
-    return defaultHierarchy;
+    return log4cplus::getDefaultHierarchy ();
 }
 
 
@@ -128,6 +127,25 @@ Logger::operator = (const Logger& rhs)
 }
 
 
+#if defined (LOG4CPLUS_HAVE_RVALUE_REFS)
+Logger::Logger (Logger && rhs)
+    : spi::AppenderAttachable (std::move (rhs))
+    , value (std::move (rhs.value))
+{
+    rhs.value = 0;
+}
+
+
+Logger &
+Logger::operator = (Logger && rhs)
+{
+    Logger (std::move (rhs)).swap (*this);
+    return *this;
+}
+
+#endif
+
+
 Logger::~Logger () 
 {
     if (value)
@@ -153,7 +171,9 @@ Logger::getParent () const
         return Logger (value->parent.get ());
     else
     {
-        value->getLogLog().error(LOG4CPLUS_TEXT("********* This logger has no parent: " + getName()));
+        helpers::getLogLog().error(
+            LOG4CPLUS_TEXT("********* This logger has no parent: "
+            + getName()));
         return *this;
     }
 }
@@ -232,10 +252,24 @@ Logger::log (LogLevel ll, const log4cplus::tstring& message, const char* file,
 
 
 void
+Logger::log (spi::InternalLoggingEvent const & ev) const
+{
+    value->log (ev);
+}
+
+
+void
 Logger::forcedLog (LogLevel ll, const log4cplus::tstring& message,
     const char* file, int line) const
 {
     value->forcedLog (ll, message, file, line);
+}
+
+
+void
+Logger::forcedLog (spi::InternalLoggingEvent const & ev) const
+{
+    value->forcedLog (ev);
 }
 
 
@@ -274,7 +308,7 @@ Logger::getHierarchy () const
 }
 
 
-log4cplus::tstring
+log4cplus::tstring const &
 Logger::getName () const
 {
     return value->getName ();

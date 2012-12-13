@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    Layout.h
 // Created: 6/2001
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2001-2009 Tad E. Smith
+// Copyright 2001-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,17 +21,18 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_LAYOUT_HEADER_
-#define _LOG4CPLUS_LAYOUT_HEADER_
+#ifndef LOG4CPLUS_LAYOUT_HEADER_
+#define LOG4CPLUS_LAYOUT_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/loglevel.h>
 #include <log4cplus/streams.h>
 #include <log4cplus/tstring.h>
-#include <log4cplus/helpers/logloguser.h>
-#include <log4cplus/helpers/property.h>
-#include <log4cplus/helpers/timehelper.h>
-#include <log4cplus/spi/loggingevent.h>
 
 #include <vector>
 
@@ -38,8 +40,28 @@
 namespace log4cplus {
 
     // Forward Declarations
-    namespace pattern {
+    namespace pattern
+    {
+
         class PatternConverter;
+
+    }
+
+    
+    namespace helpers
+    {
+
+        class Properties;
+        class Time;
+
+    }
+
+
+    namespace spi
+    {
+
+        class InternalLoggingEvent;
+
     }
 
 
@@ -47,22 +69,23 @@ namespace log4cplus {
      * This class is used to layout strings sent to an {@link
      * log4cplus::Appender}.
      */
-    class LOG4CPLUS_EXPORT Layout : protected :: log4cplus::helpers::LogLogUser {
+    class LOG4CPLUS_EXPORT Layout
+    {
     public:
-        Layout() : llmCache(getLogLevelManager()) {}
-        Layout(const log4cplus::helpers::Properties&) 
-          : llmCache(getLogLevelManager())  {}
-        virtual ~Layout() {}
+        Layout();
+        Layout(const helpers::Properties& properties);
+        virtual ~Layout() = 0;
 
         virtual void formatAndAppend(log4cplus::tostream& output, 
-                                     const log4cplus::spi::InternalLoggingEvent& event) = 0;
+            const log4cplus::spi::InternalLoggingEvent& event) = 0;
+
     protected:
         LogLevelManager& llmCache;
         
     private:
       // Disable copy
         Layout(const Layout&);
-        Layout& operator=(Layout&);
+        Layout& operator=(Layout const &);
     };
 
 
@@ -77,10 +100,13 @@ namespace log4cplus {
      *
      * {@link PatternLayout} offers a much more powerful alternative.
      */
-    class LOG4CPLUS_EXPORT SimpleLayout : public Layout {
+    class LOG4CPLUS_EXPORT SimpleLayout
+        : public Layout
+    {
     public:
-        SimpleLayout() {}
-        SimpleLayout(const log4cplus::helpers::Properties& properties) : Layout(properties) {}
+        SimpleLayout();
+        SimpleLayout(const log4cplus::helpers::Properties& properties);
+        virtual ~SimpleLayout();
 
         virtual void formatAndAppend(log4cplus::tostream& output, 
                                      const log4cplus::spi::InternalLoggingEvent& event);
@@ -129,7 +155,9 @@ namespace log4cplus {
      * 
      *  PatternLayout offers a much more flexible alternative.
      */
-    class LOG4CPLUS_EXPORT TTCCLayout : public Layout {
+    class LOG4CPLUS_EXPORT TTCCLayout
+        : public Layout
+    {
     public:
       // Ctor and dtor
         TTCCLayout(bool use_gmtime = false);
@@ -150,6 +178,7 @@ namespace log4cplus {
     };
 
 
+    LOG4CPLUS_EXPORT helpers::Time const & getTTCCLayoutTimeBase ();
 
 
     /**
@@ -177,16 +206,16 @@ namespace log4cplus {
      * Let the conversion pattern be <b>"%-5p [%t]: %m%n"</b> and assume
      * that the log4cplus environment was set to use a PatternLayout. Then the
      * statements
-     * <pre>
+     * <code><pre>
      * Logger root = Logger.getRoot();
      * LOG4CPLUS_DEBUG(root, "Message 1");
      * LOG4CPLUS_WARN(root, "Message 2");
-     * </pre>
+     * </pre></code>
      * would yield the output
-     * <pre>
+     * <tt><pre>
      * DEBUG [main]: Message 1
      * WARN  [main]: Message 2  
-     * </pre>
+     * </pre></tt>
      * 
      * Note that there is no explicit separator between text and
      * conversion specifiers. The pattern parser knows when it has reached
@@ -203,7 +232,14 @@ namespace log4cplus {
      * <td>Conversion Character</td>
      * <td>Effect</td>
      * </tr>
-     * 
+     *
+     * <tr>
+     *   <td align=center><b>b</b></td>
+     *
+     *   <td>Used to output file name component of path name.
+     *   E.g. <tt>main.cxx</tt> from path <tt>../../main.cxx</tt>.</td>
+     * </tr>
+     *
      * <tr>
      *   <td align=center><b>c</b></td>
      * 
@@ -274,7 +310,7 @@ namespace log4cplus {
      *   All of the above information applies.
      * </td>
      * </tr>
-     * 
+     *
      * <tr>
      *   <td align=center><b>F</b></td>
      * 
@@ -282,8 +318,7 @@ namespace log4cplus {
      *   issued.
      * 
      *   <b>NOTE</b> Unlike log4j, there is no performance penalty for
-     *   calling this method.
-     * 
+     *   calling this method.</td>
      * </tr>
      * 
      * <tr> 
@@ -332,12 +367,25 @@ namespace log4cplus {
      *   calling this method.
      * 
      * </tr>
-     * 
-     *  
+     *
      * <tr>
      *   <td align=center><b>m</b></td>
      *   <td>Used to output the application supplied message associated with 
      *   the logging event.</td>   
+     * </tr>
+     *
+     * <tr>
+     *   <td align=center><b>M</b></td>
+     *
+     *   <td>Used to output function name using
+     *   <code>__FUNCTION__</code> or similar macro.
+     *
+     *   <b>NOTE</b> The <code>__FUNCTION__</code> macro is not
+     *   standard but it is common extension provided by all compilers
+     *   (as of 2010). In case it is missing or in case this feature
+     *   is disabled using the
+     *   <code>LOG4CPLUS_DISABLE_FUNCTION_MACRO</code> macro, %M
+     *   expands to an empty string.</td>
      * </tr>
      * 
      * <tr>
@@ -351,11 +399,24 @@ namespace log4cplus {
      *   <td align=center><b>p</b></td>
      *   <td>Used to output the LogLevel of the logging event.</td>
      * </tr>
+     *
+     * <tr>
+     *   <td align=center><b>r</b></td>
+     *   <td>Used to output miliseconds since program start
+     *   of the logging event.</td>
+     * </tr>
      * 
      * <tr>
      *   <td align=center><b>t</b></td>
      * 
      *   <td>Used to output the name of the thread that generated the
+     *   logging event.</td>
+     * </tr>
+     *
+     * <tr>
+     *   <td align=center><b>T</b></td>
+     * 
+     *   <td>Used to output alternative name of the thread that generated the
      *   logging event.</td>
      * </tr>
      *
@@ -374,14 +435,6 @@ namespace log4cplus {
      *   </td>     
      * </tr>
      *
-     * <tr>
-     *   <td align=center><b>X{N}</b></td>
-     * 
-     *   <td>Like <b>%x</b> but with limit of NDC depth specified
-     *   as precision, e.g. <code>%X{3}</code>. Using N = 0 is equivalent to
-     *   using <code>%x</code>.</td>
-     * </tr>
-     * 
      * <tr>
      *   <td align=center><b>"%%"</b></td>
      *   <td>The sequence "%%" outputs a single percent sign.
@@ -502,7 +555,9 @@ namespace log4cplus {
      * Philip E. Margolis' highly recommended book "C -- a Software
      * Engineering Approach", ISBN 0-387-97389-3.
      */
-    class LOG4CPLUS_EXPORT PatternLayout : public Layout {
+    class LOG4CPLUS_EXPORT PatternLayout
+        : public Layout
+    {
     public:
       // Ctors and dtor
         PatternLayout(const log4cplus::tstring& pattern);
@@ -529,5 +584,5 @@ namespace log4cplus {
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_LAYOUT_HEADER_
+#endif // LOG4CPLUS_LAYOUT_HEADER_
 
