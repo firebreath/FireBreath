@@ -61,7 +61,10 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::DocumentPtr to the created Document object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static DocumentPtr create(const FB::JSObjectPtr &api) { return api->getHost()->_createDocument(api); }
+        static DocumentPtr create(const FB::JSObjectPtr &api) {
+			if (!api) { return DocumentPtr(); }
+			return api->getHost()->_createDocument(api);
+		}
 
     public:
 

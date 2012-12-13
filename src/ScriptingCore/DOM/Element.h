@@ -58,7 +58,10 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::ElementPtr to the created Element object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static ElementPtr create(const FB::JSObjectPtr &api) { return api->getHost()->_createElement(api); }
+        static ElementPtr create(const FB::JSObjectPtr &api) {
+			if (!api) { return ElementPtr(); } // If the API is null, return a NULL Element
+			return api->getHost()->_createElement(api);
+		}
 
     public:
 
