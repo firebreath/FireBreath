@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    timehelper.h
 // Created: 6/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,19 +21,22 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
-#define _LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
+#ifndef LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
+#define LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/tstring.h>
 
 #if defined (LOG4CPLUS_HAVE_TIME_H)
 #include <time.h>
 #endif
 
-#if ! defined (_WIN32_WCE)
 #include <ctime>
-#endif
 
 
 namespace log4cplus {
@@ -40,15 +44,8 @@ namespace log4cplus {
 namespace helpers {
 
 
-#if defined (_WIN32_WCE)
-using ::time_t;
-using ::tm;
-
-#else
 using std::time_t;
 using std::tm;
-
-#endif
 
 
 /**
@@ -96,7 +93,7 @@ public:
     /**
      * Returns this Time as a <code>time_t</code> value.
      */
-    time_t getTime() const;
+    time_t getTime() const LOG4CPLUS_ATTRIBUTE_PURE;
 
     /**
      * Populates <code>tm</code> using the <code>gmtime()</code>
@@ -133,9 +130,6 @@ public:
     Time& operator*=(long rhs);
 
 private:
-    void build_q_value (log4cplus::tstring & q_str) const;
-    void build_uc_q_value (log4cplus::tstring & uc_q_str) const;
-
   // Data
     time_t tv_sec;  /* seconds */
     long tv_usec;  /* microseconds */
@@ -156,24 +150,30 @@ LOG4CPLUS_EXPORT const log4cplus::helpers::Time operator*
                                     long rhs);
 
 LOG4CPLUS_EXPORT bool operator<(const log4cplus::helpers::Time& lhs,
-                                const log4cplus::helpers::Time& rhs);
+                                const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 LOG4CPLUS_EXPORT bool operator<=(const log4cplus::helpers::Time& lhs,
-                                 const log4cplus::helpers::Time& rhs);
+                                 const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 
 LOG4CPLUS_EXPORT bool operator>(const log4cplus::helpers::Time& lhs,
-                                const log4cplus::helpers::Time& rhs);
+                                const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 LOG4CPLUS_EXPORT bool operator>=(const log4cplus::helpers::Time& lhs,
-                                 const log4cplus::helpers::Time& rhs);
+                                 const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 
 LOG4CPLUS_EXPORT bool operator==(const log4cplus::helpers::Time& lhs,
-                                 const log4cplus::helpers::Time& rhs);
+                                 const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 LOG4CPLUS_EXPORT bool operator!=(const log4cplus::helpers::Time& lhs,
-                                 const log4cplus::helpers::Time& rhs);
+                                 const log4cplus::helpers::Time& rhs)
+    LOG4CPLUS_ATTRIBUTE_PURE;
 
 } // namespace helpers
 
 } // namespace log4cplus
 
 
-#endif // _LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
+#endif // LOG4CPLUS_HELPERS_TIME_HELPER_HEADER_
 

@@ -23,34 +23,49 @@
 #include <log4cplus/helpers/loglog.h>
 #include <log4cplus/helpers/pointer.h>
 #include <log4cplus/helpers/stringhelper.h>
+#include <log4cplus/helpers/property.h>
 #include <log4cplus/spi/factory.h>
 #include <log4cplus/spi/loggingevent.h>
+#include <log4cplus/internal/internal.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
+#include <stdexcept>
 
-using namespace log4cplus;
-using namespace log4cplus::helpers;
-using namespace log4cplus::spi;
 
+namespace log4cplus
+{
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // log4cplus::ErrorHandler dtor
 ///////////////////////////////////////////////////////////////////////////////
 
+ErrorHandler::ErrorHandler ()
+{ }
+
+
 ErrorHandler::~ErrorHandler()
-{
-}
+{ }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// log4cplus::OnlyOnceErrorHandler public methods
+// log4cplus::OnlyOnceErrorHandler 
 ///////////////////////////////////////////////////////////////////////////////
+
+OnlyOnceErrorHandler::OnlyOnceErrorHandler()
+    : firstTime(true)
+{ }
+
+
+OnlyOnceErrorHandler::~OnlyOnceErrorHandler ()
+{ }
+
 
 void
 OnlyOnceErrorHandler::error(const log4cplus::tstring& err)
 {
     if(firstTime) {
-        getLogLog().error(err);
+        helpers::getLogLog().error(err);
         firstTime = false;
     }
 }
@@ -73,45 +88,53 @@ Appender::Appender()
  : layout(new SimpleLayout()),
    name( LOG4CPLUS_TEXT("") ),
    threshold(NOT_SET_LOG_LEVEL),
-   errorHandler(new OnlyOnceErrorHandler()),
+   errorHandler(new OnlyOnceErrorHandler),
+   useLockFile(false),
    closed(false)
 {
 }
 
 
 
-Appender::Appender(const log4cplus::helpers::Properties properties)
- : layout(new SimpleLayout()),
-   name( LOG4CPLUS_TEXT("") ),
-   threshold(NOT_SET_LOG_LEVEL),
-   errorHandler(new OnlyOnceErrorHandler()),
-   closed(false)
+Appender::Appender(const log4cplus::helpers::Properties & properties)
+    : layout(new SimpleLayout())
+    , name()
+    , threshold(NOT_SET_LOG_LEVEL)
+    , errorHandler(new OnlyOnceErrorHandler)
+    , useLockFile(false)
+    , closed(false)
 {
-    if(properties.exists( LOG4CPLUS_TEXT("layout") )) {
-        log4cplus::tstring factoryName = properties.getProperty( LOG4CPLUS_TEXT("layout") );
-        LayoutFactory* factory = getLayoutFactoryRegistry().get(factoryName);
+    if(properties.exists( LOG4CPLUS_TEXT("layout") ))
+    {
+        log4cplus::tstring const & factoryName
+            = properties.getProperty( LOG4CPLUS_TEXT("layout") );
+        spi::LayoutFactory* factory
+            = spi::getLayoutFactoryRegistry().get(factoryName);
         if(factory == 0) {
-            getLogLog().error(  LOG4CPLUS_TEXT("Cannot find LayoutFactory: \"")
-                              + factoryName
-                              + LOG4CPLUS_TEXT("\"") );
+            helpers::getLogLog().error(
+                LOG4CPLUS_TEXT("Cannot find LayoutFactory: \"")
+                + factoryName
+                + LOG4CPLUS_TEXT("\"") );
             return;
         }
 
-        Properties layoutProperties =
+        helpers::Properties layoutProperties =
                 properties.getPropertySubset( LOG4CPLUS_TEXT("layout.") );
         try {
             std::auto_ptr<Layout> newLayout(factory->createObject(layoutProperties));
             if(newLayout.get() == 0) {
-                getLogLog().error(  LOG4CPLUS_TEXT("Failed to create appender: ")
-                                  + factoryName);
+                helpers::getLogLog().error(
+                    LOG4CPLUS_TEXT("Failed to create appender: ")
+                    + factoryName);
             }
             else {
                 layout = newLayout;
             }
         }
-        catch(std::exception& e) {
-            getLogLog().error(  LOG4CPLUS_TEXT("Error while creating Layout: ")
-                              + LOG4CPLUS_C_STR_TO_TSTRING(e.what()));
+        catch(std::exception const & e) {
+            helpers::getLogLog().error( 
+                LOG4CPLUS_TEXT("Error while creating Layout: ")
+                + LOG4CPLUS_C_STR_TO_TSTRING(e.what()));
             return;
         }
 
@@ -125,33 +148,61 @@ Appender::Appender(const log4cplus::helpers::Properties properties)
     }
 
     // Configure the filters
-    Properties filterProps = properties.getPropertySubset( LOG4CPLUS_TEXT("filters.") );
-    int filterCount = 0;
-    FilterPtr filterChain;
-    tstring filterName, factoryName;
-    while( filterProps.exists(filterName = convertIntegerToString(++filterCount)) ) {
-        factoryName = filterProps.getProperty(filterName);
-        FilterFactory* factory = getFilterFactoryRegistry().get(factoryName);
+    helpers::Properties filterProps
+        = properties.getPropertySubset( LOG4CPLUS_TEXT("filters.") );
+    unsigned filterCount = 0;
+    spi::FilterPtr filterChain;
+    tstring filterName;
+    while (filterProps.exists(
+        filterName = helpers::convertIntegerToString (++filterCount)))
+    {
+        tstring const & factoryName = filterProps.getProperty(filterName);
+        spi::FilterFactory* factory
+            = spi::getFilterFactoryRegistry().get(factoryName);
 
-        if(factory == 0) {
+        if(! factory)
+        {
             tstring err = LOG4CPLUS_TEXT("Appender::ctor()- Cannot find FilterFactory: ");
-            getLogLog().error(err + factoryName);
+            helpers::getLogLog().error(err + factoryName);
             continue;
         }
-        FilterPtr tmp_filter = factory->createObject
-                      (filterProps.getPropertySubset(filterName + LOG4CPLUS_TEXT(".")));
-        if(tmp_filter.get() == 0) {
+        spi::FilterPtr tmpFilter = factory->createObject (
+            filterProps.getPropertySubset(filterName + LOG4CPLUS_TEXT(".")));
+        if (! tmpFilter)
+        {
             tstring err = LOG4CPLUS_TEXT("Appender::ctor()- Failed to create filter: ");
-            getLogLog().error(err + filterName);
+            helpers::getLogLog().error(err + filterName);
         }
-        if(filterChain.get() == 0) {
-            filterChain = tmp_filter;
-        }
-        else {
-            filterChain->appendFilter(tmp_filter);
-        }
+        if (! filterChain)
+            filterChain = tmpFilter;
+        else
+            filterChain->appendFilter(tmpFilter);
     }
     setFilter(filterChain);
+
+    properties.getBool (useLockFile, LOG4CPLUS_TEXT("UseLockFile"));
+    if (useLockFile)
+    {
+        tstring const & lockFileName
+            = properties.getProperty (LOG4CPLUS_TEXT ("LockFile"));
+        if (! lockFileName.empty ())
+        {
+            try
+            {
+                lockFile.reset (new helpers::LockFile (lockFileName));
+            }
+            catch (std::runtime_error const &)
+            {
+                return;
+            }
+        }
+        else
+        {
+            helpers::getLogLog ().debug (
+                LOG4CPLUS_TEXT (
+                    "UseLockFile is true but LockFile is not specified"));
+        }
+    }
 }
 
 
@@ -167,15 +218,14 @@ Appender::~Appender()
 void
 Appender::destructorImpl()
 {
-    getLogLog().debug(  LOG4CPLUS_TEXT("Destroying appender named [")
-                      + name
-                      + LOG4CPLUS_TEXT("]."));
+    helpers::getLogLog().debug(  LOG4CPLUS_TEXT("Destroying appender named [")
+        + name
+        + LOG4CPLUS_TEXT("]."));
 
     // An appender might be closed then destroyed. There is no
     // point in closing twice.
-    if(closed) {
+    if(closed)
         return;
-    }
 
     close();
     closed = true;
@@ -186,26 +236,56 @@ Appender::destructorImpl()
 void
 Appender::doAppend(const log4cplus::spi::InternalLoggingEvent& event)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( access_mutex )
-        if(closed) {
-            getLogLog().error(  LOG4CPLUS_TEXT("Attempted to append to closed appender named [")
-                              + name
-                              + LOG4CPLUS_TEXT("]."));
+    thread::MutexGuard guard (access_mutex);
+
+    if(closed) {
+        helpers::getLogLog().error(
+            LOG4CPLUS_TEXT("Attempted to append to closed appender named [")
+            + name
+            + LOG4CPLUS_TEXT("]."));
+        return;
+    }
+
+    // Check appender's threshold logging level.
+
+    if (! isAsSevereAsThreshold(event.getLogLevel()))
+        return;
+
+    // Evaluate filters attached to this appender.
+
+    if (checkFilter(filter.get(), event) == spi::DENY)
+        return;
+
+    // Lock system wide lock.
+
+    helpers::LockFileGuard lfguard;
+    if (useLockFile && lockFile.get ())
+    {
+        try
+        {
+            lfguard.attach_and_lock (*lockFile);
+        }
+        catch (std::runtime_error const &)
+        {
             return;
         }
+    }
 
-        if(!isAsSevereAsThreshold(event.getLogLevel())) {
-            return;
-        }
+    // Finally append given event.
 
-        if(checkFilter(filter.get(), event) == DENY) {
-            return;
-        }
-
-        append(event);
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    append(event);
 }
 
+
+tstring &
+Appender::formatEvent (const spi::InternalLoggingEvent& event) const
+{
+    internal::appender_sratch_pad & appender_sp = internal::get_appender_sp ();
+    detail::clear_tostringstream (appender_sp.oss);
+    layout->formatAndAppend(appender_sp.oss, event);
+    appender_sp.oss.str().swap (appender_sp.str);
+    return appender_sp.str;
+}
 
 
 log4cplus::tstring
@@ -217,9 +297,9 @@ Appender::getName()
 
 
 void
-Appender::setName(const log4cplus::tstring& name_)
+Appender::setName(const log4cplus::tstring& n)
 {
-    this->name = name_;
+    this->name = n;
 }
 
 
@@ -234,15 +314,18 @@ Appender::getErrorHandler()
 void
 Appender::setErrorHandler(std::auto_ptr<ErrorHandler> eh)
 {
-    if(eh.get() == NULL) {
+    if (! eh.get())
+    {
         // We do not throw exception here since the cause is probably a
         // bad config file.
-        getLogLog().warn(LOG4CPLUS_TEXT("You have tried to set a null error-handler."));
+        helpers::getLogLog().warn(
+            LOG4CPLUS_TEXT("You have tried to set a null error-handler."));
         return;
     }
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( access_mutex )
-        this->errorHandler = eh;
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+
+    thread::MutexGuard guard (access_mutex);
+
+    this->errorHandler = eh;
 }
 
 
@@ -250,9 +333,9 @@ Appender::setErrorHandler(std::auto_ptr<ErrorHandler> eh)
 void
 Appender::setLayout(std::auto_ptr<Layout> lo)
 {
-    LOG4CPLUS_BEGIN_SYNCHRONIZE_ON_MUTEX( access_mutex )
-        this->layout = lo;
-    LOG4CPLUS_END_SYNCHRONIZE_ON_MUTEX;
+    thread::MutexGuard guard (access_mutex);
+
+    this->layout = lo;
 }
 
 
@@ -264,3 +347,4 @@ Appender::getLayout()
 }
 
 
+} // namespace log4cplus

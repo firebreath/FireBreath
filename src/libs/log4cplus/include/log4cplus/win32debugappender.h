@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    win32debugappender.h
 // Created: 12/2003
@@ -20,14 +21,18 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
-#define _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
+#ifndef LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
+#define LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
-#if defined(_WIN32)
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
+#if defined (LOG4CPLUS_HAVE_OUTPUTDEBUGSTRING) 
 
 #include <log4cplus/appender.h>
-#include <log4cplus/helpers/property.h>
 
 
 namespace log4cplus {
@@ -60,6 +65,5 @@ namespace log4cplus {
 
 } // end namespace log4cplus
 
-#endif // _WIN32
-#endif // _LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_
-
+#endif // LOG4CPLUS_HAVE_OUTPUTDEBUGSTRING
+#endif // LOG4CPLUS_WIN32DEBUG_APPENDER_HEADER_

@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    logloguser.h
 // Created: 6/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,10 +21,14 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HELPERS_LOGLOG_USER
-#define _LOG4CPLUS_HELPERS_LOGLOG_USER
+#ifndef LOG4CPLUS_HELPERS_LOGLOG_USER
+#define LOG4CPLUS_HELPERS_LOGLOG_USER
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
 
 
 namespace log4cplus {
@@ -36,7 +41,8 @@ namespace log4cplus {
          * that uses the LogLog class should extend this class and retrieve
          * their reference to LogLog using the method provided.
          */
-        class LOG4CPLUS_EXPORT LogLogUser {
+        class LOG4CPLUS_EXPORT LogLogUser
+        {
         public:
           // ctor and dtor
             LogLogUser();
@@ -48,15 +54,11 @@ namespace log4cplus {
             
           // operators
             LogLogUser& operator=(const LogLogUser& rhs);
-
-        private:
-          // Data
-            void* loglogRef;
         };
 
     } // end namespace helpers
 } // end namespace log4cplus
 
 
-#endif // _LOG4CPLUS_HELPERS_LOGLOG_USER
+#endif // LOG4CPLUS_HELPERS_LOGLOG_USER
 

@@ -1,10 +1,11 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    hierarchylocker.h
 // Created: 8/2003
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,13 +21,25 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
-#define _LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
+#ifndef LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
+#define LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
 
-#include <log4cplus/hierarchy.h>
+#include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
+#include <log4cplus/tstring.h>
+#include <log4cplus/appender.h>
+#include <log4cplus/logger.h>
 
 
-namespace log4cplus {
+namespace log4cplus
+{
+
+    class Hierarchy;
+
 
     /**
      * This is used to lock a Hierarchy.  The dtor unlocks the Hierarchy.
@@ -57,11 +70,11 @@ namespace log4cplus {
     private:
       // Data
         Hierarchy& h;
-        log4cplus::thread::Guard hierarchyLocker;
+        log4cplus::thread::MutexGuard hierarchyLocker;
         LoggerList loggerList;
     };
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
+#endif // LOG4CPLUS_HIERARCHY_LOCKER_HEADER_
 

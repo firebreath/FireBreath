@@ -4,7 +4,7 @@
 // Author:  Tad E. Smith
 //
 //
-// Copyright 2003-2009 Tad E. Smith
+// Copyright 2003-2010 Tad E. Smith
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,30 +19,30 @@
 // limitations under the License.
 
 #include <log4cplus/nullappender.h>
+#include <log4cplus/thread/syncprims-pub-impl.h>
 
-using namespace std;
-using namespace log4cplus;
-using namespace log4cplus::helpers;
 
+namespace log4cplus
+{
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// log4cplus::NullAppender ctors and dtor
+// NullAppender ctors and dtor
 ///////////////////////////////////////////////////////////////////////////////
 
-log4cplus::NullAppender::NullAppender()
+NullAppender::NullAppender()
 {
 }
 
 
-log4cplus::NullAppender::NullAppender(const log4cplus::helpers::Properties& properties)
+NullAppender::NullAppender(const helpers::Properties& properties)
 : Appender(properties)
 {
 }
 
 
 
-log4cplus::NullAppender::~NullAppender()
+NullAppender::~NullAppender()
 {
     destructorImpl();
 }
@@ -50,25 +50,26 @@ log4cplus::NullAppender::~NullAppender()
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// log4cplus::NullAppender public methods
+// NullAppender public methods
 ///////////////////////////////////////////////////////////////////////////////
 
 void
-log4cplus::NullAppender::close()
+NullAppender::close()
 {
 }
 
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// log4cplus::NullAppender protected methods
+// NullAppender protected methods
 ///////////////////////////////////////////////////////////////////////////////
 
 // This method does not need to be locked since it is called by
 // doAppend() which performs the locking
 void
-log4cplus::NullAppender::append(const spi::InternalLoggingEvent&)
+NullAppender::append(const spi::InternalLoggingEvent&)
 {
 }
 
 
+} // namespace log4cplus

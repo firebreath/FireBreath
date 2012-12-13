@@ -1,3 +1,4 @@
+// -*- C++ -*-
 // Module:  Log4CPLUS
 // File:    consoleappender.h
 // Created: 6/2001
@@ -20,10 +21,15 @@
 
 /** @file */
 
-#ifndef _LOG4CPLUS_CONSOLE_APPENDER_HEADER_
-#define _LOG4CPLUS_CONSOLE_APPENDER_HEADER_
+#ifndef LOG4CPLUS_CONSOLE_APPENDER_HEADER_
+#define LOG4CPLUS_CONSOLE_APPENDER_HEADER_
 
 #include <log4cplus/config.hxx>
+
+#if defined (LOG4CPLUS_HAVE_PRAGMA_ONCE)
+#pragma once
+#endif
+
 #include <log4cplus/appender.h>
 
 namespace log4cplus {
@@ -43,18 +49,23 @@ namespace log4cplus {
      * each appended event.</dd>
      * 
      * </dl>
+     * \sa Appender
      */
     class LOG4CPLUS_EXPORT ConsoleAppender : public Appender {
     public:
       // Ctors
         ConsoleAppender(bool logToStdErr = false, bool immediateFlush = false);
-        ConsoleAppender(const log4cplus::helpers::Properties properties);
+        ConsoleAppender(const log4cplus::helpers::Properties & properties);
 
       // Dtor
         ~ConsoleAppender();
 
       // Methods
         virtual void close();
+
+        //! This mutex is used by ConsoleAppender and helpers::LogLog
+        //! classes to synchronize output to console.
+        static log4cplus::thread::Mutex const & getOutputMutex();
 
     protected:
         virtual void append(const spi::InternalLoggingEvent& event);
@@ -70,5 +81,5 @@ namespace log4cplus {
 
 } // end namespace log4cplus
 
-#endif // _LOG4CPLUS_CONSOLE_APPENDER_HEADER_
+#endif // LOG4CPLUS_CONSOLE_APPENDER_HEADER_
 
