@@ -1,4 +1,5 @@
 
+#include <boost/type_traits.hpp>
 #include <CoreFoundation/CoreFoundation.h>
 #include <ApplicationServices/ApplicationServices.h>
 #include <SystemConfiguration/SystemConfiguration.h>

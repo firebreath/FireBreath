@@ -13,6 +13,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
                Firebreath development team
 \**********************************************************/
 
+#include <boost/type_traits.hpp>
 #import <AppKit/AppKit.h>
 
 #include "Mac/PluginWindowMac.h"

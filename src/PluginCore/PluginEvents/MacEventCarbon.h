@@ -21,6 +21,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define EventRecord NPEvent
 #else
 #include "npapi.h"
+#include <boost/type_traits.hpp>
 #include <Carbon/Carbon.h>
 #endif
 

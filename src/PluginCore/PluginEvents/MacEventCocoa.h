@@ -20,6 +20,7 @@ Copyright 2010 Firebreath development team
 #define NPCocoaEvent void*
 #define CGContextRef void*
 #else
+#include <boost/type_traits.hpp>
 #include "npapi.h"
 #endif
 

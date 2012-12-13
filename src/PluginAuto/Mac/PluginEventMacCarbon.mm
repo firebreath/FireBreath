@@ -12,6 +12,7 @@
  Copyright 2010 Eric Herrmann, Firebreath development team
 \**********************************************************/
 
+#include <boost/type_traits.hpp>
 #import <AppKit/AppKit.h>
 
 #include "ConstructDefaultPluginWindows.h"

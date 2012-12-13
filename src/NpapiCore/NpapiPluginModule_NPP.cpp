@@ -13,6 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #ifdef FB_MACOSX
+#include <boost/type_traits.hpp>
 #include <dlfcn.h>
 #endif
 #include <cstdio>

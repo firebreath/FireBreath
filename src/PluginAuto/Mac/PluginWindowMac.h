@@ -15,6 +15,7 @@ Copyright 2011 Eric Herrmann, Firebreath development team
 #ifndef H_PLUGINWINDOWMAC
 #define H_PLUGINWINDOWMAC
 
+#include <boost/type_traits.hpp>
 #include "NpapiBrowserHost.h"
 #include "NpapiTypes.h"
 #include "FBPointers.h"

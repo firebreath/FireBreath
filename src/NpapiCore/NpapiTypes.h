@@ -20,6 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_common.h"
 #endif
 #ifdef FB_MACOSX 
+#include <boost/type_traits.hpp>
 #include <Carbon/Carbon.h>
 #endif
 

@@ -16,6 +16,7 @@
 #ifndef H_FB_CONSTRUCTDEFAULTWINDOWS
 #define H_FB_CONSTRUCTDEFAULTWINDOWS
 
+#include <boost/type_traits.hpp>
 #include "PluginWindowForwardDecl.h"
 
 namespace FB
