@@ -9,6 +9,12 @@ else()
     set(TARGET_ALREADY_EXISTS 0)
 endif()
 
+#clean up garbage file from old log4cplus version if needed
+if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/log4cplus/config/defines.hxx")
+    message("!! Detected garbage file from old log4cplus version. Deleting ${CMAKE_CURRENT_SOURCE_DIR}/include/log4cplus/config/defines.hxx")
+    file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/include/log4cplus/config/defines.hxx")
+endif()
+
 set (log4cplus_version_major 1)
 set (log4cplus_version_minor 1)
 set (log4cplus_version_patch 0)

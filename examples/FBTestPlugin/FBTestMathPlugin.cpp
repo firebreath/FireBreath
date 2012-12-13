@@ -101,8 +101,8 @@ bool FBTestMathPlugin::onDetached( FB::DetachedEvent *evt, FB::PluginWindow* )
 
 bool FBTestMathPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
 {
-    FB::Rect pos = win->getWindowPosition();
 #if FB_WIN
+    FB::Rect pos = win->getWindowPosition();
     HDC hDC;
     FB::PluginWindowlessWin *wndLess = dynamic_cast<FB::PluginWindowlessWin*>(win);
     FB::PluginWindowWin *wnd = dynamic_cast<FB::PluginWindowWin*>(win);
