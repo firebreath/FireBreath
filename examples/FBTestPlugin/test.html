@@ -83,7 +83,7 @@
 
     </style>
 
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
     <script type="text/javascript" language="Javascript">
         var mimeType = "application/x-fbtestplugin";
@@ -92,6 +92,12 @@
         var pluginCB = null;
         var pluginCB2 = null;
         var pluginCB3 = null;
+
+        var pingSeq = 0;
+        var pingQ = {};
+        var pingSuccess = 0;
+        var pingFailed = 0;
+        var pingTotal = 0;
 
         function plugin() {
             return document.getElementById("testPlugin");
@@ -202,6 +208,7 @@
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
             //setTimeout(pluginRunTests, 500);
+            setInterval(ping, 500);
         }
         function pluginLoaded2() {
             markPassed("loaded2");
@@ -212,6 +219,42 @@
             markPassed("loaded3");
             $("#pluginContainer3").css("border", "1px solid black");
             setTimeout(pluginRunTests, 500);
+        }
+
+        function updatePingStats() {
+            $("#pingresults").text("Ping results: " + pingSuccess + " / " + pingTotal + " (" + pingFailed + " failed)");
+        }
+
+        function ping() {
+            var timeout = 250; // ping response longer than 250ms is beyond weird, it's a failure
+            var seq = pingSeq;
+            pingSeq++;
+            var dfd = new $.Deferred();
+            var ping = {
+                id: setTimeout(function() {
+                    dfd.reject("Timeout");
+                    if (window.console && window.console.log) {
+                        console.log("Ping request " + seq + " timed out");
+                    }
+                }, timeout),
+                dfd: dfd
+            };
+            pingQ[seq] = ping;
+            dfd.always(function() {
+                pingTotal++;
+            }).done(function() {
+                clearTimeout(ping.id);
+                pingSuccess++;
+                delete pingQ[seq];
+            }).fail(function() {
+                pingFailed++;
+                delete pingQ[seq];
+            }).always(function(){
+                updatePingStats();
+            });
+            plugin().ping(seq, function(p, s) {
+                dfd.resolve(seq);
+            });
         }
 
         function pluginRunTests() {
@@ -592,6 +635,7 @@
 <body>
     <div class="header">
         <h1>FBTestPlugin - Test page</h1>
+        <small>Ping results: <span id="pingresults">(not started)</span></small><br />
         <small>Plugin path: <span id="pluginPath">?</span></small>
     </div>
     <div id="pluginContainer">

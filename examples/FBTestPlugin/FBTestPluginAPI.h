@@ -96,6 +96,8 @@ public:
 
     void openPopup();
 
+	void ping(const int seq, const FB::JSObjectPtr& callback);
+
 private:
     FB::BrowserHostPtr m_host;
     SimpleMathAPIPtr m_simpleMath;
