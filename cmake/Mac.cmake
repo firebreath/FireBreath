@@ -134,3 +134,36 @@ MACRO(firebreath_find_commands)
     find_program(CMD_REZ Rez ${XCODE_TOOLS_PATHS} )
 
 ENDMACRO(firebreath_find_commands)
+
+macro(firebreath_find_plugin_path OUTPATH PROJNAME)
+    get_property(${OUTPATH} TARGET ${PROJNAME} PROPERTY LOCATION)
+    while (${OUTPATH} MATCHES "\\.plugin")
+        get_filename_component(${OUTPATH} "${${OUTPATH}}/.." ABSOLUTE)
+    endwhile()
+    get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+    set(${OUTPATH} "${${OUTPATH}}/${ONAME}.plugin")
+endmacro(firebreath_find_plugin_path)
+
+macro(firebreath_sign_file PROJNAME FILETOSIGN IDENTITY)
+
+    message("Project: ${PROJNAME}")
+    find_program(MAC_CODESIGN codesign)
+    set(_STCMD "${MAC_CODESIGN}" -s "${IDENTITY}" -v "${FILETOSIGN}")
+    ADD_CUSTOM_COMMAND(
+        TARGET ${PROJNAME}
+        POST_BUILD
+        COMMAND ${_STCMD}
+        )
+    message(STATUS "Enabled codesign step to sign ${FILETOSIGN}")
+
+endmacro(firebreath_sign_file)
+
+macro(firebreath_sign_plugin PROJNAME IDENTITY)
+
+    message("Project: ${PROJNAME}")
+    get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
+    firebreath_find_plugin_path(_PLUGFILENAME ${PROJNAME})
+
+    firebreath_sign_file(${PROJNAME} "${_PLUGFILENAME}" "${IDENTITY}")
+
+endmacro(firebreath_sign_plugin)

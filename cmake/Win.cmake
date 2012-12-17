@@ -183,13 +183,13 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
                     POST_BUILD
                     COMMAND ${_STCMD}
                     )
-                message("-- Successfully added signtool step to sign ${_FILENAME}")
+                message(STATUS "Successfully added signtool step to sign ${_FILENAME}")
             else()
-                message("Could not find signtool! Code signing disabled ${SIGNTOOL}")
+                message("!! Could not find signtool! Code signing disabled ${SIGNTOOL}")
             endif()
             set(PASSPHRASE "")
         else()
-            message("-- No signtool certificate found; assuming development machine (${PFXFILE})")
+            message(STATUS "No signtool certificate found; assuming development machine (${PFXFILE})")
         endif()
 
     endif()
