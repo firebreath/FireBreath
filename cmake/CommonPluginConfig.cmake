@@ -17,9 +17,11 @@
 #   intended to assist with cleaning up configuration values, generating
 #   needed files, etc.
 
-get_filename_component(FB_TEMPLATE_DIR "${FB_ROOT_DIR}/gen_templates" ABSOLUTE)
-get_filename_component(FB_TEMPLATE_DEST_DIR "${CMAKE_CURRENT_BINARY_DIR}/projects/${PLUGIN_NAME}/gen" ABSOLUTE)
+get_filename_component(FB_TEMPLATE_DIR "${FB_ROOT}/gen_templates" ABSOLUTE)
+set(FB_TEMPLATE_DIR ${FB_TEMPLATE_DIR} CACHE INTERNAL)
 message("Generating plugin configuration files in ${FB_TEMPLATE_DEST_DIR}")
+
+set(FB_COMMONPLUGINCONFIG 1 CACHE INTERNAL "Flag to indicate that CommonPluginConfig.cmake was included")
 
 # By this point we should have added any firebreath libraries that we want, so
 # FBLIB_DEFINITONS should be filled out
@@ -105,27 +107,31 @@ endif()
 
 # configure default generated files
 # TODO: Fix this to not need configure_template; it is suboptimal
-file(GLOB TEMPLATELIST ${FB_TEMPLATE_DIR}/[^.]*)
-foreach(TemplateFile ${TEMPLATELIST})
-    get_filename_component(CURFILE ${TemplateFile} NAME)
-    get_filename_component(CUREXT ${TemplateFile} EXT)
-    if (CUREXT STREQUAL ".h" OR CUREXT STREQUAL ".hpp" OR CUREXT STREQUAL ".inc")
-        set (CUR_DEST ${FB_TEMPLATE_DEST_DIR}/global)
-    else()
-        set (CUR_DEST ${FB_TEMPLATE_DEST_DIR})
-    endif()
-    if (EXISTS ${FB_CURRENT_PLUGIN_DIR}/${CURFILE})
-        if (VERBOSE)
-            message("Configuring ${CURFILE} from project source dir")
+macro(firebreath_configure_templates TEMPLATE_DIR TEMPLATE_DEST HEADER_DIR)
+    file(GLOB TEMPLATELIST ${FB_TEMPLATE_DIR}/[^.]*)
+    foreach(TemplateFile ${TEMPLATELIST})
+        get_filename_component(CURFILE ${TemplateFile} NAME)
+        get_filename_component(CUREXT ${TemplateFile} EXT)
+        if (CUREXT STREQUAL ".h" OR CUREXT STREQUAL ".hpp" OR CUREXT STREQUAL ".inc")
+            set (CUR_DEST ${FB_TEMPLATE_DEST_DIR}/global)
+        else()
+            set (CUR_DEST ${FB_TEMPLATE_DEST_DIR})
         endif()
-        configure_template(${FB_CURRENT_PLUGIN_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
-    else()
-        if (VERBOSE)
-            message("Configuring ${CURFILE}")
+        if (EXISTS ${FB_CURRENT_PLUGIN_DIR}/${CURFILE})
+            if (VERBOSE)
+                message("Configuring ${CURFILE} from project source dir")
+            endif()
+            configure_template(${FB_CURRENT_PLUGIN_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
+        else()
+            if (VERBOSE)
+                message("Configuring ${CURFILE}")
+            endif()
+            configure_template(${FB_TEMPLATE_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
         endif()
-        configure_template(${FB_TEMPLATE_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
-    endif()
-endforeach()
+    endforeach()
+endmacro(firebreath_configure_templates)
+
+macro(firebreath_generate_templates
 
 # configure project-specific generated files
 file(GLOB TEMPLATELIST ${FB_CURRENT_PLUGIN_DIR}/templates/[^.]*)
@@ -179,38 +185,38 @@ endif(WIN32)
 
 if (APPLE)
     if (FBMAC_USE_CARBON)
-        find_library(CARBON_FRAMEWORK Carbon) 
+        find_library(FRAMEWORK_CARBON Carbon) 
         set (PLUGIN_INTERNAL_DEPS
-            ${CARBON_FRAMEWORK}
+            ${FRAMEWORK_CARBON}
             ${PLUGIN_INTERNAL_DEPS})
     endif (FBMAC_USE_CARBON)
 
     #if (FBMAC_USE_COCOA)
     # In order to support async thread calls (needed for all events and other things)
     # we always need cocoa
-    find_library(COCOA_FRAMEWORK Cocoa)
+    find_library(FRAMEWORK_COCOA Cocoa)
     set (PLUGIN_INTERNAL_DEPS
-        ${COCOA_FRAMEWORK}
+        ${FRAMEWORK_COCOA}
         ${PLUGIN_INTERNAL_DEPS})
     #endif (FBMAC_USE_COCOA)
-    find_library(SYSCONFIG_FRAMEWORK SystemConfiguration)
+    find_library(FRAMEWORK_SYSCONFIG SystemConfiguration)
     set (PLUGIN_INTERNAL_DEPS
-        ${SYSCONFIG_FRAMEWORK}
+        ${FRAMEWORK_SYSCONFIG}
         ${PLUGIN_INTERNAL_DEPS})
 
     if (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS OR FBMAC_USE_INVALIDATINGCOREANIMATION)
-        find_library(FOUNDATION_FRAMEWORK Foundation)
-        find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
+        find_library(FRAMEWORK_FOUNDATION Foundation)
+        find_library(FRAMEWORK_APPLICATIONSERVICES ApplicationServices)
         set (PLUGIN_INTERNAL_DEPS
-            ${FOUNDATION_FRAMEWORK}
-            ${APPLICATIONSERVICES_FRAMEWORK}
+            ${FRAMEWORK_FOUNDATION}
+            ${FRAMEWORK_APPLICATIONSERVICES}
             ${PLUGIN_INTERNAL_DEPS})
     endif (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS OR FBMAC_USE_INVALIDATINGCOREANIMATION)
    
     if (FBMAC_USE_COREANIMATION OR FBMAC_USE_INVALIDATINGCOREANIMATION)
-        find_library(QUARTZCORE_FRAMEWORK QuartzCore)
+        find_library(FRAMEWORK_QUARTZCORE QuartzCore)
         set (PLUGIN_INTERNAL_DEPS
-            ${QUARTZCORE_FRAMEWORK}
+            ${FRAMEWORK_QUARTZCORE}
             ${PLUGIN_INTERNAL_DEPS})
     endif (FBMAC_USE_COREANIMATION OR FBMAC_USE_INVALIDATINGCOREANIMATION)
 endif (APPLE)

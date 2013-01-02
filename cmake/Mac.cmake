@@ -99,7 +99,6 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         ${SOURCES} 
         )
 
-    string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT_DIR})
     set_target_properties(${PROJECT_NAME} PROPERTIES
         OUTPUT_NAME ${FBSTRING_PluginName}
         BUNDLE 1
@@ -122,16 +121,27 @@ MACRO(firebreath_find_commands)
     set(XCODE_TOOLS_PATHS /Developer/Tools /Applications/Xcode.app/Contents/Developer/Tools /Applications/Xcode.app/Contents/Developer/usr/bin /usr/bin)
 
     find_program(CMD_CP cp)
+    set(CMD_CP ${CMD_CP} CACHE INTERNAL)
     find_program(CMD_RM rm)
+    set(CMD_RM ${CMD_RM} CACHE INTERNAL)
     find_program(CMD_LN ln)
+    set(CMD_LN ${CMD_LN} CACHE INTERNAL)
     find_program(CMD_MV mv)
+    set(CMD_MV ${CMD_MV} CACHE INTERNAL)
     find_program(CMD_HDIUTIL hdiutil)
+    set(CMD_HDIUTIL ${CMD_HDIUTIL} CACHE INTERNAL)
     find_program(CMD_SIPS sips)
+    set(CMD_SIPS ${CMD_SIPS} CACHE INTERNAL)
     find_program(CMD_SLEEP sleep)
+    set(CMD_SLEEP ${CMD_SLEEP} CACHE INTERNAL)
     find_program(CMD_OSASCRIPT osascript)
+    set(CMD_OSASCRIPT ${CMD_OSASCRIPT} CACHE INTERNAL)
     find_program(CMD_SETFILE SetFile ${XCODE_TOOLS_PATHS} )
+    set(CMD_SETFILE ${CMD_SETFILE} CACHE INTERNAL)
     find_program(CMD_DEREZ DeRez ${XCODE_TOOLS_PATHS} )
+    set(CMD_DEREZ ${CMD_DEREZ} CACHE INTERNAL)
     find_program(CMD_REZ Rez ${XCODE_TOOLS_PATHS} )
+    set(CMD_REZ ${CMD_REZ} CACHE INTERNAL)
 
 ENDMACRO(firebreath_find_commands)
 

@@ -24,13 +24,13 @@ endif()
 include_directories(
     ${GECKOSDK_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
-    ${FB_NPAPICORE_SOURCE_DIR}
-    ${FB_NPAPIHOST_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
-    ${FB_PLUGINAUTO_SOURCE_DIR}
+    ${NPAPICORE_SOURCE_DIR}
+    ${NPAPIHOST_SOURCE_DIR}
+    ${SCRIPTINGCORE_SOURCE_DIR}
+    ${PLUGINCORE_SOURCE_DIR}
+    ${PLUGINAUTO_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
-    ${FB_UNITTEST_FW_SOURCE_DIR}/src
+    ${UNITTEST++_SOURCE_DIR}/src
     ${FB_CONFIG_DIR}
     )
 
@@ -49,19 +49,19 @@ set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "UnitTests")
 
 if (APPLE)
     if (FBMAC_USE_CARBON)
-        find_library(CARBON_FRAMEWORK Carbon)
+        find_library(FRAMEWORK_CARBON Carbon)
     endif (FBMAC_USE_CARBON)
-    find_library(COCOA_FRAMEWORK Cocoa)
-    find_library(FOUNDATION_FRAMEWORK Foundation)
-    find_library(APPLICATIONSERVICES_FRAMEWORK ApplicationServices)
-    find_library(QUARTZCORE_FRAMEWORK QuartzCore)
+    find_library(FRAMEWORK_COCOA Cocoa)
+    find_library(FRAMEWORK_FOUNDATION Foundation)
+    find_library(FRAMEWORK_APPLICATIONSERVICES ApplicationServices)
+    find_library(FRAMEWORK_QUARTZCORE QuartzCore)
     set (OTHER_NPAPITEST_LIBS 
         ${OTHER_NPAPITEST_LIBS} 
-        ${COCOA_FRAMEWORK}
-        ${FOUNDATION_FRAMEWORK}
-        ${APPLICATIONSERVICES_FRAMEWORK}
-        ${QUARTZCORE_FRAMEWORK}
-        ${CARBON_FRAMEWORK})
+        ${FRAMEWORK_COCOA}
+        ${FRAMEWORK_FOUNDATION}
+        ${FRAMEWORK_APPLICATIONSERVICES}
+        ${FRAMEWORK_QUARTZCORE}
+        ${FRAMEWORK_CARBON})
 elseif (UNIX)
     if (NOT FB_GUI_DISABLED)
         set(OTHER_NPAPITEST_LIBS 

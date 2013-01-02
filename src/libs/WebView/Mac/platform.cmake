@@ -41,7 +41,7 @@ find_library(WEBKIT WebKit)
 find_library(JAVASCRIPTCORE JavaScriptCore)
 
 append_firebreath_include_dir(${JAVASCRIPTCORE}/Versions/A/Headers)
-append_firebreath_include_dir(${FB_ROOT_DIR}/src/WebKitCore)
+append_firebreath_include_dir(${FB_ROOT}/src/WebKitCore)
 append_firebreath_link_library(${WEBKIT})
 append_firebreath_link_library(${JAVASCRIPTCORE})
 append_firebreath_link_library(WebKitCore)

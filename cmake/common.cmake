@@ -14,17 +14,21 @@
 
 # Previously we included this file all over the place; we should never
 # do that anymore.
+get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
 if (NOT "${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${FB_ROOT}")
-    message("!!! WARNING! You generally should not include common.cmake from your plugin project!")
+    message("!!! WARNING! You generally should not include common.cmake from your plugin project! (included from ${CMAKE_CURRENT_SOURCE_DIR}, expecting ${FB_ROOT})")
 endif()
 
-get_filename_component (FB_ROOT_DIR "${FB_ROOT}/cmake/.." ABSOLUTE CACHE)
-get_filename_component (FB_SOURCE_DIR "${FB_ROOT}/cmake/../src" ABSOLUTE CACHE)
-get_filename_component (FB_TEST_DIR "${FB_ROOT}/cmake/../tests" ABSOLUTE CACHE)
+get_filename_component (FB_SOURCE_DIR "${FB_ROOT}/src" ABSOLUTE CACHE)
+set(FB_SOURCE_DIR "${FB_SOURCE_DIR}" CACHE INTERNAL "Location of the FireBreath src/ dir")
+get_filename_component (FB_TEST_DIR "${FB_ROOT}/tests" ABSOLUTE CACHE)
+set(FB_TEST_DIR "${FB_TEST_DIR}" CACHE INTERNAL "Location of the FireBreath tests/ dir")
+string(REPLACE " " "\ " FB_ESC_ROOT_DIR ${FB_ROOT})
+set(FB_ESC_ROOT_DIR ${FB_ESC_ROOT_DIR} CACHE INTERNAL "Escaped path of FireBreath root")
 
-set (FB_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}")
-set (FB_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin")
-set (FIREBREATH YES)
+set (FB_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "FireBreath build dir location")
+set (FB_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE INTERNAL "FireBreath build/bin dir location")
+set (FIREBREATH YES CACHE INTERNAL "Helper variable to indicate that FireBreath is loaded")
 
 if (WIN32)
     set (FB_PLATFORM_NAME "Win")
@@ -39,13 +43,13 @@ elseif(UNIX)
 endif()
 
 if ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    set ( FB_PLATFORM_ARCH_32 0 )
-    set ( FB_PLATFORM_ARCH_64 1 )
-    set ( FB_PLATFORM_ARCH_NAME "x86_64" )
+    set ( FB_PLATFORM_ARCH_32 0 CACHE INTERNAL "TRUE if 32 bit")
+    set ( FB_PLATFORM_ARCH_64 1 CACHE INTERNAL "TRUE if 64 bit")
+    set ( FB_PLATFORM_ARCH_NAME "x86_64" CACHE INTERNAL "Architecture name")
 else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
-    set ( FB_PLATFORM_ARCH_32 1 )
-    set ( FB_PLATFORM_ARCH_64 0 )
-    set ( FB_PLATFORM_ARCH_NAME "i386" )
+    set ( FB_PLATFORM_ARCH_32 1 CACHE INTERNAL "TRUE if 32 bit")
+    set ( FB_PLATFORM_ARCH_64 0 CACHE INTERNAL "TRUE if 64 bit")
+    set ( FB_PLATFORM_ARCH_NAME "i386" CACHE INTERNAL "Architecture name")
 endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
 # include the Chrome package generation function
@@ -218,12 +222,12 @@ function (fb_check_boost)
             find_program(GIT git
                 PATHS
                 )
-            if (FIREBREATH_AUTO_GIT AND EXISTS ${FB_ROOT_DIR}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
+            if (FIREBREATH_AUTO_GIT AND EXISTS ${FB_ROOT}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
                 message("Using git")
                 execute_process(
                     COMMAND ${GIT}
                     submodule update --recursive --init
-                    WORKING_DIRECTORY "${FB_ROOT_DIR}")
+                    WORKING_DIRECTORY "${FB_ROOT}")
             else()
                 message("Downloading...")
                 find_program(CURL curl)

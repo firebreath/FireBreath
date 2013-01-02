@@ -21,15 +21,25 @@ if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINAUTO_SOURCE_DIR}
-    ${FB_CONFIG_DIR}
-    ${FB_UNITTEST_FW_SOURCE_DIR}/src
-    ${Boost_INCLUDE_DIRS}
-    ${ATL_INCLUDE_DIRS}
-    )
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
+include_directories("${ScriptingCore_SOURCE_DIR}")
+include_directories("${FB_ROOT}/src/PluginAuto")
+include_directories("${FB_CONFIG_DIR}")
+include_directories("${UnitTest++_SOURCE_DIR}/src")
+include_directories("${Boost_INCLUDE_DIRS}")
+if (WIN32)
+    include_directories("${ATL_INCLUDE_DIRS}")
+endif()
+
+if (VERBOSE)
+    message("CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+    message("SCRIPTINGCORE_SOURCE_DIR: ${ScriptingCore_SOURCE_DIR}")
+    message("PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/PluginAuto")
+    message("FB_CONFIG_DIR: ${FB_CONFIG_DIR}")
+    message("UNITTEST: ${UnitTest++_SOURCE_DIR}/src")
+    message("Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+    message("ATL_INCLUDE_DIRS: ${ATL_INCLUDE_DIRS}")
+endif()
 
 file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ./[^.]*.h
@@ -58,13 +68,12 @@ link_boost_library ( ${PROJECT_NAME} date_time )
 link_boost_library ( ${PROJECT_NAME} regex )
 
 if (APPLE)
-    find_library(CARBON_FRAMEWORK Carbon) 
-    find_library(SYSCONFIG_FRAMEWORK SystemConfiguration)
-    FIND_LIBRARY(CORE_FOUNDATION NAMES foundation)
+    find_library(FRAMEWORK_CARBON Carbon) 
+    find_library(FRAMEWORK_SYSCONFIG SystemConfiguration)
     include_directories(${FOUNDATION}/Headers)
     target_link_libraries (${PROJECT_NAME}
-        ${CARBON_FRAMEWORK}
-        ${SYSCONFIG_FRAMEWORK}
+        ${FRAMEWORK_CARBON}
+        ${FRAMEWORK_SYSCONFIG}
         )
 endif()
 
