@@ -24,10 +24,10 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINAUTO_SOURCE_DIR}
-    ${FB_NPAPICORE_SOURCE_DIR}
-    ${FB_ACTIVEXCORE_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${PluginAuto_SOURCE_DIR}
+    ${NpapiCore_SOURCE_DIR}
+    ${ActiveXCore_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
@@ -88,7 +88,7 @@ set (SOURCES
     )
 
 if (APPLE)
-    FIND_LIBRARY(FOUNDATION NAMES foundation)
+    FIND_LIBRARY(FRAMEWORK_FOUNDATION NAMES foundation)
     include_directories(${FOUNDATION}/Headers)
 endif()
 

@@ -26,9 +26,9 @@ else()
 endif()
 
 include_directories (
-	${CMAKE_CURRENT_SOURCE_DIR}/src
-	${CMAKE_CURRENT_SOURCE_DIR}/include
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${ScriptingCore_SOURCE_DIR}
     ${FB_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
 )

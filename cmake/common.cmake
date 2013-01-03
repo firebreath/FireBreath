@@ -222,7 +222,8 @@ function (fb_check_boost)
             find_program(GIT git
                 PATHS
                 )
-            if (FIREBREATH_AUTO_GIT AND EXISTS ${FB_ROOT}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
+            set(GIT ${GIT} CACHE INTENRAL "Git binary")
+            if (FB_AUTO_GIT AND EXISTS ${FB_ROOT}/.git AND NOT ${GIT} MATCHES "GIT-NOTFOUND")
                 message("Using git")
                 execute_process(
                     COMMAND ${GIT}
@@ -231,7 +232,9 @@ function (fb_check_boost)
             else()
                 message("Downloading...")
                 find_program(CURL curl)
+                set(CURL ${CURL} CACHE INTERNAL "curl binary")
                 find_program(WGET wget PATHS "${FB_ROOT}/cmake/")
+                set(WGET ${WGET} CACHE INTERNAL "wget binary")
                 proxy_setup()
                 if (NOT ${WGET} MATCHES "WGET-NOTFOUND")
                     execute_process(
@@ -261,6 +264,8 @@ function (fb_check_boost)
                 endif()
                 find_program(TAR tar NO_DEFAULT_PATHS)
                 find_program(GZIP gzip NO_DEFAULT_PATHS)
+                set(TAR ${TAR} CACHE INTERNAL "tar binary")
+                set(GZIP ${GZIP} CACHE INTERNAL "gzip binary")
                 if (WIN32)
                     message("Using 7-zip to extract the archive")
                     find_program(SEVZIP 7za PATHS "${FB_ROOT}/cmake/")

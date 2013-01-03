@@ -24,12 +24,12 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/../mock
-    ${FB_ACTIVEXCORE_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${ActiveXCore_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${PluginCore_SOURCE_DIR}
     ${FB_GEN_DIR}/gen
     ${FB_CONFIG_DIR}
-    ${FB_UNITTEST_FW_SOURCE_DIR}/src
+    ${UnitTest++_SOURCE_DIR}/src
     ${Boost_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     )

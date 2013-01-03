@@ -29,6 +29,8 @@ if (UNIX AND NOT APPLE)
     find_firebreath_x11_deps()
 endif()
 
+message("template dest dir: ${FB_TEMPLATE_DEST_DIR}")
+
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
@@ -36,10 +38,10 @@ include_directories(
     ${FB_TEMPLATE_DEST_DIR}
     ${FB_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
-    ${FB_PLUGINCORE_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_NPAPICORE_SOURCE_DIR}
-    ${FB_ACTIVEXCORE_SOURCE_DIR}
+    ${PluginCore_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${NpapiCore_SOURCE_DIR}
+    ${ActiveXCore_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     )

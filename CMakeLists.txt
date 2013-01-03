@@ -65,24 +65,25 @@ endif ()
 # Common core projects -- projects that don't have any plugin specific code,
 # but are required before any plugins are loaded
 # we use an explicit binary directory here in case this file is included out-of-tree
-add_subdirectory(${FB_SCRIPTINGCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCore)
-add_subdirectory(${FB_PLUGINCORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
-add_subdirectory(${FB_NPAPICORE_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/NpapiCore)
+add_subdirectory(${FB_ROOT}/src/ScriptingCore ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCore)
+add_subdirectory(${FB_ROOT}/src/PluginCore ${CMAKE_CURRENT_BINARY_DIR}/PluginCore)
+add_subdirectory(${FB_ROOT}/src/NpapiCore ${CMAKE_CURRENT_BINARY_DIR}/NpapiCore)
 #set (FB_EXPORT_TARGETS ScriptingCore PluginCore NpapiCore)
 if (WIN32)
     add_subdirectory(${FB_ACTIVEXCORE_SOURCE_DIR} ${FB_ACTIVEXCORE_BUILD_DIR})
     #set (FB_EXPORT_TARGETS ${FB_EXPORT_TARGETS} ActiveXCore)
 endif()
 
-add_subdirectory(${FB_UNITTEST_FW_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/unittest++)
+add_subdirectory(${FB_ROOT}/tests/unittest-cpp/UnitTest++ ${CMAKE_CURRENT_BINARY_DIR}/unittest++)
 #add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
-add_subdirectory(${FB_SCRIPTINGCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
+add_subdirectory(${FB_ROOT}/tests/ScriptingCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
 if (WIN32)
-    add_subdirectory(${FB_ACTIVEXCORETEST_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCore)
+    add_subdirectory(${FB_ROOT}/tests/ActiveXCore ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCore)
 endif()
 #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 
 #install(EXPORT FireBreath_Exports DESTINATION "cmake")
 
+message("Boost includes: ${Boost_INCLUDE_DIRS}")
 
-
+export_project_dependencies()

@@ -7,13 +7,17 @@ cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 include(PluginConfig.cmake)
-
 Project (${PLUGIN_NAME})
 
 set (FB_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/firebreath CACHE PATH "Path to FireBreath Root")
+if (NOT EXISTS ${FB_ROOT}/CMakeLists.txt)
+    message(FATAL_ERROR "You need to configure FB_ROOT to the root directory of your FireBreath installation!")
+endif()
+
+include(${FB_ROOT}/PluginIncludes.cmake)
+add_subdirectory(${FB_PLUGINAUTO_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR}/PluginAuto)
 
 add_subdirectory(${FB_ROOT} ${CMAKE_CURRENT_BINARY_DIR}/firebreath)
-#include(${FB_ROOT}/PluginIncludes.cmake)
 
 #Visual Studio Express editions don't want Solution Folders enabled.
 if(NOT ATL_LIBRARY)
@@ -27,34 +31,39 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     *.html
     )
 
-include_directories(${PLUGIN_INCLUDE_DIRS})
+include_directories(${FB_PLUGIN_INCLUDE_DIRS})
+
+# This command configures the templates normally found in ${FB_ROOT}/gen_templates
+# to override one of the templates, copy it from there to the directory passed into
+# this function
+firebreath_generate_templates(${CMAKE_CURRENT_SOURCE_DIR})
+
+message("Include dirs: ${FB_PLUGIN_INCLUDE_DIRS}")
 
 # Generated files are stored in ${GENERATED} by the project configuration
 SET_SOURCE_FILES_PROPERTIES(
-    ${GENERATED}
+    ${FB_PLUGIN_GENERATED_SOURCES}
     PROPERTIES
         GENERATED 1
     )
 
 SOURCE_GROUP(Generated FILES
-    ${GENERATED}
+    ${FB_PLUGIN_GENERATED_SOURCES}
     )
 
 SET( SOURCES
     ${GENERAL}
-    ${GENERATED}
+    ${FB_PLUGIN_GENERATED_SOURCES}
     )
 
 if (WIN32)
     set (PLATFORM_NAME "Win")
+    include(Win/projectDef.cmake)
 elseif(APPLE)
     set (PLATFORM_NAME "Mac")
+    include(Mac/projectDef.cmake)
 elseif(UNIX)
     set (PLATFORM_NAME "X11")
+    include(X11/projectDef.cmake)
 endif()
 
-if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
-    #include(${CMAKE_CURRENT_SOURCE_DIR}/${PLATFORM_NAME}/projectDef.cmake)
-else()
-    message ("Could not find a ${PLATFORM_NAME} directory for the project")
-endif()

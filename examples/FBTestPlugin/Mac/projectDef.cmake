@@ -31,10 +31,10 @@ set(LOCALIZED "Mac/bundle_template/Localized.r")
 
 add_mac_plugin(${PROJECT_NAME} ${PLIST} ${STRINGS} ${LOCALIZED} SOURCES)
 
-message("Linking ${PROJECT_NAME} to ${PLUGIN_INTERNAL_DEPS}")
+message("Linking ${PROJECT_NAME} to ${FB_PLUGIN_LIBRARIES}")
 # add library dependencies here; leave ${PLUGIN_INTERNAL_DEPS} there unless you know what you're doing!
 target_link_libraries(${PROJECT_NAME}
-    ${PLUGIN_INTERNAL_DEPS}
+    ${FB_PLUGIN_LIBRARIES}
     )
 
 get_target_property(PLUGIN_BUILD_DIR ${PROJECT_NAME} LIBRARY_OUTPUT_DIRECTORY)

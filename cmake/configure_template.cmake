@@ -13,8 +13,8 @@
 #\**********************************************************/
 
 
-set(__CFG_foreach_regex "@foreach *\\(([^)]+)\\)")
-set(__CFG_endforeach_regex "@endforeach")
+set(__CFG_foreach_regex "@foreach *\\(([^)]+)\\)" CACHE INTERNAL "foreach regex")
+set(__CFG_endforeach_regex "@endforeach" CACHE INTERNAL "endforeach regex")
 
 function(_configure_template_foreach f_contents outputfile)
     set(f_contents ${${f_contents}})
@@ -114,7 +114,7 @@ function(configure_template_force filename outputfile)
     list(LENGTH file_contents linesLeft)
     while(linesLeft GREATER 0 AND NOT file_contents STREQUAL "")
         list(GET file_contents 0 line)
-        string(REGEX MATCH ${__CFG_foreach_regex} FOUND_FOREACH "${line}")
+        string(REGEX MATCH "${__CFG_foreach_regex}" FOUND_FOREACH "${line}")
         if (FOUND_FOREACH)
             _configure_template_foreach(file_contents ${outputfile})
         else()

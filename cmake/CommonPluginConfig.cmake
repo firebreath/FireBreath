@@ -18,7 +18,8 @@
 #   needed files, etc.
 
 get_filename_component(FB_TEMPLATE_DIR "${FB_ROOT}/gen_templates" ABSOLUTE)
-set(FB_TEMPLATE_DIR ${FB_TEMPLATE_DIR} CACHE INTERNAL)
+set(FB_TEMPLATE_DIR ${FB_TEMPLATE_DIR} CACHE INTERNAL "Directory to search for templates to generated files used by FireBreath")
+set(FB_TEMPLATE_DEST_DIR ${CMAKE_CURRENT_BINARY_DIR}/gen CACHE INTERNAL "Directory to search for templates to generated files used by FireBreath")
 message("Generating plugin configuration files in ${FB_TEMPLATE_DEST_DIR}")
 
 set(FB_COMMONPLUGINCONFIG 1 CACHE INTERNAL "Flag to indicate that CommonPluginConfig.cmake was included")
@@ -27,23 +28,41 @@ set(FB_COMMONPLUGINCONFIG 1 CACHE INTERNAL "Flag to indicate that CommonPluginCo
 # FBLIB_DEFINITONS should be filled out
 add_definitions(${FBLIB_DEFINITIONS})
 
+
 # Generally needed include directories for each plugin
-set(PLUGIN_INCLUDE_DIRS
+set(FB_PLUGIN_INCLUDE_DIRS
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_GECKOSDK_SOURCE_DIR}
     ${FB_INCLUDE_DIRS}
-    ${FB_NPAPICORE_SOURCE_DIR}
-    ${FB_ACTIVEXCORE_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINAUTO_SOURCE_DIR}/${FB_PLATFORM_NAME}
-    ${FB_PLUGINAUTO_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${ActiveXCore_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}
+    ${FB_ROOT}/src/ActiveXCore
+    ${PluginCore_SOURCE_DIR}
     ${FB_TEMPLATE_DEST_DIR}
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
     )
+
+if (VERBOSE)
+
+    message("CMAKE_CURRENT_SOURCE_DIR: ${CMAKE_CURRENT_SOURCE_DIR}")
+    message("FB_GECKOSDK_SOURCE_DIR: ${FB_GECKOSDK_SOURCE_DIR}")
+    message("FB_INCLUDE_DIRS: ${FB_INCLUDE_DIRS}")
+    message("FB_ACTIVEXCORE_SOURCE_DIR: ${ActiveXCore_SOURCE_DIR}")
+    message("FB_SCRIPTINGCORE_SOURCE_DIR: ${ScriptingCore_SOURCE_DIR}")
+    message("FB_PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}")
+    message("FB_PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}")
+    message("FB_PLUGINCORE_SOURCE_DIR: ${PluginCore_SOURCE_DIR}")
+    message("FB_TEMPLATE_DEST_DIR: ${FB_TEMPLATE_DEST_DIR}")
+    message("Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+    message("FBLIB_INCLUDE_DIRS: ${FBLIB_INCLUDE_DIRS}")
+    message("ATL_INCLUDE_DIRS: ${ATL_INCLUDE_DIRS}")
+    message("FB_CONFIG_DIR: ${FB_CONFIG_DIR}")
+
+endif()
 
 if (NOT FBMAC_USE_CARBON AND NOT FBMAC_USE_COCOA)
     # As of Safari 5.1 we have to choose one even if we don't draw
@@ -106,44 +125,43 @@ if (NOT FBSTRING_PluginDescription)
 endif()
 
 # configure default generated files
-# TODO: Fix this to not need configure_template; it is suboptimal
-macro(firebreath_configure_templates TEMPLATE_DIR TEMPLATE_DEST HEADER_DIR)
-    file(GLOB TEMPLATELIST ${FB_TEMPLATE_DIR}/[^.]*)
+macro(firebreath_configure_templates TEMPLATE_DIR TEMPLATE_DEST HEADER_PREFIX OVERRIDE_DIR)
+    file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
     foreach(TemplateFile ${TEMPLATELIST})
         get_filename_component(CURFILE ${TemplateFile} NAME)
         get_filename_component(CUREXT ${TemplateFile} EXT)
         if (CUREXT STREQUAL ".h" OR CUREXT STREQUAL ".hpp" OR CUREXT STREQUAL ".inc")
-            set (CUR_DEST ${FB_TEMPLATE_DEST_DIR}/global)
+            set (HEADER_DETECTED 1)
         else()
-            set (CUR_DEST ${FB_TEMPLATE_DEST_DIR})
+            set (HEADER_DETECTED 0)
         endif()
-        if (EXISTS ${FB_CURRENT_PLUGIN_DIR}/${CURFILE})
+        if (NOT "" STREQUAL "${HEADER_PREFIX}" AND HEADER_DETECTED)
+            set (CUR_DEST ${TEMPLATE_DEST}/${HEADER_PREFIX})
+        else()
+            set (CUR_DEST ${TEMPLATE_DEST})
+        endif()
+        set (SOURCE_FILE "${TEMPLATE_DIR}/${CURFILE}")
+        if (OVERRIDE_DIR AND EXISTS ${OVERRIDE_DIR}/${CURFILE})
             if (VERBOSE)
-                message("Configuring ${CURFILE} from project source dir")
+                message("Configuring ${CURFILE} from plugin-provided alternate source dir")
             endif()
-            configure_template(${FB_CURRENT_PLUGIN_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
+            set (SOURCE_FILE "${OVERRIDE_DIR}/${CURFILE}")
         else()
             if (VERBOSE)
                 message("Configuring ${CURFILE}")
             endif()
-            configure_template(${FB_TEMPLATE_DIR}/${CURFILE} ${CUR_DEST}/${CURFILE})
         endif()
+        configure_template(${SOURCE_FILE} ${CUR_DEST}/${CURFILE})
     endforeach()
 endmacro(firebreath_configure_templates)
 
-macro(firebreath_generate_templates
-
-# configure project-specific generated files
-file(GLOB TEMPLATELIST ${FB_CURRENT_PLUGIN_DIR}/templates/[^.]*)
-foreach(TemplateFile ${TEMPLATELIST})
-    get_filename_component(CURFILE ${TemplateFile} NAME)
-    message("Configuring ${CURFILE}")
-    configure_template(${FB_CURRENT_PLUGIN_DIR}/templates/${CURFILE} ${FB_TEMPLATE_DEST_DIR}/../templates/${CURFILE})
-endforeach()
+macro(firebreath_generate_templates OVERRIDE_DIR)
+    firebreath_configure_templates(${FB_TEMPLATE_DIR} ${FB_TEMPLATE_DEST_DIR} "global" ${OVERRIDE_DIR})
+endmacro(firebreath_generate_templates)
 
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
-set(PLUGIN_INTERNAL_DEPS
+set(FB_PLUGIN_LIBRARIES
     PluginCore
     ${PLUGIN_PREFIX}_PluginAuto
     NpapiCore
@@ -153,31 +171,31 @@ set(PLUGIN_INTERNAL_DEPS
     ${FBLIB_LIBRARIES}
     )
 
-file (GLOB GENERATED
+file (GLOB FB_PLUGIN_GENERATED_SOURCES
     ${FB_TEMPLATE_DEST_DIR}/[^.]*
     ${FB_TEMPLATE_DEST_DIR}/global/[^.]*
     )
 
-file (GLOB WIN_GENERATED
+file (GLOB FB_PLUGIN_GENERATED_WIN_SOURCES
     ${FB_TEMPLATE_DEST_DIR}/[^.]*.rgs
     ${FB_TEMPLATE_DEST_DIR}/[^.]*.def
     ${FB_TEMPLATE_DEST_DIR}/[^.]*.rc
     )
-SOURCE_GROUP(Generated FILES ${GENERATED})
+SOURCE_GROUP(Generated FILES ${FB_PLUGIN_GENERATED_SOURCES} ${FB_PLUGIN_GENERATED_WIN_SOURCES})
 
 if (WIN32)
-    set (PLUGIN_INTERNAL_DEPS
+    set (FB_PLUGIN_LIBRARIES
         ActiveXCore
-        ${PLUGIN_INTERNAL_DEPS}
+        ${FB_PLUGIN_LIBRARIES}
         ${ATL_LIBRARY}
         psapi
         Wininet
         )
     file (GLOB IDL_FILES
         ${FB_TEMPLATE_DEST_DIR}/*.idl)
-    list(REMOVE_ITEM GENERATED ${IDL_FILES})
+    list(REMOVE_ITEM FB_PLUGIN_GENERATED_SOURCES ${IDL_FILES})
 else()
-    set_source_files_properties(${WIN_GENERATED}
+    set_source_files_properties(${FB_PLUGIN_GENERATED_WIN_SOURCES}
         PROPERTIES
             HEADER_FILE_ONLY 1
         )
@@ -186,38 +204,37 @@ endif(WIN32)
 if (APPLE)
     if (FBMAC_USE_CARBON)
         find_library(FRAMEWORK_CARBON Carbon) 
-        set (PLUGIN_INTERNAL_DEPS
+        set (FB_PLUGIN_LIBRARIES
             ${FRAMEWORK_CARBON}
-            ${PLUGIN_INTERNAL_DEPS})
+            ${FB_PLUGIN_LIBRARIES})
     endif (FBMAC_USE_CARBON)
 
-    #if (FBMAC_USE_COCOA)
     # In order to support async thread calls (needed for all events and other things)
     # we always need cocoa
     find_library(FRAMEWORK_COCOA Cocoa)
-    set (PLUGIN_INTERNAL_DEPS
+    set (FB_PLUGIN_LIBRARIES
         ${FRAMEWORK_COCOA}
-        ${PLUGIN_INTERNAL_DEPS})
-    #endif (FBMAC_USE_COCOA)
+        ${FB_PLUGIN_LIBRARIES})
+
     find_library(FRAMEWORK_SYSCONFIG SystemConfiguration)
-    set (PLUGIN_INTERNAL_DEPS
+    set (FB_PLUGIN_LIBRARIES
         ${FRAMEWORK_SYSCONFIG}
-        ${PLUGIN_INTERNAL_DEPS})
+        ${FB_PLUGIN_LIBRARIES})
 
     if (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS OR FBMAC_USE_INVALIDATINGCOREANIMATION)
         find_library(FRAMEWORK_FOUNDATION Foundation)
         find_library(FRAMEWORK_APPLICATIONSERVICES ApplicationServices)
-        set (PLUGIN_INTERNAL_DEPS
+        set (FB_PLUGIN_LIBRARIES
             ${FRAMEWORK_FOUNDATION}
             ${FRAMEWORK_APPLICATIONSERVICES}
-            ${PLUGIN_INTERNAL_DEPS})
+            ${FB_PLUGIN_LIBRARIES})
     endif (FBMAC_USE_COREANIMATION OR FBMAC_USE_COREGRAPHICS OR FBMAC_USE_INVALIDATINGCOREANIMATION)
-   
+
     if (FBMAC_USE_COREANIMATION OR FBMAC_USE_INVALIDATINGCOREANIMATION)
         find_library(FRAMEWORK_QUARTZCORE QuartzCore)
-        set (PLUGIN_INTERNAL_DEPS
+        set (FB_PLUGIN_LIBRARIES
             ${FRAMEWORK_QUARTZCORE}
-            ${PLUGIN_INTERNAL_DEPS})
+            ${FB_PLUGIN_LIBRARIES})
     endif (FBMAC_USE_COREANIMATION OR FBMAC_USE_INVALIDATINGCOREANIMATION)
 endif (APPLE)
 

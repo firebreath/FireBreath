@@ -42,7 +42,7 @@
 
 #define FBSTRING_MIMEType   FBSTRING_MIMETypeList
 
-#define FB_GUI_DISABLED         ${FB_GUI_DISABLED}
+#cmakedefine FB_GUI_DISABLED         ${FB_GUI_DISABLED}
 
 #cmakedefine FB_ATLREG_MACHINEWIDE 1
 

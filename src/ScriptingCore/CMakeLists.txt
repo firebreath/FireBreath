@@ -25,7 +25,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${PluginCore_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}

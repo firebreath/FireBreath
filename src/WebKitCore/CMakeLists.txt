@@ -26,8 +26,8 @@ endif()
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_CONFIG_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${PluginCore_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     )
 

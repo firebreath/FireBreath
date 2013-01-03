@@ -21,13 +21,15 @@ if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
+message("SDKDIR: ${FB_GECKOSDK_SOURCE_DIR}")
+
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}
     ${GTK_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_CONFIG_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${PluginCore_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
     )

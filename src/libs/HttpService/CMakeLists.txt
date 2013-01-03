@@ -33,9 +33,9 @@ endif()
 include_directories (
     ${Boost_INCLUDE_DIRS}
 	${CMAKE_CURRENT_SOURCE_DIR}
-    ${FB_SCRIPTINGCORE_SOURCE_DIR}
-    ${FB_PLUGINAUTO_SOURCE_DIR}
-    ${FB_PLUGINCORE_SOURCE_DIR}
+    ${ScriptingCore_SOURCE_DIR}
+    ${FB_ROOT}/src/PluginAuto
+    ${PluginCore_SOURCE_DIR}
     ${FBLIB_INCLUDE_DIRS}
     ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
@@ -118,11 +118,11 @@ if (WIN32)
     endif()
 elseif (UNIX)
     if (APPLE)
-        find_library(CORE_SERVICES CoreServices)
-        append_firebreath_link_library(${CORE_SERVICES})
-        find_library(SYS_CONFIG SystemConfiguration)
-        append_firebreath_link_library(${SYS_CONFIG})
-        message("Found: ${CORE_SERVICES} ${SYS_CONFIG}")
+        find_library(FRAMEWORK_CORESERVICES CoreServices)
+        append_firebreath_link_library(${FRAMEWORK_CORESERVICES})
+        find_library(FRAMEWORK_SYSCONFIG SystemConfiguration)
+        append_firebreath_link_library(${FRAMEWORK_SYSCONFIG})
+        message("Found: ${FRAMEWORK_CORESERVICES} ${FRAMEWORK_SYSCONFIG}")
     else()
     endif()
 endif()
