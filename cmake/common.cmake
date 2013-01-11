@@ -293,7 +293,7 @@ function (fb_check_boost)
                 #file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/boost.tar.gz)
                 message("Installing firebreath-boost...")
                 file (GLOB _BOOST_FILES
-                    ${FB_BOOST_SOURCE_DIR}/firebreath-firebreath-boost*/*)
+                    ${FB_BOOST_SOURCE_DIR}/firebreath-firebreath-boost/*)
                 foreach (_CUR_FILE ${_BOOST_FILES})
                     get_filename_component (_CUR_FILENAME ${_CUR_FILE} NAME)
                     file(RENAME ${_CUR_FILE} ${FB_BOOST_SOURCE_DIR}/${_CUR_FILENAME})
