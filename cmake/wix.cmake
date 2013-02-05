@@ -205,7 +205,7 @@ if (WIN32)
 
         ADD_CUSTOM_COMMAND( TARGET    ${_project} POST_BUILD
             COMMAND   ${WIX_LIGHT}
-            ARGS      ${WIX_LINK_FLAGS_A} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
+            ARGS      ${WIX_LIGHT_FLAGS} ${WIX_LINK_FLAGS_A} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
             DEPENDS   ${${_sources}}
             COMMENT   "Linking ${${_sources}} -> ${_target}"
             )
