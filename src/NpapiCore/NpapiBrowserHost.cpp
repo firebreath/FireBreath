@@ -821,7 +821,10 @@ bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std
     } else {
         settingsMap.clear();
         vector<string> params;
-        split(params, res, is_any_of(" "));
+        // Chrome returns the whole proxy list string,
+        // squashing any space symbols between two consecutive proxies,
+        // thus we need semicolon as a separator also:
+        split(params, res, is_any_of(" ;"));
         vector<string> host;
         split(host, params[1], is_any_of(":"));
         if (params[0] == "PROXY") {
