@@ -76,7 +76,13 @@ bool FB::SystemProxyDetectorWin::detectProxy( map<string, string>& proxyMap, con
                 if (kvp.empty()) continue;
                 if (kvp.size() == 1) {
                     // untyped proxy entry. just put http on the front of the array, then fall through to the other case
-                    kvp.insert(kvp.begin(), string("http"));
+                    if (uri.protocol == "https") {
+                        // handling case when 'Use the same proxy for all protocols'
+                        // selected in WinInet settings
+                        kvp.insert(kvp.begin(), string("https"));
+                    } else {
+                        kvp.insert(kvp.begin(), string("http"));
+                    }
                 }
 
                 // this is a typed proxy entry. kvp[0] should be one of {socks,https,ftp,http}
