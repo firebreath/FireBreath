@@ -827,7 +827,8 @@ bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std
         if (params[0] == "PROXY") {
             FB::URI uri = FB::URI::fromString(URL);
             settingsMap["type"] = uri.protocol;
-        } else if(params[0] == "SOCKS") {
+        } else if(params[0] == "SOCKS" ||
+                  params[0] == "SOCKS5") {
             settingsMap["type"] = "socks";
         } else {
             settingsMap["type"] = params[0];
