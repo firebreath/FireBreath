@@ -13,6 +13,7 @@
  \**********************************************************/
 
 #include <typeinfo>
+#include <JavaScriptCore/JSStringRef.h>
 #include "JSObject.h"
 #include "JSObjectRefObject.h"
 
@@ -289,40 +290,40 @@ void JSObjectRefObject::_Initialize(JSContextRef ctx, JSObjectRef object)
 
 void JSObjectRefObject::_Finalize(JSObjectRef object)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     delete obj;
 }
 
 bool JSObjectRefObject::_HasProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     return obj->HasProperty(propertyName);
 }
 JSValueRef JSObjectRefObject::_GetProperty (JSContextRef ctx, JSObjectRef object,
                                             JSStringRef propertyName, JSValueRef *exception)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     return obj->GetProperty(propertyName, exception);
 }
 
 bool JSObjectRefObject::_SetProperty(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName,
                                      JSValueRef value, JSValueRef *exception)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     return obj->SetProperty(propertyName, value, exception);
 }
 
 bool JSObjectRefObject::_DeleteProperty(JSContextRef ctx, JSObjectRef object,
                                         JSStringRef propertyName, JSValueRef *exception)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     return obj->DeleteProperty(propertyName, exception);
 }
 
 void JSObjectRefObject::_GetPropertyNames( JSContextRef ctx, JSObjectRef object,
                                           JSPropertyNameAccumulatorRef propertyNames)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(object));
     obj->GetPropertyNames(propertyNames);
 }
 
@@ -330,7 +331,7 @@ JSValueRef JSObjectRefObject::_CallAsFunction(JSContextRef ctx, JSObjectRef func
                                               JSObjectRef thisObject, size_t argumentCount,
                                               const JSValueRef arguments[], JSValueRef* exception)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(function));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(function));
     return obj->CallAsFunction(thisObject, argumentCount, arguments, exception);
 }
 
@@ -338,7 +339,7 @@ JSObjectRef JSObjectRefObject::_CallAsConstructor(JSContextRef ctx, JSObjectRef 
                                                   size_t argumentCount, const JSValueRef arguments[],
                                                   JSValueRef* exception)
 {
-    JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(constructor));
+    JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(constructor));
     return obj->CallAsConstructor(argumentCount, arguments, exception);
 }
 
