@@ -132,7 +132,7 @@ void FB::View::WebViewMac::onFrameLoaded(JSContextRef jsContext, JSObjectRef win
     FB::VariantMap& injectVars(getJSVariables());
     FB::VariantMap::iterator it(injectVars.begin());
     FB::VariantMap::iterator end(injectVars.end());
-    while (it != injectVars.end()) {
+    while (it != end) {
         wnd->setProperty(it->first, it->second);
         ++it;
     }
@@ -164,7 +164,7 @@ FB::View::WebViewMac::~WebViewMac() {
 
 void FB::View::WebViewMac::loadHtml(const std::string& html)
 {
-    NSString *nsHtml = [[NSString alloc] initWithCString:html.data()];
+    NSString *nsHtml = [[NSString alloc] initWithCString:html.data() encoding:NSUTF8StringEncoding];
     NSURL *nsBaseUrl = [[NSURL alloc] initWithString:@"http://www.google.com"];
     
     [o->helper loadHTML:nsHtml baseUrl:nsBaseUrl];
@@ -175,7 +175,7 @@ void FB::View::WebViewMac::loadHtml(const std::string& html)
 
 void FB::View::WebViewMac::loadUri(const FB::URI& uri)
 {
-    NSString *nsUrlStr = [[NSString alloc] initWithCString:uri.toString().data()];
+    NSString *nsUrlStr = [[NSString alloc] initWithCString:uri.toString().data() encoding:NSUTF8StringEncoding];
     NSURL *nsUrl = [[NSURL alloc] initWithString:nsUrlStr];
     
     [o->helper loadURL:nsUrl];

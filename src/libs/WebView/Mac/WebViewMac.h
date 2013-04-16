@@ -113,13 +113,7 @@ namespace FB { namespace View {
     {
     public:
         WebViewMac(const FB::PluginCorePtr& plugin, const FB::BrowserHostPtr& parentHost);
-        ~WebViewMac();
-        
-        void loadHtml(const std::string& html);
-        void loadUri(const FB::URI& uri);
-        void closePage();
-
-        void DrawToCGContext(CGContext* ctx, const FB::Rect& size);
+        virtual ~WebViewMac();
 
         BEGIN_PLUGIN_EVENT_MAP()
             EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindowMacCG)
@@ -136,6 +130,12 @@ namespace FB { namespace View {
             EVENTTYPE_CASE(FB::FocusChangedEvent, onFocusChanged, FB::PluginWindowMacCG)
             EVENTTYPE_CASE(FB::CoreGraphicsDraw, onCoreGraphicsDraw, FB::PluginWindowMacCG)
         END_PLUGIN_EVENT_MAP()
+
+        virtual void loadHtml(const std::string& html);
+        virtual void loadUri(const FB::URI& uri);
+        virtual void closePage();
+
+        void DrawToCGContext(CGContext* ctx, const FB::Rect& size);
 
         virtual bool onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacCG *);
         virtual bool onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *);
