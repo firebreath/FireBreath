@@ -129,20 +129,18 @@ bool PluginCore::setReady()
 
 bool PluginCore::isWindowless()
 {
-    if (m_windowLessParam != boost::indeterminate) {
-        return m_windowLessParam;
-    } else {
+    if (boost::indeterminate(m_windowLessParam)) {
+        // initialise m_windowLessParam (defaulting to not windowless)
+        m_windowLessParam = false;
         FB::VariantMap::iterator itr = m_params.find("windowless");
         if (itr != m_params.end()) {
             try {
                 m_windowLessParam = itr->second.convert_cast<bool>();
-                return m_windowLessParam;
             } catch (const FB::bad_variant_cast& ex) {
                 FB_UNUSED_VARIABLE(ex);
             }
-        }
+	}
     }
-    m_windowLessParam = false;
     return m_windowLessParam;
 }
 

@@ -51,7 +51,7 @@ const FB::FBVoid FB::variant_detail::conversion::convert_variant( const FB::vari
 }
 
 FB::variant FB::variant_detail::conversion::make_variant(const boost::tribool& val) {
-    if (val == boost::indeterminate)
+    if (boost::indeterminate(val))
         return FB::variant();
     else
         return (bool)val;
