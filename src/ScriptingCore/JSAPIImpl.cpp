@@ -220,7 +220,7 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
         }
 
         EventContextMap::iterator it(eventMap.begin());
-        while (it != m_eventMap.end()) {
+        while (it != eventMap.end()) {
             std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
             for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; ++eventIt) {
                 eventIt->second->InvokeAsync("", args);
