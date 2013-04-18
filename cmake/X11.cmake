@@ -65,7 +65,7 @@ MACRO(add_x11_plugin PROJNAME INSOURCES)
     add_library(${PROJNAME} SHARED ${SOURCES})
 
     set_target_properties ("${PROJNAME}" PROPERTIES
-        OUTPUT_NAME np${PLUGIN_NAME}
+        OUTPUT_NAME ${FBSTRING_PluginFileName}
         PROJECT_LABEL "${PROJNAME}"
         LINK_FLAGS "${NPAPI_LINK_FLAGS}"
         PREFIX ""
