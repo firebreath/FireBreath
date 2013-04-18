@@ -2,7 +2,7 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
     <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{${FBControl_WixUpgradeCode_GUID}}">
         <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
-        <Upgrade Id="{@{GUIDS_INSTUPGR}}">
+        <Upgrade Id="{${FBControl_WixUpgradeCode_GUID}}">
             <UpgradeVersion
                 Property="OLD_VERSION_FOUND"
                 Minimum="0.0.1" IncludeMinimum="yes"
