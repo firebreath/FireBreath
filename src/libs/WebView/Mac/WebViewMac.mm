@@ -55,6 +55,7 @@ Copyright 2011 Facebook, Inc
 
     webView = [[WebView alloc] initWithFrame:frameRect frameName:nil groupName: nil];
     [webView setFrameLoadDelegate:self];
+    [webView setWantsLayer:YES];
     [hiddenWindow setContentView:webView];
     windowContext = [[NSGraphicsContext graphicsContextWithWindow:hiddenWindow] retain];
     [hiddenWindow makeFirstResponder:hiddenWindow.contentView];
@@ -155,11 +156,16 @@ FB::View::WebViewPtr FB::View::WebView::create( const FB::PluginCorePtr& plugin,
 
 FB::View::WebViewMac::WebViewMac(const FB::PluginCorePtr& plugin, const FB::BrowserHostPtr& parentHost)
     : FB::View::WebView(plugin, parentHost), o(new WebView_ObjCObjects()), mouseButtonState(FB::MouseButtonEvent::MouseButton_None),
-      m_parentHost(parentHost)
+      m_parentHost(parentHost), m_layer(NULL), m_isInvalidating(false)
 {
 }
 
 FB::View::WebViewMac::~WebViewMac() {
+    if (m_layer) {
+        [(CALayer*)m_layer removeFromSuperlayer];
+        [(CALayer*)m_layer release];
+        m_layer = NULL;
+    }
 }
 
 void FB::View::WebViewMac::loadHtml(const std::string& html)
@@ -203,25 +209,47 @@ void FB::View::WebViewMac::DrawToCGContext(CGContext* ctx, const FB::Rect& size)
     [pool release];
 }
 
-bool FB::View::WebViewMac::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMac *wnd)
 {
-    NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
-    o->helper = [[WebViewHelper alloc] initWithFrame:frame];
-    [o->helper setController:this];    
-    
-    wnd->StartAutoInvalidate(1.0/30.0);
+    if (FB::PluginWindowMac::DrawingModelCoreGraphics == wnd->getDrawingModel()) {
+        // Core Graphics rendering set up.
+        NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
+        o->helper = [[WebViewHelper alloc] initWithFrame:frame];
+        [o->helper setController:this];
+        m_isInvalidating = true;
+    }
+    else if (FB::PluginWindowMac::DrawingModelCoreAnimation == wnd->getDrawingModel() || FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel()) {
+        // Core Animation rendering set up.
+        NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
+        o->helper = [[WebViewHelper alloc] initWithFrame:frame];
+        [o->helper setController:this];
+        m_layer = [o->helper.webView layer];
+
+        if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel()) {
+            m_isInvalidating = true;
+        }
+
+        [(CALayer*)wnd->getDrawingPrimitive() addSublayer:(CALayer*)m_layer];
+    }
+
+    if (m_isInvalidating) {
+        wnd->StartAutoInvalidate(1.0/30.0);
+    }
+
     return false;
 }
 
-bool FB::View::WebViewMac::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMac *wnd)
 {
-    wnd->StopAutoInvalidate();
+    if (m_isInvalidating) {
+        wnd->StopAutoInvalidate();
+    }
     [o->helper release];
     o->helper = nil;
     return false;
 }
 
-bool FB::View::WebViewMac::onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMacCG *win)
+bool FB::View::WebViewMac::onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMac *win)
 {
     if (o->helper) {
         FB::Rect size = win->getWindowPosition();
@@ -232,7 +260,7 @@ bool FB::View::WebViewMac::onWindowResized(FB::ResizedEvent *evt, FB::PluginWind
     return true;
 }
 
-bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacCG *)
+bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMac *)
 {
     NSEventType evtType = NSKeyDown;
     
@@ -245,7 +273,7 @@ bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacC
     NSEvent *keyEvt = [NSEvent keyEventWithType:evtType
                                        location:NSMakePoint(5, 5)
                                   modifierFlags:modifierFlags
-                                      timestamp:GetCurrentEventTime()
+                                      timestamp:[NSDate timeIntervalSinceReferenceDate]
                                    windowNumber:[o->helper.hiddenWindow windowNumber]
                                         context:[o->helper context]
                                      characters:eventChar
@@ -257,7 +285,7 @@ bool FB::View::WebViewMac::onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacC
     
     return true;
 }
-bool FB::View::WebViewMac::onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *)
+bool FB::View::WebViewMac::onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMac *)
 {
     NSEventType evtType = NSKeyUp;
     
@@ -270,7 +298,7 @@ bool FB::View::WebViewMac::onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *)
     NSEvent *keyEvt = [NSEvent keyEventWithType:evtType
                                        location:NSMakePoint(5, 5)
                                   modifierFlags:modifierFlags
-                                      timestamp:GetCurrentEventTime()
+                                      timestamp:[NSDate timeIntervalSinceReferenceDate]
                                    windowNumber:[o->helper.hiddenWindow windowNumber]
                                         context:[o->helper context]
                                      characters:eventChar
@@ -283,7 +311,7 @@ bool FB::View::WebViewMac::onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *)
     return true;
 }
 
-bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindowMac *wnd)
 {
     NSPoint where;
     where.x = evt->m_x;
@@ -312,7 +340,7 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
     NSEvent *mouseDown = [NSEvent mouseEventWithType:evtType
                                             location:where
                                        modifierFlags:nil
-                                           timestamp:GetCurrentEventTime()
+                                           timestamp:[NSDate timeIntervalSinceReferenceDate]
                                         windowNumber:[o->helper.hiddenWindow windowNumber]
                                              context:[o->helper context]
                                          eventNumber:nil
@@ -321,10 +349,12 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
 
     //NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder mouseDown:mouseDown];
-    wnd->InvalidateWindow();
+    if (m_isInvalidating) {
+        wnd->InvalidateWindow();
+    }
     return true;
 }
-bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMac *wnd)
 {
     NSPoint where;
     where.x = evt->m_x;
@@ -353,7 +383,7 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
     NSEvent *mouseEvent = [NSEvent mouseEventWithType:evtType
                                              location:where
                                         modifierFlags:nil
-                                            timestamp:GetCurrentEventTime()
+                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
                                          windowNumber:[o->helper.hiddenWindow windowNumber]
                                               context:[o->helper context]
                                           eventNumber:nil
@@ -361,10 +391,12 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacC
                                              pressure:nil];
 //    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
     [o->helper.hiddenWindow.firstResponder mouseUp:mouseEvent];
-    wnd->InvalidateWindow();
+    if (m_isInvalidating) {
+        wnd->InvalidateWindow();
+    }
     return true;
 }
-bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindowMac *wnd)
 {
     NSPoint where;
     where.x = evt->m_x;
@@ -385,7 +417,7 @@ bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow
     NSEvent *mouseEvent = [NSEvent mouseEventWithType:evtType
                                              location:where
                                         modifierFlags:nil
-                                            timestamp:GetCurrentEventTime()
+                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
                                          windowNumber:[o->helper.hiddenWindow windowNumber]
                                               context:[o->helper context]
                                           eventNumber:nil
@@ -404,11 +436,13 @@ bool FB::View::WebViewMac::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow
     }
 //    getParentHost()->htmlLog(ss.str());
     
-    wnd->InvalidateWindow();
+    if (m_isInvalidating) {
+        wnd->InvalidateWindow();
+    }
     return false;
 }
 
-bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWindowMacCG *wnd) {
+bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWindowMac *wnd) {
     NSPoint where;
     where.x = evt->m_x;
     where.y = wnd->getWindowHeight()-evt->m_y;    
@@ -429,7 +463,7 @@ bool FB::View::WebViewMac::onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWi
     
     return true;
 }
-bool FB::View::WebViewMac::onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMacCG *wnd) {
+bool FB::View::WebViewMac::onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMac *wnd) {
 //    NSPoint where;
 //    where.x = evt->m_x;
 //    where.y = wnd->getWindowHeight()-evt->m_y;
@@ -437,7 +471,7 @@ bool FB::View::WebViewMac::onMouseEntered(FB::MouseEnteredEvent *evt, FB::Plugin
 //    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseEntered
 //                                        location:where
 //                                   modifierFlags:nil
-//                                       timestamp:GetCurrentEventTime()
+//                                       timestamp:[NSDate timeIntervalSinceReferenceDate]
 //                                    windowNumber:[o->helper.hiddenWindow windowNumber]
 //                                         context:[o->helper context]
 //                                     eventNumber:nil
@@ -447,7 +481,7 @@ bool FB::View::WebViewMac::onMouseEntered(FB::MouseEnteredEvent *evt, FB::Plugin
     
     return true;
 }
-bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMacCG *wnd) {
+bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMac *wnd) {
 //    NSPoint where;
 //    where.x = evt->m_x;
 //    where.y = wnd->getWindowHeight()-evt->m_y;
@@ -455,7 +489,7 @@ bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWi
 //    NSEvent *e = [NSEvent enterExitEventWithType:NSMouseExited
 //                                        location:where
 //                                   modifierFlags:nil
-//                                       timestamp:GetCurrentEventTime()
+//                                       timestamp:[NSDate timeIntervalSinceReferenceDate]
 //                                    windowNumber:[o->helper.hiddenWindow windowNumber]
 //                                         context:[o->helper context]
 //                                     eventNumber:nil
@@ -466,14 +500,14 @@ bool FB::View::WebViewMac::onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWi
     return true;
 }
 
-bool FB::View::WebViewMac::onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMacCG *)
+bool FB::View::WebViewMac::onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMac *)
 {
     [o->helper.hiddenWindow setIsActive:evt->hasFocus() ? YES : NO];
     [o->helper.hiddenWindow.contentView setNeedsDisplay:YES];
     return true;
 }
 
-bool FB::View::WebViewMac::onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG *wnd)
+bool FB::View::WebViewMac::onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMac *wnd)
 {
     CGContextSaveGState(evt->context);
     DrawToCGContext(evt->context, evt->bounds);
