@@ -161,6 +161,9 @@ namespace FB { namespace View {
             return m_host;
         }
 
+        virtual bool doWebViewNavigation(const std::string& url);
+        virtual bool doWebViewTitleChanged(const std::string& title);
+
     private:
         boost::scoped_ptr<WebView_ObjCObjects> o;
         FB::MouseButtonEvent::MouseButton mouseButtonState;
@@ -168,6 +171,7 @@ namespace FB { namespace View {
         FB::BrowserHostPtr m_parentHost;
         void* m_layer;
         bool m_isInvalidating;
+        FB::PluginWindowMac* m_wnd;
     };
 }};
 

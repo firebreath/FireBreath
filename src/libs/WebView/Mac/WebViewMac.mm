@@ -17,11 +17,25 @@ Copyright 2011 Facebook, Inc
 #include "DOM.h"
 
 #import "WebViewMac.h"
+#include "WebViewEvents.h"
 
 #define OFFSCREEN_ORIGIN_X -4000
 #define OFFSCREEN_ORIGIN_Y -4000
 
 @implementation WebViewHelper
+
+- (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id < WebPolicyDecisionListener >)listener
+{
+    // Let the plugin handle the event if it wants
+    if (controller &&
+        [frame isEqual:[sender mainFrame]]) {
+
+        controller->doWebViewNavigation([[[request URL] absoluteString] UTF8String]);
+        [listener use];
+    } else {
+        [listener use];
+    }
+}
 
 - (void)setController:(FB::View::WebViewMac*)c
 {
@@ -56,6 +70,9 @@ Copyright 2011 Facebook, Inc
     webView = [[WebView alloc] initWithFrame:frameRect frameName:nil groupName: nil];
     [webView setFrameLoadDelegate:self];
     [webView setWantsLayer:YES];
+    [webView setPolicyDelegate:self];
+    [webView setCustomUserAgent: @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/536.28.4 (KHTML, like Gecko) Version/6.0.3 Safari/536.28.4"];
+
     [hiddenWindow setContentView:webView];
     windowContext = [[NSGraphicsContext graphicsContextWithWindow:hiddenWindow] retain];
     [hiddenWindow makeFirstResponder:hiddenWindow.contentView];
@@ -98,6 +115,14 @@ Copyright 2011 Facebook, Inc
 
     [NSGraphicsContext restoreGraphicsState];
     [pool release];
+}
+
+- (void)webView:(WebView *)sender didReceiveTitle:(NSString *)title forFrame:(WebFrame *)frame
+{
+    if (controller &&
+        [frame isEqual:[sender mainFrame]]) {
+        controller->doWebViewTitleChanged([title UTF8String]);
+    }
 }
 
 - (void)webView:(WebView *)sender didClearWindowObject:(WebScriptObject *)windowObject forFrame:(WebFrame *)frame
@@ -156,7 +181,7 @@ FB::View::WebViewPtr FB::View::WebView::create( const FB::PluginCorePtr& plugin,
 
 FB::View::WebViewMac::WebViewMac(const FB::PluginCorePtr& plugin, const FB::BrowserHostPtr& parentHost)
     : FB::View::WebView(plugin, parentHost), o(new WebView_ObjCObjects()), mouseButtonState(FB::MouseButtonEvent::MouseButton_None),
-      m_parentHost(parentHost), m_layer(NULL), m_isInvalidating(false)
+      m_parentHost(parentHost), m_layer(NULL), m_isInvalidating(false), m_wnd(NULL)
 {
 }
 
@@ -211,18 +236,18 @@ void FB::View::WebViewMac::DrawToCGContext(CGContext* ctx, const FB::Rect& size)
 
 bool FB::View::WebViewMac::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMac *wnd)
 {
+    m_wnd = wnd;
+
+    NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
+    o->helper = [[WebViewHelper alloc] initWithFrame:frame];
+    [o->helper setController:this];
+
     if (FB::PluginWindowMac::DrawingModelCoreGraphics == wnd->getDrawingModel()) {
         // Core Graphics rendering set up.
-        NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
-        o->helper = [[WebViewHelper alloc] initWithFrame:frame];
-        [o->helper setController:this];
         m_isInvalidating = true;
     }
     else if (FB::PluginWindowMac::DrawingModelCoreAnimation == wnd->getDrawingModel() || FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel()) {
         // Core Animation rendering set up.
-        NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
-        o->helper = [[WebViewHelper alloc] initWithFrame:frame];
-        [o->helper setController:this];
         m_layer = [o->helper.webView layer];
 
         if (FB::PluginWindowMac::DrawingModelInvalidatingCoreAnimation == wnd->getDrawingModel()) {
@@ -241,6 +266,8 @@ bool FB::View::WebViewMac::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWi
 
 bool FB::View::WebViewMac::onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMac *wnd)
 {
+    m_wnd = NULL;
+
     if (m_isInvalidating) {
         wnd->StopAutoInvalidate();
     }
@@ -516,3 +543,22 @@ bool FB::View::WebViewMac::onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::Plu
     return true;
 }
 
+bool FB::View::WebViewMac::doWebViewNavigation(const std::string& url)
+{
+    FB::WebViewNavigation navEv(url);
+    if (m_wnd) {
+        m_wnd->SendEvent(&navEv);
+    }
+
+    return true;
+}
+
+bool FB::View::WebViewMac::doWebViewTitleChanged(const std::string& title)
+{
+    FB::WebViewTitleChanged titleEv(title);
+    if (m_wnd) {
+        m_wnd->SendEvent(&titleEv);
+    }
+
+    return true;
+}
