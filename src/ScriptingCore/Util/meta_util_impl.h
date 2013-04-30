@@ -27,7 +27,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { namespace meta { namespace detail
 {
-    class yes { char c;   };
+    class yes { yes() : c(0) { (void)c; }; char c; };
     class no  { yes y[2]; };
 
 #define FB_HAS_TYPE(Type_, Name_) \
