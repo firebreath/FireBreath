@@ -31,6 +31,14 @@ if (WIN32)
             "$ENV{ProgramFiles}/Windows Installer XML v3"
             "$ENV{ProgramFiles}/Windows Installer XML v3.5"
             "$ENV{ProgramFiles}/Windows Installer XML v3.6"
+            "$ENV{ProgramFiles}/WiX Toolset v3.6"
+            "$ENV{ProgramFiles}/WiX Toolset v3.7"
+            "$ENV{ProgramFiles(x86)}/Windows Installer XML"
+            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3"
+            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.5"
+            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.6"
+            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.6"
+            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.7"
             )
 
 
