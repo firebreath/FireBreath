@@ -22,13 +22,78 @@ Copyright 2011 Facebook, Inc
 #define OFFSCREEN_ORIGIN_X -4000
 #define OFFSCREEN_ORIGIN_Y -4000
 
+// WebViewExternalLinkHandler is a hack to get the request for a new window
+// appearing via a pop-up.  The problem is decidePolicyForNavigationAction
+// does not do what you expect, so pretty much only gets called when the window
+// first appears, so this is a thin shim to fool the WebView.
+
+typedef void(^NewWindowCallback)(NSURL *url);
+@interface WebViewExternalLinkHandler : NSObject
++(WebView *)riggedWebViewWithLoadHandler:(NewWindowCallback)handler;
+@end
+
+@interface WebViewExternalLinkHandler()
+@property (strong, nonatomic) WebView *attachedWebView;
+@property (strong, nonatomic) WebViewExternalLinkHandler *retainedSelf;
+@property (copy, nonatomic) NewWindowCallback handler;
+@end
+
+@implementation WebViewExternalLinkHandler
+
+-(id)init {
+    if (self = [super init]) {
+        // Create a new webview with self as the policyDelegate, and keep a ref to it
+        self.attachedWebView = [WebView new];
+        self.attachedWebView.policyDelegate = self;
+    }
+
+    return self;
+}
+
+-(void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id<WebPolicyDecisionListener>)listener {
+    // Execute new pop-up handler
+    if (self.handler) {
+        self.handler([actionInformation objectForKey:WebActionOriginalURLKey]);
+    }
+
+    // Done, so safe to unretain yourself
+    self.retainedSelf = nil;
+}
+
++(WebView *)riggedWebViewWithLoadHandler:(NewWindowCallback)handler {
+    WebViewExternalLinkHandler *newWindowHandler = [WebViewExternalLinkHandler new];
+    newWindowHandler.handler = handler;
+
+    // Retain yourself so that we persist until the
+    // webView:decidePolicyForNavigationAction:request:frame:decisionListener:
+    // method has been called
+    newWindowHandler.retainedSelf = newWindowHandler;
+
+    // Return the attached webview
+    return newWindowHandler.attachedWebView;
+}
+
+@end
+
 @implementation WebViewHelper
+
+// decidePolicyForNewWindowAction does not work so we have to catch the creation of a new
+// web view and send it to the right placer.  Even if decidePolicyForNewWindowAction it still
+// fails because the request is invariably empty.
+-(WebView *)webView:(WebView *)sender createWebViewWithRequest:(NSURLRequest *)request {
+    return [WebViewExternalLinkHandler riggedWebViewWithLoadHandler:^(NSURL *url) {
+        controller->doWebViewNewWindow([[url absoluteString] UTF8String]);
+    }];
+}
 
 - (void)webView:(WebView *)sender decidePolicyForNavigationAction:(NSDictionary *)actionInformation request:(NSURLRequest *)request frame:(WebFrame *)frame decisionListener:(id < WebPolicyDecisionListener >)listener
 {
+    int navType = [[actionInformation objectForKey:WebActionNavigationTypeKey] intValue];
     // Let the plugin handle the event if it wants
     if (controller &&
-        [frame isEqual:[sender mainFrame]]) {
+        [frame isEqual:[sender mainFrame]] &&
+        (navType != WebNavigationTypeBackForward) &&
+        (navType != WebNavigationTypeReload)) {
 
         controller->doWebViewNavigation([[[request URL] absoluteString] UTF8String]);
         [listener use];
@@ -72,6 +137,7 @@ Copyright 2011 Facebook, Inc
     [webView setWantsLayer:YES];
     [webView setPolicyDelegate:self];
     [webView setCustomUserAgent: @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/536.28.4 (KHTML, like Gecko) Version/6.0.3 Safari/536.28.4"];
+    [webView setUIDelegate:self];
 
     [hiddenWindow setContentView:webView];
     windowContext = [[NSGraphicsContext graphicsContextWithWindow:hiddenWindow] retain];
@@ -546,6 +612,16 @@ bool FB::View::WebViewMac::onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::Plu
 bool FB::View::WebViewMac::doWebViewNavigation(const std::string& url)
 {
     FB::WebViewNavigation navEv(url);
+    if (m_wnd) {
+        m_wnd->SendEvent(&navEv);
+    }
+
+    return true;
+}
+
+bool FB::View::WebViewMac::doWebViewNewWindow(const std::string& url)
+{
+    FB::WebViewNewWindow navEv(url);
     if (m_wnd) {
         m_wnd->SendEvent(&navEv);
     }

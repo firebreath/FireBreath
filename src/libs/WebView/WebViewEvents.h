@@ -37,6 +37,22 @@ namespace FB {
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  WebViewNewWindow
+    ///
+    /// @brief  Fired when a new window event is received.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class WebViewNewWindow : public PluginEvent
+    {
+    public:
+        WebViewNewWindow(const std::string& url)
+            : m_url(url)
+        { }
+
+    public:
+        std::string m_url;   // The url being navigated to.
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  WebViewTitleChanged
     ///
     /// @brief  Fired when the WebView title changes.

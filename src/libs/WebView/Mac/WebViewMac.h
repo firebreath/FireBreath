@@ -162,6 +162,7 @@ namespace FB { namespace View {
         }
 
         virtual bool doWebViewNavigation(const std::string& url);
+        virtual bool doWebViewNewWindow(const std::string& url);
         virtual bool doWebViewTitleChanged(const std::string& title);
 
     private:
