@@ -67,6 +67,22 @@ namespace FB {
     public:
         std::string m_title;   // The new title.
     };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  WebViewFaviconChanged
+    ///
+    /// @brief  Fired when the WebView favicon changes.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class WebViewFaviconChanged : public PluginEvent
+    {
+    public:
+        WebViewFaviconChanged(const std::string& b64_favicon)
+            : m_b64_favicon(b64_favicon)
+        { }
+
+    public:
+        std::string m_b64_favicon;   // The new favicon base64 encoded PNG.
+    };
 };
 
 #endif

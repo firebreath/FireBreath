@@ -22,6 +22,39 @@ Copyright 2011 Facebook, Inc
 #define OFFSCREEN_ORIGIN_X -4000
 #define OFFSCREEN_ORIGIN_Y -4000
 
+NSString* base64forData(NSData* theData);
+
+NSString* base64forData(NSData* theData) {
+    const uint8_t* input = (const uint8_t*)[theData bytes];
+    NSInteger length = [theData length];
+
+    static char table[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+
+    NSMutableData* data = [NSMutableData dataWithLength:((length + 2) / 3) * 4];
+    uint8_t* output = (uint8_t*)data.mutableBytes;
+
+    NSInteger i;
+    for (i=0; i < length; i += 3) {
+        NSInteger value = 0;
+        NSInteger j;
+        for (j = i; j < (i + 3); j++) {
+            value <<= 8;
+
+            if (j < length) {
+                value |= (0xFF & input[j]);
+            }
+        }
+
+        NSInteger theIndex = (i / 3) * 4;
+        output[theIndex + 0] =                    table[(value >> 18) & 0x3F];
+        output[theIndex + 1] =                    table[(value >> 12) & 0x3F];
+        output[theIndex + 2] = (i + 1) < length ? table[(value >> 6)  & 0x3F] : '=';
+        output[theIndex + 3] = (i + 2) < length ? table[(value >> 0)  & 0x3F] : '=';
+    }
+
+    return [[[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding] autorelease];
+}
+
 // WebViewExternalLinkHandler is a hack to get the request for a new window
 // appearing via a pop-up.  The problem is decidePolicyForNavigationAction
 // does not do what you expect, so pretty much only gets called when the window
@@ -76,6 +109,16 @@ typedef void(^NewWindowCallback)(NSURL *url);
 @end
 
 @implementation WebViewHelper
+
+-(void)webView:(WebView *)sender didReceiveIcon:(NSImage *)image forFrame:(WebFrame *)frame
+{
+    NSBitmapImageRep *bits = [[NSBitmapImageRep alloc] initWithData:[image TIFFRepresentation]];
+    NSData *imageData;
+    imageData = [bits representationUsingType: NSPNGFileType
+                 properties: nil];
+    NSString *imageString = base64forData(imageData);
+    controller->doWebViewFaviconChanged([imageString UTF8String]);
+}
 
 // decidePolicyForNewWindowAction does not work so we have to catch the creation of a new
 // web view and send it to the right placer.  Even if decidePolicyForNewWindowAction it still
@@ -412,7 +455,7 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
     
 //    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
     
-    NSEventType evtType;
+    NSEventType evtType = 0;
     
 //    std::stringstream ss;
 //    ss << "Mouse down at " << where.x << ", " << where.y;
@@ -425,23 +468,30 @@ bool FB::View::WebViewMac::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow
         case FB::MouseButtonEvent::MouseButton_Right:
             evtType = NSRightMouseDown;
             break;
+        case FB::MouseButtonEvent::MouseButton_Middle:
+            evtType = NSRightMouseDown;
+            break;
+        case FB::MouseButtonEvent::MouseButton_None:
         default:
             break;
     }
-    
-//    NSGraphicsContext *context = [NSGraphicsContext currentContext];
-    NSEvent *mouseDown = [NSEvent mouseEventWithType:evtType
-                                            location:where
-                                       modifierFlags:nil
-                                           timestamp:[NSDate timeIntervalSinceReferenceDate]
-                                        windowNumber:[o->helper.hiddenWindow windowNumber]
-                                             context:[o->helper context]
-                                         eventNumber:nil
-                                          clickCount:1 
-                                            pressure:nil];
 
-    //NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
-    [o->helper.hiddenWindow.firstResponder mouseDown:mouseDown];
+    if (evtType != 0) {
+//      NSGraphicsContext *context = [NSGraphicsContext currentContext];
+        NSEvent *mouseDown = [NSEvent mouseEventWithType:evtType
+                                                location:where
+                                           modifierFlags:nil
+                                               timestamp:[NSDate timeIntervalSinceReferenceDate]
+                                            windowNumber:[o->helper.hiddenWindow windowNumber]
+                                                 context:[o->helper context]
+                                             eventNumber:nil
+                                              clickCount:1
+                                                pressure:nil];
+
+//      NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+        [o->helper.hiddenWindow.firstResponder mouseDown:mouseDown];
+    }
+
     if (m_isInvalidating) {
         wnd->InvalidateWindow();
     }
@@ -454,7 +504,7 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMac 
     where.y = wnd->getWindowHeight()-evt->m_y;
     
 //    NSView* resp = [[o->helper.hiddenWindow contentView] hitTest:where];
-    NSEventType evtType;
+    NSEventType evtType = 0;
     
 //    std::stringstream ss;
 //    ss << "Mouse up at " << where.x << ", " << where.y;
@@ -468,22 +518,29 @@ bool FB::View::WebViewMac::onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMac 
         case FB::MouseButtonEvent::MouseButton_Right:
             evtType = NSRightMouseUp;
             break;
+        case FB::MouseButtonEvent::MouseButton_Middle:
+            evtType = NSRightMouseUp;
+            break;
+        case FB::MouseButtonEvent::MouseButton_None:
         default:
             break;
     }
     
-//    NSGraphicsContext *context = [NSGraphicsContext currentContext];
-    NSEvent *mouseEvent = [NSEvent mouseEventWithType:evtType
-                                             location:where
-                                        modifierFlags:nil
-                                            timestamp:[NSDate timeIntervalSinceReferenceDate]
-                                         windowNumber:[o->helper.hiddenWindow windowNumber]
-                                              context:[o->helper context]
-                                          eventNumber:nil
-                                           clickCount:1 
-                                             pressure:nil];
-//    NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
-    [o->helper.hiddenWindow.firstResponder mouseUp:mouseEvent];
+    if (evtType != 0) {
+//      NSGraphicsContext *context = [NSGraphicsContext currentContext];
+        NSEvent *mouseEvent = [NSEvent mouseEventWithType:evtType
+                                                 location:where
+                                            modifierFlags:nil
+                                                timestamp:[NSDate timeIntervalSinceReferenceDate]
+                                             windowNumber:[o->helper.hiddenWindow windowNumber]
+                                                  context:[o->helper context]
+                                              eventNumber:nil
+                                               clickCount:1
+                                                 pressure:nil];
+//      NSLog(@"%@", o->helper.hiddenWindow.firstResponder);
+        [o->helper.hiddenWindow.firstResponder mouseUp:mouseEvent];
+    }
+
     if (m_isInvalidating) {
         wnd->InvalidateWindow();
     }
@@ -634,6 +691,16 @@ bool FB::View::WebViewMac::doWebViewTitleChanged(const std::string& title)
     FB::WebViewTitleChanged titleEv(title);
     if (m_wnd) {
         m_wnd->SendEvent(&titleEv);
+    }
+
+    return true;
+}
+
+bool FB::View::WebViewMac::doWebViewFaviconChanged(const std::string b64_favicon)
+{
+    FB::WebViewFaviconChanged faviconEv(b64_favicon);
+    if (m_wnd) {
+        m_wnd->SendEvent(&faviconEv);
     }
 
     return true;
