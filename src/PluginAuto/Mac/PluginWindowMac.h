@@ -89,6 +89,8 @@ namespace FB {
         // Handles a timer event
         virtual void handleTimerEvent();
 
+        const char* getUserAgent() const;
+
     protected:
         Npapi::NpapiBrowserHostPtr m_npHost;
         PluginEventMacWeakPtr m_PluginEvent;

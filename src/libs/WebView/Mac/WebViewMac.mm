@@ -179,7 +179,6 @@ typedef void(^NewWindowCallback)(NSURL *url);
     [webView setFrameLoadDelegate:self];
     [webView setWantsLayer:YES];
     [webView setPolicyDelegate:self];
-    [webView setCustomUserAgent: @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_3) AppleWebKit/536.28.4 (KHTML, like Gecko) Version/6.0.3 Safari/536.28.4"];
     [webView setUIDelegate:self];
 
     [hiddenWindow setContentView:webView];
@@ -350,6 +349,11 @@ bool FB::View::WebViewMac::onWindowAttached(FB::AttachedEvent *evt, FB::PluginWi
     NSRect frame = NSMakeRect(0, 0, wnd->getWindowWidth(), wnd->getWindowHeight());
     o->helper = [[WebViewHelper alloc] initWithFrame:frame];
     [o->helper setController:this];
+
+    const char* user_agent(wnd->getUserAgent());
+    if (user_agent) {
+        [o->helper.webView setCustomUserAgent: [NSString stringWithUTF8String:user_agent]];
+    }
 
     if (FB::PluginWindowMac::DrawingModelCoreGraphics == wnd->getDrawingModel()) {
         // Core Graphics rendering set up.
