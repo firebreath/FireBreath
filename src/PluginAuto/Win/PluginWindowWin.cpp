@@ -68,6 +68,25 @@ PluginWindowWin::~PluginWindowWin()
         m_windowMap.erase(it);
 }
 
+std::string GetTextFromVK(unsigned int vk)
+{
+	std::string text = "";
+	static unsigned char State[256];
+	HKL layout = layout=GetKeyboardLayout(0);
+	UINT scan = MapVirtualKeyEx(vk, 4, layout); // 4 == MAPVK_VK_TO_VSC_EX
+
+	if (GetKeyboardState(State) == FALSE)
+		return 0;
+
+	unsigned short result[3];
+	int ascii = ToAsciiEx(vk, scan, State, result, 0, layout);
+
+	if (ascii == 1)
+		text += char(result[0]);
+
+	return text;
+}
+
 bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, LRESULT & lRes)
 {
     lRes = 0;
@@ -233,7 +252,8 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_KEYUP:
         {
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
-            KeyUpEvent ev(fb_key, (unsigned int)wParam);
+			unsigned int os_key = (unsigned int)wParam;
+            KeyUpEvent ev(fb_key, os_key, modifierState, GetTextFromVK(os_key));
             if(SendEvent(&ev))
                 return true;
             break;
@@ -241,8 +261,9 @@ bool PluginWindowWin::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
         case WM_KEYDOWN:
         {
             FBKeyCode fb_key = WinKeyCodeToFBKeyCode((unsigned int)wParam);
-            KeyDownEvent ev(fb_key, (unsigned int)wParam);
-            if(SendEvent(&ev))
+			unsigned int os_key = (unsigned int)wParam;
+			KeyDownEvent ev(fb_key, os_key, modifierState, GetTextFromVK(os_key));
+			if(SendEvent(&ev))
                 return true;
             break;
         }
