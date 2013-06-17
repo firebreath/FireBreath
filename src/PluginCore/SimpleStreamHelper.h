@@ -241,7 +241,7 @@ namespace FB {
         /// @author taxilian
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req );
+        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, BrowserStreamRequest& req );
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024)

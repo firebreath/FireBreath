@@ -106,7 +106,7 @@ public:
 };
 
 
-FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::BrowserHostPtr& host, const BrowserStreamRequest& req )
+FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::BrowserHostPtr& host, BrowserStreamRequest& req )
 {
     // We can't ever block on the main thread, so SynchronousGet can't be called from there.
     // Also, if you could block the main thread, that still wouldn't work because the request
@@ -115,6 +115,7 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::
     SyncHTTPHelper helper;
     try {
         FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
+		req.setCallback(cb);
         FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req);
         helper.setPtr(ptr);
         helper.waitForDone();
