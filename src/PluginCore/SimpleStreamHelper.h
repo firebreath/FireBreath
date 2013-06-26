@@ -32,7 +32,10 @@ namespace FB {
     FB_FORWARD_PTR(SimpleStreamHelper);
 
     typedef std::multimap<std::string, std::string> HeaderMap;
-    typedef boost::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
+    typedef boost::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)>   HttpCallback;
+    typedef boost::function<void (const void *, const size_t)>                                                      HttpChunkCallback;
+    typedef boost::function<void (const size_t, const size_t)>                                                      HttpProgressCallback;
+    typedef boost::function<void (bool, const FB::HeaderMap&)>                                                      HttpCompletedCallback;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  HttpStreamResponse
@@ -241,7 +244,7 @@ namespace FB {
         /// @author taxilian
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req );
+        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, BrowserStreamRequest& req );
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024)
@@ -280,7 +283,12 @@ namespace FB {
 
 
     public:
-        SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize = 128*1024 );
+        SimpleStreamHelper( 
+            const HttpCallback& callback, 
+            const HttpProgressCallback& progressCallback, 
+            const HttpChunkCallback& chunkCallback, 
+            const HttpCompletedCallback& completedCallback,
+            const size_t blockSize = 128*1024 );
 
         virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *);
@@ -293,7 +301,11 @@ namespace FB {
         boost::shared_array<uint8_t> data;
         const size_t blockSize;
         size_t received;
+        size_t total;
         HttpCallback callback;
+        HttpProgressCallback progressCallback;
+        HttpChunkCallback chunkCallback;
+        HttpCompletedCallback completedCallback;
 
     private:
         void keepReference(const SimpleStreamHelperPtr& ptr);
