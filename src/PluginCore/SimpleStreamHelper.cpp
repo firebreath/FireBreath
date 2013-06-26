@@ -219,13 +219,6 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
 
 bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * stream )
 {
-
-    std::multimap<std::string, std::string> headers;
-    headers = parse_http_headers(stream->getHeaders());
-    total = 0;
-    if (headers.find("Content-Length") != headers.end())
-        total = boost::lexical_cast<size_t>( headers.find("Content-Length")->second );
-
     // We can't reliably find the actual length, so we won't try
     return false;
 }
@@ -269,7 +262,7 @@ bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *ev
 
     // Call the progress callback
     if (progressCallback)
-        progressCallback( received, total );
+        progressCallback( received, s->getLength() );
 
     // Forward the event
     return false;
