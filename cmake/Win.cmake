@@ -164,8 +164,10 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
         if (EXISTS ${PFXFILE})
             message("-- ${_FILENAME} will be signed with ${PFXFILE}")
             GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
+            GET_FILENAME_COMPONENT(WINKIT_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots;KitsRoot]" REALPATH CACHE)
             find_program(SIGNTOOL signtool
                 PATHS
+                ${WINKIT_DIR}/bin/x64
                 ${WINSDK_DIR}/bin
                 )
             if (SIGNTOOL)
