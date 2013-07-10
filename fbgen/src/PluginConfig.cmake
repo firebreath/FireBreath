@@ -34,7 +34,11 @@ endif ( FB_PLATFORM_ARCH_32 )
 
 # these are the pieces that are relevant to using it from Javascript
 set(ACTIVEX_PROGID "@{COMPANY_ident}.@{PLUGIN_ident}")
-set(MOZILLA_PLUGINID "@{COMPANY_domain}/@{PLUGIN_ident}")
+if ( FB_PLATFORM_ARCH_32 )
+    set(MOZILLA_PLUGINID "@{COMPANY_domain}/@{PLUGIN_ident}")  # No 32bit postfix to maintain backward compatability.
+else ( FB_PLATFORM_ARCH_32 )
+    set(MOZILLA_PLUGINID "@{COMPANY_domain}/@{PLUGIN_ident}_${FB_PLATFORM_ARCH_NAME}")
+endif ( FB_PLATFORM_ARCH_32 )
 
 # strings
 set(FBSTRING_CompanyName "@{COMPANY_name}")
