@@ -35,7 +35,8 @@ class Template(string.Template):
                 retdict.update(PLUGIN_disable_gui_mac='1');
         return retdict;
 
-
+SENTENCE_SYMBOLS_RE=re.compile(r"^[()\w .:,;!?-]+$")
+SENTENCE_SYMBOLS_WARNING="must be at least one character long and may only contain letters, digits, spaces, punctuation marks, parantheses, underscores or hyphens."
 
 class Base(object):
     def __getitem__(self, item): return getattr(self, item)
@@ -43,9 +44,9 @@ class Base(object):
         for k, v in kwargs.items():
             if hasattr(self, k): setattr(self, k, v)
         self.keys = AttrDictSimple(
-            name       = ("Name", re.compile(r"^.+$"), "Name must be at least one character, and may not contain carriage returns."),
+            name       = ("Name", SENTENCE_SYMBOLS_RE, "Name " + SENTENCE_SYMBOLS_WARNING),
             ident      = ("Identifier", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,}$"), "Identifier must be 3 or more alphanumeric characters (underscore allowed)."),
-            desc       = ("Description", re.compile(r"^.+$"), "Description must be one or more characters long!"),
+            desc       = ("Description", SENTENCE_SYMBOLS_RE, "Description " + SENTENCE_SYMBOLS_WARNING),
             prefix     = ("Prefix", re.compile(r"^[a-zA-Z][a-zA-Z\d_]{2,4}$"), "Prefix must be 3 to 5 alphanumeric characters (underscores allowed)."),
             domain     = ("Domain", re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.[a-zA-Z]{2,4}$"), "Domain must be a valid domain name."),
             mimetype   = ("MIME type", re.compile(r"^[a-zA-Z0-9]+\/[a-zA-Z0-9\-]+$"), "Please use alphanumeric characters and dashes in the format: application/x-firebreath"),
