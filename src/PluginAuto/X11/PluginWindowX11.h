@@ -75,8 +75,6 @@ namespace FB {
 #endif
 
     protected:
-	static gboolean idleInvalidate(gpointer win);
-
         int32_t m_x;
         int32_t m_y;
         uint32_t m_width;

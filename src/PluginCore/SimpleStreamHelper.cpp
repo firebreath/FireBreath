@@ -115,9 +115,7 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::
     SyncHTTPHelper helper;
     try {
         FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
-	FB::BrowserStreamRequest req2(req);
-	req2.setCallback(cb);
-        FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req2);
+        FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req);
         helper.setPtr(ptr);
         helper.waitForDone();
     } catch (const std::exception&) {
