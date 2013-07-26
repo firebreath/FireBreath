@@ -45,6 +45,9 @@
 #  include <sched.h>
 #  include <signal.h>
 #elif defined (LOG4CPLUS_USE_WIN32_THREADS)
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x0400
+#  endif
 #  include <process.h> 
 #endif
 #include <log4cplus/config/windowsh-inc.h>
