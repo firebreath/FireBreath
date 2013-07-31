@@ -10,6 +10,7 @@
 file (GLOB PLATFORM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Win/[^.]*.cpp
     Win/[^.]*.h
+    Win/[^.]*.rc
     Win/[^.]*.cmake
     )
 
