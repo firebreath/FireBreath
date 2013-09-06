@@ -65,7 +65,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~JSObject() {}
 
-        virtual void *getEventId() const { return NULL; }
+        virtual void *getEventId() { return NULL; }
         virtual void *getEventContext() const { return NULL; }
 
         virtual bool supportsOptimizedCalls() const { return false; }

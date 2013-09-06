@@ -37,7 +37,7 @@ namespace FB { namespace ActiveX {
         static boost::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
         virtual ~IDispatchAPI(void);
 
-        void *getEventId() const
+        void *getEventId()
         {
             IDispatchSRef sref(m_obj.lock());
             if (sref) return (void*)sref->getPtr();

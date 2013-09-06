@@ -25,8 +25,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB::Npapi;
 using boost::static_pointer_cast;
 
+unsigned int NPObjectAPI::m_lastEventId = 0;
+boost::mutex NPObjectAPI::m_lastEventId_mutex;
+
 NPObjectAPI::NPObjectAPI(NPObject *o, const NpapiBrowserHostPtr& h)
-    : JSObject(h), m_browser(h), obj(o), is_JSAPI(false)
+    : JSObject(h), m_browser(h), obj(o), is_JSAPI(false), m_eventId(NULL)
 {
     assert(!m_browser.expired());
     if (o != NULL) {
@@ -47,6 +50,30 @@ NPObjectAPI::~NPObjectAPI(void)
     if (!m_browser.expired())
         getHost()->deferred_release(obj);
     obj = NULL;
+}
+
+const std::string NPObjectAPI::eventIdProperty = "__fb_event_id";
+
+void *NPObjectAPI::getEventId()
+{
+    if (!m_eventId) {
+        if (!HasProperty(eventIdProperty)) {
+            unsigned int eventId = 0;
+            {
+                boost::lock_guard<boost::mutex> lock(m_lastEventId_mutex);
+                eventId = ++m_lastEventId;
+            }
+            SetProperty(eventIdProperty, eventId);
+        }
+
+        try {
+            m_eventId = (void *)GetProperty(eventIdProperty).convert_cast<unsigned int>();
+        } catch (const std::bad_cast& e) {
+            throw FB::invalid_arguments(e.what());
+        }
+    }
+
+    return m_eventId;
 }
 
 void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const

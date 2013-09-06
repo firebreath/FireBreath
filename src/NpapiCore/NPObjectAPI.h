@@ -16,6 +16,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_NPOBJECTAPI
 #define H_NPOBJECTAPI
 
+#include <boost/thread/mutex.hpp>
 #include "NpapiTypes.h"
 #include "npruntime.h"
 #include "JSAPI.h"
@@ -36,7 +37,7 @@ namespace FB { namespace Npapi {
         NPObjectAPI(NPObject *, const NpapiBrowserHostPtr&);
         virtual ~NPObjectAPI(void);
 
-        void *getEventId() const { return (void*)obj; }
+        void *getEventId();
         void *getEventContext() const {
             if (!m_browser.expired())
                 return getHost()->getContextID();
@@ -68,6 +69,12 @@ namespace FB { namespace Npapi {
         NPObject *obj;
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
+
+        static const std::string eventIdProperty;
+        void *m_eventId;
+
+        static unsigned int m_lastEventId;
+        static boost::mutex m_lastEventId_mutex;
 
     public:
         bool HasMethod(const std::string& methodName) const;
