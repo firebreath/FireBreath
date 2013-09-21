@@ -71,6 +71,7 @@ void FB::JSAPIAuto::init( )
     setReserved("style");
     setReserved("id");
     setReserved("constructor");
+    setReserved("nodeName");
 }
 
 FB::JSAPIAuto::~JSAPIAuto()
