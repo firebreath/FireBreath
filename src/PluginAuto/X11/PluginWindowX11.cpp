@@ -30,6 +30,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #endif
 
+// These match the numbers used in WebKit (WebFrameView.m).
+const int cScrollbarPixelsPerLineStep = 40;
+
 FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
 {
     return new FB::PluginWindowX11(ctx);
@@ -269,16 +272,16 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
             switch (scroll->direction)
             {
             case GDK_SCROLL_UP:
-                dy -= 3;
+                dy -= cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_DOWN:
-                dy += 3;
+                dy += cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_LEFT:
-                dx -= 3;
+                dx -= cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_RIGHT:
-                dx += 3;
+                dx += cScrollbarPixelsPerLineStep;
                 break;
             }
             MouseScrollEvent evt(scroll->x, scroll->y, -dx, -dy, getModifierState(scroll->state));
