@@ -70,9 +70,11 @@ string(REGEX REPLACE "\\.dll$" "" FBSTRING_PluginFileName "${FBSTRING_PluginFile
 if (FB_ATLREG_MACHINEWIDE)
     set(REGKEY_ROOT "HKLM")
     set(FB_WIX_INSTALL_LOCATION "ProgramFilesFolder")
+    set(FB_WIX_INSTALL_SCOPE "perMachine")
 else()
     set(REGKEY_ROOT "HKCU")
     set(FB_WIX_INSTALL_LOCATION "AppDataFolder")
+    set(FB_WIX_INSTALL_SCOPE "perUser")
 endif()
 
 set(FB_VERSION_SPLIT ${FBSTRING_PLUGIN_VERSION})
