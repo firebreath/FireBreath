@@ -848,3 +848,26 @@ void FB::Npapi::NpapiBrowserHost::Navigate( const std::string& url, const std::s
     GetURL(url.c_str(), target.c_str());
     PopPopupsEnabledState();
 }
+
+NPError NpapiBrowserHost::InitAsyncSurface(NPSize *size, NPImageFormat format, void *initData, NPAsyncSurface *surface) const
+{
+    if (NPNFuncs.initasyncsurface) {
+        return NPNFuncs.initasyncsurface(m_npp, size, format, initData, surface);
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+NPError NpapiBrowserHost::FinalizeAsyncSurface(NPAsyncSurface *surface) const
+{
+    if (NPNFuncs.finalizeasyncsurface) {
+        return NPNFuncs.finalizeasyncsurface(m_npp, surface);
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+void NpapiBrowserHost::SetCurrentAsyncSurface(NPAsyncSurface *surface, NPRect *changed) const
+{
+    if (NPNFuncs.setcurrentasyncsurface) {
+        NPNFuncs.setcurrentasyncsurface(m_npp, surface, changed);
+    }
+}

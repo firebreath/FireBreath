@@ -18,11 +18,11 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "win_common.h"
 #include "PluginWindow.h"
 
-#include "Win/KeyCodesWin.h"
 #include <boost/function.hpp>
+#include <boost/scoped_ptr.hpp>
 
+#include "Win/KeyCodesWin.h"
 #include "Win/WindowContextWin.h"
-
 
 namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,14 +60,12 @@ namespace FB {
 
             FB::Rect getWindowPosition() const;
             void setWindowPosition(int32_t x, int32_t y, uint32_t width, uint32_t height);
-            void setWindowPosition(FB::Rect pos);
 
             FB::Rect getWindowClipping() const;
             void setWindowClipping(int32_t top, int32_t left, int32_t bottom, int32_t right);
             void setWindowClipping(FB::Rect clip);
 
             uint32_t getWindowWidth() const { return m_width; }
-
             uint32_t getWindowHeight() const { return m_height; }
 
             // Converts window-space coordinates into plugin-place coordinates
@@ -82,6 +80,8 @@ namespace FB {
             // Invalidate the window (Call from any thread)
             void InvalidateWindow() const;
 
+            AsyncDrawServicePtr getAsyncDrawService() const;
+
         protected:
             HDC m_hdc;
             HWND m_browserHwnd;
@@ -89,6 +89,7 @@ namespace FB {
             uint32_t m_width, m_height; 
             int32_t m_clipTop, m_clipLeft, m_clipBottom, m_clipRight;
             InvalidateWindowFunc m_invalidateWindow;
+            AsyncDrawServicePtr m_asyncDraw;
     };    
 };
 

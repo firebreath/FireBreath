@@ -72,6 +72,9 @@ NpapiHost::NpapiHost(NPInitFuncPtr initPtr, NPShutdownFuncPtr shutdownPtr, NPGet
     m_funcs.construct = &NpapiHost::NH_Construct;
     m_funcs.scheduletimer = &NpapiHost::NH_ScheduleTimer;
     m_funcs.unscheduletimer = &NpapiHost::NH_UnscheduleTimer;
+    m_funcs.initasyncsurface = &NpapiHost::NH_InitAsyncSurface;
+    m_funcs.finalizeasyncsurface = &NpapiHost::NH_FinalizeAsyncSurface;
+    m_funcs.setcurrentasyncsurface = &NpapiHost::NH_SetCurrentAsyncSurface;
 
     m_instance.ndata = this;
 }

@@ -142,7 +142,7 @@ bool PluginCore::isWindowless()
             } catch (const FB::bad_variant_cast& ex) {
                 FB_UNUSED_VARIABLE(ex);
             }
-	}
+       }
     }
     return m_windowLessParam;
 }
@@ -164,4 +164,9 @@ void FB::PluginCore::ClearWindow()
         m_Window->DetachObserver(this);
         m_Window = NULL;
     }
+}
+
+std::string FB::PluginCore::negotiateDrawingModel()
+{
+    return "";
 }

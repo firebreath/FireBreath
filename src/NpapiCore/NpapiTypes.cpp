@@ -89,7 +89,9 @@ void FB::Npapi::copyNPBrowserFuncs(NPNetscapeFuncs *dstFuncs, NPNetscapeFuncs *s
         // ?
     }
     if(srcFuncs->version >= NPVERS_HAS_XPCONNECT_SCRIPTING) { // 13
-        // ?
+        dstFuncs->initasyncsurface = srcFuncs->initasyncsurface;
+        dstFuncs->finalizeasyncsurface = srcFuncs->finalizeasyncsurface;
+        dstFuncs->setcurrentasyncsurface = srcFuncs->setcurrentasyncsurface;
     }
     if(srcFuncs->version >= NPVERS_HAS_NPRUNTIME_SCRIPTING) { // 14
         // ?

@@ -166,6 +166,10 @@ namespace FB {
 
         int ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32_t timerID)) const;
         void UnscheduleTimer(int timerId) const;
+
+        NPError InitAsyncSurface(NPSize* size, NPImageFormat format, void* initData, NPAsyncSurface* surface) const;
+        NPError FinalizeAsyncSurface(NPAsyncSurface* surface) const;
+        void SetCurrentAsyncSurface(NPAsyncSurface* surface, NPRect* changed) const;
     };
 
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;

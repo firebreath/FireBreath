@@ -18,6 +18,7 @@
 #define H_FB_WINDOWCONTEXTWIN
 
 #include "win_common.h"
+#include "FBPointers.h"
 
 namespace FB
 {
@@ -28,14 +29,23 @@ namespace FB
           : handle(handle)
         {}
     };
-    
+
+    FB_FORWARD_PTR(AsyncDrawService);
+
     struct WindowContextWindowless
     {
         HDC drawable;
-        WindowContextWindowless(HDC drawable) 
-          : drawable(drawable)
+        AsyncDrawServicePtr asyncDraw;
+
+        WindowContextWindowless(HDC drawable)
+            : drawable(drawable)
+        {}
+        WindowContextWindowless(HDC drawable, AsyncDrawServicePtr p) 
+            : drawable(drawable)
+            , asyncDraw(p)
         {}
     };
+
 }
 
 #endif
