@@ -74,6 +74,7 @@ MACRO(add_x11_plugin PROJNAME INSOURCES)
     )
 ENDMACRO(add_x11_plugin)
 
+set(SUFFIX ".so")
 function (add_rpm_package PROJNAME )
 
 endfunction(add_rpm_package)

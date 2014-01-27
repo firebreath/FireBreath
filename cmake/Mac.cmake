@@ -34,6 +34,8 @@ if ("${CMAKE_GENERATOR}" STREQUAL "Xcode" AND NOT XCODE_DIR)
     set (XCODE_DIR "${XCODE_DIR}" CACHE PATH "Path to Xcode")
 endif()
 
+set(SUFFIX ".dylib")
+
 function(patch_xcode_plugin PRJNAME TARGETNAME)
 
     file(APPEND ${PATCH_DESC_FILENAME} "${TARGETNAME} ${PRJNAME}\n")

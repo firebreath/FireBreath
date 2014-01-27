@@ -199,6 +199,7 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
     endif()
 endmacro(firebreath_sign_file)
 
+set(SUFFIX ".dll")
 macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
     if (WIN32)
         get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
