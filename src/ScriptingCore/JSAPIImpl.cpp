@@ -251,11 +251,12 @@ void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event)
     if (!event)
         throw invalid_arguments();
 
+    void *eventId = event->getEventId(); // Need to call this to be sure we have a real event id.
     boost::recursive_mutex::scoped_lock _l(m_eventMutex);
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap[event->getEventContext()].equal_range(name);
 
     for (EventMultiMap::iterator it = range.first; it != range.second; ++it) {
-        if (it->second->getEventId() == event->getEventId()) {
+        if (it->second->getEventId() == eventId) {
             return; // Already registered
         }
     }
@@ -268,11 +269,12 @@ void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &even
     if (!event)
         throw invalid_arguments();
 
+    void *eventId = event->getEventId(); // Need to call this to be sure we have a real event id.
     boost::recursive_mutex::scoped_lock _l(m_eventMutex);
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap[event->getEventContext()].equal_range(name);
 
     for (EventMultiMap::iterator it = range.first; it != range.second; ++it) {
-        if (it->second->getEventId() == event->getEventId()) {
+        if (it->second->getEventId() == eventId) {
             m_eventMap[event->getEventContext()].erase(it);
             return;
         }

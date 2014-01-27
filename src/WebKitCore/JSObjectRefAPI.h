@@ -34,7 +34,7 @@ namespace FB { namespace WebKit {
         JSObjectRefAPI(JSObjectRef, const WebKitBrowserHostPtr&);
         virtual ~JSObjectRefAPI(void);
         
-        void *getEventId() const { return (void*)getJSObjectRef(); }
+        void *getEventId() { return (void*)getJSObjectRef(); }
         void *getEventContext() const {
             if (!m_browser.expired())
                 return getHost()->getContextID();
