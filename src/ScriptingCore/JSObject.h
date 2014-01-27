@@ -89,17 +89,20 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
         {
-            if (m_host.expired()) {
+            BrowserHostPtr host(m_host.lock());
+            if (!host) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            
-            getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind(&JSObject::_invokeAsync, this, args, methodName));
+            host->ScheduleOnMainThread(shared_from_this(), boost::bind(&JSObject::_invokeAsync, this, args, methodName));
         }
 
     private:
         virtual void _invokeAsync(const std::vector<variant>& args, const std::string& methodName)
         {
-            getHost()->delayedInvoke(0, shared_from_this(), args, methodName);
+            BrowserHostPtr host(m_host.lock());
+            if (host) {
+                host->delayedInvoke(0, shared_from_this(), args, methodName);
+            }
         }
     public:
         
@@ -114,10 +117,11 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
         {
-            if (m_host.expired()) {
+            BrowserHostPtr host(m_host.lock());
+            if (!host) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            getHost()->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+            host->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         }
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
