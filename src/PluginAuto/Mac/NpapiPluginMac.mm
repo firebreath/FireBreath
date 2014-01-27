@@ -29,6 +29,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include "Mac/NpapiPluginMac.h"
 
+#include "PluginEvents/DrawingEvents.h"
+
 using namespace FB::Npapi;
 
 FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
@@ -95,6 +97,19 @@ void NpapiPluginMac::init(NPMIMEType pluginType, int16_t argc, char* argn[], cha
             pluginWin->setShowDrawingModel(true);
     }
 }
+NPError NpapiPluginMac::SetValue(NPNVariable variable, void *value)
+{
+	if (variable == NPNVcontentsScaleFactor) {
+		double contentsScaleFactor = *(double *)value;
+		ContentsScaleFactorChangedEvent ev(contentsScaleFactor);
+		// Ignore the return value (whether the event was handled) since we don't have
+  		// any fallback handlers anyway.
+		pluginWin->SendEvent(&ev);
+	}
+
+    return NPERR_NO_ERROR;
+}
+
 
 NPError NpapiPluginMac::SetWindow(NPWindow* window) {
     NPError res = NPERR_NO_ERROR;
