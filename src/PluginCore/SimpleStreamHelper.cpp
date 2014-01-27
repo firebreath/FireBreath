@@ -14,6 +14,7 @@ Copyright 2011 Richard Bateman,
 \**********************************************************/
 
 #include "BrowserHost.h"
+#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/bind.hpp>
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
@@ -50,7 +51,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(const FB::BrowserHos
 
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::BrowserHostConstPtr& host,
                                                                 const BrowserStreamRequest& req ) {
-    if (!req.getCallback()) {
+    if (!req.getCallback() && !req.getChunkCallback()) {
         throw std::runtime_error("Invalid callback");
     }
     if (!host->isMainThread()) {
@@ -68,7 +69,18 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::Browse
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
     }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
+
+    // Create a SimpleStreamHelper instance
+    FB::SimpleStreamHelperPtr ptr(
+        boost::make_shared<FB::SimpleStreamHelper>(
+            req.getCallback(), 
+            req.getProgressCallback(), 
+            req.getChunkCallback(), 
+            req.getCompletedCallback(), 
+            req.internalBufferSize
+        )
+     );
+
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
@@ -106,7 +118,7 @@ public:
 };
 
 
-FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::BrowserHostPtr& host, const BrowserStreamRequest& req )
+FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::BrowserHostPtr& host, BrowserStreamRequest& req )
 {
     // We can't ever block on the main thread, so SynchronousGet can't be called from there.
     // Also, if you could block the main thread, that still wouldn't work because the request
@@ -115,6 +127,7 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( const FB::
     SyncHTTPHelper helper;
     try {
         FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
+        req.setCallback(cb);
         FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req);
         helper.setPtr(ptr);
         helper.waitForDone();
@@ -144,8 +157,14 @@ FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost( const FB::Bro
     return SynchronousRequest(host, req);
 }
 
-FB::SimpleStreamHelper::SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize )
-    : blockSize(blockSize), received(0), callback(callback)
+FB::SimpleStreamHelper::SimpleStreamHelper( 
+    const HttpCallback& callback, 
+    const HttpProgressCallback& progressCallback, 
+    const HttpChunkCallback& chunkCallback, 
+    const HttpCompletedCallback& completedCallback,
+    const size_t blockSize )
+
+    : blockSize(blockSize), received(0), callback(callback), progressCallback(progressCallback), chunkCallback(chunkCallback), completedCallback(completedCallback)
 {
 
 }
@@ -155,6 +174,12 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
     if (!evt->success) {
         if (callback)
             callback(false, FB::HeaderMap(), boost::shared_array<uint8_t>(), received);
+        if (completedCallback)
+            completedCallback(false, FB::HeaderMap());
+
+        progressCallback.clear();
+        chunkCallback.clear();
+        completedCallback.clear();
         callback.clear();
         self.reset();
         return false;
@@ -175,50 +200,71 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         // Free all the old blocks
         blocks.clear();
     }
-    if (callback && stream) {
+    if ((callback || completedCallback) && stream) {
         std::multimap<std::string, std::string> headers;
         headers = parse_http_headers(stream->getHeaders());
-        callback(true, headers, data, received);
+        if (callback)
+            callback(true, headers, data, received);
+        if (completedCallback)
+            completedCallback(true, headers);
     }
+
+    progressCallback.clear();
+    chunkCallback.clear();
+    completedCallback.clear();
     callback.clear();
     self.reset();
     return false; // Always return false to make sure the browserhost knows to let go of the object
 }
 
-bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * )
+bool FB::SimpleStreamHelper::onStreamOpened( FB::StreamOpenedEvent *evt, FB::BrowserStream * stream )
 {
     // We can't reliably find the actual length, so we won't try
     return false;
 }
 
-bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *evt, FB::BrowserStream * )
+bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *evt, FB::BrowserStream * s )
 {
+    // Forward the received buffer size
     received += evt->getLength();
-    const uint8_t* buf = reinterpret_cast<const uint8_t*>(evt->getData());
-    const uint8_t* endbuf = buf + evt->getLength();
 
-    int len = evt->getLength();
-    int offset = evt->getDataPosition();
-    while (buf < endbuf) {
-        size_t n = offset / blockSize;
-        size_t pos = offset % blockSize;
-        if (blocks.size() < n+1) {
-            blocks.push_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
+    // Call the chunk callback
+    if (chunkCallback)
+        chunkCallback( evt->getData(), evt->getLength() );
+
+    // If we have a simple callback, build buffer
+    if (callback) {
+        const uint8_t* buf = reinterpret_cast<const uint8_t*>(evt->getData());
+        const uint8_t* endbuf = buf + evt->getLength();
+        int offset = evt->getDataPosition();
+        int len = evt->getLength();
+        while (buf < endbuf) {
+            size_t n = offset / blockSize;
+            size_t pos = offset % blockSize;
+            if (blocks.size() < n+1) {
+                blocks.push_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
+            }
+            uint8_t *destBuf = blocks.back().get();
+            //if (pos + len > )
+            int curLen = len;
+            if (pos + len >= blockSize) {
+                // If there isn't room in the current block, copy what there is room for
+                // and loop
+                curLen = blockSize-pos;
+            }
+            // Copy the bytes that fit in this buffer
+            std::copy(buf, buf+curLen, destBuf+pos);
+            buf += curLen;
+            offset += curLen;
+            len -= curLen;
         }
-        uint8_t *destBuf = blocks.back().get();
-        //if (pos + len > )
-        int curLen = len;
-        if (pos + len >= blockSize) {
-            // If there isn't room in the current block, copy what there is room for
-            // and loop
-            curLen = blockSize-pos;
-        }
-        // Copy the bytes that fit in this buffer
-        std::copy(buf, buf+curLen, destBuf+pos);
-        buf += curLen;
-        offset += curLen;
-        len -= curLen;
     }
+
+    // Call the progress callback
+    if (progressCallback)
+        progressCallback( received, s->getLength() );
+
+    // Forward the event
     return false;
 }
 

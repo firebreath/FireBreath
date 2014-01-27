@@ -87,6 +87,9 @@ namespace FB {
     private:
         PluginEventSinkPtr sinkPtr;
         HttpCallback callback;
+        HttpProgressCallback progressCallback;
+        HttpChunkCallback chunkCallback;
+        HttpCompletedCallback completedCallback;
         bool accepted;
         std::string postdata;
         std::string postheaders;
@@ -169,6 +172,83 @@ namespace FB {
         void setBufferSize(size_t size) { internalBufferSize = size; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   void FB::BrowserStreamRequest::setProgressCallback(const HttpProgressCallback& ptr);
+        ///
+        /// @brief  If you have registered a callback and you want to receive progress events you can
+        ///         register an HttpProgressCallback.
+        ///
+        /// This is used in conjuction with setCallback.  It registers a callback function that will be
+        /// called for every chunk of data being downloaded. The first argument on the HttpProgressCallback
+        /// is the bytes currently received. The second is either 0 if no Content-Length header was received,
+        /// otherwise, it's the total number of bytes of the object received.
+        ///
+        /// @param ptr  const HttpProgressCallback & A callback that will receive the progress events
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setProgressCallback(const HttpProgressCallback& ptr) { progressCallback = ptr; }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   FB::PluginEventSinkPtr FB::BrowserStreamRequest::getProgressCallback();
+        ///
+        /// @brief  Returns the HttpProgressCallback functor assigned to the object, or a NULL HttpProgressCallback
+        ///         if none.
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        HttpProgressCallback getProgressCallback() const { return progressCallback; }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   void FB::BrowserStreamRequest::setCompletedCallback(const HttpCompletedCallback& ptr);
+        ///
+        /// @brief  This function registers a HttpCompletedCallback function that will be fired when the
+        ///         download process is completed.
+        ///
+        /// This is used in conjuction with setCallback or setChunkCallback. It will be fired when the
+        /// download process is completed.
+        ///
+        /// @param ptr  const HttpProgressCallback & A callback that will receive the progress events
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setCompletedCallback(const HttpCompletedCallback& ptr) { completedCallback = ptr; }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   FB::PluginEventSinkPtr FB::BrowserStreamRequest::getCompletedCallback();
+        ///
+        /// @brief  Returns the HttpCompletedCallback functor assigned to the object, or a NULL HttpProgressCallback
+        ///         if none.
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        HttpCompletedCallback getCompletedCallback() const { return completedCallback; }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   void FB::BrowserStreamRequest::setChunkCallback(const HttpProgressCallback& ptr);
+        ///
+        /// @brief  This function is an alternative to setCallback. This function will be called for every
+        ///         data chunk that arrives.
+        ///
+        /// This is used in with or without setCallback, but like setCallback, it can't be used in conjunction
+        /// with setEventSink. This function will be fired for every chunk of incoming data.
+        ///
+        /// @param ptr  const HttpChunkCallback & A callback that will be called for every incoming data chunk
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        void setChunkCallback(const HttpChunkCallback& ptr) { chunkCallback = ptr; }
+        
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn   FB::PluginEventSinkPtr FB::BrowserStreamRequest::getChunkCallback();
+        ///
+        /// @brief  Returns the HttpChunkCallback functor assigned to the object, or a NULL HttpProgressCallback
+        ///         if none.
+        ///
+        /// @author wavesoft
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        HttpChunkCallback getChunkCallback() const { return chunkCallback; }
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn   void FB::BrowserStreamRequest::setEventSink(const PluginEventSinkPtr& ptr);
         ///
         /// @brief  To use a PluginEventSink such as DefaultBrowserStreamHandler or a derivative
@@ -185,6 +265,7 @@ namespace FB {
         /// @author taxilian
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void setEventSink(const PluginEventSinkPtr& ptr) { sinkPtr = ptr; accepted = true; }
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn   FB::PluginEventSinkPtr FB::BrowserStreamRequest::getEventSink();
         ///

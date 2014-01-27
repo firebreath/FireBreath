@@ -335,7 +335,8 @@ NPError NpapiPlugin::NewStream(NPMIMEType type, NPStream* stream, NPBool seekabl
                 newstream->AttachObserver(sink);
             } else {
                 HttpCallback callback(streamReq.getCallback());
-                if (callback) {
+                HttpChunkCallback chunkCallback(streamReq.getChunkCallback());
+                if (callback || chunkCallback) {
                     SimpleStreamHelper::AsyncRequest(m_npHost, newstream, streamReq);
                 } else {
                     FBLOG_WARN("NpapiPlugin", "Unsolicited request accepted but no callback or sink provided");

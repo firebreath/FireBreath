@@ -360,7 +360,7 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
 FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& req, const bool enable_async ) const
 {
     assertMainThread();
-    if (enable_async && req.getCallback() && !req.getEventSink()) {
+    if (enable_async && (req.getCallback() || req.getChunkCallback()) && !req.getEventSink()) {
         // If a callback was provided, use SimpleStreamHelper to create it;
         // This will actually call back into this function with an event sink                        
         BrowserStreamRequest newReq(req);
