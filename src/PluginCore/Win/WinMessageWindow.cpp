@@ -26,51 +26,77 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "WinMessageWindow.h"
 
-extern HINSTANCE gInstance;
+// thanks http://blogs.msdn.com/b/oldnewthing/archive/2004/10/25/247180.aspx
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+#define HINST_THISCOMPONENT ((HINSTANCE)&__ImageBase)
 
-static boost::recursive_mutex _windowMapMutex;
-static std::map<HWND, FB::WinMessageWindow*> _windowMap;
+class WindowsClassRegistration
+{
+    ATOM m_atom;
+    DWORD m_err;
+    const wchar_t* m_className;
 
-FB::WinMessageWindow::WinMessageWindow() {
-    WNDCLASSEX wc;
-    DWORD err(0);
-    ATOM clsAtom(NULL);
-    static int count(0);
-
-    std::wstring winName = L"FireBreathEventWindow" + boost::lexical_cast<std::wstring>(count);
-    std::wstring className = L"FBEventWindow" + boost::lexical_cast<std::wstring>(count);
-    ++count;
-
-    if (!clsAtom) {
-        //Step 1: Registering the Window Class
+public:
+    WindowsClassRegistration(const wchar_t* classname)
+        : m_err(0)
+        , m_className(classname)
+    {
+        WNDCLASSEX wc;
         wc.cbSize        = sizeof(WNDCLASSEX);
         wc.style         = 0;
-        wc.lpfnWndProc   = &WinMessageWindow::_WinProc;
+        wc.lpfnWndProc   = &FB::WinMessageWindow::_WinProc;
         wc.cbClsExtra    = 0;
         wc.cbWndExtra    = 0;
-        wc.hInstance     = gInstance;
+        wc.hInstance     = HINST_THISCOMPONENT;
         wc.lpszMenuName  = NULL;
-        wc.lpszClassName = className.c_str();
+        wc.lpszClassName = m_className;
         wc.hIcon = NULL;
         wc.hCursor = NULL;
         wc.hIconSm = NULL;
         wc.hbrBackground = NULL;
-    
-        if (!(clsAtom = ::RegisterClassEx(&wc))) {
-            err = ::GetLastError();
-            if (err != ERROR_CLASS_ALREADY_EXISTS) {
-                throw std::runtime_error("Could not register window class");
-            }
+        m_atom = ::RegisterClassEx(&wc);
+
+        if (!m_atom) {
+            m_err = ::GetLastError();
         }
     }
-    // Step 2: Creating the Window
+
+    ~WindowsClassRegistration()
+    {
+        if (0 == m_err) {
+            UnregisterClass(MAKEINTATOM(m_atom), HINST_THISCOMPONENT);
+        }
+    }
+
+    ATOM atom() const
+    {
+        if (m_err) {
+            std::stringstream ss;
+            ss << "Could not register window class, error:" << m_err;
+            throw std::runtime_error(ss.str());
+        }
+        return m_atom;
+    }
+};
+
+static boost::recursive_mutex _windowMapMutex;
+static std::map<HWND, FB::WinMessageWindow*> _windowMap;
+static WindowsClassRegistration _winclass(L"FBEventWindow");
+
+FB::WinMessageWindow::WinMessageWindow() {
+    DWORD err(0);
+
+    static int count(0);
+    std::wstring winName = L"FireBreathEventWindow" + boost::lexical_cast<std::wstring>(count);
+    ++count;
+
     HWND messageWin = CreateWindowEx(
         WS_OVERLAPPED,
-        className.c_str(),
+        MAKEINTATOM(_winclass.atom()),
         winName.c_str(),
         0,
         0, 0, 0, 0,
-        HWND_MESSAGE, NULL, gInstance, NULL);
+        HWND_MESSAGE, NULL, HINST_THISCOMPONENT, NULL);
     if (!messageWin) {
         err = ::GetLastError();
         throw std::runtime_error("Could not create Message Window");
