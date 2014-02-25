@@ -72,10 +72,9 @@ namespace FB {
         GtkWidget *m_container;
         GtkWidget *m_canvas;
         bool m_focus;
-#endif
 
-    protected:
-	static gboolean idleInvalidate(gpointer win);
+        static gboolean idleInvalidate(gpointer win);
+#endif
 
         int32_t m_x;
         int32_t m_y;

@@ -346,10 +346,10 @@ void PluginWindowX11::InvalidateWindow() const {
 }
 
 
+#if FB_GUI_DISABLED != 1
 gboolean PluginWindowX11::idleInvalidate(gpointer win) {
   const PluginWindowX11 *w = reinterpret_cast<PluginWindowX11 *>(win);
-#if FB_GUI_DISABLED != 1
   gdk_window_invalidate_rect(w->getWidgetWindow(), NULL, true);
-#endif // FB_GUI_DISABLED != 1
   return FALSE;
 }
+#endif // FB_GUI_DISABLED != 1
