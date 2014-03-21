@@ -270,7 +270,7 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool PluginCore::isWindowless() = 0
+        /// @fn virtual bool PluginCore::isWindowless()
         ///
         /// @brief  Called by the browser to query if this plugin should be windowless. 
         ///
@@ -281,6 +281,16 @@ namespace FB {
         /// @return true if windowless, false if not. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool isWindowless();
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual std::string PluginCore::negotiateDrawingModel()
+        ///
+        /// @brief  Called at plugin creation to query the plugin's preferred drawing model
+        ///
+        /// @return an empty string (the default implementation), or a comma-separated list of drawing model 
+        /// names in order of preference. Currently used on Windows to negotiate async models.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual std::string negotiateDrawingModel();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void PluginCore::setFSPath(const std::string& path)

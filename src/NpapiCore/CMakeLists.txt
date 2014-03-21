@@ -67,6 +67,11 @@ file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     Win/[^.]*.h
     Win/[^.]*.cpp
     )
+if(NOT WITH_FBWIN_ASYNCSURFACE)
+    file(GLOB to_remove RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} Win/NpapiAsyncDrawService.*)
+    list(REMOVE_ITEM WIN_SOURCES ${to_remove})
+endif()
+
 
 SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
 

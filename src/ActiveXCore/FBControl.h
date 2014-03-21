@@ -21,6 +21,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_targetver.h"
 #include <atlctl.h>
 #include <ShlGuid.h>
+#include <mshtml.h>
+#include <boost/algorithm/string.hpp>
 #include <boost/cast.hpp>
 #include <boost/scoped_array.hpp>
 #include "DOM/Window.h"
@@ -33,6 +35,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserPlugin.h"
 #include "PluginCore.h"
 #include "Win/WindowContextWin.h"
+#ifdef FBWIN_ASYNCSURFACE
+#include "ActiveXAsyncDrawService.h"
+#endif
 
 #include "registrymap.hpp"
 
@@ -70,7 +75,9 @@ namespace FB {
 
             // Provides methods for getting <params>
             public IPersistPropertyBag,
-
+#ifdef FBWIN_ASYNCSURFACE
+            public IViewObjectPresentNotify,
+#endif
             public FB::BrowserPlugin
         {
         public:
@@ -86,6 +93,9 @@ namespace FB {
 
             ActiveXBrowserHostPtr m_host;
             bool m_setReadyDone;
+#ifdef FBWIN_ASYNCSURFACE
+			CComPtr<IViewObjectPresentSite> m_viewObjectPresentSite;
+#endif
 
         protected:
 
@@ -132,6 +142,11 @@ namespace FB {
             STDMETHOD(Close)(DWORD dwSaveOption) {
                 shutdown();
                 return IOleObjectImpl<CFBControlX>::Close(dwSaveOption);
+            }
+
+            /* IViewObjectPresentNotify calls */
+            STDMETHOD(OnPreRender)(void) {
+                return S_OK;
             }
 
             /* IPersistPropertyBag calls */
@@ -282,7 +297,9 @@ namespace FB {
                 shutdown();
                 return hr;
             }
-
+#ifdef FBWIN_ASYNCSURFACE
+            pClientSite->QueryInterface(__uuidof(IViewObjectPresentSite), (void **) &m_viewObjectPresentSite);
+#endif
             m_serviceProvider = pClientSite;
             if (!m_serviceProvider)
                 return E_FAIL;
@@ -294,7 +311,6 @@ namespace FB {
             }
 
             clientSiteSet();
-
             return S_OK;
         }
 
@@ -315,7 +331,6 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InPlaceActivate( LONG iVerb, const RECT* prcPosRect)
         {
             m_bWindowOnly = (FB::pluginGuiEnabled() && !pluginMain->isWindowless());
-
             HRESULT hr = CComControl<CFBControlX>::InPlaceActivate(iVerb, prcPosRect);
 
             if (m_host)
@@ -328,20 +343,55 @@ namespace FB {
                 // window already created or gui disabled
                 return hr;
             }
-            if (m_bWndLess) {
-                pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL))));
-                FB::PluginWindowlessWin* ptr(static_cast<FB::PluginWindowlessWin*>(pluginWin.get()));
-                ptr->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
-                if (m_spInPlaceSite) {
-                    HWND hwnd = 0;
-					HRESULT hr2 = m_spInPlaceSite->GetWindow(&hwnd);
-                    if (SUCCEEDED(hr2)) {
-                        ptr->setHWND(hwnd);
+
+#ifdef FBWIN_ASYNCSURFACE
+            std::string param = pluginMain->negotiateDrawingModel();
+            {
+                using namespace boost::algorithm;
+                std::vector<std::string> prefs;
+                split(prefs, param, !is_alnum());
+
+                bool gotone = false;
+                for (size_t i = 0; !gotone && i < prefs.size(); i++) {
+                    if (0 == strcmp(prefs[i].c_str(), "AsyncWindowsDXGISurface") &&
+                        m_viewObjectPresentSite &&
+                        m_host)
+                    {
+                        BOOL accelEnabled = FALSE;
+                        HRESULT hr = m_viewObjectPresentSite->IsHardwareComposition(&accelEnabled);
+                        if (SUCCEEDED(hr) && accelEnabled) {
+                            hr = m_viewObjectPresentSite->SetCompositionMode(VIEW_OBJECT_COMPOSITION_MODE_SURFACEPRESENTER);
+                            if (SUCCEEDED(hr)) {
+                                AsyncDrawServicePtr asd = boost::make_shared<ActiveXAsyncDrawService>(m_host, m_viewObjectPresentSite);
+                                boost::scoped_ptr<PluginWindow> pw(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL, asd)));
+                                pluginWin.swap(pw);
+                                gotone = true;
+                            }
+                        }
                     }
                 }
-            } else {
-                pluginWin.swap(boost::scoped_ptr<PluginWindow>(getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd))));
-                static_cast<PluginWindowWin*>(pluginWin.get())->setCallOldWinProc(true);
+            }
+#endif
+
+            if (!pluginWin) {
+                PluginWindow* pw = 0;
+                if (m_bWndLess) {
+                    FB::PluginWindowlessWin* pww;
+                    pw = pww = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
+                    pww->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
+                    if (m_spInPlaceSite) {
+                        HWND hwnd = 0;
+                        HRESULT hr = m_spInPlaceSite->GetWindow(&hwnd);
+                        if (SUCCEEDED(hr)) {
+                            pww->setHWND(hwnd);
+                        }
+                    }
+                } else {
+                    PluginWindowWin* pww;
+                    pw = pww = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
+                    pww->setCallOldWinProc(true);
+                }
+                pluginWin.swap(boost::scoped_ptr<PluginWindow>(pw));
             }
             pluginMain->SetWindow(pluginWin.get());
             setReady();
@@ -371,7 +421,7 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::InitNew()
         {
             pluginMain->setParams(FB::VariantMap());
-			setReady();
+            setReady();
             return S_OK;
         }
 
@@ -409,7 +459,7 @@ namespace FB {
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::Load( IPropertyBag *pPropBag, IErrorLog *pErrorLog )
         {
             pluginMain->setParams(getProperties(CComQIPtr<IPropertyBag2>(pPropBag)));
-			setReady();
+            setReady();
             return S_OK;
         }
 

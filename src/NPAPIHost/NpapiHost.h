@@ -92,6 +92,9 @@ namespace FB { namespace Npapi {
         static uint32_t NP_LOADDS NH_ScheduleTimer(NPP npp, uint32_t interval, NPBool repeat, 
                                                    void (*timerFunc)(NPP npp, uint32_t timerID));
         static void     NP_LOADDS NH_UnscheduleTimer(NPP npp, uint32_t timerID);
+        static NPError  NP_LOADDS NH_InitAsyncSurface(NPP instance, NPSize *size, NPImageFormat format, void *initData, NPAsyncSurface *surface);
+        static NPError  NP_LOADDS NH_FinalizeAsyncSurface(NPP instance, NPAsyncSurface *surface);
+        static void     NP_LOADDS NH_SetCurrentAsyncSurface(NPP instance, NPAsyncSurface *surface, NPRect *changed);
 
     public:
         // NpResourceHostFuncs

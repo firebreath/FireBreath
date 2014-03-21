@@ -138,6 +138,17 @@ set(ATL_INCLUDE_DIRS
     ${MFC_INCLUDE_DIR}
     CACHE INTERNAL "ATL and MFC include dirs")
 
+option(WITH_FBWIN_ASYNCSURFACE "Build with async surface drawing support" OFF)
+
+if(WITH_FBWIN_ASYNCSURFACE)
+    message("Async surface drawing enabled")
+    add_definitions(-DFBWIN_ASYNCSURFACE)
+else()
+    message("Async surface drawing not enabled")
+endif()
+
+####
+
 IF(NOT DEFINED CMAKE_MAKECAB)
 	SET(CMAKE_MAKECAB makecab)
 ENDIF(NOT DEFINED CMAKE_MAKECAB)
