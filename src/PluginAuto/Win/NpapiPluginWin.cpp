@@ -121,8 +121,8 @@ void NpapiPluginWin::init(NPMIMEType pluginType, int16_t argc, char* argn[], cha
         m_npHost, 
         pluginMain->negotiateDrawingModel(),
         boost::bind(&NpapiPluginWin::pluginWindowFactory, this, _1));
-    if (negotiated) 
 #endif
+    if (pluginWin) 
     {
         pluginMain->SetWindow(pluginWin.get());
     } 
