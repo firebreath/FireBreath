@@ -72,7 +72,7 @@ namespace FB {
         else {
             std::stringstream ss;
             ss << "Error: Argument " << index
-               << "is not optional.";
+               << " is not optional.";
             throw FB::invalid_arguments(ss.str());
         }
     }
