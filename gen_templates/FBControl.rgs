@@ -58,7 +58,7 @@ ${REGKEY_ROOT} {
                                     AllowedDomains {
                                         '*'
                                     }
-                                    val Count = d ''
+                                    val Count = d '0'
                                 }
                             }
 @@endforeach
