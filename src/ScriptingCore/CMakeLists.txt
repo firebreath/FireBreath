@@ -28,6 +28,7 @@ include_directories(
     ${FB_PLUGINCORE_SOURCE_DIR}
     ${Boost_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
+    ${ATL_INCLUDE_DIR}
     )
 
 file (GLOB DOMTYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
