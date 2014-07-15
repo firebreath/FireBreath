@@ -50,6 +50,12 @@ namespace FB { namespace ActiveX
     
     typedef CComVariant (*ComVariantBuilder)(const ActiveXBrowserHostPtr&, const FB::variant&);    
     typedef std::map<std::type_info const*, ComVariantBuilder, type_info_less> ComVariantBuilderMap;
+
+    namespace {
+        ComVariantBuilderMap comVariantBuilderMap;
+        boost::once_flag init_flag = BOOST_ONCE_INIT;
+    }
+
     //  GJS  ---
     //  I would probably put the ComVariantBuilderMap code into ComVariantUtil.cpp?
     template<class T>
@@ -58,9 +64,8 @@ namespace FB { namespace ActiveX
         return ComVariantBuilderMap::value_type(&typeid(T), select_ccomvariant_builder::select<T>());
     }
     
-    inline ComVariantBuilderMap makeComVariantBuilderMap()
+    inline void makeComVariantBuilderMap(ComVariantBuilderMap& tdm)
     {
-        ComVariantBuilderMap tdm;
         tdm.insert(makeBuilderEntry<bool>());
         tdm.insert(makeBuilderEntry<char>());
         tdm.insert(makeBuilderEntry<unsigned char>());
@@ -90,14 +95,15 @@ namespace FB { namespace ActiveX
 
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
         tdm.insert(makeBuilderEntry<FB::FBNull>());
-        
-        return tdm;
     }
     
     inline const ComVariantBuilderMap& getComVariantBuilderMap()
     {
-        static const ComVariantBuilderMap tdm = makeComVariantBuilderMap();
-        return tdm;
+        // Thread safety is required because IE10+ can run
+        // plug-ins in multiple threads within a single process.
+        boost::call_once(init_flag, boost::bind(&makeComVariantBuilderMap, boost::ref(comVariantBuilderMap)));
+
+        return comVariantBuilderMap;
     }
     //  GJS  ---
     
