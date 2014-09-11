@@ -27,7 +27,7 @@ set(BUILD_SHARED_LIBS YES)
 # This long line is ugly, but breaking it up to multiple lines will 
 # break on cmake 2.6. LD_FLAGS will get separated by semi-colon 
 # which is not gcc compatible
-set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=${FB_ROOT_DIR}/gen_templates/version_script.txt")
+set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=\"${FB_ROOT_DIR}/gen_templates/version_script.txt\"")
 
 MACRO(find_firebreath_x11_deps)
 
