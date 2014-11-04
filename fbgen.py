@@ -163,13 +163,13 @@ def Main():
                 createDir(dirname)
             tplFile = os.path.join("fbgen", "src", tpl)
             print tplFile
-            template = Template(tplFile)
             #Special case for binary files
             if(tplFilename == "background.png"):
               input = open(tplFile, "rb")
               output = open(filename, "wb")
               output.write(input.read())
             else:
+              template = Template(tplFile)
               f = open(filename, "wb")
               f.write(template.process(plugin, company, guid, generatedGuids, templateTime))
             print "  Processed", tpl
