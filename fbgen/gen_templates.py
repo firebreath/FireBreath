@@ -7,6 +7,12 @@ class AttrDictSimple(dict):
     def __delattr__(self, attr): del self[attr]
 
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
+
 class Template(string.Template):
     delimiter = "@"
 
@@ -57,11 +63,11 @@ class Base(object):
         desc, regex, error = self.keys[key]
         if default is None:
             default = ""
-        value = raw_input("%s %s [%s]: " % (self.__class__.__name__, desc, default)) or default
+        value = input("%s %s [%s]: " % (self.__class__.__name__, desc, default)) or default
         if regex.match(value):
             return value
         else:
-            print "Invalid syntax: %s" % error
+            print("Invalid syntax: %s" % error )
             return self.getValue(key, default)
 
     def promptValues(self):
@@ -90,7 +96,7 @@ class JSAPI_Member(Base):
     ident       = None
     type        = None
     def __init__(self):
-        print "Initializing JSAPI_Member"
+        print("Initializing JSAPI_Member")
         self.types = AttrDictSimple(
             string  = "std::string",
             int     = "long",   # changed int to long since IE will pass it as a long anyway and we want to avoid issues.
