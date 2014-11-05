@@ -7,6 +7,12 @@ class AttrDictSimple(dict):
     def __delattr__(self, attr): del self[attr]
 
 
+try:
+    input = raw_input
+except NameError:
+    pass
+
+
 class Template(string.Template):
     delimiter = "@"
 
