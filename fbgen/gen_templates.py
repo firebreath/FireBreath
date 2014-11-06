@@ -28,7 +28,8 @@ class Template(string.Template):
 
     def __init__(self, filename):
         if not os.path.isfile(filename):
-            raise ValueError('Unable to read file with name %s' % filename)
+            raise ValueError('Unable to read file with name {0}'
+                             ''.format(filename))
         super(self.__class__, self).__init__(open(filename).read())
 
     def process(self, *args):
@@ -170,8 +171,8 @@ class JSAPI_Property(JSAPI_Member):
     def __init__(self, ident, type):
         super(JSAPI_Property, self).__init__()
         if not self.isValidType(type):
-            raise Exception("Invalid type %s.  Valid types are: %s" % type,
-                            ', '.join(self.types))
+            raise Exception('Invalid type {0}.  Valid types are: {1}'
+                            ''.format(type, ', '.join(self.types)))
         self.type = type
         self.ident = ident
 
@@ -190,8 +191,8 @@ class JSAPI_Method(JSAPI_Member):
         self.argTypes = argTypes
         for curArg in argTypes:
             if not self.isValidType(curArg):
-                raise Exception("Invalid type %s.  Valid types are: %s" %
-                                (curArg, ', '.join(self.types)))
+                raise Exception('Invalid type {0}.  Valid types are: {1}'
+                                ''.format(curArg, ', '.join(self.types)))
 
     def getRealArgTypes(self):
         retVal = []
@@ -252,8 +253,8 @@ class Plugin(Base):
                                     else self.makeDefaultPrefix(self.name))
         self.mimetype = self.getValue("mimetype", self.mimetype
                                       if ident == self.ident
-                                      else "application/x-%s" %
-                                      self.ident.lower()).lower()
+                                      else 'application/x-{0}'
+                                      ''.format(self.ident.lower())).lower()
         self.desc = self.getValue("desc", self.desc)
         self.disable_gui = self.getValue("disable_gui", self.disable_gui or
                                          "false").lower()
@@ -281,10 +282,11 @@ class Plugin(Base):
         cfg.set("plugin", "disable_gui", self.disable_gui)
 
     def __str__(self):
-        return '\nPlugin Details:\n--------------\nName:        %(name)s' \
-               '\nIdentifier:  %(ident)s\nPrefix:      %(prefix)s\n' \
-               'MIME type:   %(mimetype)s\nDescription: %(desc)s\n' \
-               'GUI:  %(disable_gui)s' % self
+        return '\nPlugin Details:\n--------------\nName:        {0}' \
+               '\nIdentifier:  {1}\nPrefix:      {2}\nMIME type:   {3}' \
+               '\nDescription: {4}\nGUI:  {5}' \
+               ''.format(self.name, self.ident, self.prefix, self.mimetype,
+                         self.description, self.disable_gui)
 
 
 class Company(Base):
@@ -300,7 +302,7 @@ class Company(Base):
         self.ident = self.getValue("ident", self.ident or
                                    re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
         self.domain = self.getValue("domain", self.domain or
-                                    "%s.com" % self.ident.lower())
+                                    "{0}.com".format(self.ident.lower()))
 
     def readCfg(self, cfg):
         if not cfg.has_section("company"):
@@ -317,8 +319,9 @@ class Company(Base):
         cfg.set("company", "domain", self.domain)
 
     def __str__(self):
-        return '\nCompany Details\n---------------\nName:        %(name)s\n' \
-               'Identifier:  %(ident)s\nDomain:      %(domain)s' % self
+        return '\nCompany Details\n---------------\nName:        {0}\n' \
+               'Identifier:  {1}\nDomain:      {2}' \
+               ''.format(self.name, self.ident, self.domain)
 
 
 class GUID(Base):

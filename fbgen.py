@@ -148,7 +148,7 @@ def Main():
             sys.exit(1)
 
     # Try to create a directory for this project
-    projPath = os.path.abspath(os.path.join(basePath, "%s" % plugin.ident))
+    projPath = os.path.abspath(os.path.join(basePath, "{0}".format(plugin.ident)))
     if os.path.isdir(projPath):
         try:
             overwrite = input("\nDirectory already exists. Continue anyway? "
