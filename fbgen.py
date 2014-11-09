@@ -16,10 +16,8 @@ Copyright 2009 Packet Pass, Inc. and the Firebreath development team
 """
 from __future__ import print_function
 import os
-import re
 import sys
 import time
-import uuid
 from fbgen.gen_templates import *
 from optparse import OptionParser
 try:
@@ -168,7 +166,6 @@ def Main():
 
     print("\nProcessing templates")
     srcDir = os.path.join(scriptDir, "fbgen", "src")
-    srcDirLen = len(srcDir) + len(os.path.sep)
     templateFiles = getTemplateFiles(srcDir)
     for tpl in templateFiles:
         try:
