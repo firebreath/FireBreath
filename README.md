@@ -21,6 +21,12 @@ Using Subversion
 
 If you choose to use subversion to check out FireBreath, make sure you also check out the firebreath-boost project as src/3rdParty/boost/ (you'll have to remove the existing directory).
 
+Note on Building Windows Projects
+=================================
 
+In order to build Windows projects, you need:
+ * [WiX Toolset 3.7](http://wix.codeplex.com/releases/view/99514) (higher versions cause problems)
+ * [ATLHarvester](https://wix.codeplex.com/SourceControl/network/forks/roberthyang/NewHeatExtension/latest#ATLHarvesterExtension/readme.txt) extension, which adds x64 support to Heat.
+ * Python 2.7 with lxml
 
 Good luck!
