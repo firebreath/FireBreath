@@ -1,4 +1,4 @@
-#/**********************************************************\ 
+#/**********************************************************\
 # Auto-Generated Plugin Configuration file
 # for FBTestPlugin
 #\**********************************************************/
@@ -32,6 +32,10 @@ set(FBSTRING_CompanyName "Firebreath Dev Team")
 set(FBSTRING_PLUGIN_VERSION "1.0.0")
 set(FBSTRING_LegalCopyright "Copyright 2009 Firebreath Dev Team")
 set(FBSTRING_PluginFileName "np${PLUGIN_NAME}.dll")
+if (APPLE)
+    # On apple, np is not needed
+    set(FBSTRING_PluginFileName "${PLUGIN_NAME}")
+endif()
 set(FBSTRING_ProductName "FBTestPlugin")
 set(FBSTRING_PluginName "FBTestPlugin")
 

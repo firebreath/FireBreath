@@ -56,6 +56,8 @@ SET( SOURCES
     ${FB_PLUGIN_GENERATED_SOURCES}
     )
 
+add_firebreath_library(log4cplus)
+
 if (WIN32)
     set (PLATFORM_NAME "Win")
     include(Win/projectDef.cmake)
