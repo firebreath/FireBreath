@@ -36,12 +36,27 @@ PluginEventMacCocoa::PluginEventMacCocoa() :
 
 PluginEventMacCocoa::~PluginEventMacCocoa() {}
 
-inline bool isButtonEvent(NPCocoaEvent* event)
+inline bool isMouseEvent(NPCocoaEvent* event)
 {
     switch(event->type) {
         case NPCocoaEventMouseDown:
         case NPCocoaEventMouseUp:
         case NPCocoaEventMouseMoved:
+        case NPCocoaEventMouseEntered:
+        case NPCocoaEventMouseExited:
+        case NPCocoaEventMouseDragged:
+        case NPCocoaEventScrollWheel:
+            return true;
+        default:
+            return false;
+    }
+}
+
+inline bool isMouseButtonEvent(NPCocoaEvent* event)
+{
+    switch(event->type) {
+        case NPCocoaEventMouseDown:
+        case NPCocoaEventMouseUp:
         case NPCocoaEventScrollWheel:
             return true;
         default:
@@ -65,12 +80,18 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
         return true;
     }
 
+    unsigned modifierState = MouseButtonEvent::ModifierState_None;
+    if (isMouseEvent(evt)) {
+        if (evt->data.mouse.modifierFlags & NSShiftKeyMask)
+            modifierState |= MouseButtonEvent::ModifierState_Shift;
+        if (evt->data.mouse.modifierFlags & NSControlKeyMask)
+            modifierState |= MouseButtonEvent::ModifierState_Control;
+        if (evt->data.mouse.modifierFlags & NSAlternateKeyMask)
+            modifierState |= MouseButtonEvent::ModifierState_Alt;
+    }
+
     MouseButtonEvent::MouseButton btn = MouseButtonEvent::MouseButton_None;
-    unsigned int modifierState = 0;
-    if (isButtonEvent(evt)) {
-        modifierState = (evt->data.mouse.modifierFlags & NSShiftKeyMask) != 0 ? MouseButtonEvent::ModifierState_Shift : 0;
-        modifierState += (evt->data.mouse.modifierFlags & NSControlKeyMask) != 0 ? MouseButtonEvent::ModifierState_Control : 0;
-        modifierState += (evt->data.mouse.modifierFlags & NSAlternateKeyMask) != 0 ? MouseButtonEvent::ModifierState_Menu : 0;
+    if (isMouseButtonEvent(evt)) {
         switch(evt->data.mouse.buttonNumber) {
             case 0:
                 btn = MouseButtonEvent::MouseButton_Left;
@@ -81,8 +102,6 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
             case 2:
                 btn = MouseButtonEvent::MouseButton_Right;
                 break;
-            default:
-                return 0;
         }
     }
     
