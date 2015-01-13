@@ -56,7 +56,7 @@ Point PluginEventMacCarbon::GlobalToLocal(Point location) {
     if (pluginWindow) {
         WindowRef window = pluginWindow->getWindowRef();
         // Convert the global mouse location to window structure location.
-        HIPoint local = {location.h, location.v};
+        HIPoint local = {static_cast<float>(location.h), static_cast<float>(location.v)};
         HIPointConvert(&local, kHICoordSpaceScreenPixel, NULL, kHICoordSpaceWindow, window);
 
         // Get the location of the structure and port in the window.

@@ -821,13 +821,17 @@ bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std
     } else {
         settingsMap.clear();
         vector<string> params;
-        split(params, res, is_any_of(" "));
+        // Chrome returns the whole proxy list string,
+        // squashing any space symbols between two consecutive proxies,
+        // thus we need semicolon as a separator also:
+        split(params, res, is_any_of(" ;"));
         vector<string> host;
         split(host, params[1], is_any_of(":"));
         if (params[0] == "PROXY") {
             FB::URI uri = FB::URI::fromString(URL);
             settingsMap["type"] = uri.protocol;
-        } else if(params[0] == "SOCKS") {
+        } else if(params[0] == "SOCKS" ||
+                  params[0] == "SOCKS5") {
             settingsMap["type"] = "socks";
         } else {
             settingsMap["type"] = params[0];
@@ -843,4 +847,27 @@ void FB::Npapi::NpapiBrowserHost::Navigate( const std::string& url, const std::s
     PushPopupsEnabledState(true);
     GetURL(url.c_str(), target.c_str());
     PopPopupsEnabledState();
+}
+
+NPError NpapiBrowserHost::InitAsyncSurface(NPSize *size, NPImageFormat format, void *initData, NPAsyncSurface *surface) const
+{
+    if (NPNFuncs.initasyncsurface) {
+        return NPNFuncs.initasyncsurface(m_npp, size, format, initData, surface);
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+NPError NpapiBrowserHost::FinalizeAsyncSurface(NPAsyncSurface *surface) const
+{
+    if (NPNFuncs.finalizeasyncsurface) {
+        return NPNFuncs.finalizeasyncsurface(m_npp, surface);
+    }
+    return NPERR_GENERIC_ERROR;
+}
+
+void NpapiBrowserHost::SetCurrentAsyncSurface(NPAsyncSurface *surface, NPRect *changed) const
+{
+    if (NPNFuncs.setcurrentasyncsurface) {
+        NPNFuncs.setcurrentasyncsurface(m_npp, surface, changed);
+    }
 }

@@ -111,6 +111,24 @@ namespace FB {
             bool m_hasFocus;
     };
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  Content scale factor change
+    ///
+    /// @brief  Fired when DPI settings change (e.g. when moving webbrowser window between Retina
+    ///         and non-Retina displays)
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class ContentsScaleFactorChangedEvent : public PluginEvent
+    {
+        public:
+            ContentsScaleFactorChangedEvent(double contentsScaleFactor)
+                : m_contentsScaleFactor(contentsScaleFactor) {}
+            virtual ~ContentsScaleFactorChangedEvent() { }
+
+            double contentsScaleFactor() { return m_contentsScaleFactor; }
+        protected:
+            double m_contentsScaleFactor;
+    };
+
 };
 
 #endif // H_FB_PLUGINEVENTS_DRAWINGEVENTS

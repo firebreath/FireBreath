@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<!-- saved from url=(0013)about:internet -->
+<!-- saved from url=(0014)about:internet -->
 <!-- The above comment makes IE treat this as a web page -->
 <html>
 <head>
-    <title>atl 8.0 test page for object fbcontrol</title>
+    <title>Test page for FBTestPlugin</title>
     <link type="text/css" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/themes/base/jquery-ui.css" rel="Stylesheet" />
     <style>
 
         body
         {
-            padding: 0;
-            margin: 0;
+            background-image: url('bg.png');
+            background-size: 50px 50px;
         }
     
         .header 
@@ -20,9 +20,9 @@
             width: 900px;
         }
     
-        #pluginContainer
+        .pluginContainer
         {
-            width: 300px;
+            width: 30%;
             height: 300px;
             border: 5px dotted gray;
             text-align: center;
@@ -86,49 +86,33 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
     <script type="text/javascript" language="Javascript">
-        var mimeType = "application/x-fbtestplugin";
-        var mimeType2 = "application/x-fbtestplugin-math";
-        var mimeType3 = "application/x-fbtestmathplugin";
-        var pluginCB = null;
-        var pluginCB2 = null;
-        var pluginCB3 = null;
-
         var pingSeq = 0;
         var pingQ = {};
         var pingSuccess = 0;
         var pingFailed = 0;
         var pingTotal = 0;
 
-        function plugin() {
-            return document.getElementById("testPlugin");
-        }
-        function plugin2() {
-            return document.getElementById("testPlugin2");
-        }
-        function plugin3() {
-            return document.getElementById("testPlugin3");
-        }
+        var getPlugin1;
+        var getPlugin2;
+        var getPlugin3;
 
-        function injectPlugin(dest, callback) {
-            pluginCB = callback;
-            var html = '<object id="testPlugin" type="' + mimeType + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 1!\');">';
-            html += '<param name="onload" value="pluginCB" />';
+        var pluginCount = 0;
+
+        function injectPlugin(dest, mimeType, callback, asyncdrawing /*optional*/) {
+            var id = "plugin" + pluginCount++;
+            var html = '<object id="' + id + '" type="' + mimeType + '" width="100%" height="100%" onload="alert(\'' + id + ' has loaded 1!\');">';
+            html += '<param name="onload" value="' + callback + '" />';
+            if (asyncdrawing != null) {
+                html += '<param name="windowless" value="1" />';
+	            html += '<param name="drawingmodel" value="' + asyncdrawing + '" />';
+                html += '<param name="color" value="2F00FF00" />'; // AARRGGBB
+            }
             html += '</object>';
-            dest[0].innerHTML = html;
-        }
-        function injectPlugin2(dest, callback) {
-            pluginCB2 = callback;
-            var html = '<object id="testPlugin2" type="' + mimeType2 + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 2!\');">';
-            html += '<param name="onload" value="pluginCB2" />';
-            html += '</object>';
-            dest[0].innerHTML = html;
-        }
-        function injectPlugin3(dest, callback) {
-            pluginCB3 = callback;
-            var html = '<object id="testPlugin3" type="' + mimeType3 + '" width="100%" height="100%" onload="alert(\'The plugin has loaded 3!\');">';
-            html += '<param name="onload" value="pluginCB3" />';
-            html += '</object>';
-            dest[0].innerHTML = html;
+            dest.innerHTML = html;
+
+            return function () {
+                return document.getElementById(id);
+            }
         }
 
         function dangerousInjection(dest, callback) {
@@ -199,12 +183,20 @@
             addTest("testSetTimeout", "SetTimeout Timer functionality.");
             markFailed("loaded");
             markFailed("loaded2");
-            injectPlugin($("#pluginContainer"), pluginLoaded);
-            injectPlugin2($("#pluginContainer2"), pluginLoaded2);
-            injectPlugin3($("#pluginContainer3"), pluginLoaded3);
+
+            var mimeType = "application/x-fbtestplugin",
+                mimeType2 = "application/x-fbtestplugin-math",
+                mimeType3 = "application/x-fbtestmathplugin";
+            var pc = $(".pluginContainer");
+            getPlugin1 = injectPlugin(pc[0], mimeType, "pluginLoaded"); // windowed
+                         injectPlugin(pc[1], mimeType, "", "windowless"); 
+                         injectPlugin(pc[2], mimeType, "", "AsyncWindowsDXGISurface");
+                         injectPlugin(pc[3], mimeType, "", "AsyncWindowsDXGISurface");
+            getPlugin2 = injectPlugin($("#pluginContainer2")[0], mimeType2, "pluginLoaded2");
+            getPlugin3 = injectPlugin($("#pluginContainer3")[0], mimeType3, "pluginLoaded3");
         }
 
-        function pluginLoaded() {
+        function pluginLoaded(a) {
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
             //setTimeout(pluginRunTests, 500);
@@ -252,26 +244,26 @@
             }).always(function(){
                 updatePingStats();
             });
-            plugin().ping(seq, function(p, s) {
+            getPlugin1().ping(seq, function(p, s) {
                 dfd.resolve(seq);
             });
         }
 
         function pluginRunTests() {
-            var plugin = window.plugin();
+            var plugin = getPlugin1();
             if (plugin.valid)
                 markPassed("valid");
             else
                 markFailed("valid");
 
-            var mathplugin2 = window.plugin2();
+            var mathplugin2 = getPlugin2();
             if (mathplugin2.valid)
                 markPassed("valid2");
             else
                 markFailed("valid2");
 
             // note: no valid property!
-            var mathplugin3 = window.plugin3();
+            var mathplugin3 = getPlugin3();
                 
             try {
                 var path = plugin.pluginPath;
@@ -638,8 +630,17 @@
         <small>Ping results: <span id="pingresults">(not started)</span></small><br />
         <small>Plugin path: <span id="pluginPath">?</span></small>
     </div>
-    <div id="pluginContainer">
-        <br /><br /><br />Plugin will go here!
+    <div class="pluginContainer">
+        <br /><br /><br />Windowed plugin will go here!
+    </div>
+    <div class="pluginContainer">
+        <br /><br /><br />Windowless plugin will go here!
+    </div>
+    <div class="pluginContainer">
+        <br /><br /><br />AsyncWindowsDXGISurface plugin will go here!
+    </div>
+    <div class="pluginContainer">
+        <br /><br /><br />AsyncWindowsDXGISurface plugin will go here!
     </div>
     <div id="pluginContainer2">
         <br /><br /><br />Plugin2 will go here!

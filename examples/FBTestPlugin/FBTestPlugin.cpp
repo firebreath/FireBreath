@@ -7,11 +7,15 @@
 
 \**********************************************************/
 
+#define _USE_MATH_DEFINES
+
+#include <math.h>
 #include <sstream>
+#include <stdio.h>
+#include "boost/bind.hpp" 
+
 #include "FBTestPluginAPI.h"
 #include "SimpleMathAPI.h"
-#include <stdio.h>
-
 #include "FBTestPlugin.h"
 #include "DOM/Window.h"
 #include "URI.h"
@@ -19,15 +23,9 @@
 #ifdef FB_WIN
 #include "PluginWindowWin.h"
 #include "PluginWindowlessWin.h"
-#ifdef HAS_LEAKFINDER
-#define XML_LEAK_FINDER
-#include "LeakFinder/LeakFinder.h"
+#ifdef FBWIN_ASYNCSURFACE
+#include "Win/D3d10AsyncDrawService.h"
 #endif
-#endif
-
-
-#ifdef HAS_LEAKFINDER
-boost::scoped_ptr<LeakFinderXmlOutput> FBTestPlugin::pOut;
 #endif
 
 void FBTestPlugin::StaticInitialize()
@@ -35,27 +33,14 @@ void FBTestPlugin::StaticInitialize()
     FBLOG_INFO("StaticInit", "Static Initialize");
     // Place one-time initialization stuff here; As of FireBreath 1.4 this should only
     // be called once per process
-
-#ifdef HAS_LEAKFINDER
-#ifdef XML_LEAK_FINDER
-    pOut.swap(boost::scoped_ptr<LeakFinderXmlOutput>(new LeakFinderXmlOutput(L"C:\\code\\firebreath_mem.xml")));
-#endif
-    InitLeakFinder();
-#endif
 }
 
 void FBTestPlugin::StaticDeinitialize()
 {
-#ifdef HAS_LEAKFINDER
-    DeinitLeakFinder(pOut.get());
-    pOut.reset();
-#endif
     FBLOG_INFO("StaticInit", "Static Deinitialize");
     // Place one-time deinitialization stuff here. This should be called just before
     // the plugin library is unloaded
-
 }
-
 
 FBTestPlugin::FBTestPlugin(const std::string& mimetype) :
     m_mimetype(mimetype)
@@ -114,9 +99,18 @@ bool FBTestPlugin::onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindow*)
     return false;
 }
 
-bool FBTestPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* )
+bool FBTestPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* win)
 {
+#ifdef FBWIN_ASYNCSURFACE
     // This is called when the window is attached; don't start drawing before this!
+    FB::PluginWindowlessWin* windowless = dynamic_cast<FB::PluginWindowlessWin*>(win);
+    if (windowless) {
+        FB::D3d10AsyncDrawServicePtr ads = FB::ptr_cast<FB::D3d10AsyncDrawService>(windowless->getAsyncDrawService());
+        if (ads) {
+            startDrawAsync(ads);
+        }
+    }
+#endif
     return false;
 }
 
@@ -129,12 +123,19 @@ bool FBTestPlugin::onDetached( FB::DetachedEvent *evt, FB::PluginWindow* )
 bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
 {
     FB::Rect pos = win->getWindowPosition();
+
 #if FB_WIN
     HDC hDC;
     FB::PluginWindowlessWin *wndLess = dynamic_cast<FB::PluginWindowlessWin*>(win);
     FB::PluginWindowWin *wnd = dynamic_cast<FB::PluginWindowWin*>(win);
     PAINTSTRUCT ps;
     if (wndLess) {
+#ifdef FBWIN_ASYNCSURFACE
+        if (wndLess->getAsyncDrawService()) {
+            // Firefox still calls draw when we are async drawing! (IE doesn't)
+            return true;
+        }
+#endif
         hDC = wndLess->getHDC();
     } else if (wnd) {
         hDC = BeginPaint(wnd->getHWND(), &ps);
@@ -142,6 +143,8 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
         pos.left = 0;
         pos.bottom -= pos.top;
         pos.top = 0;
+    } else {
+        return true;
     }
 
     ::SetTextAlign(hDC, TA_CENTER|TA_BASELINE);
@@ -157,14 +160,65 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
         EndPaint(wnd->getHWND(), &ps);
     }
 #endif
+
     return true;
 }
 
-bool FBTestPlugin::isWindowless()
+#ifdef FBWIN_ASYNCSURFACE
+
+bool FBTestPlugin::startDrawAsync(FB::D3d10AsyncDrawServicePtr ads)
 {
-    return PluginCore::isWindowless();
-    //return true;
+    m_thread = boost::thread(&FBTestPlugin::renderThread, this, ads);
+    return true;
 }
+
+struct Scene
+{
+    uint32_t _frame;
+    uint32_t _abgr; 
+
+    Scene(uint32_t abgrBackground)
+        : _frame(0)
+        , _abgr(abgrBackground)
+    {}
+
+    bool render(ID3D10Device1* device, ID3D10RenderTargetView* rtView, uint32_t width, uint32_t height)
+    {
+        uint32_t r = (_abgr & 0xFF);
+        uint32_t g = (_abgr & 0xFF00) >> 8;
+        uint32_t b = (_abgr & 0xFF0000) >> 16;
+        float a = (float) (sin(_frame / 31.0 * M_PI) / 2 + 0.5);
+        float color[4] = { b * a / 255.f, g * a / 255.f, r * a / 255.f, a };
+        device->ClearRenderTargetView(rtView, color);
+        // insert fancy demo here
+        ++_frame;
+        return true;
+    }
+};
+
+void FBTestPlugin::renderThread(FB::D3d10AsyncDrawServicePtr ads)
+{
+    try {
+        Scene scene(asyncTestBgColor());
+        do {
+            ads->render(boost::bind(&Scene::render, &scene, _1, _2, _3, _4));
+            boost::this_thread::sleep_for(boost::chrono::milliseconds(20));
+        } while(true);
+    }
+    catch (boost::thread_interrupted) {
+        // this is expected
+    }
+}
+
+//virtual
+void FBTestPlugin::ClearWindow()
+{
+    // the window is about to go away, so we need to stop our render thread
+    m_thread.interrupt();
+    m_thread.join();
+}
+
+#endif
 
 void FBTestPlugin::onPluginReady()
 {
@@ -173,10 +227,35 @@ void FBTestPlugin::onPluginReady()
         return;
 
     FB::URI uri = FB::URI::fromString(window->getLocation());
-    if (uri.query_data.find("log") != uri.query_data.end()) {
-        m_host->setEnableHtmlLog(true);
-    } else {
-        m_host->setEnableHtmlLog(false);
+    bool log = uri.query_data.find("log") != uri.query_data.end();
+    m_host->setEnableHtmlLog(log);
+}
+
+uint32_t FBTestPlugin::asyncTestBgColor()
+{
+    if (m_asyncTestBgColor) {
+        return *m_asyncTestBgColor;
     }
 
+    FB::VariantMap::iterator itr = m_params.find("color");
+    if (itr != m_params.end()) {
+        try {
+            uint32_t v;
+            std::stringstream ss;
+            ss << std::hex << itr->second.convert_cast<std::string>();
+            ss >> v;
+            m_asyncTestBgColor = v;
+            return *m_asyncTestBgColor;
+        } catch (const FB::bad_variant_cast& ex) {
+            FB_UNUSED_VARIABLE(ex);
+        }
+    }
+    m_asyncTestBgColor = 0x7F00FF00; // if no param is given set the default to semi-transparent green (format is 0xAARRGGBB)
+    return *m_asyncTestBgColor;
+}
+
+std::string FBTestPlugin::negotiateDrawingModel()
+{
+    boost::optional<std::string> param = getParam("drawingmodel");
+    return param ? *param : "";
 }

@@ -83,19 +83,6 @@ void NpapiPlugin::init(NPMIMEType pluginType, int16_t argc, char* argn[], char *
         }
     }
     pluginMain->setParams(paramList);
-    if(!FB::pluginGuiEnabled() || pluginMain->isWindowless()) {
-        /* Windowless plugins require negotiation with the browser.
-        * If the plugin does not set this value it is assumed to be
-        * a windowed plugin.
-        * See: https://developer.mozilla.org/en/Gecko_Plugin_API_Reference/Drawing_and_Event_Handling
-        */
-#ifndef XP_MACOSX
-        // We don't want to set these if we're in Mac OS X, otherwise Firefox 3.5 will deliver us a
-        // null window->window in NPP_SetWindow().
-        m_npHost->SetValue(NPPVpluginWindowBool, (void*)false);
-        m_npHost->SetValue(NPPVpluginTransparentBool, (void*)true); // Set transparency to true
-#endif
-    }
     setReady();
 }
 

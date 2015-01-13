@@ -259,7 +259,8 @@ NPError PluginWindowMac::SetWindow(NPWindow* window) {
 }
 
 FB::Rect PluginWindowMac::getWindowPosition() const {
-    FB::Rect r = { m_y, m_x, m_y + m_height, m_x + m_width };
+    FB::Rect r = { static_cast<int32_t>(m_y), static_cast<int32_t>(m_x),
+                   static_cast<int32_t>(m_y + m_height), static_cast<int32_t>(m_x + m_width) };
     return r;
 }
 
@@ -316,7 +317,7 @@ void PluginWindowMac::StopAutoInvalidate() {
 
 void PluginWindowMac::InvalidateWindow() const {
     FBLOG_TRACE("PluginCore", "InvalidateWindow");
-    NPRect r = { 0, 0, m_height, m_width };
+    NPRect r = { 0, 0, static_cast<uint16_t>(m_height), static_cast<uint16_t>(m_width) };
     if (!m_npHost->isMainThread())
         m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     else

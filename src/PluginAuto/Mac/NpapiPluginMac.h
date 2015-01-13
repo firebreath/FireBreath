@@ -49,6 +49,7 @@ namespace FB { namespace Npapi {
         
     private:
         int16_t GetValue(NPPVariable variable, void* value);
+        NPError SetValue(NPNVariable variable, void* value);
     };
 
 }; }; // FB::Npapi

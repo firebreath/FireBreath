@@ -14,16 +14,31 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 Packet Pass, Inc. and the Firebreath development team
 """
-import os, re, sys, time, uuid
+from __future__ import print_function
+import os
+import sys
+import time
 from fbgen.gen_templates import *
 from optparse import OptionParser
-from ConfigParser import SafeConfigParser
+try:
+    from ConfigParser import SafeConfigParser
+except:
+    from configparser import SafeConfigParser
+
+
+try:
+    input = raw_input
+except NameError:
+    pass
+
 
 def getTemplateFiles(basePath, origPath=None):
     """
-    Obtains the location to the template files. Discovers any newly added files automatically.
+    Obtains the location to the template files. Discovers any newly added files
+    automatically.
     @param basePath location from which to start searching for files.
-    @param origPath used to strip path information from the returned values. Defaults to None.
+    @param origPath used to strip path information from the returned values.
+    Defaults to None.
     @returns array of strings each entry representing a single file.
     """
     if origPath is None:
@@ -35,19 +50,20 @@ def getTemplateFiles(basePath, origPath=None):
         if filename == '.' or filename == ".." or tmpName is None:
             continue
         if os.path.isdir(tmpName):
-            files.extend(getTemplateFiles(tmpName, origPath) )
+            files.extend(getTemplateFiles(tmpName, origPath))
         else:
             files.append(tmpName[plen:])
     return files
+
 
 def createDir(dirName):
     """
     Creates a directory, even if it has to create parent directories to do so
     """
     parentDir = os.path.dirname(dirName)
-    print "Parent of %s is %s" % (dirName, parentDir)
+    print("Parent of {0} is {1}".format(dirName, parentDir))
     if os.path.isdir(parentDir):
-        print "Creating dir %s" % dirName
+        print("Creating dir {0}".format(dirName))
         os.mkdir(dirName)
     else:
         createDir(parentDir)
@@ -62,29 +78,31 @@ def Main():
     # Define the command-line interface via OptionParser
     usage = "usage: %prog [options]"
     parser = OptionParser(usage)
-    parser.add_option("-p", "--plugin-name", dest = "pluginName")
-    parser.add_option("-i", "--plugin-identifier", dest = "pluginIdent",
-        help = "3 or more alphanumeric characters (underscores allowed after first position)")
-    parser.add_option("-c", "--company-name", dest = "companyName")
-    parser.add_option("-d", "--company-domain", dest = "companyDomain")
-    parser.add_option("-g", "--disable-gui", dest = "disableGUI")
+    parser.add_option("-p", "--plugin-name", dest="pluginName")
+    parser.add_option("-i", "--plugin-identifier", dest="pluginIdent",
+                      help="3 or more alphanumeric characters underscores"
+                      " allowed after first position)")
+    parser.add_option("-c", "--company-name", dest="companyName")
+    parser.add_option("-d", "--company-domain", dest="companyDomain")
+    parser.add_option("-g", "--disable-gui", dest="disableGUI")
     options, args = parser.parse_args()
 
-
-    if options.pluginName and options.pluginIdent and options.companyName and options.companyDomain:
+    if (options.pluginName and options.pluginIdent and options.companyName
+            and options.companyDomain):
         options.interactive = False
     else:
         options.interactive = True
 
-    scriptDir = os.path.dirname(os.path.abspath(__file__) )
+    scriptDir = os.path.dirname(os.path.abspath(__file__))
     cfgFilename = os.path.join(scriptDir, ".fbgen.cfg")
     cfgFile = SafeConfigParser()
     cfgFile.read(cfgFilename)
 
     # Instantiate the appropriate classes
-    plugin = Plugin(name = options.pluginName, ident = options.pluginIdent, disable_gui = options.disableGUI)
+    plugin = Plugin(name=options.pluginName, ident=options.pluginIdent,
+                    disable_gui=options.disableGUI)
     plugin.readCfg(cfgFile)
-    company = Company(name = options.companyName)
+    company = Company(name=options.companyName)
     company.readCfg(cfgFile)
 
     if options.interactive:
@@ -92,31 +110,31 @@ def Main():
             plugin.promptValues()
             company.promptValues()
         except KeyboardInterrupt:
-            print ""  # get off of the line where the KeyboardInterrupt happened
-            sys.exit(0) # terminate gracefully
+            print("")  # get off of the line where KeyboardInterrupt happened
+            sys.exit(0)  # terminate gracefully
     plugin.updateCfg(cfgFile)
     company.updateCfg(cfgFile)
-    guid = GUID(ident = plugin.ident, domain = company.domain)
+    guid = GUID(ident=plugin.ident, domain=company.domain)
 
     # Generate the guids needed by the templates
     generatedGuids = AttrDictSimple()
-    generatedGuids.GUIDS_TYPELIB        = guid.generate("TYPELIB")
-    generatedGuids.GUIDS_CONTROLIF      = guid.generate("CONTROLIF")
-    generatedGuids.GUIDS_CONTROL        = guid.generate("CONTROL")
-    generatedGuids.GUIDS_JSIF           = guid.generate("JSIF")
-    generatedGuids.GUIDS_JSOBJ          = guid.generate("JSOBJ")
-    generatedGuids.GUIDS_EVTSRC         = guid.generate("EVTSRC")
-    generatedGuids.GUIDS_INSTPROD       = guid.generate("INSTPROD")
-    generatedGuids.GUIDS_INSTUPGR       = guid.generate("INSTUPGR")
-    generatedGuids.GUIDS_INSTUPGR64     = guid.generate("INSTUPGR64")
+    generatedGuids.GUIDS_TYPELIB = guid.generate("TYPELIB")
+    generatedGuids.GUIDS_CONTROLIF = guid.generate("CONTROLIF")
+    generatedGuids.GUIDS_CONTROL = guid.generate("CONTROL")
+    generatedGuids.GUIDS_JSIF = guid.generate("JSIF")
+    generatedGuids.GUIDS_JSOBJ = guid.generate("JSOBJ")
+    generatedGuids.GUIDS_EVTSRC = guid.generate("EVTSRC")
+    generatedGuids.GUIDS_INSTPROD = guid.generate("INSTPROD")
+    generatedGuids.GUIDS_INSTUPGR = guid.generate("INSTUPGR")
+    generatedGuids.GUIDS_INSTUPGR64 = guid.generate("INSTUPGR64")
     generatedGuids.GUIDS_companydircomp = guid.generate("companydircomp")
     generatedGuids.GUIDS_installdircomp = guid.generate("installdircomp")
 
     # Time-related values used in templates
-    templateTime = AttrDictSimple(YEAR = time.strftime("%Y"))
+    templateTime = AttrDictSimple(YEAR=time.strftime("%Y"))
 
     # Save configuration for another go
-    cfgFile.write(open(cfgFilename, "wb") )
+    cfgFile.write(open(cfgFilename, "w"))
 
     # Make sure we can get into the projects directory
     basePath = os.path.join(scriptDir, "projects")
@@ -124,30 +142,30 @@ def Main():
         try:
             os.mkdir(basePath)
         except:
-            print "Unable to create directory", basePath
+            print("Unable to create directory {0}".format(basePath))
             sys.exit(1)
 
     # Try to create a directory for this project
-    projPath = os.path.abspath(os.path.join(basePath, "%s" % plugin.ident))
+    projPath = os.path.abspath(os.path.join(basePath, "{0}".format(plugin.ident)))
     if os.path.isdir(projPath):
         try:
-            overwrite = raw_input("\nDirectory already exists. Continue anyway? [y/N] ")
+            overwrite = input("\nDirectory already exists. Continue anyway? "
+                              "[y/N]")
         except KeyboardInterrupt:
-            print ""  # get off of the line where the KeyboardInterrupt happened
-            sys.exit(0) # terminate gracefully
+            print("")  # get off of the line where KeyboardInterrupt happened
+            sys.exit(0)  # terminate gracefully
         if len(overwrite) == 0 or overwrite[0] not in ("Y", "y"):
-            print "\nAborting"
+            print("\nAborting")
             sys.exit(1)
     else:
         try:
             os.mkdir(projPath)
         except:
-            print "Failed to create project directory", projPath
+            print("Failed to create project directory {0}".format(projPath))
             sys.exit(1)
 
-    print "\nProcessing templates"
+    print("\nProcessing templates")
     srcDir = os.path.join(scriptDir, "fbgen", "src")
-    srcDirLen = len(srcDir) + len(os.path.sep)
     templateFiles = getTemplateFiles(srcDir)
     for tpl in templateFiles:
         try:
@@ -162,22 +180,22 @@ def Main():
             if not os.path.isdir(dirname):
                 createDir(dirname)
             tplFile = os.path.join("fbgen", "src", tpl)
-            print tplFile
-            template = Template(tplFile)
-            #Special case for binary files
+            print(tplFile)
+            # Special case for binary files
             if(tplFilename == "background.png"):
-              input = open(tplFile, "rb")
-              output = open(filename, "wb")
-              output.write(input.read())
+                inputFile = open(tplFile, "rb")
+                output = open(filename, "wb")
+                output.write(inputFile.read())
             else:
-              f = open(filename, "wb")
-              f.write(template.process(plugin, company, guid, generatedGuids, templateTime))
-            print "  Processed", tpl
+                template = Template(tplFile)
+                f = open(filename, "w")
+                f.write(template.process(plugin, company, guid, generatedGuids,
+                                         templateTime))
+            print("  Processed {0}".format(tpl))
         except:
-            print "  Error processing", tpl
+            print("  Error processing {0}".format(tpl))
             raise
-    print "Done. Files placed in", projPath
+    print ("Done. Files placed in {0}".format(projPath))
 
 if __name__ == "__main__":
     Main()
-

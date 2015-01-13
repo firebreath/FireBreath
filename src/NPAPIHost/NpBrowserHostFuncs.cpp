@@ -160,3 +160,16 @@ void NP_LOADDS NpapiHost::NH_UnscheduleTimer(NPP npp, uint32_t timerID) {
 
 }
 
+/* NPN_InitAsyncSurface */
+NPError	NP_LOADDS NpapiHost::NH_InitAsyncSurface(NPP instance, NPSize *size, NPImageFormat format, void *initData, NPAsyncSurface *surface) {
+    return NPERR_INVALID_PARAM;
+}
+
+/* NPN_FinalizeAsyncSurface */
+NPError	NP_LOADDS NpapiHost::NH_FinalizeAsyncSurface(NPP instance, NPAsyncSurface *surface) {
+    return NPERR_INVALID_PARAM;
+}
+
+/* NPN_SetCurrentAsyncSurface */
+void NP_LOADDS NpapiHost::NH_SetCurrentAsyncSurface(NPP instance, NPAsyncSurface *surface, NPRect *changed) {
+}

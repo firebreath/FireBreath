@@ -201,6 +201,31 @@ TEST(VariantOptionalTest)
         CHECK(!dblVal);
     }
 }
+TEST(VariantTriBool)
+{
+	PRINT_TESTNAME;
+	using namespace FB;
+
+	variant e;
+	variant i = boost::tribool(boost::indeterminate);
+	variant t = boost::tribool(true);
+	variant f = boost::tribool(false);
+
+	// boost::indeterminate is converted to an empty variant
+	// empty variants can be converted back to boost::tribool
+	CHECK(i.empty());	
+	CHECK(boost::indeterminate(i.convert_cast<boost::tribool>()));
+	CHECK(boost::indeterminate(e.convert_cast<boost::tribool>()));
+	CHECK(t.convert_cast<boost::tribool>() == boost::tribool(true));
+	CHECK(f.convert_cast<boost::tribool>() == boost::tribool(false));
+	CHECK(t.convert_cast<bool>() == true);
+	CHECK(f.convert_cast<bool>() == false);
+
+	variant bt = bool(true);
+	variant bf = bool(false);
+	CHECK(bt.convert_cast<boost::tribool>());
+	CHECK(!bf.convert_cast<boost::tribool>());
+}
 TEST(VariantToBoostVariantConversionTest)
 {
     PRINT_TESTNAME;

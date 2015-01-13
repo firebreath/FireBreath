@@ -13,6 +13,7 @@
  \**********************************************************/
 
 #include <boost/scoped_array.hpp>
+#include <JavaScriptCore/JSStringRef.h>
 #include "JSObjectRefObject.h"
 #include "JSObjectRefAPI.h"
 
@@ -59,7 +60,7 @@ JSAPIPtr JSObjectRefAPI::getJSAPI() const
     JSObjectRefPtr o(obj.lock());
     
     if (JSObjectRefObject::isJSAPI(m_jsContext, *o->getPtr())) {
-        JSObjectRefObject *obj = reinterpreted_cast<JSObjectRefObject *>(JSObjectGetPrivate(*o->getPtr()));
+        JSObjectRefObject *obj = reinterpret_cast<JSObjectRefObject *>(JSObjectGetPrivate(*o->getPtr()));
         return obj->getAPI();
     }
     

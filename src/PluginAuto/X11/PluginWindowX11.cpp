@@ -30,6 +30,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #endif
 
+// These match the numbers used in WebKit (WebFrameView.m).
+const int cScrollbarPixelsPerLineStep = 40;
+
 FB::PluginWindowX11* FB::createPluginWindowX11(const FB::WindowContextX11& ctx)
 {
     return new FB::PluginWindowX11(ctx);
@@ -269,16 +272,16 @@ gboolean PluginWindowX11::EventCallback(GtkWidget *widget, GdkEvent *event)
             switch (scroll->direction)
             {
             case GDK_SCROLL_UP:
-                dy -= 3;
+                dy -= cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_DOWN:
-                dy += 3;
+                dy += cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_LEFT:
-                dx -= 3;
+                dx -= cScrollbarPixelsPerLineStep;
                 break;
             case GDK_SCROLL_RIGHT:
-                dx += 3;
+                dx += cScrollbarPixelsPerLineStep;
                 break;
             }
             MouseScrollEvent evt(scroll->x, scroll->y, -dx, -dy, getModifierState(scroll->state));
@@ -336,9 +339,17 @@ GdkWindow* PluginWindowX11::getWidgetWindow() const
 
 #endif
 
-void PluginWindowX11::InvalidateWindow() const
-{
+void PluginWindowX11::InvalidateWindow() const {
 #if FB_GUI_DISABLED != 1
-    gdk_window_invalidate_rect(getWidgetWindow(), NULL, true);
+  g_idle_add(idleInvalidate, const_cast<PluginWindowX11 *>(this));
 #endif // FB_GUI_DISABLED != 1
 }
+
+
+#if FB_GUI_DISABLED != 1
+gboolean PluginWindowX11::idleInvalidate(gpointer win) {
+  const PluginWindowX11 *w = reinterpret_cast<PluginWindowX11 *>(win);
+  gdk_window_invalidate_rect(w->getWidgetWindow(), NULL, true);
+  return FALSE;
+}
+#endif // FB_GUI_DISABLED != 1

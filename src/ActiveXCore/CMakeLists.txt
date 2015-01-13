@@ -54,6 +54,11 @@ file (GLOB PLUGIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     registrymap.hpp
 )
 
+if(WITH_FBWIN_ASYNCSURFACE)
+    file (GLOB PLUGIN2 RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ActiveXAsyncDrawService.*)
+    list (APPEND PLUGIN ${PLUGIN2})
+endif()
+
 file (GLOB PCH RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 	precompiled_*
 )

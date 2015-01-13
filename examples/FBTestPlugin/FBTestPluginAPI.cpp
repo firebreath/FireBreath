@@ -55,8 +55,8 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
     registerMethod("systemHelpersTest", make_method(this, &FBTestPluginAPI::systemHelpersTest));
     registerMethod(L"скажи",  make_method(this, &FBTestPluginAPI::say));
 
-	registerMethod("ping", make_method(this, &FBTestPluginAPI::ping));
-    
+    registerMethod("ping", make_method(this, &FBTestPluginAPI::ping));
+
     registerMethod("addWithSimpleMath", make_method(this, &FBTestPluginAPI::addWithSimpleMath));
     registerMethod("createSimpleMath", make_method(this, &FBTestPluginAPI::createSimpleMath));
 
@@ -342,7 +342,8 @@ void FBTestPluginAPI::postURL(const std::string& url, const std::string& postdat
 }
 
 void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,
-    const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+    const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) 
+{
     FB::VariantMap outHeaders;
     for (FB::HeaderMap::const_iterator it = headers.begin(); it != headers.end(); ++it) {
         if (headers.count(it->first) > 1) {
@@ -355,30 +356,40 @@ void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool succe
             outHeaders[it->first] = it->second;
         }
     }
-    if (success) {
-        std::string dstr(reinterpret_cast<const char*>(data.get()), size);
-        callback->InvokeAsync("", FB::variant_list_of
-            (true)
-            (outHeaders)
-            (dstr)
-            );
-    } else {
-        callback->InvokeAsync("", FB::variant_list_of(false));
+
+    try {
+        if (success) {
+            std::string dstr(reinterpret_cast<const char*>(data.get()), size);
+            callback->InvokeAsync("", FB::variant_list_of
+                (true)
+                (outHeaders)
+                (dstr)
+                );
+        } else {
+            callback->InvokeAsync("", FB::variant_list_of(false));
+        }
+    } 
+    catch (const std::runtime_error&)
+    {
+        // If the plugin was destroyed,
+        // perhaps by a page navigation,
+        // the JSObjectPtr's (weak) host ptr is invalid,
+        // and a runtime exception will happen.
     }
 }
 
 void FBTestPluginAPI::SetTimeout(const FB::JSObjectPtr& callback, long timeout)
 {
-	bool recursive = false;
-	FB::TimerPtr timer = FB::Timer::getTimer(timeout, recursive, boost::bind(&FBTestPluginAPI::timerCallback, this, callback));
-	timer->start();
-	timers.push_back(timer);
+    bool recursive = false;
+    FB::TimerPtr timer = FB::Timer::getTimer(timeout, recursive, boost::bind(&FBTestPluginAPI::timerCallback, this, callback));
+    timer->start();
+    timers.push_back(timer);
 }
 
 void FBTestPluginAPI::timerCallback(const FB::JSObjectPtr& callback)
 {
-	callback->Invoke("", FB::variant_list_of());
-	// TODO: delete This timer
+    callback->Invoke("", FB::variant_list_of());
+    // TODO: delete This timer
 }
 
 FB::VariantMap FBTestPluginAPI::systemHelpersTest(){
@@ -430,5 +441,5 @@ void FBTestPluginAPI::openPopup()
 
 void FBTestPluginAPI::ping( const int seq, const FB::JSObjectPtr& callback )
 {
-	callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(seq));
+    callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(seq));
 }

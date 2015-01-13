@@ -16,12 +16,12 @@
 #ifndef H_WEBKITBROWSERHOST
 #define H_WEBKITBROWSERHOST
 
-#include <JavaScriptCore.h>
 #include <boost/thread/recursive_mutex.hpp>
 #include <objc/objc.h>
 #include <objc/runtime.h>
 #include "BrowserHost.h"
 #include "ShareableReference.h"
+#include <JavaScriptCore/JSObjectRef.h>
 
 namespace FB { namespace WebKit {
     
@@ -36,12 +36,8 @@ namespace FB { namespace WebKit {
         
     public:
         // FB::BrowserHost required methods
-        virtual void *getContextID() const {
-            return (void*)m_jsContext;
-        };
-        virtual JSContextRef getJSContext() const {
-            return m_jsContext;
-        }
+        virtual void *getContextID() const;
+        virtual JSContextRef getJSContext() const;
         
         void shutdown();
         
@@ -49,39 +45,14 @@ namespace FB { namespace WebKit {
         virtual DOM::WindowPtr getDOMWindow();
         virtual DOM::ElementPtr getDOMElement();
         
-        virtual FB::variant jsEval(const std::string &script) {
-            JSStringRef scriptJS = JSStringCreateWithUTF8CString(script.c_str());
-            JSObjectRef fn = JSObjectMakeFunction(m_jsContext, NULL, 0, NULL, scriptJS, NULL, 1, NULL);
-            JSStringRelease(scriptJS);
-            if (fn) {
-                JSValueRef ret = JSObjectCallAsFunction(m_jsContext, fn, NULL, 0, NULL, NULL);
-                return getVariant(ret);
-            } else {
-                throw FB::script_error("Could not eval: " + script);
-            }
-        }
-        virtual void evaluateJavaScript(const std::string &script) {
-            jsEval(script);
-        }
+        virtual FB::variant jsEval(const std::string &script);
+        virtual void evaluateJavaScript(const std::string &script);
         virtual void DoDeferredRelease() const;
-        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const {
-            // Default behavior is to use the parent browserhost for cross-thread calls
-            return m_parentHost->ScheduleAsyncCall(func, userData);
-        }
-        virtual BrowserStreamPtr _createStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                               bool cache = true, bool seekable = false,
-                                               size_t internalBufferSize = 128 * 1024 ) const
-        {
-            return BrowserStreamPtr(); // TODO
-        }
-        virtual BrowserStreamPtr _createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                                   const std::string& postdata,
-                                                   bool cache = true, bool seekable = false,
-                                                   size_t internalBufferSize = 128 * 1024 ) const
-        {
-            return BrowserStreamPtr(); // TODO
-        }
-        
+        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
+
+        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
+        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const;
+
     public:
         // Implementation specific methods
         FB::variant getVariant(JSValueRef input);

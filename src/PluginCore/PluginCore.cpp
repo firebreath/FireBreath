@@ -33,11 +33,11 @@ volatile int PluginCore::ActivePluginCount = 0;
 
 std::string PluginCore::OS;
 std::string PluginCore::Browser;
-void PluginCore::setPlatform(const std::string& os, const std::string& browser)
+void PluginCore::setPlatform(const std::string& opsys, const std::string& browser)
 {
-    PluginCore::OS = os;
+    PluginCore::OS = opsys;
     PluginCore::Browser = browser;
-    FBLOG_INFO("PluginCore", "os: " << os << "; browser: " << browser);
+    FBLOG_INFO("PluginCore", "os: " << opsys << "; browser: " << browser);
 }
 
 /***************************\
@@ -56,7 +56,10 @@ PluginCore::PluginCore() : m_paramsSet(false), m_Window(NULL),
 PluginCore::~PluginCore()
 {
     // Tell the host that the plugin is shutting down
-    m_host->shutdown();
+    if(m_host) {
+        m_host->shutdown();
+    }
+
     // This class is only destroyed on the main UI thread,
     // so there is no need for mutexes here
     --PluginCore::ActivePluginCount;
@@ -129,20 +132,18 @@ bool PluginCore::setReady()
 
 bool PluginCore::isWindowless()
 {
-    if (m_windowLessParam != boost::indeterminate) {
-        return m_windowLessParam;
-    } else {
+    if (boost::indeterminate(m_windowLessParam)) {
+        // initialise m_windowLessParam (defaulting to not windowless)
+        m_windowLessParam = false;
         FB::VariantMap::iterator itr = m_params.find("windowless");
         if (itr != m_params.end()) {
             try {
                 m_windowLessParam = itr->second.convert_cast<bool>();
-                return m_windowLessParam;
             } catch (const FB::bad_variant_cast& ex) {
                 FB_UNUSED_VARIABLE(ex);
             }
-        }
+       }
     }
-    m_windowLessParam = false;
     return m_windowLessParam;
 }
 
@@ -163,4 +164,9 @@ void FB::PluginCore::ClearWindow()
         m_Window->DetachObserver(this);
         m_Window = NULL;
     }
+}
+
+std::string FB::PluginCore::negotiateDrawingModel()
+{
+    return "";
 }

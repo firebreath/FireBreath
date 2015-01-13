@@ -13,11 +13,13 @@
 \**********************************************************/
 
 #include <boost/scoped_array.hpp>
+#include <JavaScriptCore/JSStringRef.h>
 #include "JSValueUtils.h"
 #include "WebKitBrowserHost.h"
 #include "JSObjectRefAPI.h"
 #include "DOM.h"
 #include <cstring>
+#include "BrowserStream.h"
 
 using namespace FB::WebKit;
 
@@ -86,6 +88,12 @@ WebKitBrowserHost::~WebKitBrowserHost()
 {
 }
 
+void *WebKitBrowserHost::getContextID() const {
+    return (void*)m_jsContext;
+}
+JSContextRef WebKitBrowserHost::getJSContext() const {
+    return m_jsContext;
+}
 FB::DOM::DocumentPtr WebKitBrowserHost::getDOMDocument() {
     try {
         FB::JSObjectPtr doc(jsEval("document").convert_cast<FB::JSObjectPtr>());
@@ -95,7 +103,7 @@ FB::DOM::DocumentPtr WebKitBrowserHost::getDOMDocument() {
     catch (...) {
     }
     return FB::DOM::DocumentPtr();
-};
+}
 FB::DOM::WindowPtr WebKitBrowserHost::getDOMWindow() {
     try {
         FB::JSObjectPtr win(getVariant(m_jsWindow).convert_cast<FB::JSObjectPtr>());
@@ -115,6 +123,31 @@ FB::DOM::ElementPtr WebKitBrowserHost::getDOMElement() {
     catch (...) {
     }
     return FB::DOM::ElementPtr();
+}
+FB::variant WebKitBrowserHost::jsEval(const std::string &script) {
+    JSStringRef scriptJS = JSStringCreateWithUTF8CString(script.c_str());
+    JSObjectRef fn = JSObjectMakeFunction(m_jsContext, NULL, 0, NULL, scriptJS, NULL, 1, NULL);
+    JSStringRelease(scriptJS);
+    if (fn) {
+        JSValueRef ret = JSObjectCallAsFunction(m_jsContext, fn, NULL, 0, NULL, NULL);
+        return getVariant(ret);
+    } else {
+        throw FB::script_error("Could not eval: " + script);
+    }
+}
+void WebKitBrowserHost::evaluateJavaScript(const std::string &script) {
+    jsEval(script);
+}
+bool WebKitBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const {
+    // Default behavior is to use the parent browserhost for cross-thread calls
+    return m_parentHost->ScheduleAsyncCall(func, userData);
+}
+
+FB::BrowserStreamPtr WebKitBrowserHost::_createStream( const BrowserStreamRequest& req ) const {
+    return BrowserStreamPtr(); // TODO
+}
+FB::BrowserStreamPtr WebKitBrowserHost::_createUnsolicitedStream(const BrowserStreamRequest& req) const{
+    return BrowserStreamPtr(); // TODO
 }
 
 FB::variant WebKitBrowserHost::getVariant(JSValueRef input)

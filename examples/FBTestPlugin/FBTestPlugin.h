@@ -17,12 +17,9 @@
 
 #include "PluginCore.h"
 #include "PluginWindow.h"
-
-#if 1
-#undef HAS_LEAKFINDER
+#ifdef FBWIN_ASYNCSURFACE
+#include "Win/D3d10AsyncDrawService.h"
 #endif
-
-class LeakFinderXmlOutput;
 
 class FBTestPlugin : public FB::PluginCore
 {
@@ -30,16 +27,13 @@ public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
-public:
     FBTestPlugin(const std::string& mimetype);
     virtual ~FBTestPlugin();
 
-public:
     virtual FB::JSAPIPtr createJSAPI();
     
     std::string getPluginPath() { return m_filesystemPath; }
 
-    bool isWindowless();
     void onPluginReady();
 
     BEGIN_PLUGIN_EVENT_MAP()
@@ -59,11 +53,22 @@ public:
     virtual bool onDetached(FB::DetachedEvent *evt, FB::PluginWindow*);
     virtual bool draw(FB::RefreshEvent *evt, FB::PluginWindow*);
     /** END EVENTDEF -- DON'T CHANGE THIS LINE **/
-#ifdef HAS_LEAKFINDER
-    static boost::scoped_ptr<LeakFinderXmlOutput> pOut;
-#endif
+
+    virtual std::string negotiateDrawingModel();
+
   private:
+    uint32_t asyncTestBgColor();
     std::string m_mimetype;
+    boost::optional<uint32_t> m_asyncTestBgColor;
+
+#ifdef FBWIN_ASYNCSURFACE
+    virtual void ClearWindow();
+    bool startDrawAsync(FB::D3d10AsyncDrawServicePtr);
+    void renderThread(FB::D3d10AsyncDrawServicePtr);
+    bool render(ID3D10Device1*, ID3D10RenderTargetView*);
+
+    boost::thread m_thread;
+#endif
 };
 
 #endif

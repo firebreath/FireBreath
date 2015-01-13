@@ -15,7 +15,9 @@
 # Find ATL stuff
 
 if (NOT VC_DIR)
-    if (MSVC11)
+    if (MSVC12)
+        GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\12.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
+    elseif (MSVC11)
         GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\11.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
     elseif (MSVC10)
         GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\10.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
@@ -136,6 +138,17 @@ set(ATL_INCLUDE_DIRS
     ${MFC_INCLUDE_DIR}
     CACHE INTERNAL "ATL and MFC include dirs")
 
+option(WITH_FBWIN_ASYNCSURFACE "Build with async surface drawing support" OFF)
+
+if(WITH_FBWIN_ASYNCSURFACE)
+    message("Async surface drawing enabled")
+    add_definitions(-DFBWIN_ASYNCSURFACE)
+else()
+    message("Async surface drawing not enabled")
+endif()
+
+####
+
 IF(NOT DEFINED CMAKE_MAKECAB)
 	SET(CMAKE_MAKECAB makecab)
 ENDIF(NOT DEFINED CMAKE_MAKECAB)
@@ -164,8 +177,10 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
         if (EXISTS ${PFXFILE})
             message("-- ${_FILENAME} will be signed with ${PFXFILE}")
             GET_FILENAME_COMPONENT(WINSDK_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Microsoft SDKs\\Windows;CurrentInstallFolder]" REALPATH CACHE)
+            GET_FILENAME_COMPONENT(WINKIT_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots;KitsRoot]" REALPATH CACHE)
             find_program(SIGNTOOL signtool
                 PATHS
+                ${WINKIT_DIR}/bin/x64
                 ${WINSDK_DIR}/bin
                 )
             if (SIGNTOOL)
@@ -195,6 +210,7 @@ macro(firebreath_sign_file PROJNAME _FILENAME PFXFILE PASSFILE TIMESTAMP_URL)
     endif()
 endmacro(firebreath_sign_file)
 
+set(SUFFIX ".dll")
 macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
     if (WIN32)
         get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
@@ -305,6 +321,8 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
     else()
         SET (CAB_DEST ${CAB_OUTDIR}/${PROJNAME}.cab)
     endif()
+	
+	FILE(RELATIVE_PATH CAB_NAME ${CAB_OUTDIR} ${CAB_DEST})
      
     if (NOT FB_CAB_SUFFIX)
         set (FB_CAB_SUFFIX _Cab)
@@ -313,7 +331,7 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
     ADD_LIBRARY(${PROJNAME}${FB_CAB_SUFFIX} STATIC ${WIX_SOURCES})
     ADD_CUSTOM_COMMAND( TARGET    ${PROJNAME}${FB_CAB_SUFFIX} POST_BUILD
         COMMAND   ${CMAKE_MAKECAB}
-        ARGS      /D "OUTDIR=${CAB_OUTDIR}" /F "${CAB_DDF}"
+        ARGS      /D "OUTDIR=${CAB_OUTDIR}" /D "NAME=${CAB_NAME}" /F "${CAB_DDF}"
         DEPENDS   ${SOURCELIST}
         COMMENT   "Create Cab ${CAB_DEST}"
         )
