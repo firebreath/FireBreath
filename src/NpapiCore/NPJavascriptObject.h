@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 16, 2009
@@ -28,7 +28,7 @@ namespace FB { namespace Npapi {
     {
     public:
         static bool isNPJavaScriptObject(const NPObject* const npo);
-    
+
     protected:
         NpapiBrowserHostPtr getHost() {
             NpapiBrowserHostPtr ptr(m_browser.lock());
@@ -125,11 +125,10 @@ namespace FB { namespace Npapi {
         {
         public:
             NPO_getLastException(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", SecurityScope_Public), obj(ptr) { }
+                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", SecurityScope_Public) { }
 			FB::variant exec(const FB::VariantList& args) { return m_msg; }
 			void setMessage(const FB::variant& msg) { m_msg = msg; }
         private:
-            NPJavascriptObject* obj;
 			static FB::variant m_msg;
         };
     };
