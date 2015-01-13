@@ -17,5 +17,10 @@ set (FB_GECKOSDK_SOURCE_DIR ${FB_SOURCE_DIR}/3rdParty/gecko-sdk/includes)
 set (FB_UTF8_SOURCE_DIR ${FB_SOURCE_DIR}/3rdParty/utf8)
 
 set (FB_PLUGINAUTO_SOURCE_DIR "${FB_SOURCE_DIR}/PluginAuto")
+set (ScriptingCore_SOURCE_DIR "${FB_SOURCE_DIR}/ScriptingCore")
+set (PluginCore_SOURCE_DIR "${FB_SOURCE_DIR}/PluginCore")
+set (PluginAuto_SOURCE_DIR "${FB_SOURCE_DIR}/PluginAuto")
+set (NpapiCore_SOURCE_DIR "${FB_SOURCE_DIR}/NpapiCore")
+set (ActiveXCore_SOURCE_DIR "${FB_SOURCE_DIR}/ActiveXCore")
 
 set(FBLIB_DIRS "${FB_SOURCE_DIR}/libs")

@@ -30,6 +30,8 @@ set (FB_BUILD_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "FireBreath build
 set (FB_BIN_DIR "${CMAKE_CURRENT_BINARY_DIR}/bin" CACHE INTERNAL "FireBreath build/bin dir location")
 set (FIREBREATH YES CACHE INTERNAL "Helper variable to indicate that FireBreath is loaded")
 
+# Get the project paths
+include(${FB_ROOT}/cmake/paths.cmake)
 if (WIN32)
     set (FB_PLATFORM_NAME "Win")
     include(${FB_ROOT}/cmake/Win.cmake)
@@ -63,9 +65,6 @@ include(${FB_ROOT}/cmake/configure_template.cmake)
 
 # include file with build options
 include(${FB_ROOT}/cmake/options.cmake)
-
-# Get the project paths
-include(${FB_ROOT}/cmake/paths.cmake)
 
 # include the build configuration defaults
 include(${FB_ROOT}/cmake/buildconfig.cmake)
