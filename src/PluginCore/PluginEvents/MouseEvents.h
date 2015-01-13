@@ -29,10 +29,11 @@ namespace FB {
 	{
 	public:
 		enum ModifierState {
-			ModifierState_None = 0,
-			ModifierState_Shift = 1,
-			ModifierState_Control = 2,
-			ModifierState_Menu = 4
+			ModifierState_None    = 0x0,
+			ModifierState_Shift   = 0x1,
+			ModifierState_Control = 0x2,
+			ModifierState_Menu    = 0x4,
+			ModifierState_Alt     = 0x8,
 		};
 		MouseEvent(int x, int y, uint32_t state = ModifierState_None) :m_x(x), m_y(y), m_state(state) { }
 
