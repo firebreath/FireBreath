@@ -1,6 +1,6 @@
-/**********************************************************\ 
+/**********************************************************\
  Original Author: Georg Fritzsche
- 
+
  Created:    Oct 23, 2010
  License:    Dual license model; choose one of two:
              New BSD License
@@ -8,9 +8,9 @@
              - or -
              GNU Lesser General Public License, version 2.1
              http://www.gnu.org/licenses/lgpl-2.1.html
- 
+
  Copyright 2010 Georg Fritzsche, Firebreath development team
- \**********************************************************/
+\**********************************************************/
 
 #pragma once
 #ifndef H_FB_NPAPIPLUGINFACTORY
@@ -18,13 +18,13 @@
 
 #include <boost/shared_ptr.hpp>
 
-namespace FB { namespace Npapi 
-{ 
-    class NpapiPlugin; 
+namespace FB { namespace Npapi
+{
+    class NpapiPlugin;
     class NpapiBrowserHost;
     typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
     typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-    
+
     NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
 } }
 

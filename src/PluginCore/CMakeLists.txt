@@ -32,7 +32,7 @@ include_directories(
     ${ATL_INCLUDE_DIRS}
     ${FB_CONFIG_DIR}
     )
- 
+
 file (GLOB EVENTS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     PluginEvents/[^.]*.h
     PluginEvents/[^.]*.cpp
