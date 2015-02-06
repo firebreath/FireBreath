@@ -252,8 +252,10 @@ namespace FB {
                 boost::shared_ptr<FB::ShareableReference<CFBControlX> > ref(boost::make_shared<FB::ShareableReference<CFBControlX> >(this));
                 m_host->ScheduleOnMainThread(ref, boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
             } else {
+            	FB::Rect pos = pluginWin->getWindowPosition();
+            	RECT r = { left+pos.left, top+pos.top, right+pos.left, bottom+pos.top };
                 if (m_spInPlaceSite)
-                    m_spInPlaceSite->InvalidateRect(NULL, TRUE);
+                    m_spInPlaceSite->InvalidateRect(&r, FALSE);
             }
         }
 
