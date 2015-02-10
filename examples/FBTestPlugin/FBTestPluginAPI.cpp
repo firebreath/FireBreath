@@ -79,7 +79,7 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
 
     registerMethod("getProxyInfo", make_method(this, &FBTestPluginAPI::getProxyInfo));
 
-    m_simpleMath = boost::make_shared<SimpleMathAPI>(m_host);
+    m_simpleMath = std::make_shared<SimpleMathAPI>(m_host);
 }
 
 FBTestPluginAPI::~FBTestPluginAPI()
@@ -278,7 +278,7 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     return map;
 }
 
-boost::weak_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
+std::weak_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
 {
     return m_simpleMath;
 }
@@ -326,7 +326,7 @@ FB::variant FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long
 
 ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
 {
-    return boost::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
+    return std::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
 }
 
 void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
@@ -415,7 +415,7 @@ const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::str
 SimpleMathAPIPtr FBTestPluginAPI::createSimpleMath()
 {
     // Create a new simplemath object each time
-    return boost::make_shared<SimpleMathAPI>(m_host);
+    return std::make_shared<SimpleMathAPI>(m_host);
 }
 
 FB::VariantMap FBTestPluginAPI::getProxyInfo(const boost::optional<std::string>& url)

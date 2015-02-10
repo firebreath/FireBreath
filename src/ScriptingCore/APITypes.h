@@ -20,9 +20,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <map>
 #include <set>
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/variant/variant_fwd.hpp>
+#include <functional>
+#include <memory>
 #include "fb_stdint.h"
 #include "FBPointers.h"
 
@@ -45,8 +44,6 @@ namespace FB
     FB_FORWARD_PTR(JSObject);
     class variant;
     namespace variant_detail {
-        // Note that null translates to returning NULL
-        struct null;
         // Note that empty translates into return VOID (undefined)
         struct empty;
     }
@@ -85,13 +82,13 @@ namespace FB
     ///
     /// @brief  Defines an alias for a JSAPI weak_ptr (you should never use a JSAPI* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::weak_ptr<FB::JSAPI> JSAPIWeakPtr; 
+    typedef std::weak_ptr<FB::JSAPI> JSAPIWeakPtr; 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSAPIPtr
     ///
     /// @brief  Defines an alias for a JSAPI shared_ptr (you should never use a JSAPI* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::shared_ptr<FB::JSAPI> JSAPIPtr; 
+    typedef std::shared_ptr<FB::JSAPI> JSAPIPtr; 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSObjectWeakPtr
@@ -99,14 +96,14 @@ namespace FB
     /// @brief  Defines an alias representing a JSObject weak_ptr (you should never use a 
     ///         JSObject* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::weak_ptr<FB::JSObject> JSObjectWeakPtr;
+    typedef std::weak_ptr<FB::JSObject> JSObjectWeakPtr;
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSObjectPtr
     ///
     /// @brief  Defines an alias representing a JSObject shared_ptr (you should never use a 
     ///         JSObject* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::shared_ptr<FB::JSObject> JSObjectPtr;
+    typedef std::shared_ptr<FB::JSObject> JSObjectPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::BrowserHostPtr
@@ -114,7 +111,7 @@ namespace FB
     /// @brief  Defines an alias representing a BrowserHost shared_ptr (you should never use a 
     ///         BrowserHost* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::shared_ptr<FB::BrowserHost> BrowserHostPtr;
+    typedef std::shared_ptr<FB::BrowserHost> BrowserHostPtr;
     
     // backwards compability typedefs
 
@@ -152,22 +149,6 @@ namespace FB
     typedef JSAPIPtr JSOutObject __attribute__((deprecated));
 #endif
     
-    // dynamically cast a FB pointer
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @fn template<class T, class U> boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r)
-    ///
-    /// @brief  Convenience function for doing a dynamic cast of one boost::shared_ptr to another
-    ///
-    /// This is simply an alias for boost::dynamic_ptr_cast<T>
-    /// 
-    /// @param  r   The value to cast
-    ///
-    /// @return A boost::shared_ptr<T>; if the dynamic cast failed this will be empty
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    template<class T, class U> 
-    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r);
-
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
@@ -212,7 +193,7 @@ namespace FB
 
     // Special Variant types
     typedef FB::variant_detail::empty FBVoid;
-    typedef FB::variant_detail::null FBNull;
+    using FBNull = std::nullptr_t;
     struct FBDateString {
     public:
         FBDateString() { }
@@ -242,7 +223,7 @@ namespace FB
     typedef variant (JSAPI::*CallMethodPtr)(const std::vector<variant>&);
     /// @brief Used by FB::JSAPISimple to store information about a method
     struct MethodInfo {
-        MethodInfo() : callFunc(NULL) { }
+        MethodInfo() : callFunc(nullptr) { }
         MethodInfo(CallMethodPtr callFunc) : callFunc(callFunc) { }
         MethodInfo(const MethodInfo &rh) : callFunc(rh.callFunc) { }
         CallMethodPtr callFunc;
@@ -260,7 +241,7 @@ namespace FB
     typedef void (JSAPI::*SetPropPtr)(const variant& value);
     /// @brief Used by FB::JSAPISimple to store information about a property
     struct PropertyInfo {
-        PropertyInfo() : getFunc(NULL), setFunc(NULL) { }
+        PropertyInfo() : getFunc(nullptr), setFunc(nullptr) { }
         PropertyInfo(GetPropPtr getFunc, SetPropPtr setFunc) : getFunc(getFunc), setFunc(setFunc) { }
         PropertyInfo(const PropertyInfo &rh) : getFunc(rh.getFunc), setFunc(rh.setFunc) { }
         GetPropPtr getFunc;
@@ -283,7 +264,7 @@ namespace FB
     };
 
     /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
-    typedef boost::function<variant (const std::vector<variant>&)> CallMethodFunctor;
+    typedef std::function<variant (const std::vector<variant>&)> CallMethodFunctor;
     struct MethodFunctors
     {
         CallMethodFunctor call;
@@ -304,9 +285,9 @@ namespace FB
     // new style JSAPI properties
 
     /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
-    typedef boost::function<FB::variant ()> GetPropFunctor;
+    typedef std::function<FB::variant ()> GetPropFunctor;
     /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
-    typedef boost::function<void (const FB::variant&)> SetPropFunctor;
+    typedef std::function<void (const FB::variant&)> SetPropFunctor;
     /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
     struct PropertyFunctors
     {
@@ -335,18 +316,6 @@ namespace FB
     
     // implementation details
     
-    template<class T, class U> 
-    boost::shared_ptr<T> ptr_cast(boost::shared_ptr<U> const & r) 
-    {
-        return boost::dynamic_pointer_cast<T>(r);
-    }
-
-    namespace boost_variant {
-        typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> fb_compat;
-        typedef boost::variant<long, int, double, float, std::string, FB::FBNull, FB::FBVoid> primitives;
-        typedef boost::variant<std::string, FB::StringSet> strings;
-    }
-
     struct Rect {
         int32_t top;
         int32_t left;

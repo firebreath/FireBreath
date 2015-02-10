@@ -13,6 +13,7 @@ License:    Dual license model; choose one of two:
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include <boost/asio.hpp>
+#include <boost/bind.hpp>
 #include "Timer.h"
 #include "TimerService.h"
 
@@ -31,7 +32,7 @@ namespace FB {
 
 TimerPtr Timer::getTimer(long _duration, bool _recursive, TimerCallbackFunc _callback)
 {
-	return boost::shared_ptr<FB::Timer>(new Timer(_duration, _recursive, _callback));
+	return std::shared_ptr<FB::Timer>(new Timer(_duration, _recursive, _callback));
 }
 
 Timer::Timer(long _duration, bool _recursive, TimerCallbackFunc _callback)

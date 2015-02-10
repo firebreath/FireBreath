@@ -17,7 +17,7 @@ License:    Dual license model; choose one of two:
 using namespace FB::ActiveX::AXDOM;
 
 Node::Node(const FB::JSObjectPtr& element, IWebBrowser *web)
-    : m_axNode(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()),
+    : m_axNode(std::dynamic_pointer_cast<IDispatchAPI>(element)->getIDispatch()),
         m_webBrowser(web), FB::DOM::Node(element)
 {
 }
@@ -28,7 +28,7 @@ Node::~Node()
 
 FB::DOM::NodePtr Node::appendChild(FB::DOM::NodePtr node) {
 	CComPtr<IHTMLDOMNode> newNode;
-	NodePtr actualNode = FB::ptr_cast<Node>(node);
+	NodePtr actualNode = std::dynamic_pointer_cast<Node>(node);
 	if (SUCCEEDED(m_axNode->appendChild(actualNode->m_axNode, &newNode))) {
 		actualNode->m_axNode = newNode; // set the node to point to the real IHTMLDOMNode
 	} else {

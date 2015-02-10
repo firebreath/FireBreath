@@ -15,14 +15,12 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
-#include <boost/shared_ptr.hpp>
-#include <boost/weak_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define FB_FORWARD_PTR(x) class x; \
-    typedef boost::shared_ptr<x> x ## Ptr; \
-    typedef boost::weak_ptr<x> x ## WeakPtr; \
-    typedef boost::shared_ptr<const x> x ## ConstPtr;
+    typedef std::shared_ptr<x> x ## Ptr; \
+    typedef std::weak_ptr<x> x ## WeakPtr; \
+    typedef std::shared_ptr<const x> x ## ConstPtr;
 
 // get rid of "unused variable" warnings
 #define FB_UNUSED_VARIABLE(x) ((void)(x))

@@ -9,7 +9,7 @@
 #ifndef H_TEMPLATEPLUGIN
 #define H_TEMPLATEPLUGIN
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/DrawingEvents.h"

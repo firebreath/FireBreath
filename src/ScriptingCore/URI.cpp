@@ -19,6 +19,7 @@ Copyright 2010 Dan Weatherford and Facebook, Inc
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/logic/tribool.hpp>
+#include <string>
 #include <vector>
 #include <sstream>
 #include <boost/asio.hpp>

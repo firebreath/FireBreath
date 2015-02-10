@@ -108,7 +108,7 @@ HRESULT FB::FactoryBase::UpdateWindowsRegistry( bool install )
 #ifdef FBWIN_ASYNCSURFACE
 FB::D3d10DeviceContextPtr FB::FactoryBase::createD3d10DeviceContext()
 {
-    return boost::make_shared<D3d10DeviceContextImpl>();
+    return std::make_shared<D3d10DeviceContextImpl>();
 }
 #endif
 

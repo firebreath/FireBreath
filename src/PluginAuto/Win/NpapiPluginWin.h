@@ -36,7 +36,7 @@ namespace FB {
     protected:
         void pluginWindowFactory(NPDrawingModel);
 
-        boost::scoped_ptr<PluginWindow> pluginWin;
+        std::unique_ptr<PluginWindow> pluginWin;
         NPDrawingModel m_drawingModel;
 
     public:

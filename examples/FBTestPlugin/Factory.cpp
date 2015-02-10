@@ -18,10 +18,10 @@ public:
     FB::PluginCorePtr createPlugin(const std::string& mimetype)
     {
         if (!mimetype.compare("application/x-fbtestmathplugin")) {
-            return boost::make_shared<FBTestMathPlugin>(mimetype);
+            return std::make_shared<FBTestMathPlugin>(mimetype);
         } else {
             // handles "application/x-fbtestplugin" and  "application/x-fbtestplugin-math"
-            return boost::make_shared<FBTestPlugin>(mimetype);
+            return std::make_shared<FBTestPlugin>(mimetype);
         }
     }
     
@@ -38,7 +38,7 @@ public:
 
 FB::FactoryBasePtr getFactoryInstance()
 {
-    static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
+    static std::shared_ptr<PluginFactory> factory = std::make_shared<PluginFactory>();
     return factory;
 }
 

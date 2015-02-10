@@ -16,14 +16,14 @@
 #ifndef H_FB_NPAPIPLUGINFACTORY
 #define H_FB_NPAPIPLUGINFACTORY
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace FB { namespace Npapi
 {
     class NpapiPlugin;
     class NpapiBrowserHost;
-    typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
-    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    typedef std::shared_ptr<NpapiPlugin> NpapiPluginPtr;
+    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
 
     NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
 } }

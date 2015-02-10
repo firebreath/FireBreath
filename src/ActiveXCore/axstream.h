@@ -18,12 +18,12 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "BrowserStream.h"
 #include <set>
-#include "boost/shared_ptr.hpp"
+#include <memory>
 
 namespace FB { namespace ActiveX {
     class ActiveXBindStatusCallback;
     class ActiveXStreamRequest;
-    typedef boost::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
+    typedef std::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
 
     class ActiveXStream : public FB::BrowserStream
     {
@@ -57,7 +57,7 @@ namespace FB { namespace ActiveX {
         bool    closing;
         std::string data;
     };
-    typedef boost::shared_ptr<ActiveXStream> ActiveXStreamPtr;
+    typedef std::shared_ptr<ActiveXStream> ActiveXStreamPtr;
 } }
 
 

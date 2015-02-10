@@ -23,7 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 using namespace FB::Npapi;
-using boost::static_pointer_cast;
+using std::static_pointer_cast;
 
 NPObjectAPI::NPObjectAPI(NPObject *o, const NpapiBrowserHostPtr& h)
     : JSObject(h), m_browser(h), obj(o), is_JSAPI(false)
@@ -353,7 +353,7 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     std::vector<JSObjectPtr>::const_iterator it(direct.begin());
     std::vector<JSObjectPtr>::const_iterator end(direct.end());
     for (; it != end; ++it) {
-        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+        NPObjectAPIPtr ptr(std::static_pointer_cast<NPObjectAPI>(*it));
         if (ptr->is_JSAPI) {
             FB::JSAPIPtr tmp = ptr->inner.lock();
             if (tmp) {
@@ -370,7 +370,7 @@ void FB::Npapi::NPObjectAPI::callMultipleFunctions( const std::string& name, con
     it = ifaces.begin();
     end = ifaces.end();
     for (; it != end; ++it) {
-        NPObjectAPIPtr ptr(boost::static_pointer_cast<NPObjectAPI>(*it));
+        NPObjectAPIPtr ptr(std::static_pointer_cast<NPObjectAPI>(*it));
         if (ptr->is_JSAPI) {
             FB::JSAPIPtr tmp = ptr->inner.lock();
             if (tmp) {

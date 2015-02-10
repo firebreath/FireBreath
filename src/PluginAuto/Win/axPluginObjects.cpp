@@ -21,7 +21,7 @@ typedef FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJav
 
 IDispatchEx* _getCOMJSWrapper( const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease /*= false*/ )
 {
-    return COMJSObject::NewObject(FB::ptr_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
+    return COMJSObject::NewObject(std::dynamic_pointer_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
 }
 const FB::WeakIDispatchExRef _getWeakRefFromCOMJSWrapper(IDispatchEx* wrapper)
 {

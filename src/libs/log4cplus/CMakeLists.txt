@@ -2,8 +2,7 @@ project (log4cplus)
 cmake_minimum_required (VERSION 2.8.0)
 
 # with firebreath this target could get added mutliple times; protect against this
-get_target_property(library_target_exists log4cplus TYPE)
-if (library_target_exists)
+if (TARGET ${PROJECT_NAME})
     set(TARGET_ALREADY_EXISTS 1)
 else()
     set(TARGET_ALREADY_EXISTS 0)

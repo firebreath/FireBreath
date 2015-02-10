@@ -17,8 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_PLUGINEVENTSINK
 
 #include "PluginEventSource.h"
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 #include <string>
 
@@ -33,7 +32,7 @@ namespace FB {
     /// @brief  Plugin event sink; all objects that can receive PluginEvent s should inherit from this
     ///         class.  Most notably, PluginCore extends this class
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class PluginEventSink : public boost::enable_shared_from_this<PluginEventSink>, boost::noncopyable
+    class PluginEventSink : public std::enable_shared_from_this<PluginEventSink>, boost::noncopyable
     {
     public:
         PluginEventSink() { };

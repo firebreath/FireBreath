@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "JSAPI.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/noncopyable.hpp>
 
 namespace FB {

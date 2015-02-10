@@ -15,7 +15,6 @@ Copyright 2009 Dan Weatherford, Facebook inc
 
 #ifdef _WIN32
 #include "win_targetver.h"
-#include <boost/asio.hpp>
 #include "win_common.h"
 #else
 #include "../3rdParty/utf8/utf8.h"
@@ -24,7 +23,6 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #endif
 #include <stdexcept>
 
-#include <boost/scoped_array.hpp>
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include <limits.h>

@@ -54,7 +54,7 @@ FBTestMathPlugin::~FBTestMathPlugin()
 FB::JSAPIPtr FBTestMathPlugin::createJSAPI()
 {
     // m_host is the BrowserHost
-    return boost::make_shared<SimpleMathAPI>(m_host);
+    return std::make_shared<SimpleMathAPI>(m_host);
 }
 
 bool FBTestMathPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)

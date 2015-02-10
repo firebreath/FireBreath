@@ -62,7 +62,7 @@ TEST (COMJavascriptObject_CreateTest)
 
     ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL, NULL));
 
-    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
+    std::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj(getFactoryInstance()->createCOMJSObject(host, testIf));
 
     CHECK (true);
@@ -74,7 +74,7 @@ TEST(COMJavascriptObject_Methods)
 
     ActiveXBrowserHostPtr host(new ActiveXBrowserHost(NULL, NULL));
 
-    boost::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
+    std::shared_ptr<TestObjectJSAPI> testIf(new TestObjectJSAPI());
     CComPtr<IDispatchEx> obj = getFactoryInstance()->createCOMJSObject(host, testIf);
 
     HRESULT hr = S_OK;
@@ -162,7 +162,7 @@ TEST(COMJavascriptObject_Properties)
 
     //NPVariant res;
     //NPVariant oneParam;
-    //boost::shared_ptr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
+    //std::shared_ptr<TestObjectJSAPI> testIf = new TestObjectJSAPI();
     //NPJavascriptObject *obj = NPJavascriptObject::NewObject(host, testIf);
 
     //// Test setting and getting many different datatypes with properties

@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NpapiPlugin.h"
 #include "FactoryBase.h"
 #include "NpapiBrowserHost.h"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "AsyncFunctionCall.h"
 #include "PluginInfo.h"
@@ -68,15 +68,15 @@ namespace
             if(asyncCallsWorkaround(npp, &npnFuncs)) {
                 npnFuncs.pluginthreadasynccall = NULL;
     #if FB_WIN
-                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHostAsyncWin>(module, npp));
+                NpapiBrowserHostPtr host(std::make_shared<NpapiBrowserHostAsyncWin>(module, npp));
                 return host;
     #else
                 // no work-around for this platform
-                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHost>(module, npp));
+                NpapiBrowserHostPtr host(std::make_shared<NpapiBrowserHost>(module, npp));
                 return host;
     #endif
             } else {
-                NpapiBrowserHostPtr host(boost::make_shared<NpapiBrowserHost>(module, npp));
+                NpapiBrowserHostPtr host(std::make_shared<NpapiBrowserHost>(module, npp));
                 return host;
             }
         } catch (...) {
@@ -89,10 +89,10 @@ namespace
     {
     private:
         NpapiBrowserHostPtr m_host;
-        boost::shared_ptr<NpapiPlugin> m_plugin;
+        std::shared_ptr<NpapiPlugin> m_plugin;
 
     public:
-        NpapiPDataHolder(NpapiBrowserHostPtr host, boost::shared_ptr<NpapiPlugin> plugin)
+        NpapiPDataHolder(NpapiBrowserHostPtr host, std::shared_ptr<NpapiPlugin> plugin)
           : m_host(host), m_plugin(plugin)
         {
 #ifdef FB_MACOSX

@@ -21,7 +21,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
-    FB::JSAPIImplPtr impl(FB::ptr_cast<JSAPIImpl>(ptr));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(ptr));
     if (impl)
         impl->registerProxy(ptr);
 
@@ -32,7 +32,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIWeakPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
-    FB::JSAPIImplPtr impl(FB::ptr_cast<JSAPIImpl>(inner.lock()));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(inner.lock()));
     if (impl)
         impl->registerProxy(ptr);
 
@@ -43,7 +43,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, con
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(securityLevel, inner));
-    FB::JSAPIImplPtr impl(FB::ptr_cast<JSAPIImpl>(ptr));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(ptr));
     if (impl)
         impl->registerProxy(ptr);
     
@@ -54,7 +54,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, con
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(securityLevel, inner));
-    FB::JSAPIImplPtr impl(FB::ptr_cast<JSAPIImpl>(inner.lock()));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(inner.lock()));
     if (impl)
         impl->registerProxy(ptr);
     
@@ -95,31 +95,31 @@ FB::JSAPIProxy::~JSAPIProxy( void )
 
 void FB::JSAPIProxy::changeObject( const FB::JSAPIWeakPtr &inner )
 {
-    if (FB::JSAPIImplPtr ptr = FB::ptr_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
+    if (FB::JSAPIImplPtr ptr = std::dynamic_pointer_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
         ptr->unregisterProxy(shared_from_this());
     }
     this->m_api.reset();
     this->m_apiWeak = inner;
-    FB::JSAPIImplPtr ptr = FB::ptr_cast<FB::JSAPIImpl>(inner.lock());
+    FB::JSAPIImplPtr ptr = std::dynamic_pointer_cast<FB::JSAPIImpl>(inner.lock());
     if (ptr)
         ptr->registerProxy(shared_from_this());
 }
 
 void FB::JSAPIProxy::changeObject( const FB::JSAPIPtr &inner )
 {
-    if (FB::JSAPIImplPtr ptr = FB::ptr_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
+    if (FB::JSAPIImplPtr ptr = std::dynamic_pointer_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
         ptr->unregisterProxy(shared_from_this());
     }
     this->m_api = inner;
     this->m_apiWeak = inner;
-    FB::JSAPIImplPtr ptr = FB::ptr_cast<FB::JSAPIImpl>(inner);
+    FB::JSAPIImplPtr ptr = std::dynamic_pointer_cast<FB::JSAPIImpl>(inner);
     if (ptr)
         ptr->registerProxy(shared_from_this());
 }
 
 void FB::JSAPIProxy::reset()
 {
-    if (FB::JSAPIImplPtr ptr = FB::ptr_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
+    if (FB::JSAPIImplPtr ptr = std::dynamic_pointer_cast<FB::JSAPIImpl>(m_apiWeak.lock())) {
         ptr->unregisterProxy(shared_from_this());
     }
     

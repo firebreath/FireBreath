@@ -23,7 +23,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 namespace FB { namespace DOM {
 
     class Element;
-    typedef boost::shared_ptr<Element> ElementPtr;
+    typedef std::shared_ptr<Element> ElementPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  Element
@@ -45,7 +45,7 @@ namespace FB { namespace DOM {
         ///
         /// @return FB::DOM::ElementPtr point to the current object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        ElementPtr element() { return boost::dynamic_pointer_cast<Element>(node()); }
+        ElementPtr element() { return std::dynamic_pointer_cast<Element>(node()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static ElementPtr Element::create(const FB::JSObjectPtr &api)

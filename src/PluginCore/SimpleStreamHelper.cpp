@@ -68,7 +68,7 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( const FB::Browse
         // This must be run from the main thread
         return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
     }
-    FB::SimpleStreamHelperPtr ptr(boost::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
+    FB::SimpleStreamHelperPtr ptr(std::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
     // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
     // to hold a reference to it.
     ptr->keepReference(ptr);
@@ -87,7 +87,7 @@ public:
         const boost::shared_array<uint8_t>& data, const size_t size)
     {
         boost::lock_guard<boost::mutex> lock(m_mutex);
-        m_response = boost::make_shared<FB::HttpStreamResponse>(success, headers, data, size);
+        m_response = std::make_shared<FB::HttpStreamResponse>(success, headers, data, size);
         done = true;
         m_cond.notify_all();
     }

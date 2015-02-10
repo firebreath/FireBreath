@@ -13,7 +13,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "variant_list.h"
 #include "JSAPI.h"
 #include "TestJSAPI.h"
@@ -24,7 +24,7 @@ TEST(JSAPI_Methods)
 
     using namespace FB;
 
-    boost::shared_ptr<FB::JSAPI> test1(new TestObjectJSAPI());
+    std::shared_ptr<FB::JSAPI> test1(new TestObjectJSAPI());
 
     // Test setting and then getting a string value
     {
@@ -120,7 +120,7 @@ TEST(JSAPI_Methods)
             CHECK(true);
         }
 
-        test1 = boost::make_shared<TestObjectJSAPI>();
+        test1 = std::make_shared<TestObjectJSAPI>();
         try {   // invalid parameters
             test1->Invoke("setValue", variant_list_of(0));
             CHECK(false);

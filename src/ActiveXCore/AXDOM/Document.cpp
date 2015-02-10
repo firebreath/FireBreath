@@ -23,7 +23,7 @@ using namespace FB::ActiveX::AXDOM;
 
 Document::Document(const FB::JSObjectPtr& obj, IWebBrowser2 *web)
     : FB::ActiveX::AXDOM::Element(obj, web), FB::ActiveX::AXDOM::Node(obj, web), FB::DOM::Node(obj), FB::DOM::Element(obj),
-      m_htmlDoc(FB::ptr_cast<IDispatchAPI>(obj)->getIDispatch()), m_webBrowser(web), FB::DOM::Document(obj)
+      m_htmlDoc(std::dynamic_pointer_cast<IDispatchAPI>(obj)->getIDispatch()), m_webBrowser(web), FB::DOM::Document(obj)
 {
 }
 
@@ -36,7 +36,7 @@ FB::DOM::WindowPtr Document::getWindow() const
     CComQIPtr<IHTMLWindow2> htmlWin;
     m_htmlDoc->get_parentWindow(&htmlWin);
     CComQIPtr<IDispatch> windowDisp(htmlWin);
-    FB::JSObjectPtr api(IDispatchAPI::create(htmlWin, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+    FB::JSObjectPtr api(IDispatchAPI::create(htmlWin, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
 
     return FB::DOM::Window::create(api);
 }
@@ -58,7 +58,7 @@ std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::strin
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }
@@ -75,7 +75,7 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
     CComPtr<IHTMLElement> el(NULL);
     doc3->getElementById(CComBSTR(FB::utf8_to_wstring(elem_id).c_str()), &el);
     CComQIPtr<IDispatch> disp(el);
-    FB::JSObjectPtr ptr(IDispatchAPI::create(disp, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+    FB::JSObjectPtr ptr(IDispatchAPI::create(disp, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
     return FB::DOM::Element::create(ptr);
 }
 
@@ -87,6 +87,6 @@ FB::DOM::ElementPtr Document::createElement(const std::string &name) const
 		throw std::runtime_error("Failed to create element!");
 	}
 	CComQIPtr<IDispatch> disp(el);
-	FB::JSObjectPtr ptr(IDispatchAPI::create(disp, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+	FB::JSObjectPtr ptr(IDispatchAPI::create(disp, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
     return FB::DOM::Element::create(ptr);
 }

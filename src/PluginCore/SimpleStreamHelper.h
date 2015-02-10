@@ -59,7 +59,7 @@ namespace FB {
         // The size of data
         const size_t size;
     };
-    typedef boost::shared_ptr<HttpStreamResponse> HttpStreamResponsePtr;
+    typedef std::shared_ptr<HttpStreamResponse> HttpStreamResponsePtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  SimpleStreamHelper

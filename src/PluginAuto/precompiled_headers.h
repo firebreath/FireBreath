@@ -29,9 +29,7 @@
 #include <string>
 #include <vector>
 #include <boost/algorithm/string.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory.h>
 
 #include "NpapiTypes.h"
 #include "NpapiPluginModule.h"

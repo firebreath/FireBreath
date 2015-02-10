@@ -1,5 +1,5 @@
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 #include <map>
 #include <string>
 
@@ -10,7 +10,7 @@ using std::string;
 
 FB::SystemProxyDetector* FB::SystemProxyDetector::get()
 {
-    static boost::scoped_ptr<FB::SystemProxyDetector> _inst(new FB::SystemProxyDetectorX11());
+    static std::unique_ptr<FB::SystemProxyDetector> _inst(new FB::SystemProxyDetectorX11());
     return _inst.get();
 }
 

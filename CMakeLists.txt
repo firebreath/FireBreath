@@ -71,7 +71,7 @@ add_subdirectory(${FB_ROOT}/src/PluginCore ${CMAKE_CURRENT_BINARY_DIR}/PluginCor
 add_subdirectory(${FB_ROOT}/src/NpapiCore ${CMAKE_CURRENT_BINARY_DIR}/NpapiCore)
 #set (FB_EXPORT_TARGETS ScriptingCore PluginCore NpapiCore)
 if (WIN32)
-    add_subdirectory(${FB_ACTIVEXCORE_SOURCE_DIR} ${FB_ACTIVEXCORE_BUILD_DIR})
+    add_subdirectory(${FB_ROOT}/src/ActiveXCore ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCore)
     #set (FB_EXPORT_TARGETS ${FB_EXPORT_TARGETS} ActiveXCore)
 endif()
 
@@ -79,7 +79,7 @@ add_subdirectory(${FB_ROOT}/tests/unittest-cpp/UnitTest++ ${CMAKE_CURRENT_BINARY
 #add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
 add_subdirectory(${FB_ROOT}/tests/ScriptingCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
 if (WIN32)
-    add_subdirectory(${FB_ROOT}/tests/ActiveXCore ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCore)
+    add_subdirectory(${FB_ROOT}/tests/ActiveXCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCoreTest)
 endif()
 #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
 

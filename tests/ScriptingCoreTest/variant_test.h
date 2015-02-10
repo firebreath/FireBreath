@@ -81,9 +81,9 @@ TEST(VariantArrayConversionTest)
     {
         typedef std::vector<std::string> StringVec;
         FB::VariantList values = variant_list_of("1")(2)(3.0);
-        boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(values));
+        std::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(values));
         
-        variant varJsArr = ptr_cast<JSObject>(jsarr);
+        variant varJsArr = std::dynamic_pointer_cast<JSObject>(jsarr);
         StringVec vs1 = varJsArr.convert_cast<StringVec>();
         StringVec vs2 = FB::convert_variant_list<StringVec>(values);
         
@@ -103,8 +103,8 @@ TEST(VariantScriptMapConversionTest)
         typedef std::map<std::string, std::string> StringStringMap;
 
         VariantMap values = variant_map_of<std::string>("a","a")("b","b")("c","c");
-        boost::shared_ptr<FakeJsMap> jsmap(new FakeJsMap(values));
-        variant varJsMap = ptr_cast<JSObject>(jsmap);
+        std::shared_ptr<FakeJsMap> jsmap(new FakeJsMap(values));
+        variant varJsMap = std::dynamic_pointer_cast<JSObject>(jsmap);
         VariantMap result = varJsMap.convert_cast<VariantMap>();
 
         VariantMap::const_iterator itval = values.begin();

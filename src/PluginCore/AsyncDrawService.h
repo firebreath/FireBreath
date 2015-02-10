@@ -31,7 +31,7 @@ namespace FB {
     /// This is the base class for all asynchronous drawing services that are used in the plugin.  
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     class AsyncDrawService : 
-        public boost::enable_shared_from_this<AsyncDrawService>
+        public std::enable_shared_from_this<AsyncDrawService>
     {
     public:
         virtual ~AsyncDrawService() {};

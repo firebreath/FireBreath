@@ -17,7 +17,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #define H_FB_DOM_WINDOW
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "Node.h"
 #include "Document.h"
 
@@ -33,11 +33,11 @@ namespace FB {
     class Window;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    boost::shared_ptr<Window> WindowPtr
+    /// @typedef    std::shared_ptr<Window> WindowPtr
     ///
     /// @brief  Defines an alias representing a pointer to a DOM::Window
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef boost::shared_ptr<Window> WindowPtr;
+    typedef std::shared_ptr<Window> WindowPtr;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  Window
@@ -79,7 +79,7 @@ namespace FB {
         ///
         /// @return shared_ptr<FB::DOM::Window> (alias as FB::DOM::WindowPtr)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        WindowPtr window() { return boost::dynamic_pointer_cast<Window>(node()); }
+        WindowPtr window() { return std::dynamic_pointer_cast<Window>(node()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static WindowPtr Window::create(const FB::JSObjectPtr &api)

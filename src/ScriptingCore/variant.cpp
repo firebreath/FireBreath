@@ -42,7 +42,7 @@ const FB::variant& FB::variant_detail::conversion::convert_variant(const FB::var
 
 const FB::FBNull FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBNull> )
 {
-    return FB::FBNull();
+    return nullptr;
 }
 
 const FB::FBVoid FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBVoid> )

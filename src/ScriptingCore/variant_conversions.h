@@ -12,7 +12,7 @@
  Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace FB {
     class variant;
@@ -30,11 +30,23 @@ namespace FB {
                 boost::is_base_of<FB::JSAPI, T>,
                 boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
                 ,variant>::type
-            make_variant(const boost::shared_ptr<T>& ptr);
+            make_variant(const std::weak_ptr<T>& ptr);
+
+            template <class T>
+            typename boost::enable_if<
+                boost::mpl::and_<
+                boost::is_base_of<FB::JSAPI, T>,
+                boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
+                ,variant>::type
+            make_variant(const std::shared_ptr<T>& ptr);
             
             template <class T>
             typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
-            make_variant(const boost::shared_ptr<T>& ptr);
+            make_variant(const std::weak_ptr<T>& ptr);
+
+            template <class T>
+            typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
+            make_variant(const std::shared_ptr<T>& ptr);
 
             template<class Cont>
             typename boost::enable_if<
@@ -68,8 +80,8 @@ namespace FB {
             make_variant(const Dict& var);
             
             template<class T>
-            typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::shared_ptr<T> >::type
-            convert_variant(const variant& var, variant_detail::conversion::type_spec< boost::shared_ptr<T> >);
+            typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, std::shared_ptr<T> >::type
+            convert_variant(const variant& var, variant_detail::conversion::type_spec< std::shared_ptr<T> >);
             
             template<class Cont>
             typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type

@@ -28,7 +28,7 @@ TEST(JSCallback_Basics)
     using boost::assign::list_of;
     using namespace FB;
     
-    boost::shared_ptr<TestObjectJSAPIAuto> backing(new TestObjectJSAPIAuto);
+    std::shared_ptr<TestObjectJSAPIAuto> backing(new TestObjectJSAPIAuto);
     
     {
         FB::JSAPIPtr test = FB::make_callback(backing, &TestObjectJSAPIAuto::returnString);

@@ -47,7 +47,7 @@ public:
     // Read-only property someInt
     long get_someInt();
 
-    boost::weak_ptr<SimpleMathAPI> get_simpleMath();
+    std::weak_ptr<SimpleMathAPI> get_simpleMath();
 
     SimpleMathAPIPtr createSimpleMath();
   
@@ -102,7 +102,7 @@ private:
     FB::BrowserHostPtr m_host;
     SimpleMathAPIPtr m_simpleMath;
     FBTestPluginWeakPtr m_pluginWeak;
-    std::vector<boost::shared_ptr<FB::Timer> > timers;
+    std::vector<std::shared_ptr<FB::Timer> > timers;
 
     std::string m_testString;
 };

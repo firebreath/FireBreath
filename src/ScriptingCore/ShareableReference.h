@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB {
 
     template <class C>
-    class ShareableReference : boost::noncopyable, public boost::enable_shared_from_this<ShareableReference<C> >
+    class ShareableReference : boost::noncopyable, public std::enable_shared_from_this<ShareableReference<C> >
     {
     public:
         ShareableReference(C* ptr) : m_ptr(ptr) {}

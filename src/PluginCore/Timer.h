@@ -15,9 +15,8 @@ License:    Dual license model; choose one of two:
 #define H_FB_TIMER
 
 #include <string>
-#include <boost/function.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
+#include <functional>
 #include <boost/system/error_code.hpp>
 
 #include "FBPointers.h"
@@ -36,15 +35,15 @@ namespace FB {
     /// 
     /// 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-	class Timer : public boost::enable_shared_from_this<Timer>
+	class Timer : public std::enable_shared_from_this<Timer>
     {
-		typedef boost::function<void (void)> TimerCallbackFunc;
+		typedef std::function<void (void)> TimerCallbackFunc;
 
 	private:
 		const long duration;
 		const bool recursive;
 		TimerCallbackFunc cb;
-        boost::scoped_ptr<TimerPimpl> pimpl;
+        std::unique_ptr<TimerPimpl> pimpl;
 
 		Timer(long _duration, bool _recursive, TimerCallbackFunc _callback);
 		void callback(const boost::system::error_code& error);

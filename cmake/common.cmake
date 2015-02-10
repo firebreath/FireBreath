@@ -15,9 +15,6 @@
 # Previously we included this file all over the place; we should never
 # do that anymore.
 get_filename_component(FB_ROOT ${CMAKE_CURRENT_LIST_FILE} PATH CACHE)
-if (NOT "${CMAKE_CURRENT_SOURCE_DIR}" STREQUAL "${FB_ROOT}")
-    message("!!! WARNING! You generally should not include common.cmake from your plugin project! (included from ${CMAKE_CURRENT_SOURCE_DIR}, expecting ${FB_ROOT})")
-endif()
 
 get_filename_component (FB_SOURCE_DIR "${FB_ROOT}/src" ABSOLUTE CACHE)
 set(FB_SOURCE_DIR "${FB_SOURCE_DIR}" CACHE INTERNAL "Location of the FireBreath src/ dir")
@@ -118,8 +115,7 @@ macro (add_boost_library BOOST_LIB)
     
         list(APPEND Boost_LIBRARIES boost_${BOOST_LIB})
         list(REMOVE_DUPLICATES Boost_LIBRARIES)
-        get_target_property(_BL_EXISTS boost_${BOOST_LIB} TYPE)
-        if (NOT _BL_EXISTS)
+        if (NOT TARGET boost_${BOOST_LIB})
             add_subdirectory(${FB_BOOST_SOURCE_DIR}/libs/${BOOST_LIB} ${CMAKE_BINARY_DIR}/boost/libs/${BOOST_LIB})
         endif()
     endif()
@@ -136,8 +132,7 @@ macro (add_firebreath_library project_name)
     set (_FOUND_LIB 0)
     foreach(_LIB_DIR ${FBLIB_DIRS})
         if (NOT _FOUND_LIB AND EXISTS ${_LIB_DIR}/${project_name}/CMakeLists.txt)
-            get_target_property(library_target_exists log4cplus TYPE)
-            if (library_target_exists)
+            if (TARGET log4cplus)
                 set (_CUR_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/fblibs/${PLUGIN_NAME}/${project_name})
             else()
                 set (_CUR_BINDIR ${CMAKE_CURRENT_BINARY_DIR}/fblibs/${project_name})
@@ -155,7 +150,6 @@ macro (add_firebreath_library project_name)
     endif()
     set (_LIB_KEY ${PLUGIN_NAME}_${project_name})
     set (${_LIB_KEY} YES)
-    set (${_LIB_KEY} YES PARENT_SCOPE)
 
 endmacro(add_firebreath_library)
 

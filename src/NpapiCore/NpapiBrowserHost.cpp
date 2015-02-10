@@ -138,8 +138,8 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
         GetValue(NPNVWindowNPObject, (void**)&window);
         GetValue(NPNVPluginElementNPObject, (void**)&element);
 
-        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, ptr_cast<NpapiBrowserHost>(shared_from_this())));
-        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, ptr_cast<NpapiBrowserHost>(shared_from_this())));
+        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
+        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
         ReleaseObject(window);
         ReleaseObject(element);
     } catch (...) {
@@ -149,7 +149,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
             ReleaseObject(element);
     }
     if (m_htmlWin) {
-        m_htmlDoc = ptr_cast<NPObjectAPI>(m_htmlWin->GetProperty("document").cast<FB::JSObjectPtr>());
+        m_htmlDoc = std::dynamic_pointer_cast<NPObjectAPI>(m_htmlWin->GetProperty("document").cast<FB::JSObjectPtr>());
     }
 }
 
@@ -255,7 +255,7 @@ FB::variant NpapiBrowserHost::getVariant(const NPVariant *npVar)
             break;
 
         case NPVariantType_Object:
-            retVal = JSObjectPtr(new NPObjectAPI(npVar->value.objectValue, ptr_cast<NpapiBrowserHost>(shared_from_this())));
+            retVal = JSObjectPtr(new NPObjectAPI(npVar->value.objectValue, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
             break;
 
         case NPVariantType_Void:
@@ -302,7 +302,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
         return;
     }
 
-    *dst = (it->second)(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), var);
+    *dst = (it->second)(std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this()), var);
 }
 
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData) const
@@ -722,7 +722,7 @@ FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( const BrowserSt
 {
     assertMainThread();
     std::string url(req.uri.toString());
-    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, req.cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    NpapiStreamPtr stream( std::make_shared<NpapiStream>( url, req.cache, req.seekable, req.internalBufferSize, std::dynamic_pointer_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     if (req.getEventSink()) {
         stream->AttachObserver( req.getEventSink() );
     }
@@ -761,7 +761,7 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const FB::Browse
     std::string url = req.uri.toString();
     FBLOG_TRACE("NpapiBrowserStream", "Creating an unsolicited stream with url: " << url);
     bool cache(false);
-    NpapiStreamPtr stream( boost::make_shared<NpapiStream>( url, cache, req.seekable, req.internalBufferSize, FB::ptr_cast<const NpapiBrowserHost>(shared_from_this()) ) );
+    NpapiStreamPtr stream( std::make_shared<NpapiStream>( url, cache, req.seekable, req.internalBufferSize, std::dynamic_pointer_cast<const NpapiBrowserHost>(shared_from_this()) ) );
     // The observer is attached by the caller
 
     stream->setCreated();
@@ -775,11 +775,11 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const FB::Browse
 NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread
-    typedef boost::shared_ptr<FB::ShareableReference<NPJavascriptObject> > SharedNPObjectRef;
+    typedef std::shared_ptr<FB::ShareableReference<NPJavascriptObject> > SharedNPObjectRef;
     NPJavascriptObject* ret(NULL);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
-        return NPJavascriptObject::NewObject(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), api, false);
+        return NPJavascriptObject::NewObject(std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this()), api, false);
 
     NPObjectRefMap::iterator fnd = m_cachedNPObject.find(ptr.get());
     if (fnd != m_cachedNPObject.end()) {
@@ -794,7 +794,7 @@ NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAP
         }
     }
     if (!ret) {
-        ret = NPJavascriptObject::NewObject(FB::ptr_cast<NpapiBrowserHost>(shared_from_this()), api, autoRelease);
+        ret = NPJavascriptObject::NewObject(std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this()), api, autoRelease);
         if (ret)
             m_cachedNPObject[ptr.get()] = ret->getWeakReference();
     }

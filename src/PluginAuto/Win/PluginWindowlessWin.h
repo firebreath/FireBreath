@@ -18,8 +18,8 @@ Copyright 2010 Anson MacKeracher, Firebreath development team
 #include "win_common.h"
 #include "PluginWindow.h"
 
-#include <boost/function.hpp>
-#include <boost/scoped_ptr.hpp>
+#include <functional>
+#include <memory>
 
 #include "Win/KeyCodesWin.h"
 #include "Win/WindowContextWin.h"
@@ -42,7 +42,7 @@ namespace FB {
             PluginWindowlessWin(const WindowContextWindowless&);
             ~PluginWindowlessWin();
 
-            typedef boost::function<void (uint32_t, uint32_t, uint32_t, uint32_t)> InvalidateWindowFunc;
+            typedef std::function<void (uint32_t, uint32_t, uint32_t, uint32_t)> InvalidateWindowFunc;
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             /// @fn HDC PluginWindowlessWin::getHDC() const

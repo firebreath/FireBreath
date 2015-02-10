@@ -16,7 +16,6 @@ License:    Dual license model; choose one of two:
 
 #include <boost/thread/mutex.hpp>
 #include <boost/thread/thread.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include "FBPointers.h"
 
@@ -48,7 +47,7 @@ namespace FB {
 		TimerService();
 
 	private:
-        boost::scoped_ptr<TimerServicePimpl> pimpl;
+        std::unique_ptr<TimerServicePimpl> pimpl;
 	};
 };
 

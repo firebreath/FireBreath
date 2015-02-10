@@ -10,13 +10,9 @@
 #include <wctype.h>
 #endif
 #include <boost/bind.hpp>
-#include <boost/smart_ptr/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/scoped_array.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread/recursive_mutex.hpp>
 #include <boost/thread/mutex.hpp>

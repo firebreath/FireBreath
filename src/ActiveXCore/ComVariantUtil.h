@@ -20,6 +20,7 @@
 #include <map>
 #include <string>
 #include <typeinfo>
+#include <memory>
 
 #include <boost/assign/list_of.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
@@ -177,7 +178,7 @@ namespace FB { namespace ActiveX
                 FB::VariantList vl = boost::assign::list_of(*it);
                 outArr->Invoke("push", vl);
             }
-            IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(outArr);
+            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(outArr);
             if (api) {
                 return api->getIDispatch();
             } 
@@ -216,7 +217,7 @@ namespace FB { namespace ActiveX
             for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); ++it) {
                 out->SetProperty(it->first, it->second);
             }
-            IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(out);
+            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(out);
             if (api) {
                 outVar = api->getIDispatch();
             }
@@ -251,7 +252,7 @@ namespace FB { namespace ActiveX
         CComVariant outVar;
 
         FB::JSAPIPtr obj(var.cast<FB::JSAPIPtr>());
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
+        IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(obj);
         if (api) {
             outVar = api->getIDispatch();
         } else {
@@ -273,7 +274,7 @@ namespace FB { namespace ActiveX
         CComVariant outVar;
 
         FB::JSAPIPtr obj(var.convert_cast<FB::JSAPIPtr>());
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
+        IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(obj);
         if (api) {
             outVar = api->getIDispatch();
         } else {
@@ -294,7 +295,7 @@ namespace FB { namespace ActiveX
         CComVariant outVar;
 
         FB::JSObjectPtr obj(var.cast<FB::JSObjectPtr>());
-        IDispatchAPIPtr api = ptr_cast<IDispatchAPI>(obj);
+        IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(obj);
         if (api) {
             outVar = api->getIDispatch();
         } else {

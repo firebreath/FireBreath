@@ -13,7 +13,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include <boost/algorithm/string.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include "win_common.h"
 #include "NpapiTypes.h"
 #include "PluginCore.h"
@@ -72,9 +72,9 @@ static const DrawingModel g_supportedModels[] = {
 void FB::Npapi::NpapiPluginWin::pluginWindowFactory(NPDrawingModel model)
 {
     // todo: support AsyncBitmapSurface as well
-    AsyncDrawServicePtr asd = boost::make_shared<NpapiAsyncDrawService>(m_npHost);
+    AsyncDrawServicePtr asd = std::make_shared<NpapiAsyncDrawService>(m_npHost);
     PluginWindow* pw = getFactoryInstance()->createPluginWindowless(WindowContextWindowless(NULL, asd));
-    pluginWin.swap(boost::scoped_ptr<PluginWindow>(pw));
+    pluginWin.swap(std::unique_ptr<PluginWindow>(pw));
     m_drawingModel = model;
 }
 
@@ -86,7 +86,7 @@ extern std::string g_dllPath;
 
 FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
-    return boost::make_shared<NpapiPluginWin>(host, mimetype);
+    return std::make_shared<NpapiPluginWin>(host, mimetype);
 }
 
 NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host, const std::string& mimetype)

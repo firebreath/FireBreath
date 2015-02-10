@@ -19,7 +19,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #include "win_common.h"
 #include <atlctl.h>
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "Node.h"
 #include "DOM/Window.h"
 

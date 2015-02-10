@@ -19,8 +19,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #include "BrowserStream.h"
 #include "urlmon.h"
 #include "atlbase.h"
-#include <boost/shared_ptr.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 
 // includes parts of Microsoft examples:
 //   http://support.microsoft.com/kb/223500
@@ -28,10 +27,10 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB { namespace ActiveX {
     class ActiveXStream;
-    typedef boost::shared_ptr<ActiveXStream> ActiveXStreamPtr;
+    typedef std::shared_ptr<ActiveXStream> ActiveXStreamPtr;
     class ActiveXBindStatusCallback;
 
-    class ActiveXStreamRequest : public boost::enable_shared_from_this<ActiveXStreamRequest>
+    class ActiveXStreamRequest : public std::enable_shared_from_this<ActiveXStreamRequest>
     {
     public:
         ActiveXStreamRequest( ActiveXStreamPtr stream );
@@ -49,7 +48,7 @@ namespace FB { namespace ActiveX {
         std::vector<FB::BrowserStream::Range>   ranges;
     };
 
-    typedef boost::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
+    typedef std::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
 
     class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate 
     {

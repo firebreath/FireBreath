@@ -26,7 +26,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 namespace FB { namespace ActiveX {
     namespace AXDOM {
         class Node;
-        typedef boost::shared_ptr<Node> NodePtr;
+        typedef std::shared_ptr<Node> NodePtr;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @class  Node

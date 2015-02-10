@@ -35,7 +35,7 @@ using namespace FB::Npapi;
 
 FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
-    return boost::make_shared<NpapiPluginMac>(host, mimetype);
+    return std::make_shared<NpapiPluginMac>(host, mimetype);
 }
 
 namespace 

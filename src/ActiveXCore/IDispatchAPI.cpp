@@ -25,9 +25,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB::ActiveX;
 
-boost::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * obj, const ActiveXBrowserHostPtr& host)
+std::shared_ptr<FB::ActiveX::IDispatchAPI> IDispatchAPI::create(IDispatch * obj, const ActiveXBrowserHostPtr& host)
 {
-    return boost::shared_ptr<IDispatchAPI>(new IDispatchAPI(obj, host));
+    return std::shared_ptr<IDispatchAPI>(new IDispatchAPI(obj, host));
 }
 
 FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHostPtr& host) :
@@ -516,7 +516,7 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
     std::vector<FB::JSObjectPtr>::const_iterator it(direct.begin());
     std::vector<FB::JSObjectPtr>::const_iterator endit(direct.end());
     for (it; it != endit; ++it) {
-        IDispatchAPIPtr ptr(boost::static_pointer_cast<IDispatchAPI>(*it));
+        IDispatchAPIPtr ptr(std::static_pointer_cast<IDispatchAPI>(*it));
         DISPID dispId = ptr->getIDForName(std::wstring(L""));
         if (dispId == DISPID_UNKNOWN) {
              continue;
@@ -534,7 +534,7 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
     it = ifaces.begin();
     endit = ifaces.end();
     for (it; it != endit; ++it) {
-        IDispatchAPIPtr ptr(boost::static_pointer_cast<IDispatchAPI>(*it));
+        IDispatchAPIPtr ptr(std::static_pointer_cast<IDispatchAPI>(*it));
         DISPID dispId = getIDForName(FB::utf8_to_wstring(name));
         if (dispId == DISPID_UNKNOWN) {
              continue;

@@ -125,7 +125,7 @@ namespace FB {
         ///
         /// @brief  Called by the browser during startup to provide a Browser Host object. 
         ///
-        /// @param  host    The boost::shared_ptr<BrowserHost> to the BrowserHost object for the current
+        /// @param  host    The std::shared_ptr<BrowserHost> to the BrowserHost object for the current
         ///                 browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void SetHost(const FB::BrowserHostPtr& host)
@@ -229,7 +229,7 @@ namespace FB {
         /// @brief  Called the first time something calls getRootJSAPI() to get the Root JSAPI instance. 
         ///
         /// This must be implemented by each class extending PluginCore.  The JSAPI object returned from
-        /// this function in a FB::JSAPIPtr (boost::shared_ptr&lt;JSAPI&gt;) provides the primary interface
+        /// this function in a FB::JSAPIPtr (std::shared_ptr&lt;JSAPI&gt;) provides the primary interface
         /// with javascript for calls made on the plugin &lt;object&gt; tag.
         ///
         /// @return FB::JSAPIPtr to the default JSAPI implementation for this plugin.

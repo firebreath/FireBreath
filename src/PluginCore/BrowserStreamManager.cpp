@@ -56,7 +56,7 @@ void FB::BrowserStreamManager::releaseStream( const BrowserStreamPtr& stream )
 
 bool FB::BrowserStreamManager::onStreamCompleted( FB::StreamCompletedEvent *evt, FB::BrowserStream *stream )
 {
-    releaseStream(FB::ptr_cast<FB::BrowserStream>(stream->shared_from_this()));
+    releaseStream(std::dynamic_pointer_cast<FB::BrowserStream>(stream->shared_from_this()));
     return false;
 }
 

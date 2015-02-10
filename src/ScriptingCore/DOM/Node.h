@@ -27,7 +27,7 @@ namespace FB { namespace DOM {
      * Provides a wrapper around a JSObject * that represents a DOM node
      **/
     class Node;
-    typedef boost::shared_ptr<Node> NodePtr;
+    using NodePtr = std::shared_ptr<Node>;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  Node
@@ -36,7 +36,7 @@ namespace FB { namespace DOM {
     ///
     /// This class should not be created directly; instead, use the Node::create method
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class Node : public boost::enable_shared_from_this<Node>
+    class Node : public std::enable_shared_from_this<Node>
     {
     public:
         Node(const JSObjectPtr& element) : m_element(element) { }

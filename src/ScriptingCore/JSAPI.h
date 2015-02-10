@@ -43,8 +43,8 @@ namespace FB
     /// Important things to know about JSAPI objects:
     ///   - Unless you have unusual needs, you will most likely want to extend FB::JSAPIAuto instead
     ///     of extending JSAPI directly.
-    ///   - Any time you work with a JSAPI object you should use it with a boost::shared_ptr.
-    ///     FB::JSAPIPtr is a typedef for a boost::shared_ptr<JSAPI> which may be useful.
+    ///   - Any time you work with a JSAPI object you should use it with a std::shared_ptr.
+    ///     FB::JSAPIPtr is a typedef for a std::shared_ptr<JSAPI> which may be useful.
     ///     -  From inside the object you can use the shared_from_this() method to get a shared_ptr for
     ///        "this"
     ///   - Objects passed in from javascript, including functions, will be passed in as FB::JSObject
@@ -53,7 +53,7 @@ namespace FB
     /// @author Richard Bateman
     /// @see FB::JSAPIAuto
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class JSAPI : public boost::enable_shared_from_this<JSAPI>, boost::noncopyable
+    class JSAPI : public std::enable_shared_from_this<JSAPI>, boost::noncopyable
     {
     public:
 

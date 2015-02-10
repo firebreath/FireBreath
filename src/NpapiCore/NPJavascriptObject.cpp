@@ -45,11 +45,11 @@ bool NPJavascriptObject::isNPJavaScriptObject(const NPObject* const npo)
 }
 
 NPJavascriptObject::NPJavascriptObject(NPP npp)
-    : m_valid(true), m_autoRelease(false), m_addEventFunc(boost::make_shared<NPO_addEventListener>(this)),
-    m_removeEventFunc(boost::make_shared<NPO_removeEventListener>(this)),
-	m_getLastExceptionFunc(boost::make_shared<NPO_getLastException>(this))
+    : m_valid(true), m_autoRelease(false), m_addEventFunc(std::make_shared<NPO_addEventListener>(this)),
+    m_removeEventFunc(std::make_shared<NPO_removeEventListener>(this)),
+	m_getLastExceptionFunc(std::make_shared<NPO_getLastException>(this))
 {
-    m_sharedRef = boost::make_shared<FB::ShareableReference<NPJavascriptObject> >(this);
+    m_sharedRef = std::make_shared<FB::ShareableReference<NPJavascriptObject> >(this);
 }
 
 NPJavascriptObject::~NPJavascriptObject(void)

@@ -195,7 +195,7 @@ if (WIN32)
         )
     file (GLOB IDL_FILES
         ${FB_TEMPLATE_DEST_DIR}/*.idl)
-    list(REMOVE_ITEM FB_PLUGIN_GENERATED_SOURCES ${IDL_FILES})
+    list(REMOVE_ITEM FB_PLUGIN_GENERATED_SOURCES "" ${IDL_FILES})
 else()
     set_source_files_properties(${FB_PLUGIN_GENERATED_WIN_SOURCES}
         PROPERTIES

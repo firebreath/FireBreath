@@ -17,7 +17,7 @@
 #define H_FB_FACTORYBASE
 
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/utility.hpp>
 #include "APITypes.h"
 #include "FBPointers.h"
@@ -39,11 +39,11 @@ namespace FB
     FB_FORWARD_PTR(PluginCore);
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(JSAPI);
-    /// @brief  Defines an alias representing a boost::shared_ptr<FactoryBase>
-    typedef boost::shared_ptr<FactoryBase> FactoryBasePtr;
+    /// @brief  Defines an alias representing a std::shared_ptr<FactoryBase>
+    typedef std::shared_ptr<FactoryBase> FactoryBasePtr;
 
-    /// @brief  Defines an alias representing a boost::shared_ptr<PluginCore>
-    typedef boost::shared_ptr<PluginCore> PluginCorePtr;
+    /// @brief  Defines an alias representing a std::shared_ptr<PluginCore>
+    typedef std::shared_ptr<PluginCore> PluginCorePtr;
 
     FB_FORWARD_PTR(D3d10DeviceContext);
 
@@ -74,7 +74,7 @@ namespace FB
     ///      public:
     ///          FB::PluginCorePtr createPlugin(const std::string& mimetype)
     ///          {
-    ///              return boost::make_shared<MyPluginObject>();
+    ///              return std::make_shared<MyPluginObject>();
     ///          }
     ///          
     ///          void globalPluginInitialize()
@@ -90,7 +90,7 @@ namespace FB
     ///
     ///      FB::FactoryBasePtr getFactoryInstance()
     ///      {
-    ///          static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
+    ///          static std::shared_ptr<PluginFactory> factory = std::make_shared<PluginFactory>();
     ///          return factory;
     ///      }
     /// @endcode
@@ -113,7 +113,7 @@ namespace FB
         ///      // Example implementation
         ///      FB::PluginCorePtr createPlugin(const std::string& mimetype)
         ///      {
-        ///          return boost::make_shared<MyPluginObject>();
+        ///          return std::make_shared<MyPluginObject>();
         ///      }
         /// @endcode
         /// 

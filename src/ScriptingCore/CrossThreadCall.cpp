@@ -27,7 +27,7 @@ void CrossThreadCall::syncCallbackFunctor(void *userData)
         }
         catch(const FB::script_error& e)
         {
-            call->m_result = variant(boost::make_shared<FB::script_error>(e.what()), true);
+            call->m_result = variant(std::make_shared<FB::script_error>(e.what()), true);
         }
         // Make sure the lock goes out of scope before we finish
         boost::lock_guard<boost::mutex> lock(call->m_mutex);

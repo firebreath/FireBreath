@@ -2,8 +2,7 @@
 #include "win_targetver.h"
 #include "win_common.h"
 #include "Win/SystemProxyDetectorWin.h"
-#include <boost/scoped_ptr.hpp>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include <sstream>
 #include <URI.h>
 #include "logging.h"
@@ -21,7 +20,7 @@ using std::map;
 
 FB::SystemProxyDetector* FB::SystemProxyDetector::get()
 {
-    static boost::scoped_ptr<FB::SystemProxyDetector> _inst(new FB::SystemProxyDetectorWin());
+    static std::unique_ptr<FB::SystemProxyDetector> _inst(new FB::SystemProxyDetectorWin());
     return _inst.get();
 }
 
@@ -53,7 +52,7 @@ bool FB::SystemProxyDetectorWin::detectProxy( map<string, string>& proxyMap, con
         // alloc, that's why this is variable size instead of just sizeof(INTERNET_PROXY_INFO)
         DWORD ipiSize = 0;
         InternetQueryOption(NULL, INTERNET_OPTION_PROXY, NULL, &ipiSize);
-        boost::scoped_array<char> ipiBuf(new char[ipiSize]);
+        std::unique_ptr<char[]> ipiBuf(new char[ipiSize]);
         INTERNET_PROXY_INFO* ipi = reinterpret_cast<INTERNET_PROXY_INFO*>(ipiBuf.get());
 
         if (! InternetQueryOption(NULL, INTERNET_OPTION_PROXY, ipiBuf.get(), &ipiSize)) throw_GetLastError("InternetQueryOption(INTERNET_OPTION_PROXY)");

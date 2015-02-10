@@ -24,8 +24,8 @@ namespace FB {
     namespace ActiveX {
         class ActiveXBrowserHost;
 
-        typedef boost::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
-        typedef boost::weak_ptr<FB::ShareableReference<IDispatchEx> > WeakIDispatchRef;
+        typedef std::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
+        typedef std::weak_ptr<FB::ShareableReference<IDispatchEx> > WeakIDispatchRef;
         template <const GUID* pclsid, class ICurObjInterface, const IID* piid, const GUID* plibid>
         class ATL_NO_VTABLE COMJavascriptObject :
             public CComObjectRootEx<CComMultiThreadModel>,
@@ -42,7 +42,7 @@ namespace FB {
             COMJavascriptObject(void)
                 : JSAPI_IDispatchEx<CurObjType, ICurObjInterface, piid>("SUBOBJECT")
             {
-                m_sharedRef = boost::make_shared<FB::ShareableReference<IDispatchEx> >(this);
+                m_sharedRef = std::make_shared<FB::ShareableReference<IDispatchEx> >(this);
             }
             virtual ~COMJavascriptObject(void)
             {

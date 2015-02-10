@@ -25,7 +25,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
 {
-    return boost::make_shared<NpapiPluginX11>(host, mimetype);
+    return std::make_shared<NpapiPluginX11>(host, mimetype);
 }
 
 using namespace FB::Npapi;

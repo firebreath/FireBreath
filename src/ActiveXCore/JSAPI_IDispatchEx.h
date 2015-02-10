@@ -105,9 +105,9 @@ namespace FB { namespace ActiveX {
         };
     public:
         JSAPI_IDispatchExBase() 
-            : m_attachFunc(boost::make_shared<IDisp_AttachEvent>(this)), 
-              m_detachFunc(boost::make_shared<IDisp_DetachEvent>(this)),
-			  m_getLastExceptionFunc(boost::make_shared<IDisp_GetLastException>())
+            : m_attachFunc(std::make_shared<IDisp_AttachEvent>(this)), 
+              m_detachFunc(std::make_shared<IDisp_DetachEvent>(this)),
+			  m_getLastExceptionFunc(std::make_shared<IDisp_GetLastException>())
         { }
         void setAPI(FB::JSAPIWeakPtr api, const ActiveXBrowserHostPtr& host)
         {

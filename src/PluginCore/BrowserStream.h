@@ -74,7 +74,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual ~BrowserStream();
 
-        virtual BrowserStreamPtr shared_from_this() { return FB::ptr_cast<BrowserStream>(PluginEventSource::shared_from_this()); }
+        virtual BrowserStreamPtr shared_from_this() { return std::dynamic_pointer_cast<BrowserStream>(PluginEventSource::shared_from_this()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool BrowserStream::readRange( size_t start, size_t end )

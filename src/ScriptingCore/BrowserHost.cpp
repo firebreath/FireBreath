@@ -16,12 +16,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cstdio>
 #include <cassert>
 #include <algorithm>
+#include <memory>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
-#include <boost/smart_ptr/enable_shared_from_this.hpp>
 #include "JSObject.h"
 #include "DOM/Window.h"
 #include "variant_list.h"
@@ -52,7 +52,7 @@ namespace FB {
         AsyncCallManagerWeakPtr mgr;
     };
 
-    class AsyncCallManager : public boost::enable_shared_from_this<AsyncCallManager>, boost::noncopyable {
+    class AsyncCallManager : public std::enable_shared_from_this<AsyncCallManager>, boost::noncopyable {
     public:
         int lastId;
         AsyncCallManager() : lastId(1) {}
@@ -73,8 +73,8 @@ namespace FB {
 volatile int FB::BrowserHost::InstanceCount(0);
 
 FB::BrowserHost::BrowserHost()
-    : _asyncManager(boost::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
-      m_isShutDown(false), m_streamMgr(boost::make_shared<FB::BrowserStreamManager>()), m_htmlLogEnabled(true)
+    : _asyncManager(std::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
+      m_isShutDown(false), m_streamMgr(std::make_shared<FB::BrowserStreamManager>()), m_htmlLogEnabled(true)
 {
     ++InstanceCount;
 }

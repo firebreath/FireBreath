@@ -17,7 +17,7 @@
 #ifndef H_FB_PLUGINWINDOWFORWARDDECL
 #define H_FB_PLUGINWINDOWFORWARDDECL
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #if defined(XP_MACOSX) && defined(__LP64__)
 #define NP_NO_QUICKDRAW

@@ -27,7 +27,7 @@ using namespace std;
 namespace FB { namespace Npapi {
     class NpapiPlugin;
     class NpapiBrowserHost;
-    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
 }; };
 
 int main()

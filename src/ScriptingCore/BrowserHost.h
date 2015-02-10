@@ -17,7 +17,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_BROWSERHOSTWRAPPER
 
 #include "APITypes.h"
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -47,7 +46,7 @@ namespace FB
     {
         AsyncLogRequest(const BrowserHostPtr& host, const std::string& message) : m_host(host), m_msg(message) { }
 
-        const boost::shared_ptr<BrowserHost> m_host;
+        const std::shared_ptr<BrowserHost> m_host;
         std::string m_msg;
     };
 
@@ -66,7 +65,7 @@ namespace FB
     /// @see NpapiBrowserHost
     /// @see ActiveXBrowserHost
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class BrowserHost : public boost::enable_shared_from_this<BrowserHost>, boost::noncopyable
+    class BrowserHost : public std::enable_shared_from_this<BrowserHost>, boost::noncopyable
     {
     public:
 
@@ -139,7 +138,7 @@ namespace FB
         typename Functor::result_type CallOnMainThread(Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const
+        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const
         ///
         /// @brief  Schedule a call to be executed on the main thread.
         ///
@@ -147,7 +146,7 @@ namespace FB
         /// like so:
         /// @code
         /// try {
-        ///     boost::shared_ptr<ObjectType> obj(get_object_sharedptr());
+        ///     std::shared_ptr<ObjectType> obj(get_object_sharedptr());
         ///     host->ScheduleOnMainThread(obj, boost::bind(&ObjectType::method, obj, arg1, arg2));
         /// } catch (const FB::script_error&) {
         ///     // The call will throw this exception if the browser is shutting down and it cannot
@@ -159,7 +158,7 @@ namespace FB
         /// is then used to create a weak_ptr so that if the object goes away before the call is made
         /// the call can fail silently instead of crashing the browser.
         ///
-        /// @param  obj     A boost::shared_ptr to the object that must exist when the call is made
+        /// @param  obj     A std::shared_ptr to the object that must exist when the call is made
         /// @param  func    The functor to execute on the main thread created with boost::bind
         /// @throws FB::script_error
         /// @see CallOnMainThread
@@ -167,7 +166,7 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class C, class Functor>
-        void ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const;
+        void ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static void AsyncHtmlLog(void *)

@@ -120,8 +120,8 @@ TEST(JSAPIAuto_Methods)
                 
         for(unsigned i=2; i<=max_args; ++i)
         {
-            boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
-            FB::VariantList params = variant_list_of(strings.front())(ptr_cast<JSObject>(jsarr));
+            std::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(strings.begin()+1, strings.begin()+i)));
+            FB::VariantList params = variant_list_of(strings.front())(std::dynamic_pointer_cast<JSObject>(jsarr));
             FB::variant ret = test->Invoke(method, params);
             const std::string expected = std::accumulate(strings.begin(), strings.begin()+i, std::string(""));
             const std::string result   = ret.cast<std::string>();
@@ -170,7 +170,7 @@ TEST(JSAPIAuto_Methods)
         // test array conversions
         const std::string method("accumulate");
         std::vector<int> values = list_of((int)1)(2)(3)(42);
-        boost::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(values)));
+        std::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(make_variant_list(values)));
         FB::variant varJsArr = FB::JSObjectPtr(jsarr);
 
         FB::variant ret = test->Invoke(method, variant_list_of(varJsArr));
@@ -192,7 +192,7 @@ TEST(JSAPIAuto_Methods)
     
     {
         const std::string description = "asdf123541234mlkasdf";
-        boost::shared_ptr<FB::JSAPIAuto> x = boost::make_shared<FB::JSAPIAuto>(description);
+        std::shared_ptr<FB::JSAPIAuto> x = std::make_shared<FB::JSAPIAuto>(description);
         CHECK_EQUAL(description, x->ToString());
         const std::string tmp(x->Invoke("toString", FB::VariantList()).convert_cast<std::string>());
         CHECK_EQUAL(description, tmp);

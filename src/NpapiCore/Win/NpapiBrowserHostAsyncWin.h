@@ -18,7 +18,7 @@ Copyright 2010 Georg Fritzsche, Firebreath development team
 #define H_NPAPIBROWSERHOSTASYNCWIN
 
 #include "NpapiBrowserHost.h"
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace FB { 
     class WinMessageWindow;
@@ -32,7 +32,7 @@ namespace FB {
             virtual bool _scheduleAsyncCall(void (*func)(void*), void* userData) const;
 
         private:
-            boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;
+            std::unique_ptr<FB::WinMessageWindow> m_messageWin;
         };
     }
 }

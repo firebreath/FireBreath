@@ -87,17 +87,17 @@ public:
 bool StreamsTest::run()
 {
     // create a sequential, cached stream (the default if you omit the parameters)
-    FB::PluginEventSinkPtr streamHandler1 = boost::make_shared<MyStreamHandler1>();
+    FB::PluginEventSinkPtr streamHandler1 = std::make_shared<MyStreamHandler1>();
     FB::BrowserStreamPtr testStream1 = host->createStream( "http://colonelpanic.net/", streamHandler1, true, false );
     FB_UNUSED_VARIABLE(testStream1);
 
     // create a seekable, non-cached stream
-    FB::PluginEventSinkPtr streamHandler2 = boost::make_shared<MyStreamHandler2>( host );
+    FB::PluginEventSinkPtr streamHandler2 = std::make_shared<MyStreamHandler2>( host );
     FB::BrowserStreamPtr testStream2 = host->createStream( "http://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Wikipedia-logo.png/100px-Wikipedia-logo.png", streamHandler2, false, true );
     FB_UNUSED_VARIABLE(testStream2);
  
     // try to access a page which does not exists (e.g. 404 or dns fails)
-    FB::PluginEventSinkPtr streamHandler3 = boost::make_shared<MyStreamHandler3>();
+    FB::PluginEventSinkPtr streamHandler3 = std::make_shared<MyStreamHandler3>();
     FB::BrowserStreamPtr testStream3 = host->createStream( "http://www.idontexist.invalid/index.html", streamHandler3, true, false );
     FB_UNUSED_VARIABLE(testStream3);
 

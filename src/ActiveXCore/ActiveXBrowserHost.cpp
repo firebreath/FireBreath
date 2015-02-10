@@ -15,7 +15,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "win_targetver.h"
 #include "win_common.h"
 #include <boost/assign.hpp>
-#include <boost/smart_ptr/make_shared.hpp>
+#include <memory>
 #include "axstream.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
@@ -66,32 +66,32 @@ void *ActiveXBrowserHost::getContextID() const
 
 FB::DOM::WindowPtr ActiveXBrowserHost::_createWindow(const FB::JSObjectPtr& obj) const
 {
-    return FB::DOM::WindowPtr(new AXDOM::Window(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
+    return FB::DOM::WindowPtr(new AXDOM::Window(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
 FB::DOM::DocumentPtr ActiveXBrowserHost::_createDocument(const FB::JSObjectPtr& obj) const
 {
-    return FB::DOM::DocumentPtr(new AXDOM::Document(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
+    return FB::DOM::DocumentPtr(new AXDOM::Document(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
 FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObjectPtr& obj) const
 {
-    return FB::DOM::ElementPtr(new AXDOM::Element(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
+    return FB::DOM::ElementPtr(new AXDOM::Element(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
 FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
-    return FB::DOM::NodePtr(new AXDOM::Node(ptr_cast<IDispatchAPI>(obj), m_webBrowser));
+    return FB::DOM::NodePtr(new AXDOM::Node(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
 void ActiveXBrowserHost::initDOMObjects()
 {
     // m_htmlWin/m_htmlDocDisp will be null after suspend()
     if (!m_window && m_htmlWin) {
-        m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+        m_window = DOM::Window::create(IDispatchAPI::create(m_htmlWin, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this())));
     }
     if (!m_document && m_htmlDocDisp) {
-        m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+        m_document = DOM::Document::create(IDispatchAPI::create(m_htmlDocDisp, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this())));
     }
 }
 
@@ -113,7 +113,7 @@ FB::DOM::ElementPtr ActiveXBrowserHost::getDOMElement()
     CComPtr<IDispatch> dispatch;
     site->GetExtendedControl(&dispatch);
     CComQIPtr<IHTMLElement2> htmlElement(dispatch);
-    return DOM::Document::create(IDispatchAPI::create(htmlElement, ptr_cast<ActiveXBrowserHost>(shared_from_this())));
+    return DOM::Document::create(IDispatchAPI::create(htmlElement, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this())));
 }
 
 void ActiveXBrowserHost::evaluateJavaScript(const std::string &script)
@@ -229,7 +229,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, ptr_cast<ActiveXBrowserHost>(shared_from_this()))); 
+        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this()))); 
         break;
 
     case VT_ERROR:
@@ -239,7 +239,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_NULL:
-        retVal = FB::FBNull();
+        retVal = nullptr;
         break;
 
     case VT_EMPTY:
@@ -265,7 +265,7 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
         return;
     }
     
-    outVar = (it->second)(FB::ptr_cast<ActiveXBrowserHost>(shared_from_this()), var);
+    outVar = (it->second)(std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this()), var);
 
     outVar.Detach(dest);
 }
@@ -276,9 +276,9 @@ FB::BrowserStreamPtr FB::ActiveX::ActiveXBrowserHost::_createStream( const Brows
     std::string url(req.uri.toString());
     ActiveXStreamPtr stream;
     if (req.method == "POST") {
-        stream = boost::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize, req.getPostData());
+        stream = std::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize, req.getPostData());
     } else {
-        stream = boost::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize);
+        stream = std::make_shared<ActiveXStream>(url, req.cache, req.seekable, req.internalBufferSize);
     }
     if (req.getEventSink()) {
         stream->AttachObserver( req.getEventSink() );
@@ -342,7 +342,7 @@ void FB::ActiveX::ActiveXBrowserHost::deferred_release( const IDispatchWRef& obj
 IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread
-    typedef boost::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
+    typedef std::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
     IDispatchEx* ret(NULL);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
@@ -369,7 +369,7 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
 
 FB::ActiveX::IDispatchWRef FB::ActiveX::ActiveXBrowserHost::getIDispatchRef( IDispatch* obj )
 {
-    IDispatchSRef ref(boost::make_shared<FB::ShareableReference<IDispatch> >(obj));
+    IDispatchSRef ref(std::make_shared<FB::ShareableReference<IDispatch> >(obj));
     obj->AddRef();
     m_heldIDispatch.push_back(ref);
     return ref;

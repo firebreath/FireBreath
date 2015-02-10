@@ -35,7 +35,7 @@ namespace FB {
     /// @brief  Base class for any object, such as BrowserStream or PluginWindow, that needs to fire
     ///         events to a PluginEventSink object (such as a PluginCore derived plugin class) 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    class PluginEventSource : public boost::enable_shared_from_this<PluginEventSource>, boost::noncopyable
+    class PluginEventSource : public std::enable_shared_from_this<PluginEventSource>, boost::noncopyable
     {
     public:
         PluginEventSource();

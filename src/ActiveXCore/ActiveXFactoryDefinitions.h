@@ -24,7 +24,7 @@ typedef long HRESULT;
 namespace FB {
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(JSAPI);
-    typedef boost::weak_ptr<FB::ShareableReference<IDispatchEx> > WeakIDispatchExRef;
+    typedef std::weak_ptr<FB::ShareableReference<IDispatchEx> > WeakIDispatchExRef;
 }
 
 IDispatchEx* _getCOMJSWrapper(const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease = false);

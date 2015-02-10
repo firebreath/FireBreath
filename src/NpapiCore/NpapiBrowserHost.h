@@ -30,8 +30,8 @@ namespace FB {
     FB_FORWARD_PTR(NPObjectAPI);
     FB_FORWARD_PTR(NpapiBrowserHost);
     FB_FORWARD_PTR(NPJavascriptObject);
-    typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
-    typedef boost::weak_ptr<FB::ShareableReference<NPJavascriptObject> > NPObjectWeakRef;
+    typedef std::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
+    typedef std::weak_ptr<FB::ShareableReference<NPJavascriptObject> > NPObjectWeakRef;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  NpapiBrowserHost
@@ -172,10 +172,10 @@ namespace FB {
         void SetCurrentAsyncSurface(NPAsyncSurface* surface, NPRect* changed) const;
     };
 
-    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-    typedef boost::shared_ptr<const NpapiBrowserHost> NpapiBrowserHostConstPtr;
-    typedef boost::weak_ptr<NpapiBrowserHost> NpapiBrowserHostWeakPtr;
-    typedef boost::weak_ptr<const NpapiBrowserHost> NpapiBrowserHostWeakConstPtr;
+    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    typedef std::shared_ptr<const NpapiBrowserHost> NpapiBrowserHostConstPtr;
+    typedef std::weak_ptr<NpapiBrowserHost> NpapiBrowserHostWeakPtr;
+    typedef std::weak_ptr<const NpapiBrowserHost> NpapiBrowserHostWeakConstPtr;
 }; };
 
 #endif

@@ -66,8 +66,8 @@ namespace FB
         virtual ~JSAPIImpl(void);
 
     public:
-        JSAPIImplPtr shared_from_this() { return boost::static_pointer_cast<JSAPIImpl>(JSAPI::shared_from_this()); }
-        boost::shared_ptr<const JSAPIImpl> shared_from_this() const { return boost::static_pointer_cast<const JSAPIImpl>(JSAPI::shared_from_this()); }
+        JSAPIImplPtr shared_from_this() { return std::static_pointer_cast<JSAPIImpl>(JSAPI::shared_from_this()); }
+        std::shared_ptr<const JSAPIImpl> shared_from_this() const { return std::static_pointer_cast<const JSAPIImpl>(JSAPI::shared_from_this()); }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void invalidate()

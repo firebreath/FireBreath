@@ -146,7 +146,7 @@ namespace FB { namespace Npapi
             outArr->Invoke("push", FB::variant_list_of(*it));
         }
 
-        if (NPObjectAPIPtr api = FB::ptr_cast<NPObjectAPI>(outArr)) {
+        if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(outArr)) {
             npv.type = NPVariantType_Object;
             npv.value.objectValue = api->getNPObject();
             host->RetainObject(npv.value.objectValue);
@@ -167,7 +167,7 @@ namespace FB { namespace Npapi
             out->SetProperty(it->first, it->second);
         }
 
-        if (NPObjectAPIPtr api = FB::ptr_cast<NPObjectAPI>(out)) {
+        if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(out)) {
             npv.type = NPVariantType_Object;
             npv.value.objectValue = api->getNPObject();
             host->RetainObject(npv.value.objectValue);
@@ -184,7 +184,7 @@ namespace FB { namespace Npapi
 //        FB::FBDateString date = var.cast<FB::FBDateString>();
 //        FB::JSObjectPtr out = host->getDOMWindow()->createDate(date.getValue());;
 //
-//        if (NPObjectAPIPtr api = FB::ptr_cast<NPObjectAPI>(out)) {
+//        if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(out)) {
 //            npv.type = NPVariantType_Object;
 //            npv.value.objectValue = api->getNPObject();
 //            host->RetainObject(npv.value.objectValue);
@@ -204,7 +204,7 @@ namespace FB { namespace Npapi
         {
             NPObject *outObj = NULL;
 
-            if (NPObjectAPIPtr tmpObj = FB::ptr_cast<NPObjectAPI>(obj)) {
+            if (NPObjectAPIPtr tmpObj = std::dynamic_pointer_cast<NPObjectAPI>(obj)) {
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
@@ -235,7 +235,7 @@ namespace FB { namespace Npapi
         {
             NPObject *outObj = NULL;
 
-            if (NPObjectAPIPtr tmpObj = FB::ptr_cast<NPObjectAPI>(obj)) {
+            if (NPObjectAPIPtr tmpObj = std::dynamic_pointer_cast<NPObjectAPI>(obj)) {
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {
@@ -264,7 +264,7 @@ namespace FB { namespace Npapi
         {
             NPObject *outObj = NULL;
 
-            if (NPObjectAPIPtr tmpObj = FB::ptr_cast<NPObjectAPI>(obj)) {
+            if (NPObjectAPIPtr tmpObj = std::dynamic_pointer_cast<NPObjectAPI>(obj)) {
                 outObj = tmpObj->getNPObject();
                 host->RetainObject(outObj);
             } else {

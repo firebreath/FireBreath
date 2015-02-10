@@ -20,6 +20,7 @@ if (WIN32)
         endif()
     ENDMACRO(DBG_MSG)
 
+    set(PF86 "ProgramFiles(x86)")
 
     if (NOT WIX_ROOT_DIR)
         # typical root dirs of installations, exactly one of them is used
@@ -33,12 +34,12 @@ if (WIN32)
             "$ENV{ProgramFiles}/Windows Installer XML v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.7"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.5"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.6"
-            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.6"
-            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.7"
+            "$ENV{${PF86}}/Windows Installer XML"
+            "$ENV{${PF86}}/Windows Installer XML v3"
+            "$ENV{${PF86}}/Windows Installer XML v3.5"
+            "$ENV{${PF86}}/Windows Installer XML v3.6"
+            "$ENV{${PF86}}/WiX Toolset v3.6"
+            "$ENV{${PF86}}/WiX Toolset v3.7"
             )
 
 

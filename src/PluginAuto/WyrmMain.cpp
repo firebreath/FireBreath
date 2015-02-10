@@ -12,6 +12,8 @@
     Copyright 2015 Richard Bateman and the Firebreath development team
 \*********************************************************************/
 
+#if 0
+
 #include "FireWyrm.h"
 #include "WyrmPluginModule.h"
 #include "logging.h"
@@ -54,3 +56,4 @@ FW_RESULT FW_OSCALL FireWyrm_Finit() {
     return WyrmPluginModule::ReleaseModule(0);
 }
 
+#endif

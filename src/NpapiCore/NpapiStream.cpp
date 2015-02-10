@@ -147,7 +147,7 @@ void FB::Npapi::NpapiStream::setCreated()
 {
     // We hold the reference here until NPP_DestroyStream is called so that the
     // object can't be deleted out from under the browser
-    m_selfReference = FB::ptr_cast<NpapiStream>(shared_from_this());
+    m_selfReference = std::dynamic_pointer_cast<NpapiStream>(shared_from_this());
 }
 
 void FB::Npapi::NpapiStream::setDestroyed()

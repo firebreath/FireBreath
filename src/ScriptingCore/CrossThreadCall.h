@@ -17,14 +17,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <vector>
 #include <string>
+#include <memory>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/mutex.hpp>
 #include "APITypes.h"
 #include "JSObject.h"
 #include "BrowserHost.h"
-#include <boost/weak_ptr.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/scoped_ptr.hpp>
 #include "logging.h"
 
 namespace FB {
@@ -41,7 +39,7 @@ namespace FB {
     class FunctorCallImpl : public FunctorCall
     {
     public:
-        FunctorCallImpl(const boost::shared_ptr<C> &cls, const Functor &func) : ref(true), reference(cls), func(func) { }
+        FunctorCallImpl(const std::shared_ptr<C> &cls, const Functor &func) : ref(true), reference(cls), func(func) { }
         FunctorCallImpl(const Functor &func) : ref(false), func(func) {}
         ~FunctorCallImpl() {
             FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (non-void)");
@@ -53,7 +51,7 @@ namespace FB {
 
     protected:
         bool ref;
-        boost::shared_ptr<C> reference;
+        std::shared_ptr<C> reference;
         Functor func;
         RT retVal;
     };
@@ -62,7 +60,7 @@ namespace FB {
     class FunctorCallImpl<Functor, C, void> : public FunctorCall
     {
     public:
-        FunctorCallImpl(const boost::shared_ptr<C> &cls, const Functor &func) : func(func), ref(true), reference(cls) { }
+        FunctorCallImpl(const std::shared_ptr<C> &cls, const Functor &func) : func(func), ref(true), reference(cls) { }
         FunctorCallImpl(const Functor &func) : func(func), ref(false) {}
         ~FunctorCallImpl() {
             FBLOG_TRACE("FunctorCall", "Destroying FunctorCall object (void)");
@@ -74,7 +72,7 @@ namespace FB {
     protected:
         Functor func;
         bool ref;
-        boost::shared_ptr<C> reference;
+        std::shared_ptr<C> reference;
     };
 
     FB_FORWARD_PTR(CrossThreadCall);
@@ -92,15 +90,15 @@ namespace FB {
         static typename Functor::result_type syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, boost::false_type /* is void */);
 
         template<class C, class Functor>
-        static void asyncCall(const FB::BrowserHostConstPtr &host, const boost::shared_ptr<C>& obj, Functor func);
+        static void asyncCall(const FB::BrowserHostConstPtr &host, const std::shared_ptr<C>& obj, Functor func);
 
     protected:
-        CrossThreadCall(const boost::shared_ptr<FunctorCall>& funct) : funct(funct), m_returned(false) { }
+        CrossThreadCall(const std::shared_ptr<FunctorCall>& funct) : funct(funct), m_returned(false) { }
 
         static void asyncCallbackFunctor(void *userData);
         static void syncCallbackFunctor(void *userData);
 
-        boost::shared_ptr<FunctorCall> funct;
+        std::shared_ptr<FunctorCall> funct;
         variant m_result;
         bool m_returned;
 
@@ -109,9 +107,9 @@ namespace FB {
     };
 
     template<class C, class Functor>
-    void CrossThreadCall::asyncCall(const FB::BrowserHostConstPtr &host, const boost::shared_ptr<C>& obj, Functor func)
+    void CrossThreadCall::asyncCall(const FB::BrowserHostConstPtr &host, const std::shared_ptr<C>& obj, Functor func)
     {
-        boost::shared_ptr<FunctorCall> funct = boost::make_shared<FunctorCallImpl<Functor, C> >(obj, func);
+        std::shared_ptr<FunctorCall> funct = std::make_shared<FunctorCallImpl<Functor, C> >(obj, func);
         CrossThreadCall *call = new CrossThreadCall(funct);
         if (!host->ScheduleAsyncCall(&CrossThreadCall::asyncCallbackFunctor, call)) {
             // Host is likely shut down; at any rate, this didn't work. Since it's asynchronous, fail silently
@@ -134,7 +132,7 @@ namespace FB {
 
         // We make this shared so that if this is something that needs to be passed into the other thread,
         // it still goes away when everything is done with it
-        boost::shared_ptr<FunctorCallImpl<Functor, bool> > funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
+        std::shared_ptr<FunctorCallImpl<Functor, bool> > funct = std::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
             // Synchronous call means that we want call to go away when this scope ends
@@ -176,7 +174,7 @@ namespace FB {
 
         // We make this shared so that if this is something that needs to be passed into the other thread,
         // it still goes away when everything is done with it
-        boost::shared_ptr<FunctorCallImpl<Functor, bool> > funct = boost::make_shared<FunctorCallImpl<Functor, bool> >(func);
+        std::shared_ptr<FunctorCallImpl<Functor, bool> > funct = std::make_shared<FunctorCallImpl<Functor, bool> >(func);
         if (!host->isMainThread())
         {
             // Synchronous call means that we want call to go away when this scope ends
@@ -221,7 +219,7 @@ namespace FB {
     }
     
     template <class C, class Functor>
-    void BrowserHost::ScheduleOnMainThread(const boost::shared_ptr<C>& obj, Functor func) const
+    void BrowserHost::ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const
     {
         boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
         CrossThreadCall::asyncCall(shared_from_this(), obj, func);

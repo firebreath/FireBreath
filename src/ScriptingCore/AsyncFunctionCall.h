@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define WM_ASYNCTHREADINVOKE    WM_USER + 1
 #endif
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace FB {
 
@@ -31,7 +31,7 @@ namespace FB {
         void (*func)(void *);
         void *userData;
     };
-    typedef boost::shared_ptr<AsyncFunctionCall> AsyncFunctionCallPtr;
+    typedef std::shared_ptr<AsyncFunctionCall> AsyncFunctionCallPtr;
 
 };
 

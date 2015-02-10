@@ -16,7 +16,7 @@ Copyright 2010 Facebook, Inc and the Firebreath development team
 #ifndef H_FB_DOM
 #define H_FB_DOM
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace FB { 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -55,13 +55,13 @@ namespace FB {
     class Node;
 
     /// @brief  shared_ptr for a FB::DOM::Window
-    typedef boost::shared_ptr<Window> WindowPtr;
+    typedef std::shared_ptr<Window> WindowPtr;
     /// @brief  shared_ptr for a FB::DOM::Document
-    typedef boost::shared_ptr<Document> DocumentPtr;
+    typedef std::shared_ptr<Document> DocumentPtr;
     /// @brief  shared_ptr for a FB::DOM::Element
-    typedef boost::shared_ptr<Element> ElementPtr;
+    typedef std::shared_ptr<Element> ElementPtr;
     /// @brief  shared_ptr for a FB::DOM::Node
-    typedef boost::shared_ptr<Node> NodePtr;
+    typedef std::shared_ptr<Node> NodePtr;
 
 }; };
 

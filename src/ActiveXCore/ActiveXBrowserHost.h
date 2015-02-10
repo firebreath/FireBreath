@@ -34,8 +34,8 @@ namespace FB {
         FB_FORWARD_PTR(ActiveXBrowserHost);
         FB_FORWARD_PTR(IDispatchAPI);
 
-        typedef boost::weak_ptr<FB::ShareableReference<IDispatch> > IDispatchWRef;
-        typedef boost::shared_ptr<FB::ShareableReference<IDispatch> > IDispatchSRef;
+        typedef std::weak_ptr<FB::ShareableReference<IDispatch> > IDispatchWRef;
+        typedef std::shared_ptr<FB::ShareableReference<IDispatch> > IDispatchSRef;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @class  ActiveXBrowserHost
         ///
@@ -85,7 +85,7 @@ namespace FB {
             CComPtr<IWebBrowser2> m_webBrowser;
             mutable FB::DOM::WindowPtr m_window;
             mutable FB::DOM::DocumentPtr m_document;
-            boost::scoped_ptr<FB::WinMessageWindow> m_messageWin;
+            std::unique_ptr<FB::WinMessageWindow> m_messageWin;
 
         private:
             mutable boost::shared_mutex m_xtmutex;

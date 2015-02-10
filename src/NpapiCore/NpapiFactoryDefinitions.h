@@ -16,7 +16,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 #ifndef H_NpapiFactoryDefinitions
 #define H_NpapiFactoryDefinitions
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include "NpapiBrowserHost.h"
 #include "NpapiPlugin.h"
 

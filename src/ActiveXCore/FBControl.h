@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <mshtml.h>
 #include <boost/algorithm/string.hpp>
 #include <boost/cast.hpp>
-#include <boost/scoped_array.hpp>
+#include <memory>
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
@@ -47,7 +47,7 @@ extern std::string g_dllPath;
 namespace FB {
     namespace ActiveX {
         class ActiveXBrowserHost;
-        typedef boost::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
+        typedef std::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
         void flagStaticInitialized(bool init = true);
         bool isStaticInitialized();
 
@@ -84,7 +84,7 @@ namespace FB {
             typedef CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> CFBControlX;
 
         protected:
-            boost::scoped_ptr<FB::PluginWindow> pluginWin;
+            std::unique_ptr<FB::PluginWindow> pluginWin;
             CComQIPtr<IServiceProvider> m_serviceProvider;
             CComQIPtr<IWebBrowser2> m_webBrowser;
             const std::string m_mimetype;
@@ -249,7 +249,7 @@ namespace FB {
         void FB::ActiveX::CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>::invalidateWindow( uint32_t left, uint32_t top, uint32_t right, uint32_t bottom )
         {
             if (!m_host->isMainThread() && m_spInPlaceSite) {
-                boost::shared_ptr<FB::ShareableReference<CFBControlX> > ref(boost::make_shared<FB::ShareableReference<CFBControlX> >(this));
+                std::shared_ptr<FB::ShareableReference<CFBControlX> > ref(std::make_shared<FB::ShareableReference<CFBControlX> >(this));
                 m_host->ScheduleOnMainThread(ref, boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
             } else {
                 if (m_spInPlaceSite)
@@ -362,8 +362,8 @@ namespace FB {
                         if (SUCCEEDED(hr) && accelEnabled) {
                             hr = m_viewObjectPresentSite->SetCompositionMode(VIEW_OBJECT_COMPOSITION_MODE_SURFACEPRESENTER);
                             if (SUCCEEDED(hr)) {
-                                AsyncDrawServicePtr asd = boost::make_shared<ActiveXAsyncDrawService>(m_host, m_viewObjectPresentSite);
-                                boost::scoped_ptr<PluginWindow> pw(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL, asd)));
+                                AsyncDrawServicePtr asd = std::make_shared<ActiveXAsyncDrawService>(m_host, m_viewObjectPresentSite);
+                                std::unique_ptr<PluginWindow> pw(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL, asd)));
                                 pluginWin.swap(pw);
                                 gotone = true;
                             }
@@ -391,7 +391,7 @@ namespace FB {
                     pw = pww = getFactoryInstance()->createPluginWindowWin(FB::WindowContextWin(m_hWnd));
                     pww->setCallOldWinProc(true);
                 }
-                pluginWin.swap(boost::scoped_ptr<PluginWindow>(pw));
+                pluginWin.swap(std::unique_ptr<PluginWindow>(pw));
             }
             pluginMain->SetWindow(pluginWin.get());
             setReady();
@@ -467,7 +467,7 @@ namespace FB {
         void CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::clientSiteSet()
         {
             m_host = ActiveXBrowserHostPtr(new ActiveXBrowserHost(m_webBrowser, m_spClientSite));
-            pluginMain->SetHost(FB::ptr_cast<FB::BrowserHost>(m_host));
+            pluginMain->SetHost(std::dynamic_pointer_cast<FB::BrowserHost>(m_host));
         }
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>

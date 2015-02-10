@@ -19,7 +19,7 @@ using namespace FB::ActiveX::AXDOM;
 
 Element::Element(const FB::JSObjectPtr& element, IWebBrowser *web)
     : FB::ActiveX::AXDOM::Node(element, web), FB::DOM::Node(element), FB::DOM::Element(element),
-      m_axDisp(FB::ptr_cast<IDispatchAPI>(element)->getIDispatch()), m_webBrowser(web)
+      m_axDisp(std::dynamic_pointer_cast<IDispatchAPI>(element)->getIDispatch()), m_webBrowser(web)
 {
     if (!m_axDisp)
         throw std::bad_cast("This is not a valid object");
@@ -49,7 +49,7 @@ std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(const std::string
             CComPtr<IDispatch> dispObj;
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
-            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
+            FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
             tagList.push_back(FB::DOM::Element::create(obj));
         }
     }
@@ -64,7 +64,7 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& 
     HRESULT hr = S_OK;
     if (elem) {
         hr = elem->getAttribute(CComBSTR(FB::utf8_to_wstring(attr).c_str()), 0, &var);
-        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
+        return std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
     } else {
         return getProperty<std::string>(attr);
     }
@@ -77,7 +77,7 @@ std::string FB::ActiveX::AXDOM::Element::getInnerHTML() const
     HRESULT hr = elem->get_innerHTML(&htmlStr);
     if (SUCCEEDED(hr)) {
         CComVariant var(htmlStr);
-        return FB::ptr_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
+        return std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())->getVariant(&var).convert_cast<std::string>();
     } else {
         throw FB::script_error("Could not get innerhtml");
     }

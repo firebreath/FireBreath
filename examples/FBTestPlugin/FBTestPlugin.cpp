@@ -61,12 +61,12 @@ FB::JSAPIPtr FBTestPlugin::createJSAPI()
     // Return a SimpleMath object instead of a FBTestPluginAPI:
     if (!m_mimetype.compare("application/x-fbtestplugin-math")) {
         // Create a new simplemath object each time        
-        return boost::make_shared<SimpleMathAPI>(m_host);
+        return std::make_shared<SimpleMathAPI>(m_host);
     }
 
     // By default, return a FBTestPluginAPI object:
     // m_host is the BrowserHost
-    return boost::make_shared<FBTestPluginAPI>(FB::ptr_cast<FBTestPlugin>(shared_from_this()), m_host);
+    return std::make_shared<FBTestPluginAPI>(std::dynamic_pointer_cast<FBTestPlugin>(shared_from_this()), m_host);
 }
 
 bool FBTestPlugin::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow*)
@@ -105,7 +105,7 @@ bool FBTestPlugin::onAttached( FB::AttachedEvent *evt, FB::PluginWindow* win)
     // This is called when the window is attached; don't start drawing before this!
     FB::PluginWindowlessWin* windowless = dynamic_cast<FB::PluginWindowlessWin*>(win);
     if (windowless) {
-        FB::D3d10AsyncDrawServicePtr ads = FB::ptr_cast<FB::D3d10AsyncDrawService>(windowless->getAsyncDrawService());
+        FB::D3d10AsyncDrawServicePtr ads = std::dynamic_pointer_cast<FB::D3d10AsyncDrawService>(windowless->getAsyncDrawService());
         if (ads) {
             startDrawAsync(ads);
         }

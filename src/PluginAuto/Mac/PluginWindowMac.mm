@@ -278,7 +278,7 @@ uint32_t PluginWindowMac::getWindowWidth() const {
 }
 
 static void timerCallback(NPP npp, uint32_t timerID) {
-    boost::shared_ptr<FB::Npapi::NpapiPluginMac> plugin = FB::ptr_cast<FB::Npapi::NpapiPluginMac>(FB::Npapi::getPlugin(npp));
+    std::shared_ptr<FB::Npapi::NpapiPluginMac> plugin = std::dynamic_pointer_cast<FB::Npapi::NpapiPluginMac>(FB::Npapi::getPlugin(npp));
     if (plugin)
         plugin->HandleTimerEvent();
 }

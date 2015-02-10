@@ -34,7 +34,7 @@ namespace FB { namespace ActiveX {
         public FB::JSObject
     {
     public:
-        static boost::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
+        static std::shared_ptr<IDispatchAPI> create(IDispatch *, const ActiveXBrowserHostPtr&);
         virtual ~IDispatchAPI(void);
 
         void *getEventId() const

@@ -61,7 +61,7 @@ namespace FB
         ///
         /// @param  inner       the API to reference; a reference to this API will be held and inner will
         ///                     not be released until this proxy object is released
-        /// @return boost::shared_ptr<JSAPIProxy>
+        /// @return std::shared_ptr<JSAPIProxy>
         /// @since  1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static JSAPIProxyPtr create(const FB::JSAPIPtr &inner);
@@ -77,7 +77,7 @@ namespace FB
         ///                     is released this object will throw an exception in response to any access
         ///                     except requests for the "expired" property, which is reserved in JSAPIProxy
         ///                     and will return true if inner has been released.
-        /// @return boost::shared_ptr<JSAPIProxy>
+        /// @return std::shared_ptr<JSAPIProxy>
         /// @since  1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static JSAPIProxyPtr create(const FB::JSAPIWeakPtr &inner);

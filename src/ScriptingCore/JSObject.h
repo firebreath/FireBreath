@@ -74,8 +74,14 @@ namespace FB
                                            const std::vector<JSObjectPtr>& ifaces) {};
         virtual bool isValid() = 0;
 
-        JSObjectPtr shared_from_this() { return boost::static_pointer_cast<JSObject>(JSAPI::shared_from_this()); }
-        boost::shared_ptr<const JSObject> shared_from_this() const { return boost::static_pointer_cast<const JSObject>(JSAPI::shared_from_this()); }
+        JSObjectPtr shared_from_this() {
+            auto ptr = JSAPI::shared_from_this();
+            return std::dynamic_pointer_cast<JSObject>(ptr);
+        }
+        std::shared_ptr<const JSObject> shared_from_this() const {
+            auto ptr = JSAPI::shared_from_this();
+            return std::dynamic_pointer_cast<const JSObject>(ptr);
+        }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
@@ -212,7 +218,7 @@ namespace FB
             boost::is_base_of<FB::JSAPI, T>,
             boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
             ,variant>::type
-        make_variant(const boost::shared_ptr<T>& ptr) {
+        make_variant(const std::shared_ptr<T>& ptr) {
             if (ptr)
                 return variant(FB::JSAPIPtr(ptr), true);
             else
@@ -220,7 +226,7 @@ namespace FB
         }
         template <class T>
         typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
-        make_variant(const boost::shared_ptr<T>& ptr) {
+        make_variant(const std::shared_ptr<T>& ptr) {
             if (ptr)
                 return variant(FB::JSObjectPtr(ptr), true);
             else
@@ -264,8 +270,8 @@ namespace FB
 
         // Convert out
         template<class T>
-        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::shared_ptr<T> >::type
-            convert_variant(const variant& var, type_spec< boost::shared_ptr<T> >)
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, std::shared_ptr<T> >::type
+            convert_variant(const variant& var, type_spec< std::shared_ptr<T> >)
         {
             FB::JSAPIPtr ptr;
             // First of all, to succeed it *must* be a JSAPI object!
@@ -274,18 +280,18 @@ namespace FB
             } else if (var.get_type() == typeid(FB::JSAPIWeakPtr)) {
                 ptr = var.cast<FB::JSAPIWeakPtr>().lock();
             } else if (var.empty() || var.is_null()) {
-                return boost::shared_ptr<T>();
+                return std::shared_ptr<T>();
             } else {
                 ptr = var.cast<FB::JSAPIPtr>();
             }
             if (!ptr)
-                return boost::shared_ptr<T>();
+                return std::shared_ptr<T>();
 
-            FB::JSObjectPtr jso = FB::ptr_cast<FB::JSObject>(ptr);
+            FB::JSObjectPtr jso = std::dynamic_pointer_cast<FB::JSObject>(ptr);
             if (jso) {
                 FB::JSAPIPtr inner = jso->getJSAPI();
                 if (inner) {
-                    boost::shared_ptr<T> tmp = FB::ptr_cast<T>(inner);
+                    std::shared_ptr<T> tmp = std::dynamic_pointer_cast<T>(inner);
                     if (tmp) {
                         // Whew! We pulled the JSAPI object out of a JSObject and found what we were
                         // looking for; we always return the inner-most object.  Keep that in mind!
@@ -294,18 +300,18 @@ namespace FB
                     // If there is an inner object, but it isn't the one we want, fall through
                 }
             }
-            boost::shared_ptr<T> ret = FB::ptr_cast<T>(ptr);
+            std::shared_ptr<T> ret = std::dynamic_pointer_cast<T>(ptr);
             if (ret)
                 return ret;
             else
                 throw FB::bad_variant_cast(var.get_type(), typeid(T));
         }
         template<class T>
-        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, boost::weak_ptr<T> >::type
-            convert_variant(const variant& var, type_spec< boost::weak_ptr<T> >)
+        typename boost::enable_if<boost::is_base_of<FB::JSAPI, T>, std::weak_ptr<T> >::type
+            convert_variant(const variant& var, type_spec< std::weak_ptr<T> >)
         {
-            boost::shared_ptr<T> sptr(var.convert_cast<boost::shared_ptr<T> >());
-            return boost::weak_ptr<T>(sptr);
+            std::shared_ptr<T> sptr(var.convert_cast<std::shared_ptr<T> >());
+            return std::weak_ptr<T>(sptr);
         }
 
         template<class Cont>
@@ -361,26 +367,26 @@ namespace FB
     /// @since 1.4
     ///
     /// @code 
-    /// if (boost::shared_ptr<MyCustomAPI> ptr = FB::get_jsapi<MyCustomAPI>(jsobject)) {
+    /// if (std::shared_ptr<MyCustomAPI> ptr = FB::get_jsapi<MyCustomAPI>(jsobject)) {
     ///     doStuff(ptr);
     /// } else {
     ///     // failed ...
     /// }
     /// @endcode
     ///
-    /// @return Returns a boost::shared_ptr<API> which is empty on failure
+    /// @return Returns a std::shared_ptr<API> which is empty on failure
     ///         and non-empty on success.
     template<class API>
-    boost::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
+    std::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
     {
-        typedef boost::shared_ptr<API> APIPtr;
+        typedef std::shared_ptr<API> APIPtr;
         
         if (!jso) {
             return APIPtr();
         }
         
         if (FB::JSAPIPtr jsapi = jso->getJSAPI()) {
-            return FB::ptr_cast<API>(jsapi);
+            return std::dynamic_pointer_cast<API>(jsapi);
         }
         
         return APIPtr();

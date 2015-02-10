@@ -24,7 +24,7 @@ namespace FB {
         TimerServicePimpl() :
             io_service(new boost::asio::io_service()),
             io_idlework(new boost::asio::io_service::work(*io_service)),
-            io_thread(NULL) {}
+            io_thread(nullptr) {}
 
         ~TimerServicePimpl() {
             io_service->stop();
@@ -34,9 +34,9 @@ namespace FB {
             io_service.reset();
         }
 
-        boost::scoped_ptr<boost::asio::io_service> io_service;
-        boost::scoped_ptr<boost::asio::io_service::work> io_idlework;
-        boost::scoped_ptr<boost::thread> io_thread;
+        std::unique_ptr<boost::asio::io_service> io_service;
+        std::unique_ptr<boost::asio::io_service::work> io_idlework;
+        std::unique_ptr<boost::thread> io_thread;
     };
 };
 

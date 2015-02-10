@@ -12,7 +12,6 @@
 #Copyright 2009-2010 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
-    
 if (WIN32)
     if (FB_OPTIMIZE STREQUAL "size")
         set (FB_OPT_PARAM "/O1 /Ob2 /Os /Oy")
@@ -78,6 +77,9 @@ endif()
 # because it is the most convenient place to put them to apply
 # to all targets
 if(UNIX)
+    set(CMAKE_CXX_STANDARD 11)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
     # XP_UNIX is used by the Gecko SDK
     set(gecko_defs "-DXP_UNIX")
     if(APPLE)

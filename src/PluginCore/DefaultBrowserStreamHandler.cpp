@@ -14,6 +14,7 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "DefaultBrowserStreamHandler.h"
+#include <memory>
 
 using namespace FB;
 
@@ -29,7 +30,7 @@ DefaultBrowserStreamHandler::~DefaultBrowserStreamHandler()
 bool DefaultBrowserStreamHandler::onStreamAttached( AttachedEvent *evt, FB::BrowserStream * Stream )
 {
     assert(Stream != NULL);
-    setStream( ptr_cast<BrowserStream>(Stream->shared_from_this()) );
+    setStream( std::dynamic_pointer_cast<BrowserStream>(Stream->shared_from_this()) );
     return false;
 }
 

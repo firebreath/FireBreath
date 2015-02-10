@@ -16,7 +16,7 @@ Copyright 2008-2012 Richard Bateman, Firebreath development team
 
 //#define ANY_IMPLICIT_CASTING    // added to enable implicit casting
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 #include <boost/any.hpp>
 #include <stdexcept>
 #include <typeinfo>
@@ -158,6 +158,13 @@ namespace FB
         struct lessthan {
             static bool impl(const boost::any& l, const boost::any& r) {
                 return boost::any_cast<T>(l) < boost::any_cast<T>(r);
+            }
+        };
+
+        template<typename T>
+        struct lessthan < std::weak_ptr<T> > {
+            static bool impl(const boost::any& l, const boost::any& r) {
+                return boost::any_cast<std::weak_ptr<T>>(l).owner_before(boost::any_cast<std::weak_ptr<T>>(r));
             }
         };
     } // namespace variant_detail
@@ -405,7 +412,7 @@ namespace FB
         }
 
         bool is_null() const {
-            return is_of_type<FB::FBNull>();
+            return is_of_type<std::nullptr_t>();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -562,6 +569,7 @@ namespace FB
 
             variant make_variant(const char* x);
             variant make_variant(const wchar_t* x);
+            variant make_variant(const std::nullptr_t);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers
             //
@@ -570,59 +578,6 @@ namespace FB
             // all const char* parameters are converted to
             // std::string
             ///////////////////////////////////////////////////
-            struct boost_variant_to_FBVariant
-                : public boost::static_visitor<FB::variant> {
-                template <typename T>
-                FB::variant operator()(T inVal) const {
-                    return FB::variant(inVal);
-                }
-            };
-
-            template <class T>
-            typename boost::enable_if<
-                FB::meta::is_boost_variant<T>, variant
-            >::type
-            make_variant(T& inVal) {
-                return boost::apply_visitor(boost_variant_to_FBVariant(), inVal);
-            }
-
-            template <typename V>
-            struct FBVariant_to_boost_variant {
-                V* res;
-                bool* found;
-                const variant& val;
-                FBVariant_to_boost_variant(const variant& val, bool* b, V* v) : res(v), found(b), val(val) {}
-
-                template <typename T>
-                void operator()(type_spec<T>&) {
-                    if (typeid(T) == val.get_type()) {
-                        // If we find an exact type match, use it
-                        *res = val.cast<T>();
-                        *found = true;
-                        return;
-                    }
-                    else if (*found) return; // When we find the correct cast we can be done
-                    try {
-                        // If we haven't found an exact match, go for the next best match
-                        *res = val.convert_cast<T>();
-                        *found = true;
-                    } catch (const FB::bad_variant_cast&) {
-                    }
-                }
-            };
-            
-            template <class T>
-            T convert_variant(const variant& var, const type_spec<T>,
-                typename boost::enable_if<FB::meta::is_boost_variant<T> >::type*p = 0) {
-                bool found(false);
-                T res;
-                FBVariant_to_boost_variant<T> converter(var, &found, &res);
-                boost::mpl::for_each<typename T::types, type_spec<boost::mpl::_1> >(converter);
-                if (found)
-                    return res;
-                else
-                    throw FB::bad_variant_cast(var.get_type(), typeid(T));
-            }
             
             const void convert_variant(const variant&, const type_spec<void>);
             const FB::FBNull convert_variant(const variant&, const type_spec<FBNull>);

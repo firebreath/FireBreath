@@ -22,7 +22,7 @@ using namespace FB::ActiveX::AXDOM;
 
 Window::Window(FB::JSObjectPtr obj, IWebBrowser2 *web)
     : FB::ActiveX::AXDOM::Node(obj, web), FB::DOM::Window(obj), FB::DOM::Node(obj),
-    m_webBrowser(web), m_htmlWin(FB::ptr_cast<IDispatchAPI>(obj)->getIDispatch())
+    m_webBrowser(web), m_htmlWin(std::dynamic_pointer_cast<IDispatchAPI>(obj)->getIDispatch())
 {
     if (!m_htmlWin) {
         throw new std::bad_cast("This is not a valid Window object");
@@ -38,7 +38,7 @@ FB::DOM::DocumentPtr Window::getDocument() const
     CComPtr<IHTMLDocument2> htmlDoc;
     m_htmlWin->get_document(&htmlDoc);
     CComQIPtr<IDispatch> htmlDocDisp(htmlDoc);
-    FB::JSObjectPtr docAPI(IDispatchAPI::create(htmlDocDisp, FB::ptr_cast<ActiveXBrowserHost>(this->m_element->getHost())));
+    FB::JSObjectPtr docAPI(IDispatchAPI::create(htmlDocDisp, std::dynamic_pointer_cast<ActiveXBrowserHost>(this->m_element->getHost())));
     return FB::DOM::Document::create(docAPI);
 }
 

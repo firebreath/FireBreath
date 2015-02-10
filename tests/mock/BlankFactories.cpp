@@ -1,7 +1,6 @@
 
 #include "BlankFactories.h"
 #include "FactoryBase.h"
-#include <boost/shared_ptr.hpp>
 #ifdef FB_WIN
 #include "Win/WindowContextWin.h"
 #endif
@@ -10,8 +9,8 @@ namespace FB { namespace Npapi
 { 
     class NpapiPlugin; 
     class NpapiBrowserHost;
-    typedef boost::shared_ptr<NpapiPlugin> NpapiPluginPtr;
-    typedef boost::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    typedef std::shared_ptr<NpapiPlugin> NpapiPluginPtr;
+    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
     
     NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
     {
@@ -66,13 +65,13 @@ public:
 
 FB::FactoryBasePtr getFactoryInstance()
 {
-    static FB::FactoryBasePtr factory = boost::make_shared<TestFactory>();
+    static FB::FactoryBasePtr factory = std::make_shared<TestFactory>();
     return factory;
 }
 
 IDispatchEx* _getCOMJSWrapper( const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease )
 {
-    return COMJSObject::NewObject(FB::ptr_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
+    return COMJSObject::NewObject(std::dynamic_pointer_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
 }
 
 const FB::WeakIDispatchExRef _getWeakRefFromCOMJSWrapper(IDispatchEx* wrapper)
