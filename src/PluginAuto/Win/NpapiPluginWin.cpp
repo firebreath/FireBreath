@@ -9,7 +9,7 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 PacketPass, Inc and the Firebreath development team
+Copyright 2009 PacketPass, Inc and the FireBreath development team
 \**********************************************************/
 
 #include <boost/algorithm/string.hpp>
@@ -64,7 +64,7 @@ struct DrawingModel {
 #define FB_DRAWING_MODEL_END_LIST { 0, (NPNVariable) 0, (NPDrawingModel) 0 }
 
 static const DrawingModel g_supportedModels[] = {
-    // FB_DRAWING_MODEL(AsyncBitmapSurface), // still todo
+    // FB_DRAWING_MODEL(AsyncBitmapSurface), // still to do
     FB_DRAWING_MODEL(AsyncWindowsDXGISurface),
     FB_DRAWING_MODEL_END_LIST
 };
@@ -132,7 +132,7 @@ void NpapiPluginWin::invalidateWindow( uint32_t left, uint32_t top, uint32_t rig
 {
     NPRect r = { top, left, bottom, right };
     if (!m_npHost->isMainThread()) {
-        m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&NpapiBrowserHost::InvalidateRect2, m_npHost, r));
+        m_npHost->ScheduleOnMainThread(m_npHost, std::bind(&NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     } else {
         m_npHost->InvalidateRect(&r);
     }

@@ -30,19 +30,7 @@ namespace FB {
                 boost::is_base_of<FB::JSAPI, T>,
                 boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
                 ,variant>::type
-            make_variant(const std::weak_ptr<T>& ptr);
-
-            template <class T>
-            typename boost::enable_if<
-                boost::mpl::and_<
-                boost::is_base_of<FB::JSAPI, T>,
-                boost::mpl::not_<boost::is_base_of<FB::JSObject, T> > >
-                ,variant>::type
             make_variant(const std::shared_ptr<T>& ptr);
-            
-            template <class T>
-            typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type
-            make_variant(const std::weak_ptr<T>& ptr);
 
             template <class T>
             typename boost::enable_if<boost::is_base_of<FB::JSObject, T>,variant>::type

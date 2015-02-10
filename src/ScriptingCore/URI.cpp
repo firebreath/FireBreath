@@ -229,14 +229,14 @@ void URI::parse_query_data(const std::string& in_str) {
     }
 }
 
-std::string FB::URI::UrlDirectory() const
+string FB::URI::UrlDirectory() const
 {
 	std::stringstream res;
 	res << protocol << string("://");
 	if (!login.empty()) res << login << "@";
 		res << domain;
 	if (port) res << ":" << boost::lexical_cast<string>(port);
-	std:string dir = res.str();
+	string dir = res.str();
 	if (path.empty() || path[path.size()-1] == '/') return string();
 	size_t loc = path.rfind("/");
 	if (loc == std::string::npos) return path;

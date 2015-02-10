@@ -14,7 +14,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 
 #include "APITypes.h"
-#include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include "variant_list.h"
 #include "variant_map.h"
@@ -226,70 +225,6 @@ TEST(VariantTriBool)
 	CHECK(bt.convert_cast<boost::tribool>());
 	CHECK(!bf.convert_cast<boost::tribool>());
 }
-TEST(VariantToBoostVariantConversionTest)
-{
-    PRINT_TESTNAME;
-    using namespace FB;
-
-    typedef boost::variant<long, int, double, std::string, FB::JSAPIPtr, FB::JSObjectPtr, FB::FBNull, FB::FBVoid> VtComplete;
-    typedef boost::variant<long> VtLong;
-    typedef boost::variant<short, int, long, boost::uint64_t> VtInts;
-    typedef boost::variant<float, double, int, long> VtNum;
-    typedef boost::variant<std::string, std::wstring> VtStr;
-    typedef boost::variant<std::wstring, std::string> VtWstr;
-
-    {
-        VtComplete a = 23;
-        variant av(a);
-        CHECK(av.convert_cast<int>() == 23);
-        a = 23.0f;
-        av = a;
-        CHECK(av.convert_cast<double>() == 23.0f);
-        a = FB::JSAPIPtr();
-        av = a;
-        CHECK(!av.convert_cast<FB::JSAPIPtr>());
-        CHECK(av.is_null());
-        a = FB::FBVoid();
-        av = a;
-        CHECK(av.empty());
-    }
-}
-TEST(BoostVariantToVariantConversionTest)
-{
-    PRINT_TESTNAME;
-    using namespace FB;
-
-    typedef FB::boost_variant::fb_compat VtComplete;
-
-    {
-        variant a = 23;
-        VtComplete av(a.convert_cast<VtComplete>());
-        CHECK(boost::get<int>(av) == 23);
-        a = 23.5;
-        av = a.convert_cast<VtComplete>();
-        CHECK(boost::get<double>(av) == 23.5f);
-        a = FB::JSAPIPtr();
-        av = a.convert_cast<VtComplete>();
-        try {
-            boost::get<FB::JSAPIPtr>(av);
-        } catch (...) {
-            CHECK(true);
-        }
-        try {
-            boost::get<FB::FBNull>(av);
-        } catch (...) {
-            CHECK(false);
-        }
-        a = FB::FBVoid();
-        av = a.convert_cast<VtComplete>();
-        try {
-            boost::get<FB::FBVoid>(av);
-        } catch (...) {
-            CHECK(false);
-        }
-    }
-}
-
 class SomeTest
 {
     char isCtored;
