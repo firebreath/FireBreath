@@ -14,10 +14,11 @@ Copyright 2010 Facebook Inc, Firebreath development team
 
 #include <string>
 #include <sstream>
+#include <thread>
+#include "ThreadInterrupt.h"
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include "SafeQueue.h"
-#include <boost/thread/thread.hpp>
 
 #pragma once
 #ifndef H_THREADRUNNERAPI
@@ -37,13 +38,14 @@ protected:
     void threadRun();
 
     FBTestPluginPtr getPlugin();
-
+    
 protected:
     FBTestPluginWeakPtr m_plugin;
     FB::BrowserHostPtr m_host;
-    boost::thread m_thread;
+    std::thread m_thread;
     FB::SafeQueue<FB::JSObjectPtr> m_queue;
     FB::SafeQueue<std::pair<std::string, FB::JSObjectPtr> > m_UrlRequestQueue;
+    FB::ThreadInterrupt m_threadMgr;
 
     std::string m_testString;
 };

@@ -15,7 +15,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <stdexcept>
 
 #include <cassert>
-#include <boost/thread.hpp>
 #include "logging.h"
 #include "BrowserHost.h"
 #include "PluginCore.h"
@@ -66,7 +65,7 @@ void NpapiPluginModule::ReleaseModule(const void* key) {
 }
 
 NpapiPluginModule::NpapiPluginModule()
-    : m_threadId(boost::this_thread::get_id())
+    : m_threadId(std::this_thread::get_id())
 {
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
@@ -79,7 +78,7 @@ NpapiPluginModule::~NpapiPluginModule()
 void NpapiPluginModule::assertMainThread()
 {
 #ifdef _DEBUG
-    assert(m_threadId == boost::this_thread::get_id());
+    assert(m_threadId == std::this_thread::get_id());
 #endif
 }
 

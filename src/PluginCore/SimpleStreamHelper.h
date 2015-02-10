@@ -21,8 +21,9 @@ Copyright 2011 Richard Bateman,
 #include "PluginEvents/StreamEvents.h"
 #include "BrowserStream.h"
 #include "URI.h"
-#include <boost/shared_array.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <boost/shared_array.hpp>
+#include <functional>
 #include <string>
 #include <list>
 #include <map>
@@ -32,7 +33,7 @@ namespace FB {
     FB_FORWARD_PTR(SimpleStreamHelper);
 
     typedef std::multimap<std::string, std::string> HeaderMap;
-    typedef boost::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
+    typedef std::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  HttpStreamResponse

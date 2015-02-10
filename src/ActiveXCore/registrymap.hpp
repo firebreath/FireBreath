@@ -13,7 +13,7 @@
 
 struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 {
-	_ATL_REGMAP_ENTRYKeeper(){ szKey=NULL; szData=NULL;}
+	_ATL_REGMAP_ENTRYKeeper(){ szKey=nullptr; szData=nullptr;}
     _ATL_REGMAP_ENTRYKeeper(LPCOLESTR key, LPCSTR cstrData)
     {
         USES_CONVERSION;
@@ -52,7 +52,7 @@ struct _ATL_REGMAP_ENTRYKeeper : public _ATL_REGMAP_ENTRY
 		szKey=key;
 		LPOLESTR newData;
 		szData = LPCOLESTR(newData =  new wchar_t[40]);
-		if(szData!=NULL)
+		if(szData!=nullptr)
 		{
 			if(0==StringFromGUID2(guid, newData,40))
 			{

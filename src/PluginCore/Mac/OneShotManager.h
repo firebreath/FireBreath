@@ -18,7 +18,7 @@
 #define FB_H_ONESHOTMANAGER
 
 #include <map>
-#include <boost/utility.hpp>
+#include <boost/noncopyable.hpp>
 
 #include "APITypes.h"
 #include "SafeQueue.h"
@@ -49,7 +49,7 @@ namespace FB
         OneShotManager();
         bool npp_nextCallback(SinkPair& callback);
 
-        mutable boost::mutex m_mutex;
+        mutable std::mutex m_mutex;
         Sinks m_sinks;
         void* m_helper;
         uint32_t m_shots;

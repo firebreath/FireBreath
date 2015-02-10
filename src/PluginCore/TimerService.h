@@ -14,8 +14,7 @@ License:    Dual license model; choose one of two:
 #ifndef H_FB_TIMER_SERVICE
 #define H_FB_TIMER_SERVICE
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/thread.hpp>
+#include <mutex>
 
 #include "FBPointers.h"
 
@@ -43,7 +42,7 @@ namespace FB {
 		boost::asio::io_service* getIOService();
 	protected:
 		static TimerServiceWeakPtr inst;
-		static boost::mutex instance_mutex;
+		static std::mutex instance_mutex;
 		TimerService();
 
 	private:

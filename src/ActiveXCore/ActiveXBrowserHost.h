@@ -63,7 +63,7 @@ namespace FB {
             FB::DOM::ElementPtr getDOMElement();
             void Navigate(const std::string& url, const std::string& target);
             
-            bool hasHTMLWindow() { return m_htmlWin != NULL; }
+            bool hasHTMLWindow() { return !!m_htmlWin; }
 
             void suspend();
             void resume(IWebBrowser2 *doc, IOleClientSite* clientSite);

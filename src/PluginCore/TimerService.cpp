@@ -15,6 +15,7 @@ License:    Dual license model; choose one of two:
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "TimerService.h"
 #include <boost/asio.hpp>
+#include <boost/thread.hpp>
 
 using namespace FB;
 
@@ -41,11 +42,11 @@ namespace FB {
 };
 
 TimerServiceWeakPtr TimerService::inst;
-boost::mutex TimerService::instance_mutex;
+std::mutex TimerService::instance_mutex;
 
 TimerServicePtr TimerService::instance()
 {
-	boost::mutex::scoped_lock lock(instance_mutex);
+	std::unique_lock<std::mutex> lock(instance_mutex);
 	TimerServicePtr service(inst.lock());
     if(!service)
 	{

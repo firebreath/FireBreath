@@ -10,6 +10,7 @@
 #define H_TEMPLATEPLUGIN
 
 #include <memory>
+#include <thread>
 
 #include "PluginEvents/MouseEvents.h"
 #include "PluginEvents/DrawingEvents.h"
@@ -67,7 +68,8 @@ public:
     void renderThread(FB::D3d10AsyncDrawServicePtr);
     bool render(ID3D10Device1*, ID3D10RenderTargetView*);
 
-    boost::thread m_thread;
+    std::atomic<bool> m_threadInterrupted;
+    std::thread m_thread;
 #endif
 };
 

@@ -11,8 +11,9 @@
 
 #include <math.h>
 #include <sstream>
+#include <chrono>
 #include <stdio.h>
-#include "boost/bind.hpp" 
+#include <functional>
 
 #include "FBTestPluginAPI.h"
 #include "SimpleMathAPI.h"
@@ -44,6 +45,9 @@ void FBTestPlugin::StaticDeinitialize()
 
 FBTestPlugin::FBTestPlugin(const std::string& mimetype) :
     m_mimetype(mimetype)
+#ifdef FBWIN_ASYNCSURFACE
+    , m_threadInterrupted(true)
+#endif
 {
 }
 
@@ -168,7 +172,7 @@ bool FBTestPlugin::draw( FB::RefreshEvent *evt, FB::PluginWindow* win )
 
 bool FBTestPlugin::startDrawAsync(FB::D3d10AsyncDrawServicePtr ads)
 {
-    m_thread = boost::thread(&FBTestPlugin::renderThread, this, ads);
+    m_thread = std::thread(&FBTestPlugin::renderThread, this, ads);
     return true;
 }
 
@@ -198,23 +202,18 @@ struct Scene
 
 void FBTestPlugin::renderThread(FB::D3d10AsyncDrawServicePtr ads)
 {
-    try {
-        Scene scene(asyncTestBgColor());
-        do {
-            ads->render(boost::bind(&Scene::render, &scene, _1, _2, _3, _4));
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(20));
-        } while(true);
-    }
-    catch (boost::thread_interrupted) {
-        // this is expected
-    }
+    Scene scene(asyncTestBgColor());
+    do {
+        ads->render(std::bind(&Scene::render, &scene, _1, _2, _3, _4));
+        std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    } while(!m_threadInterrupted);
 }
 
 //virtual
 void FBTestPlugin::ClearWindow()
 {
     // the window is about to go away, so we need to stop our render thread
-    m_thread.interrupt();
+    m_threadInterrupted = true;
     m_thread.join();
 }
 

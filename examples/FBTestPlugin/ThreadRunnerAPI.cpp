@@ -14,6 +14,7 @@ Copyright 2010 Facebook Inc, Firebreath development team
 
 #include "FBTestPlugin.h"
 #include "SimpleStreamHelper.h"
+#include "ThreadInterrupt.h"
 #include "variant_list.h"
 #include <utility>
 #include "logging.h"
@@ -26,12 +27,12 @@ ThreadRunnerAPI::ThreadRunnerAPI(const FB::BrowserHostPtr& host, const FBTestPlu
     registerMethod("addMethod", make_method(this, &ThreadRunnerAPI::addMethod));
     registerMethod("addRequest", make_method(this, &ThreadRunnerAPI::addRequest));
 
-    m_thread = boost::thread(&ThreadRunnerAPI::threadRun, this);
+    m_thread = std::thread(&ThreadRunnerAPI::threadRun, this);
 }
 
 void ThreadRunnerAPI::threadRun()
 {
-    while (!boost::this_thread::interruption_requested())
+    while (!m_threadMgr.cancelled())
     {
         m_host->htmlLog("Thread Dialog iteration start");
 
@@ -91,13 +92,18 @@ void ThreadRunnerAPI::threadRun()
             }
         }
 
-        boost::this_thread::sleep(boost::posix_time::seconds(1));
+        try {
+            m_threadMgr.wait(std::chrono::milliseconds(1000));
+        }
+        catch (FB::thread_interrupted&) {
+            return;
+        }
     }
 }
 
 ThreadRunnerAPI::~ThreadRunnerAPI()
 {
-    m_thread.interrupt();
+    m_threadMgr.cancel();
     m_thread.join();
 }
 

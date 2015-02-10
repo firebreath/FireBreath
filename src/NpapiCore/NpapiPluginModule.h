@@ -20,7 +20,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include "NpapiTypes.h"
 #include "FactoryBase.h"
-#include <boost/thread.hpp>
+#include <thread>
 #include <boost/noncopyable.hpp>
 
 namespace FB {
@@ -46,7 +46,7 @@ namespace FB {
             NPNetscapeFuncs NPNFuncs;
 
         protected:
-            boost::thread::id m_threadId;
+            std::thread::id m_threadId;
             static volatile uint32_t PluginModuleInitialized;
             static Modules m_modules;
 

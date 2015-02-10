@@ -16,9 +16,9 @@
 #ifndef H_FB_SafeQueue
 #define H_FB_SafeQueue
 
-#include <boost/thread/mutex.hpp>
-#include <boost/thread/condition_variable.hpp>
 #include <queue>
+#include <condition_variable>
+#include <mutex>
 
 namespace FB {
 
@@ -32,8 +32,8 @@ namespace FB {
     {
     private:
         std::queue<Data> the_queue;
-        mutable boost::mutex the_mutex;
-        boost::condition_variable the_condition_variable;
+        mutable std::mutex the_mutex;
+        std::condition_variable the_condition_variable;
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn void SafeQueue::push(Data const& data)
@@ -44,7 +44,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void push(Data const& data)
         {
-            boost::mutex::scoped_lock lock(the_mutex);
+            std::unique_lock<std::mutex> lock(the_mutex);
             the_queue.push(data);
             lock.unlock();
             the_condition_variable.notify_one();
@@ -59,7 +59,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool empty() const
         {
-            boost::mutex::scoped_lock lock(the_mutex);
+            std::unique_lock<std::mutex> lock(the_mutex);
             return the_queue.empty();
         }
 
@@ -74,7 +74,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool try_pop(Data& popped_value)
         {
-            boost::mutex::scoped_lock lock(the_mutex);
+            std::unique_lock<std::mutex> lock(the_mutex);
             if(the_queue.empty())
             {
                 return false;
@@ -86,7 +86,7 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn bool SafeQueue::timed_wait_and_pop(Data& popped_value, const boost::posix_time::time_duration& duration)
+        /// @fn bool SafeQueue::timed_wait_and_pop(Data& popped_value, const std::chrono::duration<Rep, Period>& rel_time)
         ///
         /// @brief  Tries to pop a value off the front of the queue; if the queue is empty it will wait
         ///         for the specified duration until something is pushed onto the back of the queue
@@ -97,9 +97,10 @@ namespace FB {
         ///
         /// @return true if a value is returned, false if the queue was empty
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool timed_wait_and_pop(Data& popped_value, const boost::posix_time::time_duration& duration)
+        template< class Rep, class Period >
+        bool timed_wait_and_pop(Data& popped_value, const std::chrono::duration<Rep, Period>& rel_time)
         {
-            boost::mutex::scoped_lock lock(the_mutex);
+            std::unique_lock<std::mutex> lock(the_mutex);
             if(the_queue.empty())
             {
                 // Wait for the specified duration if no values are there
@@ -126,7 +127,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         void wait_and_pop(Data& popped_value)
         {
-            boost::mutex::scoped_lock lock(the_mutex);
+            std::unique_lock<std::mutex> lock(the_mutex);
             while(the_queue.empty())
             {
                 the_condition_variable.wait(lock);

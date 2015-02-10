@@ -14,7 +14,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "win_targetver.h"
 #include "win_common.h"
-#include <boost/assign.hpp>
+#include <cstdint>
 #include <memory>
 #include "axstream.h"
 #include "DOM/Document.h"
@@ -211,10 +211,10 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_I8:
-        retVal = static_cast<boost::int64_t>(cVar->llVal);
+        retVal = static_cast<int64_t>(cVar->llVal);
         break;
     case VT_UI8:
-        retVal = static_cast<boost::uint64_t>(cVar->ullVal);
+        retVal = static_cast<uint64_t>(cVar->ullVal);
     case VT_LPSTR:
     case VT_LPWSTR:
     case VT_BSTR:
@@ -343,7 +343,7 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
 {
     assertMainThread(); // This should only be called on the main thread
     typedef std::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
-    IDispatchEx* ret(NULL);
+    IDispatchEx* ret(nullptr);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
         return getFactoryInstance()->createCOMJSObject(shared_from_this(), api, autoRelease);

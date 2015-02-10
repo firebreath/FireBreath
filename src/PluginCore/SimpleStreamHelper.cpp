@@ -15,8 +15,9 @@ Copyright 2011 Richard Bateman,
 
 #include "BrowserHost.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
+#include <mutex>
+#include <condition_variable>
 
 #include "BrowserStreamRequest.h"
 #include "SimpleStreamHelper.h"
@@ -86,13 +87,13 @@ public:
     void getURLCallback(bool success, const FB::HeaderMap& headers,
         const boost::shared_array<uint8_t>& data, const size_t size)
     {
-        boost::lock_guard<boost::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
         m_response = std::make_shared<FB::HttpStreamResponse>(success, headers, data, size);
         done = true;
         m_cond.notify_all();
     }
     void waitForDone() {
-        boost::unique_lock<boost::mutex> lock(m_mutex);
+        std::unique_lock<std::mutex> lock(m_mutex);
         while (!done) {
             m_cond.wait(lock);
         }
@@ -100,8 +101,8 @@ public:
 
     bool done;
     FB::SimpleStreamHelperPtr ptr;
-    boost::condition_variable m_cond;
-    boost::mutex m_mutex;
+    std::condition_variable m_cond;
+    std::mutex m_mutex;
     FB::HttpStreamResponsePtr m_response;
 };
 
@@ -157,7 +158,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
     if (!evt->success) {
         if (callback)
             callback(false, FB::HeaderMap(), boost::shared_array<uint8_t>(), received);
-        callback.clear();
+        callback = nullptr;
         self.reset();
         return false;
     }
@@ -182,7 +183,7 @@ bool FB::SimpleStreamHelper::onStreamCompleted( FB::StreamCompletedEvent *evt, F
         headers = parse_http_headers(stream->getHeaders());
         callback(true, headers, data, received);
     }
-    callback.clear();
+    callback = nullptr;
     self.reset();
     return false; // Always return false to make sure the browserhost knows to let go of the object
 }

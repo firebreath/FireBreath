@@ -72,7 +72,7 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
     if (!doc3) {
         throw std::exception("Document does not support getElementById");
     }
-    CComPtr<IHTMLElement> el(NULL);
+    CComPtr<IHTMLElement> el(nullptr);
     doc3->getElementById(CComBSTR(FB::utf8_to_wstring(elem_id).c_str()), &el);
     CComQIPtr<IDispatch> disp(el);
     FB::JSObjectPtr ptr(IDispatchAPI::create(disp, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
@@ -81,7 +81,7 @@ FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
 
 FB::DOM::ElementPtr Document::createElement(const std::string &name) const
 {
-	CComPtr<IHTMLElement> el(NULL);
+	CComPtr<IHTMLElement> el(nullptr);
 	HRESULT hr = m_htmlDoc->createElement(CComBSTR(FB::utf8_to_wstring(name).c_str()), &el);
 	if (FAILED(hr)) {
 		throw std::runtime_error("Failed to create element!");

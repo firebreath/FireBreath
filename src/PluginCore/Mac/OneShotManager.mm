@@ -61,14 +61,14 @@ FB::OneShotManager::~OneShotManager()
 
 void FB::OneShotManager::npp_register(void* instance) {
     // If there isn't a deque for the instance, create it.
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
     if (m_sinks.end() == sink)
         m_sinks[instance] = new SinkQueue();
 }
 void FB::OneShotManager::npp_unregister(void* instance) {
     // If there is a deque for the instance, destroy it and all callbacks.
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
     if (m_sinks.end() != sink) {
         m_shots -= sink->second->size();
@@ -79,7 +79,7 @@ void FB::OneShotManager::npp_unregister(void* instance) {
 
 void FB::OneShotManager::npp_scheduleAsyncCallback(void* instance, OneShotCallback func, void *userData) {
     // If there is a deque for the instance, add the callback.
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
     if (m_sinks.end() != sink) {
         sink->second->push_back(std::make_pair(userData, func));
@@ -93,7 +93,7 @@ void FB::OneShotManager::npp_scheduleAsyncCallback(void* instance, OneShotCallba
 
 bool FB::OneShotManager::npp_nextCallback(SinkPair& callback) {
     // return the next callback.
-    boost::mutex::scoped_lock lock(m_mutex);
+    std::unique_lock<std::mutex> lock(m_mutex);
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.begin();
     while (m_sinks.end() != sink) {
         SinkQueue::iterator call = sink->second->begin();

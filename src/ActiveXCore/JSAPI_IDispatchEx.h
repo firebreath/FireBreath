@@ -210,16 +210,16 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::EnumConnectionPoints(IEnumConnectionPoints **ppEnum)
     {
-        if (ppEnum == NULL)
+        if (!ppEnum)
             return E_POINTER;
-        *ppEnum = NULL;
-        CComEnumConnectionPoints* pEnum = NULL;
+        *ppEnum = nullptr;
+        CComEnumConnectionPoints* pEnum = nullptr;
 
         pEnum = new CComObject<CComEnumConnectionPoints>;
-        if (pEnum == NULL)
+        if (!pEnum)
             return E_OUTOFMEMORY;
 
-        IConnectionPoint *connectionPoint[1] = { NULL };
+        IConnectionPoint *connectionPoint[1] = { nullptr };
         static_cast<T*>(this)->QueryInterface(IID_IConnectionPoint, (void **)connectionPoint);
 
         HRESULT hRes = pEnum->Init(connectionPoint, &connectionPoint[1],
@@ -241,9 +241,9 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::FindConnectionPoint(REFIID riid, IConnectionPoint **ppCP)
     {
-        if (ppCP == NULL)
+        if (!ppCP)
             return E_POINTER;
-        *ppCP = NULL;
+        *ppCP = nullptr;
         HRESULT hRes = CONNECT_E_NOCONNECTION;
 
         if (InlineIsEqualGUID(*piid, riid)) {
@@ -264,7 +264,7 @@ namespace FB { namespace ActiveX {
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::GetConnectionPointContainer(IConnectionPointContainer **ppCPC)
     {
-        if (ppCPC == NULL)
+        if (!ppCPC)
             return E_POINTER;
 
         return static_cast<T*>(this)->QueryInterface(__uuidof(IConnectionPointContainer), (void**)ppCPC);
@@ -347,7 +347,7 @@ namespace FB { namespace ActiveX {
                                                VARIANT *pVarResult, EXCEPINFO *pExcepInfo,
                                                UINT *puArgErr)
     {
-        return InvokeEx(dispIdMember, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, NULL);
+        return InvokeEx(dispIdMember, lcid, wFlags, pDispParams, pVarResult, pExcepInfo, nullptr);
     }
 
 
@@ -545,11 +545,11 @@ namespace FB { namespace ActiveX {
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
 			m_getLastExceptionFunc->setMessage(se.what());
-            if (pei != NULL) {
+            if (pei) {
                 pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
                 pei->bstrDescription = CComBSTR(se.what()).Detach();
-                pei->bstrHelpFile = NULL;
-                pei->pfnDeferredFillIn = NULL;
+                pei->bstrHelpFile = nullptr;
+                pei->pfnDeferredFillIn = nullptr;
                 pei->scode = E_NOTIMPL;
             }
             return DISP_E_EXCEPTION;

@@ -168,9 +168,9 @@ std::string ActiveXStream::getVerbData() const
 void UseWinHTTP(const WCHAR* URL)
 {
   BOOL  bResults = FALSE;
-    HINTERNET hSession = NULL,
-              hConnect = NULL,
-              hRequest = NULL;
+    HINTERNET hSession = nullptr,
+              hConnect = nullptr,
+              hRequest = nullptr;
 
     // Use WinHttpOpen to obtain a session handle.
     hSession = WinHttpOpen(  L"DCWebClient/1.0", 
@@ -201,7 +201,7 @@ void UseWinHTTP(const WCHAR* URL)
     if (hConnect)
         hRequest = WinHttpOpenRequest( hConnect, L"GET", 
                                        comps.lpszUrlPath, 
-                                       NULL, WINHTTP_NO_REFERER, 
+                                       nullptr, WINHTTP_NO_REFERER, 
                                        WINHTTP_DEFAULT_ACCEPT_TYPES,
                                        0);
 

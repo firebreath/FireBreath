@@ -253,7 +253,7 @@ namespace FB {
                 m_host->ScheduleOnMainThread(ref, boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
             } else {
                 if (m_spInPlaceSite)
-                    m_spInPlaceSite->InvalidateRect(NULL, TRUE);
+                    m_spInPlaceSite->InvalidateRect(nullptr, TRUE);
             }
         }
 
@@ -363,7 +363,7 @@ namespace FB {
                             hr = m_viewObjectPresentSite->SetCompositionMode(VIEW_OBJECT_COMPOSITION_MODE_SURFACEPRESENTER);
                             if (SUCCEEDED(hr)) {
                                 AsyncDrawServicePtr asd = std::make_shared<ActiveXAsyncDrawService>(m_host, m_viewObjectPresentSite);
-                                std::unique_ptr<PluginWindow> pw(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL, asd)));
+                                std::unique_ptr<PluginWindow> pw(getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(nullptr, asd)));
                                 pluginWin.swap(pw);
                                 gotone = true;
                             }
@@ -377,7 +377,7 @@ namespace FB {
                 PluginWindow* pw = 0;
                 if (m_bWndLess) {
                     FB::PluginWindowlessWin* pww;
-                    pw = pww = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(NULL));
+                    pw = pww = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(nullptr));
                     pww->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
                     if (m_spInPlaceSite) {
                         HWND hwnd = 0;
@@ -436,7 +436,7 @@ namespace FB {
 
             boost::scoped_array<HRESULT> results(new HRESULT[pCount]);
             boost::scoped_array<CComVariant> vals(new CComVariant[pCount]);
-            hr = pBag->Read(pGot, pArr.get(), NULL, vals.get(), results.get());
+            hr = pBag->Read(pGot, pArr.get(), nullptr, vals.get(), results.get());
             if (SUCCEEDED(hr)) {
                 for(ULONG i = 0; i < pGot; ++i) {
                     HRESULT curRes = results[i];
@@ -517,7 +517,7 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::GetClassID( CLSID *pClassID )
         {
-            if (pClassID == NULL)
+            if (!pClassID)
                 return E_POINTER;
             *pClassID = GetObjectCLSID();
             return S_OK;
@@ -532,7 +532,7 @@ namespace FB {
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         STDMETHODIMP CFBControl<pFbCLSID, pMT,ICurObjInterface,piid,plibid>::GetInterfaceSafetyOptions(REFIID riid, DWORD *pdwSupportedOptions, DWORD *pdwEnabledOptions)
         {
-            if (pdwSupportedOptions == NULL || pdwEnabledOptions == NULL)
+            if (!pdwSupportedOptions || !pdwEnabledOptions)
                 return E_POINTER;
 
             HRESULT hr;

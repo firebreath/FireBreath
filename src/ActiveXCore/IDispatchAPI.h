@@ -41,10 +41,10 @@ namespace FB { namespace ActiveX {
         {
             IDispatchSRef sref(m_obj.lock());
             if (sref) return (void*)sref->getPtr();
-            else return NULL;
+            else return nullptr;
         }
         void *getEventContext() const {
-            if (m_browser.expired()) return NULL;
+            if (m_browser.expired()) return nullptr;
             else return getHost()->getContextID();
         };
         IDispatch* getIDispatch() const {

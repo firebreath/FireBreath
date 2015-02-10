@@ -40,7 +40,7 @@ using namespace FB::ActiveX;
 // ---------------------------------------------------------------------------
 ActiveXBindStatusCallback::ActiveXBindStatusCallback() :
     m_pbinding(0), m_pstm(0), m_cRef(1), m_cbOld(0), m_dwAction( BINDVERB_GET ), m_fRedirect( FALSE ), m_transactionStarted( false ),
-    m_hDataToPost(NULL), m_cbDataToPost(0) 
+    m_hDataToPost(nullptr), m_cbDataToPost(0) 
 {
 }
 
@@ -49,7 +49,7 @@ ActiveXBindStatusCallback::~ActiveXBindStatusCallback()
     if (m_hDataToPost) 
     {
         ::GlobalFree(m_hDataToPost);
-        m_hDataToPost = NULL;
+        m_hDataToPost = nullptr;
     }
 }
 
@@ -66,7 +66,7 @@ HRESULT ActiveXBindStatusCallback::Create(ActiveXBindStatusCallback** ppBindStat
         return E_POINTER;
     }
     
-    *ppBindStatusCallback = NULL;
+    *ppBindStatusCallback = nullptr;
 
     pBindStatusCallback = new ActiveXBindStatusCallback();
     if (!pBindStatusCallback)
@@ -139,7 +139,7 @@ HRESULT ActiveXBindStatusCallback::InitPostData(const char* szData)
  STDMETHODIMP
 ActiveXBindStatusCallback::QueryInterface(REFIID riid, void** ppv)
 {
-    *ppv = NULL;
+    *ppv = nullptr;
 
     if (riid==IID_IUnknown || riid==IID_IBindStatusCallback)    
     {
@@ -166,7 +166,7 @@ ActiveXBindStatusCallback::QueryInterface(REFIID riid, void** ppv)
  STDMETHODIMP
 ActiveXBindStatusCallback::OnStartBinding(DWORD dwReserved, IBinding* pbinding)
 {
-    if (NULL != m_pbinding)
+    if (nullptr != m_pbinding)
     {
         m_pbinding->Release();
     }
@@ -174,7 +174,7 @@ ActiveXBindStatusCallback::OnStartBinding(DWORD dwReserved, IBinding* pbinding)
     // Cache the URLMON-provided IBinding interface so that we can control the download
     m_pbinding = pbinding;
 
-    if (m_pbinding != NULL)
+    if (m_pbinding != nullptr)
     {
         m_pbinding->AddRef();
         //SetStatusText(_T("Starting to bind..."));
@@ -288,7 +288,7 @@ ActiveXBindStatusCallback::OnStopBinding(HRESULT hrStatus, LPCWSTR pszError)
     if (m_pbinding)
     {
         m_pbinding->Release();
-        m_pbinding = NULL;
+        m_pbinding = nullptr;
     }
 
     ODS("OnStopBinding\n");
@@ -309,12 +309,12 @@ ActiveXBindStatusCallback::GetBindInfo(DWORD* pgrfBINDF, BINDINFO* pbindInfo)
     // Set up the BINDINFO data structure
     pbindInfo->cbSize = sizeof(BINDINFO);
     pbindInfo->dwBindVerb = m_dwAction; // here's where the action is defined
-    pbindInfo->szExtraInfo = NULL;
+    pbindInfo->szExtraInfo = nullptr;
 
     // Initialize the STGMEDIUM.
     memset(&pbindInfo->stgmedData, 0, sizeof(STGMEDIUM));
     pbindInfo->grfBindInfoF = 0;
-    pbindInfo->szCustomVerb = NULL;
+    pbindInfo->szCustomVerb = nullptr;
 
     // set up action-specific members
     switch(m_dwAction)
@@ -434,7 +434,7 @@ STDMETHODIMP ActiveXBindStatusCallback::BeginningTransaction(LPCWSTR szURL,
         return E_POINTER;
     }
 
-    *pszAdditionalHeaders = NULL;
+    *pszAdditionalHeaders = nullptr;
 
     std::wstringstream extraHeaders;
 
@@ -485,7 +485,7 @@ STDMETHODIMP ActiveXBindStatusCallback::OnResponse(/* [in] */ DWORD dwResponseCo
         return E_POINTER;
     }
 
-    *pszAdditionalRequestHeaders = NULL;
+    *pszAdditionalRequestHeaders = nullptr;
 
     if ( m_request->stream )
     {   

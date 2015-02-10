@@ -18,8 +18,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <vector>
 #include <string>
 #include <memory>
-#include <boost/thread/condition_variable.hpp>
 #include <boost/thread/mutex.hpp>
+#include <mutex>
+#include <condition_variable>
 #include "APITypes.h"
 #include "JSObject.h"
 #include "BrowserHost.h"
@@ -102,8 +103,8 @@ namespace FB {
         variant m_result;
         bool m_returned;
 
-        boost::condition_variable m_cond;
-        boost::mutex m_mutex;
+        std::condition_variable m_cond;
+        std::mutex m_mutex;
     };
 
     template<class C, class Functor>
@@ -139,7 +140,7 @@ namespace FB {
             CrossThreadCallPtr call(new CrossThreadCall(funct));
             CrossThreadCallWeakPtr *callWeak = new CrossThreadCallWeakPtr(call);
             {
-                boost::unique_lock<boost::mutex> lock(call->m_mutex);
+                std::unique_lock<std::mutex> lock(call->m_mutex);
                 if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, callWeak)) {
                     // Browser probably shutting down, but cross thread call failed.
                     delete callWeak;
@@ -147,8 +148,7 @@ namespace FB {
                 }
 
                 while (!call->m_returned && !host->isShutDown()) {
-                    boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(10);
-                    call->m_cond.timed_wait(lock, wait_duration);
+                    call->m_cond.wait_for(lock, std::chrono::milliseconds(10));
                 }
                 if (host->isShutDown())
                     throw FB::script_error("Shutting down");
@@ -181,7 +181,7 @@ namespace FB {
             CrossThreadCallPtr call(new CrossThreadCall(funct));
             CrossThreadCallWeakPtr *callWeak = new CrossThreadCallWeakPtr(call);
             {
-                boost::unique_lock<boost::mutex> lock(call->m_mutex);
+                std::unique_lock<std::mutex> lock(call->m_mutex);
                 if (!host->ScheduleAsyncCall(&CrossThreadCall::syncCallbackFunctor, callWeak)) {
                     // Browser probably shutting down, but cross thread call failed.
                     delete callWeak;
@@ -189,8 +189,7 @@ namespace FB {
                 }
 
                 while (!call->m_returned && !host->isShutDown()) {
-                    boost::posix_time::time_duration wait_duration = boost::posix_time::milliseconds(10);
-                    call->m_cond.timed_wait(lock, wait_duration);
+                    call->m_cond.wait_for(lock, std::chrono::milliseconds(10));
                 }
                 if (host->isShutDown())
                     throw FB::script_error("Shutting down");

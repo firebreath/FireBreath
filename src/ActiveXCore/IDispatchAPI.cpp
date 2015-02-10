@@ -233,10 +233,10 @@ bool IDispatchAPI::HasProperty(const std::string& propertyName) const
         CComQIPtr<IDispatchEx> dispatchEx(getIDispatch());
         if (dispatchEx) {
             hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, 
-                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, nullptr);
         } else {
             hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, nullptr);
         }
         return SUCCEEDED(hr);
     } catch (...) { return false; }
@@ -285,10 +285,10 @@ FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
         CComQIPtr<IDispatchEx> dispatchEx(getIDispatch());
         if (dispatchEx) {
             hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYGET, &params,
-                &result, &exceptionInfo, NULL);
+                &result, &exceptionInfo, nullptr);
         } else {
             hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_PROPERTYGET, &params, &result, &exceptionInfo, nullptr);
         }
 
         if (FAILED(hr)) {
@@ -343,14 +343,14 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     CComQIPtr<IDispatchEx> dispatchEx(getIDispatch());
     if (dispatchEx) {
         hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUTREF, &params,
-            &result, &exceptionInfo, NULL);
+            &result, &exceptionInfo, nullptr);
         if (hr == DISP_E_MEMBERNOTFOUND) {
             hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT, DISPATCH_PROPERTYPUT, &params,
-                NULL, &exceptionInfo, NULL);
+                nullptr, &exceptionInfo, nullptr);
         }
     } else {
         hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_PROPERTYPUT, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_PROPERTYPUT, &params, &result, &exceptionInfo, nullptr);
     }
 
     if (FAILED(hr)) {
@@ -470,10 +470,10 @@ FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vecto
     HRESULT hr;
     if (!dispatchEx) {
         hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
     } else {
         hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
-            DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
     }
     if (FAILED(hr)) {
         throw FB::script_error("Method invoke failed");
@@ -525,10 +525,10 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
         HRESULT hr;
         if (!dispatchEx) {
             hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
         } else {
             hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
-                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
         }
     }
     it = ifaces.begin();
@@ -543,10 +543,10 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
         HRESULT hr;
         if (!dispatchEx) {
             hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
         } else {
             hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
-                DISPATCH_METHOD, &params, &result, &exceptionInfo, NULL);
+                DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
         }
     }
 }
@@ -591,10 +591,10 @@ FB::variant IDispatchAPI::Construct(const std::vector<FB::variant>& args)
     HRESULT hr;
     if (!dispatchEx) {
         hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, nullptr);
     } else {
         hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
-            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, NULL);
+            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, nullptr);
     }
     if (FAILED(hr)) {
         throw FB::script_error("Method invoke failed");
@@ -608,7 +608,7 @@ FB::JSAPIPtr IDispatchAPI::getJSAPI() const
     if (m_browser.expired() || m_obj.expired()) {
         return FB::JSAPIPtr();
     }
-    JSAPI_IDispatchExBase* p(NULL);
+    JSAPI_IDispatchExBase* p(nullptr);
     try {
         CComQIPtr<IFireBreathObject> fbObj(getIDispatch());
         // If it's our own element then both of these will pass!  This means it isn't us!
