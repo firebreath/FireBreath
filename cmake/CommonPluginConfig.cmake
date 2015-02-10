@@ -36,7 +36,7 @@ set(FB_PLUGIN_INCLUDE_DIRS
     ${FB_INCLUDE_DIRS}
     ${ActiveXCore_SOURCE_DIR}
     ${ScriptingCore_SOURCE_DIR}
-    ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}
+    ${FB_ROOT}/src/PluginAuto/${FB_PLATFORM_NAME}
     ${FB_ROOT}/src/ActiveXCore
     ${PluginCore_SOURCE_DIR}
     ${FB_TEMPLATE_DEST_DIR}
@@ -53,8 +53,7 @@ if (VERBOSE)
     message("FB_INCLUDE_DIRS: ${FB_INCLUDE_DIRS}")
     message("FB_ACTIVEXCORE_SOURCE_DIR: ${ActiveXCore_SOURCE_DIR}")
     message("FB_SCRIPTINGCORE_SOURCE_DIR: ${ScriptingCore_SOURCE_DIR}")
-    message("FB_PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}")
-    message("FB_PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/ActiveXCore/${FB_PLATFORM_NAME}")
+    message("FB_PLUGINAUTO_SOURCE_DIR: ${FB_ROOT}/src/PluginAuto/${FB_PLATFORM_NAME}")
     message("FB_PLUGINCORE_SOURCE_DIR: ${PluginCore_SOURCE_DIR}")
     message("FB_TEMPLATE_DEST_DIR: ${FB_TEMPLATE_DEST_DIR}")
     message("Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
