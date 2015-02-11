@@ -167,6 +167,13 @@ namespace FB
                 return boost::any_cast<std::weak_ptr<T>>(l).owner_before(boost::any_cast<std::weak_ptr<T>>(r));
             }
         };
+
+        template<>
+        struct lessthan < std::exception > {
+            static bool impl(const boost::any& l, const boost::any& r) {
+                return std::string(boost::any_cast<std::exception>(l).what()) < std::string(boost::any_cast<std::exception>(r).what());
+            }
+        };
     } // namespace variant_detail
 
     class variant;
@@ -570,6 +577,7 @@ namespace FB
             variant make_variant(const char* x);
             variant make_variant(const wchar_t* x);
             variant make_variant(const std::nullptr_t);
+            variant make_variant(const std::exception);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers
             //

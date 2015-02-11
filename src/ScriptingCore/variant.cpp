@@ -26,6 +26,10 @@ variant FB::variant_detail::conversion::make_variant(const wchar_t* x) {
 variant FB::variant_detail::conversion::make_variant(const std::nullptr_t) {
     return variant(nullptr, true);
 }
+variant FB::variant_detail::conversion::make_variant(const std::exception ex)
+{
+    return variant(ex, true);
+}
 ///////////////////////////////////////////////////
 // variant convert_cast helpers
 //

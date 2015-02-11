@@ -58,7 +58,7 @@ namespace FB
     /// @see FB::make_variant_list()
     /// @see FB::convert_variant_list()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::vector<variant> VariantList;
+    using VariantList = std::vector < variant > ;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::VariantMap
@@ -66,14 +66,14 @@ namespace FB
     /// @brief  Defines an alias representing a string -> variant map.
     /// @see FB::variant_map_of()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::map<std::string, variant> VariantMap;
+    using VariantMap = std::map < std::string, variant > ;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::StringSet
     ///
     /// @brief  Defines an alias representing a set of std::strings
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::set<std::string> StringSet;
+    using StringSet = std::set < std::string > ;
     
     // FB pointer types
 
@@ -82,13 +82,13 @@ namespace FB
     ///
     /// @brief  Defines an alias for a JSAPI weak_ptr (you should never use a JSAPI* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::weak_ptr<FB::JSAPI> JSAPIWeakPtr; 
+    using JSAPIWeakPtr = std::weak_ptr < FB::JSAPI > ;
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSAPIPtr
     ///
     /// @brief  Defines an alias for a JSAPI shared_ptr (you should never use a JSAPI* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::shared_ptr<FB::JSAPI> JSAPIPtr; 
+    using JSAPIPtr = std::shared_ptr < FB::JSAPI > ;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSObjectWeakPtr
@@ -96,14 +96,14 @@ namespace FB
     /// @brief  Defines an alias representing a JSObject weak_ptr (you should never use a 
     ///         JSObject* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::weak_ptr<FB::JSObject> JSObjectWeakPtr;
+    using JSObjectWeakPtr = std::weak_ptr < FB::JSObject > ;
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::JSObjectPtr
     ///
     /// @brief  Defines an alias representing a JSObject shared_ptr (you should never use a 
     ///         JSObject* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::shared_ptr<FB::JSObject> JSObjectPtr;
+    using JSObjectPtr = std::shared_ptr < FB::JSObject > ;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::BrowserHostPtr
@@ -111,54 +111,20 @@ namespace FB
     /// @brief  Defines an alias representing a BrowserHost shared_ptr (you should never use a 
     ///         BrowserHost* directly)
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef std::shared_ptr<FB::BrowserHost> BrowserHostPtr;
+    using BrowserHostPtr = std::shared_ptr < FB::BrowserHost > ;
     
     // backwards compability typedefs
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    FB::BrowserHostWrapper
-    ///
-    /// @brief  Defines a alias for backwards compatibility
-    /// @deprecated 1.3
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef BrowserHost BrowserHostWrapper;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    FB::BrowserObjectAPI
-    ///
-    /// @brief  Defines a alias for backwards compatibility
-    /// @deprecated 1.3
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef JSObject BrowserObjectAPI;
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @typedef    FB::JSOutObject
-    ///
-    /// @brief  Defines an alias for JSOutObject -> JSAPIPtr
-    /// @deprecated 1.2
-    ////////////////////////////////////////////////////////////////////////////////////////////////////
-    typedef JSAPIPtr JSOutObject;
-    
-    // deprecation warnings
-    
-#if defined(_MSC_VER)
-#  pragma deprecated(BrowserHostWrapper, BrowserObjectAPI, JSOutObject)
-#elif defined(__GNUC__)
-    typedef BrowserHost BrowserHostWrapper __attribute__((deprecated));
-    typedef JSObject BrowserObjectAPI __attribute__((deprecated));
-    typedef JSAPIPtr JSOutObject __attribute__((deprecated));
-#endif
-    
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
-    typedef variant (JSAPI::*InvokeType)(const std::string&, const std::vector<variant>&);
+    using InvokeType = variant(JSAPI::*)(const std::string&, const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
-    typedef variant (JSAPI::*ConstructType)(const std::vector<variant>&);
+    using ConstructType = variant(JSAPI::*)(const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
-    typedef void (JSAPI::*SetPropertyType)(const std::string&, const variant&);
+    using SetPropertyType = void(JSAPI::*)(const std::string&, const variant&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    typedef variant (JSAPI::*GetPropertyType)(const std::string&);
+    using GetPropertyType = variant(JSAPI::*)(const std::string&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    typedef void (JSAPI::*RemovePropertyType)(const std::string&);
+    using RemovePropertyType = void(JSAPI::*)(const std::string&);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @struct CatchAll
@@ -192,7 +158,7 @@ namespace FB
     };
 
     // Special Variant types
-    typedef FB::variant_detail::empty FBVoid;
+    using FBVoid = FB::variant_detail::empty;
     using FBNull = std::nullptr_t;
     struct FBDateString {
     public:
@@ -220,7 +186,7 @@ namespace FB
 
     class JSAPI;
     /// @brief  Defines an alias representing a function ptr for a method on a FB::JSAPISimple object
-    typedef variant (JSAPI::*CallMethodPtr)(const std::vector<variant>&);
+    using CallMethodPtr = variant(JSAPI::*)(const std::vector<variant>&);
     /// @brief Used by FB::JSAPISimple to store information about a method
     struct MethodInfo {
         MethodInfo() : callFunc(nullptr) { }
@@ -230,15 +196,15 @@ namespace FB
     };
 
     /// @brief  Defines an alias representing a map of methods used by FB::JSAPISimple
-    typedef std::map<std::string, MethodInfo> MethodMap;
+    using MethodMap = std::map<std::string, MethodInfo>;
 
     // JSAPI properties
 
 
     /// @brief  Defines an alias representing a function pointer for a property getter on a FB::JSAPISimple object
-    typedef variant (JSAPI::*GetPropPtr)();
+    using GetPropPtr = variant(JSAPI::*)();
     /// @brief  Defines an alias representing a function pointer for a property setter on a FB::JSAPISimple object
-    typedef void (JSAPI::*SetPropPtr)(const variant& value);
+    using SetPropPtr = void (JSAPI::*)(const variant& value);
     /// @brief Used by FB::JSAPISimple to store information about a property
     struct PropertyInfo {
         PropertyInfo() : getFunc(nullptr), setFunc(nullptr) { }
@@ -249,11 +215,11 @@ namespace FB
     };
 
     /// @brief  Defines an alias representing a map of properties used by FB::JSAPISimple
-    typedef std::map<std::string, PropertyInfo> PropertyMap;
+    using PropertyMap = std::map < std::string, PropertyInfo > ;
 
     // new style JSAPI methods
     /// @brief  Used to set a SecurityZone for a method or property -- used by JSAPIAuto
-    typedef int SecurityZone;
+    using SecurityZone = int;
 
     /// @brief  Default SecurityZone values; you can use these or provide your own
     enum SecurityLevel {
@@ -264,10 +230,10 @@ namespace FB
     };
 
     /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
-    typedef std::function<variant (const std::vector<variant>&)> CallMethodFunctor;
+    using CallMethodFunctor = std::function < variant(const std::vector<variant>&) > ;
     struct MethodFunctors
     {
-        CallMethodFunctor call;
+        FB::CallMethodFunctor call;
         SecurityZone zone;
         MethodFunctors() : call() {}
         MethodFunctors(const CallMethodFunctor& call) : call(call) {}
@@ -280,14 +246,14 @@ namespace FB
         }
     };
     /// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
-    typedef std::map<std::string, MethodFunctors> MethodFunctorMap;
+    using MethodFunctorMap = std::map < std::string, MethodFunctors > ;
 
     // new style JSAPI properties
 
     /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
-    typedef std::function<FB::variant ()> GetPropFunctor;
+    using GetPropFunctor = std::function < FB::variant() > ;
     /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
-    typedef std::function<void (const FB::variant&)> SetPropFunctor;
+    using SetPropFunctor = std::function < void(const FB::variant&) > ;
     /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
     struct PropertyFunctors
     {
@@ -305,14 +271,14 @@ namespace FB
         }
     };
     /// @brief  Defines an alias representing a map of property functors used by FB::JSAPIAuto
-    typedef std::map<std::string, PropertyFunctors> PropertyFunctorsMap;
+    using PropertyFunctorsMap = std::map < std::string, PropertyFunctors > ;
 
     // JSAPI event handlers
 
-    typedef std::pair<std::string, FB::JSObjectPtr> EventPair;
-    typedef std::multimap<std::string, FB::JSObjectPtr> EventMultiMap;
-    typedef std::map<void*, FB::JSObjectPtr> EventIFaceMap;
-    typedef std::map<std::string, FB::JSObjectPtr> EventSingleMap;
+    using EventPair = std::pair < std::string, FB::JSObjectPtr > ;
+    using EventMultiMap = std::multimap < std::string, FB::JSObjectPtr > ;
+    using EventIFaceMap = std::map < void*, FB::JSObjectPtr > ;
+    using EventSingleMap = std::map < std::string, FB::JSObjectPtr >; 
     
     // implementation details
     
