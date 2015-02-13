@@ -30,6 +30,9 @@ variant FB::variant_detail::conversion::make_variant(const std::exception ex)
 {
     return variant(ex, true);
 }
+variant FB::variant_detail::conversion::make_variant(variantDeferredPtr dfd) {
+    return variant(dfd, true);
+}
 ///////////////////////////////////////////////////
 // variant convert_cast helpers
 //
@@ -63,7 +66,8 @@ FB::variant FB::variant_detail::conversion::make_variant(const boost::tribool& v
     else
         return (bool)val;
 }
-boost::tribool FB::variant_detail::conversion::convert_variant( const FB::variant& var, const type_spec<boost::tribool>& )
+
+boost::tribool FB::variant_detail::conversion::convert_variant(const FB::variant& var, const type_spec<boost::tribool>&)
 {
     if (var.is_null() || var.empty())
         return boost::indeterminate;

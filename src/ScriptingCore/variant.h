@@ -123,6 +123,7 @@ Copyright 2008-2012 Richard Bateman, Firebreath development team
 namespace FB
 {
     class JSObject;
+    FB_FORWARD_PTR(variantDeferred);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @exception bad_variant_cast
@@ -577,6 +578,7 @@ namespace FB
             variant make_variant(const char* x);
             variant make_variant(const wchar_t* x);
             variant make_variant(const std::nullptr_t);
+            variant make_variant(variantDeferredPtr);
             variant make_variant(const std::exception);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers

@@ -65,6 +65,9 @@ namespace FB { namespace Npapi {
 
     private:
         NPJavascriptObject(NPP npp);
+        FB::variant addEventListener(const std::vector<variant> args);
+        FB::variant removeEventListener(const std::vector<variant> args);
+        void setPromise(FB::variantDeferredPtr promise, NPVariant *result);
 
     protected:
         void Invalidate();
@@ -92,45 +95,6 @@ namespace FB { namespace Npapi {
         static bool _RemoveProperty(NPObject *npobj, NPIdentifier name);
         static bool _Enumeration(NPObject *npobj, NPIdentifier **value, uint32_t *count);
         static bool _Construct(NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result);
-
-    public:
-        FB_FORWARD_PTR(NPO_addEventListener);
-        FB_FORWARD_PTR(NPO_removeEventListener);
-        FB_FORWARD_PTR(NPO_getLastException);
-        friend class NPO_addEventListener;
-        friend class NPO_removeEventListener;
-        NPO_addEventListenerPtr m_addEventFunc;
-        NPO_removeEventListenerPtr m_removeEventFunc;
-		NPO_getLastExceptionPtr m_getLastExceptionFunc;
-
-        class NPO_addEventListener : public FB::JSFunction
-        {
-        public:
-            NPO_addEventListener(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent", SecurityScope_Public), obj(ptr) { }
-            FB::variant exec(const std::vector<variant>& args);
-        private:
-            NPJavascriptObject* obj;
-        };
-        class NPO_removeEventListener : public FB::JSFunction
-        {
-        public:
-            NPO_removeEventListener(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent", SecurityScope_Public), obj(ptr) { }
-            FB::variant exec(const std::vector<variant>& args);
-        private:
-            NPJavascriptObject* obj;
-        };
-        class NPO_getLastException : public FB::JSFunction
-        {
-        public:
-            NPO_getLastException(NPJavascriptObject* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", SecurityScope_Public) { }
-			FB::variant exec(const FB::VariantList& args) { return m_msg; }
-			void setMessage(const FB::variant& msg) { m_msg = msg; }
-        private:
-			static FB::variant m_msg;
-        };
     };
 
 }; };

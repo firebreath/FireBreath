@@ -226,7 +226,6 @@ namespace FB {
         virtual void registerMethod(const std::string& name, const CallMethodFunctor& func);
 
         virtual bool HasMethod(const std::string& methodName) const;
-        virtual bool HasMethodObject(const std::string& methodObjName) const;
         virtual bool HasProperty(const std::string& propertyName) const;
         virtual bool HasProperty(int idx) const;
 

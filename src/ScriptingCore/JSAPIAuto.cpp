@@ -29,9 +29,7 @@ bool FB::JSAPIAuto::s_allowMethodObjects = true;
 FB::JSAPIAuto::JSAPIAuto(const std::string& description)
   : FB::JSAPIImpl(SecurityScope_Public),
     m_description(description),
-    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes),
-    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
-    m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
+    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties)
 {
     init();
 }
@@ -39,9 +37,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
 FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
   : FB::JSAPIImpl(securityLevel),
     m_description(description),
-    m_allowDynamicAttributes(FB::JSAPIAuto::s_allowDynamicAttributes),
-    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties),
-    m_allowMethodObjects(FB::JSAPIAuto::s_allowMethodObjects)
+    m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties)
 {
     init();
 }
@@ -151,24 +147,11 @@ bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
     return (m_methodFunctorMap.find(methodName) != m_methodFunctorMap.end()) && memberAccessible(m_zoneMap.find(methodName));
 }
 
-bool FB::JSAPIAuto::HasMethodObject( const std::string& methodObjName ) const
-{
-    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-
-    return m_allowMethodObjects && HasMethod(methodObjName);
-}
-
 bool FB::JSAPIAuto::HasProperty(const std::string& propertyName) const
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
-
-    // To be able to set dynamic properties, we have to respond true always
-    if (m_allowDynamicAttributes && !HasMethod(propertyName) && !isReserved(propertyName))
-        return true;
-    else if (m_allowMethodObjects && HasMethod(propertyName) && memberAccessible(m_zoneMap.find(propertyName)))
-        return true;
 
     return m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end()
         || m_attributes.find(propertyName) != m_attributes.end();
@@ -179,10 +162,6 @@ bool FB::JSAPIAuto::HasProperty(int idx) const
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
     if(!m_valid)
         return false;
-
-    // To be able to set dynamic properties, we have to respond true always
-    if (m_allowDynamicAttributes)
-        return true;
 
     return m_attributes.find(boost::lexical_cast<std::string>(idx)) != m_attributes.end();
 }
@@ -198,25 +177,14 @@ FB::variant FB::JSAPIAuto::GetProperty(const std::string& propertyName)
     if(it != m_propertyFunctorsMap.end() && memberAccessible(zoneName)) {
         return it->second.get();
     } else if (memberAccessible(zoneName)) {
-        if (HasMethodObject(propertyName))
-            return GetMethodObject(propertyName);
-
         AttributeMap::iterator fnd = m_attributes.find(propertyName);
-        if (fnd != m_attributes.end())
+        if (fnd != m_attributes.end()) {
             return fnd->second.value;
-        else if (m_allowDynamicAttributes) {
-            return FB::FBVoid(); // If we allow dynamic attributes then we need to
-                                 // return void if the property doesn't exist;
-                                 // otherwise checking a property will throw an exception
         } else {
             throw invalid_member(propertyName);
         }
     } else {
-        if (m_allowDynamicAttributes) {
-            return FB::FBVoid();
-        } else {
-            throw invalid_member(propertyName);
-        }
+        throw invalid_member(propertyName);
     }
 }
 
@@ -243,7 +211,7 @@ void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& 
         } else {
             throw invalid_member(propertyName);
         }
-    } else if (m_allowDynamicAttributes || (m_attributes.find(propertyName) != m_attributes.end() && !m_attributes[propertyName].readonly)) {
+    } else if (m_attributes.find(propertyName) != m_attributes.end() && !m_attributes[propertyName].readonly) {
         registerAttribute(propertyName, value);
     } else {
         throw invalid_member(propertyName);
@@ -263,9 +231,6 @@ void FB::JSAPIAuto::RemoveProperty(const std::string& propertyName)
 
     if(m_allowRemoveProperties && m_propertyFunctorsMap.find(propertyName) != m_propertyFunctorsMap.end()) {
         unregisterProperty(propertyName);
-    } else if (m_allowDynamicAttributes && m_attributes.find(propertyName) != m_attributes.end()
-               && !m_attributes[propertyName].readonly) {
-        unregisterAttribute(propertyName);
     }
 
     // If nothing is found matching, we'll just let it slide -- no sense causing exceptions
@@ -280,12 +245,8 @@ FB::variant FB::JSAPIAuto::GetProperty(int idx)
 
     std::string id = boost::lexical_cast<std::string>(idx);
     AttributeMap::iterator fnd = m_attributes.find(id);
-    if (fnd != m_attributes.end() && memberAccessible(m_zoneMap.find(id)))
+    if (fnd != m_attributes.end() && memberAccessible(m_zoneMap.find(id))) {
         return fnd->second.value;
-    else if (m_allowDynamicAttributes) {
-        return FB::FBVoid(); // If we allow dynamic attributes then we need to
-                             // return void if the property doesn't exist;
-                             // otherwise checking a property will throw an exception
     } else {
         throw invalid_member(boost::lexical_cast<std::string>(idx));
     }
@@ -303,11 +264,7 @@ void FB::JSAPIAuto::SetProperty(int idx, const variant& value)
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
 
     std::string id(boost::lexical_cast<std::string>(idx));
-    if (m_allowDynamicAttributes || (m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly)) {
-        registerAttribute(id, value);
-    } else {
-        throw invalid_member(FB::variant(idx).convert_cast<std::string>());
-    }
+    throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
 void FB::JSAPIAuto::RemoveProperty(int idx)
@@ -318,11 +275,7 @@ void FB::JSAPIAuto::RemoveProperty(int idx)
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
 
     std::string id(boost::lexical_cast<std::string>(idx));
-    if (m_allowDynamicAttributes && m_attributes.find(id) != m_attributes.end() && !m_attributes[id].readonly) {
-        unregisterAttribute(id);
-    } else {
-        throw invalid_member(FB::variant(idx).convert_cast<std::string>());
-    }
+    throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
 FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)

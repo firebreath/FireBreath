@@ -301,28 +301,6 @@ namespace FB
         virtual bool HasMethod(const std::string& methodName) const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual bool HasMethodObject(const std::wstring& methodObjName) const
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasMethodObject(const std::wstring& methodObjName) const
-        {
-            return HasMethodObject(wstring_to_utf8(methodObjName));
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasMethodObject(const std::string& methodObjName) const
-        ///
-        /// @brief  Query if 'methodObjName' is a valid methodObj.
-        ///
-        /// @param  methodObjName    Name of the method to fetch an object for.
-        ///
-        /// If this feature is supported
-        ///
-        /// @return true if methodObj exists, false if not.
-        /// @since 1.4
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasMethodObject(const std::string& methodObjName) const { return false; }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasProperty(const std::wstring& propertyName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual bool HasProperty(const std::wstring& propertyName) const

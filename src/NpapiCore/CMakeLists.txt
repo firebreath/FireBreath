@@ -36,6 +36,7 @@ include_directories(
 
 file (GLOB SCRIPTING RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     NPJava*
+    NPPromise*
     NPObject*
     NpapiBrowser*
     NPVariantUtil.h

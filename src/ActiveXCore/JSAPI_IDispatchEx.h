@@ -515,10 +515,7 @@ namespace FB { namespace ActiveX {
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
 
                 FB::variant rVal;
-                if (api->HasMethodObject(wsName))
-                    rVal = api->GetMethodObject(wsName);
-                else
-                    rVal = true;
+                rVal = true;
                 host->getComVariant(pvarRes, rVal);
 
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasProperty(wsName)) {
