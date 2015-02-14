@@ -481,21 +481,6 @@ namespace FB
         /// @return result of method call
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant Construct(const std::vector<variant>& args) = 0
-        ///
-        /// @brief  Called by the browser to construct the JSAPI object.
-        /// @code
-        ///       var x = new MyJSAPIObject();
-        /// @endcode
-        ///
-        /// @param  args        The arguments.
-        ///
-        /// @return result of constructor call, the new object
-        /// @since 1.5
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant Construct(const std::vector<variant>& args) = 0;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

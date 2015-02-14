@@ -39,6 +39,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 // crashing the browser on shutdown
 //////////////////////////////////////////
 
+const char* FB::BrowserHost::jsHelperTpl = "!function(){window.FireBreathHelperThingy={asyncCall:function(n,r,e,t){return t?setTimeout(function(){r[t].apply(r,e)},n):setTimeout(function(){r.apply(null,e)},n)},makeError:function(n){return new Error(n)}}}();";
+const char* FB::BrowserHost::fbPromiseJS = "!function(){function e(e){var t=typeof e;return'function'===t||'object'===t&&!!e}function t(e,t){setTimeout(function(){e(t)},0)}function n(){function r(t){try{return e(t)?t.then:null}catch(n){return u.reject(n),!1}}var o,u=this,f=[],E=[],s=i.PEND;u.promise={then:function(e,r){function u(e,t){return function(n){try{if(c(e)){var r=e(n);a.resolve(r)}else a[t](n)}catch(o){a.reject(o)}}}var a=new n;return s===i.RESOLVE?t(function(){u(e,'resolve')(o)}):s===i.REJECT?t(function(){u(r,'reject')(o)}):(f.push(u(e,'resolve')),E.push(u(r,'reject'))),a.promise}},u.resolve=function(e,n){if(s!==i.RESOLVE&&s!==i.REJECT){if(e===u||e===u.promise)return u.reject(new TypeError);if(s===i.PEND||n){var E=r(e);if(E!==!1)if(c(E)){var a=!1,l=function(e){a||(a=!0,u.resolve(e,!0))},v=function(e){a||(a=!0,u.reject(e,!0))};try{s=i.PROMISE,E.call(e,l,v)}catch(p){a||(s=i.PEND,u.reject(p))}}else{o=e,s=i.RESOLVE;for(var h=0;h<f.length;++h)t(f[h],o)}}}},u.reject=function(e){if(s!==i.RESOLVE&&s!==i.REJECT){if(e===u||e===u.promise)return u.reject(new TypeError);o=e,s=i.REJECT;for(var n=0;n<E.length;++n)t(E[n],o)}}}function r(){return new n}var o=Object.prototype.toString,c=function(e){return'[object Function]'===o.call(e)};'function'!=typeof/./&&(c=function(e){return'function'==typeof e||!1});var i={PEND:1,PROMISE:2,RESOLVE:3,REJECT:4};this.FireBreathPromise=r}();";
+
 namespace FB {
     struct _asyncCallData : boost::noncopyable {
         _asyncCallData(void (*func)(void*), void* userData, int id, AsyncCallManagerPtr mgr)
@@ -134,68 +137,6 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
 void FB::BrowserHost::evaluateJavaScript(const std::wstring &script)
 {
     evaluateJavaScript(FB::wstring_to_utf8(script));
-}
-
-void FB::BrowserHost::initJS(const void* inst)
-{
-    assertMainThread();
-    // Inject javascript helper function into the page; this is neccesary to help
-    // with some browser compatibility issues.
-    
-    const char* javascriptMethod = 
-        "window.__FB_CALL_%1% = "
-        "function(delay, f, args, fname) {"
-        "   if (arguments.length == 3)"
-        "       return setTimeout(function() { f.apply(null, args); }, delay);"
-        "   else"
-        "       return setTimeout(function() { f[fname].apply(f, args); }, delay);"
-        "};";
-    
-    // hash pointer to get a unique key for this plugin instance
-    std::size_t inst_key = static_cast<std::size_t>(
-        reinterpret_cast<std::ptrdiff_t>(inst));
-    inst_key += (inst_key >> 3);
-
-    unique_key = boost::lexical_cast<std::string>(inst_key);
-    
-    call_delegate = (boost::format("__FB_CALL_%1%") % inst_key).str();
-    
-    evaluateJavaScript((boost::format(javascriptMethod) % inst_key).str());
-}
-
-int FB::BrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-                                    const FB::VariantList& args, const std::string& fname)
-{
-    assertMainThread();
-    FB::JSObjectPtr delegate = getDelayedInvokeDelegate();
-    if (!delegate)
-        return -1;  // this is wrong (the return is meant to be the result of setTimeout)
-    if (fname.empty())
-        return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)).convert_cast<int>();
-    else
-        return delegate->Invoke("", FB::variant_list_of(delayms)(func)(args)(fname)).convert_cast<int>();
-}
-
-FB::JSObjectPtr FB::BrowserHost::getDelayedInvokeDelegate() {
-    FB::DOM::WindowPtr win(getDOMWindow());
-    if (win) {
-        if (call_delegate.empty()) {
-            initJS(this);
-        }
-		FB::JSObjectPtr delegate;
-		try {
-	        delegate = win->getProperty<FB::JSObjectPtr>(call_delegate);
-		} catch (const FB::script_error&) {
-		}
-        if (!delegate) {
-            // Sometimes the first try doesn't work; for some reason retrying generally does,
-            // and from then on it works fine
-            initJS(this);
-            delegate = win->getProperty<FB::JSObjectPtr>(call_delegate);
-        }
-        return delegate;
-    }
-    return FB::JSObjectPtr();
 }
 
 FB::DOM::WindowPtr FB::BrowserHost::_createWindow(const FB::JSObjectPtr& obj) const

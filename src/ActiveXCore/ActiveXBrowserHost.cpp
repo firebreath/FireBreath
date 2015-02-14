@@ -32,6 +32,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "BrowserStreamRequest.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
+#include <boost/algorithm/string.hpp>
+
+using boost::algorithm::replace_first;
 using namespace FB;
 using namespace FB::ActiveX;
 
@@ -82,6 +85,28 @@ FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObjectPtr& ob
 FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::NodePtr(new AXDOM::Node(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
+}
+
+int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, const std::string& fname /*= ""*/) {
+    if (!m_htmlWin) { throw new FB::script_error("Could not invoke, ActiveX control has been suspended"); }
+    int32_t ctxId{ (int32_t)(getContextID()) };
+    std::string name = std::string("_FB_HELPERS_") + boost::lexical_cast<std::string>(ctxId);
+    IDispatchAPIPtr helper;
+
+    try {
+        helper = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getProperty<JSObjectPtr>(name));
+    } catch (const FB::bad_variant_cast&) {
+        // Didn't find it
+        std::string newjs{ BrowserHost::jsHelperTpl };
+        replace_first(newjs, "FireBreathHelperThingy", name);
+        this->evaluateJavaScript(newjs);
+        // This time if it throws an exception, let it throw
+        helper = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getProperty<JSObjectPtr>(name));
+    }
+
+    FB::variant v = helper->InvokeSync("asyncCall", FB::VariantList{ delayms, func, args, fname });
+
+    return v.convert_cast<int>();
 }
 
 void ActiveXBrowserHost::initDOMObjects()

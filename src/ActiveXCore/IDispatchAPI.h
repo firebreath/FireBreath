@@ -77,29 +77,32 @@ namespace FB { namespace ActiveX {
 
     protected:
         DISPID getIDForName(const std::wstring& name) const;
+        FB::variant GetPropertySync(const std::string& propertyName);
+        FB::variant InvokeSync(const std::string& methodName, const FB::VariantList& args);
 
     public:
-        bool HasMethod(const std::string& methodName) const;
-        bool HasMethod(const std::wstring& methodName) const;
-        bool HasProperty(const std::string& propertyName) const;
-        bool HasProperty(const std::wstring& propertyName) const;
-        bool HasProperty(int idx) const;
+        bool HasMethod(const std::string& methodName) const override;
+        bool HasMethod(const std::wstring& methodName) const override;
+        bool HasProperty(const std::string& propertyName) const override;
+        bool HasProperty(const std::wstring& propertyName) const override;
+        bool HasProperty(int idx) const override;
 
-        FB::variant GetProperty(const std::string& propertyName);
-        void SetProperty(const std::string& propertyName, const FB::variant& value);
-        void RemoveProperty(const std::string& propertyName);
-        FB::variant GetProperty(int idx);
-        void SetProperty(int idx, const FB::variant& value);
-        void RemoveProperty(int idx);
+        FB::variant GetProperty(const std::string& propertyName) override;
+        void SetProperty(const std::string& propertyName, const FB::variant& value) override;
+        void RemoveProperty(const std::string& propertyName) override;
+        FB::variant GetProperty(int idx) override;
+        void SetProperty(int idx, const FB::variant& value) override;
+        void RemoveProperty(int idx) override;
 
-        FB::variant Invoke(const std::string& methodName, const FB::VariantList& args);
-        FB::variant Construct(const FB::VariantList& args);
+        FB::variant Invoke(const std::string& methodName, const FB::VariantList& args) override;
 
     public:
         virtual FB::JSAPIPtr getJSAPI() const;
 
     private:
         IDispatchAPI(IDispatch *, const ActiveXBrowserHostPtr&);
+
+        friend class ActiveXBrowserHost;
     };
 } }
 #endif

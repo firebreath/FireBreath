@@ -207,11 +207,3 @@ variant JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB:
     }    
 }
 
-variant JSAPISimple::Construct(const std::vector<FB::variant>& args)
-{
-    if (!m_valid)
-        throw object_invalidated();
-
-    throw invalid_member("constructor");
-}
-

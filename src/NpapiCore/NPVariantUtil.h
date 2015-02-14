@@ -135,6 +135,14 @@ namespace FB { namespace Npapi
     }
 
     template<> inline
+    NPVariant makeNPVariant<const std::exception>(const NpapiBrowserHostPtr& host, const FB::variant& var) {
+        NPVariant npv;
+        npv.type = NPVariantType_Null;
+        // TOOD: Finish this to properly create an exception
+        return npv;
+    }
+
+    template<> inline
     NPVariant makeNPVariant<FB::VariantList>(const NpapiBrowserHostPtr& host, const FB::variant& var)
     {
         NPVariant npv;

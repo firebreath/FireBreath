@@ -68,6 +68,8 @@ namespace FB
     class BrowserHost : public std::enable_shared_from_this<BrowserHost>, boost::noncopyable
     {
     public:
+        static const char* jsHelperTpl;
+        static const char* fbPromiseJS;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn BrowserHost() : m_threadId(boost::this_thread::get_id())
@@ -348,7 +350,7 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-        ///                       const FB::VariantList& args, const std::string& fname = "");
+        ///                       const FB::VariantList& args, const std::string& fname = "") = 0;
         ///
         /// @brief  Executes the provided method object after a delay using window.setTimeout
         ///
@@ -365,10 +367,8 @@ namespace FB
         ///
         /// @since 1.5.2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-                          const FB::VariantList& args, const std::string& fname = "");
-        FB::JSObjectPtr getDelayedInvokeDelegate();
-        virtual void initJS(const void* inst);
+        virtual int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+                const FB::VariantList& args, const std::string& fname = "") = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void htmlLog(const std::string& str)

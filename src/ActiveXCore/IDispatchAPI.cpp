@@ -42,7 +42,6 @@ FB::ActiveX::IDispatchAPI::IDispatchAPI(IDispatch * obj, const ActiveXBrowserHos
         inner = ptr;
     }
 }
-
 IDispatchAPI::~IDispatchAPI(void)
 {
     if (!m_browser.expired())
@@ -248,9 +247,13 @@ bool IDispatchAPI::HasProperty(int idx) const
     return getIDForName(name.convert_cast<std::wstring>()) != -1;
 }
 
+
+FB::variant IDispatchAPI::GetProperty(const std::string& propertyName) {
+    return GetPropertySync(propertyName);
+}
+
 // Methods to manage properties on the API
-FB::variant IDispatchAPI::GetProperty(const std::string& propertyName)
-{
+FB::variant FB::ActiveX::IDispatchAPI::GetPropertySync(const std::string& propertyName) {
     if (m_browser.expired() || m_obj.expired())
         return FB::FBVoid();
 
@@ -431,7 +434,12 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 
 
 // Methods to manage methods on the API
-FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
+FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args) {
+    // TODO: Make this asynchronous
+    return InvokeSync(methodName, args);
+}
+
+FB::variant IDispatchAPI::InvokeSync(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     if (m_browser.expired() || m_obj.expired())
         return FB::FBVoid();
@@ -549,58 +557,6 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
                 DISPATCH_METHOD, &params, &result, &exceptionInfo, nullptr);
         }
     }
-}
-
-FB::variant IDispatchAPI::Construct(const std::vector<FB::variant>& args)
-{
-    if (m_browser.expired())
-        return FB::FBVoid();
-
-    ActiveXBrowserHostPtr browser(getHost());
-    if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind((FB::ConstructType)&IDispatchAPI::Construct, this, args));
-
-    }
-
-    DISPID dispId = getIDForName(FB::utf8_to_wstring(""));
-    if (dispId == DISPID_UNKNOWN) {
-         throw FB::script_error("Constructor invoke failed");
-    }
-
-    size_t argCount(args.size());
-    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount + 1]);
-    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
-    DISPPARAMS params;
-    DISPID tid = DISPID_THIS;
-    params.cArgs = args.size() + 1;
-    params.cNamedArgs = 1;
-    params.rgvarg = rawComArgs.get();
-    params.rgdispidNamedArgs = &tid; // Needed for IE9
-
-    for (size_t i = 0; i < argCount; i++) {
-        browser->getComVariant(&comArgs[argCount - i], args[i]);
-        // We copy w/out adding a ref so that comArgs will still clean up the values when it goes away
-        rawComArgs[argCount - i] = comArgs[argCount - i];
-    }
-    comArgs[0] = getIDispatch(); // Needed for IE 9
-    rawComArgs[0] = comArgs[0];
-
-    CComVariant result;
-    CComExcepInfo exceptionInfo;
-    CComQIPtr<IDispatchEx> dispatchEx(getIDispatch());
-    HRESULT hr;
-    if (!dispatchEx) {
-        hr = getIDispatch()->Invoke(dispId, IID_NULL, LOCALE_USER_DEFAULT,
-            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, nullptr);
-    } else {
-        hr = dispatchEx->InvokeEx(dispId, LOCALE_USER_DEFAULT,
-            DISPATCH_CONSTRUCT, &params, &result, &exceptionInfo, nullptr);
-    }
-    if (FAILED(hr)) {
-        throw FB::script_error("Method invoke failed");
-    }
-    
-    return browser->getVariant(&result);
 }
 
 FB::JSAPIPtr IDispatchAPI::getJSAPI() const

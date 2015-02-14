@@ -115,7 +115,6 @@ bool PluginCore::setReady()
     try {
         FB::VariantMap::iterator fnd = m_params.find("onload");
         if (fnd != m_params.end()) {
-            m_host->initJS(this);
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
             if (method) {
                 FBLOG_TRACE("PluginCore", "InvokeDelayed(onload)");

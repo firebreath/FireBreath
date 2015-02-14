@@ -156,8 +156,6 @@ namespace FB
 
         virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-
-        virtual variant Construct(const std::vector<variant>& args);
     };
 
 };

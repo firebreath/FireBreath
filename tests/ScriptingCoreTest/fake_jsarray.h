@@ -33,7 +33,6 @@ public:
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant) {}
     FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
-    FB::JSObjectPtr Construct(const std::string&, const FB::VariantList&) { return FB::JSObjectPtr(); }
 
     // Methods for enumeration
     virtual void getMemberNames(std::vector<std::string> &nameVector) const { }
@@ -78,8 +77,6 @@ public:
             m_values.erase(m_values.begin() + idx);
         }
     }
-    
-    FB::variant Construct(const std::vector<FB::variant>& args) { throw FB::script_error("Constructor is not implemented"); }
 private:
     FB::VariantList m_values;
 };

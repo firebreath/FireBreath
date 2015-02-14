@@ -70,20 +70,18 @@ namespace FB { namespace Npapi {
         FB::JSAPIWeakPtr inner;
 
     public:
-        bool HasMethod(const std::string& methodName) const;
-        bool HasProperty(const std::string& propertyName) const;
-        bool HasProperty(int idx) const;
+        bool HasMethod(const std::string& methodName) const override;
+        bool HasProperty(const std::string& propertyName) const override;
+        bool HasProperty(int idx) const override;
 
-        variant GetProperty(const std::string& propertyName);
-        void SetProperty(const std::string& propertyName, const variant& value);
-        void RemoveProperty(const std::string& propertyName);
-        variant GetProperty(int idx);
-        void SetProperty(int idx, const variant& value);
-        void RemoveProperty(int idx);
+        variant GetProperty(const std::string& propertyName) override;
+        void SetProperty(const std::string& propertyName, const variant& value) override;
+        void RemoveProperty(const std::string& propertyName) override;
+        variant GetProperty(int idx) override;
+        void SetProperty(int idx, const variant& value) override;
+        void RemoveProperty(int idx) override;
 
-        variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-
-        variant Construct(const std::vector<variant>& args);
+        variant Invoke(const std::string& methodName, const std::vector<variant>& args) override;
     };
 
 }; };

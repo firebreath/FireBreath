@@ -303,15 +303,6 @@ FB::variant FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vect
     }
 }
 
-FB::variant FB::JSAPIAuto::Construct(const std::vector<variant> &args)
-{
-    boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
-    if(!m_valid)
-        throw object_invalidated();
-
-    throw invalid_member("constructor");
-}
-
 FB::JSAPIPtr FB::JSAPIAuto::GetMethodObject( const std::string& methodObjName )
 {
     boost::recursive_mutex::scoped_lock lock(m_zoneMutex);

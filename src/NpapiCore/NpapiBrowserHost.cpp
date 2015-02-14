@@ -38,6 +38,7 @@ using namespace FB::Npapi;
 using boost::algorithm::split;
 using boost::algorithm::is_any_of;
 using boost::algorithm::istarts_with;
+using boost::algorithm::replace_first;
 using std::vector;
 using std::string;
 using std::map;
@@ -99,9 +100,9 @@ namespace
 }
 
 NpapiBrowserHost::NpapiBrowserHost(NpapiPluginModule *module, NPP npp)
-    : module(module), m_npp(npp)
+    : module(module), m_npp(npp), m_jsHelper(nullptr)
 {
-    assert(module != NULL);
+    assert(!!module);
     // Initialize NPNFuncs to NULL values
     memset(&NPNFuncs, 0, sizeof(NPNetscapeFuncs));
 }
@@ -118,6 +119,11 @@ void NpapiBrowserHost::shutdown() {
     m_htmlWin.reset();
     m_htmlElement.reset();
     m_htmlDoc.reset();
+
+    if (m_jsHelper) {
+        ReleaseObject(m_jsHelper);
+        m_jsHelper = nullptr;
+    }
 }
 
 bool NpapiBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData) const
@@ -132,14 +138,14 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
 {
     copyNPBrowserFuncs(&NPNFuncs, pFuncs, m_npp);
 
-    NPObject *window(NULL);
-    NPObject *element(NULL);
+    NPObject *window(nullptr);
+    NPObject *element(nullptr);
     try {
         GetValue(NPNVWindowNPObject, (void**)&window);
         GetValue(NPNVPluginElementNPObject, (void**)&element);
 
-        m_htmlWin = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(window, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
-        m_htmlElement = NPObjectAPIPtr(new FB::Npapi::NPObjectAPI(element, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
+        m_htmlWin = NPObjectAPIPtr(new NPObjectAPI(window, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
+        m_htmlElement = NPObjectAPIPtr(new NPObjectAPI(element, std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this())));
         ReleaseObject(window);
         ReleaseObject(element);
     } catch (...) {
@@ -169,7 +175,7 @@ FB::DOM::WindowPtr NpapiBrowserHost::getDOMWindow()
     return FB::DOM::Window::create(m_htmlWin);
 }
 
-FB::DOM::ElementPtr FB::Npapi::NpapiBrowserHost::getDOMElement()
+FB::DOM::ElementPtr NpapiBrowserHost::getDOMElement()
 {
     if (!m_htmlElement)
         throw std::runtime_error("Cannot find HTML window");
@@ -177,7 +183,7 @@ FB::DOM::ElementPtr FB::Npapi::NpapiBrowserHost::getDOMElement()
     return FB::DOM::Element::create(m_htmlElement);
 }
 
-void FB::Npapi::NpapiBrowserHost::deferred_release( NPObject* obj )
+void NpapiBrowserHost::deferred_release( NPObject* obj )
 {
     m_deferredObjects.push(obj);
     if (isMainThread()) {
@@ -185,14 +191,14 @@ void FB::Npapi::NpapiBrowserHost::deferred_release( NPObject* obj )
     }
 }
 
-bool isExpired(std::pair<void*, FB::Npapi::NPObjectWeakRef> cur) {
+bool isExpired(std::pair<void*, NPObjectWeakRef> cur) {
     return cur.second.expired();
 }
 
-void FB::Npapi::NpapiBrowserHost::DoDeferredRelease() const
+void NpapiBrowserHost::DoDeferredRelease() const
 {
     assertMainThread();
-    NPObject* cur(NULL);
+    NPObject* cur(nullptr);
     while (m_deferredObjects.try_pop(cur)) {
         ReleaseObject(cur);
     }
@@ -307,7 +313,7 @@ void NpapiBrowserHost::getNPVariant(NPVariant *dst, const FB::variant &var)
 NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void* notifyData) const
 {
     assertMainThread();
-    if (NPNFuncs.geturlnotify != NULL) {
+    if (NPNFuncs.geturlnotify != nullptr) {
         return NPNFuncs.geturlnotify(m_npp, url, target, notifyData);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -317,7 +323,7 @@ NPError NpapiBrowserHost::GetURLNotify(const char* url, const char* target, void
 NPError NpapiBrowserHost::GetURL(const char* url, const char* target) const
 {
     assertMainThread();
-    if (NPNFuncs.geturl != NULL) {
+    if (NPNFuncs.geturl != nullptr) {
         return NPNFuncs.geturl(m_npp, url, target);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -328,7 +334,7 @@ NPError NpapiBrowserHost::PostURLNotify(const char* url, const char* target, uin
                                         const char* buf, NPBool file, void* notifyData) const
 {
     assertMainThread();
-    if (NPNFuncs.posturlnotify != NULL) {
+    if (NPNFuncs.posturlnotify != nullptr) {
         return NPNFuncs.posturlnotify(m_npp, url, target, len, buf, file, notifyData);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -339,7 +345,7 @@ NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32_t 
                                   const char* buf, NPBool file) const
 {
     assertMainThread();
-    if (NPNFuncs.posturl != NULL) {
+    if (NPNFuncs.posturl != nullptr) {
         return NPNFuncs.posturl(m_npp, url, target, len, buf, file);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -349,7 +355,7 @@ NPError NpapiBrowserHost::PostURL(const char* url, const char* target, uint32_t 
 NPError NpapiBrowserHost::RequestRead(NPStream* stream, NPByteRange* rangeList) const
 {
     assertMainThread();
-    if (NPNFuncs.requestread != NULL) {
+    if (NPNFuncs.requestread != nullptr) {
         return NPNFuncs.requestread(stream, rangeList);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -359,7 +365,7 @@ NPError NpapiBrowserHost::RequestRead(NPStream* stream, NPByteRange* rangeList) 
 NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStream** stream) const
 {
     assertMainThread();
-    if (NPNFuncs.newstream != NULL) {
+    if (NPNFuncs.newstream != nullptr) {
         return NPNFuncs.newstream(m_npp, type, target, stream);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -369,7 +375,7 @@ NPError NpapiBrowserHost::NewStream(NPMIMEType type, const char* target, NPStrea
 int32_t NpapiBrowserHost::Write(NPStream* stream, int32_t len, void* buffer) const
 {
     assertMainThread();
-    if (NPNFuncs.write != NULL) {
+    if (NPNFuncs.write != nullptr) {
         return NPNFuncs.write(m_npp, stream, len, buffer);
     } else {
         return 0;
@@ -379,7 +385,7 @@ int32_t NpapiBrowserHost::Write(NPStream* stream, int32_t len, void* buffer) con
 NPError NpapiBrowserHost::DestroyStream(NPStream* stream, NPReason reason) const
 {
     assertMainThread();
-    if (NPNFuncs.destroystream != NULL) {
+    if (NPNFuncs.destroystream != nullptr) {
         return NPNFuncs.destroystream(m_npp, stream, reason);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -455,7 +461,7 @@ int32_t NpapiBrowserHost::IntFromIdentifier(NPIdentifier identifier) const
 void NpapiBrowserHost::SetStatus(const char* message) const
 {
     assertMainThread();
-    if (NPNFuncs.status != NULL) {
+    if (NPNFuncs.status != nullptr) {
         NPNFuncs.status(m_npp, message);
     }
 }
@@ -463,17 +469,17 @@ void NpapiBrowserHost::SetStatus(const char* message) const
 const char* NpapiBrowserHost::UserAgent() const
 {
     assertMainThread();
-    if (NPNFuncs.uagent != NULL) {
+    if (NPNFuncs.uagent != nullptr) {
         return NPNFuncs.uagent(m_npp);
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
 NPError NpapiBrowserHost::GetValue(NPNVariable variable, void *value) const
 {
     assertMainThread();
-    if (NPNFuncs.getvalue != NULL) {
+    if (NPNFuncs.getvalue != nullptr) {
         return NPNFuncs.getvalue(m_npp, variable, value);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -483,7 +489,7 @@ NPError NpapiBrowserHost::GetValue(NPNVariable variable, void *value) const
 NPError NpapiBrowserHost::SetValue(NPPVariable variable, void *value) const
 {
     assertMainThread();
-    if (NPNFuncs.setvalue != NULL) {
+    if (NPNFuncs.setvalue != nullptr) {
         return NPNFuncs.setvalue(m_npp, variable, value);
     } else {
         return NPERR_GENERIC_ERROR;
@@ -499,7 +505,7 @@ void NpapiBrowserHost::InvalidateRect2(const NPRect& invalidRect) const
 void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect) const
 {
     assertMainThread();
-    if (NPNFuncs.invalidaterect != NULL) {
+    if (NPNFuncs.invalidaterect != nullptr) {
         NPNFuncs.invalidaterect(m_npp, invalidRect);
     }
 }
@@ -507,7 +513,7 @@ void NpapiBrowserHost::InvalidateRect(NPRect *invalidRect) const
 void NpapiBrowserHost::InvalidateRegion(NPRegion invalidRegion) const
 {
     assertMainThread();
-    if (NPNFuncs.invalidateregion != NULL) {
+    if (NPNFuncs.invalidateregion != nullptr) {
         NPNFuncs.invalidateregion(m_npp, invalidRegion);
     }
 }
@@ -515,7 +521,7 @@ void NpapiBrowserHost::InvalidateRegion(NPRegion invalidRegion) const
 void NpapiBrowserHost::ForceRedraw() const
 {
     assertMainThread();
-    if (NPNFuncs.forceredraw != NULL) {
+    if (NPNFuncs.forceredraw != nullptr) {
         NPNFuncs.forceredraw(m_npp);
     }
 }
@@ -523,7 +529,7 @@ void NpapiBrowserHost::ForceRedraw() const
 void NpapiBrowserHost::PushPopupsEnabledState(NPBool enabled) const
 {
     assertMainThread();
-    if (NPNFuncs.pushpopupsenabledstate != NULL) {
+    if (NPNFuncs.pushpopupsenabledstate != nullptr) {
         NPNFuncs.pushpopupsenabledstate(m_npp, enabled);
     }
 }
@@ -531,14 +537,14 @@ void NpapiBrowserHost::PushPopupsEnabledState(NPBool enabled) const
 void NpapiBrowserHost::PopPopupsEnabledState() const
 {
     assertMainThread();
-    if (NPNFuncs.poppopupsenabledstate != NULL) {
+    if (NPNFuncs.poppopupsenabledstate != nullptr) {
         NPNFuncs.poppopupsenabledstate(m_npp);
     }
 }
 
 void NpapiBrowserHost::PluginThreadAsyncCall(void (*func) (void *), void *userData) const
 {
-    if (NPNFuncs.pluginthreadasynccall != NULL) {
+    if (NPNFuncs.pluginthreadasynccall != nullptr) {
         NPNFuncs.pluginthreadasynccall(m_npp, func, userData);
     }
 }
@@ -547,10 +553,10 @@ void NpapiBrowserHost::PluginThreadAsyncCall(void (*func) (void *), void *userDa
 NPObject *NpapiBrowserHost::CreateObject(NPClass *aClass) const
 {
     assertMainThread();
-    if (NPNFuncs.createobject != NULL) {
+    if (NPNFuncs.createobject != nullptr) {
         return NPNFuncs.createobject(m_npp, aClass);
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -558,7 +564,7 @@ bool NpapiBrowserHost::Invoke(NPObject *npobj, NPIdentifier methodName, const NP
                               uint32_t argCount, NPVariant *result) const
 {
     assertMainThread();
-    if (NPNFuncs.invoke != NULL) {
+    if (NPNFuncs.invoke != nullptr) {
         return NPNFuncs.invoke(m_npp, npobj, methodName, args, argCount, result);
     } else {
         return false;
@@ -569,7 +575,7 @@ bool NpapiBrowserHost::InvokeDefault(NPObject *npobj, const NPVariant *args,
                                      uint32_t argCount, NPVariant *result) const
 {
     assertMainThread();
-    if (NPNFuncs.invokeDefault != NULL) {
+    if (NPNFuncs.invokeDefault != nullptr) {
         return NPNFuncs.invokeDefault(m_npp, npobj, args, argCount, result);
     } else {
         return false;
@@ -580,7 +586,7 @@ bool NpapiBrowserHost::Evaluate(NPObject *npobj, NPString *script,
                                 NPVariant *result) const
 {
     assertMainThread();
-    if (NPNFuncs.evaluate != NULL) {
+    if (NPNFuncs.evaluate != nullptr) {
         return NPNFuncs.evaluate(m_npp, npobj, script, result);
     } else {
         return false;
@@ -591,7 +597,7 @@ bool NpapiBrowserHost::GetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    NPVariant *result) const
 {
     assertMainThread();
-    if (NPNFuncs.getproperty != NULL) {
+    if (NPNFuncs.getproperty != nullptr) {
         return NPNFuncs.getproperty(m_npp, npobj, propertyName, result);
     } else {
         return false;
@@ -602,7 +608,7 @@ bool NpapiBrowserHost::SetProperty(NPObject *npobj, NPIdentifier propertyName,
                                    const NPVariant *value) const
 {
     assertMainThread();
-    if (NPNFuncs.setproperty != NULL) {
+    if (NPNFuncs.setproperty != nullptr) {
         return NPNFuncs.setproperty(m_npp, npobj, propertyName, value);
     } else {
         return false;
@@ -612,7 +618,7 @@ bool NpapiBrowserHost::SetProperty(NPObject *npobj, NPIdentifier propertyName,
 bool NpapiBrowserHost::RemoveProperty(NPObject *npobj, NPIdentifier propertyName) const
 {
     assertMainThread();
-    if (NPNFuncs.removeproperty != NULL) {
+    if (NPNFuncs.removeproperty != nullptr) {
         return NPNFuncs.removeproperty(m_npp, npobj, propertyName);
     } else {
         return false;
@@ -622,7 +628,7 @@ bool NpapiBrowserHost::RemoveProperty(NPObject *npobj, NPIdentifier propertyName
 bool NpapiBrowserHost::HasProperty(NPObject *npobj, NPIdentifier propertyName) const
 {
     assertMainThread();
-    if (NPNFuncs.hasproperty != NULL) {
+    if (NPNFuncs.hasproperty != nullptr) {
         return NPNFuncs.hasproperty(m_npp, npobj, propertyName);
     } else {
         return false;
@@ -632,7 +638,7 @@ bool NpapiBrowserHost::HasProperty(NPObject *npobj, NPIdentifier propertyName) c
 bool NpapiBrowserHost::HasMethod(NPObject *npobj, NPIdentifier methodName) const
 {
     assertMainThread();
-    if (NPNFuncs.hasmethod != NULL) {
+    if (NPNFuncs.hasmethod != nullptr) {
         return NPNFuncs.hasmethod(m_npp, npobj, methodName);
     } else {
         return false;
@@ -643,7 +649,7 @@ bool NpapiBrowserHost::Enumerate(NPObject *npobj, NPIdentifier **identifier,
                                  uint32_t *count) const
 {
     assertMainThread();
-    if (NPNFuncs.enumerate != NULL) {
+    if (NPNFuncs.enumerate != nullptr) {
         return NPNFuncs.enumerate(m_npp, npobj, identifier, count);
     } else {
         return false;
@@ -654,7 +660,7 @@ bool NpapiBrowserHost::Construct(NPObject *npobj, const NPVariant *args,
                                  uint32_t argCount, NPVariant *result) const
 {
     assertMainThread();
-    if (NPNFuncs.construct != NULL) {
+    if (NPNFuncs.construct != nullptr) {
         return NPNFuncs.construct(m_npp, npobj, args, argCount, result);
     } else {
         return false;
@@ -664,14 +670,14 @@ bool NpapiBrowserHost::Construct(NPObject *npobj, const NPVariant *args,
 void NpapiBrowserHost::SetException(NPObject *npobj, const NPUTF8 *message) const
 {
     assertMainThread();
-    if (NPNFuncs.setexception != NULL) {
+    if (NPNFuncs.setexception != nullptr) {
         NPNFuncs.setexception(npobj, message);
     }
 }
 
 int NpapiBrowserHost::ScheduleTimer(int interval, bool repeat, void(*func)(NPP npp, uint32_t timerID)) const
 {
-    if(NPNFuncs.scheduletimer != NULL) {
+    if(NPNFuncs.scheduletimer != nullptr) {
         return NPNFuncs.scheduletimer(m_npp, interval, repeat, func);
     } else {
         return 0;
@@ -680,36 +686,36 @@ int NpapiBrowserHost::ScheduleTimer(int interval, bool repeat, void(*func)(NPP n
 
 void NpapiBrowserHost::UnscheduleTimer(int timerId)  const
 {
-    if(NPNFuncs.unscheduletimer != NULL) {
+    if(NPNFuncs.unscheduletimer != nullptr) {
         NPNFuncs.unscheduletimer(m_npp, timerId);
     }
 }
 
-NPError FB::Npapi::NpapiBrowserHost::GetValueForURL( NPNURLVariable variable, const char *url, char **value, uint32_t *len )
+NPError NpapiBrowserHost::GetValueForURL( NPNURLVariable variable, const char *url, char **value, uint32_t *len )
 {
-    if(NPNFuncs.getvalueforurl != NULL) {
+    if(NPNFuncs.getvalueforurl != nullptr) {
         return NPNFuncs.getvalueforurl(m_npp, variable, url, value, len);
     } else {
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
 }
 
-NPError FB::Npapi::NpapiBrowserHost::SetValueForURL( NPNURLVariable variable, const char *url, const char *value, uint32_t len )
+NPError NpapiBrowserHost::SetValueForURL( NPNURLVariable variable, const char *url, const char *value, uint32_t len )
 {
-    if(NPNFuncs.setvalueforurl != NULL) {
+    if(NPNFuncs.setvalueforurl != nullptr) {
         return NPNFuncs.setvalueforurl(m_npp, variable, url, value, len);
     } else {
         return NPERR_INCOMPATIBLE_VERSION_ERROR;
     }
 }
 
-NPError FB::Npapi::NpapiBrowserHost::GetAuthenticationInfo( const char *protocol,
+NPError NpapiBrowserHost::GetAuthenticationInfo( const char *protocol,
                                                             const char *host, int32_t port,
                                                             const char *scheme, const char *realm,
                                                             char **username, uint32_t *ulen,
                                                             char **password, uint32_t *plen )
 {
-    if(NPNFuncs.getauthenticationinfo != NULL) {
+    if(NPNFuncs.getauthenticationinfo != nullptr) {
         return NPNFuncs.getauthenticationinfo(m_npp, protocol, host, port, scheme, realm,
                                               username, ulen, password, plen);
     } else {
@@ -717,7 +723,7 @@ NPError FB::Npapi::NpapiBrowserHost::GetAuthenticationInfo( const char *protocol
     }
 }
 
-FB::BrowserStreamPtr FB::Npapi::NpapiBrowserHost::_createStream( const BrowserStreamRequest& req ) const
+FB::BrowserStreamPtr NpapiBrowserHost::_createStream( const FB::BrowserStreamRequest& req ) const
 {
     assertMainThread();
     std::string url(req.uri.toString());
@@ -771,11 +777,11 @@ FB::BrowserStreamPtr NpapiBrowserHost::_createUnsolicitedStream(const FB::Browse
     return stream;
 }
 
-NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
+NPJavascriptObject* NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread
     typedef std::shared_ptr<FB::ShareableReference<NPJavascriptObject> > SharedNPObjectRef;
-    NPJavascriptObject* ret(NULL);
+    NPJavascriptObject* ret(nullptr);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
         return NPJavascriptObject::NewObject(std::dynamic_pointer_cast<NpapiBrowserHost>(shared_from_this()), api, false);
@@ -800,7 +806,7 @@ NPJavascriptObject* FB::Npapi::NpapiBrowserHost::getJSAPIWrapper( const FB::JSAP
     return ret;
 }
 
-bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, const std::string& URL )
+bool NpapiBrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, const std::string& URL )
 {
     char* retVal;
     uint32_t len;
@@ -841,11 +847,95 @@ bool FB::Npapi::NpapiBrowserHost::DetectProxySettings( std::map<std::string, std
     }
 }
 
-void FB::Npapi::NpapiBrowserHost::Navigate( const std::string& url, const std::string& target )
+void NpapiBrowserHost::Navigate( const std::string& url, const std::string& target )
 {
     PushPopupsEnabledState(true);
     GetURL(url.c_str(), target.c_str());
     PopPopupsEnabledState();
+}
+
+NPObject * NpapiBrowserHost::getPromiseObject() {
+    NPObject *window = m_htmlWin->getNPObject();
+    NPVariant tmp;
+    NPIdentifier idFbDeferred = GetStringIdentifier("FireBreathPromise");
+    bool success = Invoke(window, idFbDeferred, nullptr, 0, &tmp);
+
+    if (!success || tmp.type != NPVariantType_Object) {
+        // We couldn't find the FireBreathPromise object already in the page
+        NPVariant jsStr;
+        getNPVariant(&jsStr, BrowserHost::fbPromiseJS);
+        if (!Evaluate(window, &jsStr.value.stringValue, &tmp)) {
+            throw std::runtime_error("Could not inject Promise library");
+        }
+        ReleaseVariantValue(&tmp);
+        success = Invoke(window, idFbDeferred, nullptr, 0, &tmp);
+        if (!success || tmp.type != NPVariantType_Object) {
+            throw std::runtime_error("Could not instantiate Promise");
+        }
+    }
+    NPObject* dfd = tmp.value.objectValue;
+    RetainObject(dfd);
+    ReleaseVariantValue(&tmp);
+    return dfd;
+}
+
+NPObject* NpapiBrowserHost::getJSHelper() {
+    NPVariant tmp;
+    if (!m_jsHelper) {
+        NPObject *window = m_htmlWin->getNPObject();
+        
+        int32_t ctxId{ (int32_t)(getContextID()) };
+        std::string name = std::string("_FB_HELPERS_") + boost::lexical_cast<std::string>(ctxId);
+        
+        NPIdentifier idFbObj = GetStringIdentifier(name.c_str());
+        bool success = GetProperty(window, idFbObj, &tmp);
+        if (success && tmp.type == NPVariantType_Object) {
+            m_jsHelper = tmp.value.objectValue;
+            RetainObject(m_jsHelper);
+        }
+        ReleaseVariantValue(&tmp);
+
+        if (!m_jsHelper) {
+            // Didn't find it, probably needs to be added to the page
+            std::string newjs{ BrowserHost::jsHelperTpl };
+            replace_first(newjs, "FireBreathHelperThingy", name);
+            NPVariant jsStr;
+            getNPVariant(&jsStr, newjs);
+            if (!Evaluate(window, &jsStr.value.stringValue, &tmp)) {
+                throw std::runtime_error("Could not inject JS Helper into page");
+            }
+            ReleaseVariantValue(&tmp);
+            success = GetProperty(window, idFbObj, &tmp);
+            if (!success || tmp.type != NPVariantType_Object) {
+                throw std::runtime_error("Could not find injected helper");
+            }
+            m_jsHelper = tmp.value.objectValue;
+            RetainObject(m_jsHelper);
+            ReleaseVariantValue(&tmp);
+        }
+    }
+    return m_jsHelper;
+}
+
+int NpapiBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, const std::string& fname /*= ""*/) {
+    NPObject *jsHelper = getJSHelper();
+    NPVariant tmp;
+
+    FB::VariantList argList{ delayms, func, args, fname };
+    std::array<NPVariant, 4> npArgs;
+    decltype(npArgs.size()) i = 0;
+    for (auto v : argList) {
+        getNPVariant(&npArgs[i++], v);
+    };
+
+    NPIdentifier idAsyncCall = GetStringIdentifier("asyncCall");
+    if (Invoke(jsHelper, idAsyncCall, npArgs.data(), npArgs.size(), &tmp)) {
+        int res = tmp.value.intValue;
+        ReleaseVariantValue(&tmp);
+        return res;
+    } else {
+        throw std::runtime_error("Could not launch async call");
+    }
 }
 
 NPError NpapiBrowserHost::InitAsyncSurface(NPSize *size, NPImageFormat format, void *initData, NPAsyncSurface *surface) const

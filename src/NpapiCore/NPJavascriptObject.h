@@ -79,7 +79,6 @@ namespace FB { namespace Npapi {
         bool SetProperty(NPIdentifier name, const NPVariant *value);
         bool RemoveProperty(NPIdentifier name);
         bool Enumeration(NPIdentifier **value, uint32_t *count);
-        bool Construct(const NPVariant *args, uint32_t argCount, NPVariant *result);
 
     public:
         // Static methods referenced in the NPClass

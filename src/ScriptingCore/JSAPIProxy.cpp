@@ -250,9 +250,3 @@ FB::variant FB::JSAPIProxy::Invoke( const std::string& methodName, const std::ve
     return getAPI()->Invoke(methodName, args);
 }
 
-FB::variant FB::JSAPIProxy::Construct( const std::vector<variant>& args )
-{
-    FB::scoped_zonelock _l(getAPI(), getZone());
-    return getAPI()->Construct(args);
-}
-

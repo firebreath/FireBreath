@@ -20,6 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include <boost/enable_shared_from_this.hpp>
 #include "JSObject.h"
 
+#pragma warning( disable : 4250 )
 namespace FB { namespace DOM {
     /**
      * Node (used as NodePtr, a shared_ptr)

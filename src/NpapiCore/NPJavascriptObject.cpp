@@ -292,11 +292,6 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
     }
 }
 
-bool NPJavascriptObject::Construct(const NPVariant *args, uint32_t argCount, NPVariant *result)
-{
-    return false;
-}
-
 
 /****************************************************************************\
   These are the static functions given to the browser in the NPClass struct.
@@ -369,8 +364,7 @@ bool NPJavascriptObject::_Enumeration(NPObject *npobj, NPIdentifier **value, uin
 
 bool NPJavascriptObject::_Construct(NPObject *npobj, const NPVariant *args, uint32_t argCount, NPVariant *result)
 {
-    NPJavascriptObject *obj = static_cast<NPJavascriptObject *>(npobj);
-    return obj->Construct(args, argCount, result);
+    return false;
 }
 
 // This defines the "entry points"; it's how the browser knows how to create the object

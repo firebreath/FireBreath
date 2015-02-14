@@ -90,21 +90,20 @@ namespace FB {
         virtual void registerProperty(const std::string& name, GetPropPtr getFunc, SetPropPtr setFunc);
 
         // Methods to query existance of members on the API
-        virtual bool HasMethod(const std::string& methodName) const;
-        virtual bool HasProperty(const std::string& propertyName) const;
-        virtual bool HasProperty(int idx) const;
+        virtual bool HasMethod(const std::string& methodName) const override;
+        virtual bool HasProperty(const std::string& propertyName) const override;
+        virtual bool HasProperty(int idx) const override;
 
         // Methods to manage properties on the API
-        virtual variant GetProperty(const std::string& propertyName);
-        virtual void SetProperty(const std::string& propertyName, const variant& value);
-        virtual void RemoveProperty(const std::string& propertyName);
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant& value);
-        virtual void RemoveProperty(int idx);
+        virtual variant GetProperty(const std::string& propertyName) override;
+        virtual void SetProperty(const std::string& propertyName, const variant& value) override; 
+        virtual void RemoveProperty(const std::string& propertyName) override;
+        virtual variant GetProperty(int idx) override;
+        virtual void SetProperty(int idx, const variant& value) override;
+        virtual void RemoveProperty(int idx) override;
 
         // Methods to manage methods on the API
-        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-        virtual variant Construct(const std::vector<variant>& args);
+        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) override;
 
     public:
 

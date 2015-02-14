@@ -45,7 +45,6 @@ public:
     void SetProperty(int, const FB::variant&) {}
     void SetProperty(const std::string&, const FB::variant&) {}
     FB::variant Invoke(const std::string&, const FB::VariantList&) { return FB::variant(); }
-    FB::JSObjectPtr Construct(const std::string&, const FB::VariantList&) { return FB::JSObjectPtr(); }
 
     // Methods for enumeration
     virtual void getMemberNames(StringVec &names) const
@@ -99,8 +98,6 @@ public:
     {
         throw FB::script_error(std::string("Cannot remove property '") + boost::lexical_cast<std::string>(idx) + "'");
     }
-    
-    FB::variant Construct(const std::vector<FB::variant>& args) { throw FB::script_error("Constructor is not implemented"); }
 private:
     FB::VariantMap m_values;
     StringVec m_names;

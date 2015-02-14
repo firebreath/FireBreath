@@ -47,9 +47,9 @@ namespace FB {
         public:
             ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* clientSite);
             virtual ~ActiveXBrowserHost(void);
-            virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
+            virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const override;
 
-            virtual void *getContextID() const;
+            virtual void *getContextID() const override;
 
             virtual FB::BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
             virtual FB::BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const { return FB::BrowserStreamPtr(); }
@@ -58,18 +58,20 @@ namespace FB {
             IDispatchWRef getIDispatchRef(IDispatch* obj);
 
         public:
-            FB::DOM::DocumentPtr getDOMDocument();
-            FB::DOM::WindowPtr getDOMWindow();
-            FB::DOM::ElementPtr getDOMElement();
-            void Navigate(const std::string& url, const std::string& target);
+            FB::DOM::DocumentPtr getDOMDocument() override;
+            FB::DOM::WindowPtr getDOMWindow() override;
+            FB::DOM::ElementPtr getDOMElement() override;
+            void Navigate(const std::string& url, const std::string& target) override;
             
             bool hasHTMLWindow() { return !!m_htmlWin; }
 
             void suspend();
             void resume(IWebBrowser2 *doc, IOleClientSite* clientSite);
             
-            void evaluateJavaScript(const std::string &script);
-            void shutdown();
+            int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+                const FB::VariantList& args, const std::string& fname = "") override;
+            void evaluateJavaScript(const std::string &script) override;
+            void shutdown() override;
 
         public:
             FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;

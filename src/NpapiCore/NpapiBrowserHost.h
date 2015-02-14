@@ -60,6 +60,11 @@ namespace FB {
         NPJavascriptObject* getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease = false );
 
     public:
+        NPObject *getPromiseObject();
+        int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
+                const FB::VariantList& args, const std::string& fname = "") override;
+        NPObject* getJSHelper();
+
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
         FB::DOM::ElementPtr getDOMElement();
@@ -86,6 +91,7 @@ namespace FB {
         NPObjectAPIPtr m_htmlDoc;
         NPObjectAPIPtr m_htmlWin;
         NPObjectAPIPtr m_htmlElement;
+        NPObject* m_jsHelper;
         mutable FB::SafeQueue<NPObject*> m_deferredObjects;
         typedef std::map<void*, NPObjectWeakRef> NPObjectRefMap;
         mutable NPObjectRefMap m_cachedNPObject;

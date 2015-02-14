@@ -491,27 +491,6 @@ namespace FB { namespace ActiveX {
                 if(pvarRes)
                     host->getComVariant(pvarRes, rVal);
 
-            } else if (wFlags & DISPATCH_CONSTRUCT) {
-
-                std::vector<FB::variant> params;
-                if (pdp->cNamedArgs > 0 && pdp->rgdispidNamedArgs[0] == DISPID_THIS) {
-                    if (id == 0)
-                        wsName = L"";
-                    for (int i = pdp->cArgs - 1; i >= 1; i--) {
-                        params.push_back(host->getVariant(&pdp->rgvarg[i]));
-                    }
-                } else {
-                    for (int i = pdp->cArgs - 1; i >= 0; i--) {
-                        params.push_back(host->getVariant(&pdp->rgvarg[i]));
-                    }
-                }
-                FB::variant rVal;
-                rVal = api->Construct(params);
-                
-                if(pvarRes)
-                    host->getComVariant(pvarRes, rVal);
-
-
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
 
                 FB::variant rVal;

@@ -174,7 +174,6 @@ namespace FB {
         virtual size_t getMemberCount() const;
 
         virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-        virtual variant Construct(const std::vector<variant>& args);
         virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
 
         virtual void unregisterMethod(const std::wstring& name)
