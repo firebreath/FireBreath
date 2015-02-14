@@ -88,6 +88,7 @@ namespace
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
         tdm.insert(makeBuilderEntry<FB::JSAPIWeakPtr>());
         tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
+        tdm.insert(makeBuilderEntry<const std::exception>());
 
         return tdm;
     }
@@ -877,6 +878,27 @@ NPObject * NpapiBrowserHost::getPromiseObject() {
     RetainObject(dfd);
     ReleaseVariantValue(&tmp);
     return dfd;
+}
+
+NPObject* NpapiBrowserHost::makeError(const std::exception e) {
+    NPObject *jsHelper = getJSHelper();
+    NPVariant param, res;
+
+    NPIdentifier idFn = GetStringIdentifier("makeError");
+
+    getNPVariant(&param, FB::variant(e.what()));
+    bool success = Invoke(jsHelper, idFn, &param, 1, &res);
+    if (success && res.type == NPVariantType_Object) {
+        NPObject* errObj = res.value.objectValue;
+        RetainObject(errObj);
+        ReleaseVariantValue(&res);
+        ReleaseVariantValue(&param);
+        return errObj;
+    } else if (success) {
+        ReleaseVariantValue(&res);
+    }
+    ReleaseVariantValue(&param);
+    return nullptr;
 }
 
 NPObject* NpapiBrowserHost::getJSHelper() {
