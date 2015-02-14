@@ -23,6 +23,8 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "SimpleStreams.h"
 #include "SystemHelpers.h"
 #include <boost/make_shared.hpp>
+#include <future>
+#include "variantDeferred.h"
 
 #include "FBTestPluginAPI.h"
 
@@ -30,6 +32,9 @@ FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::Browse
 {    
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
+    registerMethod(L"fail",  make_method(this, &FBTestPluginAPI::fail));
+    registerMethod(L"echoSlowly",  make_method(this, &FBTestPluginAPI::echoSlowly));
+    registerMethod(L"failSlowly",  make_method(this, &FBTestPluginAPI::failSlowly));
     registerMethod(L"eval",  make_method(this, &FBTestPluginAPI::eval));
     registerMethod(L"asString",  make_method(this, &FBTestPluginAPI::asString));
     registerMethod(L"asBool",  make_method(this, &FBTestPluginAPI::asBool));
@@ -149,6 +154,33 @@ FB::variant FBTestPluginAPI::echo(const FB::variant& a)
     
     return a;
 }
+
+FB::variant FBTestPluginAPI::echoSlowly(const FB::variant& a)
+{
+    FB::variantDeferredPtr promise = FB::variantDeferred::makeDeferred();
+
+    auto callback = [promise, a]() { std::this_thread::sleep_for(std::chrono::seconds(2)); promise->resolve(a); };
+
+    std::async(callback);
+
+    return promise;
+}
+
+FB::variant FBTestPluginAPI::fail() {
+    // Should work by just throwing an exception
+    throw FB::script_error("Failed!");
+}
+
+FB::variant FBTestPluginAPI::failSlowly() {
+    FB::variantDeferredPtr promise = FB::variantDeferred::makeDeferred();
+
+    auto callback = [promise]() { std::this_thread::sleep_for(std::chrono::seconds(2)); promise->reject(FB::script_error("Slow failure!")); };
+
+    std::async(callback);
+
+    return promise;
+}
+
 
 std::string FBTestPluginAPI::asString(const FB::variant& a)
 {

@@ -52,6 +52,10 @@ public:
     SimpleMathAPIPtr createSimpleMath();
   
     FB::variant echo(const FB::variant& a);
+    FB::variant echoSlowly(const FB::variant& a);
+
+    FB::variant fail();
+    FB::variant failSlowly();
 
     std::string asString(const FB::variant& a);
     bool asBool(const FB::variant& a);
@@ -97,7 +101,6 @@ public:
     void openPopup();
 
 	void ping(const int seq, const FB::JSObjectPtr& callback);
-
 private:
     FB::BrowserHostPtr m_host;
     SimpleMathAPIPtr m_simpleMath;
