@@ -98,14 +98,14 @@ size_t NPObjectAPI::getMemberCount() const
     return (size_t)count;
 }
 
-bool NPObjectAPI::HasMethod(const std::string& methodName) const
+bool NPObjectAPI::HasMethod(std::string methodName) const
 {
     if (m_browser.expired())
         return false;
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
+        typedef bool (NPObjectAPI::*curtype)(std::string) const;
         return browser->CallOnMainThread(std::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
     }
     if (is_JSAPI) {
@@ -118,14 +118,14 @@ bool NPObjectAPI::HasMethod(const std::string& methodName) const
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
-bool NPObjectAPI::HasProperty(const std::string& propertyName) const
+bool NPObjectAPI::HasProperty(std::string propertyName) const
 {
     if (m_browser.expired())
         return false;
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        typedef bool (NPObjectAPI::*curtype)(const std::string&) const;
+        typedef bool (NPObjectAPI::*curtype)(std::string) const;
         return browser->CallOnMainThread(std::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
     }
     if (is_JSAPI) {
@@ -155,7 +155,11 @@ bool NPObjectAPI::HasProperty(int idx) const
 }
 
 // Methods to manage properties on the API
-FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
+FB::variantDeferredPtr NPObjectAPI::GetProperty(std::string propertyName) {
+    return FB::variantDeferred::makeDeferred(GetPropertySync(propertyName));
+}
+
+FB::variant NPObjectAPI::GetPropertySync(std::string propertyName)
 {
     if (m_browser.expired())
         return FB::FBVoid();
@@ -182,7 +186,7 @@ FB::variant NPObjectAPI::GetProperty(const std::string& propertyName)
     }
 }
 
-void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
+void NPObjectAPI::SetProperty(std::string propertyName, const FB::variant& value)
 {
     if (m_browser.expired())
         return;
@@ -207,7 +211,7 @@ void NPObjectAPI::SetProperty(const std::string& propertyName, const FB::variant
     }
 }
 
-void NPObjectAPI::RemoveProperty(const std::string& propertyName)
+void NPObjectAPI::RemoveProperty(std::string propertyName)
 {
     if (m_browser.expired())
         return;
@@ -228,13 +232,16 @@ void NPObjectAPI::RemoveProperty(const std::string& propertyName)
     }
 }
 
-FB::variant NPObjectAPI::GetProperty(int idx)
+FB::variantDeferredPtr NPObjectAPI::GetProperty(int idx) {
+    return FB::variantDeferred::makeDeferred(GetProperty(idx));
+}
+FB::variant NPObjectAPI::GetPropertySync(int idx)
 {
     if (m_browser.expired())
         return FB::FBVoid();
 
     NpapiBrowserHostPtr browser(getHost());
-    std::string strIdx(boost::lexical_cast<std::string>(idx));
+    std::string strIdx(std::to_string(idx));
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
@@ -249,7 +256,7 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
         return;
 
     NpapiBrowserHostPtr browser(getHost());
-    std::string strIdx(boost::lexical_cast<std::string>(idx));
+    std::string strIdx(std::to_string(idx));
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
@@ -264,7 +271,7 @@ void NPObjectAPI::RemoveProperty(int idx)
         return;
 
     NpapiBrowserHostPtr browser(getHost());
-    std::string strIdx(boost::lexical_cast<std::string>(idx));
+    std::string strIdx(std::to_string(idx));
     if (is_JSAPI) {
         FB::JSAPIPtr tmp = inner.lock();
         if (tmp)
@@ -274,7 +281,10 @@ void NPObjectAPI::RemoveProperty(int idx)
 }
 
 // Methods to manage methods on the API
-FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
+FB::variantDeferredPtr NPObjectAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
+    return FB::variantDeferred::makeDeferred(InvokeSync(methodName, args));
+}
+FB::variant NPObjectAPI::InvokeSync(std::string methodName, const std::vector<FB::variant>& args)
 {
     if (m_browser.expired())
         return false;
@@ -321,7 +331,7 @@ FB::variant NPObjectAPI::Invoke(const std::string& methodName, const std::vector
     }
 }
 
-void NPObjectAPI::callMultipleFunctions( const std::string& name, const FB::VariantList& args, const std::vector<JSObjectPtr>& direct, const std::vector<JSObjectPtr>& ifaces )
+void NPObjectAPI::callMultipleFunctions( std::string name, const FB::VariantList& args, const std::vector<JSObjectPtr>& direct, const std::vector<JSObjectPtr>& ifaces )
 {
     if (!isValid())
         throw FB::script_error("Error calling handlers");

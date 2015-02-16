@@ -145,20 +145,15 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         }
 
         // Default method call
-        FB::variant ret;
+        FB::variantDeferredPtr ret;
         if (mName == "addEventListener") {
-            ret = addEventListener(vArgs);
+            ret = FB::variantDeferred::makeDeferred(addEventListener(vArgs));
         } else if (mName == "removeEventListener") {
-            ret = removeEventListener(vArgs);
+            ret = FB::variantDeferred::makeDeferred(removeEventListener(vArgs));
         } else {
             ret = getAPI()->Invoke(mName, vArgs);
         }
-        if (ret.is_of_type<decltype(promise)>()) {
-            setPromise(ret.cast<decltype(promise)>(), result);
-        } else {
-            promise->resolve(ret);
-            setPromise(promise, result);
-        }
+        setPromise(ret, result);
         return true;
     } catch (const std::exception& e) {
         try {
@@ -268,8 +263,7 @@ bool NPJavascriptObject::Enumeration(NPIdentifier **value, uint32_t *count)
 {
     if (!isValid()) return false;
     try {
-        typedef std::vector<std::string> StringArray;
-        StringArray memberList;
+        std::vector<std::string> memberList;
         getAPI()->getMemberNames(memberList);
         *count = memberList.size() + 2;
         NPIdentifier *outList(nullptr);

@@ -30,8 +30,7 @@ namespace FB {
     FB_FORWARD_PTR(NPObjectAPI);
     FB_FORWARD_PTR(NpapiBrowserHost);
     FB_FORWARD_PTR(NPJavascriptObject);
-    typedef std::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
-    typedef std::weak_ptr<FB::ShareableReference<NPJavascriptObject> > NPObjectWeakRef;
+    using NPObjectWeakRef = std::weak_ptr<FB::ShareableReference<NPJavascriptObject> >;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  NpapiBrowserHost
@@ -62,20 +61,20 @@ namespace FB {
     public:
         NPObject *getPromiseObject();
         int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-                const FB::VariantList& args, const std::string& fname = "") override;
+                const FB::VariantList& args, std::string fname = "") override;
         NPObject* getJSHelper();
         NPObject* makeError(const std::exception e);
 
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
         FB::DOM::ElementPtr getDOMElement();
-        void Navigate(const std::string& url, const std::string& target);
+        void Navigate(std::string url, std::string target);
         void evaluateJavaScript(const std::string &script);
         bool isSafari() const;
         bool isFirefox() const;
         bool isChrome() const;
 
-        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "");
 
     public:
         void shutdown();
@@ -179,10 +178,6 @@ namespace FB {
         void SetCurrentAsyncSurface(NPAsyncSurface* surface, NPRect* changed) const;
     };
 
-    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
-    typedef std::shared_ptr<const NpapiBrowserHost> NpapiBrowserHostConstPtr;
-    typedef std::weak_ptr<NpapiBrowserHost> NpapiBrowserHostWeakPtr;
-    typedef std::weak_ptr<const NpapiBrowserHost> NpapiBrowserHostWeakConstPtr;
 }; };
 
 #endif

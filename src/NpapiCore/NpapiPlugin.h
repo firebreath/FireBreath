@@ -28,7 +28,7 @@ namespace FB {
 
     struct PluginCreateError : std::runtime_error
     {
-        PluginCreateError(const std::string& error)
+        PluginCreateError(std::string error)
           : std::runtime_error(error)
         { }
     };
@@ -38,7 +38,7 @@ namespace FB {
     class NpapiPlugin : public FB::BrowserPlugin
     {
     public:
-        NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
+        NpapiPlugin(const NpapiBrowserHostPtr& host, std::string mimetype);
         virtual ~NpapiPlugin(void);
 
         virtual void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);

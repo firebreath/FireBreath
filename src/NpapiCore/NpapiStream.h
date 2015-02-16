@@ -28,7 +28,7 @@ namespace FB { namespace Npapi {
     class NpapiStream : public FB::BrowserStream
     {
     public:
-        NpapiStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize, const NpapiBrowserHostConstPtr &host );
+        NpapiStream( std::string url, bool cache, bool seekable, size_t internalBufferSize, const NpapiBrowserHostConstPtr &host );
         virtual ~NpapiStream();
         
         //virtual bool is_open();

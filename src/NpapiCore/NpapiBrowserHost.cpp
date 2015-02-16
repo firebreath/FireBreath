@@ -23,12 +23,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NPObjectAPI.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
-#include "variant_list.h"
 
 #include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
 #include "BrowserStreamRequest.h"
-#include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "NPVariantUtil.h"
 #include "URI.h"
@@ -156,7 +154,7 @@ void NpapiBrowserHost::setBrowserFuncs(NPNetscapeFuncs *pFuncs)
             ReleaseObject(element);
     }
     if (m_htmlWin) {
-        m_htmlDoc = std::dynamic_pointer_cast<NPObjectAPI>(m_htmlWin->GetProperty("document").cast<FB::JSObjectPtr>());
+        m_htmlDoc = std::dynamic_pointer_cast<NPObjectAPI>(m_htmlWin->GetPropertySync("document").cast<FB::JSObjectPtr>());
     }
 }
 
@@ -807,7 +805,7 @@ NPJavascriptObject* NpapiBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& a
     return ret;
 }
 
-bool NpapiBrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, const std::string& URL )
+bool NpapiBrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, std::string URL )
 {
     char* retVal;
     uint32_t len;
@@ -848,7 +846,7 @@ bool NpapiBrowserHost::DetectProxySettings( std::map<std::string, std::string>& 
     }
 }
 
-void NpapiBrowserHost::Navigate( const std::string& url, const std::string& target )
+void NpapiBrowserHost::Navigate( std::string url, std::string target )
 {
     PushPopupsEnabledState(true);
     GetURL(url.c_str(), target.c_str());
@@ -907,7 +905,7 @@ NPObject* NpapiBrowserHost::getJSHelper() {
         NPObject *window = m_htmlWin->getNPObject();
         
         int32_t ctxId{ (int32_t)(getContextID()) };
-        std::string name = std::string("_FB_HELPERS_") + boost::lexical_cast<std::string>(ctxId);
+        std::string name = std::string("_FB_HELPERS_") + std::to_string(ctxId);
         
         NPIdentifier idFbObj = GetStringIdentifier(name.c_str());
         bool success = GetProperty(window, idFbObj, &tmp);
@@ -939,7 +937,7 @@ NPObject* NpapiBrowserHost::getJSHelper() {
     return m_jsHelper;
 }
 
-int NpapiBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, const std::string& fname /*= ""*/) {
+int NpapiBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
     NPObject *jsHelper = getJSHelper();
     NPVariant tmp;
 

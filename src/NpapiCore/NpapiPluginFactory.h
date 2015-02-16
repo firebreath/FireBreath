@@ -20,12 +20,10 @@
 
 namespace FB { namespace Npapi
 {
-    class NpapiPlugin;
-    class NpapiBrowserHost;
-    typedef std::shared_ptr<NpapiPlugin> NpapiPluginPtr;
-    typedef std::shared_ptr<NpapiBrowserHost> NpapiBrowserHostPtr;
+    FB_FORWARD_PTR(NpapiPlugin);
+    FB_FORWARD_PTR(NpapiBrowserHost);
 
-    NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype);
+    NpapiPluginPtr createNpapiPlugin(const NpapiBrowserHostPtr& host, std::string mimetype);
 } }
 
 #endif

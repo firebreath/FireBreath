@@ -35,7 +35,7 @@ namespace FB {
             NpapiPluginModule();
             virtual ~NpapiPluginModule();
 
-            typedef std::map<const void*,NpapiPluginModule*> Modules;
+            using Modules = std::map<const void*,NpapiPluginModule*>;
             static NpapiPluginModule* GetModule(const void* key);
             static void ReleaseModule(const void*);
 

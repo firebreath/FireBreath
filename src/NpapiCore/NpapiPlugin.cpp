@@ -24,7 +24,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "PluginEventSink.h"
 using namespace FB::Npapi;
 
-NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
+NpapiPlugin::NpapiPlugin(const NpapiBrowserHostPtr& host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
       m_obj(NULL),
       m_npHost(host),

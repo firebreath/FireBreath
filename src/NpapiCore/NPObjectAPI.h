@@ -52,7 +52,7 @@ namespace FB { namespace Npapi {
         void invalidate() { inner.reset(); }
         bool isValid() { return !m_browser.expired(); }
         virtual bool supportsOptimizedCalls() const { return true; }
-        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+        virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
                                            const std::vector<JSObjectPtr>& direct,
                                            const std::vector<JSObjectPtr>& ifaces);
 
@@ -69,19 +69,31 @@ namespace FB { namespace Npapi {
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
 
-    public:
-        bool HasMethod(const std::string& methodName) const override;
-        bool HasProperty(const std::string& propertyName) const override;
+    private:
+        variant GetPropertySync(std::string propertyName);
+        void SetPropertySync(std::string propertyName, const variant& value);
+        void RemovePropertySync(std::string propertyName);
+        variant GetPropertySync(int idx);
+        void SetPropertySync(int idx, const variant& value);
+        void RemovePropertySync(int idx);
+
+        variant InvokeSync(std::string methodName, const std::vector<variant>& args);
+
+        bool HasMethod(std::string methodName) const override;
+        bool HasProperty(std::string propertyName) const override;
         bool HasProperty(int idx) const override;
 
-        variant GetProperty(const std::string& propertyName) override;
-        void SetProperty(const std::string& propertyName, const variant& value) override;
-        void RemoveProperty(const std::string& propertyName) override;
-        variant GetProperty(int idx) override;
+    public:
+        variantDeferredPtr GetProperty(std::string propertyName) override;
+        void SetProperty(std::string propertyName, const variant& value) override;
+        void RemoveProperty(std::string propertyName) override;
+        variantDeferredPtr GetProperty(int idx) override;
         void SetProperty(int idx, const variant& value) override;
         void RemoveProperty(int idx) override;
 
-        variant Invoke(const std::string& methodName, const std::vector<variant>& args) override;
+        variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
+
+        friend class NpapiBrowserHost;
     };
 
 }; };

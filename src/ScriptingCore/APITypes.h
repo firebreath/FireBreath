@@ -115,13 +115,13 @@ namespace FB
     // backwards compability typedefs
 
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
-    using InvokeType = variant(JSAPI::*)(std::string, const std::vector<variant>&);
+    using InvokeType = FB::variantDeferredPtr(JSAPI::*)(std::string, const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     using ConstructType = variant(JSAPI::*)(const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
     using SetPropertyType = void(JSAPI::*)(std::string, const variant&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    using GetPropertyType = variant(JSAPI::*)(std::string);
+    using GetPropertyType = FB::variantDeferredPtr(JSAPI::*)(std::string);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
     using RemovePropertyType = void(JSAPI::*)(std::string);
 

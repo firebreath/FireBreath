@@ -47,8 +47,8 @@ namespace FB { namespace Npapi
         }
     };
 
-    typedef NPVariant (*NPVariantBuilder)(const NpapiBrowserHostPtr&, const FB::variant&);
-    typedef std::map<std::type_info const*, NPVariantBuilder, type_info_less> NPVariantBuilderMap;
+    using NPVariantBuilder = NPVariant (*)(const NpapiBrowserHostPtr&, const FB::variant&);
+    using NPVariantBuilderMap = std::map<std::type_info const*, NPVariantBuilder, type_info_less>;
 
     template<class T>
     NPVariant makeNPVariant(const NpapiBrowserHostPtr& host, const FB::variant& var)
@@ -157,8 +157,8 @@ namespace FB { namespace Npapi
         FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
         FB::VariantList inArr = var.cast<FB::VariantList>();
 
-        for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); ++it) {
-            outArr->Invoke("push", FB::variant_list_of(*it));
+        for (auto var : inArr) {
+            outArr->Invoke("push", FB::VariantList{ var });
         }
 
         if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(outArr)) {
