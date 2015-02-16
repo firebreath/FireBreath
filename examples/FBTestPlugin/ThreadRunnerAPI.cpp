@@ -21,7 +21,7 @@ Copyright 2010 Facebook Inc, Firebreath development team
 
 #include "ThreadRunnerAPI.h"
 
-ThreadRunnerAPI::ThreadRunnerAPI(const FB::BrowserHostPtr& host, const FBTestPluginWeakPtr& plugin)
+ThreadRunnerAPI::ThreadRunnerAPI(FB::BrowserHostPtr host, const FBTestPluginWeakPtr& plugin)
     : m_plugin(plugin), m_host(host)
 {
     registerMethod("addMethod", make_method(this, &ThreadRunnerAPI::addMethod));
@@ -80,7 +80,7 @@ void ThreadRunnerAPI::threadRun()
                     if (outHeaders.find(it->first) != outHeaders.end()) {
                         outHeaders[it->first].cast<FB::VariantList>().push_back(it->second);
                     } else {
-                        outHeaders[it->first] = FB::VariantList(FB::variant_list_of(it->second));
+                        outHeaders[it->first] = FB::VariantList{ it->second });
                     }
                 } else {
                     outHeaders[it->first] = it->second;
@@ -88,7 +88,7 @@ void ThreadRunnerAPI::threadRun()
             }
             if (ret->success) {
                 std::string dstr(reinterpret_cast<const char*>(ret->data.get()), ret->size);
-                val.second->InvokeAsync("", FB::variant_list_of(ret->success)(outHeaders)(dstr));
+                val.second->InvokeAsync("", FB::VariantList{ ret->success, outHeaders, dstr });
             }
         }
 
@@ -112,7 +112,7 @@ void ThreadRunnerAPI::addMethod(const FB::JSObjectPtr &obj)
     m_queue.push(obj);
 }
 
-void ThreadRunnerAPI::addRequest( const std::string& url, const FB::JSObjectPtr &obj )
+void ThreadRunnerAPI::addRequest( std::string url, const FB::JSObjectPtr &obj )
 {
     m_UrlRequestQueue.push(std::make_pair(url, obj));
 }

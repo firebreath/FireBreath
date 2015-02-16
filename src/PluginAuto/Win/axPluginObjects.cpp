@@ -14,12 +14,12 @@
 #include "ActiveXFactoryDefinitions.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
-typedef FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJavascriptObject, &DIID_IFBComEventSource, &FB_LIBID> COMJSObject;
+using COMJSObject = FB::ActiveX::COMJavascriptObject<&CLSID_FBComJavascriptObject, IFBComJavascriptObject, &DIID_IFBComEventSource, &FB_LIBID>;
 
 // Definitions used for creating the plugins
 #include "global/axplugin_defs.inc"
 
-IDispatchEx* _getCOMJSWrapper( const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease /*= false*/ )
+IDispatchEx* _getCOMJSWrapper( FB::BrowserHostPtr host, const FB::JSAPIWeakPtr& api, bool autoRelease /*= false*/ )
 {
     return COMJSObject::NewObject(std::dynamic_pointer_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
 }

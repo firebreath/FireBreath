@@ -28,7 +28,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 
 #include "FBTestPluginAPI.h"
 
-FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::BrowserHostPtr& host) : m_host(host), m_pluginWeak(plugin)
+FBTestPluginAPI::FBTestPluginAPI(const FBTestPluginPtr& plugin, FB::BrowserHostPtr host) : m_host(host), m_pluginWeak(plugin)
 {    
     registerMethod("add",  make_method(this, &FBTestPluginAPI::add));
     registerMethod(L"echo",  make_method(this, &FBTestPluginAPI::echo));
@@ -110,7 +110,7 @@ std::string FBTestPluginAPI::get_testString()
 {
     return m_testString;
 }
-void FBTestPluginAPI::set_testString(const std::string& val)
+void FBTestPluginAPI::set_testString(std::string val)
 {
     m_testString = val;
 }
@@ -135,7 +135,7 @@ long FBTestPluginAPI::add(long a, long b)
 }
 
 // test firing an event
-void FBTestPluginAPI::testEvent(const std::string& param)
+void FBTestPluginAPI::testEvent(std::string param)
 {
     fire_fired(param);
 }
@@ -144,7 +144,7 @@ FB::variant FBTestPluginAPI::echo(const FB::variant& a)
 {
     try {
         if (a.is_of_type<FB::JSObjectPtr>()) {
-            m_host->htmlLog("Echoing: " + a.cast<FB::JSObjectPtr>()->Invoke("ToString", FB::variant_list_of()).convert_cast<std::string>());
+            m_host->htmlLog("Echoing: " + a.cast<FB::JSObjectPtr>()->Invoke("ToString", FB::VariantList()).convert_cast<std::string>());
         } else {
             m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
         }
@@ -353,7 +353,7 @@ long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso)
 }
 FB::variant FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
 {
-    return math->Invoke("add", FB::variant_list_of(a)(b));
+    return math->Invoke("add", FB::VariantList{ a, b });
 }
 
 ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
@@ -361,13 +361,13 @@ ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
     return std::make_shared<ThreadRunnerAPI>(m_host, m_pluginWeak);
 }
 
-void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
+void FBTestPluginAPI::getURL(std::string url, const FB::JSObjectPtr& callback)
 {
     FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url),
         boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
 }
 
-void FBTestPluginAPI::postURL(const std::string& url, const std::string& postdata, const FB::JSObjectPtr& callback)
+void FBTestPluginAPI::postURL(std::string url, std::string postdata, const FB::JSObjectPtr& callback)
 {
     FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
         boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
@@ -382,7 +382,7 @@ void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool succe
             if (outHeaders.find(it->first) != outHeaders.end()) {
                 outHeaders[it->first].cast<FB::VariantList>().push_back(it->second);
             } else {
-                outHeaders[it->first] = FB::VariantList(FB::variant_list_of(it->second));
+                outHeaders[it->first] = FB::VariantList{ it->second };
             }
         } else {
             outHeaders[it->first] = it->second;
@@ -392,13 +392,9 @@ void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool succe
     try {
         if (success) {
             std::string dstr(reinterpret_cast<const char*>(data.get()), size);
-            callback->InvokeAsync("", FB::variant_list_of
-                (true)
-                (outHeaders)
-                (dstr)
-                );
+            callback->InvokeAsync("", FB::VariantList{true, outHeaders, dstr});
         } else {
-            callback->InvokeAsync("", FB::variant_list_of(false));
+            callback->InvokeAsync("", FB::VariantList{false});
         }
     } 
     catch (const std::runtime_error&)
@@ -420,22 +416,22 @@ void FBTestPluginAPI::SetTimeout(const FB::JSObjectPtr& callback, long timeout)
 
 void FBTestPluginAPI::timerCallback(const FB::JSObjectPtr& callback)
 {
-    callback->Invoke("", FB::variant_list_of());
+    callback->Invoke("", FB::VariantList());
     // TODO: delete This timer
 }
 
 FB::VariantMap FBTestPluginAPI::systemHelpersTest(){
-    FB::VariantMap result;
+    FB::VariantMap result{
+        { "homedir", FB::System::getHomeDirPath() },
+        { "tempdir", FB::System::getTempPath()},
+        { "appdata", FB::System::getAppDataPath("FBTestPlugin")},
+        { "appdata_local", FB::System::getLocalAppDataPath("FBTestPlugin")}
+    };
     
-    result["homedir"] = FB::System::getHomeDirPath();
-    result["tempdir"] = FB::System::getTempPath();
-    result["appdata"] = FB::System::getAppDataPath("FBTestPlugin");
-    result["appdata_local"] = FB::System::getLocalAppDataPath("FBTestPlugin");
-
     return result;
 }
 
-const boost::optional<std::string> FBTestPluginAPI::optionalTest( const std::string& test1, const boost::optional<std::string>& str )
+const boost::optional<std::string> FBTestPluginAPI::optionalTest( std::string test1, const boost::optional<std::string>& str )
 {
     if (str)
         m_host->htmlLog(*str);
@@ -473,5 +469,5 @@ void FBTestPluginAPI::openPopup()
 
 void FBTestPluginAPI::ping( const int seq, const FB::JSObjectPtr& callback )
 {
-    callback->InvokeAsync("", FB::variant_list_of(shared_from_this())(seq));
+    callback->InvokeAsync("", FB::VariantList{ shared_from_this(), seq });
 }

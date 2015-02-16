@@ -42,7 +42,7 @@ namespace FB {
             PluginWindowlessWin(const WindowContextWindowless&);
             ~PluginWindowlessWin();
 
-            typedef std::function<void (uint32_t, uint32_t, uint32_t, uint32_t)> InvalidateWindowFunc;
+            using InvalidateWindowFunc = std::function<void (uint32_t, uint32_t, uint32_t, uint32_t)>;
 
             ////////////////////////////////////////////////////////////////////////////////////////////////////
             /// @fn HDC PluginWindowlessWin::getHDC() const

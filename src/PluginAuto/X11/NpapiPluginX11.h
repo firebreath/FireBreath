@@ -26,7 +26,7 @@ namespace FB {
     class NpapiPluginX11 : public NpapiPlugin
     {
     public:
-        NpapiPluginX11(const NpapiBrowserHostPtr& host, const std::string& mimetype);
+        NpapiPluginX11(const NpapiBrowserHostPtr& host, std::string mimetype);
         virtual ~NpapiPluginX11(void);
 
     protected:

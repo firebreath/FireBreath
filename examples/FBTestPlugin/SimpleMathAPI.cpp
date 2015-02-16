@@ -14,14 +14,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 \**********************************************************/
 
 #include "JSObject.h"
-#include <boost/assign.hpp>
 #include "DOM/Document.h"
 #include "variant_list.h"
-using boost::assign::list_of;
 
 #include "SimpleMathAPI.h"
 
-SimpleMathAPI::SimpleMathAPI(const FB::BrowserHostPtr& host) : m_host(host)
+SimpleMathAPI::SimpleMathAPI(FB::BrowserHostPtr host) : m_host(host)
 {
     registerMethod("add",  make_method(this, &SimpleMathAPI::add));
     registerMethod("sub",  make_method(this, &SimpleMathAPI::sub));

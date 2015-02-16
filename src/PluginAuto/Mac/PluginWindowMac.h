@@ -39,7 +39,7 @@ namespace FB {
         };
 
         static NPDrawingModel initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host);
-        static NPDrawingModel initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& drawingModel);
+        static NPDrawingModel initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, std::string drawingModel);
         static FB::PluginWindowMac* createPluginWindowMac(NPDrawingModel drawingModel);
 
         PluginWindowMac();

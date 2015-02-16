@@ -28,7 +28,7 @@ public:
     static void StaticInitialize();
     static void StaticDeinitialize();
 
-    FBTestPlugin(const std::string& mimetype);
+    FBTestPlugin(std::string mimetype);
     virtual ~FBTestPlugin();
 
     virtual FB::JSAPIPtr createJSAPI();

@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <map>
 #include <boost/cstdint.hpp>
 
-typedef struct _NPEvent NPEvent;
+using NPEvent = struct _NPEvent;
 
 namespace FB {
 
@@ -73,7 +73,7 @@ namespace FB {
         virtual uint32_t getWindowWidth() const;
         virtual uint32_t getWindowHeight() const;
 
-        typedef std::map<void*,PluginWindowWin*> PluginWindowMap;
+        using PluginWindowMap = std::map<void*,PluginWindowWin*>;
 
         // Windowed plugins get OS events directly through their window
         boost::int16_t HandleEvent(NPEvent* evt) { return 0; }

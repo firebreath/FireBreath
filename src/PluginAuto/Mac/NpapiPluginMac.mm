@@ -33,7 +33,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 using namespace FB::Npapi;
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype)
 {
     return std::make_shared<NpapiPluginMac>(host, mimetype);
 }
@@ -51,7 +51,7 @@ namespace
     }
 }
 
-NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& mimetype)
+NpapiPluginMac::NpapiPluginMac(const FB::Npapi::NpapiBrowserHostPtr &host, std::string mimetype)
     : NpapiPlugin(host, mimetype), m_eventModel((NPEventModel)-1), m_drawingModel((NPDrawingModel)-1)
 {
     // If you receive a BAD_ACCESS error here you probably have something

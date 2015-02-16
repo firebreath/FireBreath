@@ -34,7 +34,7 @@ struct DrawingModel {
     NPNVariable query;
     NPDrawingModel model;
 
-    bool negotiate(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& requested, boost::function<void(NPDrawingModel)> factory) const
+    bool negotiate(const FB::Npapi::NpapiBrowserHostPtr& host, std::string requested, boost::function<void(NPDrawingModel)> factory) const
     {
         using namespace boost::algorithm;
         std::vector<std::string> prefs;
@@ -84,12 +84,12 @@ using namespace FB::Npapi;
 
 extern std::string g_dllPath;
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype)
 {
     return std::make_shared<NpapiPluginWin>(host, mimetype);
 }
 
-NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host, const std::string& mimetype)
+NpapiPluginWin::NpapiPluginWin(const NpapiBrowserHostPtr& host, std::string mimetype)
     : NpapiPlugin(host, mimetype)
     , m_drawingModel((NPDrawingModel)-1)
 {

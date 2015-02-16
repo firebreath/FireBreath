@@ -23,7 +23,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "NpapiPluginFactory.h"
 #include <boost/make_shared.hpp>
 
-FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+FB::Npapi::NpapiPluginPtr FB::Npapi::createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype)
 {
     return std::make_shared<NpapiPluginX11>(host, mimetype);
 }
@@ -50,7 +50,7 @@ namespace
     }
 }
 
-NpapiPluginX11::NpapiPluginX11(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+NpapiPluginX11::NpapiPluginX11(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype)
     : NpapiPlugin(host, mimetype), pluginWin(NULL)
 {
     PluginCore::setPlatform("X11", "NPAPI");

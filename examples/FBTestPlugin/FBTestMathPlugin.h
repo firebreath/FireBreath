@@ -25,7 +25,7 @@ public:
     static void StaticDeinitialize();
 
 public:
-    FBTestMathPlugin(const std::string& mimetype);
+    FBTestMathPlugin(std::string mimetype);
     virtual ~FBTestMathPlugin();
 
 public:

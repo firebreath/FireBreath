@@ -37,7 +37,7 @@ void FBTestMathPlugin::StaticDeinitialize()
 }
 
 
-FBTestMathPlugin::FBTestMathPlugin(const std::string& mimetype) :
+FBTestMathPlugin::FBTestMathPlugin(std::string mimetype) :
     m_mimetype(mimetype)
 {
 }

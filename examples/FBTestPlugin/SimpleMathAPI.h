@@ -21,12 +21,12 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 class SimpleMathAPI : public FB::JSAPIAuto
 {
 public:
-    SimpleMathAPI(const FB::BrowserHostPtr& host);
+    SimpleMathAPI(FB::BrowserHostPtr host);
     virtual ~SimpleMathAPI();
 
     // Read/Write property testString
     std::string get_testString();
-    void set_testString(const std::string& val);
+    void set_testString(std::string val);
 
     // Read-only property someInt
     int get_someInt();

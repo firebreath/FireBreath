@@ -27,7 +27,7 @@ namespace FB { namespace Npapi {
     class NpapiPluginMac : public NpapiPlugin
     {        
     public:
-        NpapiPluginMac(const NpapiBrowserHostPtr &host, const std::string& mimetype);
+        NpapiPluginMac(const NpapiBrowserHostPtr &host, std::string mimetype);
         virtual ~NpapiPluginMac(void);
         
         void init(NPMIMEType pluginType, int16_t argc, char* argn[], char *argv[]);

@@ -21,7 +21,7 @@
 #include "NpapiTypes.h"
 
 #if FB_GUI_DISABLED == 1
-typedef long int GdkNativeWindow;
+using GdkNativeWindow = long int;
 #endif
 
 namespace FB

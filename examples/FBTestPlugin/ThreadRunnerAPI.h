@@ -29,11 +29,11 @@ FB_FORWARD_PTR(FBTestPlugin)
 class ThreadRunnerAPI : public FB::JSAPIAuto
 {
 public:
-    ThreadRunnerAPI(const FB::BrowserHostPtr& host, const FBTestPluginWeakPtr& plugin);
+    ThreadRunnerAPI(FB::BrowserHostPtr host, const FBTestPluginWeakPtr& plugin);
     virtual ~ThreadRunnerAPI();
 
     void addMethod(const FB::JSObjectPtr &);
-    void addRequest(const std::string& url, const FB::JSObjectPtr &);
+    void addRequest(std::string url, const FB::JSObjectPtr &);
 protected:
     void threadRun();
 

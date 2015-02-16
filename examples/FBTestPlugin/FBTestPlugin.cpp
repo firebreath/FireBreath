@@ -43,7 +43,7 @@ void FBTestPlugin::StaticDeinitialize()
     // the plugin library is unloaded
 }
 
-FBTestPlugin::FBTestPlugin(const std::string& mimetype) :
+FBTestPlugin::FBTestPlugin(std::string mimetype) :
     m_mimetype(mimetype)
 #ifdef FBWIN_ASYNCSURFACE
     , m_threadInterrupted(true)

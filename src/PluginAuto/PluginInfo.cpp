@@ -44,12 +44,12 @@ namespace {
     }
 };
 
-std::string FB::getPluginName(const std::string& mimetype)
+std::string FB::getPluginName(std::string mimetype)
 {
     return FBSTRING_PluginName; // NPAPI only really allows one name per mimetype
 }
 
-std::string FB::getPluginDescription(const std::string& mimetype)
+std::string FB::getPluginDescription(std::string mimetype)
 {
     initPluginMetadata();
 

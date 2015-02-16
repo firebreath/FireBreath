@@ -15,7 +15,7 @@
 class PluginFactory : public FB::FactoryBase
 {
 public:
-    FB::PluginCorePtr createPlugin(const std::string& mimetype)
+    FB::PluginCorePtr createPlugin(std::string mimetype)
     {
         if (!mimetype.compare("application/x-fbtestmathplugin")) {
             return std::make_shared<FBTestMathPlugin>(mimetype);

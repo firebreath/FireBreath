@@ -120,7 +120,7 @@ static bool initPluginWindowMac_QD(const FB::Npapi::NpapiBrowserHostPtr &host, N
 #endif
 #endif
 
-NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, const std::string& drawingModel) {
+NPDrawingModel PluginWindowMac::initPluginWindowMac(const FB::Npapi::NpapiBrowserHostPtr &host, std::string drawingModel) {
     NPDrawingModel rval = (NPDrawingModel) -1; 
 #if FBMAC_USE_COREANIMATION
     if (0 == strcmp(drawingModel.c_str(), "NPDrawingModelCoreAnimation"))

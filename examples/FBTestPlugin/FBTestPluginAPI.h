@@ -30,7 +30,7 @@ FB_FORWARD_PTR(FBTestPlugin);
 class FBTestPluginAPI : public FB::JSAPIAuto
 {
 public:
-    FBTestPluginAPI(const FBTestPluginPtr& plugin, const FB::BrowserHostPtr& host);
+    FBTestPluginAPI(const FBTestPluginPtr& plugin, FB::BrowserHostPtr host);
     virtual ~FBTestPluginAPI();
 
     FB_JSAPI_EVENT(fired, 1, (const std::string));
@@ -42,7 +42,7 @@ public:
     std::wstring say(const std::wstring& val);
     // Read/Write property testString
     std::string get_testString();
-    void set_testString(const std::string& val);
+    void set_testString(std::string val);
 
     // Read-only property someInt
     long get_someInt();
@@ -61,7 +61,7 @@ public:
     bool asBool(const FB::variant& a);
     long asInt(const FB::variant& a);
     double asDouble(const FB::variant& a);
-    const boost::optional<std::string> optionalTest(const std::string& test1, const boost::optional<std::string>& str);
+    const boost::optional<std::string> optionalTest(std::string test1, const boost::optional<std::string>& str);
 
     std::string charArray(const std::vector<char>& arr);
     std::string listArray(const std::vector<std::string>&);
@@ -74,7 +74,7 @@ public:
 
     // Method add
     long add(long a, long b);
-    void testEvent(const std::string& param);
+    void testEvent(std::string param);
 
     // Method to start the streams test
     bool testStreams();
@@ -88,8 +88,8 @@ public:
     
     void eval(std::string str);
     FB::variant addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
-    void getURL(const std::string& url, const FB::JSObjectPtr& callback);
-    void postURL(const std::string& url, const std::string& postdata, const FB::JSObjectPtr& callback);
+    void getURL(std::string url, const FB::JSObjectPtr& callback);
+    void postURL(std::string url, std::string postdata, const FB::JSObjectPtr& callback);
     void getURLCallback(const FB::JSObjectPtr& callback, bool success, const FB::HeaderMap& headers,
         const boost::shared_array<uint8_t>& data, const size_t size);
 	void SetTimeout(const FB::JSObjectPtr& callback, long timeout);

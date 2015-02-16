@@ -69,7 +69,7 @@ FB::FactoryBasePtr getFactoryInstance()
     return factory;
 }
 
-IDispatchEx* _getCOMJSWrapper( const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease )
+IDispatchEx* _getCOMJSWrapper( FB::BrowserHostPtr host, const FB::JSAPIWeakPtr& api, bool autoRelease )
 {
     return COMJSObject::NewObject(std::dynamic_pointer_cast<FB::ActiveX::ActiveXBrowserHost>(host), api, autoRelease);
 }
