@@ -38,11 +38,11 @@ namespace FB {
     class BrowserPlugin : boost::noncopyable
     {
     public:
-        BrowserPlugin(const std::string& mimetype);
+        BrowserPlugin(std::string mimetype);
         virtual ~BrowserPlugin();
 
         virtual void shutdown() = 0;
-        virtual void setFSPath(const std::string& path);
+        virtual void setFSPath(std::string path);
 
         static std::string getFSPath() { return fileSystemPath; }
 

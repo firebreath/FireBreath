@@ -62,7 +62,7 @@ namespace FB {
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn static void PluginCore::setPlatform(const std::string& os, const std::string& browser)
+        /// @fn static void PluginCore::setPlatform(std::string os, std::string browser)
         ///
         /// @brief  Called by the browser when the Operating System and Browser are known.
         ///
@@ -71,7 +71,7 @@ namespace FB {
         /// @param  os      The operating system. 
         /// @param  browser The browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static void setPlatform(const std::string& os, const std::string& browser);
+        static void setPlatform(std::string os, std::string browser);
 
     public:
 
@@ -290,7 +290,7 @@ namespace FB {
         virtual std::string negotiateDrawingModel();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void PluginCore::setFSPath(const std::string& path)
+        /// @fn virtual void PluginCore::setFSPath(std::string path)
         ///
         /// @brief  Called by the browser to set the file system path of the plugin module. 
         ///
@@ -299,7 +299,7 @@ namespace FB {
         /// 
         /// @param  path    Full pathname of the file. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setFSPath(const std::string& path) { m_filesystemPath = path; }
+        virtual void setFSPath(std::string path) { m_filesystemPath = path; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static std::string getFSPath()
@@ -328,8 +328,8 @@ namespace FB {
 
         virtual void setParams(const FB::VariantMap& inParams);
         
-        virtual boost::optional<std::string> getParam(const std::string& key);
-        virtual FB::variant getParamVariant(const std::string& key);
+        virtual boost::optional<std::string> getParam(std::string key);
+        virtual FB::variant getParamVariant(std::string key);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool PluginCore::handleUnsolicitedStream(const BrowserStreamRequest& req)

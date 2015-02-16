@@ -15,7 +15,7 @@ namespace FB {
         virtual ~SystemProxyDetector() {}
         static SystemProxyDetector* get();
 
-        virtual bool detectProxy(std::map<std::string, std::string>& proxyMap, const std::string& URL) = 0;
+        virtual bool detectProxy(std::map<std::string, std::string>& proxyMap, std::string URL) = 0;
     };
 
 };

@@ -80,7 +80,7 @@ namespace FB
         virtual void shutdown() {};
 
     protected:
-        virtual void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+        virtual void fireAsyncEvent( std::string eventName, const std::vector<variant>& args );
 
     protected:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -92,7 +92,7 @@ namespace FB
         }
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args)
+        /// @fn virtual void FireEvent(std::string eventName, const std::vector<variant> &args)
         ///
         /// @brief  Fires an event into javascript asynchronously
         ///         
@@ -123,7 +123,7 @@ namespace FB
         ///
         /// @see registerEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireEvent(const std::string& eventName, const std::vector<variant> &args);
+        virtual void FireEvent(std::string eventName, const std::vector<variant> &args);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief  Fires an event into javascript asynchronously using a W3C-compliant event parameter
@@ -157,14 +157,14 @@ namespace FB
         ///
         /// @see registerEvent
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
+        virtual void FireJSEvent(std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
         /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &params)
+        virtual void FireJSEvent(std::string eventName, const FB::VariantMap &params)
         {
             FireJSEvent(eventName, params, FB::VariantList());
         }
         /// @overload
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantList &arguments)
+        virtual void FireJSEvent(std::string eventName, const FB::VariantList &arguments)
         {
             FireJSEvent(eventName, FB::VariantMap(), arguments);
         }
@@ -240,14 +240,14 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEvent(const std::string& name)
+        /// @fn virtual void registerEvent(std::string name)
         ///
         /// @brief  Register event so that event listeners can be added/attached from javascript
         ///
         /// @param  name    The name of the event to register.  This event must start with "on"
         /// @deprecated 1.5
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEvent(const std::string& name) {}
+        virtual void registerEvent(std::string name) {}
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEvent(const std::wstring& name)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -258,14 +258,14 @@ namespace FB
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
+        /// @fn virtual void registerEventMethod(std::string name, JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to register an event handler method
         ///
         /// @param  name            The name. 
         /// @param  event           The event handler method. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void registerEventMethod(std::string name, JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void registerEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -275,14 +275,14 @@ namespace FB
         }
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
+        /// @fn virtual void unregisterEventMethod(std::string name, JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to unregister an event handler method
         ///
         /// @param  name            The name. 
         /// @param  event           The event handler method to unregister. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event);
+        virtual void unregisterEventMethod(std::string name, JSObjectPtr& event);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void unregisterEventMethod(const std::wstring& name, JSObjectPtr& event)
         ////////////////////////////////////////////////////////////////////////////////////////////////////

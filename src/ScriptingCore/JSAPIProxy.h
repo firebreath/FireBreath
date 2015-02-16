@@ -136,26 +136,26 @@ namespace FB
         virtual size_t getMemberCount() const override;
 
         virtual bool HasMethod(const std::wstring& methodName) const override;
-        virtual bool HasMethod(const std::string& methodName) const override;
+        virtual bool HasMethod(std::string methodName) const override;
         virtual bool HasProperty(const std::wstring& propertyName) const override;
-        virtual bool HasProperty(const std::string& propertyName) const override;
+        virtual bool HasProperty(std::string propertyName) const override;
         virtual bool HasProperty(int idx) const override;
 
         virtual variantDeferredPtr GetProperty(const std::wstring& propertyName) override;
-        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
+        virtual variantDeferredPtr GetProperty(std::string propertyName) override;
 
         virtual void SetProperty(const std::wstring& propertyName, const variant& value) override;
-        virtual void SetProperty(const std::string& propertyName, const variant& value) override;
+        virtual void SetProperty(std::string propertyName, const variant& value) override;
 
         virtual void RemoveProperty(const std::wstring& propertyName) override;
-        virtual void RemoveProperty(const std::string& propertyName) override;
+        virtual void RemoveProperty(std::string propertyName) override;
         
         virtual variantDeferredPtr GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
         virtual variantDeferredPtr Invoke(const std::wstring& methodName, const std::vector<variant>& args) override;
-        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) override;
+        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
     };
 
 };

@@ -27,7 +27,7 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct script_error : public std::runtime_error
     {
-        script_error(const std::string& error)
+        script_error(std::string error)
             : std::runtime_error(error), m_error(error)
         { }
         virtual ~script_error() throw() { }
@@ -51,7 +51,7 @@ namespace FB {
         { }
         ~invalid_arguments() throw() { }
 
-        invalid_arguments(const std::string& error)
+        invalid_arguments(std::string error)
             : script_error(error)
         { }
     };
@@ -82,7 +82,7 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct invalid_member : public script_error
     {
-        invalid_member(const std::string& memberName)
+        invalid_member(std::string memberName)
             : script_error("The specified member does not exist: " + memberName)
         { }
         ~invalid_member() throw() { }

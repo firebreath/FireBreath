@@ -101,7 +101,7 @@ void FB::BrowserHost::shutdown()
     m_streamMgr.reset();
 }
 
-void FB::BrowserHost::htmlLog(const std::string& str)
+void FB::BrowserHost::htmlLog(std::string str)
 {
     FBLOG_INFO("BrowserHost", "Logging to HTML: " << str);
     if (m_htmlLogEnabled) {
@@ -287,7 +287,7 @@ bool FB::BrowserHost::ScheduleAsyncCall( void (*func)(void *), void *userData ) 
     }
 }
 
-FB::BrowserStreamPtr FB::BrowserHost::createStream( const std::string& url,
+FB::BrowserStreamPtr FB::BrowserHost::createStream( std::string url,
     const PluginEventSinkPtr& callback, bool cache /*= true*/, bool seekable /*= false*/,
     size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
@@ -317,8 +317,8 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& 
     }
 }
 
-FB::BrowserStreamPtr FB::BrowserHost::createPostStream( const std::string& url,
-    const PluginEventSinkPtr& callback, const std::string& postdata, bool cache /*= true*/, 
+FB::BrowserStreamPtr FB::BrowserHost::createPostStream( std::string url,
+    const PluginEventSinkPtr& callback, std::string postdata, bool cache /*= true*/, 
     bool seekable /*= false*/, size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
     BrowserStreamRequest req(url, "POST");
@@ -340,7 +340,7 @@ FB::BrowserStreamPtr FB::BrowserHost::createUnsolicitedStream( const BrowserStre
     return ptr;
 }
 
-bool FB::BrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, const std::string& url )
+bool FB::BrowserHost::DetectProxySettings( std::map<std::string, std::string>& settingsMap, std::string url )
 {
     return FB::SystemProxyDetector::get()->detectProxy(settingsMap, url);
 }

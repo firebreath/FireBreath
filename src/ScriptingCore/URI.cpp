@@ -35,7 +35,7 @@ using FB::URI;
 
 URI::StringStringMap URI::m_lhMap;
 
-std::string URI::url_encode(const std::string& in) {
+std::string URI::url_encode(std::string in) {
     std::stringstream res;
     for (size_t i = 0; i < in.size(); ++i) {
         char c = in[i];
@@ -51,7 +51,7 @@ std::string URI::url_encode(const std::string& in) {
     return res.str();
 }
 
-std::string URI::url_decode(const std::string& in) {
+std::string URI::url_decode(std::string in) {
     std::stringstream res;
     for (size_t i = 0; i < in.size(); ++i) {
         if (in[i] == '%' && (i + 2) < in.size() && isxdigit(in[i+1]) && isxdigit(in[i+2])) {
@@ -88,11 +88,11 @@ std::string URI::toString(bool include_host_part) const {
     return res.str();
 }
 
-URI URI::fromString(const std::string& in_str) {
+URI URI::fromString(std::string in_str) {
     return URI(in_str);
 }
 
-URI::URI(const std::string& in_str) : port(0) {
+URI::URI(std::string in_str) : port(0) {
     string w = in_str;
 
     size_t l = w.find("://");
@@ -162,7 +162,7 @@ bool URI::operator==(const URI& right) const {
         );
 }
 
-void URI::appendPathComponent(const std::string& pc) {
+void URI::appendPathComponent(std::string pc) {
     if (! pc.size()) return;
     // make sure we have exactly one '/' between the old path and new path component[s]
     if (path.size() && path[path.size() - 1] == '/') path.resize(path.size() - 1);
@@ -217,7 +217,7 @@ bool URI::isLocalhost() const {
     return false;
 }
 
-void URI::parse_query_data(const std::string& in_str) {
+void URI::parse_query_data(std::string in_str) {
     std::vector<string> parts;
     split(parts, in_str, is_any_of("&"));
     for (std::vector<string>::iterator it = parts.begin(); it != parts.end(); ++it) {

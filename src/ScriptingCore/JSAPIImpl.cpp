@@ -73,7 +73,7 @@ VariantMap proxyProcessMap(const VariantMap &args, const JSAPIImplPtr& self, con
     return newMap;
 }
 
-void JSAPIImpl::fireAsyncEvent(const std::string& eventName, const std::vector<variant>& args) {
+void JSAPIImpl::fireAsyncEvent(std::string eventName, const std::vector<variant>& args) {
     using JSObjectList = std::vector < FB::JSObjectPtr > ;
     EventContextMap eventMap;
     EventIfaceContextMap evtIfaces;
@@ -135,7 +135,7 @@ void JSAPIImpl::fireAsyncEvent(const std::string& eventName, const std::vector<v
     }
 }
 
-void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<variant>& args) {
+void JSAPIImpl::FireEvent(std::string eventName, const std::vector<variant>& args) {
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
@@ -168,7 +168,7 @@ void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<varian
     }
 }
 
-void JSAPIImpl::FireJSEvent(const std::string& eventName, const VariantMap &members, const VariantList &arguments) {
+void JSAPIImpl::FireJSEvent(std::string eventName, const VariantMap &members, const VariantList &arguments) {
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
@@ -231,7 +231,7 @@ void JSAPIImpl::FireJSEvent(const std::string& eventName, const VariantMap &memb
     }
 }
 
-void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event) {
+void JSAPIImpl::registerEventMethod(std::string name, JSObjectPtr &event) {
     if (!event)
         throw invalid_arguments();
 
@@ -247,7 +247,7 @@ void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event)
 }
 
 
-void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &event) {
+void JSAPIImpl::unregisterEventMethod(std::string name, JSObjectPtr &event) {
     if (!event)
         throw invalid_arguments();
 

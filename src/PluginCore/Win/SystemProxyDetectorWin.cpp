@@ -44,7 +44,7 @@ namespace {
 
 }
 
-bool FB::SystemProxyDetectorWin::detectProxy( map<string, string>& proxyMap, const string& URL )
+bool FB::SystemProxyDetectorWin::detectProxy( map<string, string>& proxyMap, string URL )
 {
     proxyMap.clear();
     try {

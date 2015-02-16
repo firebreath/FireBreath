@@ -21,7 +21,7 @@ using namespace FB;
 
 std::string BrowserPlugin::fileSystemPath;
 
-BrowserPlugin::BrowserPlugin(const std::string& mimetype) :
+BrowserPlugin::BrowserPlugin(std::string mimetype) :
     pluginMain(getFactoryInstance()->createPlugin(mimetype))
 {
 }
@@ -30,7 +30,7 @@ BrowserPlugin::~BrowserPlugin()
 {
 }
 
-void BrowserPlugin::setFSPath(const std::string& path)
+void BrowserPlugin::setFSPath(std::string path)
 {
     fileSystemPath = path;
     pluginMain->setFSPath(path);

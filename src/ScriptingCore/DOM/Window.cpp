@@ -40,7 +40,7 @@ void Window::alert(const std::wstring& str) const
     alert(FB::wstring_to_utf8(str));
 }
 
-void Window::alert(const std::string& str) const
+void Window::alert(std::string str) const
 {
     callMethod<void>("alert", VariantList{ str });
 }

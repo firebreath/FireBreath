@@ -66,7 +66,7 @@ namespace FB
     ///      class PluginFactory : public FB::FactoryBase
     ///      {
     ///      public:
-    ///          FB::PluginCorePtr createPlugin(const std::string& mimetype)
+    ///          FB::PluginCorePtr createPlugin(std::string mimetype)
     ///          {
     ///              return std::make_shared<MyPluginObject>();
     ///          }
@@ -98,14 +98,14 @@ namespace FB
         virtual ~FactoryBase();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(const std::string& mimetype) = 0
+        /// @fn virtual FB::PluginCorePtr FactoryBase::createPlugin(std::string mimetype) = 0
         ///
         /// @brief  Creates a FB::PluginCore derived user plugin object.  This must be implemented
         ///         for all plugin projects.
         ///
         /// @code
         ///      // Example implementation
-        ///      FB::PluginCorePtr createPlugin(const std::string& mimetype)
+        ///      FB::PluginCorePtr createPlugin(std::string mimetype)
         ///      {
         ///          return std::make_shared<MyPluginObject>();
         ///      }
@@ -117,7 +117,7 @@ namespace FB
         /// 
         /// @return FB::PluginCorePtr pointer to the FB::PluginCore class
         /////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::PluginCorePtr           createPlugin(const std::string& mimetype) = 0;
+        virtual FB::PluginCorePtr           createPlugin(std::string mimetype) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void FactoryBase::globalPluginInitialize()
@@ -163,7 +163,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string                         getPluginName();
         /// @overload
-        std::string                         getPluginName(const std::string& mimetype);
+        std::string                         getPluginName(std::string mimetype);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn std::string FactoryBase::getPluginDescription()
         ///
@@ -174,10 +174,10 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string                         getPluginDescription();
         /// @overload
-        std::string                         getPluginDescription(const std::string& mimetype);
+        std::string                         getPluginDescription(std::string mimetype);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype)
+        /// @fn virtual FB::Npapi::NpapiPluginPtr createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype)
         ///
         /// @brief  Creates a npapi plugin.  The default implementation creates a NpapiPluginWin, NpapiPluginX11, or
         ///         NpapiPluginMac depending on the platform.  Only in very very rare cases will you need to override
@@ -188,7 +188,7 @@ namespace FB
         ///
         /// @return An NpapiPluginPtr containing an NpapiPlugin derived plugin handler
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::Npapi::NpapiPluginPtr   createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, const std::string& mimetype);
+        virtual FB::Npapi::NpapiPluginPtr   createNpapiPlugin(const FB::Npapi::NpapiBrowserHostPtr& host, std::string mimetype);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void getLoggingMethods(FB::Log::LogMethodList& outMethods)

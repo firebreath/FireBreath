@@ -29,7 +29,7 @@ std::string Element::getInnerHTML() const
 {
     return getProperty<std::string>("innerHTML");
 }
-void Element::setInnerHTML(const std::string& html) const
+void Element::setInnerHTML(std::string html) const
 {
     setProperty("innerHTML", html);
 }
@@ -79,7 +79,7 @@ ElementPtr Element::getParentNode() const
     return retVal;
 }
 
-ElementPtr Element::getElementById(const std::string& id) const
+ElementPtr Element::getElementById(std::string id) const
 {
     JSObjectPtr api = callMethod<JSObjectPtr>("getElementById", VariantList{ id });
     return Element::create(api);
@@ -90,7 +90,7 @@ std::vector<ElementPtr> Element::getElementsByTagName(const std::wstring& tagNam
     return getElementsByTagName(FB::wstring_to_utf8(tagName));
 }
 
-std::vector<ElementPtr> Element::getElementsByTagName(const std::string& tagName) const
+std::vector<ElementPtr> Element::getElementsByTagName(std::string tagName) const
 {
     auto tagList = callMethod<std::vector<FB::JSObjectPtr> >("getElementsByTagName", VariantList{tagName});
     std::vector<ElementPtr> outList;
@@ -102,7 +102,7 @@ std::vector<ElementPtr> Element::getElementsByTagName(const std::string& tagName
     return outList;
 }
 
-std::string FB::DOM::Element::getStringAttribute( const std::string& attr ) const
+std::string FB::DOM::Element::getStringAttribute( std::string attr ) const
 {
     return callMethod<std::string>("getAttribute", FB::VariantList{ attr });
 }

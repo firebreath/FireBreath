@@ -56,12 +56,12 @@ namespace FB { namespace Log {
     void initLogging();
     void stopLogging();
 
-    void trace(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
-    void debug(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
-    void  info(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
-    void  warn(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
-    void error(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
-    void fatal(const std::string& src, const std::string& msg, const char *file, int line, const char *fn);
+    void trace(std::string src, std::string msg, const char *file, int line, const char *fn);
+    void debug(std::string src, std::string msg, const char *file, int line, const char *fn);
+    void  info(std::string src, std::string msg, const char *file, int line, const char *fn);
+    void  warn(std::string src, std::string msg, const char *file, int line, const char *fn);
+    void error(std::string src, std::string msg, const char *file, int line, const char *fn);
+    void fatal(std::string src, std::string msg, const char *file, int line, const char *fn);
 
     //////////////////////////////////////////////////////////////////////////
     /// Used to specify the preferred loglevel for a logging system

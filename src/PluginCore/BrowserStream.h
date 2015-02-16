@@ -57,13 +57,13 @@ namespace FB {
 
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn BrowserStream::BrowserStream( const std::string& url, bool cache, bool seekable, size_t internalBufferSize)
+        /// @fn BrowserStream::BrowserStream( std::string url, bool cache, bool seekable, size_t internalBufferSize)
         ///
         /// @brief  Default constructor. Dont't use directly, use BrowserHost::createStream instead.
         ///
         /// @author Matthias
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserStream( const std::string& url, bool cache, bool requestSeekable, size_t internalBufferSize);
+        BrowserStream( std::string url, bool cache, bool requestSeekable, size_t internalBufferSize);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual BrowserStream::~BrowserStream()
@@ -245,14 +245,14 @@ namespace FB {
 
     protected:
         // property setters
-        virtual void setUrl(const std::string& url);
+        virtual void setUrl(std::string url);
         virtual void setSeekableByServer(bool seekable);
         virtual void setCached(bool cached);
         virtual void setCompleted(bool completed);
         virtual void setOpen(bool open);
-        virtual void setMimeType(const std::string& mimeType);
+        virtual void setMimeType(std::string mimeType);
         virtual void setCacheFilename(const std::wstring& cacheFilename);
-        virtual void setHeaders(const std::string& headers);
+        virtual void setHeaders(std::string headers);
         virtual void setInternalBufferSize(size_t internalBufferSize);
         virtual void setLength(size_t length);
 

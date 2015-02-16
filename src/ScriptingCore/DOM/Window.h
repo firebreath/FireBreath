@@ -102,13 +102,13 @@ namespace FB {
         virtual DocumentPtr getDocument() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void Window::alert(const std::string& str) const
+        /// @fn virtual void Window::alert(std::string str) const
         ///
         /// @brief  Pop up a JS alert box
         ///
         /// @param  str The alert string
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void alert(const std::string& str) const;
+        virtual void alert(std::string str) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void Window::alert(const std::wstring& str) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -133,13 +133,13 @@ namespace FB {
         virtual FB::JSObjectPtr createMap() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual FB::JSObjectPtr Window::createDate(const std::string& datestring) const
+        /// @fn virtual FB::JSObjectPtr Window::createDate(std::string datestring) const
         ///
         /// @brief  Creates a javascript Date object and returns it
         ///
         /// @return new javascript Date object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-//        virtual FB::JSObjectPtr createDate(const std::string& datestring) const;
+//        virtual FB::JSObjectPtr createDate(std::string datestring) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string Window::getLocation() const

@@ -28,7 +28,7 @@ string FB::System::getHomeDirPath()
     return path;
 }
 
-string FB::System::getAppDataPath(const string& appName)
+string FB::System::getAppDataPath(string appName)
 {
     NSAutoreleasePool * pool = [NSAutoreleasePool new];
     // find the path to ~/Library/Application Support/
@@ -44,7 +44,7 @@ string FB::System::getAppDataPath(const string& appName)
     return path;
 }
 
-string FB::System::getLocalAppDataPath(const string& appName)
+string FB::System::getLocalAppDataPath(string appName)
 {
     return FB::System::getAppDataPath(appName);
 }

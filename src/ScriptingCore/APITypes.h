@@ -115,15 +115,15 @@ namespace FB
     // backwards compability typedefs
 
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
-    using InvokeType = variant(JSAPI::*)(const std::string&, const std::vector<variant>&);
+    using InvokeType = variant(JSAPI::*)(std::string, const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     using ConstructType = variant(JSAPI::*)(const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
-    using SetPropertyType = void(JSAPI::*)(const std::string&, const variant&);
+    using SetPropertyType = void(JSAPI::*)(std::string, const variant&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    using GetPropertyType = variant(JSAPI::*)(const std::string&);
+    using GetPropertyType = variant(JSAPI::*)(std::string);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    using RemovePropertyType = void(JSAPI::*)(const std::string&);
+    using RemovePropertyType = void(JSAPI::*)(std::string);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @struct CatchAll
@@ -134,7 +134,7 @@ namespace FB
     /// This helper struct allows your scriptable methods to receive 0 or more parameters in addition
     /// to some fixed ones. E.g. given the following scriptable method:
     /// @code
-    /// long howManyParams(long a, const std::string& b, const FB::CatchAll& more) {
+    /// long howManyParams(long a, std::string b, const FB::CatchAll& more) {
     ///     const FB::VariantList& values = more.value;
     ///     long paramCount = 2 + values.size();
     ///     return paramCount;
@@ -165,10 +165,10 @@ namespace FB
         FBDateString(const FBDateString& rhs) : date(rhs.date) { }
         FBDateString(const std::string &dstr) : date(dstr) { }
 
-        FBDateString& operator=(const std::string& dstr) { date = dstr; return *this; }
+        FBDateString& operator=(std::string dstr) { date = dstr; return *this; }
         std::string getValue() { return date; }
         void setValue(std::string value) { date = value; }
-        bool operator<(const std::string& rh) const
+        bool operator<(std::string rh) const
         {
             return date < rh;
         }

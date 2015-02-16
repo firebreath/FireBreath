@@ -69,7 +69,7 @@ namespace FB
         virtual void *getEventContext() const { return NULL; }
 
         virtual bool supportsOptimizedCalls() const { return false; }
-        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+        virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
                                            const std::vector<JSObjectPtr>& direct,
                                            const std::vector<JSObjectPtr>& ifaces) {};
         virtual bool isValid() = 0;
@@ -84,7 +84,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+        /// @fn virtual void InvokeAsync(std::string methodName, const std::vector<variant>& args)
         ///
         /// @brief  Just like Invoke, but works asynchronously.  Useful for javascript callbacks and events.
         ///         Can be safely called from any thread
@@ -93,7 +93,7 @@ namespace FB
         /// @param  args        The arguments. 
         /// @see Invoke
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void InvokeAsync(const std::string& methodName, const std::vector<variant>& args)
+        virtual void InvokeAsync(std::string methodName, const std::vector<variant>& args)
         {
             BrowserHostPtr host(m_host.lock());
             if (!host) {
@@ -103,7 +103,7 @@ namespace FB
         }
 
     private:
-        virtual void _invokeAsync(const std::vector<variant>& args, const std::string& methodName)
+        virtual void _invokeAsync(const std::vector<variant>& args, std::string methodName)
         {
             BrowserHostPtr host(m_host.lock());
             if (host) {
@@ -113,7 +113,7 @@ namespace FB
     public:
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
+        /// @fn virtual void SetPropertyAsync(std::string propertyName, const variant& value)
         ///
         /// @brief  Just like SetProperty, but works asynchronously.  Useful if you are running on another
         ///         thread and don't need to wait to be sure it worked.
@@ -121,7 +121,7 @@ namespace FB
         /// @param  propertyName    Name of the property. 
         /// @param  value           The value. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetPropertyAsync(const std::string& propertyName, const variant& value)
+        virtual void SetPropertyAsync(std::string propertyName, const variant& value)
         {
             BrowserHostPtr host(m_host.lock());
             if (!host) {

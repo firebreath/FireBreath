@@ -80,19 +80,19 @@ size_t JSAPISimple::getMemberCount() const
 }
 
 // Methods for registering properties and functions to the auto-table
-void JSAPISimple::registerMethod(const std::string& name, CallMethodPtr func)
+void JSAPISimple::registerMethod(std::string name, CallMethodPtr func)
 {
     m_methodMap[name].callFunc = func;
 }
 
-void JSAPISimple::registerProperty(const std::string& name, GetPropPtr getFunc, SetPropPtr setFunc)
+void JSAPISimple::registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc)
 {
     m_propertyMap[name].getFunc = getFunc;
     m_propertyMap[name].setFunc = setFunc;
 }
 
 // Methods to query existance of members on the API
-bool JSAPISimple::HasMethod(const std::string& methodName) const
+bool JSAPISimple::HasMethod(std::string methodName) const
 {
     if (!m_valid)
         return false;
@@ -105,7 +105,7 @@ bool JSAPISimple::HasMethod(const std::string& methodName) const
     }
 }
 
-bool JSAPISimple::HasProperty(const std::string& propertyName) const
+bool JSAPISimple::HasProperty(std::string propertyName) const
 {
     if (!m_valid)
         return false;
@@ -121,7 +121,7 @@ bool JSAPISimple::HasProperty(const std::string& propertyName) const
 
 
 // Methods to manage properties on the API
-variantDeferredPtr JSAPISimple::GetProperty(const std::string& propertyName)
+variantDeferredPtr JSAPISimple::GetProperty(std::string propertyName)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -134,7 +134,7 @@ variantDeferredPtr JSAPISimple::GetProperty(const std::string& propertyName)
     }
 }
 
-void JSAPISimple::SetProperty(const std::string& propertyName, const variant& value)
+void JSAPISimple::SetProperty(std::string propertyName, const variant& value)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -147,7 +147,7 @@ void JSAPISimple::SetProperty(const std::string& propertyName, const variant& va
     }
 }
 
-void JSAPISimple::RemoveProperty(const std::string& propertyName)
+void JSAPISimple::RemoveProperty(std::string propertyName)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -197,7 +197,7 @@ void JSAPISimple::RemoveProperty(int idx)
 
 
 // Methods to manage methods on the API
-variantDeferredPtr JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
+variantDeferredPtr JSAPISimple::Invoke(std::string methodName, const std::vector<FB::variant>& args)
 {
     if (!m_valid)
         throw object_invalidated();

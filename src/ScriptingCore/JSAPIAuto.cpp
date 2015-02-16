@@ -24,7 +24,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 bool FB::JSAPIAuto::s_allowRemoveProperties = false;
 
-FB::JSAPIAuto::JSAPIAuto(const std::string& description)
+FB::JSAPIAuto::JSAPIAuto(std::string description)
   : FB::JSAPIImpl(SecurityScope_Public),
     m_description(description),
     m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties)
@@ -32,7 +32,7 @@ FB::JSAPIAuto::JSAPIAuto(const std::string& description)
     init();
 }
 
-FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, const std::string& description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
+FB::JSAPIAuto::JSAPIAuto( const SecurityZone& securityLevel, std::string description /*= "<JSAPI-Auto Secure Javascript Object>"*/ )
   : FB::JSAPIImpl(securityLevel),
     m_description(description),
     m_allowRemoveProperties(FB::JSAPIAuto::s_allowRemoveProperties)
@@ -58,14 +58,14 @@ FB::JSAPIAuto::~JSAPIAuto()
 
 }
 
-void FB::JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
+void FB::JSAPIAuto::registerMethod(std::string name, const CallMethodFunctor& func)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     m_methodFunctorMap[name] = func;
     m_zoneMap[name] = getZone();
 }
 
-void FB::JSAPIAuto::unregisterMethod( const std::string& name )
+void FB::JSAPIAuto::unregisterMethod( std::string name )
 {
     FB::MethodFunctorMap::iterator fnd = m_methodFunctorMap.find(name);
     if (fnd != m_methodFunctorMap.end()) {
@@ -79,7 +79,7 @@ void FB::JSAPIAuto::registerProperty(const std::wstring& name, const PropertyFun
     registerProperty(FB::wstring_to_utf8(name), func);
 }
 
-void FB::JSAPIAuto::registerProperty(const std::string& name, const PropertyFunctors& propFuncs)
+void FB::JSAPIAuto::registerProperty(std::string name, const PropertyFunctors& propFuncs)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     m_propertyFunctorsMap[name] = propFuncs;
@@ -91,7 +91,7 @@ void FB::JSAPIAuto::unregisterProperty( const std::wstring& name )
     unregisterProperty(FB::wstring_to_utf8(name));
 }
 
-void FB::JSAPIAuto::unregisterProperty( const std::string& name )
+void FB::JSAPIAuto::unregisterProperty( std::string name )
 {
     FB::PropertyFunctorsMap::iterator fnd = m_propertyFunctorsMap.find(name);
     if (fnd != m_propertyFunctorsMap.end()) {
@@ -121,7 +121,7 @@ size_t FB::JSAPIAuto::getMemberCount() const
     return count;
 }
 
-bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
+bool FB::JSAPIAuto::HasMethod(std::string methodName) const
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -130,7 +130,7 @@ bool FB::JSAPIAuto::HasMethod(const std::string& methodName) const
     return (m_methodFunctorMap.find(methodName) != m_methodFunctorMap.end()) && memberAccessible(m_zoneMap.find(methodName));
 }
 
-bool FB::JSAPIAuto::HasProperty(const std::string& propertyName) const
+bool FB::JSAPIAuto::HasProperty(std::string propertyName) const
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -149,7 +149,7 @@ bool FB::JSAPIAuto::HasProperty(int idx) const
     return m_attributes.find(std::to_string(idx)) != m_attributes.end();
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(const std::string& propertyName)
+FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(std::string propertyName)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -171,7 +171,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(const std::string& propertyNam
     }
 }
 
-void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& value)
+void FB::JSAPIAuto::SetProperty(std::string propertyName, const variant& value)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -201,7 +201,7 @@ void FB::JSAPIAuto::SetProperty(const std::string& propertyName, const variant& 
     }
 }
 
-void FB::JSAPIAuto::RemoveProperty(const std::string& propertyName)
+void FB::JSAPIAuto::RemoveProperty(std::string propertyName)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -261,7 +261,7 @@ void FB::JSAPIAuto::RemoveProperty(int idx)
     throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::Invoke(const std::string& methodName, const std::vector<variant> &args)
+FB::variantDeferredPtr FB::JSAPIAuto::Invoke(std::string methodName, const std::vector<variant> &args)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -295,7 +295,7 @@ void FB::JSAPIAuto::registerAttribute( const std::string &name, const FB::varian
     m_zoneMap[name] = getZone();
 }
 
-void FB::JSAPIAuto::unregisterAttribute( const std::string& name )
+void FB::JSAPIAuto::unregisterAttribute( std::string name )
 {
     AttributeMap::iterator fnd = m_attributes.find(name);
     if ( fnd != m_attributes.end() ) {
@@ -310,7 +310,7 @@ void FB::JSAPIAuto::unregisterAttribute( const std::string& name )
     }
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::getAttribute( const std::string& name )
+FB::variantDeferredPtr FB::JSAPIAuto::getAttribute( std::string name )
 {
     if (m_attributes.find(name) != m_attributes.end()) {
         return FB::variantDeferred::makeDeferred(m_attributes[name].value);
@@ -318,7 +318,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::getAttribute( const std::string& name )
     return FB::variantDeferred::makeDeferred(FB::FBVoid());
 }
 
-void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& value )
+void FB::JSAPIAuto::setAttribute( std::string name, const FB::variant& value )
 {
     AttributeMap::iterator fnd = m_attributes.find(name);
     if (fnd == m_attributes.end() || !fnd->second.readonly) {
@@ -330,7 +330,7 @@ void FB::JSAPIAuto::setAttribute( const std::string& name, const FB::variant& va
     }
 }
 
-void FB::JSAPIAuto::FireJSEvent( const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments )
+void FB::JSAPIAuto::FireJSEvent( std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments )
 {
     JSAPIImpl::FireJSEvent(eventName, members, arguments);
     FB::variant evt(getAttribute(eventName));
@@ -345,7 +345,7 @@ void FB::JSAPIAuto::FireJSEvent( const std::string& eventName, const FB::Variant
     }
 }
 
-void FB::JSAPIAuto::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args )
+void FB::JSAPIAuto::fireAsyncEvent( std::string eventName, const std::vector<variant>& args )
 {
     JSAPIImpl::fireAsyncEvent(eventName, args);
     FB::variant evt(getAttribute(eventName));

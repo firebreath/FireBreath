@@ -17,7 +17,7 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "JSEvent.h"
 
-FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, const std::string& name, const FB::VariantMap &members, const FB::VariantList &arguments )
+FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, std::string name, const FB::VariantMap &members, const FB::VariantList &arguments )
 {
     FB::VariantMap event;
     event["type"] = name;
@@ -35,12 +35,12 @@ FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, const std::string& name, const
     return event;
 }
 
-FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, const std::string& name, const FB::VariantMap &members )
+FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, std::string name, const FB::VariantMap &members )
 {
     return FB::CreateEvent(api, name, members, FB::VariantList());
 }
 
-FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, const std::string& name, const VariantList &arguments )
+FB::VariantMap FB::CreateEvent( FB::JSAPIPtr api, std::string name, const VariantList &arguments )
 {
     return FB::CreateEvent(api, name, FB::VariantMap(), arguments);
 }

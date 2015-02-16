@@ -74,13 +74,13 @@ namespace FB { namespace DOM {
         virtual std::string getInnerHTML() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void Element::setInnerHTML(const std::string&) const
+        /// @fn virtual void Element::setInnerHTML(std::string) const
         ///
         /// @brief  Sets an inner html for the element
         ///
         /// @param  html    The html to set
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setInnerHTML(const std::string& html) const;
+        virtual void setInnerHTML(std::string html) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getWidth() const
@@ -169,7 +169,7 @@ namespace FB { namespace DOM {
         virtual ElementPtr getParentNode() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual ElementPtr Element::getElement(const std::string& name) const
+        /// @fn virtual ElementPtr Element::getElement(std::string name) const
         ///
         /// @brief  Gets a child element of the specified name
         ///
@@ -186,7 +186,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElement(const std::string& name) const
+        virtual ElementPtr getElement(std::string name) const
         {
             JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
             ElementPtr retVal((api) ? new Element(api) : NULL);
@@ -215,10 +215,10 @@ namespace FB { namespace DOM {
             return retVal;
         }
 
-        virtual std::string getStringAttribute(const std::string& attr) const;
+        virtual std::string getStringAttribute(std::string attr) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual ElementPtr getElementById(const std::string& elem_id) const
+        /// @fn virtual ElementPtr getElementById(std::string elem_id) const
         ///
         /// @brief  Gets an element from the DOM with the specified id
         ///
@@ -226,10 +226,10 @@ namespace FB { namespace DOM {
         ///
         /// @return The element by identifier.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElementById(const std::string& elem_id) const;
+        virtual ElementPtr getElementById(std::string elem_id) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName) const
+        /// @fn virtual std::vector<ElementPtr> getElementsByTagName(std::string tagName) const
         ///
         /// @brief  Gets a list of all elements in the document with the specified tag name
         ///
@@ -237,7 +237,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The elements by tag name.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::vector<ElementPtr> getElementsByTagName(const std::string& tagName) const;
+        virtual std::vector<ElementPtr> getElementsByTagName(std::string tagName) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName) const

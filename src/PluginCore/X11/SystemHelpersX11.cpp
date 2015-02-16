@@ -58,14 +58,14 @@ std::string FB::System::getHomeDirPath()
     return x;
 }
 
-std::string FB::System::getAppDataPath(const std::string& appName)
+std::string FB::System::getAppDataPath(std::string appName)
 {
     std::string s = getHomeDirPath();
 
     return s + "/." + appName;
 }
 
-std::string FB::System::getLocalAppDataPath(const std::string& appName)
+std::string FB::System::getLocalAppDataPath(std::string appName)
 {
     return getAppDataPath(appName);
 }

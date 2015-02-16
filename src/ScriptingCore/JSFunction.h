@@ -24,11 +24,11 @@ namespace FB {
     class JSFunction : public FB::JSAPIAuto {
     public:
         JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone);
-        JSFunction(const FB::JSAPIWeakPtr& obj, const std::string& func, const FB::SecurityZone);
+        JSFunction(const FB::JSAPIWeakPtr& obj, std::string func, const FB::SecurityZone);
 
-        virtual bool HasProperty(const std::string& propName) const override;
-        virtual bool HasMethod(const std::string& methodName) const override;
-        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) override;
+        virtual bool HasProperty(std::string propName) const override;
+        virtual bool HasMethod(std::string methodName) const override;
+        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
         virtual variantDeferredPtr exec(const std::vector<variant>& args);
         virtual variantDeferredPtr call(const std::vector<variant>& args);
         virtual variantDeferredPtr apply(const std::vector<variant>& args);

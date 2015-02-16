@@ -14,7 +14,7 @@ FB::SystemProxyDetector* FB::SystemProxyDetector::get()
     return _inst.get();
 }
 
-bool FB::SystemProxyDetectorX11::detectProxy( map<string, string>& proxyMap, const string& URL )
+bool FB::SystemProxyDetectorX11::detectProxy( map<string, string>& proxyMap, string URL )
 {
     return false;
 }

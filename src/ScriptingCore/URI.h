@@ -42,7 +42,7 @@ namespace FB {
     class URI {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static std::string FB::URI::url_decode(const std::string& in)
+        /// @fn public static std::string FB::URI::url_decode(std::string in)
         ///
         /// @brief  Decodes the given urlencoded URL
         ///
@@ -55,9 +55,9 @@ namespace FB {
         /// @since 1.4b1
         /// @see url_encode
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static std::string url_decode(const std::string& in);
+        static std::string url_decode(std::string in);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static std::string FB::URI::url_encode(const std::string& in)
+        /// @fn public static std::string FB::URI::url_encode(std::string in)
         ///
         /// @brief  Encodes the given URL for transmission
         ///
@@ -70,14 +70,14 @@ namespace FB {
         /// @since 1.4b1
         /// @see url_decode
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static std::string url_encode(const std::string& in);
+        static std::string url_encode(std::string in);
 
     public:
         /// Initializes an empty FB::URI object
         URI() : port(0) {}
 
         /// Initializes a FB::URI object by decoding the input URL
-        URI(const std::string& str_uri);
+        URI(std::string str_uri);
 
         /// Compares two FB::URI objects
         bool operator==(const URI& right) const;
@@ -104,7 +104,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         std::string toString(bool include_domain_part = true) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static  FB::URI FB::URI::fromString(const std::string& in_str)
+        /// @fn public static  FB::URI FB::URI::fromString(std::string in_str)
         ///
         /// @brief  Returns a URI object from the given string
         ///
@@ -112,9 +112,9 @@ namespace FB {
         /// @returns FB::URI
         /// @since 1.4b1
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static URI fromString(const std::string& in_str);
+        static URI fromString(std::string in_str);
 
-        void addQueryData(const std::string& key, const std::string& val) {
+        void addQueryData(std::string key, std::string val) {
             query_data[key] = val;
         }
 
@@ -167,7 +167,7 @@ namespace FB {
         ///
         /// @since 1.4b1
         //////////////////////////////////////////////////////////////////////////////
-        void appendPathComponent(const std::string& pc);
+        void appendPathComponent(std::string pc);
         //////////////////////////////////////////////////////////////////////////////
         /// Returns the part of the path after the last /
         /// @since 1.4b1
@@ -189,7 +189,7 @@ namespace FB {
         bool isLocalhost() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public void FB::URI::parse_query_data(const std::string& in_str)
+        /// @fn public void FB::URI::parse_query_data(std::string in_str)
         ///
         /// @brief  Parses a urlencoded QueryString and stores the results in the URI
         ///
@@ -204,7 +204,7 @@ namespace FB {
         /// @returns void
         /// @since 1.4b1
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void parse_query_data(const std::string& in_str);
+        void parse_query_data(std::string in_str);
     };
 };
 

@@ -72,7 +72,7 @@ namespace FB {
     class TextEvent : public PluginEvent
     {
     public:
-        TextEvent(const std::string& text) : text(text) {}
+        TextEvent(std::string text) : text(text) {}
         
     public:
         std::string text;

@@ -41,7 +41,7 @@ FB::SystemProxyDetector* FB::SystemProxyDetector::get()
     return _inst.get();
 }
 
-bool FB::SystemProxyDetectorMac::detectProxy( map<string, string>& proxyMap, const string& URL )
+bool FB::SystemProxyDetectorMac::detectProxy( map<string, string>& proxyMap, string URL )
 {
     CFDictionaryRef proxySettings(SCDynamicStoreCopyProxies(NULL));
     if (! proxySettings) {

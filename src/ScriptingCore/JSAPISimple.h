@@ -40,7 +40,7 @@ namespace FB {
         size_t getMemberCount() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerMethod(const std::string& name, CallMethodPtr func)
+        /// @fn virtual void registerMethod(std::string name, CallMethodPtr func)
         ///
         /// @brief  Register a method to be exposed to javascript
         ///
@@ -58,10 +58,10 @@ namespace FB {
         /// @param  name    The name that the method should be exposed to javascript as
         /// @param  func    The function that should be called to handle the javascript method
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerMethod(const std::string& name, CallMethodPtr func);
+        virtual void registerMethod(std::string name, CallMethodPtr func);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerProperty(const std::string& name, GetPropPtr getFunc,
+        /// @fn virtual void registerProperty(std::string name, GetPropPtr getFunc,
         /// SetPropPtr setFunc)
         ///
         /// @brief  Register a property to be exposed to javascript
@@ -87,23 +87,23 @@ namespace FB {
         /// @param  getFunc The get function (or NULL for write-only)
         /// @param  setFunc The set function (or NULL for read-only)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerProperty(const std::string& name, GetPropPtr getFunc, SetPropPtr setFunc);
+        virtual void registerProperty(std::string name, GetPropPtr getFunc, SetPropPtr setFunc);
 
         // Methods to query existance of members on the API
-        virtual bool HasMethod(const std::string& methodName) const override;
-        virtual bool HasProperty(const std::string& propertyName) const override;
+        virtual bool HasMethod(std::string methodName) const override;
+        virtual bool HasProperty(std::string propertyName) const override;
         virtual bool HasProperty(int idx) const override;
 
         // Methods to manage properties on the API
-        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
-        virtual void SetProperty(const std::string& propertyName, const variant& value) override; 
-        virtual void RemoveProperty(const std::string& propertyName) override;
+        virtual variantDeferredPtr GetProperty(std::string propertyName) override;
+        virtual void SetProperty(std::string propertyName, const variant& value) override; 
+        virtual void RemoveProperty(std::string propertyName) override;
         virtual variantDeferredPtr GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
         // Methods to manage methods on the API
-        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) override;
+        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
 
     public:
 

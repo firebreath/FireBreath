@@ -21,9 +21,9 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB {
 
-    FB::VariantMap CreateEvent(FB::JSAPIPtr api, const std::string& name, const FB::VariantMap &members, const FB::VariantList &arguments);
-    FB::VariantMap CreateEvent(FB::JSAPIPtr api, const std::string& name, const FB::VariantMap &members);
-    FB::VariantMap CreateEvent(FB::JSAPIPtr api, const std::string& name, const FB::VariantList &arguments);
+    FB::VariantMap CreateEvent(FB::JSAPIPtr api, std::string name, const FB::VariantMap &members, const FB::VariantList &arguments);
+    FB::VariantMap CreateEvent(FB::JSAPIPtr api, std::string name, const FB::VariantMap &members);
+    FB::VariantMap CreateEvent(FB::JSAPIPtr api, std::string name, const FB::VariantList &arguments);
 
 };
 

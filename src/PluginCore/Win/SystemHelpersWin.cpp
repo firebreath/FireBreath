@@ -80,14 +80,14 @@ string FB::System::getHomeDirPath()
     return getFolderStd(CSIDL_PROFILE);
 }
 
-string FB::System::getAppDataPath(const string& appName)
+string FB::System::getAppDataPath(string appName)
 {
     std::string out;
     out = getFolderStd(CSIDL_APPDATA);
     return out + "\\" + appName;
 }
 
-string FB::System::getLocalAppDataPath(const string& appName)
+string FB::System::getLocalAppDataPath(string appName)
 {
     std::string out;
     initLibrary();

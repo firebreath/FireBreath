@@ -46,7 +46,7 @@ namespace FB
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct AsyncLogRequest
     {
-        AsyncLogRequest(const BrowserHostPtr& host, const std::string& message) : m_host(host), m_msg(message) { }
+        AsyncLogRequest(const BrowserHostPtr& host, std::string message) : m_host(host), m_msg(message) { }
 
         const std::shared_ptr<BrowserHost> m_host;
         std::string m_msg;
@@ -213,7 +213,7 @@ namespace FB
         virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req, const bool enable_async = true ) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
+        /// @fn virtual BrowserStreamPtr createStream(std::string url, const PluginEventSinkPtr& callback,
         /// bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
         /// @brief  Creates a BrowserStream (deprecated since 1.7.0)
@@ -229,12 +229,12 @@ namespace FB
         /// @deprecated 1.7 (use the other createStream)
         /// @see virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual BrowserStreamPtr createStream(const std::string& url, const PluginEventSinkPtr& callback,
+        virtual BrowserStreamPtr createStream(std::string url, const PluginEventSinkPtr& callback,
                                             bool cache = true, bool seekable = false,
                                             size_t internalBufferSize = 128 * 1024 ) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
+        /// @fn virtual BrowserStreamPtr createPostStream(std::string url, const PluginEventSinkPtr& callback,
         /// const str::string postdata, bool cache = true, bool seekable = false, size_t internalBufferSize = 128 * 1024 ) const
         ///
         /// @brief  Creates a BrowserStream.
@@ -253,8 +253,8 @@ namespace FB
         /// @deprecated 1.7 use createStream with a BrowserRequestStream of type "POST"
         /// @see virtual BrowserStreamPtr createStream( const BrowserStreamRequest& req ) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual BrowserStreamPtr createPostStream(const std::string& url, const PluginEventSinkPtr& callback,
-                                                const std::string& postdata,
+        virtual BrowserStreamPtr createPostStream(std::string url, const PluginEventSinkPtr& callback,
+                                                std::string postdata,
                                                 bool cache = true, bool seekable = false,
                                                 size_t internalBufferSize = 128 * 1024 ) const;
 
@@ -326,7 +326,7 @@ namespace FB
         virtual DOM::ElementPtr getDOMElement() = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void Navigate(const std::string& url, const std::string& target)
+        /// @fn virtual void Navigate(std::string url, std::string target)
         ///
         /// @brief  Instructs the browser to navigate to the specified url in the target window
         ///
@@ -334,7 +334,7 @@ namespace FB
         /// @param  target Target window (for example, "_blank" will open a new window/tab)
         /// @since 1.6.0rc2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void Navigate(const std::string& url, const std::string& target) {};
+        virtual void Navigate(std::string url, std::string target) {};
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void evaluateJavaScript(const std::string &script) = 0
@@ -352,7 +352,7 @@ namespace FB
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-        ///                       const FB::VariantList& args, const std::string& fname = "") = 0;
+        ///                       const FB::VariantList& args, std::string fname = "") = 0;
         ///
         /// @brief  Executes the provided method object after a delay using window.setTimeout
         ///
@@ -370,16 +370,16 @@ namespace FB
         /// @since 1.5.2
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-                const FB::VariantList& args, const std::string& fname = "") = 0;
+                const FB::VariantList& args, std::string fname = "") = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void htmlLog(const std::string& str)
+        /// @fn virtual void htmlLog(std::string str)
         ///
         /// @brief  Sends a log message to the containing web page using Console.log (firebug)
         ///
         /// @param  str The log message to send to the browser.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void htmlLog(const std::string& str);
+        virtual void htmlLog(std::string str);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void setEnableHtmlLog(const bool enabled = true)
@@ -453,7 +453,7 @@ namespace FB
         virtual void DoDeferredRelease() const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+        /// @fn virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "");
         ///
         /// @brief  Detects the proxy settings from the browser
         ///
@@ -470,7 +470,7 @@ namespace FB
         /// @param url the url for which you need proxy settings. Omit for the default proxy
         /// @since 1.6
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "");
 
     public:
         virtual FB::DOM::WindowPtr _createWindow(const FB::JSObjectPtr& obj) const;

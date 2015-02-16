@@ -34,7 +34,7 @@ namespace FB {
     std::string wstring_to_utf8(const std::wstring& src);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    /// @fn std::wstring utf8_to_wstring(const std::string& src)
+    /// @fn std::wstring utf8_to_wstring(std::string src)
     ///
     /// @brief  Accepts a UTF8-encoded std::string and returns a std::wstring
     ///
@@ -42,7 +42,7 @@ namespace FB {
     ///
     /// @return std::wstring representation
     ////////////////////////////////////////////////////////////////////////////////////////////////////
-    std::wstring utf8_to_wstring(const std::string& src);
+    std::wstring utf8_to_wstring(std::string src);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @fn std::wstring wstring_tolower(const std::wstring& src)

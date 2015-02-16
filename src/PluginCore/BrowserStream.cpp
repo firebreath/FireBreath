@@ -18,7 +18,7 @@ Copyright 2010 PacketPass, Inc and the Firebreath development team
 using namespace FB;
 
 // browser stream
-BrowserStream::BrowserStream(const std::string& Url, bool Cache, bool SeekableRequested, size_t InternalBufferSize) 
+BrowserStream::BrowserStream(std::string Url, bool Cache, bool SeekableRequested, size_t InternalBufferSize) 
   : url(Url)
   , seekableRequested(SeekableRequested)
   , seekableByServer(false)
@@ -123,17 +123,17 @@ void BrowserStream::setCompleted(bool Completed)
     completed = Completed;
 }
 
-void BrowserStream::setUrl(const std::string& Url)
+void BrowserStream::setUrl(std::string Url)
 {
     url = Url;
 }
 
-void BrowserStream::setHeaders(const std::string& Headers)
+void BrowserStream::setHeaders(std::string Headers)
 {
     headers = Headers;
 }
 
-void BrowserStream::setMimeType(const std::string& MimeType)
+void BrowserStream::setMimeType(std::string MimeType)
 {
     mimeType = MimeType;
 }

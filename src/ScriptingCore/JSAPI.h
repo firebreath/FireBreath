@@ -171,14 +171,14 @@ namespace FB
         virtual SecurityZone getZone() const { return SecurityScope_Public; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
+        /// @fn virtual void registerEventMethod(std::string name, JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to register an event handler method
         ///
         /// @param  name            The name.
         /// @param  event           The event handler method.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerEventMethod(const std::string& name, JSObjectPtr& event)
+        virtual void registerEventMethod(std::string name, JSObjectPtr& event)
         {
             // TODO: add support for this in IDispatchAPI and NPObjectAPI
             throw FB::script_error("Not implemented");
@@ -192,14 +192,14 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
+        /// @fn virtual void unregisterEventMethod(std::string name, JSObjectPtr& event)
         ///
         /// @brief  Called by the browser to unregister an event handler method
         ///
         /// @param  name            The name.
         /// @param  event           The event handler method to unregister.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterEventMethod(const std::string& name, JSObjectPtr& event)
+        virtual void unregisterEventMethod(std::string name, JSObjectPtr& event)
         {
             // TODO: add support for this in IDispatchAPI and NPObjectAPI
             throw FB::script_error("Not implemented");
@@ -289,7 +289,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasMethod(const std::string& methodName) const = 0
+        /// @fn virtual bool HasMethod(std::string methodName) const = 0
         ///
         /// @brief  Query if the JSAPI object has the 'methodName' method.
         ///
@@ -297,7 +297,7 @@ namespace FB
         ///
         /// @return true if method exists, false if not.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasMethod(const std::string& methodName) const = 0;
+        virtual bool HasMethod(std::string methodName) const = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual bool HasProperty(const std::wstring& propertyName) const
@@ -307,7 +307,7 @@ namespace FB
             return HasProperty(wstring_to_utf8(propertyName));
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual bool HasProperty(const std::string& propertyName) const
+        /// @fn virtual bool HasProperty(std::string propertyName) const
         ///
         /// @brief  Query if 'propertyName' is a valid property.
         ///
@@ -315,7 +315,7 @@ namespace FB
         ///
         /// @return true if property exists, false if not.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual bool HasProperty(const std::string& propertyName) const = 0;
+        virtual bool HasProperty(std::string propertyName) const = 0;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual bool HasProperty(int idx) const = 0
         ///
@@ -342,7 +342,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant GetProperty(const std::string& propertyName) = 0
+        /// @fn virtual variant GetProperty(std::string propertyName) = 0
         ///
         /// @brief  Gets a property value
         ///
@@ -350,7 +350,7 @@ namespace FB
         ///
         /// @return The property value
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr GetProperty(const std::string& propertyName) = 0;
+        virtual variantDeferredPtr GetProperty(std::string propertyName) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void SetProperty(const std::wstring& propertyName, const variant& value)
@@ -360,14 +360,14 @@ namespace FB
             SetProperty(wstring_to_utf8(propertyName), value);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void SetProperty(const std::string& propertyName, const variant& value) = 0
+        /// @fn virtual void SetProperty(std::string propertyName, const variant& value) = 0
         ///
         /// @brief  Sets the value of a property.
         ///
         /// @param  propertyName    Name of the property.
         /// @param  value           The value.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetProperty(const std::string& propertyName, const variant& value) = 0;
+        virtual void SetProperty(std::string propertyName, const variant& value) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual variantDeferredPtr GetProperty(int idx) = 0
@@ -411,14 +411,14 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void RemoveProperty(const std::string& propertyName) = 0
+        /// @fn virtual void RemoveProperty(std::string propertyName) = 0
         ///
         /// @brief  Removes a property
         ///
         /// @param  propertyName    Name of the property.
         /// @since 1.5
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void RemoveProperty(const std::string& propertyName) = 0;
+        virtual void RemoveProperty(std::string propertyName) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void RemoveProperty(int idx) = 0
@@ -445,7 +445,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variantDeferredPtr Invoke(const std::string& methodName,
+        /// @fn virtual variantDeferredPtr Invoke(std::string methodName,
         /// const std::vector<variant>& args) = 0
         ///
         /// @brief  Called by the browser to invoke a method on the JSAPI object.
@@ -455,7 +455,7 @@ namespace FB
         ///
         /// @return result of method call
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) = 0;
+        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) = 0;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

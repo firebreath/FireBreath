@@ -21,7 +21,7 @@ FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& fun
     init();
 }
 
-FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func, const FB::SecurityZone zone)
+FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, std::string func, const FB::SecurityZone zone)
     : FB::JSAPIAuto(zone, func + "()"), m_apiWeak(obj), m_methodName(func)
 {
     init();
@@ -60,7 +60,7 @@ FB::variantDeferredPtr FB::JSFunction::apply( const std::vector<variant>& args )
 }
 
 
-bool FB::JSFunction::HasMethod( const std::string& methodName ) const
+bool FB::JSFunction::HasMethod( std::string methodName ) const
 {
     if (methodName == "" || methodName == "apply" || methodName == "call") {
         return true;
@@ -69,7 +69,7 @@ bool FB::JSFunction::HasMethod( const std::string& methodName ) const
     }
 }
 
-FB::variantDeferredPtr FB::JSFunction::Invoke( const std::string& methodName, const std::vector<variant>& args )
+FB::variantDeferredPtr FB::JSFunction::Invoke( std::string methodName, const std::vector<variant>& args )
 {
     if (methodName == "") {
         return exec(args);
@@ -82,7 +82,7 @@ FB::variantDeferredPtr FB::JSFunction::Invoke( const std::string& methodName, co
     }
 }
 
-bool FB::JSFunction::HasProperty( const std::string& propName ) const
+bool FB::JSFunction::HasProperty( std::string propName ) const
 {
     if (propName == "call" || propName == "apply")
         return false;

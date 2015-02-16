@@ -39,7 +39,7 @@ namespace FB {
     {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn FB::BrowserStreamRequest::BrowserStreamRequest(const std::string& uri, const std::string method /*= "GET"*/, const bool accept /*= true*/);
+        /// @fn FB::BrowserStreamRequest::BrowserStreamRequest(std::string uri, const std::string method /*= "GET"*/, const bool accept /*= true*/);
         ///
         /// @brief  Create a BrowserStreamRequest from a string containing the URI to call
         ///
@@ -50,7 +50,7 @@ namespace FB {
         /// @author taxilian
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        BrowserStreamRequest(const std::string& uri, const std::string method = "GET", const bool accept = true)
+        BrowserStreamRequest(std::string uri, const std::string method = "GET", const bool accept = true)
             : uri(uri), method(method), lastModified(0), seekable(false),
             internalBufferSize(k_DEFAULT_REQUEST_BUFFER), cache(false), accepted(accept)
         {
@@ -123,7 +123,7 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         bool wasAccepted() const { return accepted; }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn   void FB::BrowserStreamRequest::addQueryData(const std::string& key, const std::string& val);
+        /// @fn   void FB::BrowserStreamRequest::addQueryData(std::string key, std::string val);
         ///
         /// @brief  Add a GET querystring parameter (... &key=val ...)
         ///
@@ -132,11 +132,11 @@ namespace FB {
         ///
         /// @author taxilian
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void addQueryData(const std::string& key, const std::string& val) {
+        void addQueryData(std::string key, std::string val) {
             uri.addQueryData(key, val);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn   void FB::BrowserStreamRequest::setHeaders(const std::string& headers);
+        /// @fn   void FB::BrowserStreamRequest::setHeaders(std::string headers);
         ///
         /// @brief  Used internally to set the headers on this object. Should not be called normally
         ///
@@ -144,7 +144,7 @@ namespace FB {
         ///
         /// @author taxilian
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setHeaders(const std::string& headers) {
+        void setHeaders(std::string headers) {
             this->headers = SimpleStreamHelper::parse_http_headers(headers);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -225,7 +225,7 @@ namespace FB {
         HttpCallback getCallback() const { return callback; }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn   void FB::BrowserStreamRequest::setPostData(const std::string& data, const std::string& post_headers /*= ""*/);
+        /// @fn   void FB::BrowserStreamRequest::setPostData(std::string data, std::string post_headers /*= ""*/);
         ///
         /// @brief  Sets POST data for the request; only used if the type of the request is POST
         ///
@@ -234,7 +234,7 @@ namespace FB {
         ///
         /// @author taxilian
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void setPostData(const std::string& data, const std::string& post_headers = "") { postdata = data; postheaders = post_headers; }
+        void setPostData(std::string data, std::string post_headers = "") { postdata = data; postheaders = post_headers; }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn   std::string FB::BrowserStreamRequest::getPostData();
         ///

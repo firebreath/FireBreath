@@ -33,7 +33,7 @@ volatile int PluginCore::ActivePluginCount = 0;
 
 std::string PluginCore::OS;
 std::string PluginCore::Browser;
-void PluginCore::setPlatform(const std::string& opsys, const std::string& browser)
+void PluginCore::setPlatform(std::string opsys, std::string browser)
 {
     PluginCore::OS = opsys;
     PluginCore::Browser = browser;
@@ -90,7 +90,7 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
     }
 }
 
-boost::optional<std::string> PluginCore::getParam(const std::string& key) {
+boost::optional<std::string> PluginCore::getParam(std::string key) {
     boost::optional<std::string> rval;
     FB::VariantMap::const_iterator fnd = m_params.find(key.c_str());
     if (fnd != m_params.end())
@@ -98,7 +98,7 @@ boost::optional<std::string> PluginCore::getParam(const std::string& key) {
     return rval;
 }
 
-FB::variant FB::PluginCore::getParamVariant( const std::string& key )
+FB::variant FB::PluginCore::getParamVariant( std::string key )
 {
     FB::VariantMap::const_iterator fnd = m_params.find(key.c_str());
     if (fnd != m_params.end())

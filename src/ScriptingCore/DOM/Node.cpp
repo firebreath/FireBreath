@@ -20,7 +20,7 @@ FB::DOM::NodePtr FB::DOM::Node::getNode(const std::wstring& name) const
 {
     return getNode(FB::wstring_to_utf8(name));
 }
-FB::DOM::NodePtr FB::DOM::Node::getNode(const std::string& name) const
+FB::DOM::NodePtr FB::DOM::Node::getNode(std::string name) const
 {
     FB::JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
     return Node::create(api);
@@ -36,7 +36,7 @@ void FB::DOM::Node::setProperty(const std::wstring& name, const FB::variant& val
 {
     setProperty(FB::wstring_to_utf8(name), val);
 }
-void FB::DOM::Node::setProperty(const std::string& name, const FB::variant& val) const
+void FB::DOM::Node::setProperty(std::string name, const FB::variant& val) const
 {
     m_element->SetProperty(name, val);
 }

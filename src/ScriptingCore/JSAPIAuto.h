@@ -106,8 +106,8 @@ namespace FB {
 
     public:
         /// @brief Description is used by ToString().
-        JSAPIAuto(const std::string& description = "<JSAPI-Auto Javascript Object>");
-        JSAPIAuto(const SecurityZone& securityLevel, const std::string& description = "<JSAPI-Auto Secure Javascript Object>");
+        JSAPIAuto(std::string description = "<JSAPI-Auto Javascript Object>");
+        JSAPIAuto(const SecurityZone& securityLevel, std::string description = "<JSAPI-Auto Secure Javascript Object>");
         typedef std::deque<SecurityZone> ZoneStack;
 
         void init();
@@ -132,14 +132,14 @@ namespace FB {
         virtual void getMemberNames(std::vector<std::string> &nameVector) const;
         virtual size_t getMemberCount() const;
 
-        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args);
+        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args);
 
         virtual void unregisterMethod(const std::wstring& name)
         {
             unregisterMethod(FB::wstring_to_utf8(name));
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void JSAPIAuto::unregisterMethod(const std::string& name)
+        /// @fn virtual void JSAPIAuto::unregisterMethod(std::string name)
         ///
         /// @brief  Unregisters a method that has been exposed to javascript 
         ///
@@ -149,14 +149,14 @@ namespace FB {
         /// @see registerMethod
         /// @since 1.4b4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterMethod(const std::string& name);
+        virtual void unregisterMethod(std::string name);
 
         virtual void registerMethod(const std::wstring& name, const CallMethodFunctor& func)
         {
             registerMethod(FB::wstring_to_utf8(name), func);
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void JSAPIAuto::registerMethod(const std::string& name, const CallMethodFunctor& func)
+        /// @fn virtual void JSAPIAuto::registerMethod(std::string name, const CallMethodFunctor& func)
         ///
         /// @brief  Registers a method to be exposed to javascript 
         ///
@@ -180,16 +180,16 @@ namespace FB {
         /// @param  name    The name that the method will have when accessed from javascript. 
         /// @param  func    The result of a make_method call given the class instance and function ptr
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerMethod(const std::string& name, const CallMethodFunctor& func);
+        virtual void registerMethod(std::string name, const CallMethodFunctor& func);
 
-        virtual bool HasMethod(const std::string& methodName) const;
-        virtual bool HasProperty(const std::string& propertyName) const;
+        virtual bool HasMethod(std::string methodName) const;
+        virtual bool HasProperty(std::string propertyName) const;
         virtual bool HasProperty(int idx) const;
 
         virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void JSAPIAuto::registerProperty(const std::string& name,
+        /// @fn virtual void JSAPIAuto::registerProperty(std::string name,
         /// const PropertyFunctors& propFuncs)
         ///
         /// @brief  Register property to be exposed to javascript. 
@@ -211,11 +211,11 @@ namespace FB {
         /// @param  name        The name. 
         /// @param  propFuncs   The property funcs. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void registerProperty(const std::string& name, const PropertyFunctors& propFuncs);
+        virtual void registerProperty(std::string name, const PropertyFunctors& propFuncs);
 
         virtual void unregisterProperty(const std::wstring& name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void JSAPIAuto::unregisterProperty(const std::string& name)
+        /// @fn virtual void JSAPIAuto::unregisterProperty(std::string name)
         ///
         /// @brief  Unregisters a property that has been exposed to javascript 
         ///
@@ -225,17 +225,17 @@ namespace FB {
         /// @see registerProperty
         /// @since 1.4b4
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterProperty(const std::string& name);
+        virtual void unregisterProperty(std::string name);
         
-        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
-        virtual void SetProperty(const std::string& propertyName, const variant& value) override;
-        virtual void RemoveProperty(const std::string& propertyName) override;
+        virtual variantDeferredPtr GetProperty(std::string propertyName) override;
+        virtual void SetProperty(std::string propertyName, const variant& value) override;
+        virtual void RemoveProperty(std::string propertyName) override;
         virtual variantDeferredPtr GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
-        virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
-        virtual void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
+        virtual void FireJSEvent(std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
+        virtual void fireAsyncEvent( std::string eventName, const std::vector<variant>& args );
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
@@ -265,7 +265,7 @@ namespace FB {
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public virtual FB::variant getAttribute(const std::string& name)
+        /// @fn public virtual FB::variant getAttribute(std::string name)
         ///
         /// @brief   Returns the attribute with the given name, empty variant if none
         ///
@@ -278,9 +278,9 @@ namespace FB {
         /// @see setAttribute
         /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::variantDeferredPtr getAttribute(const std::string& name);
+        virtual FB::variantDeferredPtr getAttribute(std::string name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public virtual void setAttribute(const std::string& name, const FB::variant& value)
+        /// @fn public virtual void setAttribute(std::string name, const FB::variant& value)
         ///
         /// @brief   Assigns a value to the specified attribute, if it is not reserved or read-only
         ///
@@ -292,9 +292,9 @@ namespace FB {
         /// @see getAttribute
         /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setAttribute(const std::string& name, const FB::variant& value);
+        virtual void setAttribute(std::string name, const FB::variant& value);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public virtual void removeAttribute(const std::string& name)
+        /// @fn public virtual void removeAttribute(std::string name)
         ///
         /// @brief   Removes the attribute with the given name
         ///
@@ -305,7 +305,7 @@ namespace FB {
         /// @see setAttribute
         /// @see getAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void unregisterAttribute(const std::string& name);
+        virtual void unregisterAttribute(std::string name);
 
     protected:
         bool memberAccessible( ZoneMap::const_iterator it ) const

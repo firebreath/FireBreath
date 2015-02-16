@@ -43,7 +43,7 @@ namespace FB {
     }
 
 
-    std::wstring utf8_to_wstring(const std::string& src) {
+    std::wstring utf8_to_wstring(std::string src) {
         std::wstring out_str;
 #ifdef _WIN32
         utf8::utf8to16(src.begin(), src.end(), std::back_inserter(out_str));
