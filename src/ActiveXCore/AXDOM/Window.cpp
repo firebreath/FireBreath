@@ -42,7 +42,7 @@ FB::DOM::DocumentPtr Window::getDocument() const
     return FB::DOM::Document::create(docAPI);
 }
 
-void Window::alert(const std::string& str) const
+void Window::alert(std::string str) const
 {
     m_htmlWin->alert(CComBSTR(FB::utf8_to_wstring(str).c_str()));
 }

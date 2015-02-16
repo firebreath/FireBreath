@@ -34,8 +34,8 @@ namespace FB {
         FB_FORWARD_PTR(ActiveXBrowserHost);
         FB_FORWARD_PTR(IDispatchAPI);
 
-        typedef std::weak_ptr<FB::ShareableReference<IDispatch> > IDispatchWRef;
-        typedef std::shared_ptr<FB::ShareableReference<IDispatch> > IDispatchSRef;
+        using IDispatchWRef = std::weak_ptr<FB::ShareableReference<IDispatch> >;
+        using IDispatchSRef = std::shared_ptr<FB::ShareableReference<IDispatch> >;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @class  ActiveXBrowserHost
         ///
@@ -61,7 +61,7 @@ namespace FB {
             FB::DOM::DocumentPtr getDOMDocument() override;
             FB::DOM::WindowPtr getDOMWindow() override;
             FB::DOM::ElementPtr getDOMElement() override;
-            void Navigate(const std::string& url, const std::string& target) override;
+            void Navigate(std::string url, std::string target) override;
             
             bool hasHTMLWindow() { return !!m_htmlWin; }
 
@@ -69,7 +69,7 @@ namespace FB {
             void resume(IWebBrowser2 *doc, IOleClientSite* clientSite);
             
             int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
-                const FB::VariantList& args, const std::string& fname = "") override;
+                const FB::VariantList& args, std::string fname = "") override;
             void evaluateJavaScript(const std::string &script) override;
             void shutdown() override;
 
@@ -92,8 +92,8 @@ namespace FB {
         private:
             mutable boost::shared_mutex m_xtmutex;
             mutable FB::SafeQueue<IDispatchWRef> m_deferredObjects;
-            typedef std::map<void*, FB::WeakIDispatchExRef> IDispatchExRefMap;
-            typedef std::list<IDispatchSRef> IDispatchRefList;
+            using IDispatchExRefMap = std::map<void*, FB::WeakIDispatchExRef>;
+            using IDispatchRefList = std::list<IDispatchSRef>;
             mutable IDispatchExRefMap m_cachedIDispatch;
             mutable IDispatchRefList m_heldIDispatch;
 

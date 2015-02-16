@@ -87,10 +87,10 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
     return FB::DOM::NodePtr(new AXDOM::Node(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
 }
 
-int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, const std::string& fname /*= ""*/) {
+int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
     if (!m_htmlWin) { throw new FB::script_error("Could not invoke, ActiveX control has been suspended"); }
     int32_t ctxId{ (int32_t)(getContextID()) };
-    std::string name = std::string("_FB_HELPERS_") + boost::lexical_cast<std::string>(ctxId);
+    std::string name = std::string("_FB_HELPERS_") + std::to_string(ctxId);
     IDispatchAPIPtr helper;
 
     try {
@@ -367,7 +367,7 @@ void FB::ActiveX::ActiveXBrowserHost::deferred_release( const IDispatchWRef& obj
 IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/ )
 {
     assertMainThread(); // This should only be called on the main thread
-    typedef std::shared_ptr<FB::ShareableReference<IDispatchEx> > SharedIDispatchRef;
+    using SharedIDispatchRef = std::shared_ptr<FB::ShareableReference<IDispatchEx> >;
     IDispatchEx* ret(nullptr);
     FB::JSAPIPtr ptr(api.lock());
     if (!ptr)
@@ -408,7 +408,7 @@ void FB::ActiveX::ActiveXBrowserHost::ReleaseAllHeldObjects()
     m_heldIDispatch.clear();
 }
 
-void FB::ActiveX::ActiveXBrowserHost::Navigate( const std::string& url, const std::string& target )
+void FB::ActiveX::ActiveXBrowserHost::Navigate( std::string url, std::string target )
 {
     CComBSTR destURL(FB::utf8_to_wstring(url).c_str());
     CComVariant targetWin(FB::utf8_to_wstring(target).c_str());

@@ -39,7 +39,7 @@ namespace FB { namespace ActiveX {
 
         public:
             virtual FB::DOM::DocumentPtr getDocument() const;
-            virtual void alert(const std::string& str) const;
+            virtual void alert(std::string str) const;
             virtual std::string getLocation() const;
 
         protected:

@@ -44,70 +44,8 @@ namespace FB { namespace ActiveX {
     class JSAPI_IDispatchExBase : public IFireBreathObject
     {
     public:
-        FB_FORWARD_PTR(IDisp_AttachEvent);
-        FB_FORWARD_PTR(IDisp_DetachEvent);
-        FB_FORWARD_PTR(IDisp_GetLastException);
-        class IDisp_GetLastException : public FB::JSFunction
-        {
-        public:
-            IDisp_GetLastException()
-                : FB::JSFunction(FB::JSAPIPtr(), "getLastException", FB::SecurityScope_Public) { }
-            FB::variant exec(const std::vector<variant>& args) {
-                return m_msg;
-            }
-			void setMessage(const FB::variant& msg) { m_msg = msg; }
-        private:
-			static FB::variant m_msg;
-        };
-        class IDisp_AttachEvent : public FB::JSFunction
-        {
-        public:
-            IDisp_AttachEvent(JSAPI_IDispatchExBase* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "attachEvent", FB::SecurityScope_Public), obj(ptr) { }
-            FB::variant exec(const std::vector<variant>& args) {
-                if (args.size() >=2 && args.size() <= 3) {
-                    try {
-                        std::string evtName = args[0].convert_cast<std::string>();
-                        FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
-                        obj->getAPI()->registerEventMethod(evtName, method);
-                        return FB::variant();
-                    } catch (const std::bad_cast& e) {
-                        throw FB::invalid_arguments(e.what());
-                    }
-                } else {
-                    throw FB::invalid_arguments();
-                }
-            }
-        private:
-            JSAPI_IDispatchExBase* obj;
-        };
-        class IDisp_DetachEvent : public FB::JSFunction
-        {
-        public:
-            IDisp_DetachEvent(JSAPI_IDispatchExBase* ptr)
-                : FB::JSFunction(FB::JSAPIPtr(), "detachEvent", FB::SecurityScope_Public), obj(ptr) { }
-            FB::variant exec(const std::vector<variant>& args) {
-                if (args.size() >=2 && args.size() <= 3) {
-                    try {
-                        std::string evtName = args[0].convert_cast<std::string>();
-                        FB::JSObjectPtr method(args[1].convert_cast<FB::JSObjectPtr>());
-                        obj->getAPI()->unregisterEventMethod(evtName, method);
-                        return FB::variant();
-                    } catch (const std::bad_cast& e) {
-                        throw FB::invalid_arguments(e.what());
-                    }
-                } else {
-                    throw FB::invalid_arguments();
-                }
-            }
-        private:
-            JSAPI_IDispatchExBase* obj;
-        };
     public:
         JSAPI_IDispatchExBase() 
-            : m_attachFunc(std::make_shared<IDisp_AttachEvent>(this)), 
-              m_detachFunc(std::make_shared<IDisp_DetachEvent>(this)),
-			  m_getLastExceptionFunc(std::make_shared<IDisp_GetLastException>())
         { }
         void setAPI(FB::JSAPIWeakPtr api, const ActiveXBrowserHostPtr& host)
         {
@@ -145,12 +83,11 @@ namespace FB { namespace ActiveX {
         public IConnectionPointContainer,
         public IConnectionPoint
     {
-        typedef CComEnum<IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*,
-            _CopyInterface<IConnectionPoint> > CComEnumConnectionPoints;
-        typedef std::map<DWORD, IDispatchAPIPtr> ConnectionPointMap;
+        using CComEnumConnectionPoints = CComEnum < IEnumConnectionPoints, &__uuidof(IEnumConnectionPoints), IConnectionPoint*, _CopyInterface<IConnectionPoint> > ;
+        using ConnectionPointMap = std::map < DWORD, IDispatchAPIPtr > ;
 
     public:
-        JSAPI_IDispatchEx(const std::string& mimetype) : m_mimetype(mimetype), m_readyState(READYSTATE_LOADING) { };
+        JSAPI_IDispatchEx(std::string mimetype) : m_mimetype(mimetype), m_readyState(READYSTATE_LOADING) { };
         virtual ~JSAPI_IDispatchEx(void) { };
         void setReadyState(READYSTATE newState)
         {

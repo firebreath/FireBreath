@@ -41,7 +41,7 @@ FB::DOM::WindowPtr Document::getWindow() const
     return FB::DOM::Window::create(api);
 }
 
-std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::string& tagName) const
+std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(std::string tagName) const
 {
     CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
     CComPtr<IHTMLElementCollection> list;
@@ -66,7 +66,7 @@ std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(const std::strin
 }
 
 
-FB::DOM::ElementPtr Document::getElementById(const std::string& elem_id) const
+FB::DOM::ElementPtr Document::getElementById(std::string elem_id) const
 {
     CComQIPtr<IHTMLDocument3> doc3(m_htmlDoc);
     if (!doc3) {

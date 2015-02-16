@@ -29,7 +29,7 @@ Element::~Element()
 {
 }
 
-std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(const std::string& tagName) const
+std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(std::string tagName) const
 {
     CComQIPtr<IHTMLElement2> elem(m_axDisp);
     CComQIPtr<IHTMLDocument3> doc(m_axDisp);
@@ -56,7 +56,7 @@ std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(const std::string
     return tagList;
 }
 
-std::string FB::ActiveX::AXDOM::Element::getStringAttribute( const std::string& attr ) const
+std::string FB::ActiveX::AXDOM::Element::getStringAttribute( std::string attr ) const
 {
     CComQIPtr<IHTMLElement> elem(m_axDisp);
     CComQIPtr<IHTMLDocument5> doc(m_axDisp);
@@ -83,7 +83,7 @@ std::string FB::ActiveX::AXDOM::Element::getInnerHTML() const
     }
 }
 
-void FB::ActiveX::AXDOM::Element::setInnerHTML( const std::string& html ) const
+void FB::ActiveX::AXDOM::Element::setInnerHTML( std::string html ) const
 {
     CComBSTR newHtml(html.c_str());
     CComQIPtr<IHTMLElement> elem(m_axDisp);

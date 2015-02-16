@@ -26,10 +26,9 @@ Copyright 2010 Richard Bateman, Firebreath development team
 //   http://support.microsoft.com/kb/165800
 
 namespace FB { namespace ActiveX {
-    class ActiveXStream;
-    typedef std::shared_ptr<ActiveXStream> ActiveXStreamPtr;
+    FB_FORWARD_PTR(ActiveXStream);
     class ActiveXBindStatusCallback;
-
+    FB_FORWARD_PTR(ActiveXStreamRequest);
     class ActiveXStreamRequest : public std::enable_shared_from_this<ActiveXStreamRequest>
     {
     public:
@@ -47,8 +46,6 @@ namespace FB { namespace ActiveX {
         CComPtr<IStream>    fstream;
         std::vector<FB::BrowserStream::Range>   ranges;
     };
-
-    typedef std::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
 
     class ActiveXBindStatusCallback : public IBindStatusCallback, IHttpNegotiate 
     {

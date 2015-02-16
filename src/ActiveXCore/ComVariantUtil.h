@@ -21,13 +21,9 @@
 #include <string>
 #include <typeinfo>
 #include <memory>
+#include <mutex>
 
-#include <boost/assign/list_of.hpp>
-#include <boost/type_traits/is_arithmetic.hpp>
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
-#include <boost/integer_traits.hpp>
+#include <type_traits.hpp>
 
 #include "FactoryBase.h"
 #include "ActiveXBrowserHost.h"
@@ -49,12 +45,12 @@ namespace FB { namespace ActiveX
         }
     };
     
-    typedef CComVariant (*ComVariantBuilder)(const ActiveXBrowserHostPtr&, const FB::variant&);    
-    typedef std::map<std::type_info const*, ComVariantBuilder, type_info_less> ComVariantBuilderMap;
+    using ComVariantBuilder = CComVariant(*)(const ActiveXBrowserHostPtr&, const FB::variant&);
+    using ComVariantBuilderMap = std::map<std::type_info const*, ComVariantBuilder, type_info_less>;
 
     namespace {
         ComVariantBuilderMap comVariantBuilderMap;
-        boost::once_flag init_flag = BOOST_ONCE_INIT;
+        std::once_flag init_flag;
     }
 
     //  GJS  ---
@@ -102,7 +98,7 @@ namespace FB { namespace ActiveX
     {
         // Thread safety is required because IE10+ can run
         // plug-ins in multiple threads within a single process.
-        boost::call_once(init_flag, boost::bind(&makeComVariantBuilderMap, boost::ref(comVariantBuilderMap)));
+        std::call_once(init_flag, std::bind(&makeComVariantBuilderMap, std::ref(comVariantBuilderMap)));
 
         return comVariantBuilderMap;
     }
@@ -175,7 +171,7 @@ namespace FB { namespace ActiveX
         {
             FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
             for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); ++it) {
-                FB::VariantList vl = boost::assign::list_of(*it);
+                FB::VariantList vl{ *it };
                 outArr->Invoke("push", vl);
             }
             IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(outArr);
@@ -314,13 +310,13 @@ namespace FB { namespace ActiveX
     namespace select_ccomvariant_builder
     {        
         template<class T>
-        ComVariantBuilder isArithmetic(const boost::true_type& /* is_arithmetic */)
+        ComVariantBuilder isArithmetic(const std::true_type& /* is_arithmetic */)
         {
             return &makeArithmeticComVariant<T>;
         }
         
         template<class T>
-        ComVariantBuilder isArithmetic(const boost::false_type& /* is_arithmetic */)
+        ComVariantBuilder isArithmetic(const std::false_type& /* is_arithmetic */)
         {
             return &makeComVariant<T>;
         }
@@ -328,7 +324,7 @@ namespace FB { namespace ActiveX
         template<class T>
         ComVariantBuilder select()
         {
-            return isArithmetic<T>(boost::is_arithmetic<T>());
+            return isArithmetic<T>(std::is_arithmetic<T>());
         }
     }
 } }

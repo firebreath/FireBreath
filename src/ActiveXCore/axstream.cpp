@@ -20,11 +20,11 @@ Copyright 2010 Richard Bateman, Firebreath development team
 using namespace FB;
 using namespace FB::ActiveX;
 
-ActiveXStream::ActiveXStream( const std::string& url, bool cache, bool seekableRequested, size_t internalBufferSize ) : FB::BrowserStream( url, cache, seekableRequested, internalBufferSize ), closing(false)
+ActiveXStream::ActiveXStream( std::string url, bool cache, bool seekableRequested, size_t internalBufferSize ) : FB::BrowserStream( url, cache, seekableRequested, internalBufferSize ), closing(false)
 {
 }
 
-ActiveXStream::ActiveXStream( const std::string& url, bool cache, bool seekableRequested, size_t internalBufferSize, const std::string& verbdata ) : FB::BrowserStream( url, cache, seekableRequested, internalBufferSize ), closing(false), data(verbdata)
+ActiveXStream::ActiveXStream( std::string url, bool cache, bool seekableRequested, size_t internalBufferSize, std::string verbdata ) : FB::BrowserStream( url, cache, seekableRequested, internalBufferSize ), closing(false), data(verbdata)
 {
 }
 

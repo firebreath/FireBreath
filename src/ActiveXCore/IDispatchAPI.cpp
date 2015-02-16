@@ -13,8 +13,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "win_targetver.h"
-#include <boost/bind.hpp>
-#include <boost/scoped_array.hpp>
 #include <dispex.h>
 #include "utf8_tools.h"
 #include "JSAPI_IDispatchEx.h"
@@ -57,7 +55,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
         typedef void (FB::JSAPI::*getMemberNamesType)(std::vector<std::string> *nameVector) const;
-        browser->CallOnMainThread(boost::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
+        browser->CallOnMainThread(std::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
     if (is_JSAPI) {
@@ -94,7 +92,7 @@ size_t IDispatchAPI::getMemberCount() const
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::getMemberCount, this));
+        return browser->CallOnMainThread(std::bind(&IDispatchAPI::getMemberCount, this));
     }
 
     if (is_JSAPI) {
@@ -131,7 +129,7 @@ DISPID IDispatchAPI::getIDForName(const std::wstring& name) const
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind(&IDispatchAPI::getIDForName, this, name));
+        return browser->CallOnMainThread(std::bind(&IDispatchAPI::getIDForName, this, name));
     }
 
     if (name.empty()) {
@@ -167,15 +165,15 @@ bool IDispatchAPI::HasMethod(const std::wstring& methodName) const
     return getIDForName(methodName) != -1;
 }
 
-bool IDispatchAPI::HasMethod(const std::string& methodName) const
+bool IDispatchAPI::HasMethod(std::string methodName) const
 {
     if (m_browser.expired() || m_obj.expired())
         return false;
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        typedef bool (IDispatchAPI::*curtype)(const std::string&) const;
-        return browser->CallOnMainThread(boost::bind((curtype)&IDispatchAPI::HasMethod, this, methodName));
+        typedef bool (IDispatchAPI::*curtype)(std::string) const;
+        return browser->CallOnMainThread(std::bind((curtype)&IDispatchAPI::HasMethod, this, methodName));
     }
 
     if (is_JSAPI) {
@@ -196,15 +194,15 @@ bool IDispatchAPI::HasProperty(const std::wstring& propertyName) const
     return HasProperty(FB::wstring_to_utf8(propertyName));
 }
 
-bool IDispatchAPI::HasProperty(const std::string& propertyName) const
+bool IDispatchAPI::HasProperty(std::string propertyName) const
 {
     if (m_browser.expired() || m_obj.expired())
         return false;
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        typedef bool (IDispatchAPI::*HasPropertyType)(const std::string&) const;
-        return browser->CallOnMainThread(boost::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
+        typedef bool (IDispatchAPI::*HasPropertyType)(std::string) const;
+        return browser->CallOnMainThread(std::bind((HasPropertyType)&IDispatchAPI::HasProperty, this, propertyName));
     }
 
     if (is_JSAPI) {
@@ -248,18 +246,18 @@ bool IDispatchAPI::HasProperty(int idx) const
 }
 
 
-FB::variant IDispatchAPI::GetProperty(const std::string& propertyName) {
-    return GetPropertySync(propertyName);
+FB::variant IDispatchAPI::GetProperty(std::string propertyName) {
+    return FB::variantDeferred::makeDeferred(GetPropertySync(propertyName));
 }
 
 // Methods to manage properties on the API
-FB::variant FB::ActiveX::IDispatchAPI::GetPropertySync(const std::string& propertyName) {
+FB::variant FB::ActiveX::IDispatchAPI::GetPropertySync(std::string propertyName) {
     if (m_browser.expired() || m_obj.expired())
         return FB::FBVoid();
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
+        return browser->CallOnMainThread(std::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
     }
     
     if (is_JSAPI) {
@@ -304,14 +302,14 @@ FB::variant FB::ActiveX::IDispatchAPI::GetPropertySync(const std::string& proper
     }
 }
 
-void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::variant& value)
+void IDispatchAPI::SetProperty(std::string propertyName, const FB::variant& value)
 {
     if (m_browser.expired() || m_obj.expired())
         return;
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        browser->CallOnMainThread(boost::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
+        browser->CallOnMainThread(std::bind((FB::SetPropertyType)&IDispatchAPI::SetProperty, this, propertyName, value));
         return;
     }
 
@@ -361,14 +359,14 @@ void IDispatchAPI::SetProperty(const std::string& propertyName, const FB::varian
     }
 }
 
-void IDispatchAPI::RemoveProperty(const std::string& propertyName)
+void IDispatchAPI::RemoveProperty(std::string propertyName)
 {
     if (m_browser.expired())
         return;
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        browser->CallOnMainThread(boost::bind((FB::RemovePropertyType)&IDispatchAPI::RemoveProperty, this, propertyName));
+        browser->CallOnMainThread(std::bind((FB::RemovePropertyType)&IDispatchAPI::RemoveProperty, this, propertyName));
         return;
     }
 
@@ -434,19 +432,19 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 
 
 // Methods to manage methods on the API
-FB::variant IDispatchAPI::Invoke(const std::string& methodName, const std::vector<FB::variant>& args) {
+FB::variant IDispatchAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
     // TODO: Make this asynchronous
-    return InvokeSync(methodName, args);
+    return FB::variantDeferred::makeDeferred(InvokeSync(methodName, args));
 }
 
-FB::variant IDispatchAPI::InvokeSync(const std::string& methodName, const std::vector<FB::variant>& args)
+FB::variant IDispatchAPI::InvokeSync(std::string methodName, const std::vector<FB::variant>& args)
 {
     if (m_browser.expired() || m_obj.expired())
         return FB::FBVoid();
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(boost::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
+        return browser->CallOnMainThread(std::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(methodName));
@@ -455,8 +453,8 @@ FB::variant IDispatchAPI::InvokeSync(const std::string& methodName, const std::v
     }
 
     size_t argCount(args.size());
-    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount + 1]);
-    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
+    std::unique_ptr<CComVariant> comArgs(new CComVariant[argCount + 1]);
+    std::unique_ptr<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
     DISPPARAMS params;
     DISPID tid = DISPID_THIS;
     params.cArgs = args.size() + 1;
@@ -490,7 +488,7 @@ FB::variant IDispatchAPI::InvokeSync(const std::string& methodName, const std::v
     return browser->getVariant(&result);
 }
 
-void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::VariantList& args, 
+void IDispatchAPI::callMultipleFunctions( std::string name, const FB::VariantList& args, 
                                           const std::vector<FB::JSObjectPtr>& direct, const std::vector<FB::JSObjectPtr>& ifaces )
 {
     if (!isValid())
@@ -498,12 +496,12 @@ void IDispatchAPI::callMultipleFunctions( const std::string& name, const FB::Var
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->ScheduleOnMainThread(shared_from_this(), boost::bind(&IDispatchAPI::callMultipleFunctions, this, name, args, direct, ifaces));
+        return browser->ScheduleOnMainThread(shared_from_this(), std::bind(&IDispatchAPI::callMultipleFunctions, this, name, args, direct, ifaces));
     }
 
     size_t argCount(args.size());
-    boost::scoped_array<CComVariant> comArgs(new CComVariant[argCount + 1]);
-    boost::scoped_array<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
+    std::unique_ptr<CComVariant> comArgs(new CComVariant[argCount + 1]);
+    std::unique_ptr<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
     DISPPARAMS params;
     DISPID tid = DISPID_THIS;
     params.cArgs = args.size() + 1;

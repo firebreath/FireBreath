@@ -10,7 +10,6 @@
 #include <dispex.h>
 #include <boost/scoped_array.hpp>
 #include "wininet.h"
-#include <boost/assign.hpp>
 #include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp>
 #include <boost/bind.hpp>

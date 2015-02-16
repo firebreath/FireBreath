@@ -22,14 +22,14 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 namespace FB { namespace ActiveX {
     class ActiveXBindStatusCallback;
-    class ActiveXStreamRequest;
-    typedef std::shared_ptr<ActiveXStreamRequest> ActiveXStreamRequestPtr;
+    FB_FORWARD_PTR(ActiveXStreamRequest);
+    FB_FORWARD_PTR(ActiveXStream);
 
     class ActiveXStream : public FB::BrowserStream
     {
     public:
-        ActiveXStream(const std::string& url, bool cache, bool seekable, size_t internalBufferSize );
-        ActiveXStream(const std::string& url, bool cache, bool seekable, size_t internalBufferSize, const std::string& verbdata );
+        ActiveXStream(std::string url, bool cache, bool seekable, size_t internalBufferSize );
+        ActiveXStream(std::string url, bool cache, bool seekable, size_t internalBufferSize, std::string verbdata );
         virtual ~ActiveXStream();
         
         virtual bool readRanges( const std::vector<Range>& ranges );
@@ -57,7 +57,6 @@ namespace FB { namespace ActiveX {
         bool    closing;
         std::string data;
     };
-    typedef std::shared_ptr<ActiveXStream> ActiveXStreamPtr;
 } }
 
 

@@ -53,7 +53,7 @@ namespace FB { namespace ActiveX {
         }
         bool isValid() { return !m_obj.expired() && !m_browser.expired(); }
         virtual bool supportsOptimizedCalls() const { return true; }
-        virtual void callMultipleFunctions(const std::string& name, const FB::VariantList& args,
+        virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
                                            const std::vector<JSObjectPtr>& direct,
                                            const std::vector<JSObjectPtr>& ifaces);
         void invalidate() { m_obj.reset(); }
@@ -77,24 +77,24 @@ namespace FB { namespace ActiveX {
 
     protected:
         DISPID getIDForName(const std::wstring& name) const;
-        FB::variant GetPropertySync(const std::string& propertyName);
-        FB::variant InvokeSync(const std::string& methodName, const FB::VariantList& args);
+        FB::variant GetPropertySync(std::string propertyName);
+        FB::variant InvokeSync(std::string methodName, const FB::VariantList& args);
 
     public:
-        bool HasMethod(const std::string& methodName) const override;
+        bool HasMethod(std::string methodName) const override;
         bool HasMethod(const std::wstring& methodName) const override;
-        bool HasProperty(const std::string& propertyName) const override;
+        bool HasProperty(std::string propertyName) const override;
         bool HasProperty(const std::wstring& propertyName) const override;
         bool HasProperty(int idx) const override;
 
-        FB::variant GetProperty(const std::string& propertyName) override;
-        void SetProperty(const std::string& propertyName, const FB::variant& value) override;
-        void RemoveProperty(const std::string& propertyName) override;
-        FB::variant GetProperty(int idx) override;
+        FB::variantDeferredPtr GetProperty(std::string propertyName) override;
+        void SetProperty(std::string propertyName, const FB::variant& value) override;
+        void RemoveProperty(std::string propertyName) override;
+        FB::variantDeferredPtr GetProperty(int idx) override;
         void SetProperty(int idx, const FB::variant& value) override;
         void RemoveProperty(int idx) override;
 
-        FB::variant Invoke(const std::string& methodName, const FB::VariantList& args) override;
+        FB::variantDeferredPtr Invoke(std::string methodName, const FB::VariantList& args) override;
 
     public:
         virtual FB::JSAPIPtr getJSAPI() const;

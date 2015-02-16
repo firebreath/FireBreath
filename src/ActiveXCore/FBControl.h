@@ -25,6 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <boost/algorithm/string.hpp>
 #include <boost/cast.hpp>
 #include <memory>
+#include <functional>
 #include "DOM/Window.h"
 #include "FactoryBase.h"
 #include "logging.h"
@@ -46,32 +47,31 @@ extern std::string g_dllPath;
 // CFBControl
 namespace FB {
     namespace ActiveX {
-        class ActiveXBrowserHost;
-        typedef std::shared_ptr<ActiveXBrowserHost> ActiveXBrowserHostPtr;
+        FB_FORWARD_PTR(ActiveXBrowserHost);
         void flagStaticInitialized(bool init = true);
         bool isStaticInitialized();
 
         template <const GUID* pFbCLSID, const char* pMT, class ICurObjInterface, const IID* piid, const GUID* plibid>
         class ATL_NO_VTABLE CFBControl :
             public CComObjectRootEx<CComMultiThreadModel>,
-            public CComCoClass<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid>, pFbCLSID >,
-            public CComControl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
+            public CComCoClass<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>, pFbCLSID >,
+            public CComControl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
 
-            public JSAPI_IDispatchEx< CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid>, ICurObjInterface, piid>,
+            public JSAPI_IDispatchEx< CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid>, ICurObjInterface, piid>,
 
             // Required for standard events
             public IProvideClassInfo2Impl<pFbCLSID, NULL, plibid>,
             public IObjectSafety,
 
             //public IPersistStreamInitImpl<CFBControl<pFbCLSID,pMT> >,
-            public IOleControlImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
-            public IOleObjectImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
-            public IOleInPlaceActiveObjectImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
-            public IQuickActivateImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
-            public IViewObjectExImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
-            public IOleInPlaceObjectWindowlessImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
+            public IOleControlImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
+            public IOleObjectImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
+            public IOleInPlaceActiveObjectImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
+            public IQuickActivateImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
+            public IViewObjectExImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
+            public IOleInPlaceObjectWindowlessImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
 
-            public IObjectWithSiteImpl<CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> >,
+            public IObjectWithSiteImpl<CFBControl<pFbCLSID, pMT, ICurObjInterface, piid, plibid> >,
 
             // Provides methods for getting <params>
             public IPersistPropertyBag,
@@ -81,7 +81,7 @@ namespace FB {
             public FB::BrowserPlugin
         {
         public:
-            typedef CFBControl<pFbCLSID,pMT,ICurObjInterface,piid,plibid> CFBControlX;
+            using CFBControlX = CFBControl < pFbCLSID, pMT, ICurObjInterface, piid, plibid > ;
 
         protected:
             std::unique_ptr<FB::PluginWindow> pluginWin;
@@ -250,7 +250,7 @@ namespace FB {
         {
             if (!m_host->isMainThread() && m_spInPlaceSite) {
                 std::shared_ptr<FB::ShareableReference<CFBControlX> > ref(std::make_shared<FB::ShareableReference<CFBControlX> >(this));
-                m_host->ScheduleOnMainThread(ref, boost::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
+                m_host->ScheduleOnMainThread(ref, std::bind(&CFBControlX::invalidateWindow, this, left, top, right, bottom));
             } else {
                 if (m_spInPlaceSite)
                     m_spInPlaceSite->InvalidateRect(nullptr, TRUE);
@@ -378,7 +378,8 @@ namespace FB {
                 if (m_bWndLess) {
                     FB::PluginWindowlessWin* pww;
                     pw = pww = getFactoryInstance()->createPluginWindowless(FB::WindowContextWindowless(nullptr));
-                    pww->setInvalidateWindowFunc(boost::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
+                    using namespace std::placeholders;
+                    pww->setInvalidateWindowFunc(std::bind(&CFBControlX::invalidateWindow, this, _1, _2, _3, _4));
                     if (m_spInPlaceSite) {
                         HWND hwnd = 0;
                         HRESULT hr = m_spInPlaceSite->GetWindow(&hwnd);
@@ -431,11 +432,11 @@ namespace FB {
             ULONG pCount(0), pGot(0);
             HRESULT hr = pBag->CountProperties(&pCount);
             FB::VariantMap paramMap;
-            boost::scoped_array<PROPBAG2> pArr(new PROPBAG2[pCount]);
+            std::unique_ptr<PROPBAG2> pArr(new PROPBAG2[pCount]);
             hr = pBag->GetPropertyInfo(0, pCount, pArr.get(), &pGot);
 
-            boost::scoped_array<HRESULT> results(new HRESULT[pCount]);
-            boost::scoped_array<CComVariant> vals(new CComVariant[pCount]);
+            std::unique_ptr<HRESULT> results(new HRESULT[pCount]);
+            std::unique_ptr<CComVariant> vals(new CComVariant[pCount]);
             hr = pBag->Read(pGot, pArr.get(), nullptr, vals.get(), results.get());
             if (SUCCEEDED(hr)) {
                 for(ULONG i = 0; i < pGot; ++i) {

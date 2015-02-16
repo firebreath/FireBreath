@@ -80,7 +80,7 @@ long TestAPI::add(long a, long b)
 // test firing an event
 void TestAPI::testEvent(const std::string& param)
 {
-    this->FireEvent("onfired", FB::variant_list_of(param));
+    this->FireEvent("onfired", FB::VariantList{ param });
 }
 
 FB::variant TestAPI::echo(const FB::variant& a)
