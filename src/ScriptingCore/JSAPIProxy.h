@@ -132,30 +132,30 @@ namespace FB
     public:
 
         void invalidate();
-        virtual void getMemberNames(std::vector<std::string> &nameVector) const;
-        virtual size_t getMemberCount() const;
+        virtual void getMemberNames(std::vector<std::string> &nameVector) const override;
+        virtual size_t getMemberCount() const override;
 
-        virtual bool HasMethod(const std::wstring& methodName) const;
-        virtual bool HasMethod(const std::string& methodName) const;
-        virtual bool HasProperty(const std::wstring& propertyName) const;
-        virtual bool HasProperty(const std::string& propertyName) const;
-        virtual bool HasProperty(int idx) const;
+        virtual bool HasMethod(const std::wstring& methodName) const override;
+        virtual bool HasMethod(const std::string& methodName) const override;
+        virtual bool HasProperty(const std::wstring& propertyName) const override;
+        virtual bool HasProperty(const std::string& propertyName) const override;
+        virtual bool HasProperty(int idx) const override;
 
-        virtual variant GetProperty(const std::wstring& propertyName);
-        virtual variant GetProperty(const std::string& propertyName);
+        virtual variantDeferredPtr GetProperty(const std::wstring& propertyName) override;
+        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
 
-        virtual void SetProperty(const std::wstring& propertyName, const variant& value);
-        virtual void SetProperty(const std::string& propertyName, const variant& value);
+        virtual void SetProperty(const std::wstring& propertyName, const variant& value) override;
+        virtual void SetProperty(const std::string& propertyName, const variant& value) override;
 
-        virtual void RemoveProperty(const std::wstring& propertyName);
-        virtual void RemoveProperty(const std::string& propertyName);
+        virtual void RemoveProperty(const std::wstring& propertyName) override;
+        virtual void RemoveProperty(const std::string& propertyName) override;
         
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant& value);
-        virtual void RemoveProperty(int idx);
+        virtual variantDeferredPtr GetProperty(int idx) override;
+        virtual void SetProperty(int idx, const variant& value) override;
+        virtual void RemoveProperty(int idx) override;
 
-        virtual variant Invoke(const std::wstring& methodName, const std::vector<variant>& args);
-        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
+        virtual variantDeferredPtr Invoke(const std::wstring& methodName, const std::vector<variant>& args) override;
+        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) override;
     };
 
 };

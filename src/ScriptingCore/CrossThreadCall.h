@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <vector>
 #include <string>
+#include <type_traits>
 #include <memory>
 #include <boost/thread/mutex.hpp>
 #include <mutex>
@@ -86,9 +87,9 @@ namespace FB {
         static typename Functor::result_type syncCall(const FB::BrowserHostConstPtr &host, Functor func);
 
         template<class Functor>
-        static typename Functor::result_type syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, boost::true_type /* is void */);
+        static typename Functor::result_type syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, std::true_type /* is void */);
         template<class Functor>
-        static typename Functor::result_type syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, boost::false_type /* is void */);
+        static typename Functor::result_type syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, std::false_type /* is void */);
 
         template<class C, class Functor>
         static void asyncCall(const FB::BrowserHostConstPtr &host, const std::shared_ptr<C>& obj, Functor func);
@@ -122,12 +123,12 @@ namespace FB {
     template<class Functor>
     typename Functor::result_type CrossThreadCall::syncCall(const FB::BrowserHostConstPtr &host, Functor func)
     {
-        typedef boost::is_same<void, typename Functor::result_type> is_void;
+        typedef std::is_same<void, typename Functor::result_type> is_void;
         return syncCallHelper(host, func, is_void());
     }
 
     template <class Functor>
-    typename Functor::result_type CrossThreadCall::syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, boost::true_type /* return void */)
+    typename Functor::result_type CrossThreadCall::syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, std::true_type /* return void */)
     {
         FB::variant varResult;
 
@@ -167,7 +168,7 @@ namespace FB {
     }
 
     template <class Functor>
-    typename Functor::result_type CrossThreadCall::syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, boost::false_type /* return not void */)
+    typename Functor::result_type CrossThreadCall::syncCallHelper(const FB::BrowserHostConstPtr &host, Functor func, std::false_type /* return not void */)
     {
         typename Functor::result_type result;
         FB::variant varResult;
@@ -218,7 +219,7 @@ namespace FB {
     }
     
     template <class C, class Functor>
-    void BrowserHost::ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const
+    void BrowserHost::ScheduleOnMainThread(std::shared_ptr<C> obj, Functor func) const
     {
         boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
         CrossThreadCall::asyncCall(shared_from_this(), obj, func);

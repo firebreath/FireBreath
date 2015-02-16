@@ -49,6 +49,6 @@ ElementPtr Document::getBody() const
 
 FB::DOM::ElementPtr Document::createElement(const std::string &name) const
 {
-	JSObjectPtr api = callMethod<FB::JSObjectPtr>("createElement", FB::variant_list_of(name));
+    JSObjectPtr api = callMethod<FB::JSObjectPtr>("createElement", FB::VariantList{ name });
 	return Element::create(api);
 }

@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <cassert>
 #include <algorithm>
 #include <memory>
+#include <thread>
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/lambda/construct.hpp>
@@ -61,7 +62,7 @@ namespace FB {
         AsyncCallManager() : lastId(1) {}
         ~AsyncCallManager();
 
-        boost::recursive_mutex m_mutex;
+        std::recursive_mutex m_mutex;
         void shutdown();
 
         _asyncCallData* makeCallback(void (*func)(void *), void * userData );
@@ -76,7 +77,7 @@ namespace FB {
 volatile int FB::BrowserHost::InstanceCount(0);
 
 FB::BrowserHost::BrowserHost()
-    : _asyncManager(std::make_shared<AsyncCallManager>()), m_threadId(boost::this_thread::get_id()),
+    : _asyncManager(std::make_shared<AsyncCallManager>()), m_threadId(std::this_thread::get_id()),
       m_isShutDown(false), m_streamMgr(std::make_shared<FB::BrowserStreamManager>()), m_htmlLogEnabled(true)
 {
     ++InstanceCount;
@@ -89,7 +90,7 @@ FB::BrowserHost::~BrowserHost()
 
 void FB::BrowserHost::shutdown()
 {
-    BOOST_FOREACH(FB::JSAPIPtr ptr, m_retainedObjects) {
+    for (auto ptr : m_retainedObjects) {
         // Notify each JSAPI object that we're shutting down
         ptr->shutdown();
     }
@@ -123,7 +124,7 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
             FB::JSObjectPtr obj = window->getProperty<FB::JSObjectPtr>("console");
             printf("Logging: %s\n", req->m_msg.c_str());
             if (obj)
-                obj->Invoke("log", FB::variant_list_of(req->m_msg));
+                obj->Invoke("log", FB::VariantList{req->m_msg});
         }
     } catch (const std::exception &) {
         // printf("Exception: %s\n", e.what());
@@ -171,12 +172,12 @@ void FB::BrowserHost::assertMainThread() const
 
 bool FB::BrowserHost::isMainThread() const
 {
-    return m_threadId == boost::this_thread::get_id();
+    return m_threadId == std::this_thread::get_id();
 }
 
 void FB::BrowserHost::freeRetainedObjects() const
 {
-    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
+    std::unique_lock<std::recursive_mutex> _l(m_jsapimutex);
     // This releases all stored shared_ptr objects that the browser is holding
     m_retainedObjects.clear();
 
@@ -185,16 +186,16 @@ void FB::BrowserHost::freeRetainedObjects() const
     DoDeferredRelease();
 }
 
-void FB::BrowserHost::retainJSAPIPtr( const FB::JSAPIPtr& obj ) const
+void FB::BrowserHost::retainJSAPIPtr( FB::JSAPIPtr obj ) const
 {
-    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
-    m_retainedObjects.push_back(obj);
+    std::unique_lock<std::recursive_mutex> _l(m_jsapimutex);
+    m_retainedObjects.emplace_back(obj);
 }
 
-void FB::BrowserHost::releaseJSAPIPtr( const FB::JSAPIPtr& obj ) const
+void FB::BrowserHost::releaseJSAPIPtr( FB::JSAPIPtr obj ) const
 {
-    boost::recursive_mutex::scoped_lock _l(m_jsapimutex);
-    std::list<FB::JSAPIPtr>::iterator it = std::find_if(m_retainedObjects.begin(), m_retainedObjects.end(), boost::lambda::_1 == obj);
+    std::unique_lock<std::recursive_mutex> _l(m_jsapimutex);
+    auto it = std::find_if(m_retainedObjects.begin(), m_retainedObjects.end(), [&](decltype(m_retainedObjects)::value_type cur) { return cur == obj; });
     if (it != m_retainedObjects.end()) {
         m_retainedObjects.erase(it);
     }
@@ -218,7 +219,7 @@ void FB::AsyncCallManager::call( _asyncCallData* data )
 {
     {
         // Verify _asyncCallData is still in DataList. If not, the _asyncCallData has already been dealt with. 
-        boost::recursive_mutex::scoped_lock _l(m_mutex);
+        std::unique_lock<std::recursive_mutex> _l(m_mutex);
         std::set<_asyncCallData*>::iterator fnd = DataList.find(data);
         if (DataList.end() != fnd)
             DataList.erase(fnd);
@@ -233,7 +234,7 @@ void FB::AsyncCallManager::call( _asyncCallData* data )
 
 FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), void * userData)
 {
-    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    std::unique_lock<std::recursive_mutex> _l(m_mutex);
     _asyncCallData *data = new _asyncCallData(func, userData, ++lastId, shared_from_this());
     DataList.insert(data);
     return data;
@@ -241,24 +242,24 @@ FB::_asyncCallData* FB::AsyncCallManager::makeCallback(void (*func)(void *), voi
 
 void FB::AsyncCallManager::remove(_asyncCallData* data)
 {
-    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    std::unique_lock<std::recursive_mutex> _l(m_mutex);
     DataList.erase(data);
 }
 
 void FB::AsyncCallManager::shutdown()
 {
-    boost::recursive_mutex::scoped_lock _l(m_mutex);
+    std::unique_lock<std::recursive_mutex> _l(m_mutex);
     // Store these so that they can be freed when the browserhost object is destroyed -- at that
     // point it's no longer possible for the browser to finish the async calls
     canceledDataList.insert(DataList.begin(), DataList.end());
 
-    std::for_each(DataList.begin(), DataList.end(), boost::lambda::bind(&_asyncCallData::call, boost::lambda::_1));
+    for (auto i1 : DataList) { call(i1); }
     DataList.clear();
 }
 
 FB::AsyncCallManager::~AsyncCallManager()
 {
-    std::for_each(canceledDataList.begin(), canceledDataList.end(), boost::lambda::bind(boost::lambda::delete_ptr(), boost::lambda::_1));
+    for (auto i1 : canceledDataList) { delete i1; }
 }
 
 

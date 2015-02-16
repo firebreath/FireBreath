@@ -191,14 +191,9 @@ namespace FB { namespace meta { namespace detail
         std::wstring
     > pseudo_container_types;
 
-    template<typename T>
-    struct plain_type {
-        typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
-    };
-
     template<class T>
     struct is_pseudo_container 
-      : boost::mpl::contains<pseudo_container_types, typename plain_type<T>::type>::type
+      : boost::mpl::contains<pseudo_container_types, typename std::decay<T>::type>::type
     {};
 
     ////////////////

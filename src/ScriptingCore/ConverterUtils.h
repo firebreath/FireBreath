@@ -19,22 +19,18 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #  pragma once
 #endif
 
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/type_traits/remove_const.hpp>
+#include <type_traits>
+#include <vector>
+#include <FBPointers.h>
 #include <boost/mpl/contains.hpp>
 #include <boost/mpl/vector.hpp>
 
 namespace FB { 
     class variant;
-    typedef std::vector<variant> VariantList;
+    FB_FORWARD_PTR(variantDeferred);
+    using VariantList = std::vector<variant>;
     namespace detail 
     {
-        // helper meta function that removes all pointers etc. from a type
-        template<typename T>
-        struct plain_type {
-            typedef typename boost::remove_const<typename boost::remove_reference<T>::type>::type type;
-        };
-
         // actual conversion functions are wrapped in this struct to allow partial specialization
         template<typename To, typename From>
         struct converter {
@@ -157,6 +153,21 @@ namespace FB { namespace detail
                    << " at index " << index;
                 throw FB::invalid_arguments(ss.str());
             }
+        }
+    };
+
+    // specialization for conversion from variant to variantDeferredPtr
+    template<>
+    struct converter<FB::variant, FB::variantDeferredPtr>
+    {
+        static inline FB::variantDeferredPtr convert(const FB::variant& from)
+        {
+            return FB::variantDeferred::makeDeferred(from);
+        }
+
+        static inline FB::variantDeferredPtr convert(const FB::variant& from, size_t index)
+        {
+            return FB::variantDeferred::makeDeferred(from);
         }
     };
 

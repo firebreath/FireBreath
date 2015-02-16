@@ -12,8 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "variant_list.h"
-#include "../precompiled_headers.h" // On windows, everything above this line in PCH
+#include "variantDeferred.h"
 #include "Element.h"
 
 using namespace FB::DOM;
@@ -82,8 +81,7 @@ ElementPtr Element::getParentNode() const
 
 ElementPtr Element::getElementById(const std::string& id) const
 {
-    JSObjectPtr api =
-        callMethod<JSObjectPtr>("getElementById", variant_list_of(id));
+    JSObjectPtr api = callMethod<JSObjectPtr>("getElementById", VariantList{ id });
     return Element::create(api);
 }
 
@@ -94,18 +92,18 @@ std::vector<ElementPtr> Element::getElementsByTagName(const std::wstring& tagNam
 
 std::vector<ElementPtr> Element::getElementsByTagName(const std::string& tagName) const
 {
-    std::vector<FB::JSObjectPtr> tagList = callMethod<std::vector<FB::JSObjectPtr> >("getElementsByTagName", FB::variant_list_of(tagName));
-    std::vector<FB::JSObjectPtr>::iterator it;
+    auto tagList = callMethod<std::vector<FB::JSObjectPtr> >("getElementsByTagName", VariantList{tagName});
     std::vector<ElementPtr> outList;
-    for (it = tagList.begin(); it != tagList.end(); ++it)
+
+    for (auto tag : tagList)
     {
-        outList.push_back(Element::create(*it));
+        outList.push_back(Element::create(tag));
     }
     return outList;
 }
 
 std::string FB::DOM::Element::getStringAttribute( const std::string& attr ) const
 {
-    return callMethod<std::string>("getAttribute", FB::variant_list_of(attr));
+    return callMethod<std::string>("getAttribute", FB::VariantList{ attr });
 }
 

@@ -32,8 +32,8 @@ namespace FB {
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(SimpleStreamHelper);
 
-    typedef std::multimap<std::string, std::string> HeaderMap;
-    typedef std::function<void (bool, const FB::HeaderMap&, const boost::shared_array<uint8_t>&, const size_t)> HttpCallback;
+    using HeaderMap = std::multimap<std::string, std::string>;
+    using HttpCallback = std::function<void (bool, FB::HeaderMap, boost::shared_array<uint8_t>, const size_t)>;
     
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  HttpStreamResponse
@@ -48,8 +48,8 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     struct HttpStreamResponse : boost::noncopyable
     {
-        HttpStreamResponse(bool success, const FB::HeaderMap& headers,
-            const boost::shared_array<uint8_t>& data, const size_t size) : success(success),
+        HttpStreamResponse(bool success, FB::HeaderMap headers,
+            boost::shared_array<uint8_t> data, const size_t size) : success(success),
             headers(headers), data(data), size(size) { }
         // True if the request succeeded
         bool success;
@@ -60,7 +60,7 @@ namespace FB {
         // The size of data
         const size_t size;
     };
-    typedef std::shared_ptr<HttpStreamResponse> HttpStreamResponsePtr;
+    using HttpStreamResponsePtr = std::shared_ptr<HttpStreamResponse>;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  SimpleStreamHelper
@@ -76,7 +76,7 @@ namespace FB {
     {
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(const BrowserHostConstPtr& host, const BrowserStreamRequest& req);
+        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(BrowserHostConstPtr host, const BrowserStreamRequest& req);
         ///
         /// @brief  Creates an asynchronous HTTP request from the provided BrowserStreamRequest
         ///
@@ -84,32 +84,32 @@ namespace FB {
         /// the same BrowserStreamRequest object. Note that a BrowserStreamRequest object passed to
         /// this method *must* have a callback (see BrowserStreamRequest::setCallback)
         ///
-        /// @param host  const BrowserHostConstPtr & 
+        /// @param host  BrowserHostConstPtr  
         /// @param req  const BrowserStreamRequest & 
         ///
         /// @author taxilian
         /// @since 1.7
         /// @see FB::BrowserStreamRequest:setCallback
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostConstPtr& host, const BrowserStreamRequest& req );
+        static FB::SimpleStreamHelperPtr AsyncRequest( BrowserHostConstPtr host, const BrowserStreamRequest& req );
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(const BrowserHostConstPtr& host, const BrowserStreamPtr& stream, const BrowserStreamRequest& req);
+        /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(BrowserHostConstPtr host, BrowserStreamPtr stream, const BrowserStreamRequest& req);
         ///
         /// @brief  Creates an asynchronous HTTP request from the provided BrowserStreamRequest and existing stream object
         ///
         /// This method is generally only used internally; it works on an existing (but not really started) stream object.
         ///
-        /// @param host  const BrowserHostConstPtr & 
-        /// @param stream  const BrowserStreamPtr & 
+        /// @param host  BrowserHostConstPtr 
+        /// @param stream  BrowserStreamPtr 
         /// @param req  const BrowserStreamRequest & 
         ///
         /// @author taxilian
         /// @since 1.7
         /// @see FB::BrowserStreamRequest:setCallback
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncRequest( const BrowserHostConstPtr& host, const BrowserStreamPtr& stream, const BrowserStreamRequest& req );
+        static FB::SimpleStreamHelperPtr AsyncRequest( BrowserHostConstPtr host, BrowserStreamPtr stream, const BrowserStreamRequest& req );
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback, const bool cache = true, const size_t bufferSize = 128*1024)
+        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(FB::BrowserHostPtr host, FB::URI uri, HttpCallback callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Starts an asynchronous HTTP get request
         ///
@@ -118,14 +118,14 @@ namespace FB {
         /// cleaned up automatically when the request finishes.
         ///
         /// @code
-        /// void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
+        /// void FBTestPluginAPI::getURL(std::string url, FB::JSObjectPtr callback)
         /// {
         ///    FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url),
         ///        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
         /// }
         ///
-        /// void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,
-        ///    const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+        /// void FBTestPluginAPI::getURLCallback(FB::JSObjectPtr callback, bool success,
+        ///    FB::HeaderMap headers, boost::shared_array<uint8_t> data, const size_t size) {
         ///    if (success) {
         ///        std::string dstr(reinterpret_cast<const char*>(data.get()), size);
         ///        // Do something here; dstr is a string containing the full body
@@ -136,23 +136,23 @@ namespace FB {
         /// }
         /// @endcode
         ///
-        /// @param  host        const FB::BrowserHostPtr&   BrowserHostPtr to use to create the stream
-        /// @param  uri         const FB::URI&              URI to request
-        /// @param  callback    const HttpCallback &        Function to call with the response
-        /// @param  cache       const bool                  true if cache can be used
-        /// @param  bufferSize  const size_t                Specifies the size of the buffer to use internally
+        /// @param  host        FB::BrowserHostPtr   BrowserHostPtr to use to create the stream
+        /// @param  uri         FB::URI              URI to request
+        /// @param  callback    HttpCallback         Function to call with the response
+        /// @param  cache       const bool           true if cache can be used
+        /// @param  bufferSize  const size_t         Specifies the size of the buffer to use internally
         /// @returns FB::SimpleStreamHelperPtr
         /// @since 1.4b3
         /// @see SynchronousGet
         /// @see FB::URI
         /// @deprecated 1.7 use AsyncRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const HttpCallback& callback,
+        static FB::SimpleStreamHelperPtr AsyncGet(FB::BrowserHostPtr host, FB::URI uri, HttpCallback callback,
             bool cache = true, size_t bufferSize = 128*1024);
 
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const HttpCallback& callback, const bool cache = true, const size_t bufferSize = 128*1024)
+        /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(FB::BrowserHostPtr host, FB::URI uri, std::string postdata, HttpCallback callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Starts an asynchronous HTTP post request
         ///
@@ -161,14 +161,14 @@ namespace FB {
         /// cleaned up automatically when the request finishes.
         ///
         /// @code
-        /// void FBTestPluginAPI::postURL(const std::string& url, const std::string& postdata, concst const FB::JSObjectPtr& callback)
+        /// void FBTestPluginAPI::postURL(std::string url, std::string postdata, concst FB::JSObjectPtr callback)
         /// {
         ///    FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
         ///        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
         /// }
         ///
-        /// void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,
-        ///    const FB::HeaderMap& headers, const boost::shared_array<uint8_t>& data, const size_t size) {
+        /// void FBTestPluginAPI::getURLCallback(FB::JSObjectPtr callback, bool success,
+        ///    FB::HeaderMap headers, boost::shared_array<uint8_t> data, const size_t size) {
         ///    if (success) {
         ///        std::string dstr(reinterpret_cast<const char*>(data.get()), size);
         ///        // Do something here; dstr is a string containing the full body
@@ -179,24 +179,24 @@ namespace FB {
         /// }
         /// @endcode
         ///
-        /// @param  host        const FB::BrowserHostPtr&   BrowserHostPtr to use to create the stream
-        /// @param  uri         const FB::URI&              URI to request
-        /// @param  postdata    const std::string&          Post data to send
-        /// @param  callback    const HttpCallback &        Function to call with the response      
-        /// @param  cache       const bool                  true if cache can be used
-        /// @param  bufferSize  const size_t                Specifies the size of the buffer to use internally
+        /// @param  host        FB::BrowserHostPtr   BrowserHostPtr to use to create the stream
+        /// @param  uri         FB::URI              URI to request
+        /// @param  postdata    std::string          Post data to send
+        /// @param  callback    HttpCallback         Function to call with the response      
+        /// @param  cache       const bool           true if cache can be used
+        /// @param  bufferSize  const size_t         Specifies the size of the buffer to use internally
         /// @returns FB::SimpleStreamHelperPtr
         /// @since 1.4b3
         /// @see SynchronousGet
         /// @see FB::URI
         /// @deprecated 1.7 use AsyncRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static FB::SimpleStreamHelperPtr AsyncPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const HttpCallback& callback,
+        static FB::SimpleStreamHelperPtr AsyncPost(FB::BrowserHostPtr host, FB::URI uri, std::string postdata, HttpCallback callback,
             bool cache = true, size_t bufferSize = 128*1024);
 
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, const bool cache = true, const size_t bufferSize = 128*1024)
+        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousGet(FB::BrowserHostPtr host, FB::URI uri, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP get request. 
         ///
@@ -204,7 +204,7 @@ namespace FB {
         /// a thread that you have started.  *IMPORTANT*: This must *never* be called on the main thread!
         ///
         /// @code
-        /// void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
+        /// void FBTestPluginAPI::getURL(std::string url, FB::JSObjectPtr callback)
         /// {
         ///     FB::HttpStreamResponsePtr resp = FB::SimpleStreamHelper::SynchronousGet(m_host, FB::URI::fromString(url));
         ///     if (resp->success) {
@@ -216,10 +216,10 @@ namespace FB {
         /// }
         /// @endcode
         ///
-        /// @param  host        const FB::BrowserHostPtr&   BrowserHostPtr to use to create the stream
-        /// @param  uri         const FB::URI&              URI to request
-        /// @param  cache       const bool                  true if cache can be used
-        /// @param  bufferSize  const size_t                Specifies the size of the buffer to use internally
+        /// @param  host        FB::BrowserHostPtr   BrowserHostPtr to use to create the stream
+        /// @param  uri         FB::URI              URI to request
+        /// @param  cache       const bool           true if cache can be used
+        /// @param  bufferSize  const size_t         Specifies the size of the buffer to use internally
         /// @returns FB::HttpStreamResponsePtr
         /// @since 1.4b3
         /// @see AsyncGet
@@ -227,25 +227,25 @@ namespace FB {
         /// @see FB::HttpStreamResponse
         /// @deprecated 1.7 use SynchronousRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HttpStreamResponsePtr SynchronousGet(const FB::BrowserHostPtr& host, const FB::URI& uri, 
+        static HttpStreamResponsePtr SynchronousGet(FB::BrowserHostPtr host, FB::URI uri, 
             const bool cache = true, const size_t bufferSize = 128*1024);
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn  static  FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req);
+        /// @fn  static  FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest(FB::BrowserHostPtr host, const BrowserStreamRequest& req);
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP request
         ///
-        /// @param host  const FB::BrowserHostPtr & BrowserHost to use (m_host on the plugin object)
+        /// @param host  FB::BrowserHostPtr & BrowserHost to use (m_host on the plugin object)
         /// @param req  const BrowserStreamRequest & BrowserStreamRequest describing the request to make;
         ///             should not have a callback or eventsink
         ///
         /// @author taxilian
         /// @since 1.7
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HttpStreamResponsePtr SynchronousRequest(const FB::BrowserHostPtr& host, const BrowserStreamRequest& req );
+        static HttpStreamResponsePtr SynchronousRequest(FB::BrowserHostPtr host, const BrowserStreamRequest& req );
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024)
+        /// @fn public static FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousPost(FB::BrowserHostPtr host, FB::URI uri, std::string postdata, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
         /// @brief  Do not call from the main thread! Starts a Synchronous HTTP POST request. 
         ///
@@ -253,7 +253,7 @@ namespace FB {
         /// a thread that you have started.  *IMPORTANT*: This must *never* be called on the main thread!
         ///
         /// @code
-        /// void FBTestPluginAPI::getURL(const std::string& url, const FB::JSObjectPtr& callback)
+        /// void FBTestPluginAPI::getURL(std::string url, FB::JSObjectPtr callback)
         /// {
         ///     FB::HttpStreamResponsePtr resp = FB::SimpleStreamHelper::SynchronousPost(m_host, FB::URI::fromString(url));
         ///     if (resp->success) {
@@ -265,9 +265,9 @@ namespace FB {
         /// }
         /// @endcode
         ///
-        /// @param  host        const FB::BrowserHostPtr&   BrowserHostPtr to use to create the stream
-        /// @param  uri         const FB::URI&              URI to request
-        /// @param  postdata    const std::string&          Post data to send
+        /// @param  host        FB::BrowserHostPtr   BrowserHostPtr to use to create the stream
+        /// @param  uri         FB::URI&              URI to request
+        /// @param  postdata    std::string&          Post data to send
         /// @param  cache       const bool                  true if cache can be used
         /// @param  bufferSize  const size_t                Specifies the size of the buffer to use internally
         /// @returns FB::HttpStreamResponsePtr
@@ -277,19 +277,19 @@ namespace FB {
         /// @see FB::HttpStreamResponse
         /// @deprecated 1.7 use SynchronousRequest
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        static HttpStreamResponsePtr SynchronousPost(const FB::BrowserHostPtr& host, const FB::URI& uri, const std::string& postdata, const bool cache = true, const size_t bufferSize = 128*1024);
+        static HttpStreamResponsePtr SynchronousPost(FB::BrowserHostPtr host, FB::URI uri, std::string postdata, const bool cache = true, const size_t bufferSize = 128*1024);
 
 
     public:
-        SimpleStreamHelper( const HttpCallback& callback, const size_t blockSize = 128*1024 );
+        SimpleStreamHelper( HttpCallback callback, const size_t blockSize = 128*1024 );
 
         virtual bool onStreamDataArrived(FB::StreamDataArrivedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamOpened(FB::StreamOpenedEvent *evt, FB::BrowserStream *);
         virtual bool onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *);
-        static FB::HeaderMap parse_http_headers(const std::string& headers );
+        static FB::HeaderMap parse_http_headers(std::string headers );
 
     protected:
-        typedef std::list<boost::shared_array<uint8_t> > BlockList;
+        using BlockList = std::list<boost::shared_array<uint8_t> >;
         BlockList blocks;
         boost::shared_array<uint8_t> data;
         const size_t blockSize;
@@ -297,7 +297,7 @@ namespace FB {
         HttpCallback callback;
 
     private:
-        void keepReference(const SimpleStreamHelperPtr& ptr);
+        void keepReference(SimpleStreamHelperPtr ptr);
         SimpleStreamHelperPtr self;
         BrowserStreamPtr streamPtr;
     };

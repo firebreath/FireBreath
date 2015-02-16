@@ -96,7 +96,7 @@ public:
     
     void RemoveProperty(int idx)
     {
-        throw FB::script_error(std::string("Cannot remove property '") + boost::lexical_cast<std::string>(idx) + "'");
+        throw FB::script_error(std::string("Cannot remove property '") + std::to_string(idx) + "'");
     }
 private:
     FB::VariantMap m_values;

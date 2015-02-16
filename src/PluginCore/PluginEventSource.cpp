@@ -36,7 +36,7 @@ void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
 {
-    boost::recursive_mutex::scoped_lock _l(m_observerLock);
+    std::unique_lock<std::recursive_mutex> _l(m_observerLock);
     m_observers.push_back(sink);
     AttachedEvent newEvent;
     sink->HandleEvent(&newEvent, this);
@@ -49,7 +49,7 @@ void PluginEventSource::DetachObserver(FB::PluginEventSink *sink)
 
 void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 {
-    boost::recursive_mutex::scoped_lock _l(m_observerLock);
+    std::unique_lock<std::recursive_mutex> _l(m_observerLock);
 	
 	std::list<PluginEventSinkPtr> detachedList;
 	{
@@ -75,7 +75,7 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 
 bool PluginEventSource::SendEvent(PluginEvent* evt)
 {
-    boost::recursive_mutex::scoped_lock _l(m_observerLock);
+    std::unique_lock<std::recursive_mutex> _l(m_observerLock);
 
     // Sometimes the events cause an observer to be removed; we make a copy so that 
     // it doesn't mess with our iterator.  Remember that removing an observer will only take

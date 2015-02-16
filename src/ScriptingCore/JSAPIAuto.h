@@ -19,9 +19,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <deque>
 #include <vector>
 #include <string>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/tuple/tuple.hpp>
-#include <boost/tuple/tuple_comparison.hpp> 
+#include <tuple>
 #include "JSAPIImpl.h"
 #include "MethodConverter.h"
 #include "PropertyConverter.h"
@@ -29,6 +27,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB {
     FB_FORWARD_PTR(JSFunction);
+    FB_FORWARD_PTR(variantDeferred);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())
@@ -102,9 +101,8 @@ namespace FB {
             FB::variant value;
             bool readonly;
         };
-        typedef std::map<boost::tuple<std::string, FB::SecurityZone>, FB::JSFunctionPtr> MethodObjectMap;
-        typedef std::map<std::string, FB::SecurityZone> ZoneMap;
-        typedef std::map<std::string, Attribute> AttributeMap;
+        using ZoneMap = std::map<std::string, FB::SecurityZone>;
+        using AttributeMap = std::map<std::string, Attribute>;
 
     public:
         /// @brief Description is used by ToString().
@@ -131,50 +129,10 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public void setReserved(const std::string &name)
-        ///
-        /// @brief   Prevents attributes from being created from JavaScript with the specified name
-        ///
-        /// This is generally only useful to prevent your plugin from overriding some attribute on the
-        /// object tag it resides in in the DOM.  Attributes such as "id", "name", and "width" are marked
-        /// as reserved by default.
-        /// 
-        /// @param  name    The name of the attribute to mark as reserved
-        ///
-        /// @returns void
-        ///
-        /// @since 1.4a3
-        /// @see registerAttribute
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void setReserved(const std::string &name)
-        {
-            m_reservedMembers.insert(name);
-        }
-
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn public bool isReserved( const std::string& propertyName ) const
-        ///
-        /// @brief   Returns true if the specified propertyName is a reserved attribute
-        ///
-        /// @param   propertyName    Name of the attribute to check
-        ///
-        /// @returns bool true if propertyName is reserved
-        ///
-        /// @since 1.4a3
-        /// @see setReserved
-        /// @see registerAttribute
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        bool isReserved( const std::string& propertyName ) const
-        {
-            return m_reservedMembers.find(propertyName) != m_reservedMembers.end();
-        }
-
         virtual void getMemberNames(std::vector<std::string> &nameVector) const;
         virtual size_t getMemberCount() const;
 
-        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args);
-        virtual JSAPIPtr GetMethodObject(const std::string& methodObjName);
+        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args);
 
         virtual void unregisterMethod(const std::wstring& name)
         {
@@ -269,12 +227,12 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterProperty(const std::string& name);
         
-        virtual variant GetProperty(const std::string& propertyName);
-        virtual void SetProperty(const std::string& propertyName, const variant& value);
-        virtual void RemoveProperty(const std::string& propertyName);
-        virtual variant GetProperty(int idx);
-        virtual void SetProperty(int idx, const variant& value);
-        virtual void RemoveProperty(int idx);
+        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
+        virtual void SetProperty(const std::string& propertyName, const variant& value) override;
+        virtual void RemoveProperty(const std::string& propertyName) override;
+        virtual variantDeferredPtr GetProperty(int idx) override;
+        virtual void SetProperty(int idx, const variant& value) override;
+        virtual void RemoveProperty(int idx) override;
 
         virtual void FireJSEvent(const std::string& eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
         virtual void fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args );
@@ -320,7 +278,7 @@ namespace FB {
         /// @see setAttribute
         /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::variant getAttribute(const std::string& name);
+        virtual FB::variantDeferredPtr getAttribute(const std::string& name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public virtual void setAttribute(const std::string& name, const FB::variant& value)
         ///
@@ -356,8 +314,6 @@ namespace FB {
         }
 
     protected:
-        // Stores Method Objects -- JSAPI proxy objects for calling a method on this object
-        MethodObjectMap m_methodObjectMap;
         // Stores the methods exposed to JS
         MethodFunctorMap m_methodFunctorMap;
         // Stores the properties exposed to JS
@@ -368,14 +324,9 @@ namespace FB {
         const std::string m_description;
 
         AttributeMap m_attributes;
-        FB::StringSet m_reservedMembers;
-        bool m_allowDynamicAttributes;
         bool m_allowRemoveProperties;
-        bool m_allowMethodObjects;
     public:
-        static bool s_allowDynamicAttributes;
         static bool s_allowRemoveProperties;
-        static bool s_allowMethodObjects;
     };
 
 };

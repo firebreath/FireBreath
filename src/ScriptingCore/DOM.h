@@ -49,19 +49,10 @@ namespace FB {
 ////////////////////////////////////////////////////////////////////////////////////////////////////
     namespace DOM {
 
-    class Window;
-    class Document;
-    class Element;
-    class Node;
-
-    /// @brief  shared_ptr for a FB::DOM::Window
-    typedef std::shared_ptr<Window> WindowPtr;
-    /// @brief  shared_ptr for a FB::DOM::Document
-    typedef std::shared_ptr<Document> DocumentPtr;
-    /// @brief  shared_ptr for a FB::DOM::Element
-    typedef std::shared_ptr<Element> ElementPtr;
-    /// @brief  shared_ptr for a FB::DOM::Node
-    typedef std::shared_ptr<Node> NodePtr;
+    FB_FORWARD_PTR(Window);
+    FB_FORWARD_PTR(Document);
+    FB_FORWARD_PTR(Element);
+    FB_FORWARD_PTR(Node);
 
 }; };
 

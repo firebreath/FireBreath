@@ -15,7 +15,8 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
+#include <boost/noncopyable.hpp>
 
 namespace FB {
 

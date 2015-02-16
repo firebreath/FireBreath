@@ -19,7 +19,7 @@ Copyright 2011 Richard Bateman,
 
 #include <set>
 #include <boost/noncopyable.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <mutex>
 #include "PluginEventSink.h"
 #include "PluginEvents/StreamEvents.h"
 #include "BrowserStream.h"
@@ -42,7 +42,7 @@ namespace FB {
         virtual bool onStreamCompleted(FB::StreamCompletedEvent *evt, FB::BrowserStream *stream);
     private:
         std::set<BrowserStreamPtr> m_retainedStreams;
-        mutable boost::recursive_mutex m_xtmutex;
+        mutable std::recursive_mutex m_xtmutex;
     };
 
 };

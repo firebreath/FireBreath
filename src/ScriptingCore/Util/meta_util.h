@@ -21,11 +21,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { namespace meta 
 {
-    // get the plain type of T (without pointers, references, ...)
-    template<typename T>
-    struct plain_type 
-        : FB::meta::detail::plain_type<T> {};
-
     ////////////////////////////////////////////////
     // is optional - a boost::optional<T> type
 

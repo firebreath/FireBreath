@@ -21,6 +21,7 @@ Copyright 2015 Richard Bateman and the FireBreath Dev Team
 #include <boost/noncopyable.hpp>
 
 namespace FB {
+    struct VariantPromiseData;
     FB_FORWARD_PTR(variantDeferred);
     class variantDeferred final : boost::noncopyable {
     public:
@@ -28,7 +29,7 @@ namespace FB {
         enum class State {PENDING, RESOLVED, REJECTED};
 
         static variantDeferredPtr makeDeferred() { return std::make_shared<variantDeferred>(PrivateOnly()); }
-        static variantDeferredPtr makeDeferred(variant v)  { return std::make_shared<variantDeferred>(v, PrivateOnly()); }
+        static variantDeferredPtr makeDeferred(variant v);
 
     private:
         struct PrivateOnly {};
@@ -39,8 +40,7 @@ namespace FB {
         ~variantDeferred();
 
         void invalidate() {
-            m_onResolve.clear();
-            m_onReject.clear();
+            pData.release();
         }
 
         void then(DeferredCallback success, DeferredCallback fail);
@@ -52,12 +52,7 @@ namespace FB {
         void reject(std::exception e);
 
     private:
-        variant m_value;
-        State m_state;
-        std::exception m_err;
-
-        std::vector<DeferredCallback> m_onResolve;
-        std::vector<DeferredCallback> m_onReject;
+        std::unique_ptr<VariantPromiseData> pData;
     };
 }
 

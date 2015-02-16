@@ -22,10 +22,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "APITypes.h"
 #include <string>
 #include <set>
-#include <boost/assign.hpp>
 #include <boost/logic/tribool.hpp>
-
-using boost::assign::list_of;
 
 namespace FB {
 
@@ -121,14 +118,14 @@ namespace FB {
         virtual ~PluginCore();
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void PluginCore::SetHost(const FB::BrowserHostPtr& host)
+        /// @fn virtual void PluginCore::SetHost(FB::BrowserHostPtr host)
         ///
         /// @brief  Called by the browser during startup to provide a Browser Host object. 
         ///
         /// @param  host    The std::shared_ptr<BrowserHost> to the BrowserHost object for the current
         ///                 browser. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetHost(const FB::BrowserHostPtr& host)
+        virtual void SetHost(FB::BrowserHostPtr host)
         {
             m_host = host;
         }

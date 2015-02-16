@@ -39,12 +39,6 @@ namespace FB
     FB_FORWARD_PTR(PluginCore);
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(JSAPI);
-    /// @brief  Defines an alias representing a std::shared_ptr<FactoryBase>
-    typedef std::shared_ptr<FactoryBase> FactoryBasePtr;
-
-    /// @brief  Defines an alias representing a std::shared_ptr<PluginCore>
-    typedef std::shared_ptr<PluginCore> PluginCorePtr;
-
     FB_FORWARD_PTR(D3d10DeviceContext);
 
     namespace Npapi { 
@@ -238,7 +232,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual PluginWindowlessWin*        createPluginWindowless(const WindowContextWindowless& ctx);
 
-        virtual IDispatchEx*                createCOMJSObject(const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease = false);
+        virtual IDispatchEx*                createCOMJSObject(FB::BrowserHostPtr host, const FB::JSAPIWeakPtr& api, bool autoRelease = false);
         virtual HRESULT                     UpdateWindowsRegistry( bool install );
 #endif
 

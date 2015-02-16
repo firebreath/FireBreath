@@ -19,12 +19,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include <list>
 #include <deque>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
 #include "JSExceptions.h"
 #include "JSAPI.h"
-#include "boost/thread/recursive_mutex.hpp"
-#include "boost/thread/mutex.hpp"
 
 namespace FB
 {
@@ -113,7 +110,7 @@ namespace FB
         ///
         /// You can then fire the event -- from any thread -- from the JSAPI object like so:
         /// @code
-        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        ///      FireEvent("onload", FB::VariantList{"param1", 2, 3.0});
         /// @endcode
         ///         
         /// Also note that registerEvent must be called from the constructor to register the event.
@@ -146,7 +143,7 @@ namespace FB
         ///
         /// You can then fire the event -- from any thread -- from the JSAPI object like so:
         /// @code
-        ///      FireEvent("onload", FB::variant_list_of("param1")(2)(3.0));
+        ///      FireEvent("onload", FB::VariantList{"param1", 2, 3.0});
         /// @endcode
         ///         
         /// Also note that registerEvent must be called from the constructor to register the event.
@@ -199,7 +196,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void setDefaultZone(const SecurityZone& securityLevel)
         {
-            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+            std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
             assert(!m_zoneStack.empty());
             m_zoneStack.pop_front();
             m_zoneStack.push_front(securityLevel);
@@ -219,7 +216,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual SecurityZone getDefaultZone() const
         {
-            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+            std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
             assert(!m_zoneStack.empty());
             return m_zoneStack.front();
         }
@@ -238,7 +235,7 @@ namespace FB
         virtual SecurityZone getZone() const
         {
             assert(!m_zoneStack.empty());
-            boost::recursive_mutex::scoped_lock lock(m_zoneMutex);
+            std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
             return m_zoneStack.back();
         }
 
@@ -305,7 +302,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerEventInterface(const JSObjectPtr& event)
         {
-            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
             m_evtIfaces[event->getEventContext()][static_cast<void*>(event.get())] = event;
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -317,30 +314,30 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterEventInterface(const JSObjectPtr& event)
         {
-            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
             EventIFaceMap::iterator fnd = m_evtIfaces[event->getEventContext()].find(static_cast<void*>(event.get()));
             m_evtIfaces[event->getEventContext()].erase(fnd);
         }
 
     public:
         virtual void registerProxy(const JSAPIImplWeakPtr &ptr) const;
-        virtual void unregisterProxy( const FB::JSAPIImplPtr& ptr ) const;
+        virtual void unregisterProxy(const FB::JSAPIImplPtr& ptr) const;
 
     protected:
-        typedef std::deque<SecurityZone> ZoneStack;
-        typedef std::map<void*, EventMultiMap> EventContextMap;
+        using ZoneStack = std::deque < SecurityZone > ;
+        using EventContextMap = std::map < void*, EventMultiMap > ;
         // Stores event handlers
         EventContextMap m_eventMap;
-        typedef std::map<void*, EventIFaceMap> EventIfaceContextMap;
+        using EventIfaceContextMap = std::map < void*, EventIFaceMap > ;
         // Stores event interfaces
-        EventIfaceContextMap m_evtIfaces;      
+        EventIfaceContextMap m_evtIfaces;
 
-        typedef std::vector<JSAPIImplWeakPtr> ProxyList;
+        using ProxyList = std::vector < JSAPIImplWeakPtr > ;
         mutable ProxyList m_proxies;
 
-        mutable boost::recursive_mutex m_eventMutex;
-        mutable boost::recursive_mutex m_proxyMutex;
-        mutable boost::recursive_mutex m_zoneMutex;
+        mutable std::recursive_mutex m_eventMutex;
+        mutable std::recursive_mutex m_proxyMutex;
+        mutable std::recursive_mutex m_zoneMutex;
         ZoneStack m_zoneStack;
                 
         bool m_valid;                   // Tracks if this object has been invalidated

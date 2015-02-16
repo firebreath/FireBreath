@@ -34,10 +34,10 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #define _FB_MW_Tn(z, n, data) T##n
 #define _FB_MW_TLAST(n) BOOST_PP_CAT(T, BOOST_PP_SUB(n,1))
 
-#define _FB_MW_CNLARG(n) convertArgumentSoft<typename plain_type<T##n>::type>(in, BOOST_PP_ADD(n,1))
+#define _FB_MW_CNLARG(n) convertArgumentSoft<typename std::decay<T##n>::type>(in, BOOST_PP_ADD(n,1))
 #define _FB_MW_CLARG(n) convertLastArgument<TLast>(in, BOOST_PP_ADD(n,1))
 #define _FB_MW_CARGS(z, n, t) BOOST_PP_IF(BOOST_PP_EQUAL(n, BOOST_PP_SUB(t,1)), _FB_MW_CLARG(n), _FB_MW_CNLARG(n))
-#define _FB_MW_TLASTDEF(n) typedef typename plain_type<_FB_MW_TLAST(n)>::type TLast;
+#define _FB_MW_TLASTDEF(n) typedef typename std::decay<_FB_MW_TLAST(n)>::type TLast;
 
 #define _FB_METHOD_WRAPPER(z, n, data)                                          \
         template<typename C, typename R                                         \
@@ -45,15 +45,15 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             BOOST_PP_ENUM(n, _FB_MW_TPL, 0), typename F>                        \
         struct method_wrapper##n                                                \
         {                                                                       \
-            typedef FB::variant result_type;                                    \
+            using result_type = FB::variantDeferredPtr;                         \
             F f;                                                                \
             method_wrapper##n(F f) : f(f) {}                                    \
-            FB::variant operator()(C* instance, const FB::VariantList& in)      \
+            result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
-                return (instance->*f)(                                          \
+                return FB::variantDeferred::makeDeferred((instance->*f)(        \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
-                    );                                                          \
+                    ));                                                         \
             }                                                                   \
         };                                                                      \
         template<typename C                                                     \
@@ -63,16 +63,16 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n,0))                            \
             BOOST_PP_ENUM(n, _FB_MW_Tn, 0), F>                                  \
         {                                                                       \
-            typedef FB::variant result_type;                                    \
+            using result_type = FB::variantDeferredPtr;                         \
             F f;                                                                \
             method_wrapper##n(F f) : f(f) {}                                    \
-            FB::variant operator()(C* instance, const FB::VariantList& in)      \
+            result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
                 (instance->*f)(                                                 \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
                     );                                                          \
-                return FB::variant();                                           \
+                return FB::variantDeferred::makeDeferred(FB::variant());        \
             }                                                                   \
         };
 
@@ -109,7 +109,6 @@ namespace FB
 {
     namespace detail { namespace methods
     {
-        using FB::detail::plain_type;
         using FB::convertArgumentSoft;
         
         BOOST_PP_REPEAT(50, _FB_METHOD_WRAPPER, BOOST_PP_EMPTY())

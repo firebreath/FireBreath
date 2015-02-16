@@ -14,7 +14,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 
 #include <map>
-#include <boost/assign/list_of.hpp>
 #include "APITypes.h"
 #include "variant_map.h"
 
@@ -22,21 +21,18 @@ TEST(VariantMapTest)
 {
     PRINT_TESTNAME;
 
-    using boost::assign::list_of;
-    using boost::assign::map_list_of;
     using FB::convert_variant_map;
     using FB::make_variant_map;
+    using FB::VariantMap;
 
-    typedef std::map<std::string, FB::variant> VariantMap;
-    typedef std::pair<VariantMap::key_type, VariantMap::mapped_type> MapPair;
     typedef std::vector<std::string> StringVec;
         
     {
-        StringVec names = list_of("a")("b")("c")("d")("e");
-        VariantMap values = FB::variant_map_of<std::string>("a","a")("b","b")("c","c")("d","d")("e","e");
+        StringVec names{ "a", "b", "c", "d", "e" };
+        VariantMap values{ { "a", "a" }, { "b", "b" }, { "c", "c" }, { "d", "d" }, { "e", "e" } };
 
-        StringVec::const_iterator  itn = names.begin();
-        VariantMap::const_iterator itv = values.begin();
+        auto itn = names.begin();
+        auto itv = values.begin();
 
         for( ; itn!=names.end() && itv!=values.end(); ++itn, ++itv)
         {
@@ -45,9 +41,9 @@ TEST(VariantMapTest)
         }
     }
     {
-        StringVec names = list_of("a")("b")("c")("d")("e");
-        std::map<std::string, std::string> sm = map_list_of("a","a")("b","b")("c","c")("d","d")("e","e");
-        FB::VariantMap vm = make_variant_map(sm);
+        StringVec names{ "a", "b", "c", "d", "e" };
+        std::map<std::string, std::string> sm{ { "a", "a" }, { "b", "b" }, { "c", "c" }, { "d", "d" }, { "e", "e" } };
+        VariantMap vm = make_variant_map(sm);
 
         StringVec::const_iterator  itn = names.begin();
         VariantMap::const_iterator itv = vm.begin();
@@ -70,12 +66,10 @@ TEST(VariantMapWithListTest)
 {
     PRINT_TESTNAME;
 
-    using FB::variant_map_of;
-    using FB::variant_list_of;
     using FB::VariantMap;
     using FB::VariantList;
 
-    VariantMap testMap = variant_map_of<std::string>("num", 12)("bobb", "billy")("list", variant_list_of(1)(2)("asdf"));
+    VariantMap testMap{ { "num", 12 }, { "bobb", "billy" }, { "list", VariantList{ 1, 2, "asdf" } } };
     CHECK(testMap["num"].convert_cast<int>() == 12);
     CHECK(testMap["list"].cast<VariantList>()[0].convert_cast<int>() == 1);
     CHECK(testMap["list"].cast<VariantList>()[1].convert_cast<int>() == 2);

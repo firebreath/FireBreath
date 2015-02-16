@@ -15,8 +15,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #ifndef PROPERTY_CONVERTER_H
 #define PROPERTY_CONVERTER_H
 
-#include <boost/function.hpp>
-#include <boost/bind.hpp>
+#include <functional>
 #include <boost/function_types/is_member_function_pointer.hpp>
 #include <boost/function_types/result_type.hpp>
 #include <boost/function_types/parameter_types.hpp>
@@ -67,8 +66,9 @@ namespace FB
             template<typename T>
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)())
-            { 
-                return boost::bind(boost::mem_fn(getter), instance);
+            {
+                auto wrapper = [instance, getter]() { return FB::variantDeferred::makeDeferred((instance->*getter)()); };
+                return wrapper;
             }
         };
         
@@ -78,7 +78,8 @@ namespace FB
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
             { 
-                return boost::bind(boost::mem_fn(getter), instance);
+                auto wrapper = [instance, getter]() { return FB::variantDeferred::makeDeferred((instance->*getter)()); };
+                return wrapper;
             }
         };
                 

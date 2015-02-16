@@ -3,16 +3,16 @@ Original Author: Richard Bateman (taxilian)
 
 Created:    April 8, 2011
 License:    Dual license model; choose one of two:
-            New BSD License
-            http://www.opensource.org/licenses/bsd-license.php
-            - or -
-            GNU Lesser General Public License, version 2.1
-            http://www.gnu.org/licenses/lgpl-2.1.html
+New BSD License
+http://www.opensource.org/licenses/bsd-license.php
+- or -
+GNU Lesser General Public License, version 2.1
+http://www.gnu.org/licenses/lgpl-2.1.html
 
 Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
-#include <boost/bind.hpp>
+#include <boost/range/iterator_range.hpp>
 #include "BrowserHost.h"
 #include "JSObject.h"
 #include "utf8_tools.h"
@@ -23,142 +23,128 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 using namespace FB;
 
-JSAPIImpl::JSAPIImpl(void) : m_valid(true)
-{
+JSAPIImpl::JSAPIImpl(void) : m_valid(true) {
     m_zoneStack.push_back(SecurityScope_Public);
     registerEvent("onload");
 }
 
-JSAPIImpl::JSAPIImpl( const SecurityZone& securityLevel ) : m_valid(true)
-{
+JSAPIImpl::JSAPIImpl(const SecurityZone& securityLevel) : m_valid(true) {
     m_zoneStack.push_back(securityLevel);
     registerEvent("onload");
 }
 
-JSAPIImpl::~JSAPIImpl(void)
-{
+JSAPIImpl::~JSAPIImpl(void) {
 }
 
-void JSAPIImpl::invalidate()
-{
+void JSAPIImpl::invalidate() {
     m_valid = false;
 }
 
-VariantMap proxyProcessMap( const VariantMap &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy );
-VariantList proxyProcessList( const VariantList &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy )
-{
+VariantMap proxyProcessMap(const VariantMap &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy);
+VariantList proxyProcessList(const VariantList &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy) {
     VariantList newArgs;
-    for (VariantList::const_iterator it = args.begin();
-        it != args.end(); ++it) {
-        if (it->is_of_type<JSAPIPtr>() && it->convert_cast<JSAPIPtr>() == self) {
+    for (auto arg : args) {
+        if (arg.is_of_type<JSAPIPtr>() && arg.convert_cast<JSAPIPtr>() == self) {
             newArgs.push_back(proxy);
-        } else if (it->is_of_type<VariantList>()) {
-            newArgs.push_back(proxyProcessList(it->convert_cast<VariantList>(), self, proxy));
-        } else if (it->is_of_type<VariantMap>()) {
-            newArgs.push_back(proxyProcessMap(it->convert_cast<VariantMap>(), self, proxy));
+        } else if (arg.is_of_type<VariantList>()) {
+            newArgs.push_back(proxyProcessList(arg.convert_cast<VariantList>(), self, proxy));
+        } else if (arg.is_of_type<VariantMap>()) {
+            newArgs.push_back(proxyProcessMap(arg.convert_cast<VariantMap>(), self, proxy));
         } else {
-            newArgs.push_back(*it);
+            newArgs.push_back(arg);
         }
     }
     return newArgs;
 }
 
-VariantMap proxyProcessMap( const VariantMap &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy )
-{
+VariantMap proxyProcessMap(const VariantMap &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy) {
     VariantMap newMap;
-    for (VariantMap::const_iterator it = args.begin();
-        it != args.end(); ++it) {
-        if (it->second.is_of_type<JSAPIPtr>() && it->second.convert_cast<JSAPIPtr>() == self) {
-            newMap[it->first] = proxy;
-        } else if (it->second.is_of_type<VariantList>()) {
-            newMap[it->first] = proxyProcessList(it->second.convert_cast<VariantList>(), self, proxy);
-        } else if (it->second.is_of_type<VariantMap>()) {
-            newMap[it->first] = proxyProcessMap(it->second.convert_cast<VariantMap>(), self, proxy);
+    for (auto arg : args) {
+        if (arg.second.is_of_type<JSAPIPtr>() && arg.second.convert_cast<JSAPIPtr>() == self) {
+            newMap[arg.first] = proxy;
+        } else if (arg.second.is_of_type<VariantList>()) {
+            newMap[arg.first] = proxyProcessList(arg.second.convert_cast<VariantList>(), self, proxy);
+        } else if (arg.second.is_of_type<VariantMap>()) {
+            newMap[arg.first] = proxyProcessMap(arg.second.convert_cast<VariantMap>(), self, proxy);
         } else {
-            newMap[it->first] = it->second;
+            newMap[arg.first] = arg.second;
         }
     }
     return newMap;
 }
 
-void JSAPIImpl::fireAsyncEvent( const std::string& eventName, const std::vector<variant>& args )
-{
+void JSAPIImpl::fireAsyncEvent(const std::string& eventName, const std::vector<variant>& args) {
+    using JSObjectList = std::vector < FB::JSObjectPtr > ;
     EventContextMap eventMap;
     EventIfaceContextMap evtIfaces;
     {
-        boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+        std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
         eventMap = m_eventMap;
         evtIfaces = m_evtIfaces;
     }
 
     std::set<void*> contexts;
-    {
-        EventContextMap::iterator it(eventMap.begin());
-        EventContextMap::iterator end(eventMap.end());
-        for (; it != end; ++it) {
-            bool first(true);
-            std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
-            for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; ++eventIt) {
-                if (first && eventIt->second->isValid() && eventIt->second->supportsOptimizedCalls()) {
-                    contexts.insert(it->first);
-                    std::vector<FB::JSObjectPtr> handlers;
-                    std::vector<FB::JSObjectPtr> ifaces;
-                    for (EventMultiMap::const_iterator inIt(range.first); inIt != range.second; ++inIt) {
-                        handlers.push_back(inIt->second);
+    for (auto ctx : eventMap) {
+        bool first(true);
+        void* ctxId(ctx.first);
+        // ctx.second is the multimap of event name -> object
+        // Search inside ctx.second for all matching event handler objects
+        auto handlerList = boost::make_iterator_range(ctx.second.equal_range(eventName));
+        for (auto handler : handlerList) {
+            if (first && handler.second->isValid() && handler.second->supportsOptimizedCalls()) {
+                contexts.insert(ctxId);
+                JSObjectList handlers;
+                JSObjectList ifaces;
+                for (auto inItem : handlerList) {
+                    handlers.emplace_back(inItem.second);
+                }
+                auto ifCtx(evtIfaces.find(ctxId));
+                if (ifCtx != evtIfaces.end()) {
+                    for (auto ifaceCur : ifCtx->second) {
+                        ifaces.emplace_back(ifaceCur.second);
                     }
-                    EventIfaceContextMap::iterator ifCtx(evtIfaces.find(it->first));
-                    if (ifCtx != evtIfaces.end()) {
-                        for (EventIFaceMap::const_iterator ifaceIt(ifCtx->second.begin()); ifaceIt != ifCtx->second.end(); ++ifaceIt) {
-                            ifaces.push_back(ifaceIt->second);
-                        }
-                    }
-                    eventIt->second->callMultipleFunctions(eventName, args, handlers, ifaces);
-                    break;
-                } else {
-                    if (eventIt->second->isValid()) {
-                        first = false;
-                        eventIt->second->InvokeAsync("", args);
-                    }
+                }
+                handler.second->callMultipleFunctions(eventName, args, handlers, ifaces);
+                break;
+            } else {
+                if (handler.second->isValid()) {
+                    first = false;
+                    handler.second->InvokeAsync("", args);
                 }
             }
         }
     }
 
     // Some events are registered as a jsapi object with a method of the same name as the event
-    {
-        EventIfaceContextMap::iterator it(evtIfaces.begin());
-        EventIfaceContextMap::iterator end(evtIfaces.end());
-        for (; it != end; ++it) {
-            if (contexts.find(it->first) != contexts.end())
-                continue; // We've already handled these
+    for (auto ifaceGrp : evtIfaces) {
+        if (contexts.find(ifaceGrp.first) != contexts.end())
+            continue; // We've already handled these
 
-            for (EventIFaceMap::const_iterator ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
-                if (ifaceIt->second->isValid() && ifaceIt->second->supportsOptimizedCalls()) {
-                    std::vector<FB::JSObjectPtr> handlers;
-                    std::vector<FB::JSObjectPtr> ifaces;
-                    for (EventIFaceMap::const_iterator inIt = it->second.begin(); inIt != it->second.end(); ++inIt) {
-                        ifaces.push_back(inIt->second);
-                    }
-                    ifaceIt->second->callMultipleFunctions(eventName, args, handlers, ifaces);
-                    break;
+        for (auto iface : ifaceGrp.second) {
+            if (iface.second->isValid() && iface.second->supportsOptimizedCalls()) {
+                std::vector<FB::JSObjectPtr> handlers;
+                std::vector<FB::JSObjectPtr> ifaces;
+                for (auto ifaceCur : ifaceGrp.second) {
+                    ifaces.emplace_back(ifaceCur.second);
                 }
-                ifaceIt->second->InvokeAsync(eventName, args);
+                iface.second->callMultipleFunctions(eventName, args, handlers, ifaces);
+                break;
             }
+            iface.second->InvokeAsync(eventName, args);
         }
     }
 }
 
-void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<variant>& args)
-{
+void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<variant>& args) {
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
     {
         JSAPIImplPtr self(shared_from_this());
-        boost::recursive_mutex::scoped_lock _l(m_proxyMutex);
+        std::unique_lock<std::recursive_mutex> _l(m_proxyMutex);
         ProxyList::iterator proxyIt = m_proxies.begin();
-        while (proxyIt != m_proxies.end()) {
-            JSAPIImplPtr proxy(proxyIt->lock());
+        for (auto proxyWeakPtr : m_proxies) {
+            JSAPIImplPtr proxy(proxyWeakPtr.lock());
             if (!proxy) {
                 // Since you can't use a shared_ptr in a destructor, there
                 // is no way for the proxy object to let us know when it goes
@@ -182,14 +168,13 @@ void JSAPIImpl::FireEvent(const std::string& eventName, const std::vector<varian
     }
 }
 
-void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &members, const VariantList &arguments )
-{
+void JSAPIImpl::FireJSEvent(const std::string& eventName, const VariantMap &members, const VariantList &arguments) {
     if (!m_valid)   // When invalidated, do nothing more
         return;
 
     {
         JSAPIImplPtr self(shared_from_this());
-        boost::recursive_mutex::scoped_lock _l(m_proxyMutex);
+        std::unique_lock<std::recursive_mutex> _l(m_proxyMutex);
         ProxyList::iterator proxyIt = m_proxies.begin();
         while (proxyIt != m_proxies.end()) {
             JSAPIImplPtr proxy(proxyIt->lock());
@@ -215,15 +200,15 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
     {
         EventContextMap eventMap;
         {
-            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
             eventMap = m_eventMap;
         }
 
         EventContextMap::iterator it(eventMap.begin());
         while (it != eventMap.end()) {
-            std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = it->second.equal_range(eventName);
-            for (EventMultiMap::const_iterator eventIt = range.first; eventIt != range.second; ++eventIt) {
-                eventIt->second->InvokeAsync("", args);
+            auto range = boost::make_iterator_range(it->second.equal_range(eventName));
+            for (auto item : range) {
+                item.second->InvokeAsync("", args);
             }
             ++it;
         }
@@ -233,29 +218,28 @@ void JSAPIImpl::FireJSEvent( const std::string& eventName, const VariantMap &mem
     {
         EventIfaceContextMap evtIfaces;
         {
-            boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+            std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
             evtIfaces = m_evtIfaces;
         }
 
         EventIfaceContextMap::iterator it(evtIfaces.begin());
         while (it != evtIfaces.end()) {
-            for (EventIFaceMap::const_iterator ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
+            for (auto ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
                 ifaceIt->second->InvokeAsync(eventName, args);
             }
         }
     }
 }
 
-void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event)
-{
+void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event) {
     if (!event)
         throw invalid_arguments();
 
-    boost::recursive_mutex::scoped_lock _l(m_eventMutex);
-    std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap[event->getEventContext()].equal_range(name);
+    std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
+    auto range = boost::make_iterator_range(m_eventMap[event->getEventContext()].equal_range(name));
 
-    for (EventMultiMap::iterator it = range.first; it != range.second; ++it) {
-        if (it->second->getEventId() == event->getEventId()) {
+    for (auto grp : range) {
+        if (grp.second->getEventId() == event->getEventId()) {
             return; // Already registered
         }
     }
@@ -263,12 +247,11 @@ void JSAPIImpl::registerEventMethod(const std::string& name, JSObjectPtr &event)
 }
 
 
-void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &event)
-{
+void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &event) {
     if (!event)
         throw invalid_arguments();
 
-    boost::recursive_mutex::scoped_lock _l(m_eventMutex);
+    std::unique_lock<std::recursive_mutex> _l(m_eventMutex);
     std::pair<EventMultiMap::iterator, EventMultiMap::iterator> range = m_eventMap[event->getEventContext()].equal_range(name);
 
     for (EventMultiMap::iterator it = range.first; it != range.second; ++it) {
@@ -279,15 +262,13 @@ void JSAPIImpl::unregisterEventMethod(const std::string& name, JSObjectPtr &even
     }
 }
 
-void JSAPIImpl::registerProxy( const JSAPIImplWeakPtr &ptr ) const
-{
-    boost::recursive_mutex::scoped_lock _l(m_proxyMutex);
+void JSAPIImpl::registerProxy(const JSAPIImplWeakPtr &ptr) const {
+    std::unique_lock<std::recursive_mutex> _l(m_proxyMutex);
     m_proxies.push_back(ptr);
 }
 
-void JSAPIImpl::unregisterProxy( const JSAPIImplPtr& ptr ) const
-{
-    boost::recursive_mutex::scoped_lock _l(m_proxyMutex);
+void JSAPIImpl::unregisterProxy(const JSAPIImplPtr& ptr) const {
+    std::unique_lock<std::recursive_mutex> _l(m_proxyMutex);
     ProxyList::iterator it = m_proxies.begin();
     while (it != m_proxies.end()) {
         JSAPIPtr cur(it->lock());

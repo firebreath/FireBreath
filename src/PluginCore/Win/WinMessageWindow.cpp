@@ -14,9 +14,9 @@ Copyright 2010 Richard Bateman, Firebreath development team
 
 #include "win_targetver.h"
 #include "win_common.h"
-#include <boost/lexical_cast.hpp>
-#include <boost/bind.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <functional>
+#include <mutex>
+#include <map>
 #include "AsyncFunctionCall.h"
 #include "logging.h"
 #include "../precompiled_headers.h" // On windows, everything above this line in PCH
@@ -79,7 +79,7 @@ public:
     }
 };
 
-static boost::recursive_mutex _windowMapMutex;
+static std::recursive_mutex _windowMapMutex;
 static std::map<HWND, FB::WinMessageWindow*> _windowMap;
 static WindowsClassRegistration _winclass(L"FBEventWindow");
 
@@ -87,7 +87,7 @@ FB::WinMessageWindow::WinMessageWindow() {
     DWORD err(0);
 
     static int count(0);
-    std::wstring winName = L"FireBreathEventWindow" + boost::lexical_cast<std::wstring>(count);
+    std::wstring winName = L"FireBreathEventWindow" + std::to_wstring(count);
     ++count;
 
     HWND messageWin = CreateWindowEx(
@@ -103,8 +103,10 @@ FB::WinMessageWindow::WinMessageWindow() {
     }
     _windowMap[messageWin] = this;
     m_hWnd = messageWin;
-    boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
-    winProc = boost::bind(&FB::WinMessageWindow::DefaultWinProc, this, _1, _2, _3, _4, _5);
+    std::unique_lock<std::recursive_mutex> _l(_windowMapMutex);
+
+    using namespace std::placeholders;
+    winProc = std::bind(&FB::WinMessageWindow::DefaultWinProc, this, _1, _2, _3, _4, _5);
 }
 
 LRESULT CALLBACK FB::WinMessageWindow::_WinProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
@@ -112,7 +114,7 @@ LRESULT CALLBACK FB::WinMessageWindow::_WinProc( HWND hWnd, UINT uMsg, WPARAM wP
     LRESULT lres = S_OK;
     FB::WinMessageWindow* self(NULL);
     {
-        boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
+        std::unique_lock<std::recursive_mutex> _l(_windowMapMutex);
         if (_windowMap.find(hWnd) != _windowMap.end())
             self = _windowMap[hWnd];
     }
@@ -130,7 +132,7 @@ HWND FB::WinMessageWindow::getHWND()
 
 FB::WinMessageWindow::~WinMessageWindow()
 {
-    boost::recursive_mutex::scoped_lock _l(_windowMapMutex);
+    std::unique_lock<std::recursive_mutex> _l(_windowMapMutex);
     _windowMap.erase(m_hWnd);
     ::DestroyWindow(m_hWnd);
 }

@@ -12,8 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "variant_list.h"
-#include "../precompiled_headers.h" // On windows, everything above this line in PCH
+#include "variantDeferred.h"
 #include "Node.h"
 #include "Element.h"
 #include "Document.h"
@@ -43,7 +42,7 @@ void Window::alert(const std::wstring& str) const
 
 void Window::alert(const std::string& str) const
 {
-    callMethod<void>("alert", variant_list_of(str));
+    callMethod<void>("alert", VariantList{ str });
 }
 
 FB::JSObjectPtr Window::createArray() const

@@ -29,11 +29,11 @@ TEST(JSAPI_Methods)
     // Test setting and then getting a string value
     {
         const std::string msg("This is a test");
-        VariantList args = variant_list_of(0)(msg);
+        VariantList args{ 0, msg };
         test1->Invoke("setValue", args);
 
         try {
-            FB::variant retVal = test1->Invoke("getValue", variant_list_of(0));
+            FB::variant retVal = test1->Invoke("getValue", VariantList{ 0 });
             CHECK(retVal.convert_cast<const std::string>() == msg);
         } catch (...) {
             CHECK(false);
@@ -43,10 +43,10 @@ TEST(JSAPI_Methods)
     // Test setting and then getting integer values
     {
         for (int i = 0; i < TESTOBJECTJSAPI_ACCESSLISTLENGTH; ++i) {
-            FB::VariantList args = variant_list_of(i)(i);
+            FB::VariantList args{ i, i };
             test1->Invoke("setValue", args);
 
-            FB::variant retVal = test1->Invoke("getValue", variant_list_of(i));
+            FB::variant retVal = test1->Invoke("getValue", VariantList{ i });
             CHECK(retVal.convert_cast<int>() == i);
         }
     }
@@ -54,10 +54,10 @@ TEST(JSAPI_Methods)
     // Test setting and then getting double values
     {
         for (int i = 0; i < TESTOBJECTJSAPI_ACCESSLISTLENGTH; i++) {
-            FB::VariantList args(variant_list_of(i)((double)(i * 1.5)));
+            FB::VariantList args{ i, (double)(i * 1.5) };
             test1->Invoke("setValue", args);
 
-            FB::variant retVal = test1->Invoke("getValue", variant_list_of(i));
+            FB::variant retVal = test1->Invoke("getValue", VariantList{ i });
             CHECK(retVal.convert_cast<double>() == (double)(i * 1.5));
         }
     }
@@ -98,7 +98,7 @@ TEST(JSAPI_Methods)
     {
         test1->invalidate();
         try {
-            test1->Invoke("setValue", variant_list_of(0)("This is a test"));
+            test1->Invoke("setValue", VariantList{ 0, "This is a test" });
             CHECK(false);
         } catch (const invalid_arguments& e) {
             CHECK(false);
@@ -114,7 +114,7 @@ TEST(JSAPI_Methods)
     // Test that all exceptions are caught by script_error as well
     {
         try {
-            test1->Invoke("setValue", variant_list_of(0)("This is a test"));
+            test1->Invoke("setValue", VariantList{ 0, "This is a test" });
             CHECK(false);
         } catch (script_error e) {
             CHECK(true);
@@ -122,7 +122,7 @@ TEST(JSAPI_Methods)
 
         test1 = std::make_shared<TestObjectJSAPI>();
         try {   // invalid parameters
-            test1->Invoke("setValue", variant_list_of(0));
+            test1->Invoke("setValue", VariantList{ 0 });
             CHECK(false);
         } catch (const script_error& e) {
             CHECK(true);

@@ -18,9 +18,11 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include <boost/noncopyable.hpp>
-#include <boost/thread.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include <boost/thread/recursive_mutex.hpp>
+#include <thread>
+#include <mutex>
+#include <memory>
+#include <list>
 
 namespace FB
 {
@@ -140,7 +142,7 @@ namespace FB
         typename Functor::result_type CallOnMainThread(Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<class C, class Functor> void ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const
+        /// @fn template<class C, class Functor> void ScheduleOnMainThread(std::shared_ptr<C> obj, Functor func) const
         ///
         /// @brief  Schedule a call to be executed on the main thread.
         ///
@@ -168,7 +170,7 @@ namespace FB
         /// @since 1.3.0
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class C, class Functor>
-        void ScheduleOnMainThread(const std::shared_ptr<C>& obj, Functor func) const;
+        void ScheduleOnMainThread(std::shared_ptr<C> obj, Functor func) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn static void AsyncHtmlLog(void *)
@@ -424,22 +426,22 @@ namespace FB
         void freeRetainedObjects() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void retainJSAPIPtr(const FB::JSAPIPtr& obj) const
+        /// @fn virtual void retainJSAPIPtr(FB::JSAPIPtr obj) const
         ///
         /// @brief  retains an instance of the JSAPI object until the plugin shuts down
         ///
         /// @param obj  JSAPIPtr object to retain
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void retainJSAPIPtr(const FB::JSAPIPtr& obj) const;
+        void retainJSAPIPtr(FB::JSAPIPtr obj) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const
+        /// @fn virtual void releaseJSAPIPtr(FB::JSAPIPtr obj) const
         ///
         /// @brief  releases the specified JSAPI object to allow it to be invalidated and freed. This is
         ///         done automatically for all retained objects on shutdown
         /// @since 1.4a3
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        void releaseJSAPIPtr(const FB::JSAPIPtr& obj) const;
+        void releaseJSAPIPtr(FB::JSAPIPtr obj) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void DoDeferredRelease() const
@@ -496,13 +498,13 @@ namespace FB
 
     private:
         // Stores the thread_id for the thread the plugin was started on
-        boost::thread::id m_threadId;
+        std::thread::id m_threadId;
         // if true then the plugin this belongs to has shut down (or is shutting down)
         bool m_isShutDown;
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
         mutable boost::shared_mutex m_xtmutex;
         // Used to prevent race conditions with scheduling cross-thread calls during shutdown
-        mutable boost::recursive_mutex m_jsapimutex;
+        mutable std::recursive_mutex m_jsapimutex;
 
         mutable std::list<FB::JSAPIPtr> m_retainedObjects;
         static volatile int InstanceCount;

@@ -37,7 +37,7 @@ namespace FB {
     ////////////////////////////////////////////////////////////////////////////////////////////////////
 	class Timer : public std::enable_shared_from_this<Timer>
     {
-		typedef std::function<void (void)> TimerCallbackFunc;
+		using TimerCallbackFunc = std::function<void (void)>;
 
 	private:
 		const long duration;

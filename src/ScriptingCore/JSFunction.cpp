@@ -12,7 +12,7 @@
  Copyright 2010 Richard Bateman, FaceBook inc, Firebreath development team
 \**********************************************************/
 
-#include "precompiled_headers.h" // On windows, everything above this line in PCH
+#include "variantDeferred.h"
 #include "JSFunction.h"
 
 FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone zone)
@@ -29,12 +29,9 @@ FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::string& func
 
 void FB::JSFunction::init()
 {
-    m_allowMethodObjects = false;
-    // There are no reserved members on this object
-    m_reservedMembers.clear();
 }
 
-FB::variant FB::JSFunction::exec( const std::vector<variant>& args )
+FB::variantDeferredPtr FB::JSFunction::exec( const std::vector<variant>& args )
 {
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
@@ -44,7 +41,7 @@ FB::variant FB::JSFunction::exec( const std::vector<variant>& args )
     return api->Invoke(m_methodName, args);
 }
 
-FB::variant FB::JSFunction::call( const std::vector<variant>& args )
+FB::variantDeferredPtr FB::JSFunction::call( const std::vector<variant>& args )
 {
     FB::VariantList list;
     if (args.size() >= 1) {
@@ -53,7 +50,7 @@ FB::variant FB::JSFunction::call( const std::vector<variant>& args )
     return exec(list);
 }
 
-FB::variant FB::JSFunction::apply( const std::vector<variant>& args )
+FB::variantDeferredPtr FB::JSFunction::apply( const std::vector<variant>& args )
 {
     FB::VariantList list;
     if (args.size() >= 2) {
@@ -72,7 +69,7 @@ bool FB::JSFunction::HasMethod( const std::string& methodName ) const
     }
 }
 
-FB::variant FB::JSFunction::Invoke( const std::string& methodName, const std::vector<variant>& args )
+FB::variantDeferredPtr FB::JSFunction::Invoke( const std::string& methodName, const std::vector<variant>& args )
 {
     if (methodName == "") {
         return exec(args);

@@ -18,9 +18,8 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <list>
 #include <typeinfo>
+#include <mutex>
 #include "APITypes.h"
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/thread/recursive_mutex.hpp>
 #include <boost/noncopyable.hpp>
 
 namespace FB {
@@ -119,9 +118,9 @@ namespace FB {
         ///
         /// @brief  Defines an alias representing the observer .
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        typedef std::list<PluginEventSinkWeakPtr> ObserverMap; 
+        using ObserverMap = std::list<PluginEventSinkWeakPtr>; 
         ObserverMap m_observers; /// List of attached observers
-        boost::recursive_mutex m_observerLock;
+        std::recursive_mutex m_observerLock;
     };
 };
 

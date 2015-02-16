@@ -13,7 +13,10 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
+#include "variantDeferred.h"
 #include "JSAPISimple.h"
+
+using dfd = FB::variantDeferred;
 
 using namespace FB;
 JSAPISimple::JSAPISimple(void) : m_allowRemoveProperty(false)
@@ -31,7 +34,7 @@ JSAPISimple::~JSAPISimple(void)
 }
 
 
-variant JSAPISimple::callFireEvent(const std::vector<FB::variant>& args_in)
+FB::variantDeferredPtr FB::JSAPISimple::callFireEvent(const std::vector<variant>& args_in)
 {
     std::vector<FB::variant> args(args_in);
     
@@ -39,21 +42,21 @@ variant JSAPISimple::callFireEvent(const std::vector<FB::variant>& args_in)
         std::string event = args[0].convert_cast<std::string>();
         args.erase(args.begin());
         this->FireEvent(event, args);
-        return event;
+        return dfd::makeDeferred(event);
     } catch (...) {
         throw invalid_arguments();
     }
 }
 
 // Example function call and read-only property; override these if desired in derived classes
-variant JSAPISimple::callToString(const std::vector<FB::variant>& args)
+variantDeferredPtr JSAPISimple::callToString(const std::vector<FB::variant>& args)
 {
-    return "JSAPI Javascript Object";
+    return dfd::makeDeferred("JSAPI Javascript Object");
 }
 
-variant JSAPISimple::getValid()
+variantDeferredPtr JSAPISimple::getValid()
 {
-    return m_valid;
+    return dfd::makeDeferred(m_valid);
 }
 
 void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
@@ -118,7 +121,7 @@ bool JSAPISimple::HasProperty(const std::string& propertyName) const
 
 
 // Methods to manage properties on the API
-variant JSAPISimple::GetProperty(const std::string& propertyName)
+variantDeferredPtr JSAPISimple::GetProperty(const std::string& propertyName)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -162,7 +165,7 @@ bool JSAPISimple::HasProperty(int idx) const
     return false;
 }
 
-variant JSAPISimple::GetProperty(int idx)
+variantDeferredPtr JSAPISimple::GetProperty(int idx)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -194,7 +197,7 @@ void JSAPISimple::RemoveProperty(int idx)
 
 
 // Methods to manage methods on the API
-variant JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
+variantDeferredPtr JSAPISimple::Invoke(const std::string& methodName, const std::vector<FB::variant>& args)
 {
     if (!m_valid)
         throw object_invalidated();

@@ -42,6 +42,7 @@ namespace FB
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(JSAPI);
     FB_FORWARD_PTR(JSObject);
+    FB_FORWARD_PTR(variantDeferred);
     class variant;
     namespace variant_detail {
         // Note that empty translates into return VOID (undefined)
@@ -54,7 +55,6 @@ namespace FB
     /// @typedef    FB::VariantList
     ///
     /// @brief  Defines an alias representing list of variants.
-    /// @see FB::variant_list_of()
     /// @see FB::make_variant_list()
     /// @see FB::convert_variant_list()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +64,6 @@ namespace FB
     /// @typedef    FB::VariantMap
     ///
     /// @brief  Defines an alias representing a string -> variant map.
-    /// @see FB::variant_map_of()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     using VariantMap = std::map < std::string, variant > ;
 
@@ -186,7 +185,7 @@ namespace FB
 
     class JSAPI;
     /// @brief  Defines an alias representing a function ptr for a method on a FB::JSAPISimple object
-    using CallMethodPtr = variant(JSAPI::*)(const std::vector<variant>&);
+    using CallMethodPtr = variantDeferredPtr(JSAPI::*)(const std::vector<variant>&);
     /// @brief Used by FB::JSAPISimple to store information about a method
     struct MethodInfo {
         MethodInfo() : callFunc(nullptr) { }
@@ -202,7 +201,7 @@ namespace FB
 
 
     /// @brief  Defines an alias representing a function pointer for a property getter on a FB::JSAPISimple object
-    using GetPropPtr = variant(JSAPI::*)();
+    using GetPropPtr = variantDeferredPtr(JSAPI::*)();
     /// @brief  Defines an alias representing a function pointer for a property setter on a FB::JSAPISimple object
     using SetPropPtr = void (JSAPI::*)(const variant& value);
     /// @brief Used by FB::JSAPISimple to store information about a property
@@ -230,7 +229,7 @@ namespace FB
     };
 
     /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
-    using CallMethodFunctor = std::function < variant(const std::vector<variant>&) > ;
+    using CallMethodFunctor = std::function < variantDeferredPtr(const std::vector<variant>&) > ;
     struct MethodFunctors
     {
         FB::CallMethodFunctor call;
@@ -251,7 +250,7 @@ namespace FB
     // new style JSAPI properties
 
     /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
-    using GetPropFunctor = std::function < FB::variant() > ;
+    using GetPropFunctor = std::function < FB::variantDeferredPtr() > ;
     /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
     using SetPropFunctor = std::function < void(const FB::variant&) > ;
     /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
@@ -293,6 +292,7 @@ namespace FB
 // This needs to be included after all our classes are defined because it relies on types defined in this file
 // TODO: can this be done better?
 #include "variant.h"
+#include "variantDeferred.h"
 
 #endif
 

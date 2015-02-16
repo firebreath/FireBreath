@@ -18,7 +18,7 @@ Copyright 2013 Gil Gonen and the Firebreath development team
 
 #include "FBPointers.h"
 #include "fb_stdint.h"
-#include "boost/enable_shared_from_this.hpp"
+#include <memory>
 
 namespace FB {
     FB_FORWARD_PTR(AsyncDrawService);

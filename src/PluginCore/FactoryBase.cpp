@@ -94,7 +94,7 @@ FB::PluginWindowlessWin* FB::FactoryBase::createPluginWindowless(const WindowCon
 {
     return FB::createPluginWindowless(ctx);
 }
-IDispatchEx* FB::FactoryBase::createCOMJSObject(const FB::BrowserHostPtr& host, const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/)
+IDispatchEx* FB::FactoryBase::createCOMJSObject(FB::BrowserHostPtr host, const FB::JSAPIWeakPtr& api, bool autoRelease/* = false*/)
 {
     return _getCOMJSWrapper(host, api, autoRelease);
 }

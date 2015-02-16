@@ -17,7 +17,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #define H_FB_DOM_NODE
 
 #include <string>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 #include "JSObject.h"
 
 #pragma warning( disable : 4250 )
@@ -85,7 +85,7 @@ namespace FB { namespace DOM {
         ///         type T, and returns it
         ///
         /// @code
-        ///      double tmp = node.callMethod<double>("pow", FB::variant_list_of(3)(2));
+        ///      double tmp = node.callMethod<double>("pow", FB::VariantList{ 3, 2 };
         /// @endcode
         ///
         /// @param  name the name of the method to call

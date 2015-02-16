@@ -15,7 +15,6 @@
 #include <vector>
 #include <sstream>
 #include <numeric>
-#include <boost/assign.hpp>
 #include "TestJSAPIAuto.h"
 #include "JSCallback.h"
 #include "variant_list.h"
@@ -25,7 +24,6 @@ TEST(JSCallback_Basics)
 {
     PRINT_TESTNAME;
     
-    using boost::assign::list_of;
     using namespace FB;
     
     std::shared_ptr<TestObjectJSAPIAuto> backing(new TestObjectJSAPIAuto);
@@ -35,18 +33,18 @@ TEST(JSCallback_Basics)
         const std::string method("");
         CHECK(test->HasMethod(method));
         const std::string value("foo");
-        FB::VariantList args = list_of(value);        
-        FB::variant ret = test->Invoke(method, args);        
+        FB::VariantList args{ value };
+        FB::variant ret = test->Invoke(method, args);
         CHECK(ret.cast<std::string>() == value);
     }    
     
     {
         FB::JSAPIPtr test = FB::make_callback(backing, &TestObjectJSAPIAuto::concatenate);
-        
+
         const std::string method("");
         CHECK(test->HasMethod(method));
         const std::string a("push "), b("me "), c("please");
-        FB::VariantList args = list_of(a)(b)(c);
+        FB::VariantList args{ a, b, c };
         FB::variant ret = test->Invoke(method, args);
         CHECK(ret.cast<std::string>() == (a+b+c));
     }

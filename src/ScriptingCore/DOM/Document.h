@@ -22,8 +22,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 namespace FB { namespace DOM {
 
-    class Document;
-    typedef std::shared_ptr<Document> DocumentPtr;
+    FB_FORWARD_PTR(Document);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  Document

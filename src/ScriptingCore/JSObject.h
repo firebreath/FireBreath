@@ -99,7 +99,7 @@ namespace FB
             if (!host) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            host->ScheduleOnMainThread(shared_from_this(), boost::bind(&JSObject::_invokeAsync, this, args, methodName));
+            host->ScheduleOnMainThread(shared_from_this(), std::bind(&JSObject::_invokeAsync, this, args, methodName));
         }
 
     private:
@@ -127,7 +127,7 @@ namespace FB
             if (!host) {
                 throw std::runtime_error("Cannot invoke asynchronously");
             }
-            host->ScheduleOnMainThread(shared_from_this(), boost::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
+            host->ScheduleOnMainThread(shared_from_this(), std::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         }
     public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////

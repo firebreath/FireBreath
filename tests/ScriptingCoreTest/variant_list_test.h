@@ -13,7 +13,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 \**********************************************************/
 
 
-#include <boost/assign/list_of.hpp>
 #include "APITypes.h"
 #include "variant_list.h"
 #include "variant_map.h"
@@ -22,8 +21,6 @@ TEST(VariantListTest)
 {
     PRINT_TESTNAME;
 
-    using boost::assign::list_of;
-    using FB::variant_list_of;
     using FB::make_variant_list;
     using FB::convert_variant_list;
 
@@ -34,9 +31,9 @@ TEST(VariantListTest)
         vl.push_back(25.74);
         vl.push_back(-1);
 
-        std::vector<FB::VariantList> to_test = list_of
-            (make_variant_list(vl))
-            (variant_list_of  (1)("foo")(25.74)(-1));
+        std::vector<FB::VariantList> to_test{
+            make_variant_list(vl), FB::VariantList{ 1, "foo", 25.74, -1 }
+        };
 
         for(size_t i=0; i<vl.size(); ++i)
         {
@@ -49,7 +46,7 @@ TEST(VariantListTest)
     }
 
     {
-        std::vector<std::string> sl = list_of("1")("2")("3")("4");
+        std::vector<std::string> sl{ "1", "2", "3", "4" };
         FB::VariantList vl = make_variant_list(sl);
 
         for(size_t i=0; i<vl.size(); ++i) 
@@ -70,12 +67,10 @@ TEST(VariantListWithMapTest)
 {
     PRINT_TESTNAME;
 
-    using FB::variant_list_of;
-    using FB::variant_map_of;
     using FB::VariantList;
     using FB::VariantMap;
 
-    VariantList testList = variant_list_of(23)("asdf")(variant_map_of<std::string>("num", 12)("bobb", "billy"));
+    VariantList testList = VariantList{ 23, "asdf", VariantMap{ { "num", 12 }, { "bobb", "billy" } } };
     CHECK(testList[0].convert_cast<int>() == 23);
     VariantMap tmp = testList[2].convert_cast<VariantMap>();
     CHECK(tmp["bobb"].convert_cast<std::string>() == "billy");

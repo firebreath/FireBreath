@@ -118,7 +118,7 @@ bool PluginCore::setReady()
             FB::JSObjectPtr method = fnd->second.convert_cast<FB::JSObjectPtr>();
             if (method) {
                 FBLOG_TRACE("PluginCore", "InvokeDelayed(onload)");
-                m_host->delayedInvoke(250, method, FB::variant_list_of(getRootJSAPI()));
+                m_host->delayedInvoke(250, method, FB::VariantList{ getRootJSAPI() });
                 rval = true;
             }
         }

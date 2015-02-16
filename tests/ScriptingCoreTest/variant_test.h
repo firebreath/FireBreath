@@ -79,7 +79,7 @@ TEST(VariantArrayConversionTest)
     // scripting style array conversion
     {
         typedef std::vector<std::string> StringVec;
-        FB::VariantList values = variant_list_of("1")(2)(3.0);
+        FB::VariantList values{ "1", 2, 3.0 };
         std::shared_ptr<FakeJsArray> jsarr(new FakeJsArray(values));
         
         variant varJsArr = std::dynamic_pointer_cast<JSObject>(jsarr);
@@ -101,7 +101,7 @@ TEST(VariantScriptMapConversionTest)
         typedef VariantMap::value_type StringVariantPair;
         typedef std::map<std::string, std::string> StringStringMap;
 
-        VariantMap values = variant_map_of<std::string>("a","a")("b","b")("c","c");
+        VariantMap values{ { "a", "a" }, { "b", "b" }, { "c", "c" } };
         std::shared_ptr<FakeJsMap> jsmap(new FakeJsMap(values));
         variant varJsMap = std::dynamic_pointer_cast<JSObject>(jsmap);
         VariantMap result = varJsMap.convert_cast<VariantMap>();

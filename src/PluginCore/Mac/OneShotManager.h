@@ -27,9 +27,9 @@
 namespace FB
 {
     typedef void (*OneShotCallback)(void*);
-    typedef std::pair<void*, OneShotCallback> SinkPair;
-    typedef std::deque<SinkPair> SinkQueue;
-    typedef std::map<void*,SinkQueue*> Sinks;
+    using SinkPair = std::pair<void*, OneShotCallback>;
+    using SinkQueue = std::deque<SinkPair>;
+    using Sinks = std::map<void*,SinkQueue*>;
 
     class OneShotManager : public boost::noncopyable
     {

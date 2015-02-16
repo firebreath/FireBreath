@@ -73,62 +73,6 @@ namespace FB
                               FB::VariantList::const_iterator end,
                               OutputIterator result);
 
-    /// @brief Allows convenient creation of an FB::VariantList.
-    /// @return A helper type that overloads operator() for insertion and is convertible to FB::VariantList.
-    ///
-    /// Examples: 
-    /// @code
-    /// FB::VariantList vars = FB::variant_list_of(1)("2")(3.4);
-    /// FireEvent("randomDiceRoll", FB::variant_list_of(4));
-    /// @endcode
-    inline FB::detail::VariantListInserter variant_list_of(FB::variant v);
-    /// @brief Convenience overload to create an empty FB::VariantList.
-    /// @return An empty FB::VariantList.
-    inline FB::VariantList variant_list_of();
-
-    ///////////////////////////////////
-    // detail definitions
-
-    namespace detail
-    {
-        // helper for variant_list_of
-        class VariantListInserter
-        {
-        public:
-            VariantListInserter() : m_l() {}
-            VariantListInserter(FB::variant v) : m_l(1, v) {}
-            VariantListInserter& operator()(FB::variant v)
-            {
-                m_l.insert(m_l.end(), v);
-                return *this;
-            }
-            operator FB::VariantList& ()
-            {
-                return m_l;
-            }
-            operator FB::variant()
-            {
-                return FB::variant(m_l);
-            }
-        private:
-            FB::VariantList m_l;
-        };
-    }
-
-    ///////////////////////////////////
-    // definitions
-
-    inline FB::detail::VariantListInserter 
-    variant_list_of(FB::variant v)
-    {
-        return FB::detail::VariantListInserter(v);
-    }
-
-    inline FB::VariantList
-    variant_list_of()
-    {
-        return FB::VariantList();
-    }
 
     template<class InputIterator>
     inline void make_variant_list(InputIterator begin, 

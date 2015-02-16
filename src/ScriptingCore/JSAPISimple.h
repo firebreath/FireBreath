@@ -52,7 +52,7 @@ namespace FB {
         ///      
         /// This matches the following definition:
         /// @code
-        ///      variant callToString(const std::vector<variant>& args);
+        ///      variantDeferredPtr callToString(const std::vector<variant>& args);
         /// @endcode
         /// 
         /// @param  name    The name that the method should be exposed to javascript as
@@ -79,7 +79,7 @@ namespace FB {
         ///      
         /// This matches the following definition:
         /// @code
-        ///      variant getValid();
+        ///      variantDeferredPtr getValid();
         ///      void setValid(variant value);
         /// @endcode
         ///
@@ -95,20 +95,20 @@ namespace FB {
         virtual bool HasProperty(int idx) const override;
 
         // Methods to manage properties on the API
-        virtual variant GetProperty(const std::string& propertyName) override;
+        virtual variantDeferredPtr GetProperty(const std::string& propertyName) override;
         virtual void SetProperty(const std::string& propertyName, const variant& value) override; 
         virtual void RemoveProperty(const std::string& propertyName) override;
-        virtual variant GetProperty(int idx) override;
+        virtual variantDeferredPtr GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
         // Methods to manage methods on the API
-        virtual variant Invoke(const std::string& methodName, const std::vector<variant>& args) override;
+        virtual variantDeferredPtr Invoke(const std::string& methodName, const std::vector<variant>& args) override;
 
     public:
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant callFireEvent(const std::vector<variant>& args)
+        /// @fn virtual variantDeferredPtr callFireEvent(const std::vector<variant>& args)
         ///
         /// @brief  Example function for testing fireEvent
         ///
@@ -117,10 +117,10 @@ namespace FB {
         ///
         /// @return nothing
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant callFireEvent(const std::vector<variant>& args);
+        virtual variantDeferredPtr callFireEvent(const std::vector<variant>& args_in);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant callToString(const std::vector<variant>& args)
+        /// @fn virtual variantDeferredPtr callToString(const std::vector<variant>& args)
         ///
         /// @brief  Called when a string representation of the object requested.  Always returns
         ///         "JSAPI Javascript Object";  
@@ -129,16 +129,16 @@ namespace FB {
         ///
         /// @return "JSAPI Javascript Object"
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant callToString(const std::vector<variant>& args);
+        virtual variantDeferredPtr callToString(const std::vector<variant>& args);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variant getValid()
+        /// @fn virtual variantDeferredPtr getValid()
         ///
         /// @brief  Returns true to indicate that the JSAPI interface is working
         ///
         /// @return true 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variant getValid();
+        virtual variantDeferredPtr getValid();
 
     protected:
         MethodMap m_methodMap;
