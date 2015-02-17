@@ -80,7 +80,7 @@ void ThreadRunnerAPI::threadRun()
                     if (outHeaders.find(it->first) != outHeaders.end()) {
                         outHeaders[it->first].cast<FB::VariantList>().push_back(it->second);
                     } else {
-                        outHeaders[it->first] = FB::VariantList{ it->second });
+                        outHeaders[it->first] = FB::VariantList{ it->second };
                     }
                 } else {
                     outHeaders[it->first] = it->second;

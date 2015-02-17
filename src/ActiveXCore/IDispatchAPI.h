@@ -78,6 +78,7 @@ namespace FB { namespace ActiveX {
     protected:
         DISPID getIDForName(const std::wstring& name) const;
         FB::variant GetPropertySync(std::string propertyName);
+        FB::variant GetPropertySync(int idx);
         FB::variant InvokeSync(std::string methodName, const FB::VariantList& args);
 
     public:

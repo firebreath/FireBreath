@@ -246,7 +246,7 @@ bool IDispatchAPI::HasProperty(int idx) const
 }
 
 
-FB::variant IDispatchAPI::GetProperty(std::string propertyName) {
+FB::variantDeferredPtr IDispatchAPI::GetProperty(std::string propertyName) {
     return FB::variantDeferred::makeDeferred(GetPropertySync(propertyName));
 }
 
@@ -400,7 +400,10 @@ void IDispatchAPI::RemoveProperty(std::string propertyName)
 }
 
 
-FB::variant IDispatchAPI::GetProperty(int idx)
+FB::variantDeferredPtr IDispatchAPI::GetProperty(int idx) {
+    return FB::variantDeferred::makeDeferred(GetPropertySync(idx));
+}
+FB::variant IDispatchAPI::GetPropertySync(int idx)
 {
     FB::variant sIdx(idx);
     return GetProperty(sIdx.convert_cast<std::string>());
@@ -432,7 +435,7 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 
 
 // Methods to manage methods on the API
-FB::variant IDispatchAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
+FB::variantDeferredPtr IDispatchAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
     // TODO: Make this asynchronous
     return FB::variantDeferred::makeDeferred(InvokeSync(methodName, args));
 }
@@ -453,8 +456,8 @@ FB::variant IDispatchAPI::InvokeSync(std::string methodName, const std::vector<F
     }
 
     size_t argCount(args.size());
-    std::unique_ptr<CComVariant> comArgs(new CComVariant[argCount + 1]);
-    std::unique_ptr<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
+    std::unique_ptr<CComVariant[]> comArgs(new CComVariant[argCount + 1]);
+    std::unique_ptr<VARIANTARG[]> rawComArgs(new VARIANTARG[argCount + 1]);
     DISPPARAMS params;
     DISPID tid = DISPID_THIS;
     params.cArgs = args.size() + 1;
@@ -500,8 +503,8 @@ void IDispatchAPI::callMultipleFunctions( std::string name, const FB::VariantLis
     }
 
     size_t argCount(args.size());
-    std::unique_ptr<CComVariant> comArgs(new CComVariant[argCount + 1]);
-    std::unique_ptr<VARIANTARG> rawComArgs(new VARIANTARG[argCount + 1]);
+    std::unique_ptr<CComVariant[]> comArgs(new CComVariant[argCount + 1]);
+    std::unique_ptr<VARIANTARG[]> rawComArgs(new VARIANTARG[argCount + 1]);
     DISPPARAMS params;
     DISPID tid = DISPID_THIS;
     params.cArgs = args.size() + 1;

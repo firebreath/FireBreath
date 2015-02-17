@@ -14,5 +14,3 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI_IDispatchEx.h"
 
-FB::variant FB::ActiveX::JSAPI_IDispatchExBase::IDisp_GetLastException::m_msg;
-

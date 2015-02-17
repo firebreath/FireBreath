@@ -23,7 +23,7 @@
 #include <memory>
 #include <mutex>
 
-#include <type_traits.hpp>
+#include <type_traits>
 
 #include "FactoryBase.h"
 #include "ActiveXBrowserHost.h"
