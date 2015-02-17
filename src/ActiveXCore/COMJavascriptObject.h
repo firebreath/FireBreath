@@ -18,7 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "JSAPI_IDispatchEx.h"
 #include "ShareableReference.h"
-#include <boost/make_shared.hpp>
 
 namespace FB {
     namespace ActiveX {

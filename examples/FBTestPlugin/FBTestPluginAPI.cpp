@@ -22,7 +22,6 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "ThreadRunnerAPI.h"
 #include "SimpleStreams.h"
 #include "SystemHelpers.h"
-#include <boost/make_shared.hpp>
 #include <future>
 #include "variantDeferred.h"
 
@@ -143,11 +142,7 @@ void FBTestPluginAPI::testEvent(std::string param)
 FB::variant FBTestPluginAPI::echo(const FB::variant& a)
 {
     try {
-        if (a.is_of_type<FB::JSObjectPtr>()) {
-            m_host->htmlLog("Echoing: " + a.cast<FB::JSObjectPtr>()->Invoke("ToString", FB::VariantList()).convert_cast<std::string>());
-        } else {
-            m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
-        }
+        m_host->htmlLog("Echoing: " + a.convert_cast<std::string>());
     } catch (...) {
         m_host->htmlLog("Echoing: (unknown)");
     }
@@ -347,8 +342,9 @@ long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso)
         throw FB::invalid_arguments();
     if (!jso->HasProperty("getArray"))
         throw FB::invalid_arguments();
-    FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
-    long len = array.size();// array->GetProperty("length").convert_cast<long>();
+    long len = -1;
+    //FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
+    //long len = array.size();// array->GetProperty("length").convert_cast<long>();
     return len;
 }
 FB::variant FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
@@ -363,14 +359,16 @@ ThreadRunnerAPIPtr FBTestPluginAPI::createThreadRunner()
 
 void FBTestPluginAPI::getURL(std::string url, const FB::JSObjectPtr& callback)
 {
+    using namespace std::placeholders;
     FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url),
-        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+        std::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
 }
 
 void FBTestPluginAPI::postURL(std::string url, std::string postdata, const FB::JSObjectPtr& callback)
 {
+    using namespace std::placeholders;
     FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
-        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+        std::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
 }
 
 void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool success,
@@ -409,7 +407,7 @@ void FBTestPluginAPI::getURLCallback(const FB::JSObjectPtr& callback, bool succe
 void FBTestPluginAPI::SetTimeout(const FB::JSObjectPtr& callback, long timeout)
 {
     bool recursive = false;
-    FB::TimerPtr timer = FB::Timer::getTimer(timeout, recursive, boost::bind(&FBTestPluginAPI::timerCallback, this, callback));
+    FB::TimerPtr timer = FB::Timer::getTimer(timeout, recursive, std::bind(&FBTestPluginAPI::timerCallback, this, callback));
     timer->start();
     timers.push_back(timer);
 }

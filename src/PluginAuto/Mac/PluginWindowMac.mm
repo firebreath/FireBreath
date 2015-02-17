@@ -319,7 +319,7 @@ void PluginWindowMac::InvalidateWindow() const {
     FBLOG_TRACE("PluginCore", "InvalidateWindow");
     NPRect r = { 0, 0, static_cast<uint16_t>(m_height), static_cast<uint16_t>(m_width) };
     if (!m_npHost->isMainThread())
-        m_npHost->ScheduleOnMainThread(m_npHost, boost::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
+        m_npHost->ScheduleOnMainThread(m_npHost, std::bind(&Npapi::NpapiBrowserHost::InvalidateRect2, m_npHost, r));
     else
         m_npHost->InvalidateRect(&r);
 }

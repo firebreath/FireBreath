@@ -6,14 +6,9 @@
 
 #include <tchar.h>
 #include <sstream>
-#include <boost/bind.hpp>
 #include <dispex.h>
-#include <boost/scoped_array.hpp>
 #include "wininet.h"
-#include <boost/scoped_array.hpp>
 #include <boost/shared_array.hpp>
-#include <boost/bind.hpp>
-#include <boost/make_shared.hpp>
 
 #include "ComVariantUtil.h"
 #include "ActiveXFactoryDefinitions.h"

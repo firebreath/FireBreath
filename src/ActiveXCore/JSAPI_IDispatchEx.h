@@ -69,9 +69,6 @@ namespace FB { namespace ActiveX {
 
     protected:
         FB::JSAPIWeakPtr m_api;
-        IDisp_AttachEventPtr m_attachFunc;
-        IDisp_DetachEventPtr m_detachFunc;
-        IDisp_GetLastExceptionPtr m_getLastExceptionFunc;
 
         ActiveXBrowserHostWeakPtr m_host;
     };
@@ -374,41 +371,7 @@ namespace FB { namespace ActiveX {
                 }
             }
 
-			if (wsName == L"getLastException") {
-				if (wFlags & DISPATCH_METHOD) {
-					FB::VariantList params;
-	                FB::variant rVal;
-	                rVal = m_getLastExceptionFunc->exec(params);
-	                
-	                if(pvarRes)
-	                    host->getComVariant(pvarRes, rVal);
-				} else if (wFlags & DISPATCH_PROPERTYGET) {
-					FB::variant rVal(m_getLastExceptionFunc);
-					host->getComVariant(pvarRes, rVal);
-				}
-			} else if (wsName == L"attachEvent" || wsName == L"detachEvent") {
-                if (wFlags & DISPATCH_METHOD) {
-                    std::vector<FB::variant> params;
-                    for (int i = pdp->cArgs - 1; i >= 0; i--) {
-                        params.push_back(host->getVariant(&pdp->rgvarg[i]));
-                    }
-
-                    if (wsName[0] == L'a') {
-                        m_attachFunc->exec(params);
-                    } else {
-                        m_detachFunc->exec(params);
-                    }
-                } else if (wFlags & DISPATCH_PROPERTYGET) {
-                    FB::variant rVal;
-                    if (wsName[0] == L'a') {
-                        rVal = m_attachFunc;
-                    } else {
-                        rVal = m_detachFunc;
-                    }
-                    host->getComVariant(pvarRes, rVal);
-                }
-
-            } else if (wFlags & DISPATCH_METHOD && (api->HasMethod(wsName) || !id) ) {
+			if (wFlags & DISPATCH_METHOD && (api->HasMethod(wsName) || !id) ) {
 
                 std::vector<FB::variant> params;
                 if (pdp->cNamedArgs > 0 && pdp->rgdispidNamedArgs[0] == DISPID_THIS) {
@@ -451,13 +414,11 @@ namespace FB { namespace ActiveX {
             } else {
                 throw FB::invalid_member("Invalid method or property name");
             }
-        } catch (const FB::invalid_member& se) {
+        } catch (const FB::invalid_member&) {
             FBLOG_INFO("JSAPI_IDispatchEx", "No such member: \"" << FB::wstring_to_utf8(wsName) << "\"");
-			m_getLastExceptionFunc->setMessage(se.what());
             return DISP_E_MEMBERNOTFOUND;
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
-			m_getLastExceptionFunc->setMessage(se.what());
             if (pei) {
                 pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
                 pei->bstrDescription = CComBSTR(se.what()).Detach();
@@ -499,7 +460,6 @@ namespace FB { namespace ActiveX {
             api->RemoveProperty(wsName);
         } catch (const FB::script_error& se) {
             FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
-			m_getLastExceptionFunc->setMessage(se.what());
             return S_FALSE;
         } catch (...) {
             return S_FALSE;

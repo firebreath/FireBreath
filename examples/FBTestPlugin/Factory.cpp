@@ -10,7 +10,6 @@
 #include "FactoryBase.h"
 #include "FBTestPlugin.h"
 #include "FBTestMathPlugin.h"
-#include <boost/make_shared.hpp>
 
 class PluginFactory : public FB::FactoryBase
 {

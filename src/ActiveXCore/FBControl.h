@@ -432,11 +432,11 @@ namespace FB {
             ULONG pCount(0), pGot(0);
             HRESULT hr = pBag->CountProperties(&pCount);
             FB::VariantMap paramMap;
-            std::unique_ptr<PROPBAG2> pArr(new PROPBAG2[pCount]);
+            std::unique_ptr<PROPBAG2[]> pArr(new PROPBAG2[pCount]);
             hr = pBag->GetPropertyInfo(0, pCount, pArr.get(), &pGot);
 
-            std::unique_ptr<HRESULT> results(new HRESULT[pCount]);
-            std::unique_ptr<CComVariant> vals(new CComVariant[pCount]);
+            std::unique_ptr<HRESULT[]> results(new HRESULT[pCount]);
+            std::unique_ptr<CComVariant[]> vals(new CComVariant[pCount]);
             hr = pBag->Read(pGot, pArr.get(), nullptr, vals.get(), results.get());
             if (SUCCEEDED(hr)) {
                 for(ULONG i = 0; i < pGot; ++i) {

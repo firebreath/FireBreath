@@ -24,7 +24,6 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "FactoryBase.h"
 
 #include "NpapiPluginFactory.h"
-#include <boost/make_shared.hpp>
 #include <string>
 
 #include "Mac/NpapiPluginMac.h"

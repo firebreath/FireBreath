@@ -120,7 +120,7 @@ void NpapiPluginWin::init(NPMIMEType pluginType, int16_t argc, char* argn[], cha
     bool negotiated = g_supportedModels->negotiate(
         m_npHost, 
         pluginMain->negotiateDrawingModel(),
-        boost::bind(&NpapiPluginWin::pluginWindowFactory, this, _1));
+        std::bind(&NpapiPluginWin::pluginWindowFactory, this, std::placeholders::_1));
 #endif
     if (pluginWin) 
     {
@@ -184,7 +184,8 @@ NPError NpapiPluginWin::SetWindow(NPWindow* window)
             win->setWindowPosition(window->x, window->y, window->width, window->height);
             win->setWindowClipping(window->clipRect.top, window->clipRect.left,
                                    window->clipRect.bottom, window->clipRect.right);
-            win->setInvalidateWindowFunc(boost::bind(&NpapiPluginWin::invalidateWindow, this, _1, _2, _3, _4));
+            win->setInvalidateWindowFunc(std::bind(&NpapiPluginWin::invalidateWindow, this,
+                std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
             pluginMain->SetWindow(win);
             pluginWin.reset(win);
         } else if (win) {
