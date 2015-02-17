@@ -27,7 +27,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/comparison/greater.hpp>
 #include <boost/function.hpp>
-#include <boost/bind.hpp>
 #include "ConverterUtils.h"
 
 #define _FB_MW_TPL(z, n, data) typename T##n
@@ -84,12 +83,12 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
     make_method(C* instance, R (C::*function)(                                  \
         BOOST_PP_ENUM(n, _FB_MW_Tn, 0)))                                        \
     {                                                                           \
-        return boost::bind(                                                     \
+        return std::bind(                                                       \
             FB::detail::methods::method_wrapper##n<C, R                         \
                 BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n,0))                        \
                 BOOST_PP_ENUM(n, _FB_MW_Tn, 0)                                  \
                 , R (C::*)(BOOST_PP_ENUM(n, _FB_MW_Tn, 0))>(function),          \
-                instance, _1);                                                  \
+                instance, std::placeholders::_1);                               \
     }                                                                           \
     template<class C, class R                                                   \
             BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n,0))                            \
@@ -98,11 +97,11 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
     make_method(C* instance, R (C::*function)(                                  \
         BOOST_PP_ENUM(n, _FB_MW_Tn, 0)) const)                                  \
     {                                                                           \
-            return boost::bind(FB::detail::methods::method_wrapper##n<C, R      \
+            return std::bind(FB::detail::methods::method_wrapper##n<C, R        \
                 BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n,0))                        \
                 BOOST_PP_ENUM(n, _FB_MW_Tn, 0)                                  \
             , R (C::*)(BOOST_PP_ENUM(n, _FB_MW_Tn, 0)) const>(function),        \
-            instance, _1);                                                      \
+            instance, std::placeholders::_1);                                   \
     }
 
 namespace FB

@@ -9,13 +9,10 @@
 #include <xlocale.h>
 #include <wctype.h>
 #endif
-#include <boost/bind.hpp>
 #include <memory>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/mutex.hpp>
 #include <vector>
 #include <stdexcept>
 

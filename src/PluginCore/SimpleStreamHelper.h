@@ -92,6 +92,7 @@ namespace FB {
         /// @see FB::BrowserStreamRequest:setCallback
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static FB::SimpleStreamHelperPtr AsyncRequest( BrowserHostConstPtr host, const BrowserStreamRequest& req );
+        static FB::SimpleStreamHelperPtr doAsyncReq1(FB::BrowserHostConstPtr host, const FB::BrowserStreamRequest& req);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn  static  FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest(BrowserHostConstPtr host, BrowserStreamPtr stream, const BrowserStreamRequest& req);
         ///
@@ -108,6 +109,7 @@ namespace FB {
         /// @see FB::BrowserStreamRequest:setCallback
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         static FB::SimpleStreamHelperPtr AsyncRequest( BrowserHostConstPtr host, BrowserStreamPtr stream, const BrowserStreamRequest& req );
+        static FB::SimpleStreamHelperPtr doAsyncReq2(FB::BrowserHostConstPtr host, FB::BrowserStreamPtr stream, const FB::BrowserStreamRequest& req);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public static FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet(FB::BrowserHostPtr host, FB::URI uri, HttpCallback callback, const bool cache = true, const size_t bufferSize = 128*1024)
         ///
@@ -120,8 +122,9 @@ namespace FB {
         /// @code
         /// void FBTestPluginAPI::getURL(std::string url, FB::JSObjectPtr callback)
         /// {
+        ///    using std::placeholders;
         ///    FB::SimpleStreamHelper::AsyncGet(m_host, FB::URI::fromString(url),
-        ///        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+        ///        std::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
         /// }
         ///
         /// void FBTestPluginAPI::getURLCallback(FB::JSObjectPtr callback, bool success,
@@ -163,8 +166,9 @@ namespace FB {
         /// @code
         /// void FBTestPluginAPI::postURL(std::string url, std::string postdata, concst FB::JSObjectPtr callback)
         /// {
+        ///    using std::placeholders;
         ///    FB::SimpleStreamHelper::AsyncPost(m_host, FB::URI::fromString(url), postdata,
-        ///        boost::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
+        ///        std::bind(&FBTestPluginAPI::getURLCallback, this, callback, _1, _2, _3, _4));
         /// }
         ///
         /// void FBTestPluginAPI::getURLCallback(FB::JSObjectPtr callback, bool success,

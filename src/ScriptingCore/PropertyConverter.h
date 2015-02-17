@@ -99,11 +99,9 @@ namespace FB
             static inline 
             FB::SetPropFunctor f(C* instance, void (C::*setter)(T))
             { 
-                typedef typename FB::detail::plain_type<T>::type Ty;
+                typedef typename std::decay<T>::type Ty;
                 typedef FB::detail::converter<Ty, FB::variant> converter;
-                return 
-                boost::bind(setter, instance, 
-                            boost::bind(&converter::convert, _1)); 
+                return [instance, setter](FB::variant v) { (instance->*setter)(converter::convert(v)); };
             }
         };
         
@@ -115,9 +113,7 @@ namespace FB
             { 
                 typedef typename FB::detail::plain_type<T>::type Ty;
                 typedef FB::detail::converter<Ty, FB::variant> converter;
-                return 
-                boost::bind(setter, instance, 
-                            boost::bind(&converter::convert, _1)); 
+                return [instance, setter](FB::variant v) { (instance->*setter)(converter::convert(v)); };
             }
         };
         
@@ -157,7 +153,7 @@ namespace FB
     {
         return PropertyFunctors(
             FB::detail::properties::getter<C, F>::result::f(instance, f),
-            boost::bind(FB::detail::properties::dummySetter, _1));
+            [](FB::variant v) { });
     }
 }
 

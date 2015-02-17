@@ -15,8 +15,6 @@ Copyright 2011 Richard Bateman,
 
 #include "BrowserHost.h"
 #include <boost/algorithm/string.hpp>
-#include <boost/bind.hpp>
-#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include <mutex>
 #include <condition_variable>
 
@@ -50,6 +48,11 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncPost(FB::BrowserHostPtr h
     return AsyncRequest(host, req);
 }
 
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::doAsyncReq1(FB::BrowserHostConstPtr host, const FB::BrowserStreamRequest& req) {
+    FB::BrowserStreamPtr stream(host->createStream(req, false));
+    return FB::SimpleStreamHelper::AsyncRequest(host, stream, req);
+}
+
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( FB::BrowserHostConstPtr host,
                                                                 const BrowserStreamRequest& req ) {
     if (!req.getCallback()) {
@@ -57,10 +60,21 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( FB::BrowserHostC
     }
     if (!host->isMainThread()) {
         // This must be run from the main thread
-        return host->CallOnMainThread(boost::bind(&AsyncRequest, host, req));
+        auto func = std::bind(&doAsyncReq1, host, req);
+        return host->CallOnMainThread(func);
     }
-    FB::BrowserStreamPtr stream(host->createStream(req, false));
-    return AsyncRequest(host, stream, req);
+    return doAsyncReq1(host, req);
+}
+
+FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::doAsyncReq2(FB::BrowserHostConstPtr host,
+                                      FB::BrowserStreamPtr stream,
+                                      const FB::BrowserStreamRequest& req) {
+    FB::SimpleStreamHelperPtr ptr(std::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
+    // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
+    // to hold a reference to it.
+    ptr->keepReference(ptr);
+    stream->AttachObserver(ptr);
+    return ptr;
 }
 
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( FB::BrowserHostConstPtr host,
@@ -68,14 +82,9 @@ FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncRequest( FB::BrowserHostC
                                                                 const BrowserStreamRequest& req ) {
     if (!host->isMainThread()) {
         // This must be run from the main thread
-        return host->CallOnMainThread(boost::bind(&AsyncRequest, host, stream, req));
+        return host->CallOnMainThread(std::bind(&doAsyncReq2, host, stream, req));
     }
-    FB::SimpleStreamHelperPtr ptr(std::make_shared<FB::SimpleStreamHelper>(req.getCallback(), req.internalBufferSize));
-    // This is kinda a weird trick; it's responsible for freeing itself, unless something decides
-    // to hold a reference to it.
-    ptr->keepReference(ptr);
-    stream->AttachObserver(ptr);
-    return ptr;
+    return doAsyncReq2(host, stream, req);
 }
 
 struct SyncHTTPHelper
@@ -110,15 +119,16 @@ public:
 
 FB::HttpStreamResponsePtr FB::SimpleStreamHelper::SynchronousRequest( FB::BrowserHostPtr host, const BrowserStreamRequest& req )
 {
+    using namespace std::placeholders;
     // We can't ever block on the main thread, so SynchronousGet can't be called from there.
     // Also, if you could block the main thread, that still wouldn't work because the request
     // is processed on the main thread!
     assert(!host->isMainThread());
     SyncHTTPHelper helper;
     try {
-        FB::HttpCallback cb(boost::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
-	FB::BrowserStreamRequest req2(req);
-	req2.setCallback(cb);
+        FB::HttpCallback cb(std::bind(&SyncHTTPHelper::getURLCallback, &helper, _1, _2, _3, _4));
+        FB::BrowserStreamRequest req2(req);
+        req2.setCallback(cb);
         FB::SimpleStreamHelperPtr ptr = AsyncRequest(host, req2);
         helper.setPtr(ptr);
         helper.waitForDone();

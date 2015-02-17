@@ -11,9 +11,10 @@ License:    Dual license model; choose one of two:
 
 \**********************************************************/
 
-#include "precompiled_headers.h" // On windows, everything above this line in PCH
+#ifdef FB_WIN
+#include "win_targetver.h"
+#endif
 #include <boost/asio.hpp>
-#include <boost/bind.hpp>
 #include "Timer.h"
 #include "TimerService.h"
 
@@ -70,7 +71,7 @@ void Timer::callback(const boost::system::error_code& error)
 void Timer::start()
 {
 	pimpl->timer.expires_from_now(boost::posix_time::milliseconds(duration));
-	pimpl->timer.async_wait(boost::bind(&Timer::callback, this, boost::asio::placeholders::error));
+    pimpl->timer.async_wait([this](const boost::system::error_code& error) { callback(error); });
 }
 bool Timer::stop()
 {

@@ -19,7 +19,6 @@
 #include <cstdio>
 #include <cassert>
 #include <algorithm>
-#include <boost/bind.hpp>
 #include <boost/format.hpp>
 #include <memory>
 #include <boost/lexical_cast.hpp>
@@ -27,8 +26,6 @@
 #include <boost/algorithm/string/trim.hpp>
 #include <boost/logic/tribool.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/thread/recursive_mutex.hpp>
-#include <boost/thread/mutex.hpp>
 #include <vector>
 #include <sstream>
 #include <stdlib.h>
