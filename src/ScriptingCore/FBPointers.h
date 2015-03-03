@@ -19,8 +19,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #define FB_FORWARD_PTR(x) class x; \
     using x ## Ptr = std::shared_ptr<x>; \
-    using x ## WeakPtr = typedef std::weak_ptr<x>; \
-    using x ## ConstPtr = typedef std::shared_ptr<const x>; \
+    using x ## WeakPtr = std::weak_ptr<x>; \
+    using x ## ConstPtr = std::shared_ptr<const x>; \
     using x ## WeakConstPtr = std::weak_ptr<const x>;
 
 // get rid of "unused variable" warnings

@@ -20,7 +20,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const FB::JSAPIPtr &inner )
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(inner));
-    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(ptr));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(inner));
     if (impl)
         impl->registerProxy(ptr);
 
@@ -42,7 +42,7 @@ FB::JSAPIProxyPtr FB::JSAPIProxy::create( const SecurityZone& securityLevel, con
 {
     // This is necessary because you can't use shared_from_this in the constructor
     FB::JSAPIProxyPtr ptr(new FB::JSAPIProxy(securityLevel, inner));
-    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(ptr));
+    FB::JSAPIImplPtr impl(std::dynamic_pointer_cast<JSAPIImpl>(inner));
     if (impl)
         impl->registerProxy(ptr);
     
@@ -182,7 +182,7 @@ bool FB::JSAPIProxy::HasProperty( int idx ) const
 FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
 {
     if (propertyName == L"expired")
-        return FB::variantDeferred::makeDeferred(isExpired());
+        return FB::makeVariantDeferred(isExpired());
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }
@@ -190,7 +190,7 @@ FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( const std::wstring& property
 FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( std::string propertyName )
 {
     if (propertyName == "expired")
-        return FB::variantDeferred::makeDeferred(isExpired());
+        return FB::makeVariantDeferred(isExpired());
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }

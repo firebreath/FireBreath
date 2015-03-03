@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <set>
 #include <functional>
 #include <memory>
-#include "fb_stdint.h"
+#include <cstdint>
 #include "FBPointers.h"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,24 @@ namespace FB
     FB_FORWARD_PTR(BrowserHost);
     FB_FORWARD_PTR(JSAPI);
     FB_FORWARD_PTR(JSObject);
-    FB_FORWARD_PTR(variantDeferred);
+    class variant;
+    template <typename T>
+    class Deferred;
+
+    template <typename T>
+    using DeferredPtr = std::shared_ptr < Deferred<T> > ;
+    template <typename T>
+    using DeferredWeakPtr = std::weak_ptr < Deferred<T> > ;
+
+    using variantDeferred = Deferred < FB::variant > ;
+    using variantDeferredPtr = std::shared_ptr < variantDeferred > ;
+    using variantDeferredWeakPtr = std::weak_ptr < variantDeferred > ;
+
+    variantDeferredPtr makeVariantDeferred(FB::variant v);
+    variantDeferredPtr makeVariantDeferred();
+    template <typename T>
+    variantDeferredPtr makeVariantDeferred(FB::DeferredPtr<T> v);
+
     class variant;
     namespace variant_detail {
         // Note that empty translates into return VOID (undefined)
@@ -115,13 +132,13 @@ namespace FB
     // backwards compability typedefs
 
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
-    using InvokeType = FB::variantDeferredPtr(JSAPI::*)(std::string, const std::vector<variant>&);
+    using InvokeType = variantDeferredPtr(JSAPI::*)(std::string, const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::Invoke
     using ConstructType = variant(JSAPI::*)(const std::vector<variant>&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::SetProperty
     using SetPropertyType = void(JSAPI::*)(std::string, const variant&);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
-    using GetPropertyType = FB::variantDeferredPtr(JSAPI::*)(std::string);
+    using GetPropertyType = variantDeferredPtr(JSAPI::*)(std::string);
     /// @brief  Defines an alias representing a function pointer to JSAPI::GetProperty
     using RemovePropertyType = void(JSAPI::*)(std::string);
 
@@ -250,7 +267,7 @@ namespace FB
     // new style JSAPI properties
 
     /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
-    using GetPropFunctor = std::function < FB::variantDeferredPtr() > ;
+    using GetPropFunctor = std::function < variantDeferredPtr() > ;
     /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
     using SetPropFunctor = std::function < void(const FB::variant&) > ;
     /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
@@ -292,7 +309,6 @@ namespace FB
 // This needs to be included after all our classes are defined because it relies on types defined in this file
 // TODO: can this be done better?
 #include "variant.h"
-#include "variantDeferred.h"
 
 #endif
 

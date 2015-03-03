@@ -154,11 +154,12 @@ namespace FB { namespace Npapi
     {
         NPVariant npv;
 
-        FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
+        NPObjectAPIPtr win = std::dynamic_pointer_cast<NPObjectAPI>(host->getDOMWindow()->getJSObject());
+        NPObjectAPIPtr outArr = std::dynamic_pointer_cast<NPObjectAPI>(win->InvokeSync("Array", FB::VariantList{}).cast<JSObjectPtr>());
         FB::VariantList inArr = var.cast<FB::VariantList>();
 
         for (auto var : inArr) {
-            outArr->Invoke("push", FB::VariantList{ var });
+            outArr->InvokeSync("push", FB::VariantList{ var });
         }
 
         if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(outArr)) {
@@ -175,7 +176,8 @@ namespace FB { namespace Npapi
     {
         NPVariant npv;
 
-        FB::JSObjectPtr out = host->getDOMWindow()->createMap();
+        NPObjectAPIPtr win = std::dynamic_pointer_cast<NPObjectAPI>(host->getDOMWindow()->getJSObject());
+        NPObjectAPIPtr out = std::dynamic_pointer_cast<NPObjectAPI>(win->InvokeSync("Object", FB::VariantList{}).cast<JSObjectPtr>());
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
 
         for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); ++it) {

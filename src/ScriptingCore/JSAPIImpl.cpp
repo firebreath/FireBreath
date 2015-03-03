@@ -44,12 +44,12 @@ VariantMap proxyProcessMap(const VariantMap &args, const JSAPIImplPtr& self, con
 VariantList proxyProcessList(const VariantList &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy) {
     VariantList newArgs;
     for (auto arg : args) {
-        if (arg.is_of_type<JSAPIPtr>() && arg.convert_cast<JSAPIPtr>() == self) {
+        if (arg.is_of_type<JSAPIPtr>() && arg.cast<JSAPIPtr>() == self) {
             newArgs.push_back(proxy);
         } else if (arg.is_of_type<VariantList>()) {
-            newArgs.push_back(proxyProcessList(arg.convert_cast<VariantList>(), self, proxy));
+            newArgs.push_back(proxyProcessList(arg.cast<VariantList>(), self, proxy));
         } else if (arg.is_of_type<VariantMap>()) {
-            newArgs.push_back(proxyProcessMap(arg.convert_cast<VariantMap>(), self, proxy));
+            newArgs.push_back(proxyProcessMap(arg.cast<VariantMap>(), self, proxy));
         } else {
             newArgs.push_back(arg);
         }
@@ -60,12 +60,12 @@ VariantList proxyProcessList(const VariantList &args, const JSAPIImplPtr& self, 
 VariantMap proxyProcessMap(const VariantMap &args, const JSAPIImplPtr& self, const JSAPIImplPtr& proxy) {
     VariantMap newMap;
     for (auto arg : args) {
-        if (arg.second.is_of_type<JSAPIPtr>() && arg.second.convert_cast<JSAPIPtr>() == self) {
+        if (arg.second.is_of_type<JSAPIPtr>() && arg.second.cast<JSAPIPtr>() == self) {
             newMap[arg.first] = proxy;
         } else if (arg.second.is_of_type<VariantList>()) {
-            newMap[arg.first] = proxyProcessList(arg.second.convert_cast<VariantList>(), self, proxy);
+            newMap[arg.first] = proxyProcessList(arg.second.cast<VariantList>(), self, proxy);
         } else if (arg.second.is_of_type<VariantMap>()) {
-            newMap[arg.first] = proxyProcessMap(arg.second.convert_cast<VariantMap>(), self, proxy);
+            newMap[arg.first] = proxyProcessMap(arg.second.cast<VariantMap>(), self, proxy);
         } else {
             newMap[arg.first] = arg.second;
         }
@@ -109,7 +109,7 @@ void JSAPIImpl::fireAsyncEvent(std::string eventName, const std::vector<variant>
             } else {
                 if (handler.second->isValid()) {
                     first = false;
-                    handler.second->InvokeAsync("", args);
+                    handler.second->Invoke("", args);
                 }
             }
         }
@@ -130,7 +130,7 @@ void JSAPIImpl::fireAsyncEvent(std::string eventName, const std::vector<variant>
                 iface.second->callMultipleFunctions(eventName, args, handlers, ifaces);
                 break;
             }
-            iface.second->InvokeAsync(eventName, args);
+            iface.second->Invoke(eventName, args);
         }
     }
 }
@@ -208,7 +208,7 @@ void JSAPIImpl::FireJSEvent(std::string eventName, const VariantMap &members, co
         while (it != eventMap.end()) {
             auto range = boost::make_iterator_range(it->second.equal_range(eventName));
             for (auto item : range) {
-                item.second->InvokeAsync("", args);
+                item.second->Invoke("", args);
             }
             ++it;
         }
@@ -225,7 +225,7 @@ void JSAPIImpl::FireJSEvent(std::string eventName, const VariantMap &members, co
         EventIfaceContextMap::iterator it(evtIfaces.begin());
         while (it != evtIfaces.end()) {
             for (auto ifaceIt = it->second.begin(); ifaceIt != it->second.end(); ++ifaceIt) {
-                ifaceIt->second->InvokeAsync(eventName, args);
+                ifaceIt->second->Invoke(eventName, args);
             }
         }
     }

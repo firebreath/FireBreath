@@ -67,7 +67,7 @@ namespace FB
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)())
             {
-                auto wrapper = [instance, getter]() { return FB::variantDeferred::makeDeferred((instance->*getter)()); };
+                auto wrapper = [instance, getter]() { return FB::makeVariantDeferred((instance->*getter)()); };
                 return wrapper;
             }
         };
@@ -78,7 +78,7 @@ namespace FB
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
             { 
-                auto wrapper = [instance, getter]() { return FB::variantDeferred::makeDeferred((instance->*getter)()); };
+                auto wrapper = [instance, getter]() { return FB::makeVariantDeferred((instance->*getter)()); };
                 return wrapper;
             }
         };

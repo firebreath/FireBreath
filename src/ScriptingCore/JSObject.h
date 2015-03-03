@@ -74,6 +74,44 @@ namespace FB
                                            const std::vector<JSObjectPtr>& ifaces) {};
         virtual bool isValid() = 0;
 
+    private:
+        template<class Cont>
+        FB::DeferredPtr<Cont> getArrayValuesImpl() {
+            try {
+                DeferredPtr<VariantList> dfdList = getHost()->GetArrayValues(shared_from_this());
+
+                auto onDone = [](VariantList inList) -> Cont {
+                    Cont out;
+                    for (auto c : inList) {
+                        out.emplace_back(c.convert_cast<Cont::value_type>());
+                    }
+                    return out;
+                };
+                return dfdList->then<Cont>(onDone);
+            } catch (std::bad_cast&) {
+                throw std::runtime_error("Browser not available, can't convert to array");
+            }
+        }
+
+        template<class Dict>
+        FB::DeferredPtr<Dict> getObjectValuesImpl() {
+            try {
+                DeferredPtr<VariantMap> dfdMap = getHost()->GetObjectValues(shared_from_this());
+
+                auto onDone = [](VariantMap inMap) -> Dict {
+                    Dict out;
+                    for (auto c : inMap) {
+                        out[c.first] = c.second.convert_cast<Dict::mapped_type>();
+                    }
+                    return out;
+                };
+                return dfdMap->then<Dict>(onDone);
+            } catch (std::bad_cast&) {
+                throw std::runtime_error("Browser not available, can't convert to object");
+            }
+        }
+
+    protected:
         JSObjectPtr shared_from_this() {
             auto ptr = JSAPI::shared_from_this();
             return std::dynamic_pointer_cast<JSObject>(ptr);
@@ -143,7 +181,7 @@ namespace FB
         /// is used. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Cont>
-        static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst);
+        static DeferredPtr<Cont> GetArrayValues(const FB::JSObjectPtr& src);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Dict> static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
@@ -155,11 +193,9 @@ namespace FB
         /// @param [in,out] dst Destination for the. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Dict>
-        static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst);
+        static DeferredPtr<Dict> GetObjectValues(const FB::JSObjectPtr& src);
     
     public:
-        /// @brief Get associated FB::JSAPI.
-        virtual JSAPIPtr getJSAPI() const = 0;
         /// @brief Get the associated FB::BrowserHost; may throw std::bad_cast
         BrowserHostPtr getHost() { return BrowserHostPtr(m_host); }
 
@@ -168,46 +204,18 @@ namespace FB
     };
 
     template<class Cont>
-    void JSObject::GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
+    FB::DeferredPtr<Cont> JSObject::GetArrayValues(const FB::JSObjectPtr& src)
     {
         if (!src) {
-            return;
+            return makeDeferred<Cont>(Cont());
         }
-        try {
-            FB::variant tmp = src->GetProperty("length");
-            long length = tmp.convert_cast<long>();
-            std::back_insert_iterator<Cont> inserter(dst);
-
-            for(int i=0; i<length; ++i) {
-                tmp = src->GetProperty(i);
-                *inserter++ = tmp.convert_cast<typename Cont::value_type>();
-            }
-        } catch(const FB::script_error& e) {
-            throw e;
-        }
+        return src->getArrayValuesImpl<Cont>();
     }
 
     template<class Dict>
-    void JSObject::GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
+    FB::DeferredPtr<Dict> JSObject::GetObjectValues(const FB::JSObjectPtr& src)
     {
-        typedef typename Dict::key_type KeyType;
-        typedef typename Dict::mapped_type MappedType;
-        typedef std::pair<KeyType, MappedType> PairType;
-        typedef std::vector<std::string> StringVec;
-
-        if (!src) return;
-        try {
-            StringVec fields;
-            src->getMemberNames(fields);
-            std::insert_iterator<Dict> inserter(dst, dst.begin());
-
-            for(StringVec::iterator it = fields.begin(); it != fields.end(); it++) {
-                FB::variant tmp = src->GetProperty(*it);
-                *inserter++ = PairType(*it, tmp.convert_cast<MappedType>());
-            }
-        } catch (const FB::script_error& e) {
-            throw e;
-        }
+        return src->getObjectValuesImpl<Dict>();
     }
     
     namespace variant_detail { namespace conversion {
@@ -287,19 +295,6 @@ namespace FB
             if (!ptr)
                 return std::shared_ptr<T>();
 
-            FB::JSObjectPtr jso = std::dynamic_pointer_cast<FB::JSObject>(ptr);
-            if (jso) {
-                FB::JSAPIPtr inner = jso->getJSAPI();
-                if (inner) {
-                    std::shared_ptr<T> tmp = std::dynamic_pointer_cast<T>(inner);
-                    if (tmp) {
-                        // Whew! We pulled the JSAPI object out of a JSObject and found what we were
-                        // looking for; we always return the inner-most object.  Keep that in mind!
-                        return tmp;
-                    }
-                    // If there is an inner object, but it isn't the one we want, fall through
-                }
-            }
             std::shared_ptr<T> ret = std::dynamic_pointer_cast<T>(ptr);
             if (ret)
                 return ret;
@@ -315,7 +310,7 @@ namespace FB
         }
 
         template<class Cont>
-        typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+        typename FB::meta::enable_for_non_assoc_containers<Cont, DeferredPtr<Cont>>::type
             convert_variant(const variant& var, type_spec<Cont>)
         {
             typedef FB::JSObjectPtr JsObject;
@@ -323,22 +318,20 @@ namespace FB
             // if the held data is of type Cont just return it
 
             if(var.is_of_type<Cont>()) 
-                return var.cast<Cont>();
+                return makeDeferred<Cont>(var.cast<Cont>());
 
             // if the help data is not a JavaScript object throw
 
-            if(!var.can_be_type<JsObject>())
+            if(!var.is_of_type<JsObject>())
                 throw bad_variant_cast(var.get_type(), typeid(JsObject));
             
             // if it is a JavaScript object try to treat it as an array
 
-            Cont cont;
-            FB::JSObject::GetArrayValues(var.convert_cast<JsObject>(), cont);
-            return cont;
+            return FB::JSObject::GetArrayValues<Cont>(var.cast<JsObject>());
         }
 
         template<class Dict>
-        typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
+        typename FB::meta::enable_for_pair_assoc_containers<Dict, DeferredPtr<Dict>>::type
             convert_variant(const variant& var, type_spec<Dict>)
         {
             typedef FB::JSObjectPtr JsObject;
@@ -346,18 +339,15 @@ namespace FB
             // if the held data is of type Dict just return it
 
             if(var.is_of_type<Dict>()) 
-                return var.cast<Dict>();
+                return makeDeferred<Dict>(var.cast<Dict>());
 
             // if the help data is not a JavaScript object throw
 
-            if(!var.can_be_type<JsObject>())
+            if(!var.is_of_type<JsObject>())
                 throw bad_variant_cast(var.get_type(), typeid(JsObject));
             
             // if it is a JavaScript object try to treat it as an array
-
-            Dict dict;
-            FB::JSObject::GetObjectValues(var.convert_cast<JsObject>(), dict);
-            return dict;
+            return FB::JSObject::GetObjectValues<Dict>(var.cast<JsObject>());
         }
     } }
     

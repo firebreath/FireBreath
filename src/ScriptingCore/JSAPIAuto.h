@@ -27,7 +27,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB {
     FB_FORWARD_PTR(JSFunction);
-    FB_FORWARD_PTR(variantDeferred);
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @fn template<class C, class R> FB::CallMethodFunctor make_method(C* instance, R (C::*function)())

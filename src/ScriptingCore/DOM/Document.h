@@ -74,7 +74,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The window. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual WindowPtr getWindow() const;
+        virtual DeferredPtr<WindowPtr> getWindow() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::getHead() const
@@ -83,7 +83,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The document's head.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getHead() const;
+        virtual DeferredPtr<ElementPtr> getHead() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::getBody() const
@@ -92,7 +92,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The document's body.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getBody() const;
+        virtual DeferredPtr<ElementPtr> getBody() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::createElement(const std::string &name) const
@@ -101,7 +101,7 @@ namespace FB { namespace DOM {
         ///
         /// @return DOM::ElementPtr wrapping the newly created element
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-		virtual ElementPtr createElement(const std::string &name) const;
+		virtual DeferredPtr<ElementPtr> createElement(const std::string &name) const;
 	
 	};
 

@@ -74,8 +74,12 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
             std::string value(it->second.convert_cast<std::string>());
             if (key.substr(0, 2) == "on") {
                 FB::JSObjectPtr tmp;
-                tmp = m_host->getDOMWindow()
-                    ->getProperty<FB::JSObjectPtr>(value);
+                auto dfd = m_host->getDOMWindow()->getProperty<FB::JSObjectPtr>(value);
+                auto selfPtr(shared_from_this());
+
+                dfd->done([=](FB::JSObjectPtr tmp) -> void {
+                    m_params[key] = tmp;
+                });
 
                 FBLOG_TRACE("PluginCore", "Found <param> event handler: " << key);
 

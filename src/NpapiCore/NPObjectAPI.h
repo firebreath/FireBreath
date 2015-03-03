@@ -48,8 +48,7 @@ namespace FB { namespace Npapi {
         void getMemberNames(std::vector<std::string> &nameVector) const;
         size_t getMemberCount() const;
     public:
-        virtual JSAPIPtr getJSAPI() const;
-        void invalidate() { inner.reset(); }
+        void invalidate() { }
         bool isValid() { return !m_browser.expired(); }
         virtual bool supportsOptimizedCalls() const { return true; }
         virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
@@ -66,10 +65,11 @@ namespace FB { namespace Npapi {
         }
         NpapiBrowserHostWeakPtr m_browser;
         NPObject *obj;
-        bool is_JSAPI;
-        FB::JSAPIWeakPtr inner;
 
-    private:
+    public:
+        // The methods below are not to be used outside of the NPAPI part of the FireBreath core;
+        // doing so basically undermines the abstraction and makes your plugin platform-specific
+
         variant GetPropertySync(std::string propertyName);
         void SetPropertySync(std::string propertyName, const variant& value);
         void RemovePropertySync(std::string propertyName);

@@ -18,7 +18,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "NPJavascriptObject.h"
 #include "NPPromise.h"
-#include "variantDeferred.h"
+#include "Deferred.h"
 
 using namespace FB::Npapi;
 
@@ -132,7 +132,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
 {
     VOID_TO_NPVARIANT(*result);
     if (!isValid()) return false;
-    auto promise = FB::variantDeferred::makeDeferred();
+    auto promise = FB::makeVariantDeferred();
     try {
         std::string mName;
         NpapiBrowserHostPtr browser(getHost());
@@ -147,9 +147,9 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         // Default method call
         FB::variantDeferredPtr ret;
         if (mName == "addEventListener") {
-            ret = FB::variantDeferred::makeDeferred(addEventListener(vArgs));
+            ret = FB::makeVariantDeferred(addEventListener(vArgs));
         } else if (mName == "removeEventListener") {
-            ret = FB::variantDeferred::makeDeferred(removeEventListener(vArgs));
+            ret = FB::makeVariantDeferred(removeEventListener(vArgs));
         } else {
             ret = getAPI()->Invoke(mName, vArgs);
         }
@@ -197,10 +197,9 @@ bool NPJavascriptObject::HasProperty(NPIdentifier name)
 bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
 {
     if (!isValid()) return false;
-    auto promise = FB::variantDeferred::makeDeferred();
     try {
         NpapiBrowserHostPtr browser(getHost());
-        FB::variant ret;
+        FB::variantDeferredPtr ret;
         if (browser->IdentifierIsString(name)) {
             std::string sName(browser->StringFromIdentifier(name));
             ret = getAPI()->GetProperty(sName);
@@ -208,14 +207,10 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
             ret = getAPI()->GetProperty(browser->IntFromIdentifier(name));
         }
 
-        if (ret.is_of_type<decltype(promise)>()) {
-            setPromise(ret.cast<decltype(promise)>(), result);
-        } else {
-            promise->resolve(ret);
-            setPromise(promise, result);
-        }
+        setPromise(ret, result);
         return true;
     } catch (const std::exception& e) {
+        auto promise = makeVariantDeferred();
         promise->reject(e);
         setPromise(promise, result);
         return false;

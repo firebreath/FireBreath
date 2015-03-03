@@ -395,6 +395,9 @@ namespace FB
             m_htmlLogEnabled = enabled;
         }
 
+        virtual DeferredPtr<VariantList> GetArrayValues(FB::JSObjectPtr obj) = 0;
+        virtual DeferredPtr<VariantMap> GetObjectValues(FB::JSObjectPtr obj) = 0;
+
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void shutdown()
         ///

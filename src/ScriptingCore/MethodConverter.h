@@ -50,7 +50,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
-                return FB::variantDeferred::makeDeferred((instance->*f)(        \
+                return FB::makeVariantDeferred((instance->*f)(        \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
                     ));                                                         \
             }                                                                   \
@@ -71,7 +71,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
                 (instance->*f)(                                                 \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
                     );                                                          \
-                return FB::variantDeferred::makeDeferred(FB::variant());        \
+                return FB::makeVariantDeferred(FB::variant());                  \
             }                                                                   \
         };
 

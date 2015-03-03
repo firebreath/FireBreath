@@ -30,9 +30,6 @@ variant FB::variant_detail::conversion::make_variant(const std::exception ex)
 {
     return variant(ex, true);
 }
-variant FB::variant_detail::conversion::make_variant(variantDeferredPtr dfd) {
-    return variant(dfd, true);
-}
 ///////////////////////////////////////////////////
 // variant convert_cast helpers
 //

@@ -61,7 +61,8 @@ void NPPromise::init(NpapiBrowserHostPtr host) {
     // Hook up to the promise
     auto onSuccess = std::bind(&NPPromise::onSuccess, shared_from_this(), std::placeholders::_1);
     auto onError = std::bind(&NPPromise::onError, shared_from_this(), std::placeholders::_1);
-    m_promise->then(onSuccess, onError);
+    m_promise->done(onSuccess);
+    m_promise->fail(onError);
 }
 
 FB::Npapi::NPPromise::~NPPromise(void) {

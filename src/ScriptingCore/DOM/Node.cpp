@@ -13,41 +13,51 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
 #include "JSObject.h"
-#include "variantDeferred.h"
+#include "Deferred.h"
 #include "Node.h"
 
-FB::DOM::NodePtr FB::DOM::Node::getNode(const std::wstring& name) const 
+using namespace FB::DOM;
+using FB::DeferredPtr;
+
+DeferredPtr<NodePtr> Node::getNode(const std::wstring& name) const 
 {
     return getNode(FB::wstring_to_utf8(name));
 }
-FB::DOM::NodePtr FB::DOM::Node::getNode(std::string name) const
+DeferredPtr<NodePtr> Node::getNode(std::string name) const
 {
-    FB::JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
-    return Node::create(api);
+    auto dfd = getProperty<FB::JSObjectPtr>(name);
+    auto onDone = [=](FB::JSObjectPtr api) -> NodePtr {
+        return Node::create(api);
+    };
+    auto next = dfd->then<NodePtr>( onDone );
+    return next;
 }
 
-FB::DOM::NodePtr FB::DOM::Node::getNode(const int idx) const
+DeferredPtr<NodePtr> Node::getNode(const int idx) const
 {
-    FB::JSObjectPtr api = getProperty<JSObjectPtr>(idx);
-    return Node::create(api);
+    return getProperty<FB::JSObjectPtr>(idx)->then<NodePtr>( [=](FB::JSObjectPtr api) {
+        return Node::create(api);
+    } );
 }
 
-void FB::DOM::Node::setProperty(const std::wstring& name, const FB::variant& val) const
+void Node::setProperty(const std::wstring& name, const FB::variant& val) const
 {
     setProperty(FB::wstring_to_utf8(name), val);
 }
-void FB::DOM::Node::setProperty(std::string name, const FB::variant& val) const
+void Node::setProperty(std::string name, const FB::variant& val) const
 {
     m_element->SetProperty(name, val);
 }
 
-void FB::DOM::Node::setProperty(const int idx, const FB::variant& val) const
+void Node::setProperty(const int idx, const FB::variant& val) const
 {
     m_element->SetProperty(idx, val);
 }
 
-FB::DOM::NodePtr FB::DOM::Node::appendChild(FB::DOM::NodePtr node)
+DeferredPtr<NodePtr> Node::appendChild(NodePtr node)
 {
-    FB::JSObjectPtr result = callMethod<FB::JSObjectPtr>("appendChild", FB::VariantList{ node->getJSObject() });
-	return Node::create(result);
+    return callMethod<FB::JSObjectPtr>("appendChild", FB::VariantList{ node->getJSObject() })
+        ->then<NodePtr>([=](JSObjectPtr api) {
+        return Node::create(api);
+    });
 }

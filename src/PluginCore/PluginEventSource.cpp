@@ -53,8 +53,8 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 	
 	std::list<PluginEventSinkPtr> detachedList;
 	{
-		std::list<PluginEventSinkWeakPtr>::iterator end = m_observers.end();
-		for (std::list<PluginEventSinkWeakPtr>::iterator it = m_observers.begin(); it != end; ) {
+		auto end = m_observers.end();
+		for (auto it = m_observers.begin(); it != end; ) {
 			PluginEventSinkPtr ptr(it->lock());
 			if (!ptr || sink == ptr) {
 				it = m_observers.erase(it);
@@ -66,11 +66,10 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 		}
 	}
 	
-	std::list<PluginEventSinkPtr>::iterator end = detachedList.end();
 	DetachedEvent evt;
-	for (std::list<PluginEventSinkPtr>::iterator it = detachedList.begin(); it != end; ++it) {
-		(*it)->HandleEvent(&evt, this);
-	}
+    for (auto cur : detachedList) {
+        cur->HandleEvent(&evt, this);
+    }
 }
 
 bool PluginEventSource::SendEvent(PluginEvent* evt)
@@ -81,14 +80,11 @@ bool PluginEventSource::SendEvent(PluginEvent* evt)
     // it doesn't mess with our iterator.  Remember that removing an observer will only take
     // affect on the next SendEvent call
     ObserverMap copy(m_observers);
-    ObserverMap::iterator it = copy.begin();
-
-    while (it != copy.end()) {
-        PluginEventSinkPtr tmp = it->lock();
+    for (auto cur : copy) {
+        PluginEventSinkPtr tmp = cur.lock();
         if (tmp && tmp->HandleEvent(evt, this)) {
             return true;    // Tell the caller that the event was handled
         }
-        ++it;
     }
     return false;
 }

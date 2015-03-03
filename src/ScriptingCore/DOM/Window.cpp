@@ -12,7 +12,7 @@ License:    Dual license model; choose one of two:
 Copyright 2009 PacketPass, Inc and the Firebreath development team
 \**********************************************************/
 
-#include "variantDeferred.h"
+#include "Deferred.h"
 #include "Node.h"
 #include "Element.h"
 #include "Document.h"
@@ -20,6 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Window.h"
 
 using namespace FB::DOM;
+using FB::DeferredPtr;
 
 Window::Window(const FB::JSObjectPtr& element) : Node(element)
 {
@@ -29,10 +30,11 @@ Window::~Window()
 {
 }
 
-DocumentPtr Window::getDocument() const
+DeferredPtr<DocumentPtr> Window::getDocument() const
 {
-    JSObjectPtr api = getProperty<JSObjectPtr>("document");
-    return Document::create(api);
+    return getProperty<JSObjectPtr>("document")->then<DocumentPtr>([=](JSObjectPtr api) {
+        return Document::create(api);
+    });
 }
 
 void Window::alert(const std::wstring& str) const
@@ -42,23 +44,24 @@ void Window::alert(const std::wstring& str) const
 
 void Window::alert(std::string str) const
 {
-    callMethod<void>("alert", VariantList{ str });
+    callMethod<variant>("alert", VariantList{ str });
 }
 
-FB::JSObjectPtr Window::createArray() const
+DeferredPtr<FB::JSObjectPtr> Window::createArray() const
 {
-    JSObjectPtr arr = this->callMethod<JSObjectPtr>("Array", FB::VariantList());
-    return arr;
+    return callMethod<JSObjectPtr>("Array", FB::VariantList());
 }
 
-FB::JSObjectPtr Window::createMap() const
+DeferredPtr<FB::JSObjectPtr> Window::createMap() const
 {
-    JSObjectPtr arr = this->callMethod<JSObjectPtr>("Object", FB::VariantList());
-    return arr;
+    auto arrDfd = this->callMethod<JSObjectPtr>("Object", FB::VariantList());
+    return arrDfd;
 }
 
-std::string Window::getLocation() const
+DeferredPtr<std::string> Window::getLocation() const
 {
-    return getNode("location")->getProperty<std::string>("href");
+    return getNode("location")->thenPipe<std::string>([=](NodePtr loc) {
+        return loc->getProperty<std::string>("href");
+    });
 }
 

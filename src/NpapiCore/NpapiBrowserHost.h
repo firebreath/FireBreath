@@ -58,6 +58,9 @@ namespace FB {
         virtual void DoDeferredRelease() const;
         NPJavascriptObject* getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease = false );
 
+        virtual DeferredPtr<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj);
+        virtual DeferredPtr<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj);
+
     public:
         NPObject *getPromiseObject();
         int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,

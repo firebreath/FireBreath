@@ -27,7 +27,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 
 namespace FB { 
     class variant;
-    FB_FORWARD_PTR(variantDeferred);
     using VariantList = std::vector<variant>;
     namespace detail 
     {
@@ -162,12 +161,12 @@ namespace FB { namespace detail
     {
         static inline FB::variantDeferredPtr convert(const FB::variant& from)
         {
-            return FB::variantDeferred::makeDeferred(from);
+            return FB::makeVariantDeferred(from);
         }
 
         static inline FB::variantDeferredPtr convert(const FB::variant& from, size_t index)
         {
-            return FB::variantDeferred::makeDeferred(from);
+            return FB::makeVariantDeferred(from);
         }
     };
 

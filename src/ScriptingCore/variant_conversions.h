@@ -18,7 +18,6 @@ namespace FB {
     class variant;
     class JSAPI;
     class JSObject;
-    FB_FORWARD_PTR(variantDeferred);
     namespace variant_detail {
         namespace conversion {
             template <class T>
@@ -73,11 +72,11 @@ namespace FB {
             convert_variant(const variant& var, variant_detail::conversion::type_spec< std::shared_ptr<T> >);
             
             template<class Cont>
-            typename FB::meta::enable_for_non_assoc_containers<Cont, const Cont>::type
+            typename FB::meta::enable_for_non_assoc_containers<Cont, DeferredPtr<Cont>>::type
             convert_variant(const variant& var, type_spec<Cont>);
             
             template<class Dict>
-            typename FB::meta::enable_for_pair_assoc_containers<Dict, const Dict>::type
+            typename FB::meta::enable_for_pair_assoc_containers<Dict, DeferredPtr<Dict>>::type
             convert_variant(const variant& var, type_spec<Dict>);
         }
     }

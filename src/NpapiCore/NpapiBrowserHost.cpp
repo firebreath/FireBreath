@@ -23,6 +23,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "NPObjectAPI.h"
 #include "DOM/Document.h"
 #include "DOM/Window.h"
+#include "Deferred.h"
 
 #include "NpapiStream.h"
 #include "NpapiBrowserHost.h"
@@ -32,6 +33,9 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "URI.h"
 
 using namespace FB::Npapi;
+using FB::DeferredPtr;
+using FB::VariantList;
+using FB::VariantMap;
 
 using boost::algorithm::split;
 using boost::algorithm::is_any_of;
@@ -180,6 +184,38 @@ FB::DOM::ElementPtr NpapiBrowserHost::getDOMElement()
         throw std::runtime_error("Cannot find HTML window");
 
     return FB::DOM::Element::create(m_htmlElement);
+}
+
+DeferredPtr<VariantList> NpapiBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
+    VariantList out;
+    NPObjectAPIPtr ptr = std::dynamic_pointer_cast<NPObjectAPI>(obj);
+    if (!ptr) {
+        return FB::makeDeferred<VariantList>(out);
+    }
+
+    uint32_t len = ptr->GetPropertySync("length").convert_cast<uint32_t>();
+    for (size_t i{ 0 }; i < len; ++i) {
+        out.emplace_back(ptr->GetPropertySync(i));
+    }
+    return FB::makeDeferred<VariantList>(out);
+}
+DeferredPtr<FB::VariantMap> NpapiBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
+    VariantMap dst;
+    NPObjectAPIPtr src = std::dynamic_pointer_cast<NPObjectAPI>(obj);
+    if (!src) {
+        return FB::makeDeferred<VariantMap>(dst);
+    }
+    try {
+        vector<string> fields;
+        src->getMemberNames(fields);
+
+        for (auto fname : fields) {
+            dst[fname] = src->GetPropertySync(fname);
+        }
+    } catch (const FB::script_error& e) {
+        throw e;
+    }
+    return FB::makeDeferred<VariantMap>(dst);
 }
 
 void NpapiBrowserHost::deferred_release( NPObject* obj )

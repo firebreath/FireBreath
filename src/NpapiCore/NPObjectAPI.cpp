@@ -25,18 +25,11 @@ using FB::JSObjectPtr;
 using std::static_pointer_cast;
 
 NPObjectAPI::NPObjectAPI(NPObject *o, const NpapiBrowserHostPtr& h)
-    : JSObject(h), m_browser(h), obj(o), is_JSAPI(false)
+    : JSObject(h), m_browser(h), obj(o)
 {
     assert(!m_browser.expired());
     if (o != NULL) {
         getHost()->RetainObject(obj);
-    }
-    FB::JSAPIPtr ptr(getJSAPI());
-    if (ptr) {
-        // This is a JSAPI object wrapped in an IDispatch object; we'll call it
-        // directly(ish)
-        is_JSAPI = true;
-        inner = ptr;
     }
 }
 
@@ -59,12 +52,6 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
         browser->CallOnMainThread(std::bind((getMemberNamesType)&FB::JSAPI::getMemberNames, this, &nameVector));
         return;
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            tmp->getMemberNames(nameVector);
-        return;
-    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
 
@@ -84,13 +71,6 @@ size_t NPObjectAPI::getMemberCount() const
     if (!browser->isMainThread()) {
         return browser->CallOnMainThread(std::bind(&NPObjectAPI::getMemberCount, this));
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->getMemberCount();
-        else 
-            return 0;
-    }
     NPIdentifier *idArray(NULL);
     uint32_t count;
     browser->Enumerate(obj, &idArray, &count);
@@ -108,13 +88,6 @@ bool NPObjectAPI::HasMethod(std::string methodName) const
         typedef bool (NPObjectAPI::*curtype)(std::string) const;
         return browser->CallOnMainThread(std::bind((curtype)&NPObjectAPI::HasMethod, this, methodName));
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->HasMethod(methodName);
-        else 
-            return false;
-    }
     return browser->HasMethod(obj, browser->GetStringIdentifier(methodName.c_str()));
 }
 
@@ -128,13 +101,6 @@ bool NPObjectAPI::HasProperty(std::string propertyName) const
         typedef bool (NPObjectAPI::*curtype)(std::string) const;
         return browser->CallOnMainThread(std::bind((curtype)&NPObjectAPI::HasProperty, this, propertyName));
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->HasProperty(propertyName);
-        else 
-            return false;
-    }
     return browser->HasProperty(obj, browser->GetStringIdentifier(propertyName.c_str()));
 }
 
@@ -144,19 +110,12 @@ bool NPObjectAPI::HasProperty(int idx) const
         return false;
 
     NpapiBrowserHostPtr browser(getHost());
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->HasProperty(idx);
-        else 
-            return false;
-    }
     return browser->HasProperty(obj, browser->GetIntIdentifier(idx));
 }
 
 // Methods to manage properties on the API
 FB::variantDeferredPtr NPObjectAPI::GetProperty(std::string propertyName) {
-    return FB::variantDeferred::makeDeferred(GetPropertySync(propertyName));
+    return FB::makeVariantDeferred(GetPropertySync(propertyName));
 }
 
 FB::variant NPObjectAPI::GetPropertySync(std::string propertyName)
@@ -166,14 +125,7 @@ FB::variant NPObjectAPI::GetPropertySync(std::string propertyName)
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(std::bind((FB::GetPropertyType)&JSAPI::GetProperty, this, propertyName));
-    }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->GetProperty(propertyName);
-        else 
-            return false;
+        return browser->CallOnMainThread(std::bind((variant(JSAPI::*)(std::string))&NPObjectAPI::GetPropertySync, this, propertyName));
     }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
@@ -196,12 +148,6 @@ void NPObjectAPI::SetProperty(std::string propertyName, const FB::variant& value
         browser->CallOnMainThread(std::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
         return;
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            tmp->SetProperty(propertyName, value);
-        return;
-    }
     NPVariant val;
     browser->getNPVariant(&val, value);
     bool res = browser->SetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &val);
@@ -220,20 +166,13 @@ void NPObjectAPI::RemoveProperty(std::string propertyName)
     if (!browser->isMainThread()) {
         return browser->CallOnMainThread(std::bind((FB::RemovePropertyType)&JSAPI::RemoveProperty, this, propertyName));
     }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->RemoveProperty(propertyName);
-        else 
-            return /*false*/;
-    }
     if (!browser->RemoveProperty(obj, browser->GetStringIdentifier(propertyName.c_str()))) {
         throw script_error(propertyName.c_str());
     }
 }
 
 FB::variantDeferredPtr NPObjectAPI::GetProperty(int idx) {
-    return FB::variantDeferred::makeDeferred(GetProperty(idx));
+    return FB::makeVariantDeferred(GetPropertySync(idx));
 }
 FB::variant NPObjectAPI::GetPropertySync(int idx)
 {
@@ -242,12 +181,7 @@ FB::variant NPObjectAPI::GetPropertySync(int idx)
 
     NpapiBrowserHostPtr browser(getHost());
     std::string strIdx(std::to_string(idx));
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->GetProperty(idx);
-    }
-    return GetProperty(strIdx);
+    return GetPropertySync(strIdx);
 }
 
 void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
@@ -257,11 +191,6 @@ void NPObjectAPI::SetProperty(int idx, const FB::variant& value)
 
     NpapiBrowserHostPtr browser(getHost());
     std::string strIdx(std::to_string(idx));
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            SetProperty(idx, value);
-    }
     SetProperty(strIdx, value);
 }
 
@@ -272,17 +201,12 @@ void NPObjectAPI::RemoveProperty(int idx)
 
     NpapiBrowserHostPtr browser(getHost());
     std::string strIdx(std::to_string(idx));
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->RemoveProperty(idx);
-    }
     return RemoveProperty(strIdx);
 }
 
 // Methods to manage methods on the API
 FB::variantDeferredPtr NPObjectAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
-    return FB::variantDeferred::makeDeferred(InvokeSync(methodName, args));
+    return FB::makeVariantDeferred(InvokeSync(methodName, args));
 }
 FB::variant NPObjectAPI::InvokeSync(std::string methodName, const std::vector<FB::variant>& args)
 {
@@ -291,14 +215,8 @@ FB::variant NPObjectAPI::InvokeSync(std::string methodName, const std::vector<FB
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(std::bind((FB::InvokeType)&NPObjectAPI::Invoke, this, methodName, args));
-    }
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (tmp)
-            return tmp->Invoke(methodName, args);
-        else 
-            return false;
+        auto cb = (FB::variant(NPObjectAPI::*)(std::string, const FB::VariantList&))&NPObjectAPI::Invoke;
+        return browser->CallOnMainThread(std::bind(cb, this, methodName, args));
     }
     NPVariant retVal;
 
@@ -358,13 +276,6 @@ void NPObjectAPI::callMultipleFunctions( std::string name, const FB::VariantList
     bool res = false;
     for (auto obj : direct) {
         NPObjectAPIPtr ptr(std::static_pointer_cast<NPObjectAPI>(obj));
-        if (ptr->is_JSAPI) {
-            FB::JSAPIPtr tmp = ptr->inner.lock();
-            if (tmp) {
-                tmp->Invoke("", args);
-                continue;
-            }
-        }
         browser->getNPVariant(&npargs[1], ptr);
         res = browser->Invoke(helper, idFn, npargs.get(), 3, &retVal);
         browser->ReleaseVariantValue(&retVal);
@@ -373,13 +284,6 @@ void NPObjectAPI::callMultipleFunctions( std::string name, const FB::VariantList
     
     for (auto obj : ifaces) {
         NPObjectAPIPtr ptr(std::static_pointer_cast<NPObjectAPI>(obj));
-        if (ptr->is_JSAPI) {
-            FB::JSAPIPtr tmp = ptr->inner.lock();
-            if (tmp) {
-                tmp->Invoke("", args);
-                continue;
-            }
-        }
         browser->getNPVariant(&npargs[1], ptr);
         res = browser->Invoke(helper, idFn, npargs.get(), 4, &retVal);
         browser->ReleaseVariantValue(&retVal);
@@ -388,17 +292,3 @@ void NPObjectAPI::callMultipleFunctions( std::string name, const FB::VariantList
     browser->ReleaseVariantValue(&npargs[2]);
     browser->ReleaseVariantValue(&npargs[3]);
 }
-
-FB::JSAPIPtr NPObjectAPI::getJSAPI() const
-{
-    if (!obj) {
-        return JSAPIPtr();
-    }
-    
-    if (!NPJavascriptObject::isNPJavaScriptObject(obj)) {
-        return JSAPIPtr();
-    }
-    
-    return static_cast<NPJavascriptObject*>(obj)->getAPI();
-}
-

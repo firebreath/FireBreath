@@ -18,6 +18,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 
 #include <string>
 #include "JSObject.h"
+#include "Deferred.h"
 #include "Node.h"
 
 namespace FB { namespace DOM {
@@ -71,7 +72,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The inner html.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::string getInnerHTML() const;
+        virtual FB::DeferredPtr<std::string> getInnerHTML() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setInnerHTML(std::string) const
@@ -89,7 +90,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The width.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getWidth() const;
+        virtual FB::DeferredPtr<int> getWidth() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setWidth(int) const
@@ -107,7 +108,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The scroll width.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getScrollWidth() const;
+        virtual FB::DeferredPtr<int> getScrollWidth() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getHeight() const
@@ -116,7 +117,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The height.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getHeight() const;
+        virtual FB::DeferredPtr<int> getHeight() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Element::setHeight(int) const
@@ -134,7 +135,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The scroll height.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getScrollHeight() const;
+        virtual FB::DeferredPtr<int> getScrollHeight() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual int Element::getChildNodeCount() const
@@ -143,7 +144,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child node count.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual int getChildNodeCount() const;
+        virtual FB::DeferredPtr<int> getChildNodeCount() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getChildNode(int idx) const
@@ -157,7 +158,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The child node.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getChildNode(const int idx) const;
+        virtual FB::DeferredPtr<ElementPtr> getChildNode(const int idx) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getParentNode() const
@@ -166,7 +167,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The parent node.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getParentNode() const;
+        virtual FB::DeferredPtr<ElementPtr> getParentNode() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Element::getElement(std::string name) const
@@ -186,11 +187,13 @@ namespace FB { namespace DOM {
         ///
         /// @return The child element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElement(std::string name) const
+        virtual FB::DeferredPtr<ElementPtr> getElement(std::string name) const
         {
-            JSObjectPtr api = getProperty<FB::JSObjectPtr>(name);
-            ElementPtr retVal((api) ? new Element(api) : NULL);
-            return retVal;
+            auto onDone = [](FB::JSObjectPtr api) -> ElementPtr {
+                ElementPtr retVal((api) ? new Element(api) : nullptr);
+                return retVal;
+            };
+            return getProperty<FB::JSObjectPtr>(name)->then<ElementPtr>(onDone);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -208,14 +211,16 @@ namespace FB { namespace DOM {
         ///
         /// @return The child element.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElement(const int idx) const
+        virtual FB::DeferredPtr<ElementPtr> getElement(const int idx) const
         {
-            JSObjectPtr api = getProperty<FB::JSObjectPtr>(idx);
-            ElementPtr retVal((api) ? new Element(api) : NULL);
-            return retVal;
+            auto onDone = [](FB::JSObjectPtr api) -> ElementPtr {
+                ElementPtr retVal((api) ? new Element(api) : nullptr);
+                return retVal;
+            };
+            return getProperty<FB::JSObjectPtr>(idx)->then<ElementPtr>(onDone);
         }
 
-        virtual std::string getStringAttribute(std::string attr) const;
+        virtual FB::DeferredPtr<std::string> getStringAttribute(std::string attr) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr getElementById(std::string elem_id) const
@@ -226,7 +231,7 @@ namespace FB { namespace DOM {
         ///
         /// @return The element by identifier.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual ElementPtr getElementById(std::string elem_id) const;
+        virtual FB::DeferredPtr<ElementPtr> getElementById(std::string elem_id) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::vector<ElementPtr> getElementsByTagName(std::string tagName) const
@@ -237,12 +242,12 @@ namespace FB { namespace DOM {
         ///
         /// @return The elements by tag name.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::vector<ElementPtr> getElementsByTagName(std::string tagName) const;
+        virtual FB::DeferredPtr<std::vector<ElementPtr>> getElementsByTagName(std::string tagName) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual std::vector<ElementPtr> getElementsByTagName(const std::wstring& tagName) const;
+        virtual FB::DeferredPtr<std::vector<ElementPtr>> getElementsByTagName(const std::wstring& tagName) const;
     };
 
 }; };

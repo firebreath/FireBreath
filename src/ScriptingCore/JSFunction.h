@@ -20,7 +20,6 @@
 
 namespace FB {
     FB_FORWARD_PTR(JSFunction);
-    FB_FORWARD_PTR(variantDeferred);
     class JSFunction : public FB::JSAPIAuto {
     public:
         JSFunction(const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone);

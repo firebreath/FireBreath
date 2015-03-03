@@ -17,7 +17,7 @@ Copyright 2013 Gil Gonen and the Firebreath development team
 #define H_FB_ASYNCDRAWSERVICE
 
 #include "FBPointers.h"
-#include "fb_stdint.h"
+#include <cstdint>
 #include <memory>
 
 namespace FB {

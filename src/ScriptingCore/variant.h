@@ -25,8 +25,6 @@ Copyright 2008-2012 Richard Bateman, Firebreath development team
 #include <sstream>
 #include <string>
 
-#include <boost/type_traits/is_integral.hpp>
-#include <boost/type_traits/is_floating_point.hpp>
 #include <boost/type_traits/is_arithmetic.hpp>
 #include <boost/mpl/or.hpp>
 #include <boost/mpl/and.hpp>
@@ -123,7 +121,6 @@ Copyright 2008-2012 Richard Bateman, Firebreath development team
 namespace FB
 {
     class JSObject;
-    FB_FORWARD_PTR(variantDeferred);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @exception bad_variant_cast
@@ -390,7 +387,7 @@ namespace FB
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn template<typename T> typename FB::meta::disable_for_containers_and_numbers<T, const T>::type variant::convert_cast() const
+        /// @fn template<typename T> typename FB::meta::disable_for_containers<T, const T>::type variant::convert_cast() const
         ///
         /// @brief  Converts the stored value to the requested type *if possible* and returns the resulting
         ///         value.  If the conversion is not possible, throws bad_variant_cast
@@ -406,7 +403,12 @@ namespace FB
         /// @return converted value of the specified type
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<typename T>
-        const T convert_cast() const;
+        typename FB::meta::disable_for_containers<T, const T>::type
+        convert_cast() const;
+
+        template<typename T>
+        typename FB::meta::enable_for_containers<T, DeferredPtr<T>>::type
+        convert_cast() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn bool variant::empty() const
@@ -578,7 +580,6 @@ namespace FB
             variant make_variant(const char* x);
             variant make_variant(const wchar_t* x);
             variant make_variant(const std::nullptr_t);
-            variant make_variant(variantDeferredPtr);
             variant make_variant(const std::exception);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers
@@ -628,11 +629,19 @@ namespace FB
             }
         }
     }
+    template<class Cont>
+    typename FB::meta::enable_for_containers<Cont, DeferredPtr<Cont>>::type
+    variant::convert_cast() const {
+        return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<Cont>());
+    }
+    
     template<typename T>
-    const T variant::convert_cast() const
+    typename FB::meta::disable_for_containers<T, const T>::type
+    variant::convert_cast() const
     {
         return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<T>());
     }
+
     template <class T>
     variant make_variant(T t)
     {

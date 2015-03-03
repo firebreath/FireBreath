@@ -18,7 +18,6 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <cassert>
 #include <mutex>
 #include <memory>
-#include "variantDeferred.h"
 
 #include "JSAPIAuto.h"
 
@@ -162,7 +161,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(std::string propertyName)
     } else if (memberAccessible(zoneName)) {
         AttributeMap::iterator fnd = m_attributes.find(propertyName);
         if (fnd != m_attributes.end()) {
-            return FB::variantDeferred::makeDeferred(fnd->second.value);
+            return FB::makeVariantDeferred(fnd->second.value);
         } else {
             throw invalid_member(propertyName);
         }
@@ -229,7 +228,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(int idx)
     std::string id = std::to_string(idx);
     AttributeMap::iterator fnd = m_attributes.find(id);
     if (fnd != m_attributes.end() && memberAccessible(m_zoneMap.find(id))) {
-        return FB::variantDeferred::makeDeferred(fnd->second.value);
+        return FB::makeVariantDeferred(fnd->second.value);
     } else {
         throw invalid_member(std::to_string(idx));
     }
@@ -313,9 +312,9 @@ void FB::JSAPIAuto::unregisterAttribute( std::string name )
 FB::variantDeferredPtr FB::JSAPIAuto::getAttribute( std::string name )
 {
     if (m_attributes.find(name) != m_attributes.end()) {
-        return FB::variantDeferred::makeDeferred(m_attributes[name].value);
+        return FB::makeVariantDeferred(m_attributes[name].value);
     }
-    return FB::variantDeferred::makeDeferred(FB::FBVoid());
+    return FB::makeVariantDeferred(FB::FBVoid());
 }
 
 void FB::JSAPIAuto::setAttribute( std::string name, const FB::variant& value )
@@ -333,12 +332,15 @@ void FB::JSAPIAuto::setAttribute( std::string name, const FB::variant& value )
 void FB::JSAPIAuto::FireJSEvent( std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments )
 {
     JSAPIImpl::FireJSEvent(eventName, members, arguments);
-    FB::variant evt(getAttribute(eventName));
+    FB::variant evt;
+    try {
+        evt = m_attributes.at(eventName).value;
+    } catch (...) {};
     if (evt.is_of_type<FB::JSObjectPtr>()) {
         VariantList args;
         args.push_back(FB::CreateEvent(shared_from_this(), eventName, members, arguments));
         try {
-            evt.cast<JSObjectPtr>()->InvokeAsync("", args);
+            evt.cast<JSObjectPtr>()->Invoke("", args);
         } catch (...) {
             // Apparently either this isn't really an event handler or something failed.
         }
@@ -348,12 +350,15 @@ void FB::JSAPIAuto::FireJSEvent( std::string eventName, const FB::VariantMap &me
 void FB::JSAPIAuto::fireAsyncEvent( std::string eventName, const std::vector<variant>& args )
 {
     JSAPIImpl::fireAsyncEvent(eventName, args);
-    FB::variant evt(getAttribute(eventName));
+    FB::variant evt;
+    try {
+        evt = m_attributes.at(eventName).value;
+    } catch (...) {};
     if (evt.is_of_type<FB::JSObjectPtr>()) {
         try {
             FB::JSObjectPtr handler(evt.cast<JSObjectPtr>());
             if (handler) {
-                handler->InvokeAsync("", args);
+                handler->Invoke("", args);
             }
         } catch (...) {
             // Apparently either this isn't really an event handler or something failed.

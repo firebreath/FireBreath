@@ -12,8 +12,9 @@
  Copyright 2010 Richard Bateman, FaceBook inc, Firebreath development team
 \**********************************************************/
 
-#include "variantDeferred.h"
+#include "Deferred.h"
 #include "JSFunction.h"
+#include <memory>
 
 FB::JSFunction::JSFunction( const FB::JSAPIWeakPtr& obj, const std::wstring& func, const FB::SecurityZone zone)
     : FB::JSAPIAuto(zone, FB::wstring_to_utf8(func) + "()"), m_apiWeak(obj), m_methodName(FB::wstring_to_utf8(func))
@@ -52,11 +53,14 @@ FB::variantDeferredPtr FB::JSFunction::call( const std::vector<variant>& args )
 
 FB::variantDeferredPtr FB::JSFunction::apply( const std::vector<variant>& args )
 {
-    FB::VariantList list;
     if (args.size() >= 2) {
-        list = args[1].convert_cast<FB::VariantList>();
+        auto fn = std::dynamic_pointer_cast<FB::JSFunction>(shared_from_this());
+        return args[1].convert_cast<FB::VariantList>()->thenPipe<variant>([fn](VariantList list) {
+            return fn->exec(list);
+        });
+    } else {
+        return exec(VariantList{});
     }
-    return exec(list);
 }
 
 

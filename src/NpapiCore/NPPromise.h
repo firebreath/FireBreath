@@ -19,7 +19,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "APITypes.h"
 #include "NpapiTypes.h"
 #include "NpapiBrowserHost.h"
-#include "variantDeferred.h"
+#include "Deferred.h"
 #include <boost/noncopyable.hpp>
 
 namespace FB { namespace Npapi {

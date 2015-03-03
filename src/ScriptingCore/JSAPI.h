@@ -27,7 +27,6 @@ namespace FB
 {
     FB_FORWARD_PTR(JSObject);
     FB_FORWARD_PTR(BrowserHost);
-    FB_FORWARD_PTR(variantDeferred);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  JSAPI

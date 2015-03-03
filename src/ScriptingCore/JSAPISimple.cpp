@@ -13,10 +13,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
-#include "variantDeferred.h"
+#include "Deferred.h"
 #include "JSAPISimple.h"
-
-using dfd = FB::variantDeferred;
 
 using namespace FB;
 JSAPISimple::JSAPISimple(void) : m_allowRemoveProperty(false)
@@ -42,7 +40,7 @@ FB::variantDeferredPtr FB::JSAPISimple::callFireEvent(const std::vector<variant>
         std::string event = args[0].convert_cast<std::string>();
         args.erase(args.begin());
         this->FireEvent(event, args);
-        return dfd::makeDeferred(event);
+        return FB::makeVariantDeferred(event);
     } catch (...) {
         throw invalid_arguments();
     }
@@ -51,12 +49,12 @@ FB::variantDeferredPtr FB::JSAPISimple::callFireEvent(const std::vector<variant>
 // Example function call and read-only property; override these if desired in derived classes
 variantDeferredPtr JSAPISimple::callToString(const std::vector<FB::variant>& args)
 {
-    return dfd::makeDeferred("JSAPI Javascript Object");
+    return FB::makeVariantDeferred("JSAPI Javascript Object");
 }
 
 variantDeferredPtr JSAPISimple::getValid()
 {
-    return dfd::makeDeferred(m_valid);
+    return FB::makeVariantDeferred(m_valid);
 }
 
 void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
