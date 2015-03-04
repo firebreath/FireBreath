@@ -14,16 +14,3 @@ Copyright 2015 Richard Bateman and the FireBreath Dev Team
 
 #include "APITypes.h"
 #include "Deferred.h"
-
-using FB::variantDeferredPtr;
-using FB::variant;
-
-variantDeferredPtr FB::makeVariantDeferred(variant v) {
-
-    return makeDeferred<FB::variant>(v);
-}
-
-variantDeferredPtr FB::makeVariantDeferred() {
-
-    return makeDeferred<FB::variant>();
-}

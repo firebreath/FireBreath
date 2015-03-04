@@ -19,26 +19,15 @@ Copyright 2015 Richard Bateman and the FireBreath Dev Team
 #include <functional>
 #include <type_traits>
 #include <APITypes.h>
-#include <boost/noncopyable.hpp>
 
 namespace FB {
-    template <typename T>
-    DeferredPtr<T> makeDeferred() {
-        return std::make_shared<Deferred<T>>(Deferred<T>::PrivateOnly());
-    }
 
     template <typename T>
-    DeferredPtr<T> makeDeferred(T v) {
-        return std::make_shared<Deferred<T>>(v, Deferred<T>::PrivateOnly());
-    }
+    class Promise;
 
     template <typename T>
-    struct is_Deferred : std::false_type { };
-    template <typename T>
-    struct is_Deferred<DeferredPtr<T> > : std::true_type {}; 
-
-    template <typename T>
-    class Deferred final : public std::enable_shared_from_this<Deferred<T>>, boost::noncopyable {
+    class Deferred final {
+        friend class Promise < T > ;
     public:
         using type = T;
         using Callback = std::function < void(T) > ;
@@ -46,180 +35,217 @@ namespace FB {
         enum class State {PENDING, RESOLVED, REJECTED};
 
     private:
-        struct PrivateOnly {};
+        struct StateData {
+            StateData(T v) : value(v), state(State::RESOLVED) {}
+            StateData() : state(State::PENDING) {}
+            T value;
+            State state;
+            std::exception err;
+
+            std::vector<Callback> resolveList;
+            std::vector<ErrCallback> rejectList;
+        };
+        using StateDataPtr = std::shared_ptr < StateData > ;
+        
+        StateDataPtr m_data;
     public:
-        Deferred(T v, PrivateOnly) : m_value(v), m_state(State::RESOLVED) { }
-        Deferred(PrivateOnly) : m_state(State::PENDING) {}
+        Deferred(T v) : m_data(std::make_shared<StateData>(v)) {}
+        Deferred() : m_data(std::make_shared<StateData>()) {}
+        Deferred(Deferred<T> &&rh) : m_data(std::move(rh.m_data)) {} // Move constructor
+        Deferred(const Deferred<T>& rh) : m_data(rh.m_data) {} // Copy constructor
         
         ~Deferred() { invalidate(); }
 
-        void invalidate() {
-            if (m_state == State::PENDING) {
+        Promise<T> promise() const {
+            return Promise<T>(m_data);
+        }
+
+        void invalidate() const {
+            if (m_data->state == State::PENDING) {
                 reject(std::runtime_error("Deferred object destroyed"));
             }
         }
 
+        void resolve(Promise<T> v) const {
+            auto onDone = [this](T resV) {
+                this->resolve(resV);
+            };
+            auto onFail = [this](std::exception e) { reject(e); };
+            promise().done(onDone, onFail);
+        }
+        void resolve(T v) const {
+            m_data->value = v;
+            m_data->state = State::RESOLVED;
+            for (auto fn : m_data->resolveList) {
+                fn(v);
+            }
+            m_data->resolveList.clear();
+        }
+        void reject(std::exception e) const {
+            m_data->err = e;
+            m_data->state = State::REJECTED;
+            for (auto fn : m_data->rejectList) {
+                fn(e);
+            }
+            m_data->rejectList.clear();
+        }
+
+    };
+
+    template <typename T>
+    class Promise
+    {
+    private:
+        friend class Deferred < T >;
+        typename Deferred<T>::StateDataPtr m_data;
+
+    public:
+        Promise() {} // default constructor, creates invalid promise
+        Promise(typename Deferred<T>::StateDataPtr data) : m_data(data) {}
+        Promise(Promise&& rh) : m_data(std::move(rh.m_data)) {} // Move constructor
+        Promise(const Promise<T>& rh) : m_data(rh.m_data) {} // Copy constructor
+        Promise(T v) {
+            Deferred<T> dfd{ v };
+            m_data = dfd.promise().m_data;
+        }
+
+        Promise<T>& operator=(const Promise<T>& rh) {
+            m_data = rh.m_data;
+            return *this;
+        }
+
+        template <typename U>
+        Promise(const Promise<U>& rh) {
+            Deferred<T> dfd;
+            auto onDone = [dfd](U v) {
+                FB::variant val{ v };
+                dfd.resolve(val.convert_cast<T>());
+            };
+            auto onFail = [dfd](std::exception e) { dfd.reject(e); };
+            done(onDone, onFail);
+            m_data = dfd.promise().m_data;
+        }
+
         // Called only if U and T are not the same type (see specialization below)
         template <typename U>
-        DeferredPtr<U> convert_cast() {
-            DeferredPtr<U> dfdOut = makeDeferred<U>();
-            auto onDone = [dfdOut](T v) {
-                FB::variant val{ v };
-                dfdOut->resolve(val.convert_cast<U>());
-            };
-            auto onFail = [dfdOut](std::exception e) { dfdOut->reject(e); };
-            done(onDone);
-            fail(onFail);
-            return dfdOut;
+        Promise<U> convert_cast() {
+            return Promise<U>(*this);
         }
 
         template <>
-        DeferredPtr<T> convert_cast() {
-            return shared_from_this();
+        Promise<T> convert_cast() {
+            return *this;
+        }
+
+        static Promise<T> rejected(std::exception e) {
+            Deferred<T> dfd;
+            dfd.reject(e);
+            return dfd.promise();
+        }
+
+        void invalidate() {
+            m_data.reset();
         }
 
         // piped then with static return value
         template <typename Uout>
-        DeferredPtr<Uout> then(std::function<Uout(typename T)> cbSuccess, std::function<Uout(std::exception)> cbFail = nullptr)
-        {
-            DeferredPtr<Uout> dfdOut = makeDeferred<Uout>();
-            auto onDone = [dfdOut,cbSuccess](typename T v) -> void {
+        Promise<Uout> then(std::function<Uout(typename T)> cbSuccess, std::function<Uout(std::exception)> cbFail = nullptr) const {
+            if (!m_data) { return Promise<Uout>::rejected(std::runtime_error("Promise invalid")); }
+            Deferred<Uout> dfd;
+            auto onDone = [dfd, cbSuccess](typename T v) -> void {
                 try {
                     auto res = cbSuccess(v);
-                    dfdOut->resolve(res);
+                    dfd.resolve(res);
                 } catch (std::exception e) {
-                    dfdOut->reject(e);
+                    dfd.reject(e);
                 }
             };
             if (cbFail) {
-                auto onFail = [dfdOut,cbFail](std::exception e1) -> void {
+                auto onFail = [dfd, cbFail](std::exception e1) -> void {
                     try {
                         auto res = cbFail(e1);
-                        dfdOut->resolve(res);
+                        dfd.resolve(res);
                     } catch (std::exception e2) {
-                        dfdOut->reject(e2);
+                        dfd.reject(e2);
                     }
                 };
-                done((Callback)onDone);
+                done((Deferred<T>::Callback)onDone);
                 int a = 0;
                 //fail((ErrCallback)onFail);
             } else {
-                auto onFail = [dfdOut](std::exception e1) -> void {
-                    dfdOut->reject(e1);
+                auto onFail = [dfd](std::exception e1) -> void {
+                    dfd.reject(e1);
                 };
                 done(onDone);
                 fail(onFail);
             }
-            return dfdOut;
+            return dfd.promise();
         }
 
         // piped then with Deferred return value
         template <typename Uout>
-        DeferredPtr<Uout> thenPipe(std::function<DeferredPtr<Uout>(typename T)> cbSuccess, std::function<DeferredPtr<Uout>(std::exception)> cbFail = nullptr)
-        {
-            DeferredPtr<Uout> dfdOut = makeDeferred<Uout>();
-            auto onDone = [dfdOut,cbSuccess](typename T v) -> void {
+        Promise<Uout> thenPipe(std::function<Promise<Uout>(typename T)> cbSuccess, std::function<Promise<Uout>(std::exception)> cbFail = nullptr) const {
+            if (!m_data) { return Promise<Uout>::rejected(std::runtime_error("Promise invalid")); }
+            Deferred<Uout> dfd;
+            auto onDone = [dfd, cbSuccess](typename T v) -> void {
                 try {
                     auto res = cbSuccess(v);
-                    auto onDone2 = [dfdOut](Uout v) { dfdOut->resolve(v); };
-                    auto onFail2 = [dfdOut](std::exception e) { dfdOut->reject(e); };
-                    res->done(onDone2);
-                    res->fail(onFail2);
+                    auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+                    auto onFail2 = [dfd](std::exception e) { dfd.reject(e); };
+                    res.done(onDone2);
+                    res.fail(onFail2);
                 } catch (std::exception e) {
-                    dfdOut->reject(e);
+                    dfd.reject(e);
                 }
             };
 
             if (cbFail) {
-                auto onFail = [dfdOut,cbFail](std::exception e1) -> void {
+                auto onFail = [dfd, cbFail](std::exception e1) -> void {
                     try {
                         auto res = cbFail(e1);
-                        auto onDone2 = [dfdOut](Uout v) { dfdOut->resolve(v); };
-                        auto onFail2 = [dfdOut](std::exception e) { dfdOut->reject(e); };
-                        res->done(onDone2);
-                        res->fail(onFail2);
+                        auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+                        auto onFail2 = [dfd](std::exception e) { dfd.reject(e); };
+                        res.done(onDone2);
+                        res.fail(onFail2);
                     } catch (std::exception e2) {
-                        dfdOut->reject(e2);
+                        dfd.reject(e2);
                     }
                 };
                 done(onDone);
                 fail(onFail);
             } else {
-                auto onFail = [dfdOut](std::exception e1) -> void {
-                    dfdOut->reject(e1);
+                auto onFail = [dfd](std::exception e1) -> void {
+                    dfd.reject(e1);
                 };
                 done(onDone);
                 fail(onFail);
             }
-            return dfdOut;
+            return dfd.promise();
         }
 
-        void done(Callback cbSuccess) {
-            if (!cbSuccess) { return; }
-            if (m_state == State::PENDING) {
-                m_onResolve.emplace_back(cbSuccess);
-            } else if (m_state == State::RESOLVED) {
-                cbSuccess(m_value);
+        const Promise<T>& done(typename Deferred<T>::Callback cbSuccess, typename Deferred<T>::ErrCallback cbFail = nullptr) const {
+            if (!m_data) { throw std::runtime_error("Promise invalid"); }
+            if (cbFail) { fail(cbFail); }
+            if (!cbSuccess) { return *this; }
+            if (m_data->state == Deferred<T>::State::PENDING) {
+                m_data->resolveList.emplace_back(cbSuccess);
+            } else if (m_data->state == Deferred<T>::State::RESOLVED) {
+                cbSuccess(m_data->value);
             }
+            return *this;
         }
-        void fail(ErrCallback cbFail) {
-            if (!cbFail) { return; }
-            if (m_state == State::PENDING) {
-                m_onReject.emplace_back(cbFail);
-            } else if (m_state == State::REJECTED) {
-                cbFail(m_err);
+        const Promise<T>& fail(typename Deferred<T>::ErrCallback cbFail) const {
+            if (!m_data) { throw std::runtime_error("Promise invalid"); }
+            if (!cbFail) { return *this; }
+            if (m_data->state == Deferred<T>::State::PENDING) {
+                m_data->rejectList.emplace_back(cbFail);
+            } else if (m_data->state == Deferred<T>::State::REJECTED) {
+                cbFail(m_data->err);
             }
+            return *this;
         }
 
-        void resolve(DeferredPtr<T> v) {
-            auto self = shared_from_this();
-            auto onDone = [self](T resV) {
-                self->resolve(resV);
-            };
-            auto onFail = [self](std::exception e) { self->reject(e); };
-            done(onDone);
-            fail(onFail);
-        }
-        void resolve(T v) {
-            m_value = v;
-            m_state = State::RESOLVED;
-            for (auto fn : m_onResolve) {
-                fn(v);
-            }
-            m_onResolve.clear();
-        }
-        void reject(std::exception e) {
-            m_err = e;
-            m_state = State::REJECTED;
-            for (auto fn : m_onReject) {
-                fn(e);
-            }
-            m_onReject.clear();
-        }
-
-    private:
-        T m_value;
-        State m_state;
-        std::exception m_err;
-
-        std::vector<Callback> m_onResolve;
-        std::vector<ErrCallback> m_onReject;
-
-        template <typename T>
-        friend DeferredPtr<T> makeDeferred(T v);
-
-        template <typename T>
-        friend DeferredPtr<T> makeDeferred();
     };
-
-    template <typename T>
-    variantDeferredPtr makeVariantDeferred(FB::DeferredPtr<T> v) {
-        return v->convert_cast<FB::variant>();
-    }
-
-    variantDeferredPtr makeVariantDeferred(FB::variant v);
-
-    variantDeferredPtr makeVariantDeferred();
 
 }
 
