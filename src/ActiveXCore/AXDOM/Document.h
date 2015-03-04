@@ -43,10 +43,10 @@ namespace FB { namespace ActiveX {
             virtual ~Document();
 
         public:
-            virtual FB::DOM::WindowPtr getWindow() const;
-            virtual FB::DOM::ElementPtr getElementById(std::string elem_id) const;
-            virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(std::string tagName) const;
-			virtual FB::DOM::ElementPtr createElement(const std::string &name) const;
+            virtual FB::Promise<FB::DOM::WindowPtr> getWindow() const;
+            virtual FB::Promise<FB::DOM::ElementPtr> getElementById(std::string elem_id) const;
+            virtual FB::Promise<std::vector<FB::DOM::ElementPtr>> getElementsByTagName(std::string tagName) const;
+			virtual FB::Promise<FB::DOM::ElementPtr> createElement(const std::string &name) const;
         protected:
             CComQIPtr<IWebBrowser> m_webBrowser;
             CComQIPtr<IHTMLDocument2> m_htmlDoc;

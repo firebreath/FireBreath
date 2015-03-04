@@ -67,7 +67,7 @@ namespace FB { namespace Npapi {
         NPJavascriptObject(NPP npp);
         FB::variant addEventListener(const std::vector<variant> args);
         FB::variant removeEventListener(const std::vector<variant> args);
-        void setPromise(FB::variantDeferredPtr promise, NPVariant *result);
+        void setPromise(FB::variantPromise promise, NPVariant *result);
 
     protected:
         void Invalidate();

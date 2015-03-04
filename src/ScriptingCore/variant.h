@@ -407,7 +407,7 @@ namespace FB
         convert_cast() const;
 
         template<typename T>
-        typename FB::meta::enable_for_containers<T, DeferredPtr<T>>::type
+        typename FB::meta::enable_for_containers<T, Promise<T>>::type
         convert_cast() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -630,7 +630,7 @@ namespace FB
         }
     }
     template<class Cont>
-    typename FB::meta::enable_for_containers<Cont, DeferredPtr<Cont>>::type
+    typename FB::meta::enable_for_containers<Cont, Promise<Cont>>::type
     variant::convert_cast() const {
         return variant_detail::conversion::convert_variant(*this, variant_detail::conversion::type_spec<Cont>());
     }

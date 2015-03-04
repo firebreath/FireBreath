@@ -77,7 +77,7 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 auto dfd = m_host->getDOMWindow()->getProperty<FB::JSObjectPtr>(value);
                 auto selfPtr(shared_from_this());
 
-                dfd->done([=](FB::JSObjectPtr tmp) -> void {
+                dfd.done([=](FB::JSObjectPtr tmp) -> void {
                     m_params[key] = tmp;
                 });
 

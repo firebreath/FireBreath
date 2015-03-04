@@ -148,7 +148,7 @@ bool FB::JSAPIAuto::HasProperty(int idx) const
     return m_attributes.find(std::to_string(idx)) != m_attributes.end();
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(std::string propertyName)
+FB::variantPromise FB::JSAPIAuto::GetProperty(std::string propertyName)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -161,7 +161,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(std::string propertyName)
     } else if (memberAccessible(zoneName)) {
         AttributeMap::iterator fnd = m_attributes.find(propertyName);
         if (fnd != m_attributes.end()) {
-            return FB::makeVariantDeferred(fnd->second.value);
+            return fnd->second.value;
         } else {
             throw invalid_member(propertyName);
         }
@@ -219,7 +219,7 @@ void FB::JSAPIAuto::RemoveProperty(std::string propertyName)
     // when the end goal is reached already.
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(int idx)
+FB::variantPromise FB::JSAPIAuto::GetProperty(int idx)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -228,7 +228,7 @@ FB::variantDeferredPtr FB::JSAPIAuto::GetProperty(int idx)
     std::string id = std::to_string(idx);
     AttributeMap::iterator fnd = m_attributes.find(id);
     if (fnd != m_attributes.end() && memberAccessible(m_zoneMap.find(id))) {
-        return FB::makeVariantDeferred(fnd->second.value);
+        return fnd->second.value;
     } else {
         throw invalid_member(std::to_string(idx));
     }
@@ -260,7 +260,7 @@ void FB::JSAPIAuto::RemoveProperty(int idx)
     throw invalid_member(FB::variant(idx).convert_cast<std::string>());
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::Invoke(std::string methodName, const std::vector<variant> &args)
+FB::variantPromise FB::JSAPIAuto::Invoke(std::string methodName, const std::vector<variant> &args)
 {
     std::unique_lock<std::recursive_mutex> lock(m_zoneMutex);
     if(!m_valid)
@@ -309,12 +309,12 @@ void FB::JSAPIAuto::unregisterAttribute( std::string name )
     }
 }
 
-FB::variantDeferredPtr FB::JSAPIAuto::getAttribute( std::string name )
+FB::variantPromise FB::JSAPIAuto::getAttribute( std::string name )
 {
     if (m_attributes.find(name) != m_attributes.end()) {
-        return FB::makeVariantDeferred(m_attributes[name].value);
+        return m_attributes[name].value;
     }
-    return FB::makeVariantDeferred(FB::FBVoid());
+    return FB::FBVoid();
 }
 
 void FB::JSAPIAuto::setAttribute( std::string name, const FB::variant& value )

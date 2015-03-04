@@ -38,9 +38,9 @@ namespace FB { namespace ActiveX {
             virtual ~Window();
 
         public:
-            virtual FB::DOM::DocumentPtr getDocument() const;
-            virtual void alert(std::string str) const;
-            virtual std::string getLocation() const;
+            virtual FB::Promise<FB::DOM::DocumentPtr> getDocument() const override;
+            virtual void alert(std::string str) const override;
+            virtual FB::Promise<std::string> getLocation() const override;
 
         protected:
             CComQIPtr<IHTMLWindow2> m_htmlWin;

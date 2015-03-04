@@ -29,12 +29,14 @@ Element::~Element()
 {
 }
 
-std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(std::string tagName) const
+using ElementList = std::vector < FB::DOM::ElementPtr > ;
+
+FB::Promise<ElementList> Element::getElementsByTagName(std::string tagName) const
 {
     CComQIPtr<IHTMLElement2> elem(m_axDisp);
     CComQIPtr<IHTMLDocument3> doc(m_axDisp);
     CComPtr<IHTMLElementCollection> list;
-    std::vector<FB::DOM::ElementPtr> tagList;
+    ElementList tagList;
     CComBSTR tName(FB::utf8_to_wstring(tagName).c_str());
     if (elem) {
         elem->getElementsByTagName(tName, &list);
@@ -56,7 +58,7 @@ std::vector<FB::DOM::ElementPtr> Element::getElementsByTagName(std::string tagNa
     return tagList;
 }
 
-std::string FB::ActiveX::AXDOM::Element::getStringAttribute( std::string attr ) const
+FB::Promise<std::string> FB::ActiveX::AXDOM::Element::getStringAttribute( std::string attr ) const
 {
     CComQIPtr<IHTMLElement> elem(m_axDisp);
     CComQIPtr<IHTMLDocument5> doc(m_axDisp);
@@ -70,7 +72,7 @@ std::string FB::ActiveX::AXDOM::Element::getStringAttribute( std::string attr ) 
     }
 }
 
-std::string FB::ActiveX::AXDOM::Element::getInnerHTML() const
+FB::Promise<std::string> FB::ActiveX::AXDOM::Element::getInnerHTML() const
 {
     CComBSTR htmlStr;
     CComQIPtr<IHTMLElement> elem(m_axDisp);

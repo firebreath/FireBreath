@@ -141,8 +141,8 @@ namespace FB
         virtual bool HasProperty(std::string propertyName) const override;
         virtual bool HasProperty(int idx) const override;
 
-        virtual variantDeferredPtr GetProperty(const std::wstring& propertyName) override;
-        virtual variantDeferredPtr GetProperty(std::string propertyName) override;
+        virtual variantPromise GetProperty(const std::wstring& propertyName) override;
+        virtual variantPromise GetProperty(std::string propertyName) override;
 
         virtual void SetProperty(const std::wstring& propertyName, const variant& value) override;
         virtual void SetProperty(std::string propertyName, const variant& value) override;
@@ -150,12 +150,12 @@ namespace FB
         virtual void RemoveProperty(const std::wstring& propertyName) override;
         virtual void RemoveProperty(std::string propertyName) override;
         
-        virtual variantDeferredPtr GetProperty(int idx) override;
+        virtual variantPromise GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
-        virtual variantDeferredPtr Invoke(const std::wstring& methodName, const std::vector<variant>& args) override;
-        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
+        virtual variantPromise Invoke(const std::wstring& methodName, const std::vector<variant>& args) override;
+        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args) override;
     };
 
 };

@@ -84,14 +84,14 @@ namespace FB { namespace Npapi {
         bool HasProperty(int idx) const override;
 
     public:
-        variantDeferredPtr GetProperty(std::string propertyName) override;
+        variantPromise GetProperty(std::string propertyName) override;
         void SetProperty(std::string propertyName, const variant& value) override;
         void RemoveProperty(std::string propertyName) override;
-        variantDeferredPtr GetProperty(int idx) override;
+        variantPromise GetProperty(int idx) override;
         void SetProperty(int idx, const variant& value) override;
         void RemoveProperty(int idx) override;
 
-        variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
+        variantPromise Invoke(std::string methodName, const std::vector<variant>& args) override;
 
         friend class NpapiBrowserHost;
     };

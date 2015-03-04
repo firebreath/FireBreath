@@ -94,14 +94,16 @@ int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::
     IDispatchAPIPtr helper;
 
     try {
-        helper = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getProperty<JSObjectPtr>(name));
+        IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+        helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync(name).cast<JSObjectPtr>());
     } catch (const FB::bad_variant_cast&) {
         // Didn't find it
         std::string newjs{ BrowserHost::jsHelperTpl };
         replace_first(newjs, "FireBreathHelperThingy", name);
         this->evaluateJavaScript(newjs);
         // This time if it throws an exception, let it throw
-        helper = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getProperty<JSObjectPtr>(name));
+        IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+        helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync(name).cast<JSObjectPtr>());
     }
 
     FB::variant v = helper->InvokeSync("asyncCall", FB::VariantList{ delayms, func, args, fname });

@@ -169,12 +169,8 @@ namespace FB { namespace ActiveX
         FB::VariantList inArr = var.cast<FB::VariantList>();
         if (host->hasHTMLWindow())
         {
-            FB::JSObjectPtr outArr = host->getDOMWindow()->createArray();
-            for (FB::VariantList::iterator it = inArr.begin(); it != inArr.end(); ++it) {
-                FB::VariantList vl{ *it };
-                outArr->Invoke("push", vl);
-            }
-            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(outArr);
+            IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(host->getDOMWindow()->getJSObject());
+            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("Array", inArr).cast<JSObjectPtr>());
             if (api) {
                 return api->getIDispatch();
             } 
@@ -209,11 +205,11 @@ namespace FB { namespace ActiveX
         FB::VariantMap inMap = var.cast<FB::VariantMap>();
         if (host->hasHTMLWindow())
         {
-            FB::JSObjectPtr out = host->getDOMWindow()->createMap();
+            IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(host->getDOMWindow()->getJSObject());
+            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("Object", FB::VariantList{}).cast<JSObjectPtr>());
             for (FB::VariantMap::iterator it = inMap.begin(); it != inMap.end(); ++it) {
-                out->SetProperty(it->first, it->second);
+                api->SetProperty(it->first, it->second);
             }
-            IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(out);
             if (api) {
                 outVar = api->getIDispatch();
             }

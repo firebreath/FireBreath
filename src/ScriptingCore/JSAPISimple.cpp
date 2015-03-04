@@ -32,7 +32,7 @@ JSAPISimple::~JSAPISimple(void)
 }
 
 
-FB::variantDeferredPtr FB::JSAPISimple::callFireEvent(const std::vector<variant>& args_in)
+FB::variantPromise FB::JSAPISimple::callFireEvent(const std::vector<variant>& args_in)
 {
     std::vector<FB::variant> args(args_in);
     
@@ -40,21 +40,21 @@ FB::variantDeferredPtr FB::JSAPISimple::callFireEvent(const std::vector<variant>
         std::string event = args[0].convert_cast<std::string>();
         args.erase(args.begin());
         this->FireEvent(event, args);
-        return FB::makeVariantDeferred(event);
+        return event;
     } catch (...) {
         throw invalid_arguments();
     }
 }
 
 // Example function call and read-only property; override these if desired in derived classes
-variantDeferredPtr JSAPISimple::callToString(const std::vector<FB::variant>& args)
+variantPromise JSAPISimple::callToString(const std::vector<FB::variant>& args)
 {
-    return FB::makeVariantDeferred("JSAPI Javascript Object");
+    return "JSAPI Javascript Object";
 }
 
-variantDeferredPtr JSAPISimple::getValid()
+variantPromise JSAPISimple::getValid()
 {
-    return FB::makeVariantDeferred(m_valid);
+    return m_valid;
 }
 
 void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
@@ -119,7 +119,7 @@ bool JSAPISimple::HasProperty(std::string propertyName) const
 
 
 // Methods to manage properties on the API
-variantDeferredPtr JSAPISimple::GetProperty(std::string propertyName)
+variantPromise JSAPISimple::GetProperty(std::string propertyName)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -163,7 +163,7 @@ bool JSAPISimple::HasProperty(int idx) const
     return false;
 }
 
-variantDeferredPtr JSAPISimple::GetProperty(int idx)
+variantPromise JSAPISimple::GetProperty(int idx)
 {
     if (!m_valid)
         throw object_invalidated();
@@ -195,7 +195,7 @@ void JSAPISimple::RemoveProperty(int idx)
 
 
 // Methods to manage methods on the API
-variantDeferredPtr JSAPISimple::Invoke(std::string methodName, const std::vector<FB::variant>& args)
+variantPromise JSAPISimple::Invoke(std::string methodName, const std::vector<FB::variant>& args)
 {
     if (!m_valid)
         throw object_invalidated();

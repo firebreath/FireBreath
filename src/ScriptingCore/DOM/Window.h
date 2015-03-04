@@ -99,7 +99,7 @@ namespace FB {
         ///
         /// @return The document. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<DocumentPtr> getDocument() const;
+        virtual FB::Promise<DocumentPtr> getDocument() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void Window::alert(std::string str) const
@@ -121,7 +121,7 @@ namespace FB {
         ///
         /// @return new empty javascript array
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<FB::JSObjectPtr> createArray() const;
+        virtual FB::Promise<FB::JSObjectPtr> createArray() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual FB::JSObjectPtr Window::createMap() const
@@ -130,7 +130,7 @@ namespace FB {
         ///
         /// @return new empty javascript object
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<FB::JSObjectPtr> createMap() const;
+        virtual FB::Promise<FB::JSObjectPtr> createMap() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual FB::JSObjectPtr Window::createDate(std::string datestring) const
@@ -149,7 +149,7 @@ namespace FB {
         /// @return The location as a strin
         ///         g. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<std::string> getLocation() const;
+        virtual FB::Promise<std::string> getLocation() const;
     };
 
 } };

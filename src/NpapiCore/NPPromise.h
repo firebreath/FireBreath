@@ -37,13 +37,13 @@ namespace FB { namespace Npapi {
             return ptr;
         }
         NpapiBrowserHostWeakPtr m_browser;
-        FB::variantDeferredPtr m_promise;
+        FB::variantPromise m_promise;
         NPObject* m_npDeferred;
         NPObject* m_npPromise;
 
     public:
-        static NPPromisePtr create(NpapiBrowserHostPtr host, FB::variantDeferredPtr promise);
-        NPPromise(NpapiBrowserHostPtr host, FB::variantDeferredPtr promise, PrivateOnly&);
+        static NPPromisePtr create(NpapiBrowserHostPtr host, FB::variantPromise promise);
+        NPPromise(NpapiBrowserHostPtr host, FB::variantPromise promise, PrivateOnly&);
         virtual ~NPPromise(void);
         void init(NpapiBrowserHostPtr host);
 
@@ -56,7 +56,7 @@ namespace FB { namespace Npapi {
             if (!m_settled) {
                 _onError(std::runtime_error("Invalidated"));
             }
-            m_promise->invalidate();
+            m_promise.invalidate();
         }
 
         bool isSettled() {

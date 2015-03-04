@@ -114,8 +114,8 @@ bool NPObjectAPI::HasProperty(int idx) const
 }
 
 // Methods to manage properties on the API
-FB::variantDeferredPtr NPObjectAPI::GetProperty(std::string propertyName) {
-    return FB::makeVariantDeferred(GetPropertySync(propertyName));
+FB::variantPromise NPObjectAPI::GetProperty(std::string propertyName) {
+    return GetPropertySync(propertyName);
 }
 
 FB::variant NPObjectAPI::GetPropertySync(std::string propertyName)
@@ -125,7 +125,8 @@ FB::variant NPObjectAPI::GetPropertySync(std::string propertyName)
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(std::bind((variant(JSAPI::*)(std::string))&NPObjectAPI::GetPropertySync, this, propertyName));
+        using curType = variant(JSAPI::*)(std::string);
+        return browser->CallOnMainThread(std::bind((curType)&NPObjectAPI::GetPropertySync, this, propertyName));
     }
     NPVariant retVal;
     if (!browser->GetProperty(obj, browser->GetStringIdentifier(propertyName.c_str()), &retVal)) {
@@ -171,8 +172,8 @@ void NPObjectAPI::RemoveProperty(std::string propertyName)
     }
 }
 
-FB::variantDeferredPtr NPObjectAPI::GetProperty(int idx) {
-    return FB::makeVariantDeferred(GetPropertySync(idx));
+FB::variantPromise NPObjectAPI::GetProperty(int idx) {
+    return GetPropertySync(idx);
 }
 FB::variant NPObjectAPI::GetPropertySync(int idx)
 {
@@ -205,8 +206,8 @@ void NPObjectAPI::RemoveProperty(int idx)
 }
 
 // Methods to manage methods on the API
-FB::variantDeferredPtr NPObjectAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
-    return FB::makeVariantDeferred(InvokeSync(methodName, args));
+FB::variantPromise NPObjectAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
+    return InvokeSync(methodName, args);
 }
 FB::variant NPObjectAPI::InvokeSync(std::string methodName, const std::vector<FB::variant>& args)
 {
@@ -215,7 +216,7 @@ FB::variant NPObjectAPI::InvokeSync(std::string methodName, const std::vector<FB
 
     NpapiBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        auto cb = (FB::variant(NPObjectAPI::*)(std::string, const FB::VariantList&))&NPObjectAPI::Invoke;
+        auto cb = (FB::variant(NPObjectAPI::*)(std::string, const FB::VariantList&))&NPObjectAPI::InvokeSync;
         return browser->CallOnMainThread(std::bind(cb, this, methodName, args));
     }
     NPVariant retVal;

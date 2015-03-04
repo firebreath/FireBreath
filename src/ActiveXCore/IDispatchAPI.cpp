@@ -246,8 +246,8 @@ bool IDispatchAPI::HasProperty(int idx) const
 }
 
 
-FB::variantDeferredPtr IDispatchAPI::GetProperty(std::string propertyName) {
-    return FB::variantDeferred::makeDeferred(GetPropertySync(propertyName));
+FB::variantPromise IDispatchAPI::GetProperty(std::string propertyName) {
+    return GetPropertySync(propertyName);
 }
 
 // Methods to manage properties on the API
@@ -257,15 +257,8 @@ FB::variant FB::ActiveX::IDispatchAPI::GetPropertySync(std::string propertyName)
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(std::bind((FB::GetPropertyType)&IDispatchAPI::GetProperty, this, propertyName));
-    }
-    
-    if (is_JSAPI) {
-        FB::JSAPIPtr tmp = inner.lock();
-        if (!tmp) {
-            return false;
-        }
-        return tmp->GetProperty(propertyName);
+        using curType = variant(JSAPI::*)(std::string);
+        return browser->CallOnMainThread(std::bind((curType)&IDispatchAPI::GetPropertySync, this, propertyName));
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(propertyName));
@@ -400,13 +393,13 @@ void IDispatchAPI::RemoveProperty(std::string propertyName)
 }
 
 
-FB::variantDeferredPtr IDispatchAPI::GetProperty(int idx) {
-    return FB::variantDeferred::makeDeferred(GetPropertySync(idx));
+FB::variantPromise IDispatchAPI::GetProperty(int idx) {
+    return GetPropertySync(idx);
 }
 FB::variant IDispatchAPI::GetPropertySync(int idx)
 {
     FB::variant sIdx(idx);
-    return GetProperty(sIdx.convert_cast<std::string>());
+    return GetPropertySync(sIdx.convert_cast<std::string>());
 }
 
 void IDispatchAPI::RemoveProperty(int idx)
@@ -435,9 +428,9 @@ void IDispatchAPI::SetProperty(int idx, const FB::variant& value)
 
 
 // Methods to manage methods on the API
-FB::variantDeferredPtr IDispatchAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
+FB::variantPromise IDispatchAPI::Invoke(std::string methodName, const std::vector<FB::variant>& args) {
     // TODO: Make this asynchronous
-    return FB::variantDeferred::makeDeferred(InvokeSync(methodName, args));
+    return InvokeSync(methodName, args);
 }
 
 FB::variant IDispatchAPI::InvokeSync(std::string methodName, const std::vector<FB::variant>& args)
@@ -447,7 +440,8 @@ FB::variant IDispatchAPI::InvokeSync(std::string methodName, const std::vector<F
 
     ActiveXBrowserHostPtr browser(getHost());
     if (!browser->isMainThread()) {
-        return browser->CallOnMainThread(std::bind((FB::InvokeType)&IDispatchAPI::Invoke, this, methodName, args));
+        auto cb = (FB::variant(IDispatchAPI::*)(std::string, const FB::VariantList&))&IDispatchAPI::InvokeSync;
+        return browser->CallOnMainThread(std::bind(cb, this, methodName, args));
     }
 
     DISPID dispId = getIDForName(FB::utf8_to_wstring(methodName));

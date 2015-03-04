@@ -44,15 +44,15 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             BOOST_PP_ENUM(n, _FB_MW_TPL, 0), typename F>                        \
         struct method_wrapper##n                                                \
         {                                                                       \
-            using result_type = FB::variantDeferredPtr;                         \
+            using result_type = FB::variantPromise;                             \
             F f;                                                                \
             method_wrapper##n(F f) : f(f) {}                                    \
             result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
-                return FB::makeVariantDeferred((instance->*f)(        \
+                return (instance->*f)(                                          \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
-                    ));                                                         \
+                    );                                                          \
             }                                                                   \
         };                                                                      \
         template<typename C                                                     \
@@ -62,7 +62,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n,0))                            \
             BOOST_PP_ENUM(n, _FB_MW_Tn, 0), F>                                  \
         {                                                                       \
-            using result_type = FB::variantDeferredPtr;                         \
+            using result_type = FB::variantPromise;                             \
             F f;                                                                \
             method_wrapper##n(F f) : f(f) {}                                    \
             result_type operator()(C* instance, const FB::VariantList& in)      \
@@ -71,7 +71,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
                 (instance->*f)(                                                 \
                     BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
                     );                                                          \
-                return FB::makeVariantDeferred(FB::variant());                  \
+                return FB::variant();                                           \
             }                                                                   \
         };
 

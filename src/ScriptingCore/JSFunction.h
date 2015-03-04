@@ -27,10 +27,10 @@ namespace FB {
 
         virtual bool HasProperty(std::string propName) const override;
         virtual bool HasMethod(std::string methodName) const override;
-        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) override;
-        virtual variantDeferredPtr exec(const std::vector<variant>& args);
-        virtual variantDeferredPtr call(const std::vector<variant>& args);
-        virtual variantDeferredPtr apply(const std::vector<variant>& args);
+        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args) override;
+        virtual variantPromise exec(const std::vector<variant>& args);
+        virtual variantPromise call(const std::vector<variant>& args);
+        virtual variantPromise apply(const std::vector<variant>& args);
 
     private:
         void init();

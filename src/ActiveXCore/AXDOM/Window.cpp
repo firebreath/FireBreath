@@ -33,7 +33,7 @@ Window::~Window()
 {
 }
 
-FB::DOM::DocumentPtr Window::getDocument() const
+FB::Promise<FB::DOM::DocumentPtr> Window::getDocument() const
 {
     CComPtr<IHTMLDocument2> htmlDoc;
     m_htmlWin->get_document(&htmlDoc);
@@ -47,7 +47,7 @@ void Window::alert(std::string str) const
     m_htmlWin->alert(CComBSTR(FB::utf8_to_wstring(str).c_str()));
 }
 
-std::string Window::getLocation() const
+FB::Promise<std::string> Window::getLocation() const
 {
     CComBSTR bstr;
     m_webBrowser->get_LocationURL(&bstr);

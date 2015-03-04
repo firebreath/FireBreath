@@ -31,7 +31,7 @@ Document::~Document()
 {
 }
 
-FB::DOM::WindowPtr Document::getWindow() const
+FB::Promise<FB::DOM::WindowPtr> Document::getWindow() const
 {
     CComQIPtr<IHTMLWindow2> htmlWin;
     m_htmlDoc->get_parentWindow(&htmlWin);
@@ -41,11 +41,12 @@ FB::DOM::WindowPtr Document::getWindow() const
     return FB::DOM::Window::create(api);
 }
 
-std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(std::string tagName) const
+using ElementList = std::vector < FB::DOM::ElementPtr > ;
+FB::Promise<ElementList> Document::getElementsByTagName(std::string tagName) const
 {
     CComQIPtr<IHTMLDocument3> doc(m_htmlDoc);
     CComPtr<IHTMLElementCollection> list;
-    std::vector<FB::DOM::ElementPtr> tagList;
+    ElementList tagList;
     CComBSTR tName(FB::utf8_to_wstring(tagName).c_str());
     if (doc) {
         doc->getElementsByTagName(tName, &list);
@@ -66,7 +67,7 @@ std::vector<FB::DOM::ElementPtr> Document::getElementsByTagName(std::string tagN
 }
 
 
-FB::DOM::ElementPtr Document::getElementById(std::string elem_id) const
+FB::Promise<FB::DOM::ElementPtr> Document::getElementById(std::string elem_id) const
 {
     CComQIPtr<IHTMLDocument3> doc3(m_htmlDoc);
     if (!doc3) {
@@ -79,7 +80,7 @@ FB::DOM::ElementPtr Document::getElementById(std::string elem_id) const
     return FB::DOM::Element::create(ptr);
 }
 
-FB::DOM::ElementPtr Document::createElement(const std::string &name) const
+FB::Promise<FB::DOM::ElementPtr> Document::createElement(const std::string &name) const
 {
 	CComPtr<IHTMLElement> el(nullptr);
 	HRESULT hr = m_htmlDoc->createElement(CComBSTR(FB::utf8_to_wstring(name).c_str()), &el);

@@ -94,16 +94,16 @@ namespace FB { namespace DOM {
         /// @return result of calling the method cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        FB::DeferredPtr<T> callMethod(std::string name, const VariantList& args) const
+        FB::Promise<T> callMethod(std::string name, const VariantList& args) const
         {
             auto tmp = m_element->Invoke(name, args);
-            return tmp->convert_cast<T>();
+            return tmp.convert_cast<T>();
         }
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload template <class T> T callMethod(const std::wstring& name, const VariantList& args) const
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        FB::DeferredPtr<T> callMethod(const std::wstring& name, const VariantList& args) const
+        FB::Promise<T> callMethod(const std::wstring& name, const VariantList& args) const
         {
             return callMethod<T>(FB::wstring_to_utf8(name), args);
         }
@@ -111,7 +111,7 @@ namespace FB { namespace DOM {
 
         /// @overload
         template <class T>
-        FB::DeferredPtr<T> getProperty(const std::wstring& name) const
+        FB::Promise<T> getProperty(const std::wstring& name) const
         {
             return getProperty<T>(FB::wstring_to_utf8(name));
         }
@@ -130,10 +130,10 @@ namespace FB { namespace DOM {
         /// @return value of the requested property cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        FB::DeferredPtr<T> getProperty(std::string name) const
+        FB::Promise<T> getProperty(std::string name) const
         {
             auto tmp = m_element->GetProperty(name);
-            return tmp->convert_cast<T>();
+            return tmp.convert_cast<T>();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,14 +147,14 @@ namespace FB { namespace DOM {
         /// @return result of calling the method cast as type T
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template <class T>
-        FB::DeferredPtr<T> getProperty(const int idx) const
+        FB::Promise<T> getProperty(const int idx) const
         {
             auto tmp = m_element->GetProperty(idx);
-            return tmp->convert_cast<T>();
+            return tmp.convert_cast<T>();
         }
 
         /// @overload
-        virtual FB::DeferredPtr<NodePtr> getNode(const std::wstring& name) const;
+        virtual FB::Promise<NodePtr> getNode(const std::wstring& name) const;
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual NodePtr getNode(std::string name) const
         ///
@@ -164,7 +164,7 @@ namespace FB { namespace DOM {
         ///
         /// @return child node
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<NodePtr> getNode(std::string name) const;
+        virtual FB::Promise<NodePtr> getNode(std::string name) const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual NodePtr getNode(int idx) const
@@ -175,7 +175,7 @@ namespace FB { namespace DOM {
         ///
         /// @return child node
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::DeferredPtr<NodePtr> getNode(const int idx) const;
+        virtual FB::Promise<NodePtr> getNode(const int idx) const;
 
         /// @overload
         virtual void setProperty(const std::wstring& name, const variant& val) const;
@@ -194,7 +194,7 @@ namespace FB { namespace DOM {
         /// @overload
         virtual void setProperty(const int idx, const variant& val) const;
 
-		virtual FB::DeferredPtr<NodePtr> appendChild(NodePtr node);
+		virtual FB::Promise<NodePtr> appendChild(NodePtr node);
 
     protected:
         JSObjectPtr m_element; // The JSObject that this object wraps

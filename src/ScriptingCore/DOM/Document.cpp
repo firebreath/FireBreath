@@ -20,7 +20,7 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Document.h"
 
 using namespace FB::DOM;
-using FB::DeferredPtr;
+using FB::Promise;
 
 Document::Document(const FB::JSObjectPtr& element) : Node(element), Element(element)
 {
@@ -30,30 +30,30 @@ Document::~Document()
 {
 }
 
-DeferredPtr<WindowPtr> Document::getWindow() const
+Promise<WindowPtr> Document::getWindow() const
 {
-    return getProperty<FB::JSObjectPtr>("window")->then<WindowPtr>([=](JSObjectPtr api) {
+    return getProperty<FB::JSObjectPtr>("window").then<WindowPtr>([=](JSObjectPtr api) {
         return Window::create(api);
     });
 }
 
-DeferredPtr<ElementPtr> Document::getHead() const
+Promise<ElementPtr> Document::getHead() const
 {
-    return getProperty<FB::JSObjectPtr>("head")->then<ElementPtr>([=](JSObjectPtr api) {
+    return getProperty<FB::JSObjectPtr>("head").then<ElementPtr>([=](JSObjectPtr api) {
         return Element::create(api);
     });
 }
 
-DeferredPtr<ElementPtr> Document::getBody() const
+Promise<ElementPtr> Document::getBody() const
 {
-    return getProperty<FB::JSObjectPtr>("body")->then<ElementPtr>([=](JSObjectPtr api) {
+    return getProperty<FB::JSObjectPtr>("body").then<ElementPtr>([=](JSObjectPtr api) {
         return Element::create(api);
     });
 }
 
-DeferredPtr<ElementPtr> Document::createElement(const std::string &name) const
+Promise<ElementPtr> Document::createElement(const std::string &name) const
 {
-    return callMethod<FB::JSObjectPtr>("createElement", FB::VariantList{ name })->then<ElementPtr>([=](JSObjectPtr api) {
+    return callMethod<FB::JSObjectPtr>("createElement", FB::VariantList{ name }).then<ElementPtr>([=](JSObjectPtr api) {
         return Element::create(api);
     });
 }

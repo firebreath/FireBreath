@@ -72,11 +72,11 @@ namespace FB {
             convert_variant(const variant& var, variant_detail::conversion::type_spec< std::shared_ptr<T> >);
             
             template<class Cont>
-            typename FB::meta::enable_for_non_assoc_containers<Cont, DeferredPtr<Cont>>::type
+            typename FB::meta::enable_for_non_assoc_containers<Cont, Promise<Cont>>::type
             convert_variant(const variant& var, type_spec<Cont>);
             
             template<class Dict>
-            typename FB::meta::enable_for_pair_assoc_containers<Dict, DeferredPtr<Dict>>::type
+            typename FB::meta::enable_for_pair_assoc_containers<Dict, Promise<Dict>>::type
             convert_variant(const variant& var, type_spec<Dict>);
         }
     }

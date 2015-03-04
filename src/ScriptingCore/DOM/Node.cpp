@@ -17,25 +17,25 @@ Copyright 2009 PacketPass, Inc and the Firebreath development team
 #include "Node.h"
 
 using namespace FB::DOM;
-using FB::DeferredPtr;
+using FB::Promise;
 
-DeferredPtr<NodePtr> Node::getNode(const std::wstring& name) const 
+Promise<NodePtr> Node::getNode(const std::wstring& name) const 
 {
     return getNode(FB::wstring_to_utf8(name));
 }
-DeferredPtr<NodePtr> Node::getNode(std::string name) const
+Promise<NodePtr> Node::getNode(std::string name) const
 {
     auto dfd = getProperty<FB::JSObjectPtr>(name);
     auto onDone = [=](FB::JSObjectPtr api) -> NodePtr {
         return Node::create(api);
     };
-    auto next = dfd->then<NodePtr>( onDone );
+    auto next = dfd.then<NodePtr>( onDone );
     return next;
 }
 
-DeferredPtr<NodePtr> Node::getNode(const int idx) const
+Promise<NodePtr> Node::getNode(const int idx) const
 {
-    return getProperty<FB::JSObjectPtr>(idx)->then<NodePtr>( [=](FB::JSObjectPtr api) {
+    return getProperty<FB::JSObjectPtr>(idx).then<NodePtr>( [=](FB::JSObjectPtr api) {
         return Node::create(api);
     } );
 }
@@ -54,10 +54,10 @@ void Node::setProperty(const int idx, const FB::variant& val) const
     m_element->SetProperty(idx, val);
 }
 
-DeferredPtr<NodePtr> Node::appendChild(NodePtr node)
+Promise<NodePtr> Node::appendChild(NodePtr node)
 {
     return callMethod<FB::JSObjectPtr>("appendChild", FB::VariantList{ node->getJSObject() })
-        ->then<NodePtr>([=](JSObjectPtr api) {
+        .then<NodePtr>([=](JSObjectPtr api) {
         return Node::create(api);
     });
 }

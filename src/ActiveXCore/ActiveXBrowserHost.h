@@ -57,6 +57,15 @@ namespace FB {
             IDispatchEx* getJSAPIWrapper(const FB::JSAPIWeakPtr& api, bool autoRelease = false);
             IDispatchWRef getIDispatchRef(IDispatch* obj);
 
+            virtual Promise<VariantList> GetArrayValues(FB::JSObjectPtr obj) {
+                // TODO: Fix this to work!
+                throw std::bad_cast("Not yet implemented");
+            }
+            virtual Promise<VariantMap> GetObjectValues(FB::JSObjectPtr obj) {
+                // TODO: Fix this to work!
+                throw std::bad_cast("Not yet implemented");
+            }
+
         public:
             FB::DOM::DocumentPtr getDOMDocument() override;
             FB::DOM::WindowPtr getDOMWindow() override;

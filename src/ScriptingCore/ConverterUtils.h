@@ -155,18 +155,18 @@ namespace FB { namespace detail
         }
     };
 
-    // specialization for conversion from variant to variantDeferredPtr
+    // specialization for conversion from variant to variantPromise
     template<>
-    struct converter<FB::variant, FB::variantDeferredPtr>
+    struct converter<FB::variant, FB::variantPromise>
     {
-        static inline FB::variantDeferredPtr convert(const FB::variant& from)
+        static inline FB::variantPromise convert(const FB::variant& from)
         {
-            return FB::makeVariantDeferred(from);
+            return from;
         }
 
-        static inline FB::variantDeferredPtr convert(const FB::variant& from, size_t index)
+        static inline FB::variantPromise convert(const FB::variant& from, size_t index)
         {
-            return FB::makeVariantDeferred(from);
+            return from;
         }
     };
 

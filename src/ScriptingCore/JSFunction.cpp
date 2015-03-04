@@ -32,7 +32,7 @@ void FB::JSFunction::init()
 {
 }
 
-FB::variantDeferredPtr FB::JSFunction::exec( const std::vector<variant>& args )
+FB::variantPromise FB::JSFunction::exec( const std::vector<variant>& args )
 {
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
@@ -42,7 +42,7 @@ FB::variantDeferredPtr FB::JSFunction::exec( const std::vector<variant>& args )
     return api->Invoke(m_methodName, args);
 }
 
-FB::variantDeferredPtr FB::JSFunction::call( const std::vector<variant>& args )
+FB::variantPromise FB::JSFunction::call( const std::vector<variant>& args )
 {
     FB::VariantList list;
     if (args.size() >= 1) {
@@ -51,11 +51,11 @@ FB::variantDeferredPtr FB::JSFunction::call( const std::vector<variant>& args )
     return exec(list);
 }
 
-FB::variantDeferredPtr FB::JSFunction::apply( const std::vector<variant>& args )
+FB::variantPromise FB::JSFunction::apply( const std::vector<variant>& args )
 {
     if (args.size() >= 2) {
         auto fn = std::dynamic_pointer_cast<FB::JSFunction>(shared_from_this());
-        return args[1].convert_cast<FB::VariantList>()->thenPipe<variant>([fn](VariantList list) {
+        return args[1].convert_cast<FB::VariantList>().thenPipe<variant>([fn](VariantList list) {
             return fn->exec(list);
         });
     } else {
@@ -73,7 +73,7 @@ bool FB::JSFunction::HasMethod( std::string methodName ) const
     }
 }
 
-FB::variantDeferredPtr FB::JSFunction::Invoke( std::string methodName, const std::vector<variant>& args )
+FB::variantPromise FB::JSFunction::Invoke( std::string methodName, const std::vector<variant>& args )
 {
     if (methodName == "") {
         return exec(args);

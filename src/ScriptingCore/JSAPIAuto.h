@@ -131,7 +131,7 @@ namespace FB {
         virtual void getMemberNames(std::vector<std::string> &nameVector) const;
         virtual size_t getMemberCount() const;
 
-        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args);
+        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args);
 
         virtual void unregisterMethod(const std::wstring& name)
         {
@@ -226,10 +226,10 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void unregisterProperty(std::string name);
         
-        virtual variantDeferredPtr GetProperty(std::string propertyName) override;
+        virtual variantPromise GetProperty(std::string propertyName) override;
         virtual void SetProperty(std::string propertyName, const variant& value) override;
         virtual void RemoveProperty(std::string propertyName) override;
-        virtual variantDeferredPtr GetProperty(int idx) override;
+        virtual variantPromise GetProperty(int idx) override;
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
@@ -277,7 +277,7 @@ namespace FB {
         /// @see setAttribute
         /// @see removeAttribute
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual FB::variantDeferredPtr getAttribute(std::string name);
+        virtual FB::variantPromise getAttribute(std::string name);
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn public virtual void setAttribute(std::string name, const FB::variant& value)
         ///

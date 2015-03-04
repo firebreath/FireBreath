@@ -386,7 +386,8 @@ namespace FB { namespace ActiveX {
                     }
                 }
                 FB::variant rVal;
-                rVal = api->Invoke(wsName, params);
+                // TODO: Create a promise from the DOM, return it tied to the Deferred returned here
+                //rVal = api->Invoke(wsName, params);
                 
                 if(pvarRes)
                     host->getComVariant(pvarRes, rVal);
@@ -402,9 +403,10 @@ namespace FB { namespace ActiveX {
                 if(!pvarRes)
                     return E_INVALIDARG;
 
-                FB::variant rVal = api->GetProperty(wsName);
+                // TODO: Create a promise from the DOM, return it tied to the Deferred returned here
+                //FB::variant rVal = api->GetProperty(wsName);
 
-                host->getComVariant(pvarRes, rVal);
+                //host->getComVariant(pvarRes, rVal);
 
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
 

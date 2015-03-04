@@ -39,10 +39,10 @@ namespace FB { namespace ActiveX {
             Element(const FB::JSObjectPtr& element, IWebBrowser *web);
             virtual ~Element();
 
-            virtual std::vector<FB::DOM::ElementPtr> getElementsByTagName(std::string tagName) const;
-            virtual std::string getStringAttribute(std::string attr) const;
-            virtual std::string getInnerHTML() const;
-            virtual void setInnerHTML(std::string html) const;
+            virtual FB::Promise<std::vector<FB::DOM::ElementPtr>> getElementsByTagName(std::string tagName) const override;
+            virtual FB::Promise<std::string> getStringAttribute(std::string attr) const override;
+            virtual FB::Promise<std::string> getInnerHTML() const override;
+            virtual void setInnerHTML(std::string html) const override;
 
         public:
             CComQIPtr<IDispatch> m_axDisp;

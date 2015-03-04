@@ -39,7 +39,7 @@ namespace FB { namespace ActiveX {
             virtual ~Node();
 
         public:
-			virtual FB::DOM::NodePtr appendChild(FB::DOM::NodePtr node);
+			virtual FB::Promise<FB::DOM::NodePtr> appendChild(FB::DOM::NodePtr node) override;
         protected:
             CComQIPtr<IHTMLDOMNode> m_axNode;
             CComPtr<IWebBrowser> m_webBrowser;

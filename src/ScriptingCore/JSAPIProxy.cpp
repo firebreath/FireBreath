@@ -179,23 +179,23 @@ bool FB::JSAPIProxy::HasProperty( int idx ) const
     return getAPI()->HasProperty(idx);
 }
 
-FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
+FB::variantPromise FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
 {
     if (propertyName == L"expired")
-        return FB::makeVariantDeferred(isExpired());
+        return isExpired();
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }
 
-FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( std::string propertyName )
+FB::variantPromise FB::JSAPIProxy::GetProperty( std::string propertyName )
 {
     if (propertyName == "expired")
-        return FB::makeVariantDeferred(isExpired());
+        return isExpired();
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }
 
-FB::variantDeferredPtr FB::JSAPIProxy::GetProperty( int idx )
+FB::variantPromise FB::JSAPIProxy::GetProperty( int idx )
 {
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(idx);
@@ -237,13 +237,13 @@ void FB::JSAPIProxy::RemoveProperty( int idx )
     getAPI()->RemoveProperty(idx);
 }
 
-FB::variantDeferredPtr FB::JSAPIProxy::Invoke( const std::wstring& methodName, const std::vector<variant>& args )
+FB::variantPromise FB::JSAPIProxy::Invoke( const std::wstring& methodName, const std::vector<variant>& args )
 {
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->Invoke(methodName, args);
 }
 
-FB::variantDeferredPtr FB::JSAPIProxy::Invoke( std::string methodName, const std::vector<variant>& args )
+FB::variantPromise FB::JSAPIProxy::Invoke( std::string methodName, const std::vector<variant>& args )
 {
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->Invoke(methodName, args);

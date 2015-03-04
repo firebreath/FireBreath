@@ -123,7 +123,7 @@ FB::variant NPJavascriptObject::removeEventListener( const std::vector<FB::varia
     }
 }
 
-void NPJavascriptObject::setPromise(FB::variantDeferredPtr promise, NPVariant *result) {
+void NPJavascriptObject::setPromise(FB::variantPromise promise, NPVariant *result) {
     auto npPromise = NPPromise::create(getHost(), promise);
     OBJECT_TO_NPVARIANT(npPromise->getNPPromise(), *result);
 }
@@ -132,7 +132,6 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
 {
     VOID_TO_NPVARIANT(*result);
     if (!isValid()) return false;
-    auto promise = FB::makeVariantDeferred();
     try {
         std::string mName;
         NpapiBrowserHostPtr browser(getHost());
@@ -145,11 +144,11 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         }
 
         // Default method call
-        FB::variantDeferredPtr ret;
+        FB::variantPromise ret;
         if (mName == "addEventListener") {
-            ret = FB::makeVariantDeferred(addEventListener(vArgs));
+            ret = addEventListener(vArgs);
         } else if (mName == "removeEventListener") {
-            ret = FB::makeVariantDeferred(removeEventListener(vArgs));
+            ret = removeEventListener(vArgs);
         } else {
             ret = getAPI()->Invoke(mName, vArgs);
         }
@@ -157,8 +156,9 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         return true;
     } catch (const std::exception& e) {
         try {
-            setPromise(promise, result);
-            promise->reject(e);
+            FB::variantDeferred dfd;
+            dfd.reject(e);
+            setPromise(dfd.promise(), result);
             return true;
         } catch (...) {
             return false;
@@ -199,7 +199,7 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
     if (!isValid()) return false;
     try {
         NpapiBrowserHostPtr browser(getHost());
-        FB::variantDeferredPtr ret;
+        FB::variantPromise ret;
         if (browser->IdentifierIsString(name)) {
             std::string sName(browser->StringFromIdentifier(name));
             ret = getAPI()->GetProperty(sName);
@@ -210,9 +210,9 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
         setPromise(ret, result);
         return true;
     } catch (const std::exception& e) {
-        auto promise = makeVariantDeferred();
-        promise->reject(e);
-        setPromise(promise, result);
+        FB::variantDeferred dfd;
+        dfd.reject(e);
+        setPromise(dfd.promise(), result);
         return false;
     }
 }

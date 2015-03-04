@@ -76,9 +76,9 @@ namespace FB
 
     private:
         template<class Cont>
-        FB::DeferredPtr<Cont> getArrayValuesImpl() {
+        FB::Promise<Cont> getArrayValuesImpl() {
             try {
-                DeferredPtr<VariantList> dfdList = getHost()->GetArrayValues(shared_from_this());
+                Promise<VariantList> dfdList = getHost()->GetArrayValues(shared_from_this());
 
                 auto onDone = [](VariantList inList) -> Cont {
                     Cont out;
@@ -87,16 +87,16 @@ namespace FB
                     }
                     return out;
                 };
-                return dfdList->then<Cont>(onDone);
+                return dfdList.then<Cont>(onDone);
             } catch (std::bad_cast&) {
                 throw std::runtime_error("Browser not available, can't convert to array");
             }
         }
 
         template<class Dict>
-        FB::DeferredPtr<Dict> getObjectValuesImpl() {
+        FB::Promise<Dict> getObjectValuesImpl() {
             try {
-                DeferredPtr<VariantMap> dfdMap = getHost()->GetObjectValues(shared_from_this());
+                Promise<VariantMap> dfdMap = getHost()->GetObjectValues(shared_from_this());
 
                 auto onDone = [](VariantMap inMap) -> Dict {
                     Dict out;
@@ -105,7 +105,7 @@ namespace FB
                     }
                     return out;
                 };
-                return dfdMap->then<Dict>(onDone);
+                return dfdMap.then<Dict>(onDone);
             } catch (std::bad_cast&) {
                 throw std::runtime_error("Browser not available, can't convert to object");
             }
@@ -121,10 +121,12 @@ namespace FB
             return std::dynamic_pointer_cast<const JSObject>(ptr);
         }
 
+    public:
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void InvokeAsync(std::string methodName, const std::vector<variant>& args)
         ///
-        /// @brief  Just like Invoke, but works asynchronously.  Useful for javascript callbacks and events.
+        /// @brief  Just like Invoke, but does not care about a return value and has slightly lower overhead.
+        ///         Useful for javascript callbacks and events.
         ///         Can be safely called from any thread
         ///
         /// @param  methodName  Name of the method. 
@@ -151,24 +153,6 @@ namespace FB
     public:
         
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual void SetPropertyAsync(std::string propertyName, const variant& value)
-        ///
-        /// @brief  Just like SetProperty, but works asynchronously.  Useful if you are running on another
-        ///         thread and don't need to wait to be sure it worked.
-        ///
-        /// @param  propertyName    Name of the property. 
-        /// @param  value           The value. 
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual void SetPropertyAsync(std::string propertyName, const variant& value)
-        {
-            BrowserHostPtr host(m_host.lock());
-            if (!host) {
-                throw std::runtime_error("Cannot invoke asynchronously");
-            }
-            host->ScheduleOnMainThread(shared_from_this(), std::bind((FB::SetPropertyType)&JSAPI::SetProperty, this, propertyName, value));
-        }
-    public:
-        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Cont> static void GetArrayValues(const FB::JSObjectPtr& src, Cont& dst)
         ///
         /// @brief  Gets Array values out of src and adds them to the STL container dst 
@@ -181,7 +165,7 @@ namespace FB
         /// is used. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Cont>
-        static DeferredPtr<Cont> GetArrayValues(const FB::JSObjectPtr& src);
+        static Promise<Cont> GetArrayValues(const FB::JSObjectPtr& src);
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn template<class Dict> static void GetObjectValues(const FB::JSObjectPtr& src, Dict& dst)
@@ -193,7 +177,7 @@ namespace FB
         /// @param [in,out] dst Destination for the. 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         template<class Dict>
-        static DeferredPtr<Dict> GetObjectValues(const FB::JSObjectPtr& src);
+        static Promise<Dict> GetObjectValues(const FB::JSObjectPtr& src);
     
     public:
         /// @brief Get the associated FB::BrowserHost; may throw std::bad_cast
@@ -204,16 +188,16 @@ namespace FB
     };
 
     template<class Cont>
-    FB::DeferredPtr<Cont> JSObject::GetArrayValues(const FB::JSObjectPtr& src)
+    FB::Promise<Cont> JSObject::GetArrayValues(const FB::JSObjectPtr& src)
     {
         if (!src) {
-            return makeDeferred<Cont>(Cont());
+            return Cont();
         }
         return src->getArrayValuesImpl<Cont>();
     }
 
     template<class Dict>
-    FB::DeferredPtr<Dict> JSObject::GetObjectValues(const FB::JSObjectPtr& src)
+    FB::Promise<Dict> JSObject::GetObjectValues(const FB::JSObjectPtr& src)
     {
         return src->getObjectValuesImpl<Dict>();
     }
@@ -310,7 +294,7 @@ namespace FB
         }
 
         template<class Cont>
-        typename FB::meta::enable_for_non_assoc_containers<Cont, DeferredPtr<Cont>>::type
+        typename FB::meta::enable_for_non_assoc_containers<Cont, Promise<Cont>>::type
             convert_variant(const variant& var, type_spec<Cont>)
         {
             typedef FB::JSObjectPtr JsObject;
@@ -318,7 +302,7 @@ namespace FB
             // if the held data is of type Cont just return it
 
             if(var.is_of_type<Cont>()) 
-                return makeDeferred<Cont>(var.cast<Cont>());
+                return var.cast<Cont>();
 
             // if the help data is not a JavaScript object throw
 
@@ -331,7 +315,7 @@ namespace FB
         }
 
         template<class Dict>
-        typename FB::meta::enable_for_pair_assoc_containers<Dict, DeferredPtr<Dict>>::type
+        typename FB::meta::enable_for_pair_assoc_containers<Dict, Promise<Dict>>::type
             convert_variant(const variant& var, type_spec<Dict>)
         {
             typedef FB::JSObjectPtr JsObject;
@@ -339,7 +323,7 @@ namespace FB
             // if the held data is of type Dict just return it
 
             if(var.is_of_type<Dict>()) 
-                return makeDeferred<Dict>(var.cast<Dict>());
+                return var.cast<Dict>();
 
             // if the help data is not a JavaScript object throw
 

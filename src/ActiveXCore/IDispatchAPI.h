@@ -75,8 +75,10 @@ namespace FB { namespace ActiveX {
         bool is_JSAPI;
         FB::JSAPIWeakPtr inner;
 
-    protected:
         DISPID getIDForName(const std::wstring& name) const;
+
+    public:
+        // Seriously, don't call these methods from your plugin -- it makes things totally platform-specific
         FB::variant GetPropertySync(std::string propertyName);
         FB::variant GetPropertySync(int idx);
         FB::variant InvokeSync(std::string methodName, const FB::VariantList& args);
@@ -88,14 +90,14 @@ namespace FB { namespace ActiveX {
         bool HasProperty(const std::wstring& propertyName) const override;
         bool HasProperty(int idx) const override;
 
-        FB::variantDeferredPtr GetProperty(std::string propertyName) override;
+        FB::variantPromise GetProperty(std::string propertyName) override;
         void SetProperty(std::string propertyName, const FB::variant& value) override;
         void RemoveProperty(std::string propertyName) override;
-        FB::variantDeferredPtr GetProperty(int idx) override;
+        FB::variantPromise GetProperty(int idx) override;
         void SetProperty(int idx, const FB::variant& value) override;
         void RemoveProperty(int idx) override;
 
-        FB::variantDeferredPtr Invoke(std::string methodName, const FB::VariantList& args) override;
+        FB::variantPromise Invoke(std::string methodName, const FB::VariantList& args) override;
 
     public:
         virtual FB::JSAPIPtr getJSAPI() const;

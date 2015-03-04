@@ -13,6 +13,7 @@ License:    Dual license model; choose one of two:
 
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "Node.h"
+#include "Deferred.h"
 
 using namespace FB::ActiveX::AXDOM;
 
@@ -26,7 +27,7 @@ Node::~Node()
 {
 }
 
-FB::DOM::NodePtr Node::appendChild(FB::DOM::NodePtr node) {
+FB::Promise<FB::DOM::NodePtr> Node::appendChild(FB::DOM::NodePtr node) {
 	CComPtr<IHTMLDOMNode> newNode;
 	NodePtr actualNode = std::dynamic_pointer_cast<Node>(node);
 	if (SUCCEEDED(m_axNode->appendChild(actualNode->m_axNode, &newNode))) {

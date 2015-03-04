@@ -33,7 +33,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "URI.h"
 
 using namespace FB::Npapi;
-using FB::DeferredPtr;
+using FB::Promise;
 using FB::VariantList;
 using FB::VariantMap;
 
@@ -186,24 +186,24 @@ FB::DOM::ElementPtr NpapiBrowserHost::getDOMElement()
     return FB::DOM::Element::create(m_htmlElement);
 }
 
-DeferredPtr<VariantList> NpapiBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
+Promise<VariantList> NpapiBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
     VariantList out;
     NPObjectAPIPtr ptr = std::dynamic_pointer_cast<NPObjectAPI>(obj);
     if (!ptr) {
-        return FB::makeDeferred<VariantList>(out);
+        return out;
     }
 
     uint32_t len = ptr->GetPropertySync("length").convert_cast<uint32_t>();
     for (size_t i{ 0 }; i < len; ++i) {
         out.emplace_back(ptr->GetPropertySync(i));
     }
-    return FB::makeDeferred<VariantList>(out);
+    return out;
 }
-DeferredPtr<FB::VariantMap> NpapiBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
+Promise<FB::VariantMap> NpapiBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
     VariantMap dst;
     NPObjectAPIPtr src = std::dynamic_pointer_cast<NPObjectAPI>(obj);
     if (!src) {
-        return FB::makeDeferred<VariantMap>(dst);
+        return dst;
     }
     try {
         vector<string> fields;
@@ -215,7 +215,7 @@ DeferredPtr<FB::VariantMap> NpapiBrowserHost::GetObjectValues(FB::JSObjectPtr ob
     } catch (const FB::script_error& e) {
         throw e;
     }
-    return FB::makeDeferred<VariantMap>(dst);
+    return dst;
 }
 
 void NpapiBrowserHost::deferred_release( NPObject* obj )

@@ -17,6 +17,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define H_FB_JSAPI
 
 #include "APITypes.h"
+#include "Deferred.h"
 #include <list>
 #include <deque>
 #include <memory>
@@ -335,7 +336,7 @@ namespace FB
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual variant GetProperty(const std::wstring& propertyName)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr GetProperty(const std::wstring& propertyName)
+        virtual variantPromise GetProperty(const std::wstring& propertyName)
         {
             return GetProperty(wstring_to_utf8(propertyName));
         }
@@ -349,7 +350,7 @@ namespace FB
         ///
         /// @return The property value
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr GetProperty(std::string propertyName) = 0;
+        virtual variantPromise GetProperty(std::string propertyName) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @overload virtual void SetProperty(const std::wstring& propertyName, const variant& value)
@@ -369,7 +370,7 @@ namespace FB
         virtual void SetProperty(std::string propertyName, const variant& value) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variantDeferredPtr GetProperty(int idx) = 0
+        /// @fn virtual variantPromise GetProperty(int idx) = 0
         ///
         /// @brief  Gets the value of an indexed property.
         ///
@@ -383,7 +384,7 @@ namespace FB
         ///
         /// @return The property value.
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr GetProperty(int idx) = 0;
+        virtual variantPromise GetProperty(int idx) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void SetProperty(int idx, const variant& value) = 0
@@ -436,15 +437,15 @@ namespace FB
         virtual void RemoveProperty(int idx) = 0;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @overload virtual variantDeferredPtr Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+        /// @overload virtual variantPromise Invoke(const std::wstring& methodName, const std::vector<variant>& args)
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr Invoke(const std::wstring& methodName, const std::vector<variant>& args)
+        virtual variantPromise Invoke(const std::wstring& methodName, const std::vector<variant>& args)
         {
             return Invoke(wstring_to_utf8(methodName), args);
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        /// @fn virtual variantDeferredPtr Invoke(std::string methodName,
+        /// @fn virtual variantPromise Invoke(std::string methodName,
         /// const std::vector<variant>& args) = 0
         ///
         /// @brief  Called by the browser to invoke a method on the JSAPI object.
@@ -454,7 +455,7 @@ namespace FB
         ///
         /// @return result of method call
         ////////////////////////////////////////////////////////////////////////////////////////////////////
-        virtual variantDeferredPtr Invoke(std::string methodName, const std::vector<variant>& args) = 0;
+        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args) = 0;
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////

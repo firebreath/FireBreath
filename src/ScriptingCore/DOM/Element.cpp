@@ -24,65 +24,65 @@ Element::Element(const FB::JSObjectPtr& element) : Node(element) {
 Element::~Element() {
 }
 
-FB::DeferredPtr<std::string> Element::getInnerHTML() const {
+FB::Promise<std::string> Element::getInnerHTML() const {
     return getProperty<std::string>("innerHTML");
 }
 void Element::setInnerHTML(std::string html) const {
     setProperty("innerHTML", html);
 }
 
-FB::DeferredPtr<int> Element::getWidth() const {
+FB::Promise<int> Element::getWidth() const {
     return getProperty<int>("width");
 }
 void Element::setWidth(const int width) const {
     setProperty("width", width);
 }
 
-FB::DeferredPtr<int> Element::getScrollWidth() const {
+FB::Promise<int> Element::getScrollWidth() const {
     return getProperty<int>("scrollWidth");
 }
 
-FB::DeferredPtr<int> Element::getHeight() const {
+FB::Promise<int> Element::getHeight() const {
     return getProperty<int>("height");
 }
 void Element::setHeight(const int height) const {
     setProperty("height", height);
 }
 
-FB::DeferredPtr<int> Element::getScrollHeight() const {
+FB::Promise<int> Element::getScrollHeight() const {
     return getProperty<int>("scrollHeight");
 }
 
-FB::DeferredPtr<int> Element::getChildNodeCount() const {
-    return getNode("childNodes")->thenPipe<int>([=](NodePtr ptr) {
+FB::Promise<int> Element::getChildNodeCount() const {
+    return getNode("childNodes").thenPipe<int>([=](NodePtr ptr) {
         return ptr->getProperty<int>("length");
     });
 }
 
-FB::DeferredPtr<ElementPtr> Element::getChildNode(const int idx) const {
-    return getElement("childNodes")->thenPipe<ElementPtr>([=](ElementPtr el) {
+FB::Promise<ElementPtr> Element::getChildNode(const int idx) const {
+    return getElement("childNodes").thenPipe<ElementPtr>([=](ElementPtr el) {
         return el->getElement(idx);
     });
 }
 
-FB::DeferredPtr<ElementPtr> Element::getParentNode() const {
-    return getElement("parentNode")->convert_cast<ElementPtr>();
+FB::Promise<ElementPtr> Element::getParentNode() const {
+    return getElement("parentNode").convert_cast<ElementPtr>();
 }
 
-FB::DeferredPtr<ElementPtr> Element::getElementById(std::string id) const {
-    return callMethod<JSObjectPtr>("getElementById", VariantList{ id })->then<ElementPtr>(
+FB::Promise<ElementPtr> Element::getElementById(std::string id) const {
+    return callMethod<JSObjectPtr>("getElementById", VariantList{ id }).then<ElementPtr>(
         [id](JSObjectPtr api) {
         return Element::create(api);
     });
 }
 
-FB::DeferredPtr<std::vector<ElementPtr>> Element::getElementsByTagName(const std::wstring& tagName) const {
+FB::Promise<std::vector<ElementPtr>> Element::getElementsByTagName(const std::wstring& tagName) const {
     return getElementsByTagName(FB::wstring_to_utf8(tagName));
 }
 
-FB::DeferredPtr<std::vector<ElementPtr>> Element::getElementsByTagName(std::string tagName) const {
+FB::Promise<std::vector<ElementPtr>> Element::getElementsByTagName(std::string tagName) const {
     return callMethod<vector<JSObjectPtr>>("getElementsByTagName", VariantList{ tagName })
-        ->then<vector<ElementPtr>>([=](vector<JSObjectPtr> tagList) {
+        .then<vector<ElementPtr>>([=](vector<JSObjectPtr> tagList) {
         std::vector<ElementPtr> outList;
         for (auto tag : tagList) {
             outList.emplace_back(Element::create(tag));
@@ -91,7 +91,7 @@ FB::DeferredPtr<std::vector<ElementPtr>> Element::getElementsByTagName(std::stri
     });
 }
 
-FB::DeferredPtr<std::string> FB::DOM::Element::getStringAttribute(std::string attr) const {
+FB::Promise<std::string> FB::DOM::Element::getStringAttribute(std::string attr) const {
     return callMethod<std::string>("getAttribute", FB::VariantList{ attr });
 }
 
