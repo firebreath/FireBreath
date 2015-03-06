@@ -21,6 +21,7 @@ set (ScriptingCore_SOURCE_DIR "${FB_SOURCE_DIR}/ScriptingCore")
 set (PluginCore_SOURCE_DIR "${FB_SOURCE_DIR}/PluginCore")
 set (PluginAuto_SOURCE_DIR "${FB_SOURCE_DIR}/PluginAuto")
 set (NpapiCore_SOURCE_DIR "${FB_SOURCE_DIR}/NpapiCore")
+set (FireWyrm_SOURCE_DIR "${FB_SOURCE_DIR}/FireWyrm")
 set (ActiveXCore_SOURCE_DIR "${FB_SOURCE_DIR}/ActiveXCore")
 
 set(FBLIB_DIRS "${FB_SOURCE_DIR}/libs")

@@ -42,9 +42,12 @@ include_directories(
     ${ScriptingCore_SOURCE_DIR}
     ${NpapiCore_SOURCE_DIR}
     ${ActiveXCore_SOURCE_DIR}
+    ${FireWyrm_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     )
+
+message("FireWyrm from ${FireWyrm_SOURCE_DIR}")
 
 file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.cpp

@@ -19,7 +19,7 @@
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserStreamRequest.h"
-#include "WyrmPlugin.h"
+#include "WyrmSpawn.h"
 #include "WyrmStream.h"
 #include "PluginEventSink.h"
 using namespace FB::FireWyrm;

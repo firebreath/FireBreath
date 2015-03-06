@@ -25,7 +25,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 namespace FB {
     namespace FireWyrm {
 
-    FB_FORWARD_PTR(WyrmPluginModule);
+    FB_FORWARD_PTR(WyrmColony);
     FB_FORWARD_PTR(WyrmBrowserHost);
     FB_FORWARD_PTR(WyrmJavascriptObject);
     typedef boost::shared_ptr<NPObjectAPI> NPObjectAPIPtr;
@@ -40,7 +40,7 @@ namespace FB {
         public FB::BrowserHost
     {
     public:
-        WyrmBrowserHost(WyrmPluginModule *module, const FW_INST plugInst);
+        WyrmBrowserHost(WyrmColony *module, const FW_INST plugInst);
         virtual ~WyrmBrowserHost(void);
 
     public:
@@ -74,7 +74,7 @@ namespace FB {
     // NPN_ functions -- for scope reasons, we no longer access these using the global functions
     protected:
         NPNetscapeFuncs NPNFuncs;   // Function pointers
-        WyrmPluginModule *module;
+        WyrmColony *module;
         NPP m_npp;
         NPObjectAPIPtr m_htmlDoc;
         NPObjectAPIPtr m_htmlWin;

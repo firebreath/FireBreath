@@ -16,13 +16,42 @@
 #ifndef H_FIREWYRM
 #define H_FIREWYRM
 
-typedef uint8_t FW_RESULT;
+#include <cstdint>
+
+typedef uint8_t  FW_RESULT;
 typedef uint32_t FW_INST;
 typedef uint32_t FW_MSG;
-typedef RESULT (*FW_Callback)(const FW_INST hndInst, FW_MSG hndMsg, const uint8_t* strResp, uint32_t strRespLen);
+
+
+typedef FW_RESULT (*FW_AsyncCall)(const void* pData);
+
+///
+// FireWyrmHost calls -- calls made back into whatever is hosting the plugin, such as the browser
+///
+typedef FW_RESULT (*FWH_PerformAsyncCall)(const FW_AsyncCall* call, const void* pData);
+
+typedef FW_RESULT (*FW_Command)(const FW_INST colonyId, const char* strCommand, uint32_t strCommandLen);
+typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint8_t* strResp, uint32_t strRespLen);
+
+typedef struct _FireWyrmHostFuncs
+{
+    uint16_t size;
+    uint16_t version;
+    FW_Command call;
+    FW_CommandCallback cmdCallback;
+    FWH_PerformAsyncCall doAsyncCall;
+} FWHostFuncs;
+
+typedef struct _FireWyrmColonyFuncs
+{
+    uint16_t size;
+    uint16_t version;
+    FW_Command call;
+    FW_CommandCallback cmdCallback;
+} FWColonyFuncs;
+
+
 
 #endif // H_FIREWYRM
-
-
 
 

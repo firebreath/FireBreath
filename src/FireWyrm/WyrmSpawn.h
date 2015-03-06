@@ -25,20 +25,21 @@ namespace FB {
 
     namespace FireWyrm {
 
-    struct PluginCreateError : std::runtime_error
+    struct WyrmSpawningError : std::runtime_error
     {
-        PluginCreateError(const std::string& error)
+        WyrmSpawningError(const std::string& error)
           : std::runtime_error(error)
         { }
     };
 
-    FB_FORWARD_PTR(FireWyrmPlugin);
+    FB_FORWARD_PTR(WyrmSpawn);
+    FB_FORWARD_PTR(FireWyrmBrowserHost);
 
-    class FireWyrmPlugin : public FB::BrowserPlugin
+    class WyrmSpawn : public FB::BrowserPlugin
     {
     public:
-        FireWyrmPlugin(const FireWyrmBrowserHostPtr& host, const std::string& mimetype);
-        virtual ~FireWyrmPlugin(void);
+        WyrmSpawn(const FireWyrmBrowserHostPtr& host, const std::string& mimetype);
+        virtual ~WyrmSpawn(void);
 
         virtual void init(const std::string& name);
         virtual void shutdown();
@@ -46,9 +47,7 @@ namespace FB {
         virtual bool setReady();
 
     protected:
-        NPJavascriptObject *m_obj;
         FireWyrmBrowserHostPtr m_npHost;
-        bool m_retainReturnedNPObject;
         bool m_isReady;
         std::string m_mimetype;
         std::string m_pluginName;
