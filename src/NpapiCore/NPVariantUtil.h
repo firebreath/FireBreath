@@ -155,12 +155,8 @@ namespace FB { namespace Npapi
         NPVariant npv;
 
         NPObjectAPIPtr win = std::dynamic_pointer_cast<NPObjectAPI>(host->getDOMWindow()->getJSObject());
-        NPObjectAPIPtr outArr = std::dynamic_pointer_cast<NPObjectAPI>(win->InvokeSync("Array", FB::VariantList{}).cast<JSObjectPtr>());
         FB::VariantList inArr = var.cast<FB::VariantList>();
-
-        for (auto var : inArr) {
-            outArr->InvokeSync("push", FB::VariantList{ var });
-        }
+        NPObjectAPIPtr outArr = std::dynamic_pointer_cast<NPObjectAPI>(win->InvokeSync("Array", inArr).cast<JSObjectPtr>());
 
         if (NPObjectAPIPtr api = std::dynamic_pointer_cast<NPObjectAPI>(outArr)) {
             npv.type = NPVariantType_Object;

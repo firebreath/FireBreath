@@ -187,13 +187,13 @@ FB::DOM::ElementPtr NpapiBrowserHost::getDOMElement()
 }
 
 Promise<VariantList> NpapiBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
-    VariantList out;
     NPObjectAPIPtr ptr = std::dynamic_pointer_cast<NPObjectAPI>(obj);
     if (!ptr) {
-        return out;
+        return VariantList();
     }
 
     uint32_t len = ptr->GetPropertySync("length").convert_cast<uint32_t>();
+    VariantList out( len );
     for (size_t i{ 0 }; i < len; ++i) {
         out.emplace_back(ptr->GetPropertySync(i));
     }
