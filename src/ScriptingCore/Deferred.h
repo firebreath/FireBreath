@@ -22,6 +22,8 @@ Copyright 2015 Richard Bateman and the FireBreath Dev Team
 
 namespace FB {
 
+    enum class PromiseState {PENDING, RESOLVED, REJECTED};
+
     template <typename T>
     class Promise;
 
@@ -32,14 +34,37 @@ namespace FB {
         using type = T;
         using Callback = std::function < void(T) > ;
         using ErrCallback = std::function < void(std::exception e) > ;
-        enum class State {PENDING, RESOLVED, REJECTED};
 
     private:
         struct StateData {
-            StateData(T v) : value(v), state(State::RESOLVED) {}
-            StateData() : state(State::PENDING) {}
+            StateData(T v) : value(v), state(PromiseState::RESOLVED) {}
+            StateData(std::exception e) : err(e), state(PromiseState::REJECTED) {}
+            StateData() : state(PromiseState::PENDING) {}
+            ~StateData() {
+                if (state == PromiseState::PENDING) {
+                    reject(std::runtime_error("Deferred object destroyed"));
+                }
+            }
+            void resolve(T v) {
+                value = v;
+                state = PromiseState::RESOLVED;
+                rejectList.clear();
+                for (auto fn : resolveList) {
+                    fn(v);
+                }
+                resolveList.clear();
+            }
+            void reject(std::exception e) {
+                err = e;
+                state = PromiseState::REJECTED;
+                resolveList.clear();
+                for (auto fn : rejectList) {
+                    fn(e);
+                }
+                rejectList.clear();
+            }
             T value;
-            State state;
+            PromiseState state;
             std::exception err;
 
             std::vector<Callback> resolveList;
@@ -50,32 +75,39 @@ namespace FB {
         StateDataPtr m_data;
     public:
         Deferred(T v) : m_data(std::make_shared<StateData>(v)) {}
+        Deferred(std::exception e) : m_data(std::make_shared<StateData>(e)) {}
         Deferred() : m_data(std::make_shared<StateData>()) {}
         Deferred(Deferred<T> &&rh) : m_data(std::move(rh.m_data)) {} // Move constructor
         Deferred(const Deferred<T>& rh) : m_data(rh.m_data) {} // Copy constructor
         
-        ~Deferred() { invalidate(); }
+        ~Deferred() { }
 
         Promise<T> promise() const {
             return Promise<T>(m_data);
         }
 
         void invalidate() const {
-            if (m_data->state == State::PENDING) {
+            if (m_data->state == PromiseState::PENDING) {
                 reject(std::runtime_error("Deferred object destroyed"));
             }
         }
 
-        void resolve(Promise<T> v) const {
-            auto onDone = [this](T resV) {
-                this->resolve(resV);
-            };
-            auto onFail = [this](std::exception e) { reject(e); };
-            promise().done(onDone, onFail);
-        }
         void resolve(T v) const {
-            m_data->value = v;
-            m_data->state = State::RESOLVED;
+            m_data->resolve(v);
+        }
+        void resolve(Promise<T> v) const {
+            Deferred<T> dfd(*this);
+            auto onDone = [dfd](T resV) {
+                dfd.resolve(resV);
+            };
+            auto onFail = [dfd](std::exception e) { dfd.reject(e); };
+            v.done(onDone, onFail);
+        }
+        void reject(std::exception e) const {
+            m_data->reject(e);
+        }
+
+    };
             for (auto fn : m_data->resolveList) {
                 fn(v);
             }
@@ -169,15 +201,12 @@ namespace FB {
                         dfd.reject(e2);
                     }
                 };
-                done((Deferred<T>::Callback)onDone);
-                int a = 0;
-                //fail((ErrCallback)onFail);
+                done(onDone, onFail);
             } else {
                 auto onFail = [dfd](std::exception e1) -> void {
                     dfd.reject(e1);
                 };
-                done(onDone);
-                fail(onFail);
+                done(onDone, onFail);
             }
             return dfd.promise();
         }
@@ -192,8 +221,7 @@ namespace FB {
                     auto res = cbSuccess(v);
                     auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
                     auto onFail2 = [dfd](std::exception e) { dfd.reject(e); };
-                    res.done(onDone2);
-                    res.fail(onFail2);
+                    res.done(onDone2, onFail2);
                 } catch (std::exception e) {
                     dfd.reject(e);
                 }
@@ -205,20 +233,17 @@ namespace FB {
                         auto res = cbFail(e1);
                         auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
                         auto onFail2 = [dfd](std::exception e) { dfd.reject(e); };
-                        res.done(onDone2);
-                        res.fail(onFail2);
+                        res.done(onDone2, onFail2);
                     } catch (std::exception e2) {
                         dfd.reject(e2);
                     }
                 };
-                done(onDone);
-                fail(onFail);
+                done(onDone, onFail);
             } else {
                 auto onFail = [dfd](std::exception e1) -> void {
                     dfd.reject(e1);
                 };
-                done(onDone);
-                fail(onFail);
+                done(onDone, onFail);
             }
             return dfd.promise();
         }
@@ -227,9 +252,9 @@ namespace FB {
             if (!m_data) { throw std::runtime_error("Promise invalid"); }
             if (cbFail) { fail(cbFail); }
             if (!cbSuccess) { return *this; }
-            if (m_data->state == Deferred<T>::State::PENDING) {
+            if (m_data->state == PromiseState::PENDING) {
                 m_data->resolveList.emplace_back(cbSuccess);
-            } else if (m_data->state == Deferred<T>::State::RESOLVED) {
+            } else if (m_data->state == PromiseState::RESOLVED) {
                 cbSuccess(m_data->value);
             }
             return *this;
@@ -237,7 +262,15 @@ namespace FB {
         const Promise<T>& fail(typename Deferred<T>::ErrCallback cbFail) const {
             if (!m_data) { throw std::runtime_error("Promise invalid"); }
             if (!cbFail) { return *this; }
-            if (m_data->state == Deferred<T>::State::PENDING) {
+            if (m_data->state == PromiseState::PENDING) {
+                m_data->rejectList.emplace_back(cbFail);
+            } else if (m_data->state == PromiseState::REJECTED) {
+                cbFail(m_data->err);
+            }
+            return *this;
+        }
+
+    };
                 m_data->rejectList.emplace_back(cbFail);
             } else if (m_data->state == Deferred<T>::State::REJECTED) {
                 cbFail(m_data->err);
