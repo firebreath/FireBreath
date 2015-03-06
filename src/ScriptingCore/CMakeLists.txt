@@ -55,6 +55,7 @@ file (GLOB TYPES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     JSExceptions.h
     FBPointers.h
     Shareable*
+    Deferred*
     logging.h
 )
 
