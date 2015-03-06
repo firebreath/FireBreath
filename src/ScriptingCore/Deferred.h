@@ -190,15 +190,42 @@ namespace FB {
             return *this;
         }
 
-        template <typename U>
+        // available only when creating a variantDeferred, allows forcing the type in the variant.
+        // Unless you *really* know what you're doing, don't use this; it's used internally. If
+        // you use this it will most likely cause convert_cast to not work.
+        template <typename U, typename V=T, typename std::enable_if<std::is_same<FB::variant, V>::value, int >::type = 0>
+        Promise(const Promise<U>& rh, bool force) {
+            Deferred<T> dfd;
+            auto onDone = [dfd](U v) -> void {
+                FB::variant val{ v, true };
+                dfd.resolve(val);
+            };
+            auto onFail = [dfd](std::exception e) { dfd.reject(e); };
+            rh.done(onDone, onFail);
+            m_data = dfd.promise().m_data;
+        }
+
+        template <typename U, typename V=T, typename std::enable_if<std::is_same<FB::variant, V>::value, int >::type = 0>
         Promise(const Promise<U>& rh) {
             Deferred<T> dfd;
-            auto onDone = [dfd](U v) {
+            auto onDone = [dfd](U v) -> void {
+                FB::variant val{ v };
+                dfd.resolve(val);
+            };
+            auto onFail = [dfd](std::exception e) { dfd.reject(e); };
+            rh.done(onDone, onFail);
+            m_data = dfd.promise().m_data;
+        }
+
+        template <typename U, typename V=T, typename std::enable_if<!std::is_same<FB::variant, V>::value, int >::type = 0>
+        Promise(const Promise<U>& rh) {
+            Deferred<T> dfd;
+            auto onDone = [dfd](U v) -> void {
                 FB::variant val{ v };
                 dfd.resolve(val.convert_cast<T>());
             };
             auto onFail = [dfd](std::exception e) { dfd.reject(e); };
-            done(onDone, onFail);
+            rh.done(onDone, onFail);
             m_data = dfd.promise().m_data;
         }
 
