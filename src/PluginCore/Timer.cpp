@@ -70,8 +70,9 @@ void Timer::callback(const boost::system::error_code& error)
 
 void Timer::start()
 {
+    auto self = shared_from_this();
 	pimpl->timer.expires_from_now(boost::posix_time::milliseconds(duration));
-    pimpl->timer.async_wait([this](const boost::system::error_code& error) { callback(error); });
+    pimpl->timer.async_wait([self](const boost::system::error_code& error) { self->callback(error); });
 }
 bool Timer::stop()
 {
