@@ -47,10 +47,17 @@ namespace FB {
             template<typename ArgType>
             inline
             ArgType convertLastArgument(const FB::VariantList& l, size_t n);
+
+            template<typename ArgType>
+            inline
+            FB::variantPromise convertLastArgumentDfd(const FB::VariantList& l, size_t n);
         }
     } // namespace detail
 
-    // "soft" conversion wrapper function
+
+    ///////////////////////////////////////////////////////////////////
+    // "soft" conversion wrapper function which returns exact types  //
+    ///////////////////////////////////////////////////////////////////
     template<typename To>
     inline
     To convertArgumentSoft(const FB::VariantList& args, const size_t index,
@@ -119,6 +126,80 @@ namespace FB {
     {
         return FB::detail::converter<To, From>::convert(from, index);
     }
+
+
+
+    ///////////////////////////////////////////////////////////////////
+    // "soft" conversion wrapper function which returns exact types  //
+    ///////////////////////////////////////////////////////////////////
+    template<typename To>
+    inline
+    FB::variantPromise convertArgumentSoftDfd(const FB::VariantList& args, const size_t index,
+        typename boost::disable_if<boost::mpl::or_<
+            FB::meta::is_optional<To>,
+            boost::mpl::or_<
+                boost::is_same<To, FB::variant>,
+                boost::is_same<To, boost::tribool>
+            >
+        > >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
+        else {
+            std::stringstream ss;
+            ss << "Error: Argument " << index
+               << " is not optional.";
+            throw FB::invalid_arguments(ss.str());
+        }
+    }    
+    template<typename To>
+    inline
+    FB::variantPromise convertArgumentSoftDfd(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<FB::meta::is_optional<To> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
+        else
+            return To(); // Empty optional argument
+    }
+
+    template<typename To>
+    inline
+    FB::variantPromise convertArgumentSoftDfd(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<boost::is_same<To, boost::tribool> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
+        else
+            return boost::tribool(); // Empty variant argument
+    }
+
+    template<typename To>
+    inline
+    FB::variantPromise convertArgumentSoftDfd(const FB::VariantList& args, const size_t index,
+        typename boost::enable_if<boost::is_same<To, FB::variant> >::type* p=0)
+    {
+        if (args.size() >= index)
+            return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
+        else
+            return FB::variant(); // Empty variant argument
+    }
+    // conversion wrapper function
+    template<typename To, typename From>
+    inline
+    FB::variantPromise convertArgumentDfd(const From& from)
+    {
+        return FB::detail::converter<To, From>::convertDfd(from);
+    }
+
+    // conversion wrapper function
+    template<typename To, typename From>
+    inline
+    FB::variantPromise convertArgumentDfd(const From& from, const size_t index, boost::disable_if< FB::meta::is_optional<To> >*p = 0)
+    {
+        return FB::detail::converter<To, From>::convertDfd(from, index);
+    }
+    
 } // namespace FB
 
 namespace FB { namespace detail
@@ -127,10 +208,28 @@ namespace FB { namespace detail
     template<typename To>
     struct converter<To, FB::variant>
     {
+        static inline FB::variantPromise getPromiseFor(const To& v) {
+            return FB::variant(v, true);
+        }
+        static inline FB::variantPromise getPromiseFor(const FB::Promise<To>& v) {
+            return FB::variantPromise(v, true);
+        }
         static inline To convert(const FB::variant& from)
         {
             try {
-                return from.convert_cast<To>();
+                return from.cast<To>();
+            } catch(const FB::bad_variant_cast& e) {
+                std::stringstream ss;
+                ss << "Invalid argument conversion "
+                   << "from " << e.from 
+                   << " to "  << e.to;
+                throw FB::invalid_arguments(ss.str());
+            }
+        }
+        static inline FB::variantPromise convertDfd(const FB::variant& from)
+        {
+            try {
+                return getPromiseFor<To>(from.convert_cast<To>());
             } catch(const FB::bad_variant_cast& e) {
                 std::stringstream ss;
                 ss << "Invalid argument conversion "
@@ -143,7 +242,20 @@ namespace FB { namespace detail
         static inline To convert(const FB::variant& from, size_t index)
         {
             try {
-                return from.convert_cast<To>();
+                return from.cast<To>();
+            } catch(const FB::bad_variant_cast& e) {
+                std::stringstream ss;
+                ss << "Invalid argument conversion "
+                   << "from " << e.from 
+                   << " to "  << e.to 
+                   << " at index " << index;
+                throw FB::invalid_arguments(ss.str());
+            }
+        }
+        static inline FB::variantPromise convertDfd(const FB::variant& from, size_t index)
+        {
+            try {
+                return getPromiseFor(from.convert_cast<To>());
             } catch(const FB::bad_variant_cast& e) {
                 std::stringstream ss;
                 ss << "Invalid argument conversion "
@@ -163,7 +275,15 @@ namespace FB { namespace detail
         {
             return from;
         }
+        static inline FB::variantPromise convertDfd(const FB::variant& from)
+        {
+            return from;
+        }
 
+        static inline FB::variantPromise convertDfd(const FB::variant& from, size_t index)
+        {
+            return from;
+        }
         static inline FB::variantPromise convert(const FB::variant& from, size_t index)
         {
             return from;
@@ -178,8 +298,16 @@ namespace FB { namespace detail
         {
             return from;
         }
+        static inline FB::variantPromise convertDfd(const FB::variant& from)
+        {
+            return from;
+        }
 
         static inline FB::variant convert(const FB::variant& from, size_t index)
+        {
+            return from;
+        }
+        static inline FB::variantPromise convertDfd(const FB::variant& from, size_t index)
         {
             return from;
         }
@@ -228,6 +356,19 @@ namespace FB { namespace detail
             }
             return FB::convertArgumentSoft<ArgType>(l, n);
         }
+        // default handling for the last parameter is just converting
+        template<typename ArgType>
+        inline
+        FB::variantPromise convertLastArgumentDfd(const FB::VariantList& l, size_t n)
+        {
+            // If this is the last parameter and 
+            if (l.size() > n) {
+                std::stringstream ss;
+                ss << "Too many arguments, expected " << n << ".";
+                throw FB::invalid_arguments(ss.str());
+            }
+            return FB::convertArgumentSoftDfd<ArgType>(l, n);
+        }
 
         // if the last argument is CatchAll, fill it with all remaining parameters
         template<>
@@ -241,6 +382,13 @@ namespace FB { namespace detail
             for( ; n <= l.size(); ++n)
                 result.value.push_back(l[n-1]);
             return result;
+        }
+        // If the last is catchall we'll just convert to variant but not complain if there are more params
+        template<>
+        inline
+        FB::variantPromise convertLastArgumentDfd<FB::CatchAll>(const FB::VariantList& l, size_t n)
+        {
+            return FB::convertArgumentSoftDfd<FB::variant>(l, n);
         }
     } // namespace methods
 } } // namespace FB { namespace detail

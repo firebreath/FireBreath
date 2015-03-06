@@ -27,6 +27,7 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/preprocessor/comparison/equal.hpp>
 #include <boost/preprocessor/comparison/greater.hpp>
 #include <boost/function.hpp>
+#include "DeferredUtils.h"
 #include "ConverterUtils.h"
 
 #define _FB_MW_TPL(z, n, data) typename T##n
@@ -36,6 +37,11 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #define _FB_MW_CNLARG(n) convertArgumentSoft<typename std::decay<T##n>::type>(in, BOOST_PP_ADD(n,1))
 #define _FB_MW_CLARG(n) convertLastArgument<TLast>(in, BOOST_PP_ADD(n,1))
 #define _FB_MW_CARGS(z, n, t) BOOST_PP_IF(BOOST_PP_EQUAL(n, BOOST_PP_SUB(t,1)), _FB_MW_CLARG(n), _FB_MW_CNLARG(n))
+
+#define _FB_MW_CNLARG_DFD(n) convertArgumentSoftDfd<typename std::decay<T##n>::type>(in, BOOST_PP_ADD(n,1))
+#define _FB_MW_CLARG_DFD(n) convertLastArgumentDfd<TLast>(in, BOOST_PP_ADD(n,1))
+#define _FB_MW_CARGS_DFD(z, n, t) BOOST_PP_IF(BOOST_PP_EQUAL(n, BOOST_PP_SUB(t,1)), _FB_MW_CLARG_DFD(n), _FB_MW_CNLARG_DFD(n))
+
 #define _FB_MW_TLASTDEF(n) typedef typename std::decay<_FB_MW_TLAST(n)>::type TLast;
 
 #define _FB_METHOD_WRAPPER(z, n, data)                                          \
@@ -50,9 +56,25 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
-                return (instance->*f)(                                          \
-                    BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
-                    );                                                          \
+                /* If any of the convert_casts return a FB::Promise<T> this */  \
+                /* will convert them to FB::variantPromises */                  \
+                FB::VariantPromiseList args{                                    \
+                    BOOST_PP_ENUM(n, _FB_MW_CARGS_DFD, n)                       \
+                };                                                              \
+                auto max = in.size();                                           \
+                if (in.size() > n) {                                            \
+                    for (decltype(max) i = n; i < max; ++i) {                   \
+                        args.emplace_back(convertArgumentSoftDfd<FB::variant>(in, i));\
+                    }                                                           \
+                }                                                               \
+                auto fn(f);                                                     \
+                auto cb = [fn,instance](const FB::VariantList&in) -> FB::variantPromise { \
+                    return (instance->*fn)(                                     \
+                        BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                       \
+                        );                                                      \
+                };                                                              \
+                /* This will call cb with a VariantList of resolved things   */ \
+                return FB::whenAllPromises(args, cb);                           \
             }                                                                   \
         };                                                                      \
         template<typename C                                                     \
@@ -68,10 +90,26 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
             result_type operator()(C* instance, const FB::VariantList& in)      \
             {                                                                   \
                 BOOST_PP_IF(BOOST_PP_GREATER(n,0), _FB_MW_TLASTDEF(n), BOOST_PP_EMPTY()) \
-                (instance->*f)(                                                 \
-                    BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                           \
-                    );                                                          \
-                return FB::variant();                                           \
+                /* If any of the convert_casts return a FB::Promise<T> this */  \
+                /* will convert them to FB::variantPromises */                  \
+                FB::VariantPromiseList args{                                    \
+                    BOOST_PP_ENUM(n, _FB_MW_CARGS_DFD, n)                       \
+                };                                                              \
+                auto max = in.size();                                           \
+                if (in.size() > n) {                                            \
+                    for (decltype(max) i = n; i < max; ++i) {                   \
+                        args.emplace_back(convertArgumentSoft<FB::variant>(in, i));\
+                    }                                                           \
+                }                                                               \
+                auto fn(f);                                                     \
+                auto cb = [fn,instance](const FB::VariantList&in) -> FB::variantPromise { \
+                    (instance->*fn)(                                            \
+                        BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                       \
+                        );                                                      \
+                    return variant();                                           \
+                };                                                              \
+                /* This will call cb with a VariantList of resolved things   */ \
+                return FB::whenAllPromises(args, cb);                           \
             }                                                                   \
         };
 
@@ -109,6 +147,7 @@ namespace FB
     namespace detail { namespace methods
     {
         using FB::convertArgumentSoft;
+        using FB::convertArgumentSoftDfd;
         
         BOOST_PP_REPEAT(50, _FB_METHOD_WRAPPER, BOOST_PP_EMPTY())
 
