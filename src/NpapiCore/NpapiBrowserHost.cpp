@@ -193,7 +193,7 @@ Promise<VariantList> NpapiBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
     }
 
     uint32_t len = ptr->GetPropertySync("length").convert_cast<uint32_t>();
-    VariantList out( len );
+    VariantList out;
     for (size_t i{ 0 }; i < len; ++i) {
         out.emplace_back(ptr->GetPropertySync(i));
     }
