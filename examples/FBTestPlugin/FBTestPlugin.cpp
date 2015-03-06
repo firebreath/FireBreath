@@ -225,9 +225,17 @@ void FBTestPlugin::onPluginReady()
     if (!window)
         return;
 
-    FB::URI uri = FB::URI::fromString(window->getLocation());
-    bool log = uri.query_data.find("log") != uri.query_data.end();
-    m_host->setEnableHtmlLog(log);
+    FB::BrowserHostWeakPtr weakHost(m_host);
+    window->getLocation().done([weakHost](std::string loc) {
+        FB::URI uri = FB::URI::fromString(loc);
+        FB::BrowserHostPtr host(weakHost.lock());
+        if (!host) return;
+        if (uri.query_data.find("log") != uri.query_data.end()) {
+            host->setEnableHtmlLog(true);
+        } else {
+            host->setEnableHtmlLog(false);
+        }
+    });
 }
 
 uint32_t FBTestPlugin::asyncTestBgColor()

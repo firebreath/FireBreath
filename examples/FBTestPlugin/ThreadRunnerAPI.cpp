@@ -16,6 +16,7 @@ Copyright 2010 Facebook Inc, Firebreath development team
 #include "SimpleStreamHelper.h"
 #include "ThreadInterrupt.h"
 #include "variant_list.h"
+#include "Deferred.h"
 #include <utility>
 #include "logging.h"
 
@@ -34,23 +35,29 @@ void ThreadRunnerAPI::threadRun()
 {
     while (!m_threadMgr.cancelled())
     {
+        FB::BrowserHostPtr host{ m_host };
+
         m_host->htmlLog("Thread Dialog iteration start");
 
         FB::JSObjectPtr func;
         if (this->m_queue.try_pop(func))
         {
-            FB::variant var;
             try {
-                var = func->Invoke("", FB::VariantList());
+                func->Invoke("", FB::VariantList()).done([=](FB::variant var) {
+                    // Asynchronous call
+                    if (var.is_of_type<std::string>()) {
+                        host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
+                    } else if (var.is_of_type<FB::JSObjectPtr>()) {
+                        addMethod(var.convert_cast<FB::JSObjectPtr>());
+                    }
+                }).fail([host](std::exception& ex) {
+                    // The function had an exception
+                    host->htmlLog(std::string("Exception calling func ") + ex.what());
+                });
             } catch (const FB::script_error& ex) {
                 // The function call failed
-                m_host->htmlLog(std::string("Function call failed with ") + ex.what());
+                m_host->htmlLog(std::string("Exception attempting to call func ") + ex.what());
                 continue;
-            }
-            if (var.is_of_type<std::string>()) {
-                m_host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
-            } else if (var.is_of_type<FB::JSObjectPtr>()) {
-                m_queue.push(var.convert_cast<FB::JSObjectPtr>());
             }
         }
 

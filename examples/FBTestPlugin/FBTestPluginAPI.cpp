@@ -23,7 +23,7 @@ Copyright 2009 PacketPass Inc, Georg Fritzsche,
 #include "SimpleStreams.h"
 #include "SystemHelpers.h"
 #include <future>
-#include "variantDeferred.h"
+#include "Deferred.h"
 
 #include "FBTestPluginAPI.h"
 
@@ -150,15 +150,18 @@ FB::variant FBTestPluginAPI::echo(const FB::variant& a)
     return a;
 }
 
-FB::variant FBTestPluginAPI::echoSlowly(const FB::variant& a)
+FB::variantPromise FBTestPluginAPI::echoSlowly(const FB::variant& a)
 {
-    FB::variantDeferredPtr promise = FB::variantDeferred::makeDeferred();
+    FB::variantDeferred dfd;
 
-    auto callback = [promise, a]() { std::this_thread::sleep_for(std::chrono::seconds(2)); promise->resolve(a); };
+    auto callback = [dfd, a]() {
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+        dfd.resolve(a);
+    };
 
     std::async(callback);
 
-    return promise;
+    return dfd.promise();
 }
 
 FB::variant FBTestPluginAPI::fail() {
@@ -166,14 +169,14 @@ FB::variant FBTestPluginAPI::fail() {
     throw FB::script_error("Failed!");
 }
 
-FB::variant FBTestPluginAPI::failSlowly() {
-    FB::variantDeferredPtr promise = FB::variantDeferred::makeDeferred();
+FB::variantPromise FBTestPluginAPI::failSlowly() {
+    FB::variantDeferred dfd;
 
-    auto callback = [promise]() { std::this_thread::sleep_for(std::chrono::seconds(2)); promise->reject(FB::script_error("Slow failure!")); };
+    auto callback = [dfd]() { std::this_thread::sleep_for(std::chrono::seconds(2)); dfd.reject(FB::script_error("Slow failure!")); };
 
     std::async(callback);
 
-    return promise;
+    return dfd.promise();
 }
 
 
@@ -207,28 +210,30 @@ FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& ar
     return outArr;
 }
 
-FB::VariantList FBTestPluginAPI::getObjectKeys(const FB::JSObjectPtr& arr)
+FB::variantPromise FBTestPluginAPI::getObjectKeys(const FB::JSObjectPtr& arr)
 {
-    FB::VariantList outArr;
-    std::map<std::string, FB::variant> inMap;
-    arr->GetObjectValues(arr, inMap);
+    return FB::variant(arr).convert_cast<FB::VariantMap>().then<FB::variant>(
+        [](FB::VariantMap inMap) -> FB::variant {
+            FB::VariantList outArr;
 
-    for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
-        outArr.push_back(it->first);
-    }
-    return outArr;
+            for (auto c : inMap) {
+                outArr.emplace_back(c.first);
+            }
+            return outArr;
+        }
+    );
 }
 
-FB::VariantList FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
+FB::Promise<FB::VariantList> FBTestPluginAPI::getObjectValues(const FB::JSObjectPtr& arr)
 {
-    FB::VariantList outArr;
     std::map<std::string, FB::variant> inMap;
-    arr->GetObjectValues(arr, inMap);
-
-    for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
-        outArr.push_back(it->second);
-    }
-    return outArr;
+    return FB::variant(arr).convert_cast<FB::VariantMap>().then<FB::VariantList>([](FB::VariantMap inMap) -> FB::VariantList {
+        FB::VariantList outArr;
+        for (auto c : inMap) {
+            outArr.emplace_back(c.second);
+        }
+        return outArr;
+    });
 }
 
 std::string FBTestPluginAPI::charArray(const std::vector<char>& arr)
@@ -310,16 +315,18 @@ std::weak_ptr<SimpleMathAPI> FBTestPluginAPI::get_simpleMath()
     return m_simpleMath;
 }
 
-FB::variant FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
+FB::variantPromise FBTestPluginAPI::getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute)
 {
-    std::vector<FB::DOM::ElementPtr> tagList = m_host->getDOMDocument()->getElementsByTagName(tagName);
-    if (!tagList.size()) {
-        return "No matching tags found";
-    }
-    return tagList[idx]->getJSObject()->GetProperty(attribute);
+    return m_host->getDOMDocument()->getElementsByTagName(tagName).thenPipe<FB::variant>([idx,attribute](std::vector<FB::DOM::ElementPtr> tagList) -> FB::variantPromise {
+        if (!tagList.size()) {
+            return "No matching tags found";
+        } else {
+            return tagList[idx]->getJSObject()->GetProperty(attribute);
+        }
+    });
 }
 
-std::string FBTestPluginAPI::getPageLocation()
+FB::variantPromise FBTestPluginAPI::getPageLocation()
 {
     return m_host->getDOMWindow()->getLocation();
 }
@@ -347,7 +354,7 @@ long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso)
     //long len = array.size();// array->GetProperty("length").convert_cast<long>();
     return len;
 }
-FB::variant FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
+FB::variantPromise FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
 {
     return math->Invoke("add", FB::VariantList{ a, b });
 }

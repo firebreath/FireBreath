@@ -52,10 +52,10 @@ public:
     SimpleMathAPIPtr createSimpleMath();
   
     FB::variant echo(const FB::variant& a);
-    FB::variant echoSlowly(const FB::variant& a);
+    FB::variantPromise echoSlowly(const FB::variant& a);
 
     FB::variant fail();
-    FB::variant failSlowly();
+    FB::variantPromise failSlowly();
 
     std::string asString(const FB::variant& a);
     bool asBool(const FB::variant& a);
@@ -66,8 +66,8 @@ public:
     std::string charArray(const std::vector<char>& arr);
     std::string listArray(const std::vector<std::string>&);
     FB::VariantList reverseArray(const std::vector<std::string>& arr);
-    FB::VariantList getObjectKeys(const FB::JSObjectPtr& arr);
-    FB::VariantList getObjectValues(const FB::JSObjectPtr& arr);
+    FB::variantPromise getObjectKeys(const FB::JSObjectPtr& arr);
+    FB::Promise<FB::VariantList> getObjectValues(const FB::JSObjectPtr& arr);
     FB::VariantMap getUserData();
     FB::VariantList getUserArray();
     long countArrayLength(const FB::JSObjectPtr &jso); 
@@ -80,14 +80,14 @@ public:
     bool testStreams();
 
     // Method to test getting a tag from the page
-    FB::variant getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute);
+    FB::variantPromise getTagAttribute(const std::wstring &tagName, const long idx, const std::wstring &attribute);
 
-    std::string getPageLocation();
+    FB::variantPromise getPageLocation();
     
     std::string get_pluginPath();
     
     void eval(std::string str);
-    FB::variant addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
+    FB::variantPromise addWithSimpleMath(const FB::JSObjectPtr& jso, long a, long b);
     void getURL(std::string url, const FB::JSObjectPtr& callback);
     void postURL(std::string url, std::string postdata, const FB::JSObjectPtr& callback);
     void getURLCallback(const FB::JSObjectPtr& callback, bool success, const FB::HeaderMap& headers,
