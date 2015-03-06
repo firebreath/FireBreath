@@ -33,6 +33,17 @@ namespace FB { namespace meta
         : boost::mpl::true_ {};
 
     ////////////////////////////////////////////////
+    // is promise - a FB::Promise<T> type
+
+    template <typename T>
+    struct is_promise
+        : boost::mpl::false_ {};
+
+    template <typename T>
+    struct is_promise< FB::Promise<T> >
+        : boost::mpl::true_ {};
+
+    ////////////////////////////////////////////////
     // is_boost_variant - is a boost::variant type
 
     template <typename T>
