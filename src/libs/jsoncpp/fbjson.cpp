@@ -54,7 +54,9 @@ namespace FB {
         Json::Reader rdr;
         Json::Value root;
 
-        rdr.parse(json, root, false);
+        if (!rdr.parse(json, root, false)) {
+            throw std::bad_cast("Invalid JSON document");
+        }
 
         return jsonValueToVariant(root);
     }

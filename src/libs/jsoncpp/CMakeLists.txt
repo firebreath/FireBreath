@@ -18,8 +18,7 @@ set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
 project(jsoncpp)
 
-get_target_property(library_target_exists jsoncpp TYPE)
-if (library_target_exists)
+if (TARGET jsoncpp)
     set(TARGET_ALREADY_EXISTS 1)
 else()
     set(TARGET_ALREADY_EXISTS 0)
