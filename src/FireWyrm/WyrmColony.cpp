@@ -14,6 +14,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include <stdexcept>
 
+#include "fbjson.h"
+
 #include <cassert>
 #include "logging.h"
 #include "BrowserHost.h"
@@ -23,10 +25,24 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "WyrmColony.h"
+#include "WyrmBrowserHost.h"
 using namespace FB::FireWyrm;
 
 volatile uint32_t WyrmColony::ColonyInitialized(0);
 WyrmColony::ColonyMap WyrmColony::m_colonyMap;
+WyrmColony::CommandMap WyrmColony::cmdMap;
+
+#define addToCommandMap(str) cmdMap[#str] = &WyrmColony:: ## str;
+
+void WyrmColony::initCommandMap() {
+    addToCommandMap(New);
+    addToCommandMap(Destroy);
+    addToCommandMap(Enum);
+    addToCommandMap(Invoke);
+    addToCommandMap(GetP);
+    addToCommandMap(SetP);
+    addToCommandMap(RelObj);
+}
 
 WyrmColony* WyrmColony::GetColony(FW_INST key) {
     if (!WyrmColony::ColonyInitialized) {
@@ -36,7 +52,7 @@ WyrmColony* WyrmColony::GetColony(FW_INST key) {
     WyrmColony* rval = NULL;
     auto module = m_colonyMap.find(key);
     if (m_colonyMap.end() == module) {
-        rval = new WyrmColony();
+        rval = new WyrmColony(key);
         m_colonyMap[key] = rval;
         WyrmColony::ColonyInitialized++;
     } else
@@ -66,7 +82,7 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
     return 0;
 }
 
-WyrmColony::WyrmColony()
+WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::get_id()), m_nextSpawnId(1)
 {
 }
 
@@ -74,18 +90,23 @@ WyrmColony::~WyrmColony()
 {
 }
 
-FW_RESULT FW_onCommand(const FW_INST colonyId, const char* strCommand, uint32_t strCommandLen) {
+FW_RESULT FW_onCommand(const FW_INST colonyId, const uint32_t cmdId, const char* strCommand, uint32_t strCommandLen) {
     auto c = WyrmColony::GetColony(colonyId);
     std::string command(strCommand, strCommandLen);
 
-    return c->onCommand(command);
+    try {
+        return c->onCommand(cmdId, command);
+    } catch (std::bad_cast& e) {
+        c->sendResponse(cmdId, FB::VariantList{ "error", FB::VariantMap{ { "error", "Malformed JSON request" }, { "message", std::string(e.what()) } } });
+        return FW_ERR_INVALID_JSON;
+    }
 }
 
-FW_RESULT FW_onCommandCallback(const FW_INST colonyId, const char* strResp, uint32_t strRespLen) {
+FW_RESULT FW_onCommandCallback(const FW_INST colonyId, const uint32_t cmdId, const char* strResp, uint32_t strRespLen) {
     auto c = WyrmColony::GetColony(colonyId);
     std::string response(strResp, strRespLen);
 
-    return c->onResponse(response);
+    return c->onResponse(cmdId, response);
 }
 
 void FB::FireWyrm::WyrmColony::setFuncs(FWHostFuncs* hFuncs) {
@@ -102,11 +123,64 @@ void FB::FireWyrm::WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
     cFuncs->cmdCallback = &FW_onCommandCallback;
 }
 
-FW_RESULT FB::FireWyrm::WyrmColony::onCommand(std::string command) {
+FW_RESULT FB::FireWyrm::WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
+    // This is where the magic happens... =]
+    Json::Reader rdr;
+    Json::Value root;
+
+    int cmdIdx{ 0 };
+    if (!rdr.parse(command, root, false)) {
+        return FW_ERR_INVALID_JSON;
+    } else if (!root.isArray() || root.size() < 1 || !root[cmdIdx].isString()) {
+        return FW_ERR_BAD_FORMAT;
+    }
+
+    std::string cmd(root[cmdIdx].asString());
+
+    auto fnd = cmdMap.find(cmd);
+    if (fnd != cmdMap.end()) {
+        // This is a valid command!
+        CommandHandler cmd = fnd->second;
+
+        VariantList args;
+        for (decltype(root.size()) i = 1; i < root.size(); ++i) {
+            args.emplace_back(jsonValueToVariant(root[i]));
+        }
+        auto dfd = (this->*cmd)(args);
+        dfd.done([cmdId, this](FB::VariantList doc) {
+            sendResponse(cmdId, doc);
+        }, [cmdId, this](std::exception e) {
+            sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", e.what() } } });
+        });
+    } else {
+        return FW_ERR_INVALID_COMMAND;
+    }
+
+    return FW_ERR_UNKNOWN;
+}
+
+FW_RESULT FB::FireWyrm::WyrmColony::onResponse(const uint32_t cmdId, std::string response) {
     throw std::logic_error("The method or operation is not implemented.");
 }
 
-FW_RESULT FB::FireWyrm::WyrmColony::onResponse(std::string response) {
-    throw std::logic_error("The method or operation is not implemented.");
+void FB::FireWyrm::WyrmColony::sendResponse(const uint32_t cmdId, FB::VariantList resp) {
+    auto outJSON = variantToJsonValue(resp);
+
+    std::ostringstream out;
+    out << outJSON;
+    auto outDoc = out.str();
+    this->m_hFuncs.cmdCallback(m_key, cmdId, outDoc.c_str(), outDoc.size());
+}
+
+FB::VariantListPromise FB::FireWyrm::WyrmColony::New(FB::VariantList args) {
+    // Spawn a new instance
+    FW_INST id = m_nextSpawnId++;
+    WyrmBrowserHostPtr wyrmHost{ std::make_shared<WyrmBrowserHost>(this, id) };
+
+    return FB::VariantList{ "success", id };
+}
+
+bool FB::FireWyrm::WyrmColony::_scheduleAsyncCall(void(*func)(void*), void * userData) {
+    return m_hFuncs.doAsyncCall(func, userData) == 0;
 }
 

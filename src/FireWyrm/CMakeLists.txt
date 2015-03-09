@@ -8,7 +8,7 @@
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
-#            
+#
 #Copyright 2015 Gradecam and the FireBreath Development Team
 #\**********************************************************/
 
@@ -20,6 +20,10 @@ if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
+if (FIREBREATH)
+    add_firebreath_library(jsoncpp)
+endif()
+
 include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_CONFIG_DIR}
@@ -27,6 +31,7 @@ include_directories(
     ${PluginCore_SOURCE_DIR}
     ${ATL_INCLUDE_DIRS}
     ${Boost_INCLUDE_DIRS}
+    ${FBLIB_INCLUDE_DIRS}
     )
 
 file (GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -45,6 +50,7 @@ target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIBDL_LIBRARIES}
+    jsoncpp
     )
 
 export(TARGETS ${PROJECT_NAME} APPEND FILE ${FB_EXPORT_FILE})

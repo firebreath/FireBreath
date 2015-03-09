@@ -48,10 +48,8 @@ namespace FB
     template <typename T>
     class Promise;
 
-    using variantDeferred = Deferred < FB::variant > ;
-    using variantPromise = Promise < FB::variant > ;
-
-    class variant;
+    using variantDeferred = Deferred < variant > ;
+    using variantPromise = Promise < variant > ;
     namespace variant_detail {
         // Note that empty translates into return VOID (undefined)
         struct empty;
@@ -76,6 +74,8 @@ namespace FB
     /// @see FB::convert_variant_list()
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     using VariantPromiseList = std::vector < variantPromise > ;
+    using VariantListPromise = Promise < VariantList >;
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::VariantMap
@@ -83,6 +83,7 @@ namespace FB
     /// @brief  Defines an alias representing a string -> variant map.
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     using VariantMap = std::map < std::string, variant > ;
+    using VariantMapPromise = Promise < VariantMap > ;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @typedef    FB::StringSet
