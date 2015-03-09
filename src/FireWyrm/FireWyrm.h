@@ -74,8 +74,11 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
                - "success"
 
     Specific Messages:
-        Message : ["New", []]
+        Message : ["New", "application/x-somepluginmimetype", {}]
             - spawn a new instance.
+            - first parameter is the mimetype; must be specified
+            - second parameter are the key/value parameters (analogous to the param tags in an object tag)
+                - This must be provided but can be empty
         Response: ["success", id]
             - where id is a numeric (int32) identifier for the created spawn
 
