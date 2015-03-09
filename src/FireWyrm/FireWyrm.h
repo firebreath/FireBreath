@@ -74,20 +74,29 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
                - "success"
 
     Specific Messages:
-        Message : ["NewI", []]
-            - create new instance.
+        Message : ["New", []]
+            - spawn a new instance.
         Response: ["success", id]
-            - where id is a numeric (int32) identifier for the created instance
+            - where id is a numeric (int32) identifier for the created spawn
 
-        Message : ["DestroyI", [id]]
-            - destroy existing instance
+        Message : ["Destroy", [id]]
+            - destroy existing spawn
         Response: ["success", id]
-            - where id is the numeric (int32) identifier for the instance that was destroyed
+            - where id is the numeric (int32) identifier for the spawn that was destroyed
+
+        Message : ["Enum", spawn_id, object_id]
+            - Enumerates the member names of a given object
+            - spawn_id matches an identifier returned by NewI which has not been destroyed
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
+        Response: ["success", ["list", "of", "members", "here"]]
+            - The return value is an array of strings corresponding to known members
+            - There could be other members that work but are not known to FireBreath; they will not be listed
+        Alternate Response: ["error", {"error": "invalid object", "message": "The object does not exist"}]
 
         Message : ["Invoke", spawn_id, object_id, "funcName", (Array)[arg1, arg2, arg3]]
             - Invoke method funcName on a given object
             - spawn_id matches an identifier returned by NewI which has not been destroyed
-            - object_id matches a known and live object, including 0 which is the "default" or root object for the instance
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
             - The argument array may be empty but must be provided
             - if "funcName" is "" (empty string) then the object will be invoked as a function
         Response: ["success", retVal]
@@ -99,7 +108,7 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
         Message : ["GetP", spawn_id, object_id, "propName"]
             - Get the named property for the given object
             - spawn_id matches an identifier returned by NewI which has not been destroyed
-            - object_id matches a known and live object, including 0 which is the "default" or root object for the instance
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
             - If "propName" is "" this will resolve to itself, returning its own object_id
         Response: ["success", retVal]
             - retVal can be any supported argument type
@@ -110,7 +119,7 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
         Message : ["SetP", spawn_id, object_id, "propName", value]
             - Set the named property for the given object
             - spawn_id matches an identifier returned by NewI which has not been destroyed
-            - object_id matches a known and live object, including 0 which is the "default" or root object for the instance
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
             - If "propName" is "" this will return an error
         Response: ["success", null]
             - There is no return value for this call
@@ -124,7 +133,7 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
         Message : ["RelObj", spawn_id, object_id]
             - Releases the specified object (so it can be freed)
             - spawn_id matches an identifier returned by NewI which has not been destroyed
-            - object_id matches a known and live object, including 0 which is the "default" or root object for the instance
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
         Response: ["success", null]
             - There is no return value for this call
         Alternate Response: ["error", {"error": "error type", "message": "specific error message"}]
