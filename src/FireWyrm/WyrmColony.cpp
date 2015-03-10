@@ -109,13 +109,13 @@ FW_RESULT FW_onCommandCallback(const FW_INST colonyId, const uint32_t cmdId, con
     return c->onResponse(cmdId, response);
 }
 
-void FB::FireWyrm::WyrmColony::setFuncs(FWHostFuncs* hFuncs) {
+void WyrmColony::setFuncs(FWHostFuncs* hFuncs) {
     memset(&m_hFuncs, 0, sizeof(*hFuncs));
 
     memcpy(&m_hFuncs, hFuncs, std::min(hFuncs->size, static_cast<uint16_t>(sizeof(*hFuncs))));
 }
 
-void FB::FireWyrm::WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
+void WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
     cFuncs->size = sizeof(*cFuncs);
     cFuncs->version = 1;
 
@@ -123,7 +123,7 @@ void FB::FireWyrm::WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
     cFuncs->cmdCallback = &FW_onCommandCallback;
 }
 
-FW_RESULT FB::FireWyrm::WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
+FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     // This is where the magic happens... =]
     Json::Reader rdr;
     Json::Value root;
@@ -159,11 +159,11 @@ FW_RESULT FB::FireWyrm::WyrmColony::onCommand(const uint32_t cmdId, std::string 
     return FW_ERR_UNKNOWN;
 }
 
-FW_RESULT FB::FireWyrm::WyrmColony::onResponse(const uint32_t cmdId, std::string response) {
+FW_RESULT WyrmColony::onResponse(const uint32_t cmdId, std::string response) {
     throw std::logic_error("The method or operation is not implemented.");
 }
 
-void FB::FireWyrm::WyrmColony::sendResponse(const uint32_t cmdId, FB::VariantList resp) {
+void WyrmColony::sendResponse(const uint32_t cmdId, FB::VariantList resp) {
     auto outJSON = variantToJsonValue(resp);
 
     std::ostringstream out;
@@ -172,7 +172,7 @@ void FB::FireWyrm::WyrmColony::sendResponse(const uint32_t cmdId, FB::VariantLis
     this->m_hFuncs.cmdCallback(m_key, cmdId, outDoc.c_str(), outDoc.size());
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::New(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::New(FB::VariantList args) {
     // Spawn a new instance
     FW_INST id = m_nextSpawnId++;
     WyrmBrowserHostPtr wyrmHost{ std::make_shared<WyrmBrowserHost>(this, id) };
@@ -180,7 +180,7 @@ FB::VariantListPromise FB::FireWyrm::WyrmColony::New(FB::VariantList args) {
     return FB::VariantList{ "success", id };
 }
 
-bool FB::FireWyrm::WyrmColony::_scheduleAsyncCall(void(*func)(void*), void * userData) {
+bool WyrmColony::_scheduleAsyncCall(void(*func)(void*), void * userData) {
     return m_hFuncs.doAsyncCall(func, userData) == 0;
 }
 
