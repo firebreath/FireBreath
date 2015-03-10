@@ -79,7 +79,7 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
         assert(PluginCore::getActivePluginCount() == 0);
         FB::Log::stopLogging();
     }
-    return 0;
+    return FW_SUCCESS;
 }
 
 WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::get_id()), m_nextSpawnId(1)

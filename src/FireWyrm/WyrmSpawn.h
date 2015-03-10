@@ -33,12 +33,12 @@ namespace FB {
     };
 
     FB_FORWARD_PTR(WyrmSpawn);
-    FB_FORWARD_PTR(FireWyrmBrowserHost);
+    FB_FORWARD_PTR(WyrmBrowserHost);
 
     class WyrmSpawn : public FB::BrowserPlugin
     {
     public:
-        WyrmSpawn(const FireWyrmBrowserHostPtr& host, const std::string& mimetype);
+        WyrmSpawn(const WyrmBrowserHostPtr& host, const std::string& mimetype);
         virtual ~WyrmSpawn(void);
 
         virtual void init(const std::string& name);
@@ -47,11 +47,11 @@ namespace FB {
         virtual bool setReady();
 
     protected:
-        FireWyrmBrowserHostPtr m_npHost;
+        WyrmBrowserHostPtr m_fwHost;
         bool m_isReady;
         std::string m_mimetype;
-        std::string m_pluginName;
         std::string m_pluginDesc;
+        std::string m_pluginName;
     };
 
 }; }; // FB::FireWyrm

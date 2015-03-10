@@ -45,6 +45,8 @@ namespace FB { namespace FireWyrm {
         FW_RESULT onResponse(const uint32_t cmdId, const std::string response);
         void sendResponse(const uint32_t cmdId, FB::VariantList resp);
 
+        bool _scheduleAsyncCall(void(*func) (void*), void * userData);
+
     private:
         // Messsage handlers
         FB::VariantListPromise New(FB::VariantList args);
@@ -64,7 +66,6 @@ namespace FB { namespace FireWyrm {
         static volatile uint32_t ColonyInitialized;
         static ColonyMap m_colonyMap;
         static void initCommandMap();
-        bool _scheduleAsyncCall(void(*func) (void*), void * userData);
     };
 
 } };

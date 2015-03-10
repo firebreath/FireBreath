@@ -26,6 +26,7 @@ namespace FB {
     namespace FireWyrm {
 
     FB_FORWARD_PTR(WyrmColony);
+    FB_FORWARD_PTR(LocalWyrmling);
     FB_FORWARD_PTR(WyrmBrowserHost);
     FB_FORWARD_PTR(WyrmJavascriptObject);
 
@@ -49,7 +50,6 @@ namespace FB {
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
         virtual void *getContextID() const { return (void *)m_spawnId; }
-        virtual FW_INST getSpawnId() const { return m_spawnId; }
 
     public:
         int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
@@ -68,14 +68,21 @@ namespace FB {
     public:
         void shutdown();
 
-    // NPN_ functions -- for scope reasons, we no longer access these using the global functions
+        LocalWyrmling createWyrmling(FB::JSAPIPtr api, FW_INST objId);
+        LocalWyrmling createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId);
+
+        // Wyrm Scripting methods
+        FB::VariantListPromise Enum(FW_INST objId);
+        FB::variantPromise Invoke(FW_INST objId, std::string name, FB::VariantList args);
+        FB::variantPromise GetP(FW_INST objId, std::string name);
+        FB::Promise<void> SetP(FW_INST objId, std::string name, FB::variant value);
+
     protected:
         WyrmColony *module;
         FW_INST m_spawnId;
         FW_INST m_nextObjId;
-        //NPObjectAPIPtr m_htmlDoc;
-        //NPObjectAPIPtr m_htmlWin;
-        //NPObjectAPIPtr m_htmlElement;
+
+        std::map<FW_INST, LocalWyrmling> m_localMap;
     };
 }; };
 

@@ -24,7 +24,7 @@
 #include "PluginEventSink.h"
 using namespace FB::FireWyrm;
 
-FireWyrmPlugin::FireWyrmPlugin(const FireWyrmBrowserHostPtr& host, const std::string& mimetype)
+WyrmSpawn::WyrmSpawn(const WyrmBrowserHostPtr& host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
       m_isReady(false),
       m_mimetype(mimetype),
@@ -34,11 +34,11 @@ FireWyrmPlugin::FireWyrmPlugin(const FireWyrmBrowserHostPtr& host, const std::st
     pluginMain->SetHost(host);
 }
 
-FireWyrmPlugin::~FireWyrmPlugin(void)
+WyrmSpawn::~WyrmSpawn(void)
 {
 }
 
-bool FireWyrmPlugin::setReady()
+bool WyrmSpawn::setReady()
 {
     bool rval = false;
     if (!m_isReady)
@@ -46,13 +46,13 @@ bool FireWyrmPlugin::setReady()
     return rval;
 }
 
-void FireWyrmPlugin::shutdown(void)
+void WyrmSpawn::shutdown(void)
 {
     pluginMain->ClearWindow();
     pluginMain->shutdown();
 }
 
-void FireWyrmPlugin::init(const std::string& name, const FB::VariantMap& args)
+void WyrmSpawn::init(const FB::VariantMap& args)
 {
     pluginMain->setParams(args);
     setReady();

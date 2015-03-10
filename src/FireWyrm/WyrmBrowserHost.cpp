@@ -13,6 +13,11 @@ Copyright 2015 Richard Bateman, Firebreath development team
 \**********************************************************/
 
 #include "WyrmBrowserHost.h"
+#include "BrowserStream.h"
+#include "BrowserStreamRequest.h"
+#include "LocalWyrmling.h"
+#include "WyrmColony.h"
+#include "Deferred.h"
 
 using namespace FB::FireWyrm;
 
@@ -42,18 +47,34 @@ FB::DOM::DocumentPtr WyrmBrowserHost::getDOMDocument() {
     throw new std::runtime_error("Not implemented");
 }
 
-Promise<FB::VariantList> WyrmBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
+FB::Promise<FB::VariantList> WyrmBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
     throw new std::runtime_error("Not implemented");
 }
 
-Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
+FB::Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
     throw new std::runtime_error("Not implemented");
 }
 
-BrowserStreamPtr WyrmBrowserHost::_createStream(const BrowserStreamRequest& req) const {
+FB::BrowserStreamPtr WyrmBrowserHost::_createStream(const FB::BrowserStreamRequest& req) const {
     throw new std::runtime_error("Not implemented");
 }
 
-void FB::FireWyrm::WyrmBrowserHost::evaluateJavaScript(const std::string &script) {
+void WyrmBrowserHost::evaluateJavaScript(const std::string &script) {
     throw new std::runtime_error("Not implemented");
+}
+
+int WyrmBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
+    throw new std::runtime_error("Not implemented");
+}
+
+LocalWyrmling FB::FireWyrm::WyrmBrowserHost::createWyrmling(FB::JSAPIPtr api, FW_INST objId) {
+    LocalWyrmling obj( std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this()), api, objId, true );
+    m_localMap[objId] = obj;
+    return obj;
+}
+
+LocalWyrmling FB::FireWyrm::WyrmBrowserHost::createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId) {
+    LocalWyrmling obj( std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this()), api, objId, false );
+    m_localMap[objId] = obj;
+    return obj;
 }
