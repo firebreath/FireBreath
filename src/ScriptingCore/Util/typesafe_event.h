@@ -22,7 +22,7 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #define __FB_EVTFUNC_NAME(evt) BOOST_PP_CAT(fire_, evt)
 #define __FB_EVTPARAMMACRO(z, n, args) BOOST_PP_ARRAY_ELEM(n, args) p##n
 
-#define __FB_EVTADDTOLIST(z, n, name) name.push_back(p##n);
+#define __FB_EVTADDTOLIST(z, n, name) name.emplace_back(p##n);
 
 #define FB_JSAPI_EVENT(evt, argCount, argList)                                       \
     void __FB_EVTFUNC_NAME(evt)(                                                     \

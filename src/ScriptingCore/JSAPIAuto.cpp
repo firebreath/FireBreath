@@ -105,7 +105,7 @@ void FB::JSAPIAuto::getMemberNames(std::vector<std::string> &nameVector) const
     nameVector.clear();
     for (ZoneMap::const_iterator it = m_zoneMap.begin(); it != m_zoneMap.end(); ++it) {
         if (getZone() >= it->second)
-            nameVector.push_back(it->first);
+            nameVector.emplace_back(it->first);
     }
 }
 
@@ -338,7 +338,7 @@ void FB::JSAPIAuto::FireJSEvent( std::string eventName, const FB::VariantMap &me
     } catch (...) {};
     if (evt.is_of_type<FB::JSObjectPtr>()) {
         VariantList args;
-        args.push_back(FB::CreateEvent(shared_from_this(), eventName, members, arguments));
+        args.emplace_back(FB::CreateEvent(shared_from_this(), eventName, members, arguments));
         try {
             evt.cast<JSObjectPtr>()->Invoke("", args);
         } catch (...) {

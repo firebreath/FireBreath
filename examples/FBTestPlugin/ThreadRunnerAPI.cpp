@@ -85,7 +85,7 @@ void ThreadRunnerAPI::threadRun()
             for (FB::HeaderMap::const_iterator it = ret->headers.begin(); it != ret->headers.end(); ++it) {
                 if (ret->headers.count(it->first) > 1) {
                     if (outHeaders.find(it->first) != outHeaders.end()) {
-                        outHeaders[it->first].cast<FB::VariantList>().push_back(it->second);
+                        outHeaders[it->first].cast<FB::VariantList>().emplace_back(it->second);
                     } else {
                         outHeaders[it->first] = FB::VariantList{ it->second };
                     }

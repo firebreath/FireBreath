@@ -63,11 +63,11 @@ void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const
 
     for (FB::MethodMap::const_iterator it = m_methodMap.begin();
         it != m_methodMap.end(); ++it) {
-        nameVector.push_back(it->first);
+        nameVector.emplace_back(it->first);
     }
     for (FB::PropertyMap::const_iterator it = m_propertyMap.begin();
         it != m_propertyMap.end(); ++it) {
-        nameVector.push_back(it->first);
+        nameVector.emplace_back(it->first);
     }
 }
 

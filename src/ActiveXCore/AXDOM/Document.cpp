@@ -60,7 +60,7 @@ FB::Promise<ElementList> Document::getElementsByTagName(std::string tagName) con
             CComVariant idx(i);
             list->item(idx, idx, &dispObj);
             FB::JSObjectPtr obj(IDispatchAPI::create(dispObj, std::dynamic_pointer_cast<ActiveXBrowserHost>(getJSObject()->getHost())));
-            tagList.push_back(FB::DOM::Element::create(obj));
+            tagList.emplace_back(FB::DOM::Element::create(obj));
         }
     }
     return tagList;

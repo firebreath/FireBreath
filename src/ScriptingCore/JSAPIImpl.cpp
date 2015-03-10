@@ -24,12 +24,12 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using namespace FB;
 
 JSAPIImpl::JSAPIImpl(void) : m_valid(true) {
-    m_zoneStack.push_back(SecurityScope_Public);
+    m_zoneStack.emplace_back(SecurityScope_Public);
     registerEvent("onload");
 }
 
 JSAPIImpl::JSAPIImpl(const SecurityZone& securityLevel) : m_valid(true) {
-    m_zoneStack.push_back(securityLevel);
+    m_zoneStack.emplace_back(securityLevel);
     registerEvent("onload");
 }
 
@@ -45,13 +45,13 @@ VariantList proxyProcessList(const VariantList &args, const JSAPIImplPtr& self, 
     VariantList newArgs;
     for (auto arg : args) {
         if (arg.is_of_type<JSAPIPtr>() && arg.cast<JSAPIPtr>() == self) {
-            newArgs.push_back(proxy);
+            newArgs.emplace_back(proxy);
         } else if (arg.is_of_type<VariantList>()) {
-            newArgs.push_back(proxyProcessList(arg.cast<VariantList>(), self, proxy));
+            newArgs.emplace_back(proxyProcessList(arg.cast<VariantList>(), self, proxy));
         } else if (arg.is_of_type<VariantMap>()) {
-            newArgs.push_back(proxyProcessMap(arg.cast<VariantMap>(), self, proxy));
+            newArgs.emplace_back(proxyProcessMap(arg.cast<VariantMap>(), self, proxy));
         } else {
-            newArgs.push_back(arg);
+            newArgs.emplace_back(arg);
         }
     }
     return newArgs;
@@ -195,7 +195,7 @@ void JSAPIImpl::FireJSEvent(std::string eventName, const VariantMap &members, co
     }
 
     VariantList args;
-    args.push_back(CreateEvent(shared_from_this(), eventName, members, arguments));
+    args.emplace_back(CreateEvent(shared_from_this(), eventName, members, arguments));
 
     {
         EventContextMap eventMap;
@@ -264,7 +264,7 @@ void JSAPIImpl::unregisterEventMethod(std::string name, JSObjectPtr &event) {
 
 void JSAPIImpl::registerProxy(const JSAPIImplWeakPtr &ptr) const {
     std::unique_lock<std::recursive_mutex> _l(m_proxyMutex);
-    m_proxies.push_back(ptr);
+    m_proxies.emplace_back(ptr);
 }
 
 void JSAPIImpl::unregisterProxy(const JSAPIImplPtr& ptr) const {

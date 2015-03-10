@@ -217,7 +217,7 @@ bool FB::SimpleStreamHelper::onStreamDataArrived( FB::StreamDataArrivedEvent *ev
         size_t n = offset / blockSize;
         size_t pos = offset % blockSize;
         if (blocks.size() < n+1) {
-            blocks.push_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
+            blocks.emplace_back(boost::shared_array<uint8_t>(new uint8_t[blockSize]));
         }
         uint8_t *destBuf = blocks.back().get();
         //if (pos + len > )

@@ -26,10 +26,10 @@ TEST(VariantListTest)
 
     {
         FB::VariantList vl;
-        vl.push_back(1);
-        vl.push_back("foo");
-        vl.push_back(25.74);
-        vl.push_back(-1);
+        vl.emplace_back(1);
+        vl.emplace_back("foo");
+        vl.emplace_back(25.74);
+        vl.emplace_back(-1);
 
         std::vector<FB::VariantList> to_test{
             make_variant_list(vl), FB::VariantList{ 1, "foo", 25.74, -1 }

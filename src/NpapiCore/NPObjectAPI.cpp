@@ -57,7 +57,7 @@ void NPObjectAPI::getMemberNames(std::vector<std::string> &nameVector) const
 
     browser->Enumerate(obj, &idArray, &count);
     for (uint32_t i = 0; i < count; i++) {
-        nameVector.push_back(browser->StringFromIdentifier(idArray[i]));
+        nameVector.emplace_back(browser->StringFromIdentifier(idArray[i]));
     }
     browser->MemFree(idArray);
 }

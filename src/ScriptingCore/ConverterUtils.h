@@ -380,7 +380,7 @@ namespace FB { namespace detail
             if(count < 1) 
                 return result;            
             for( ; n <= l.size(); ++n)
-                result.value.push_back(l[n-1]);
+                result.value.emplace_back(l[n-1]);
             return result;
         }
         // If the last is catchall we'll just convert to variant but not complain if there are more params

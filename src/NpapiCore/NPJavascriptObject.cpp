@@ -140,7 +140,7 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         }
         std::vector<FB::variant> vArgs;
         for (unsigned int i = 0; i < argCount; i++) {
-            vArgs.push_back(browser->getVariant(&args[i]));
+            vArgs.emplace_back(browser->getVariant(&args[i]));
         }
 
         // Default method call

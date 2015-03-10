@@ -166,7 +166,7 @@ void URI::appendPathComponent(std::string pc) {
     if (! pc.size()) return;
     // make sure we have exactly one '/' between the old path and new path component[s]
     if (path.size() && path[path.size() - 1] == '/') path.resize(path.size() - 1);
-    if (pc[0] != '/') path.push_back('/');
+    if (pc[0] != '/') path.emplace_back('/');
     path += pc;
 }
 

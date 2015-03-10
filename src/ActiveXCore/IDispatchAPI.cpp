@@ -79,7 +79,7 @@ void IDispatchAPI::getMemberNames(std::vector<std::string> &nameVector) const
             CComBSTR memberName;
             if (SUCCEEDED(dispatchEx->GetMemberName(dispid, &memberName))) {
                 std::wstring name(memberName);
-                nameVector.push_back(FB::wstring_to_utf8(name));
+                nameVector.emplace_back(FB::wstring_to_utf8(name));
             }
         }
     } catch(...) {}

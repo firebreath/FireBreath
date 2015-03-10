@@ -37,7 +37,7 @@ void PluginEventSource::AttachObserver(FB::PluginEventSink *sink)
 void PluginEventSource::AttachObserver( PluginEventSinkPtr sink )
 {
     std::unique_lock<std::recursive_mutex> _l(m_observerLock);
-    m_observers.push_back(sink);
+    m_observers.emplace_back(sink);
     AttachedEvent newEvent;
     sink->HandleEvent(&newEvent, this);
 }
@@ -59,7 +59,7 @@ void PluginEventSource::DetachObserver( PluginEventSinkPtr sink )
 			if (!ptr || sink == ptr) {
 				it = m_observers.erase(it);
 				if (ptr)
-					detachedList.push_back(ptr);
+					detachedList.emplace_back(ptr);
 			} else {
 				++it;
 			}

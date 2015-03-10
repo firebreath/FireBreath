@@ -74,7 +74,7 @@ FB::Npapi::NpapiPluginPtr FB::FactoryBase::createNpapiPlugin(const FB::Npapi::Np
 void FB::FactoryBase::getLoggingMethods( FB::Log::LogMethodList& outMethods )
 {
 #ifndef NDEBUG
-    outMethods.push_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
+    outMethods.emplace_back(std::make_pair(FB::Log::LogMethod_Console, std::string()));
 #endif
 }
 

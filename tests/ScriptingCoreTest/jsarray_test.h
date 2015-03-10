@@ -38,7 +38,7 @@ TEST(JSFakeArrayTest)
         {
             std::vector<FB::variant> to_test = VariantList{ (*test)[i], test->Values()[i] };
             for(size_t c=0; c<copies.size(); ++c) 
-                to_test.push_back(copies[c][i]);
+                to_test.emplace_back(copies[c][i]);
 
             for(size_t t=0; t<to_test.size(); ++t) 
             {

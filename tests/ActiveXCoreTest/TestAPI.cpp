@@ -114,7 +114,7 @@ FB::VariantList TestAPI::reverseArray(const std::vector<std::string>& arr)
     FB::VariantList outArr;
     for (std::vector<std::string>::const_reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
     {
-        outArr.push_back(*it);
+        outArr.emplace_back(*it);
     }
     return outArr;
 }
@@ -126,7 +126,7 @@ FB::VariantList TestAPI::getObjectKeys(const FB::JSObjectPtr& arr)
     arr->GetObjectValues(arr, inMap);
 
     for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
-        outArr.push_back(it->first);
+        outArr.emplace_back(it->first);
     }
     return outArr;
 }
@@ -138,7 +138,7 @@ FB::VariantList TestAPI::getObjectValues(const FB::JSObjectPtr& arr)
     arr->GetObjectValues(arr, inMap);
 
     for (std::map<std::string, FB::variant>::iterator it = inMap.begin(); it != inMap.end(); it++) {
-        outArr.push_back(it->second);
+        outArr.emplace_back(it->second);
     }
     return outArr;
 }
@@ -166,9 +166,9 @@ FB::VariantMap TestAPI::getUserData()
     map["EyeColor"] = "Hazel";
     map["HairColor"] = "Brown";
     FB::VariantList kids;
-    kids.push_back("Caleb");
-    kids.push_back("Unknown");
-    kids.push_back("Ok, I only have one, but I'm filling space");
+    kids.emplace_back("Caleb");
+    kids.emplace_back("Unknown");
+    kids.emplace_back("Ok, I only have one, but I'm filling space");
     map["Kids"] = kids;
     return map;
 }

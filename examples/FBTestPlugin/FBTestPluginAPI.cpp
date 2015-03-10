@@ -205,7 +205,7 @@ FB::VariantList FBTestPluginAPI::reverseArray(const std::vector<std::string>& ar
     FB::VariantList outArr;
     for (std::vector<std::string>::const_reverse_iterator it = arr.rbegin(); it != arr.rend(); it++)
     {
-        outArr.push_back(*it);
+        outArr.emplace_back(*it);
     }
     return outArr;
 }
@@ -269,22 +269,22 @@ std::string FBTestPluginAPI::listArray(const std::vector<std::string>& arr)
 FB::VariantList FBTestPluginAPI::getUserArray()
 {
     FB::VariantList map;
-    map.push_back("Richard Bateman");
-    map.push_back("Somewhere in Utah");
-    map.push_back("Hazel");
-    map.push_back("Brown");
+    map.emplace_back("Richard Bateman");
+    map.emplace_back("Somewhere in Utah");
+    map.emplace_back("Hazel");
+    map.pemplace_back"Brown");
     FB::VariantList kids;
-    kids.push_back("Caleb");
-    kids.push_back("Unknown");
-    kids.push_back("Ok, I only have one, but I'm filling space");
+    kids.emplace_back("Caleb");
+    kids.emplace_back("Unknown");
+    kids.emplace_back("Ok, I only have one, but I'm filling space");
     FB::VariantMap innerMap;
     innerMap["test"] = 12;
     innerMap["test2"] = true;
     innerMap["test3"] = 12.4;
     innerMap["test4"] = "asdf";
-    map.push_back(innerMap);
-    kids.push_back(innerMap);
-    map.push_back(kids);
+    map.emplace_back(innerMap);
+    kids.emplace_back(innerMap);
+    map.emplace_back(kids);
     return map;
 }
 

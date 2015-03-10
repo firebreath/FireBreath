@@ -82,7 +82,7 @@ void FB::OneShotManager::npp_scheduleAsyncCallback(void* instance, OneShotCallba
     std::unique_lock<std::mutex> lock(m_mutex);
     std::map<void*,SinkQueue*>::iterator sink = m_sinks.find(instance);
     if (m_sinks.end() != sink) {
-        sink->second->push_back(std::make_pair(userData, func));
+        sink->second->emplace_back(std::make_pair(userData, func));
         if (!m_shots) {
             OneShotManagerHelper* mHelper = (OneShotManagerHelper*) m_helper;
             [mHelper performSelectorOnMainThread:@selector(shoot:) withObject:NULL waitUntilDone:NO];

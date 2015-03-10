@@ -247,7 +247,7 @@ namespace FB
             for (std::vector<std::string>::const_iterator it = utf8Vector.begin();
                     it != utf8Vector.end(); ++it) {
                 std::wstring wStrVal(utf8_to_wstring(*it));
-                nameVector.push_back(wStrVal);
+                nameVector.emplace_back(wStrVal);
             }
         }
 
