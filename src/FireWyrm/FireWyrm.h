@@ -142,6 +142,39 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
         Alternate Response: ["error", {"error": "error type", "message": "specific error message"}]
             - For example, if the object is invalid or has already been released, you will get:
                 ["error", {"error": "invalid", "message": "The object does not exist"}]
+
+
+
+        Browser-only messages:
+            - These are messages which are only supported by FireWyrm colonies which live in a browser
+              In other words, they work from plugin -> browser but not browser -> plugin
+
+        Message : ["Eval", jsString]
+            - jsString is a valid string of javascript to evaluate
+            - ability to evaluate the string depends on browser support
+        Response: ["success", retVal]
+            - retVal can be any supported argument type
+        Alternate Response: ["error", {"error": "exception thrown", "message": "message from thrown exception", "stack": "call stack if any"}]
+        Alternate Response: ["error", {"error": "not supported", "message": "eval not supported"}]
+        
+        Message : ["readArray", spawn_id, object_id]
+            - Requests all values of an object which is assumed to be an array
+            - spawn_id matches an identifier returned by NewI which has not been destroyed
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
+        Response: ["success", [array, values, here]]
+            - each value of the array can be any supported argument type
+            - this is a shorthand for getting length and then requesting each value individually
+            - will only succeed if there is a "length" property on the object and obj[0..length] exists
+        Alternate Response: ["error", {"error": "invalid type", "message": "object is not an array"]
+
+        Message : ["readObject", spawn_id, object_id]
+            - Requests a key : value map of the object
+            - spawn_id matches an identifier returned by NewI which has not been destroyed
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
+        Response: ["success", {"key1": "value1", "key2": "value2"}]
+            - all keys must be strings, values can be any supported argument type
+            - this is a shorthand for enumerating the keys on the object and then requesting each value
+        Alternate Response: ["error", {"error": "invalid", "message": "The object does not exist"}]
 **/
 
 typedef struct _FireWyrmHostFuncs
