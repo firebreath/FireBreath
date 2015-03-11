@@ -51,14 +51,15 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
             - bool
             - null
             - string
-            - binary Data (in the format {$type: "binary", data: "LONG_BASE64_STRING"})
-            - object reference (in the format {$type: ref, data: object_id})
+            - binary Data (in the format {"$type": "binary", data: "LONG_BASE64_STRING"})
+            - object reference (in the format {"$type": "ref", data: object_id})
             - json data by value
                 - By default, all javascript objects are passed by reference
                 - If desired to pass by value (much more efficient for passing large amounts of
                   data) then this type is used
-                - In the format {$type: json, data: mixed} where the "mixed" value is used without
+                - In the format {"$type": "json", data: mixed} where the "mixed" value is used without
                   any transformation (no looking through for special types, no references, etc)
+            - error data (in the format {"$type": "error", message: "message"})
 
     Scoping:
         Everything is scoped to a colonyId
