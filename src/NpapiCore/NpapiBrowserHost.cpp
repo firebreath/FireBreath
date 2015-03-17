@@ -47,11 +47,6 @@ using std::map;
 
 namespace
 {
-    struct MethodCallReq
-    {
-        //FB::variant
-    };
-
     template<class T>
     NPVariantBuilderMap::value_type makeBuilderEntry()
     {

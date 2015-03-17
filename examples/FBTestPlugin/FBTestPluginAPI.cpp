@@ -272,7 +272,7 @@ FB::VariantList FBTestPluginAPI::getUserArray()
     map.emplace_back("Richard Bateman");
     map.emplace_back("Somewhere in Utah");
     map.emplace_back("Hazel");
-    map.pemplace_back"Brown");
+    map.emplace_back("Brown");
     FB::VariantList kids;
     kids.emplace_back("Caleb");
     kids.emplace_back("Unknown");

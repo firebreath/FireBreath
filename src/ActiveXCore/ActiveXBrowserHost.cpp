@@ -397,7 +397,8 @@ IDispatchEx* FB::ActiveX::ActiveXBrowserHost::getJSAPIWrapper( const FB::JSAPIWe
 FB::ActiveX::IDispatchWRef FB::ActiveX::ActiveXBrowserHost::getIDispatchRef( IDispatch* obj )
 {
     obj->AddRef();
-    m_heldIDispatch.emplace_back(std::make_shared<FB::ShareableReference<IDispatch> >(obj));
+    auto ref = std::make_shared<FB::ShareableReference<IDispatch> >(obj);
+    m_heldIDispatch.emplace_back(ref);
     return ref;
 }
 

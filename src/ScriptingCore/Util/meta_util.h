@@ -19,8 +19,11 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
 #include <boost/optional.hpp>
 #include "meta_util_impl.h"
 
-namespace FB { namespace meta 
-{
+namespace FB { 
+    template <typename T>
+    class Promise;
+
+    namespace meta {
     ////////////////////////////////////////////////
     // is optional - a boost::optional<T> type
 

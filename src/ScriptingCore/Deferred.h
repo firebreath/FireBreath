@@ -282,6 +282,37 @@ namespace FB {
             return dfd.promise();
         }
 
+        template <>
+        Promise<void> then<void>(std::function<void(typename T)> cbSuccess, std::function<void(std::exception)> cbFail) const {
+            if (!m_data) { return Promise<void>::rejected(std::runtime_error("Promise invalid")); }
+            Deferred<void> dfd;
+            auto onDone = [dfd, cbSuccess](typename T v) -> void {
+                try {
+                    cbSuccess(v);
+                    dfd.resolve();
+                } catch (std::exception e) {
+                    dfd.reject(e);
+                }
+            };
+            if (cbFail) {
+                auto onFail = [dfd, cbFail](std::exception e1) -> void {
+                    try {
+                        cbFail(e1);
+                        dfd.resolve();
+                    } catch (std::exception e2) {
+                        dfd.reject(e2);
+                    }
+                };
+                done(onDone, onFail);
+            } else {
+                auto onFail = [dfd](std::exception e1) -> void {
+                    dfd.reject(e1);
+                };
+                done(onDone, onFail);
+            }
+            return dfd.promise();
+        }
+
         // piped then with Deferred return value
         template <typename Uout>
         Promise<Uout> thenPipe(std::function<Promise<Uout>(typename T)> cbSuccess, std::function<Promise<Uout>(std::exception)> cbFail = nullptr) const {
