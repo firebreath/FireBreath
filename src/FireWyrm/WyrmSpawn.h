@@ -17,7 +17,6 @@
 #define H_FB_FIREWYRM_FIREWYRMPLUGIN
 
 #include "WyrmBrowserHost.h"
-#include "WyrmJSObject.h"
 #include "BrowserPlugin.h"
 
 namespace FB {
@@ -38,10 +37,10 @@ namespace FB {
     class WyrmSpawn : public FB::BrowserPlugin
     {
     public:
-        WyrmSpawn(const WyrmBrowserHostPtr& host, const std::string& mimetype);
+        WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype);
         virtual ~WyrmSpawn(void);
 
-        virtual void init(const std::string& name);
+        virtual void init(VariantMap args);
         virtual void shutdown();
 
         virtual bool setReady();

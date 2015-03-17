@@ -18,6 +18,7 @@ Copyright 2015 Richard Bateman, Firebreath development team
 #include "LocalWyrmling.h"
 #include "WyrmColony.h"
 #include "Deferred.h"
+#include "WyrmVariantUtil.h"
 
 using namespace FB::FireWyrm;
 
@@ -67,14 +68,84 @@ int WyrmBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& fun
     throw new std::runtime_error("Not implemented");
 }
 
-LocalWyrmling FB::FireWyrm::WyrmBrowserHost::createWyrmling(FB::JSAPIPtr api, FW_INST objId) {
+LocalWyrmling WyrmBrowserHost::getWyrmling(FB::JSAPIPtr api) {
+    for (auto it : m_localMap) {
+        if (it.second.containsAPI(api)) {
+            return it.second;
+        }
+    }
+    FW_INST objId = m_nextObjId++;
+    return createWyrmling(api, objId);
+}
+
+FB::FireWyrm::LocalWyrmling FB::FireWyrm::WyrmBrowserHost::getWyrmling(FB::JSAPIWeakPtr api) {
+    for (auto it : m_localMap) {
+        if (it.second.containsAPI(api.lock())) {
+            return it.second;
+        }
+    }
+    FW_INST objId = m_nextObjId++;
+    return createWyrmling(api, objId);
+}
+LocalWyrmling WyrmBrowserHost::createWyrmling(FB::JSAPIPtr api, FW_INST objId) {
     LocalWyrmling obj( std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this()), api, objId, true );
     m_localMap[objId] = obj;
     return obj;
 }
 
-LocalWyrmling FB::FireWyrm::WyrmBrowserHost::createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId) {
+LocalWyrmling WyrmBrowserHost::createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId) {
     LocalWyrmling obj( std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this()), api, objId, false );
     m_localMap[objId] = obj;
     return obj;
+}
+
+FB::VariantListPromise FB::FireWyrm::WyrmBrowserHost::Enum(FW_INST objId) {
+    auto fnd = m_localMap.find(objId);
+    if (fnd != m_localMap.end()) {
+        return fnd->second.Enum();
+    } else {
+        throw std::runtime_error("Object not found");
+    }
+}
+
+FB::variantPromise FB::FireWyrm::WyrmBrowserHost::Invoke(FW_INST objId, std::string name, FB::VariantList args) {
+    auto fnd = m_localMap.find(objId);
+    if (fnd != m_localMap.end()) {
+        return fnd->second.Invoke(name, args);
+    } else {
+        throw std::runtime_error("Object not found");
+    }
+}
+
+FB::variantPromise FB::FireWyrm::WyrmBrowserHost::GetP(FW_INST objId, std::string name) {
+    auto fnd = m_localMap.find(objId);
+    if (fnd != m_localMap.end()) {
+        return fnd->second.GetP(name);
+    } else {
+        throw std::runtime_error("Object not found");
+    }
+}
+
+FB::Promise<void> FB::FireWyrm::WyrmBrowserHost::SetP(FW_INST objId, std::string name, FB::variant value) {
+    auto fnd = m_localMap.find(objId);
+    if (fnd != m_localMap.end()) {
+        return fnd->second.SetP(name, value);
+    } else {
+        throw std::runtime_error("Object not found");
+    }
+}
+
+FB::Promise<void> FB::FireWyrm::WyrmBrowserHost::RelObj(FW_INST objId) {
+    auto fnd = m_localMap.find(objId);
+    if (fnd != m_localMap.end()) {
+        fnd->second.Invalidate();
+        m_localMap.erase(fnd);
+        return FB::Promise<void>(true);
+    } else {
+        throw std::runtime_error("Object not found");
+    }
+}
+
+FB::variantPromise WyrmBrowserHost::DoCommand(FB::VariantList cmd) {
+    return module->DoCommand(cmd);
 }

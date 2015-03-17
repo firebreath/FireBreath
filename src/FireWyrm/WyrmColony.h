@@ -25,13 +25,19 @@
 
 namespace FB { namespace FireWyrm {
     FB_FORWARD_PTR(WyrmSpawn);
+    FB_FORWARD_PTR(WyrmSac);
+    FB_FORWARD_PTR(AlienLarvae);
 
     class WyrmColony : boost::noncopyable
     {
         using CommandHandler = FB::VariantListPromise(WyrmColony::*)(FB::VariantList args);
         using CommandMap = std::map < std::string, CommandHandler > ;
+        using StringDeferred = FB::Deferred < std::string > ;
+        using StringPromise = FB::Promise < std::string > ;
 
-        using SpawnMap = std::map < FW_INST, WyrmSpawnPtr > ;
+        using SpawnMap = std::map < FW_INST, WyrmSacPtr > ;
+        using WaitMap = std::map < uint32_t, StringDeferred > ;
+        using LarvaeMap = std::map < std::pair< FW_INST, uint32_t>, AlienLarvaeWeakPtr > ;
     public:
         WyrmColony(FW_INST key);
         virtual ~WyrmColony();
@@ -44,10 +50,25 @@ namespace FB { namespace FireWyrm {
         FW_RESULT onCommand(const uint32_t cmdId, const std::string command);
         FW_RESULT onResponse(const uint32_t cmdId, const std::string response);
         void sendResponse(const uint32_t cmdId, FB::VariantList resp);
+        StringPromise sendCommand(FB::VariantList cmd);
 
         bool _scheduleAsyncCall(void(*func) (void*), void * userData);
+        AlienLarvaePtr getLarvaeFor(const FW_INST spawnId, const uint32_t objId);
 
     private:
+        //
+        uint32_t getCommandId() {
+            // Return the next unused command ID
+            // Note that this is designed to eventually overflow and wrap around if needed; if somehow a long
+            // running command is still running when it gets the next time around (astronomically unlikely)
+            // the check to see if it is still in the waitMap will cause it to be skipped
+            uint32_t cmdId = m_nextCmdId++;
+            while (m_waitMap.find(cmdId) != m_waitMap.end()) {
+                cmdId = m_nextCmdId++;
+            }
+            return cmdId;
+        }
+
         // Messsage handlers
         FB::VariantListPromise New(FB::VariantList args);
         FB::VariantListPromise Destroy(FB::VariantList args);
@@ -57,11 +78,19 @@ namespace FB { namespace FireWyrm {
         FB::VariantListPromise SetP(FB::VariantList args);
         FB::VariantListPromise RelObj(FB::VariantList args);
 
+    public:
+        // Host calls
+        FB::variantPromise DoCommand(FB::VariantList args);
+
     protected:
         FW_INST m_key;
         std::thread::id m_threadId;
         FWHostFuncs m_hFuncs;
         FW_INST m_nextSpawnId;
+        uint32_t m_nextCmdId;
+        SpawnMap m_spawnMap;
+        WaitMap m_waitMap;
+        LarvaeMap m_larvaeMap;
         static CommandMap cmdMap;
         static volatile uint32_t ColonyInitialized;
         static ColonyMap m_colonyMap;

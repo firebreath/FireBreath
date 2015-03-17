@@ -20,11 +20,11 @@
 
 #include "BrowserStreamRequest.h"
 #include "WyrmSpawn.h"
-#include "WyrmStream.h"
+//#include "WyrmStream.h"
 #include "PluginEventSink.h"
 using namespace FB::FireWyrm;
 
-WyrmSpawn::WyrmSpawn(const WyrmBrowserHostPtr& host, std::string mimetype)
+WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
       m_isReady(false),
       m_mimetype(mimetype),
@@ -48,11 +48,13 @@ bool WyrmSpawn::setReady()
 
 void WyrmSpawn::shutdown(void)
 {
+    m_fwHost->shutdown();
     pluginMain->ClearWindow();
     pluginMain->shutdown();
+    m_fwHost.reset();
 }
 
-void WyrmSpawn::init(const FB::VariantMap& args)
+void WyrmSpawn::init(FB::VariantMap args)
 {
     pluginMain->setParams(args);
     setReady();

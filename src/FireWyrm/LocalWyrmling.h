@@ -55,10 +55,16 @@ namespace FB { namespace FireWyrm {
                 throw std::bad_cast();
             return ptr;
         }
+        bool containsAPI(FB::JSAPIPtr api) const {
+            return m_api.lock() == getAPI();
+        }
+        FW_INST getObjectId() const { return m_id; }
         virtual ~LocalWyrmling(void);
 
         void Invalidate() {
             m_valid = false;
+            m_api.reset();
+            m_browser.reset();
         }
         bool isValid() {
             return m_valid && !m_api.expired() && !m_browser.expired();

@@ -23,11 +23,12 @@ typedef uint32_t FW_INST;
 typedef uint32_t FW_MSG;
 
 
-#define FW_SUCCESS
+#define FW_SUCCESS 0
 #define FW_ERR_UNKNOWN (FW_SUCCESS + 1)
 #define FW_ERR_INVALID_JSON (FW_SUCCESS + 2)
 #define FW_ERR_BAD_FORMAT (FW_SUCCESS + 3)
 #define FW_ERR_INVALID_COMMAND (FW_SUCCESS + 4)
+#define FW_ERR_INVALID_CMD_ID (FW_SUCCESS + 5)
 
 typedef void (*FW_AsyncCall)(void* pData);
 
@@ -51,15 +52,15 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
             - bool
             - null
             - string
-            - binary Data (in the format {"$type": "binary", data: "LONG_BASE64_STRING"})
-            - object reference (in the format {"$type": "ref", data: object_id})
+            - binary Data (in the format {"$type": "binary", "data": "LONG_BASE64_STRING"})
+            - object reference (in the format { "$type": "ref", "data": [spawn_id, object_id] } )
             - json data by value
                 - By default, all javascript objects are passed by reference
                 - If desired to pass by value (much more efficient for passing large amounts of
                   data) then this type is used
-                - In the format {"$type": "json", data: mixed} where the "mixed" value is used without
+                - In the format {"$type": "json", "data": mixed} where the "mixed" value is used without
                   any transformation (no looking through for special types, no references, etc)
-            - error data (in the format {"$type": "error", message: "message"})
+            - error data (in the format {"$type": "error", "data": "message"})
 
     Scoping:
         Everything is scoped to a colonyId
@@ -131,6 +132,17 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
             - For example, if the argument name does not exist and is not valid, you will get:
                 ["error", {"error": "could not set property", "message": "Property does not exist on this object"}]
 
+        Message : ["DelP", spawn_id, object_id, "propName"]
+            - Delete the named property from the given object
+            - spawn_id matches an identifier returned by NewI which has not been destroyed
+            - object_id matches a known and live object, including 0 which is the "default" or root object for the spawn
+            - If "propName" is "" this will return an error
+        Response: ["success", null]
+            - There is no return value for this call
+        Alternate Response: ["error", {"error": "error type", "message": "specific error message"}]
+            - For example, if the argument name does not exist and is not valid, you will get:
+                ["error", {"error": "could not set property", "message": "Property does not exist on this object"}]
+
         IMPORTANT!
         Any objects returned *must* be released or memory leaks will result
 
@@ -149,6 +161,8 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
         Browser-only messages:
             - These are messages which are only supported by FireWyrm colonies which live in a browser
               In other words, they work from plugin -> browser but not browser -> plugin
+
+              NOTE: These probably should be moved to the root interface of an object type
 
         Message : ["Eval", jsString]
             - jsString is a valid string of javascript to evaluate

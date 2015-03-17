@@ -50,6 +50,7 @@ namespace FB {
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
         virtual void *getContextID() const { return (void *)m_spawnId; }
+        virtual FW_INST getSpawnId() const { return m_spawnId; }
 
     public:
         int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
@@ -60,14 +61,16 @@ namespace FB {
         FB::DOM::ElementPtr getDOMElement() override;
         void evaluateJavaScript(const std::string &script) override;
 
-        virtual Promise<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj);
-        virtual Promise<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj);
+        virtual Promise<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj) override;
+        virtual Promise<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj) override;
 
         virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
 
     public:
         void shutdown();
 
+        LocalWyrmling getWyrmling(FB::JSAPIPtr api);
+        LocalWyrmling getWyrmling(FB::JSAPIWeakPtr api);
         LocalWyrmling createWyrmling(FB::JSAPIPtr api, FW_INST objId);
         LocalWyrmling createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId);
 
@@ -76,6 +79,9 @@ namespace FB {
         FB::variantPromise Invoke(FW_INST objId, std::string name, FB::VariantList args);
         FB::variantPromise GetP(FW_INST objId, std::string name);
         FB::Promise<void> SetP(FW_INST objId, std::string name, FB::variant value);
+        FB::Promise<void> RelObj(FW_INST objId);
+
+        FB::variantPromise DoCommand(FB::VariantList cmd);
 
     protected:
         WyrmColony *module;
