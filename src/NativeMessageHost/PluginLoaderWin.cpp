@@ -33,11 +33,11 @@ PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename)
         throw new std::runtime_error("Could not load file");
     }
 
-    initFn = GetProcAddress(m_module, L"FireWyrm_Init");
-    finitFn = GetProcAddress(m_module, L"FireWyrm_Finit");
+    initFn = reinterpret_cast<InitFnPtr>(GetProcAddress(m_module, "FireWyrm_Init"));
+    finitFn = reinterpret_cast<FinitFnPtr>(GetProcAddress(m_module, "FireWyrm_Finit"));
 
     if (!initFn || !finitFn) {
-        throw new std::runtime_error("Could not find entrypoints");
+        throw new std::runtime_error("Could not find entry points");
     }
 }
 

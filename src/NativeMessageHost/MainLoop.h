@@ -18,9 +18,10 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #define MainLoop_h__
 
 #include <string>
-#include <thread>
 #include <deque>
 #include <vector>
+#include <memory>
+#include <thread>
 #include <mutex>
 #include <condition_variable>
 #include "FireWyrm.h"
@@ -89,7 +90,7 @@ private:
     std::mutex m_mutex;
     std::condition_variable m_cond;
     bool m_needsToExit;
-    std::unique_pointer<PluginLoader> m_pluginLoader;
+    std::unique_ptr<PluginLoader> m_pluginLoader;
     FWColonyFuncs m_cFuncs;
 };
 

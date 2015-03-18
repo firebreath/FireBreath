@@ -36,7 +36,7 @@ private:
     using FinitFnPtr = FW_RESULT(*)();
     
     InitFnPtr initFn;
-    InitFnPtr finitFn;
+    FinitFnPtr finitFn;
 };
 
 #endif // PluginLoader_h__
