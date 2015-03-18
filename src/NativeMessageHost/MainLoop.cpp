@@ -44,20 +44,26 @@ messageInfo& getMessageInfo(uint32_t msgId, size_t c) {
     }
 }
 
-FW_RESULT doAsyncCall(const FW_AsyncCall call, const void* pData) {
+FW_RESULT doAsyncCall(const FW_AsyncCall call, void* pData) {
     MainLoop::get().scheduleCall(call, pData);
     return FW_SUCCESS;
 }
 
-messageInfo parseString(const char* strCommand, uint32_t strCommandLen) {
-    Json::Reader rdr;
-    Json::Value root;
-    std::string command(strCommand, strCommandLen);
+messageInfo parseCommandMessage(Json::Value& root) {
+    std::string cmd = root["cmd"].asString();
+    if (cmd == "create") {
+        if (!root.isMember("mimetype")) {
+            throw std::runtime_error("Missing Mimetype");
+        }
+        messageInfo msg;
+        msg.type = MessageType::CREATE;
+        msg.msgs.emplace_back(root["mimetype"].asString());
+        return msg;
+    }
+}
 
-    int cmdIdx{ 0 };
-    if (!rdr.parse(command, root, false)) {
-        throw std::runtime_error("Invalid json");
-    } else if (!root.isObject() || !root.isMember("msg") || !root.isMember("c") || !root["c"].isIntegral() || !root.isMember("cmdId") || !root["cmdId"].isIntegral()) {
+messageInfo parseWyrmholeMessage(Json::Value& root) {
+    if (!root.isMember("c") || !root["c"].isIntegral() || !root.isMember("cmdId") || !root["cmdId"].isIntegral()) {
         throw std::runtime_error("Invalid message");
     }
     FW_INST colonyId = 0;
@@ -80,6 +86,39 @@ messageInfo parseString(const char* strCommand, uint32_t strCommandLen) {
     info.msgs[n] = root["msg"].asString();
     info.curC++;
     return info;
+}
+
+messageInfo parseIncomingMessage(std::string command) {
+    Json::Reader rdr;
+    Json::Value root;
+
+    int cmdIdx{ 0 };
+    if (!rdr.parse(command, root, false)) {
+        throw std::runtime_error("Invalid json");
+    } else if (!root.isObject()) {
+        throw std::runtime_error("Invalid message");
+    }
+
+    if (root.isMember("cmd")) {
+        return parseCommandMessage(root);
+    } else if (root.isMember("msg")) {
+        return parseWyrmholeMessage(root);
+    } else {
+        throw std::runtime_error("Unknown message");
+    }
+    
+}
+
+void MainLoop::messageIn(std::string msg) {
+    // Process the message before we send it in
+    messageInfo processedMsg = parseIncomingMessage(msg);
+
+    if (processedMsg.isComplete()) {
+        std::unique_lock<std::mutex> _l(m_mutex);
+        m_messagesIn.emplace_back(processedMsg);
+        _l.unlock();
+        m_cond.notify_all();
+    }
 }
 
 FW_RESULT sendCommand(const FW_INST colonyId, const uint32_t cmdId, const char* strCommand, uint32_t strCommandLen, std::string type) {
@@ -132,7 +171,7 @@ void MainLoop::run() {
     m_cFuncs.size = sizeof(m_cFuncs);
     m_cFuncs.version = FW_VERSION;
 
-    std::unique_ptr<MainLoader> plugin;
+    std::unique_ptr<PluginLoader> plugin;
 
     auto workExists = [this]() {
         return m_needsToExit || m_messagesIn.size() || m_AsyncCalls.size();
@@ -140,10 +179,35 @@ void MainLoop::run() {
 
     std::unique_lock<std::mutex> _l(m_mutex);
     while (!m_needsToExit) {
-        m_cond.wait(_l, workExists);
+        // If work already exists, don't wait
+        if (!workExists()) {
+            m_cond.wait(_l, workExists);
+        }
+
         if (m_needsToExit) {
             // TODO: Do any cleanup here
             return;
+        }
+        // This is intentionally not a loop; this way new calls scheduled will not prevent other messages
+        // from being processed
+        if (m_AsyncCalls.size()) {
+            AsyncCall c = m_AsyncCalls.front();
+            m_AsyncCalls.pop_front();
+
+            // Unlock the mutex while we do the call so other messages can be scheduled in the mean time
+            // This also prevents deadlocks if the async call is reentrant, since we aren't using a recursive
+            // lock
+            _l.unlock();
+            (*(c.fn))(c.pData);
+            _l.lock();
+        }
+        if (m_messagesIn.size()) {
+            messageInfo message = m_messagesIn.front();
+            m_AsyncCalls.pop_front();
+
+            _l.unlock();
+            processBrowserMessage(message);
+            _l.lock();
         }
 
         // TODO: Handle commands that need to go out

@@ -27,18 +27,26 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include "FireWyrm.h"
 #include "PluginLoader.h"
 
+enum class MessageType { UNKNOWN, CREATE, DESTROY, COMMAND, RESPONSE };
+
 struct messageInfo
 {
-    messageInfo(size_t c, uint32_t msgId) : msgId(msgId), c(c), curC(0), msgs(c) {}
+    messageInfo(size_t c, uint32_t msgId) : colonyId(0), msgId(msgId), c(c), curC(0), msgs(c) {}
     messageInfo() {}
+
     FW_INST colonyId;
     uint32_t msgId;
-    std::string command;
     size_t c;
     size_t curC;
     std::vector<std::string> msgs;
 
-    std::string getString() {
+    MessageType type;
+    
+    bool isComplete() const {
+        return curC >= c;
+    }
+
+    std::string getString() const {
         std::string out;
         size_t len = 0;
         for (auto m : msgs) {
@@ -57,9 +65,9 @@ private:
     struct PrivateStruct {};
     struct AsyncCall
     {
-        AsyncCall(FW_AsyncCall fn, const void* pData) : fn(fn), pData(pData) {}
+        AsyncCall(FW_AsyncCall fn, void* pData) : fn(fn), pData(pData) {}
         FW_AsyncCall fn;
-        const void* pData;
+        void* pData;
     };
 public:
     MainLoop(std::string url, PrivateStruct) : m_url(url), m_needsToExit(false) {}
@@ -67,13 +75,8 @@ public:
 
     void run();
 
-    void messageIn(std::string msg) {
-        std::unique_lock<std::mutex> _l(m_mutex);
-        m_messagesIn.emplace_back(msg);
-        _l.unlock();
-        m_cond.notify_all();
-    }
-    void scheduleCall(FW_AsyncCall fn, const void* pData) {
+    void messageIn(std::string msg);
+    void scheduleCall(FW_AsyncCall fn, void* pData) {
         std::unique_lock<std::mutex> _l(m_mutex);
         m_AsyncCalls.emplace_back(AsyncCall(fn, pData));
         _l.unlock();
@@ -83,7 +86,7 @@ public:
 
 private:
     FW_RESULT processMessage(messageInfo msg);
-    std::deque<std::string> m_messagesIn;
+    std::deque<messageInfo> m_messagesIn;
     std::deque<AsyncCall> m_AsyncCalls;
     std::string m_url;
     std::mutex m_mutex;
