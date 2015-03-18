@@ -18,7 +18,6 @@ Copyright 2009 Dan Weatherford, Facebook inc
 #define H_FB_UTF8
 
 #include <string>
-#include "../3rdParty/utf8/utf8.h"
 
 namespace FB {
 

@@ -13,44 +13,26 @@ License:    Dual license model; choose one of two:
 Copyright 2009 Dan Weatherford, Facebook inc
 \**********************************************************/
 
-#ifdef _WIN32
-#include "win_targetver.h"
-#include "win_common.h"
-#else
-#include "../3rdParty/utf8/utf8.h"
-#include <xlocale.h>
-#include <wctype.h>
-#endif
-#include <stdexcept>
-
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include <limits.h>
 #include <boost/algorithm/string/case_conv.hpp>
+#include <locale>
+#include <codecvt>
 
 #include "utf8_tools.h"
+
+std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
 
 namespace FB {
 
     std::string wstring_to_utf8(const std::wstring& src) {
-        std::string out_str;
-#ifdef _WIN32
-        utf8::utf16to8(src.begin(), src.end(), std::back_inserter(out_str));
-#else
-        utf8::utf32to8(src.begin(), src.end(), std::back_inserter(out_str));
-#endif
-        return out_str;
+        return utf8_conv.to_bytes(src);
     }
 
 
     std::wstring utf8_to_wstring(std::string src) {
-        std::wstring out_str;
-#ifdef _WIN32
-        utf8::utf8to16(src.begin(), src.end(), std::back_inserter(out_str));
-#else
-        utf8::utf8to32(src.begin(), src.end(), std::back_inserter(out_str));
-#endif
-        return out_str;
+        return utf8_conv.from_bytes(src);
     }
 
 
