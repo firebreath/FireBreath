@@ -23,5 +23,6 @@ set (PluginAuto_SOURCE_DIR "${FB_SOURCE_DIR}/PluginAuto")
 set (NpapiCore_SOURCE_DIR "${FB_SOURCE_DIR}/NpapiCore")
 set (FireWyrm_SOURCE_DIR "${FB_SOURCE_DIR}/FireWyrm")
 set (ActiveXCore_SOURCE_DIR "${FB_SOURCE_DIR}/ActiveXCore")
+set (NativeMessageHost_SOURCE_DIR "${FB_SOURCE_DIR}/NativeMessageHost")
 
 set(FBLIB_DIRS "${FB_SOURCE_DIR}/libs")

@@ -76,13 +76,15 @@ if (WIN32)
     #set (FB_EXPORT_TARGETS ${FB_EXPORT_TARGETS} ActiveXCore)
 endif()
 
-add_subdirectory(${FB_ROOT}/tests/unittest-cpp/UnitTest++ ${CMAKE_CURRENT_BINARY_DIR}/unittest++)
+#add_subdirectory(${FB_ROOT}/tests/unittest-cpp/UnitTest++ ${CMAKE_CURRENT_BINARY_DIR}/unittest++)
 #add_subdirectory(${FB_NPAPIHOST_SOURCE_DIR} ${FB_NPAPIHOST_BUILD_DIR})
-add_subdirectory(${FB_ROOT}/tests/ScriptingCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
-if (WIN32)
-    add_subdirectory(${FB_ROOT}/tests/ActiveXCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCoreTest)
-endif()
+#add_subdirectory(${FB_ROOT}/tests/ScriptingCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ScriptingCoreTest)
+#if (WIN32)
+    #add_subdirectory(${FB_ROOT}/tests/ActiveXCoreTest ${CMAKE_CURRENT_BINARY_DIR}/ActiveXCoreTest)
+#endif()
 #add_subdirectory(${FB_NPAPICORETEST_SOURCE_DIR}) # - not functional, needs to be re-done
+
+add_subdirectory(${FB_ROOT}/src/NativeMessageHost ${CMAKE_CURRENT_BINARY_DIR}/NativeMessageHost)
 
 #install(EXPORT FireBreath_Exports DESTINATION "cmake")
 
