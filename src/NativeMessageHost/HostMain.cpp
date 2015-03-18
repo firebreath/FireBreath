@@ -9,7 +9,7 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 GradeCam, Richard Bateman, and the
+Copyright 2015 GradeCam, Richard Bateman, and the
                Firebreath development team
 \**********************************************************/
 
@@ -31,6 +31,8 @@ int main(int argc, char* argv[]) {
 
     // Start the main program loop
     mainLoop.run();
+
+    // TODO: Join the reader thread
   } else {
       std::cerr << "This application is intended to be run from Chrome as a Native Messaging extension" << std::endl;
   }

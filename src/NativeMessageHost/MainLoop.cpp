@@ -9,7 +9,7 @@ License:    Dual license model; choose one of two:
             GNU Lesser General Public License, version 2.1
             http://www.gnu.org/licenses/lgpl-2.1.html
 
-Copyright 2009 GradeCam, Richard Bateman, and the
+Copyright 2015 GradeCam, Richard Bateman, and the
                Firebreath development team
 \**********************************************************/
 

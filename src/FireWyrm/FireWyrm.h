@@ -37,7 +37,7 @@ typedef void (*FW_AsyncCall)(void* pData);
 ///
 // FireWyrmHost calls -- calls made back into whatever is hosting the plugin, such as the browser
 ///
-typedef FW_RESULT (*FWH_PerformAsyncCall)(const FW_AsyncCall call, const void* pData);
+typedef FW_RESULT (*FWH_PerformAsyncCall)(const FW_AsyncCall call, void* pData);
 
 typedef FW_RESULT (*FW_Command)(const FW_INST colonyId, const uint32_t cmdId, const char* strCommand, uint32_t strCommandLen);
 typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t cmdId, const char* strResp, uint32_t strRespLen);
