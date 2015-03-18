@@ -30,6 +30,8 @@ typedef uint32_t FW_MSG;
 #define FW_ERR_INVALID_COMMAND (FW_SUCCESS + 4)
 #define FW_ERR_INVALID_CMD_ID (FW_SUCCESS + 5)
 
+#define FW_VERSION 1
+
 typedef void (*FW_AsyncCall)(void* pData);
 
 ///

@@ -214,7 +214,7 @@ void WyrmColony::setFuncs(FWHostFuncs* hFuncs) {
 
 void WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
     cFuncs->size = sizeof(*cFuncs);
-    cFuncs->version = 1;
+    cFuncs->version = FW_VERSION;
 
     cFuncs->call = &FW_onCommand;
     cFuncs->cmdCallback = &FW_onCommandCallback;
