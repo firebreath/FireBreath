@@ -23,9 +23,10 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 class ReadLoop
 {
 public:
-    ReadLoop(MainLoop& main) : m_main(main) {
+    ReadLoop(MainLoop& main) : m_main(main) { }
 
-    }
+    void start();
+    void run();
 
 private:
     std::thread m_thread;

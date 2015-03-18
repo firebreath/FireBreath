@@ -15,37 +15,24 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 
 #include "MainLoop.h"
 #include "ReadLoop.h"
+#include <iostream>
 
 int main(int argc, char* argv[]) {
 
   if (argv[1] != NULL) {
-    std::string output;
-    unsigned int len = 0;
-
-    std::cin.read((char*) &len, sizeof(len));
-
     std::cout.sync_with_stdio(false);
     std::cin.sync_with_stdio(false);
 
-    char str[len];
+    MainLoop mainLoop& = MainLoop.get(argv[1]);
+    ReadLoop reader(mainLoop);
 
-    size_t res = fread(str, sizeof(char), len, stdin);
+    // Start the thread reading from cin
+    reader.start();
 
-    std::cerr << "received message:"
-              << std::endl
-              << str
-              << std::endl;
-
-    if (res) { // We are going to pretend that any data without the string "echo"
-               // is a request for the version
-      apitest apitest;
-      if (strstr (str,"echo"))
-        output = apitest.echo(str);
-      else
-        output = apitest.get_version();
-    }
-
-    writeOut(output);
+    // Start the main program loop
+    mainLoop.run();
+  } else {
+      std::cerr << "This application is intended to be run from Chrome as a Native Messaging extension" << std::endl;
   }
   return 0;
 }

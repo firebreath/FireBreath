@@ -17,7 +17,6 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #include <algorithm>
 #include <sstream>
 #include "MainLoop.h"
-#include "PluginLoader.h"
 #include "json/json.h"
 
 // The maximum size when this was written for a message from the plugin to the browser was 1MB; to avoid
@@ -120,6 +119,7 @@ MainLoop& MainLoop::get(std::string url) {
 
 void MainLoop::run() {
     // This is the main loop
+    std::cerr << "Starting main message loop" << std::endl;
 
     FWHostFuncs hFuncs;
     hFuncs.size = sizeof(hFuncs);
@@ -132,7 +132,7 @@ void MainLoop::run() {
     m_cFuncs.size = sizeof(m_cFuncs);
     m_cFuncs.version = FW_VERSION;
 
-
+    std::unique_ptr<MainLoader> plugin;
 
     auto workExists = [this]() {
         return m_needsToExit || m_messagesIn.size() || m_AsyncCalls.size();
@@ -145,6 +145,9 @@ void MainLoop::run() {
             // TODO: Do any cleanup here
             return;
         }
+
+        // TODO: Handle commands that need to go out
+        // TODO: Handle commands that came in from the ReadLoop
     }
 }
 

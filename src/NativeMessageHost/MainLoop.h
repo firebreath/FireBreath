@@ -25,8 +25,7 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #include <mutex>
 #include <condition_variable>
 #include "FireWyrm.h"
-
-class PluginLoader;
+#include "PluginLoader.h"
 
 struct messageInfo
 {
