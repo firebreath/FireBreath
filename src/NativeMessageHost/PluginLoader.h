@@ -32,6 +32,8 @@ public:
 
     virtual FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) = 0;
     virtual FW_RESULT Finit() = 0;
+
+    virtual std::string getPluginName() = 0;
 };
 
 #endif // PluginLoader_h__

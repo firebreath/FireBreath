@@ -20,18 +20,25 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include <string>
 #include <deque>
 #include <vector>
+#include <map>
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <iostream>
 #include <condition_variable>
 #include "FireWyrm.h"
 #include "PluginLoader.h"
 
-enum class MessageType { UNKNOWN, CREATE, DESTROY, COMMAND, RESPONSE };
+enum class MessageType { UNKNOWN, CREATE, DESTROY, COMMAND, RESPONSE, ERROR };
+
+using stringMap = std::map<std::string, std::string>;
 
 struct messageInfo
 {
     messageInfo(size_t c, uint32_t msgId) : colonyId(0), msgId(msgId), c(c), curC(0), msgs(c) {}
+    messageInfo(MessageType type, std::string msg) : type(type) {
+        msgs.emplace_back(msg);
+    }
     messageInfo() {}
 
     FW_INST colonyId;
@@ -82,10 +89,19 @@ public:
         _l.unlock();
         m_cond.notify_all();
     }
-    void writeMessage(std::string msg);
+    void writeObj(stringMap outMap);
+    void writeMessage(std::string output) {
+        auto a = output.size();
+        std::cout << char(((a >> 0) & 0xFF))
+            << char(((a >> 8) & 0xFF))
+            << char(((a >> 16) & 0xFF))
+            << char(((a >> 24) & 0xFF))
+            << output;
+    }
 
 private:
     FW_RESULT processMessage(messageInfo msg);
+    void processBrowserMessage(messageInfo& message);
     std::deque<messageInfo> m_messagesIn;
     std::deque<AsyncCall> m_AsyncCalls;
     std::string m_url;
@@ -94,6 +110,7 @@ private:
     bool m_needsToExit;
     std::unique_ptr<PluginLoader> m_pluginLoader;
     FWColonyFuncs m_cFuncs;
+    FWHostFuncs m_hFuncs;
 };
 
 #endif // MainLoop_h__

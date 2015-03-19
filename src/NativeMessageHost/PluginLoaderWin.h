@@ -28,6 +28,10 @@ public:
 
     FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) override;
     FW_RESULT Finit() override;
+    std::string getPluginName() override {
+        // TODO: Populate basic plugin metadata when searching, then have it available here
+        return "Unknown";
+    }
 
 private:
     HMODULE m_module;

@@ -23,7 +23,7 @@ int main(int argc, char* argv[]) {
     std::cout.sync_with_stdio(false);
     std::cin.sync_with_stdio(false);
 
-    MainLoop mainLoop& = MainLoop.get(argv[1]);
+    MainLoop& mainLoop = MainLoop::get(argv[1]);
     ReadLoop reader(mainLoop);
 
     // Start the thread reading from cin

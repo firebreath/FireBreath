@@ -49,6 +49,12 @@ FW_RESULT doAsyncCall(const FW_AsyncCall call, void* pData) {
     return FW_SUCCESS;
 }
 
+/* Example:
+{
+    "cmd": "create",
+    "mimetype": "application/x-fbtestplugin"
+}
+*/
 messageInfo parseCommandMessage(Json::Value& root) {
     std::string cmd = root["cmd"].asString();
     if (cmd == "create") {
@@ -59,9 +65,20 @@ messageInfo parseCommandMessage(Json::Value& root) {
         msg.type = MessageType::CREATE;
         msg.msgs.emplace_back(root["mimetype"].asString());
         return msg;
+    } else {
+        throw std::runtime_error("Unknown command");
     }
 }
 
+/* Example:
+{
+    "cmdId": 1,
+    "c": 1,
+    "n": 1,
+    "colonyId": 0,
+    "msg": "[\"New\", \"application/x-fbtestplugin\", {}]"
+}
+*/
 messageInfo parseWyrmholeMessage(Json::Value& root) {
     if (!root.isMember("c") || !root["c"].isIntegral() || !root.isMember("cmdId") || !root["cmdId"].isIntegral()) {
         throw std::runtime_error("Invalid message");
@@ -80,11 +97,14 @@ messageInfo parseWyrmholeMessage(Json::Value& root) {
         }
         n = root.get("n", 1).asUInt() - 1;
     }
+    MessageType type = (root.isMember("type") && root["type"].asString() == "resp") ?
+        MessageType::RESPONSE : MessageType::COMMAND;
 
     messageInfo info(getMessageInfo(c, cmdId));
     info.colonyId = colonyId;
     info.msgs[n] = root["msg"].asString();
     info.curC++;
+    info.type = type;
     return info;
 }
 
@@ -111,7 +131,12 @@ messageInfo parseIncomingMessage(std::string command) {
 
 void MainLoop::messageIn(std::string msg) {
     // Process the message before we send it in
-    messageInfo processedMsg = parseIncomingMessage(msg);
+    messageInfo processedMsg;
+    try {
+        processedMsg = parseIncomingMessage(msg);
+    } catch (std::exception e) {
+        processedMsg = messageInfo(MessageType::ERROR, e.what());
+    }
 
     if (processedMsg.isComplete()) {
         std::unique_lock<std::mutex> _l(m_mutex);
@@ -160,18 +185,15 @@ void MainLoop::run() {
     // This is the main loop
     std::cerr << "Starting main message loop" << std::endl;
 
-    FWHostFuncs hFuncs;
-    hFuncs.size = sizeof(hFuncs);
-    hFuncs.version = FW_VERSION;
-    hFuncs.doAsyncCall = &doAsyncCall;
-    hFuncs.call = &doCommand;
-    hFuncs.cmdCallback = &doCommandCallback;
-
     memset(&m_cFuncs, 0, sizeof(m_cFuncs));
     m_cFuncs.size = sizeof(m_cFuncs);
     m_cFuncs.version = FW_VERSION;
 
-    std::unique_ptr<PluginLoader> plugin;
+    m_hFuncs.size = sizeof(m_hFuncs);
+    m_hFuncs.version = FW_VERSION;
+    m_hFuncs.doAsyncCall = &doAsyncCall;
+    m_hFuncs.call = &doCommand;
+    m_hFuncs.cmdCallback = &doCommandCallback;
 
     auto workExists = [this]() {
         return m_needsToExit || m_messagesIn.size() || m_AsyncCalls.size();
@@ -215,11 +237,37 @@ void MainLoop::run() {
     }
 }
 
-void MainLoop::writeMessage(std::string output) {
-    auto a = output.size();
-    std::cout << char(((a >> 0) & 0xFF))
-              << char(((a >> 8) & 0xFF))
-              << char(((a >> 16) & 0xFF))
-              << char(((a >> 24) & 0xFF))
-              << output;
+void MainLoop::writeObj(stringMap outMap) {
+    Json::Value v{ Json::objectValue };
+    for (auto c : outMap) {
+        v[c.first] = c.second;
+    }
+    std::ostringstream out;
+    out << v;
+    this->writeMessage(out.str());
+}
+
+void MainLoop::processBrowserMessage(messageInfo& message) {
+    if (message.type == MessageType::ERROR) {
+        writeObj(stringMap{ { "status", "error" }, { "message", message.msgs[0] } });
+    } else if (message.type == MessageType::COMMAND) {
+        try {
+            m_pluginLoader = PluginLoader::LoadPlugin(message.msgs[0]);
+
+            m_pluginLoader->Init(&m_hFuncs, &m_cFuncs);
+            writeObj(stringMap{ { "status", "success" }, { "plugin", m_pluginLoader->getPluginName() } });
+        } catch (std::exception e) {
+            writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
+        }
+    } else {
+        if (message.type == MessageType::COMMAND) {
+            std::string msg = message.getString();
+            (*m_hFuncs.call)(message.colonyId, message.msgId, msg.c_str(), msg.size());
+        } else if (message.type == MessageType::RESPONSE) {
+            std::string msg = message.getString();
+            (*m_hFuncs.cmdCallback)(message.colonyId, message.msgId, msg.c_str(), msg.size());
+        } else {
+            writeObj(stringMap{ { "status", "error" }, { "message", "Unknown message" } });
+        }
+    }
 }
