@@ -63,3 +63,16 @@ const ValueBuilderMap& FB::FireWyrm::getJsonValueBuilderMap()
     static const ValueBuilderMap tdm = makeJsonValueBuilderMap();
     return tdm;
 }
+
+Value FB::FireWyrm::getValueForVariant(FB::variant var, WyrmBrowserHostPtr host) {
+    auto builderMap = getJsonValueBuilderMap();
+    const std::type_info& type = var.get_type();
+    auto it = builderMap.find(&type);
+
+    if (it == builderMap.end()) {
+        // unhandled type :(
+        return Json::nullValue;
+    }
+
+    return (it->second)(var, host);
+}

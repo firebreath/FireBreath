@@ -111,3 +111,7 @@ variantPromise AlienWyrmling::Invoke(std::string methodName, const VariantList& 
         return host->DoCommand(FB::VariantList{ "Invoke", spawnId, objId, methodName, args });
     });
 }
+
+void FB::FireWyrm::AlienWyrmling::callMultipleFunctions(std::string name, const FB::VariantList& args, const std::vector<JSObjectPtr>& direct, const std::vector<JSObjectPtr>& ifaces) {
+    throw std::logic_error("Not implemented");
+}

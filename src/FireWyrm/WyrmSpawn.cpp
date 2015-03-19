@@ -16,6 +16,7 @@
 #include "PluginCore.h"
 #include "PluginInfo.h"
 #include "BrowserHost.h"
+#include "LocalWyrmling.h"
 #include "precompiled_headers.h" // On windows, everything above this line in PCH
 
 #include "BrowserStreamRequest.h"
@@ -26,6 +27,7 @@ using namespace FB::FireWyrm;
 
 WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
+      m_fwHost(host),
       m_isReady(false),
       m_mimetype(mimetype),
       m_pluginName(getFactoryInstance()->getPluginName(mimetype)),
@@ -41,6 +43,7 @@ WyrmSpawn::~WyrmSpawn(void)
 bool WyrmSpawn::setReady()
 {
     bool rval = false;
+    m_fwHost->createWyrmling(pluginMain->getRootJSAPI(), 0);
     if (!m_isReady)
         rval = m_isReady = pluginMain->setReady();
     return rval;

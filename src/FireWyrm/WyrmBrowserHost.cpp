@@ -32,6 +32,10 @@ WyrmBrowserHost::~WyrmBrowserHost(void) {
 
 }
 
+void WyrmBrowserHost::shutdown() {
+
+}
+
 bool WyrmBrowserHost::_scheduleAsyncCall(void(*func)(void *), void *userData) const {
     return module->_scheduleAsyncCall(func, userData);
 }
@@ -144,6 +148,18 @@ FB::Promise<void> FB::FireWyrm::WyrmBrowserHost::RelObj(FW_INST objId) {
     } else {
         throw std::runtime_error("Object not found");
     }
+}
+
+FB::BrowserStreamPtr WyrmBrowserHost::_createUnsolicitedStream(const FB::BrowserStreamRequest& req) const {
+    throw std::logic_error("Not implemented");
+}
+
+void WyrmBrowserHost::DoDeferredRelease() const {
+
+}
+
+bool WyrmBrowserHost::DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url /*= ""*/) {
+    throw std::logic_error("Not implemented");
 }
 
 FB::variantPromise WyrmBrowserHost::DoCommand(FB::VariantList cmd) {

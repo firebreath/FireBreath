@@ -50,18 +50,7 @@ namespace FB { namespace FireWyrm
 
     const ValueBuilderMap& getJsonValueBuilderMap();
 
-    Value getValueForVariant(FB::variant var, WyrmBrowserHostPtr host) {
-        auto builderMap = getJsonValueBuilderMap();
-        const std::type_info& type = var.get_type();
-        auto it = builderMap.find(&type);
-
-        if (it == builderMap.end()) {
-            // unhandled type :(
-            return Json::nullValue;
-        }
-
-        return (it->second)(var, host);
-    }
+    Value getValueForVariant(FB::variant var, WyrmBrowserHostPtr host);
 
     template<class T>
     Value makeValue(FB::variant var, WyrmBrowserHostPtr host)

@@ -99,6 +99,7 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
 
 WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::get_id()), m_nextSpawnId(1), m_nextCmdId(1)
 {
+    initCommandMap();
 }
 
 WyrmColony::~WyrmColony()
@@ -119,9 +120,9 @@ AlienLarvaePtr FB::FireWyrm::WyrmColony::getLarvaeFor(const FW_INST spawnId, con
     return larvae;
 }
 
-FB::variant valueToVariant(Json::Value root, WyrmColony* colony);
+FB::variant valueToVariant(Json::Value& root, WyrmColony* colony);
 
-FB::variant valueRawObjectToVariant(Json::Value root, WyrmColony *colony) {
+FB::variant valueRawObjectToVariant(Json::Value& root, WyrmColony *colony) {
     // If this is a "by value" object then we'll just pass it
     Json::Value def;
     Json::Value::Members members = root.getMemberNames();
@@ -132,7 +133,7 @@ FB::variant valueRawObjectToVariant(Json::Value root, WyrmColony *colony) {
     return outMap;
 }
 
-FB::variant valueObjectToVariant(Json::Value root, WyrmColony* colony) {
+FB::variant valueObjectToVariant(Json::Value& root, WyrmColony* colony) {
     assert(root.isObject());
 
     if (root.isMember("$type")) {
@@ -160,7 +161,7 @@ FB::variant valueObjectToVariant(Json::Value root, WyrmColony* colony) {
     }
 }
 
-FB::variant valueToVariant(Json::Value root, WyrmColony* colony) {
+FB::variant valueToVariant(Json::Value& root, WyrmColony* colony) {
     Json::Value def;
     if (root.isString())
         return root.asString();
@@ -221,10 +222,11 @@ void WyrmColony::populateFuncs(FWColonyFuncs* cFuncs) {
 }
 
 using JsonSizeType = decltype(Json::Value().size());
-FB::VariantList getArguments(WyrmColony* colony, Json::Value root, JsonSizeType startIndex, JsonSizeType maxIndex = -1) {
+FB::VariantList getArguments(WyrmColony* colony, Json::Value& root, JsonSizeType startIndex, JsonSizeType maxIndex = -1) {
     FB::VariantList args;
 
-    if (maxIndex < 0) { maxIndex = root.size(); }
+    // -1 in a uint is a really big number
+    maxIndex = std::min(root.size(), maxIndex);
     for (decltype(root.size()) i = 1; i < maxIndex; ++i) {
         args.emplace_back(valueToVariant(root[i], colony));
     }
@@ -269,12 +271,20 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     return FW_ERR_UNKNOWN;
 }
 
+std::string stringify(Json::Value& root) {
+    Json::FastWriter writer;
+    std::string outString = writer.write(root);
+    // Json::FastWriter leaves a \n at the end of the string, which causes issues with Chrome
+    // We'll remove it
+    outString[outString.length() - 1] = 0;
+    outString.erase(outString.end() - 1);
+    return outString;
+}
+
 void WyrmColony::sendResponse(const uint32_t cmdId, FB::VariantList resp) {
     auto outJSON = variantToJsonValue(resp);
 
-    std::ostringstream out;
-    out << outJSON;
-    auto outDoc = out.str();
+    auto outDoc = stringify(outJSON);
     this->m_hFuncs.cmdCallback(m_key, cmdId, outDoc.c_str(), outDoc.size());
 }
 
@@ -292,9 +302,7 @@ FW_RESULT WyrmColony::onResponse(const uint32_t cmdId, const std::string respons
 WyrmColony::StringPromise WyrmColony::sendCommand(FB::VariantList cmd) {
     auto outJSON = variantToJsonValue(cmd);
 
-    std::ostringstream out;
-    out << outJSON;
-    std::string outStr = std::move(out.str());
+    std::string outStr = stringify(outJSON);
     StringDeferred dfd;
     auto cmdId = getCommandId();
     m_waitMap[cmdId] = dfd;
@@ -308,7 +316,8 @@ FB::VariantListPromise WyrmColony::New(FB::VariantList args) {
     std::string mimetype = args[0].convert_cast<std::string>();
     WyrmBrowserHostPtr wyrmHost{ std::make_shared<WyrmBrowserHost>(this, id) };
     auto wyrmSpawn = std::make_shared<WyrmSpawn>(wyrmHost, mimetype);
-
+    // TODO: Anything to improve in the lifecycle?
+    wyrmSpawn->setReady();
     m_spawnMap[id] = std::make_shared<WyrmSac>(wyrmSpawn, wyrmHost);
     return FB::VariantList{ "success", id };
 }
