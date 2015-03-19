@@ -43,7 +43,7 @@ set (SOURCES
     ${SOURCES}
     )
 
-add_library(${PROJECT_NAME} STATIC ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireWyrmHosts")
 
 target_link_libraries(${PROJECT_NAME}
