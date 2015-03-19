@@ -26,9 +26,7 @@ public:
     static std::unique_ptr<PluginLoader> LoadPlugin(std::string mimetype);
 
     PluginLoader(std::string mimetype) {};
-    virtual ~PluginLoader() {
-        Finit();
-    };
+    virtual ~PluginLoader() { };
 
     virtual FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) = 0;
     virtual FW_RESULT Finit() = 0;

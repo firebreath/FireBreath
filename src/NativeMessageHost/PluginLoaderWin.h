@@ -24,7 +24,7 @@ class PluginLoaderWin : public PluginLoader
 {
 public:
     PluginLoaderWin(std::string mimetype, std::string filename);
-    virtual ~PluginLoaderWin();;
+    virtual ~PluginLoaderWin();
 
     FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) override;
     FW_RESULT Finit() override;

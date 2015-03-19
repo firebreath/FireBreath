@@ -91,12 +91,17 @@ public:
     }
     void writeObj(stringMap outMap);
     void writeMessage(std::string output) {
-        auto a = output.size();
-        std::cout << char(((a >> 0) & 0xFF))
-            << char(((a >> 8) & 0xFF))
-            << char(((a >> 16) & 0xFF))
-            << char(((a >> 24) & 0xFF))
-            << output;
+        uint32_t a = output.size(); // strip off newline
+        fwrite(&a, sizeof(a), 1, stdout);
+        fwrite(output.data(), sizeof(char), a, stdout);
+        fflush(stdout);
+    }
+    void shutdown() {
+        std::unique_lock<std::mutex> _l(m_mutex);
+        std::cerr << "Exit signaled" << std::endl;
+        m_needsToExit = true;
+        _l.unlock();
+        m_cond.notify_all();
     }
 
 private:

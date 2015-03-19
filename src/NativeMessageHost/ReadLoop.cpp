@@ -23,31 +23,39 @@ void ReadLoop::start() {
     m_thread = std::thread(&ReadLoop::run, this);
 }
 
+bool canRead() {
+    return !feof(stdin) && !ferror(stdin);
+}
+
 void ReadLoop::run() {
     // Begin read loop thread
     std::cerr << "Starting read loop" << std::endl;
     
     uint32_t len = 0;
 
-    while (cin.good()) {
+    while (canRead()) {
         // First read the 4 byte length of the input message
         // TODO: Use fread here
-        cin.read((char*) &len, sizeof(len));
+        size_t res = fread((char*) &len, sizeof(len), 1, stdin);
 
         // Allocate a string that is long enough
-        std::string inMessage;
-        inMessage.reserve(len);
-        // Read the message into the string; this is a bit of a hack, but if it works we're using it
-        size_t res = fread(&inMessage[0], sizeof(char), len, stdin);
-        if (res != len) {
+        char *inString = new char[len];
+        res = fread(&inString[0], sizeof(char), len, stdin);
+        std::string inMessage(inString, len);
+        if (res == 0) {
+            // Exit signaled
+            m_main.shutdown();
+            return;
+        } else if (res != len) {
             // Note: "Ack!" is a technical term
             std::cerr << "Ack! Expected to read " << len << " bytes but instead read " << res << " bytes." << std::endl;
-        } else if (!cin.good()) {
+        } else if (!canRead()) {
             // There was an error reading; time to bail
             std::cerr << "Could not read from stdin! Bailing" << std::endl;
         } else {
             m_main.messageIn(inMessage);
         }
+        delete[] inString;
     }
 
     std::cerr << "Read loop ending" << std::endl;

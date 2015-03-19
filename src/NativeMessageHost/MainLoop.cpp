@@ -27,8 +27,17 @@ inline size_t countChunks(double size) {
     return static_cast<size_t>(ceil(size / maxCommandSize));
 }
 
-
 std::map<uint32_t, messageInfo> msgMap;
+
+std::string stringify(Json::Value& root) {
+    Json::FastWriter writer;
+    std::string outString = writer.write(root);
+    // Json::FastWriter leaves a \n at the end of the string, which causes issues with Chrome
+    // We'll remove it
+    outString[outString.length() - 1] = 0;
+    outString.erase(outString.end() - 1);
+    return outString;
+}
 
 messageInfo& getMessageInfo(uint32_t msgId, size_t c) {
     auto fnd = msgMap.find(msgId);
@@ -100,7 +109,7 @@ messageInfo parseWyrmholeMessage(Json::Value& root) {
     MessageType type = (root.isMember("type") && root["type"].asString() == "resp") ?
         MessageType::RESPONSE : MessageType::COMMAND;
 
-    messageInfo info(getMessageInfo(c, cmdId));
+    messageInfo info(getMessageInfo(cmdId, c));
     info.colonyId = colonyId;
     info.msgs[n] = root["msg"].asString();
     info.curC++;
@@ -160,9 +169,7 @@ FW_RESULT sendCommand(const FW_INST colonyId, const uint32_t cmdId, const char* 
         root["n"] = i + 1;
         root["msg"] = std::string(strCommand + (maxCommandSize * i), std::min((int)maxCommandSize, (int)(strCommandLen - maxCommandSize * i)));
 
-        std::ostringstream out;
-        out << root;
-        main.writeMessage(out.str());
+        main.writeMessage(stringify(root));
     }
 
     return FW_SUCCESS;
@@ -225,7 +232,7 @@ void MainLoop::run() {
         }
         if (m_messagesIn.size()) {
             messageInfo message = m_messagesIn.front();
-            m_AsyncCalls.pop_front();
+            m_messagesIn.pop_front();
 
             _l.unlock();
             processBrowserMessage(message);
@@ -242,15 +249,13 @@ void MainLoop::writeObj(stringMap outMap) {
     for (auto c : outMap) {
         v[c.first] = c.second;
     }
-    std::ostringstream out;
-    out << v;
-    this->writeMessage(out.str());
+    this->writeMessage(stringify(v));
 }
 
 void MainLoop::processBrowserMessage(messageInfo& message) {
     if (message.type == MessageType::ERROR) {
         writeObj(stringMap{ { "status", "error" }, { "message", message.msgs[0] } });
-    } else if (message.type == MessageType::COMMAND) {
+    } else if (message.type == MessageType::CREATE) {
         try {
             m_pluginLoader = PluginLoader::LoadPlugin(message.msgs[0]);
 
@@ -262,10 +267,18 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
     } else {
         if (message.type == MessageType::COMMAND) {
             std::string msg = message.getString();
-            (*m_hFuncs.call)(message.colonyId, message.msgId, msg.c_str(), msg.size());
+            if (!m_pluginLoader) {
+                writeObj(stringMap{ { "status", "error" }, { "message", "Plugin not loaded" } });
+                return;
+            }
+            (*m_cFuncs.call)(message.colonyId, message.msgId, msg.c_str(), msg.size());
         } else if (message.type == MessageType::RESPONSE) {
             std::string msg = message.getString();
-            (*m_hFuncs.cmdCallback)(message.colonyId, message.msgId, msg.c_str(), msg.size());
+            if (!m_pluginLoader) {
+                writeObj(stringMap{ { "status", "error" }, { "message", "Plugin not loaded" } });
+                return;
+            }
+            (*m_cFuncs.cmdCallback)(message.colonyId, message.msgId, msg.c_str(), msg.size());
         } else {
             writeObj(stringMap{ { "status", "error" }, { "message", "Unknown message" } });
         }

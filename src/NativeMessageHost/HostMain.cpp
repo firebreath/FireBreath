@@ -16,25 +16,34 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include "MainLoop.h"
 #include "ReadLoop.h"
 #include <iostream>
+#ifdef WIN32
+#include <intrin.h>
+#include <io.h>
+#include <fcntl.h>
+#endif
 
 int main(int argc, char* argv[]) {
 
-  if (argv[1] != NULL) {
-    std::cout.sync_with_stdio(false);
-    std::cin.sync_with_stdio(false);
+#ifdef WIN32
+    __debugbreak();
+    _setmode(_fileno(stdout), _O_BINARY);
+    _setmode(_fileno(stdin), _O_BINARY);
+    _setmode(_fileno(stderr), _O_BINARY);
+#endif
+    if (argv[1] != NULL) {
+        MainLoop& mainLoop = MainLoop::get(argv[1]);
+        ReadLoop reader(mainLoop);
 
-    MainLoop& mainLoop = MainLoop::get(argv[1]);
-    ReadLoop reader(mainLoop);
+        // Start the thread reading from cin
+        reader.start();
 
-    // Start the thread reading from cin
-    reader.start();
+        // Start the main program loop
+        mainLoop.run();
+        reader.join();
 
-    // Start the main program loop
-    mainLoop.run();
-
-    // TODO: Join the reader thread
-  } else {
-      std::cerr << "This application is intended to be run from Chrome as a Native Messaging extension" << std::endl;
-  }
-  return 0;
+        // TODO: Join the reader thread
+    } else {
+        std::cerr << "This application is intended to be run from Chrome as a Native Messaging extension" << std::endl;
+    }
+    return 0;
 }

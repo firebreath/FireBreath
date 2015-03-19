@@ -37,11 +37,12 @@ PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename)
     finitFn = reinterpret_cast<FinitFnPtr>(GetProcAddress(m_module, "FireWyrm_Finit"));
 
     if (!initFn || !finitFn) {
-        throw new std::runtime_error("Could not find entry points");
+        throw std::runtime_error("Could not find entry points");
     }
 }
 
 PluginLoaderWin::~PluginLoaderWin() {
+    Finit();
     if (m_module) {
         FreeLibrary(m_module);
     }

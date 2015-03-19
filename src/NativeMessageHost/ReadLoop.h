@@ -27,6 +27,9 @@ public:
 
     void start();
     void run();
+    void join() {
+        m_thread.join();
+    }
 
 private:
     std::thread m_thread;
