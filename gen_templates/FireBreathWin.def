@@ -15,3 +15,7 @@ EXPORTS
 	NP_GetEntryPoints   @1
 	NP_Initialize       @2
 	NP_Shutdown         @3
+
+; Needed for FireWyrm
+    FireWyrm_Init       @4
+    FireWyrm_Finit      @5

@@ -168,6 +168,7 @@ set(FB_PLUGIN_LIBRARIES
     NpapiCore
     ScriptingCore
     PluginCore
+    FireWyrm
     ${Boost_LIBRARIES}
     ${FBLIB_LIBRARIES}
     )
