@@ -221,21 +221,22 @@ void FBTestPlugin::ClearWindow()
 
 void FBTestPlugin::onPluginReady()
 {
-    FB::DOM::WindowPtr window = m_host->getDOMWindow();
-    if (!window)
-        return;
+    // TODO: make this work
+    //FB::DOM::WindowPtr window = m_host->getDOMWindow();
+    //if (!window)
+    //    return;
 
-    FB::BrowserHostWeakPtr weakHost(m_host);
-    window->getLocation().done([weakHost](std::string loc) {
-        FB::URI uri = FB::URI::fromString(loc);
-        FB::BrowserHostPtr host(weakHost.lock());
-        if (!host) return;
-        if (uri.query_data.find("log") != uri.query_data.end()) {
-            host->setEnableHtmlLog(true);
-        } else {
-            host->setEnableHtmlLog(false);
-        }
-    });
+    //FB::BrowserHostWeakPtr weakHost(m_host);
+    //window->getLocation().done([weakHost](std::string loc) {
+    //    FB::URI uri = FB::URI::fromString(loc);
+    //    FB::BrowserHostPtr host(weakHost.lock());
+    //    if (!host) return;
+    //    if (uri.query_data.find("log") != uri.query_data.end()) {
+    //        host->setEnableHtmlLog(true);
+    //    } else {
+    //        host->setEnableHtmlLog(false);
+    //    }
+    //});
 }
 
 uint32_t FBTestPlugin::asyncTestBgColor()
