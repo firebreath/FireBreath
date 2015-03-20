@@ -71,6 +71,16 @@ ${REGKEY_ROOT} {
         NoRemove MozillaPlugins {
             ForceRemove '${MOZILLA_PLUGINID}' {
                 val Path = s '%MODULE%'
+                val FireWyrm = s 'true'
+                val Description = s '${FBSTRING_PluginDescription}'
+                val ProductName = s '${FBSTRING_ProductName}'
+                val Vendor = s '${FBSTRING_CompanyName}'
+                val Version = s '${FBSTRING_PLUGIN_VERSION}'
+                MimeTypes {
+@@foreach (FBSTRING_MIMEType CUR_MIMETYPE)
+                    '${CUR_MIMETYPE}' { }
+@@endforeach
+                }
             }
         }
     }
