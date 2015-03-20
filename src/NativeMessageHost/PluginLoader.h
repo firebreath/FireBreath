@@ -20,10 +20,35 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #include <string>
 #include <memory>
 
+struct PluginInfo {
+    std::string name;
+    std::string description;
+    std::string path;
+    std::string product_name;
+    std::string vendor;
+    std::string version;
+    std::vector<std::string> mime_types;
+    bool providesMimeType(std::string mimetype) {
+        return (find(mime_types.begin(), mime_types.end(), mimetype) != mime_types.end());
+    }
+};
+
+class PluginList : public std::vector<PluginInfo> {
+    public:
+    PluginList::iterator findByMimetype(std::string mime) {
+        for(auto it = begin(); it != end(); ++it) {
+            if (it->providesMimeType(mime))
+                return it;
+        }
+        return end();
+    };
+};
+
 class PluginLoader
 {
 public:
     static std::unique_ptr<PluginLoader> LoadPlugin(std::string mimetype);
+    static PluginList getPluginList();
 
     PluginLoader(std::string mimetype) {};
     virtual ~PluginLoader() { };
@@ -32,32 +57,6 @@ public:
     virtual FW_RESULT Finit() = 0;
 
     virtual std::string getPluginName() = 0;
-};
-
-struct PluginInfo {
-    std::string name;
-    std::string description;
-    std::string path;
-    std::string product_name;
-    std::string vendor;
-    std::vector<std::string> mime_types;
-    bool providesMimeType(std::string mimetype) {
-        if (find(mime_types.begin(), mime_types.end(), mimetype) != mime_types.end())
-          return true;
-        return false;
-    }
-};
-
-template <class T>
-class PluginList : public std::vector<T> {
-    public:
-    std::string find_mime(const std::string& mime) {
-        for(PluginList<PluginInfo*>::iterator it = this->begin(); it != this->end(); ++it) {
-            if ((*it)->providesMimeType(mime.c_str()))
-                return (*it)->path;
-        }
-        return "";
-    };
 };
 
 #endif // PluginLoader_h__

@@ -21,22 +21,18 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #define MAX_VALUE 32767
 
 std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
-    PluginList<PluginInfo*> plugins = getPluginList();
+    PluginList plugins(getPluginList());
 
-    if (plugins.empty()) {
+    auto fnd = plugins.findByMimetype(mimetype);
+    if (fnd == plugins.end()) {
         throw new std::runtime_error("No registered plugins detected");
     }
 
-    if (plugins.empty()) {
-        throw new std::runtime_error("Unable to locate plugin that provides requested mime type");
-    }
-
-    return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, filename));
+    return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, fnd->path));
 }
 
-PluginList<PluginInfo*> getPluginList() {
-    std::vector<PluginInfo*> result;
-    PluginInfo* plugin;
+PluginList PluginLoader::getPluginList() {
+    PluginList result;
     HKEY hPlugins,
          hPluginItem,
          hMimeTypesKey;
@@ -60,45 +56,54 @@ PluginList<PluginInfo*> getPluginList() {
             while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
                 rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
                 if (rc == ERROR_SUCCESS) {
-                    plugin = new PluginInfo();
-                    plugin->name = utf8_conv.to_bytes(lpName);
+                    PluginInfo plugin;
+                    plugin.name = utf8_conv.to_bytes(lpName);
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("FireWyrm"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS) {
+                        auto fwSupport = utf8_conv.to_bytes(lpData);
+                        if (!fwSupport.length() || fwSupport != "true") {
+                            // This isn't a firewyrm compatible plugin
+                            continue;
+                        }
+                    }
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("Description"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
-                        plugin->description = utf8_conv.to_bytes(lpData);
+                        plugin.description = utf8_conv.to_bytes(lpData);
                     lpcbData = MAX_VALUE;
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
-                        plugin->path = utf8_conv.to_bytes(lpData);
+                        plugin.path = utf8_conv.to_bytes(lpData);
                     lpcbData = MAX_VALUE;
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("ProductName"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
-                        plugin->product_name = utf8_conv.to_bytes(lpData);
+                        plugin.product_name = utf8_conv.to_bytes(lpData);
                     lpcbData = MAX_VALUE;
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("Vendor"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
-                        plugin->vendor = utf8_conv.to_bytes(lpData);
+                        plugin.vendor = utf8_conv.to_bytes(lpData);
                     lpcbData = MAX_VALUE;
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("Version"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
-                        plugin->vendor = utf8_conv.to_bytes(lpData);
+                        plugin.version = utf8_conv.to_bytes(lpData);
 
                     rc = RegOpenKeyEx(hPluginItem, TEXT("MimeTypes"), 0, KEY_READ, &hMimeTypesKey); // get the MimeTypes key
                     if (rc == ERROR_SUCCESS) {
                         dwsIndex = 0; // reset the current subkey index
                         while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
-                            plugin->mime_types.push_back(utf8_conv.to_bytes(lpName));
+                            plugin.mime_types.push_back(utf8_conv.to_bytes(lpName));
                             lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
                         }
                         RegCloseKey(hMimeTypesKey);
                     }
 
                     RegCloseKey(hPluginItem); // close hPluginItem
-                    result.push_back(plugin);
+                    result.emplace_back(plugin);
                 }
 
                 lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size

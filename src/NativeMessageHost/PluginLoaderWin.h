@@ -44,6 +44,5 @@ private:
     FinitFnPtr finitFn;
 };
 
-PluginList<PluginInfo*> getPluginList();
 
 #endif // PluginLoader_h__
