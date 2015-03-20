@@ -47,7 +47,7 @@ std::string getMimeHandlerPath(std::string mimetype) {
 
         if (rc == ERROR_SUCCESS) {
             dwIndex = 0;  // reset the current subkey index
-            while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
+            while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, (LPWSTR) lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
                 rc = RegOpenKeyEx(hPlugins, (LPWSTR) lpName, 0, KEY_READ, &hPluginItem);
 
                 if (rc == ERROR_SUCCESS) {
