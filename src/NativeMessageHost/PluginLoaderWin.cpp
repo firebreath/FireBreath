@@ -17,71 +17,97 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #include <locale>
 #include "PluginLoaderWin.h"
 
-std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
-    std::string filename = getMimeHandlerPath(mimetype);
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE 32767
 
-    if (!filename.length()) {
-        throw new std::runtime_error("Could not find plugin that provides requested mime type");
+std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
+    PluginList<PluginInfo*> plugins = getPluginList();
+
+    if (plugins.empty()) {
+        throw new std::runtime_error("No registered plugins detected");
+    }
+
+    if (plugins.empty()) {
+        throw new std::runtime_error("Unable to locate plugin that provides requested mime type");
     }
 
     return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, filename));
 }
 
-std::string getMimeHandlerPath(std::string mimetype) {
+PluginList<PluginInfo*> getPluginList() {
+    std::vector<PluginInfo*> result;
+    PluginInfo* plugin;
     HKEY hPlugins,
          hPluginItem,
          hMimeTypesKey;
-    char lpName[0xFF] = {0},        // buffer for subkey name
-         lpData[0xFF] = {0};        // buffer for the value of the path key
-    DWORD lpcName = 0xFF,           // size of lpName buffer (subkey name)
-          lpcbData = 0xFF,          // size of the lpData buffer (path)
+    TCHAR lpName[MAX_KEY_LENGTH],   // buffer for subkey name
+          lpData[MAX_VALUE];        // buffer for the value of the path key
+    DWORD lpcName = MAX_KEY_LENGTH, // size of lpName buffer (subkey name)
+          lpcbData = MAX_VALUE,     // size of the lpData buffer (path)
           dwIndex,                  // subkey counter
           dwsIndex,                 // subkey counter
           rc,                       // return code
           lrc;                      // loop return code
     std::vector<HKEY> hList = {HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE};
     LPCWSTR PLUGIN_HIVE = TEXT("SOFTWARE\\MozillaPlugins");
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
 
     for (auto &hkey : hList) {
         rc = RegOpenKeyEx(hkey, PLUGIN_HIVE, 0, KEY_READ|KEY_WOW64_32KEY, &hPlugins);
 
         if (rc == ERROR_SUCCESS) {
             dwIndex = 0;  // reset the current subkey index
-            while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, (LPWSTR) lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
-                rc = RegOpenKeyEx(hPlugins, (LPWSTR) lpName, 0, KEY_READ, &hPluginItem);
-
+            while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
+                rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
                 if (rc == ERROR_SUCCESS) {
+                    plugin = new PluginInfo();
+                    plugin->name = utf8_conv.to_bytes(lpName);
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Description"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->description = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->path = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("ProductName"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->product_name = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Vendor"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->vendor = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Version"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->vendor = utf8_conv.to_bytes(lpData);
+
                     rc = RegOpenKeyEx(hPluginItem, TEXT("MimeTypes"), 0, KEY_READ, &hMimeTypesKey); // get the MimeTypes key
-
-                    if (rc == ERROR_SUCCESS) { // only continue with the item if it has a MimeTypes key
-                        rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS) {
                         dwsIndex = 0; // reset the current subkey index
-
-                        while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, (LPWSTR) lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
-
-                            if (strcmp(lpName, mimetype.c_str()) == 0) {
-                                RegCloseKey(hMimeTypesKey);
-                                RegCloseKey(hPlugins);
-                                RegCloseKey(hPluginItem);
-                                return lpData;
-                            }
-
-                            lpcName = 0xFF; // reset lpcName buffer size
+                        while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
+                            plugin->mime_types.push_back(utf8_conv.to_bytes(lpName));
+                            lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
                         }
-
                         RegCloseKey(hMimeTypesKey);
-                        RegCloseKey(hPluginItem);
                     }
+
+                    RegCloseKey(hPluginItem); // close hPluginItem
+                    result.push_back(plugin);
                 }
 
-                lpcName = 0xFF; // reset lpcName buffer size
-                RegCloseKey(hPluginItem); // close hPluginItem
+                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             }
         }
 
         RegCloseKey(hPlugins);
     }
-    return ""; // no provider found
+    return result;
 }
 
 PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename)

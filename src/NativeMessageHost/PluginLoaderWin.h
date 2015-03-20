@@ -44,6 +44,6 @@ private:
     FinitFnPtr finitFn;
 };
 
-std::string getMimeHandlerPath(std::string);
+PluginList<PluginInfo*> getPluginList();
 
 #endif // PluginLoader_h__
