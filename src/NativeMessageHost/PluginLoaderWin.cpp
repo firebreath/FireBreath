@@ -17,10 +17,97 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #include <locale>
 #include "PluginLoaderWin.h"
 
+#define MAX_KEY_LENGTH 255
+#define MAX_VALUE 32767
+
 std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
-    std::string filename = "C:\\code\\FireBreath2\\build\\firebreath\\bin\\FBTestPlugin\\Debug\\npFBTestPlugin.dll";
+    PluginList<PluginInfo*> plugins = getPluginList();
+
+    if (plugins.empty()) {
+        throw new std::runtime_error("No registered plugins detected");
+    }
+
+    if (plugins.empty()) {
+        throw new std::runtime_error("Unable to locate plugin that provides requested mime type");
+    }
 
     return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, filename));
+}
+
+PluginList<PluginInfo*> getPluginList() {
+    std::vector<PluginInfo*> result;
+    PluginInfo* plugin;
+    HKEY hPlugins,
+         hPluginItem,
+         hMimeTypesKey;
+    TCHAR lpName[MAX_KEY_LENGTH],   // buffer for subkey name
+          lpData[MAX_VALUE];        // buffer for the value of the path key
+    DWORD lpcName = MAX_KEY_LENGTH, // size of lpName buffer (subkey name)
+          lpcbData = MAX_VALUE,     // size of the lpData buffer (path)
+          dwIndex,                  // subkey counter
+          dwsIndex,                 // subkey counter
+          rc,                       // return code
+          lrc;                      // loop return code
+    std::vector<HKEY> hList = {HKEY_CURRENT_USER, HKEY_LOCAL_MACHINE};
+    LPCWSTR PLUGIN_HIVE = TEXT("SOFTWARE\\MozillaPlugins");
+    std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
+
+    for (auto &hkey : hList) {
+        rc = RegOpenKeyEx(hkey, PLUGIN_HIVE, 0, KEY_READ|KEY_WOW64_32KEY, &hPlugins);
+
+        if (rc == ERROR_SUCCESS) {
+            dwIndex = 0;  // reset the current subkey index
+            while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
+                rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
+                if (rc == ERROR_SUCCESS) {
+                    plugin = new PluginInfo();
+                    plugin->name = utf8_conv.to_bytes(lpName);
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Description"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->description = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->path = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("ProductName"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->product_name = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Vendor"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->vendor = utf8_conv.to_bytes(lpData);
+                    lpcbData = MAX_VALUE;
+
+                    rc = RegQueryValueEx(hPluginItem, TEXT("Version"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
+                    if (rc == ERROR_SUCCESS)
+                        plugin->vendor = utf8_conv.to_bytes(lpData);
+
+                    rc = RegOpenKeyEx(hPluginItem, TEXT("MimeTypes"), 0, KEY_READ, &hMimeTypesKey); // get the MimeTypes key
+                    if (rc == ERROR_SUCCESS) {
+                        dwsIndex = 0; // reset the current subkey index
+                        while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
+                            plugin->mime_types.push_back(utf8_conv.to_bytes(lpName));
+                            lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
+                        }
+                        RegCloseKey(hMimeTypesKey);
+                    }
+
+                    RegCloseKey(hPluginItem); // close hPluginItem
+                    result.push_back(plugin);
+                }
+
+                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
+            }
+        }
+
+        RegCloseKey(hPlugins);
+    }
+    return result;
 }
 
 PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename)
