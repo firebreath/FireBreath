@@ -16,6 +16,8 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #ifndef PluginLoaderWin_h__
 #define PluginLoaderWin_h__
 
+#include <vector>
+#include <sstream>
 #include "PluginLoader.h"
 #include "FireWyrm.h"
 #include "win_common.h"
@@ -42,5 +44,7 @@ private:
     InitFnPtr initFn;
     FinitFnPtr finitFn;
 };
+
+std::string getMimeHandlerPath(std::string);
 
 #endif // PluginLoader_h__
