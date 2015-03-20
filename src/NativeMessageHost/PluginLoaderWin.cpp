@@ -31,8 +31,8 @@ std::string getMimeHandlerPath(std::string mimetype) {
     HKEY hPlugins,
          hPluginItem,
          hMimeTypesKey;
-    LPWSTR lpName,                  // buffer for subkey name
-           lpData;                  // buffer for the value of the path key
+    char lpName[0xFF] = {0},        // buffer for subkey name
+         lpData[0xFF] = {0};        // buffer for the value of the path key
     DWORD lpcName = 0xFF,           // size of lpName buffer (subkey name)
           lpcbData = 0xFF,          // size of the lpData buffer (path)
           dwIndex,                  // subkey counter
@@ -48,7 +48,7 @@ std::string getMimeHandlerPath(std::string mimetype) {
         if (rc == ERROR_SUCCESS) {
             dwIndex = 0;  // reset the current subkey index
             while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
-                rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
+                rc = RegOpenKeyEx(hPlugins, (LPWSTR) lpName, 0, KEY_READ, &hPluginItem);
 
                 if (rc == ERROR_SUCCESS) {
                     rc = RegOpenKeyEx(hPluginItem, TEXT("MimeTypes"), 0, KEY_READ, &hMimeTypesKey); // get the MimeTypes key
@@ -57,18 +57,13 @@ std::string getMimeHandlerPath(std::string mimetype) {
                         rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                         dwsIndex = 0; // reset the current subkey index
 
-                        while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
-                            std::stringstream ss;
-                            ss << lpName;
-                            std::string lpNameStr = ss.str();
+                        while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, (LPWSTR) lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
 
-                            if (strcmp(lpNameStr.c_str(), mimetype.c_str()) == 0) {
+                            if (strcmp(lpName, mimetype.c_str()) == 0) {
                                 RegCloseKey(hMimeTypesKey);
                                 RegCloseKey(hPlugins);
                                 RegCloseKey(hPluginItem);
-                                ss.str("");
-                                ss << lpData;
-                                return ss.str();
+                                return lpData;
                             }
 
                             lpcName = 0xFF; // reset lpcName buffer size

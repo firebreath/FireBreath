@@ -17,7 +17,6 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #define PluginLoaderWin_h__
 
 #include <vector>
-#include <sstream>
 #include "PluginLoader.h"
 #include "FireWyrm.h"
 #include "win_common.h"
