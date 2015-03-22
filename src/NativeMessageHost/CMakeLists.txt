@@ -87,12 +87,15 @@ set (SOURCES
 add_executable(${PROJECT_NAME} ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireWyrmHosts")
 
+if (UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "BSD")
+    set(LIBDL_LIBRARIES dl)
+endif()
+
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIBDL_LIBRARIES}
     jsoncpp
-    dl
     )
 
 export(TARGETS ${PROJECT_NAME} APPEND FILE ${FB_EXPORT_FILE})
