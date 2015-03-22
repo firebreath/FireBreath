@@ -1,4 +1,4 @@
-#/**********************************************************\ 
+#/**********************************************************\
 #Original Author: Richard Bateman (taxilian)
 #
 #Created:    Mar 17, 2015
@@ -39,8 +39,49 @@ file (GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.cpp
     )
 
+file (GLOB X11_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    X11/[^.]*.h
+    X11/[^.]*.cpp
+    )
+
+SOURCE_GROUP(X11 FILES ${X11_SOURCES})
+
+file (GLOB WIN_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Win/[^.]*.h
+    Win/[^.]*.cpp
+    )
+
+SOURCE_GROUP(Windows FILES ${WIN_SOURCES})
+
+file (GLOB MAC_SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    Mac/[^.]*.h
+    Mac/[^.]*.cpp
+    Mac/[^.]*.mm
+    )
+
+SOURCE_GROUP(Mac FILES ${MAC_SOURCES})
+
+if (WIN32)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${X11_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+elseif(APPLE)
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${X11_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+elseif(UNIX)
+    if (FIREBREATH)
+        add_boost_library(filesystem)
+        add_boost_library(regex)
+    endif()
+    include_directories(${FB_GECKOSDK_SOURCE_DIR})
+    set_source_files_properties(${WIN_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+    set_source_files_properties(${MAC_SOURCES} PROPERTIES HEADER_FILE_ONLY 1)
+endif()
+
 set (SOURCES
     ${SOURCES}
+    ${WIN_SOURCES}
+    ${MAC_SOURCES}
+    ${X11_SOURCES}
     )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -51,6 +92,7 @@ target_link_libraries(${PROJECT_NAME}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIBDL_LIBRARIES}
     jsoncpp
+    dl
     )
 
 export(TARGETS ${PROJECT_NAME} APPEND FILE ${FB_EXPORT_FILE})

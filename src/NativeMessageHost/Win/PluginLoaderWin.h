@@ -39,7 +39,7 @@ private:
 
     using InitFnPtr = FW_RESULT(*)(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs);
     using FinitFnPtr = FW_RESULT(*)();
-    
+
     InitFnPtr initFn;
     FinitFnPtr finitFn;
 };
