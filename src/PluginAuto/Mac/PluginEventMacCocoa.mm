@@ -97,10 +97,10 @@ int16_t PluginEventMacCocoa::HandleEvent(void* event) {
                 btn = MouseButtonEvent::MouseButton_Left;
                 break;
             case 1:
-                btn = MouseButtonEvent::MouseButton_Middle;
+                btn = MouseButtonEvent::MouseButton_Right;
                 break;
             case 2:
-                btn = MouseButtonEvent::MouseButton_Right;
+                btn = MouseButtonEvent::MouseButton_Middle;
                 break;
         }
     }
