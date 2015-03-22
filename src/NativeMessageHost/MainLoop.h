@@ -18,6 +18,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #define MainLoop_h__
 
 #include <string>
+#include <string.h>
 #include <deque>
 #include <vector>
 #include <map>

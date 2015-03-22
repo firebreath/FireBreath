@@ -159,13 +159,13 @@ FW_RESULT sendCommand(const FW_INST colonyId, const uint32_t cmdId, const char* 
     MainLoop& main(MainLoop::get());
 
     Json::Value root(Json::objectValue);
-    auto c = countChunks(strCommandLen);
+    uint32_t c = countChunks(strCommandLen);
     root["c"] = c;
     root["type"] = type;
     root["colonyId"] = colonyId;
     root["cmdId"] = cmdId;
     
-    for (size_t i = 0; i < c; ++i) {
+    for (uint32_t i = 0; i < c; ++i) {
         root["n"] = i + 1;
         root["msg"] = std::string(strCommand + (maxCommandSize * i), std::min((int)maxCommandSize, (int)(strCommandLen - maxCommandSize * i)));
 
