@@ -29,13 +29,14 @@ namespace FB {
     class KeyEvent : public PluginEvent
     {
     public:
-        KeyEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0)
+        KeyEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0, const std::string& text = "")
             :
-        m_key_code( fb_key ), m_os_key_code( os_key ), m_modifierFlags(modifiers)
+        m_key_code( fb_key ), m_os_key_code( os_key ), m_modifierFlags(modifiers), m_text(text)
         { }
 
     public:
         FBKeyCode m_key_code;
+		std::string m_text;
         uint32_t m_os_key_code;
         uint32_t m_modifierFlags;
     };
@@ -48,8 +49,8 @@ namespace FB {
     class KeyUpEvent : public KeyEvent
     {
     public:
-        KeyUpEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0)
-            : KeyEvent(fb_key, os_key, modifiers) {}
+        KeyUpEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0, const std::string& text = "")
+            : KeyEvent(fb_key, os_key, modifiers, text) {}
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -60,8 +61,8 @@ namespace FB {
     class KeyDownEvent : public KeyEvent
     {
     public:
-        KeyDownEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0)
-            : KeyEvent(fb_key, os_key, modifiers) {}
+        KeyDownEvent(FBKeyCode fb_key, uint32_t os_key, uint32_t modifiers = 0, const std::string& text = "")
+            : KeyEvent(fb_key, os_key, modifiers, text) {}
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
