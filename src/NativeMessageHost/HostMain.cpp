@@ -25,7 +25,9 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 int main(int argc, char* argv[]) {
 
 #ifdef WIN32
+#ifdef DEBUG_BREAK
     __debugbreak();
+#endif
     _setmode(_fileno(stdout), _O_BINARY);
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
