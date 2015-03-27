@@ -73,21 +73,11 @@ int WyrmBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& fun
 }
 
 LocalWyrmling WyrmBrowserHost::getWyrmling(FB::JSAPIPtr api) {
-    for (auto it : m_localMap) {
-        if (it.second.containsAPI(api)) {
-            return it.second;
-        }
-    }
     FW_INST objId = m_nextObjId++;
     return createWyrmling(api, objId);
 }
 
 FB::FireWyrm::LocalWyrmling FB::FireWyrm::WyrmBrowserHost::getWyrmling(FB::JSAPIWeakPtr api) {
-    for (auto it : m_localMap) {
-        if (it.second.containsAPI(api.lock())) {
-            return it.second;
-        }
-    }
     FW_INST objId = m_nextObjId++;
     return createWyrmling(api, objId);
 }
