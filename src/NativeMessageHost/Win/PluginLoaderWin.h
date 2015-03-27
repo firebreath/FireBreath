@@ -24,18 +24,19 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 class PluginLoaderWin : public PluginLoader
 {
 public:
-    PluginLoaderWin(std::string mimetype, std::string filename);
+    PluginLoaderWin(std::string mimetype, std::string filename, std::string name);
     virtual ~PluginLoaderWin();
 
     FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) override;
     FW_RESULT Finit() override;
     std::string getPluginName() override {
         // TODO: Populate basic plugin metadata when searching, then have it available here
-        return "Unknown";
+        return m_pluginName;
     }
 
 private:
     HMODULE m_module;
+    std::string m_pluginName;
 
     using InitFnPtr = FW_RESULT(*)(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs);
     using FinitFnPtr = FW_RESULT(*)();

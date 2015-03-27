@@ -74,6 +74,14 @@ messageInfo parseCommandMessage(Json::Value& root) {
         msg.type = MessageType::CREATE;
         msg.msgs.emplace_back(root["mimetype"].asString());
         return msg;
+    } else if (cmd == "destroy") {
+        messageInfo msg;
+        msg.type = MessageType::DESTROY;
+        return msg;
+    } else if (cmd == "list") {
+        messageInfo msg;
+        msg.type = MessageType::ENUM;
+        return msg;
     } else {
         throw std::runtime_error("Unknown command");
     }
@@ -261,6 +269,41 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
 
             m_pluginLoader->Init(&m_hFuncs, &m_cFuncs);
             writeObj(stringMap{ { "status", "success" }, { "plugin", m_pluginLoader->getPluginName() } });
+        } catch (std::exception e) {
+            writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
+        }
+    } else if (message.type == MessageType::DESTROY) {
+        try {
+            m_pluginLoader->Finit();
+            m_pluginLoader.reset();
+            writeObj(stringMap{ { "status", "success" } });
+        } catch (std::exception e) {
+            writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
+        }
+    } else if (message.type == MessageType::ENUM) {
+        // Enumerate the plugins installed
+        try {
+            auto list = PluginLoader::getPluginList();
+
+            Json::Value plugArr{ Json::arrayValue };
+            for (auto& plugin : list) {
+                Json::Value pl{ Json::objectValue };
+                pl["name"] = plugin.name;
+                pl["description"] = plugin.description;
+                pl["product"] = plugin.product_name;
+                pl["vendor"] = plugin.vendor;
+                pl["version"] = plugin.version;
+                Json::Value types{ Json::arrayValue };
+                for (auto strMimetype : plugin.mime_types) {
+                    types.append(strMimetype);
+                }
+                pl["mimetypes"] = types;
+                plugArr.append(pl);
+            }
+            Json::Value msg{ Json::objectValue };
+            msg["status"] = "success";
+            msg["list"] = plugArr;
+            writeMessage(stringify(msg));
         } catch (std::exception e) {
             writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
         }

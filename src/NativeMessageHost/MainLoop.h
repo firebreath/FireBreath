@@ -30,7 +30,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include "FireWyrm.h"
 #include "PluginLoader.h"
 
-enum class MessageType { UNKNOWN, CREATE, DESTROY, COMMAND, RESPONSE, ERROR };
+enum class MessageType { UNKNOWN, CREATE, DESTROY, COMMAND, RESPONSE, ERROR, ENUM };
 
 using stringMap = std::map<std::string, std::string>;
 

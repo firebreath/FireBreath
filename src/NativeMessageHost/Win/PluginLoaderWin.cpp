@@ -28,7 +28,7 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
         throw new std::runtime_error("No registered plugins detected");
     }
 
-    return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, fnd->path));
+    return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, fnd->path, fnd->name));
 }
 
 PluginList PluginLoader::getPluginList() {
@@ -66,6 +66,9 @@ PluginList PluginLoader::getPluginList() {
                             // This isn't a firewyrm compatible plugin
                             continue;
                         }
+                    } else {
+                        //Not a firewyrm compatible plugin, skip
+                        continue;
                     }
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("Description"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
@@ -115,8 +118,8 @@ PluginList PluginLoader::getPluginList() {
     return result;
 }
 
-PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename)
-    : PluginLoader(mimetype), m_module(nullptr), initFn(nullptr), finitFn(nullptr) {
+PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename, std::string name)
+    : PluginLoader(mimetype), m_pluginName(name), m_module(nullptr), initFn(nullptr), finitFn(nullptr) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
     std::wstring libPath = utf8_conv.from_bytes(filename);
     m_module = LoadLibrary(libPath.c_str());
