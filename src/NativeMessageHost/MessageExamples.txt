@@ -1,0 +1,98 @@
+Here are some example messages that may go across the wyrmhole:
+
+Load a plugin:
+
+    {"cmd": "create", mimetype: "application/x-fbtestplugin"}
+  response:
+    {"status": "success", "plugin": "Plugin name here"}
+
+Unload a plugin module:
+
+    {"cmd": "destroy"}
+  response:
+    {"status": "success"}
+
+List all plugins:
+
+    {"cmd": "list"}
+  response:
+    {"status": "success", "list": [{...plugin1...}, {...plugin2...}, ...]}
+
+A plugin object in the list looks like:
+{
+    "name": "Some plugin",
+    "description": "Some description about the plugin which is likely useless but will probably be here anyway",
+    "product": "Some plugin product (don't know why this is here)",
+    "vendor": "Some company",
+    "version": "1.2.3.4",
+    "mimetypes": [
+        "application/x-somemimetype",
+        "some/mimetype",
+        "text/anothertype"
+    ]
+}
+
+Send a FireWyrm message (cmdId is auto assigned, unique to source)
+{
+    "cmdId": 15,
+    "type": "cmd",
+    "c": 1, // number of messages in a batch from a split up message
+    "n": 1, // Which position in that batch this is
+    "colonyId": 0,
+    "msg": "[\"New\", \"application/x-fbtestplugin\", {}]"
+}
+Receive a response (cmdId matches the command it is responding to)
+{
+    "cmdId": 15,
+    "type": "resp",
+    "c": 1, // number of messages in a batch from a split up message
+    "n": 1, // Which position in that batch this is
+    "colonyId": 0,
+    "msg": "[\"success\", 1]"
+}
+
+
+--------------
+
+From the page to the content script is a little more detailed:
+
+Create a wyrmhole:
+
+    {"request": "create"}
+  response:
+    {"source": "host", "port": "Port1", message: "Created"}
+
+Load a plugin in the wyrmhole
+
+    {"request": "load", mimetype: "application/x-fbtestplugin"}
+  response:
+    {"source": "host", "port": "Port1", "msg": (create response)}
+
+Send a message through the wyrmhole
+    Send a FireWyrm message (cmdId is auto assigned, unique to source)
+    {
+        "source": "host",
+        "port": "Port1",
+        "cmdId": 15,
+        "type": "cmd",
+        "c": 1, // number of messages in a batch from a split up message
+        "n": 1, // Which position in that batch this is
+        "colonyId": 0,
+        "msg": "[\"New\", \"application/x-fbtestplugin\", {}]"
+    }
+    Receive a response (cmdId matches the command it is responding to)
+    {
+        "cmdId": 15,
+        "type": "resp",
+        "c": 1, // number of messages in a batch from a split up message
+        "n": 1, // Which position in that batch this is
+        "colonyId": 0,
+        "msg": "[\"success\", 1]"
+    }
+
+Destroy the wyrmhole and unload any plugins:
+
+    {"request": "destroy", "port": "Port1"}
+  response:
+    {"status": "success"}
+

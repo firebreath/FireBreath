@@ -1,0 +1,24 @@
+{
+  "name": "FireBreath Plugin Adapter",
+  "version": "1.0",
+  "manifest_version": 2,
+  "description": "Allows use of FireBreath plugins",
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "background": {
+    "scripts": ["background.js"]
+  },
+  "content_scripts": [{
+      "matches": [ "<all_urls>" ],
+      "js": ["content.js"]
+  }],
+  "web_accessible_resources": [
+      "wyrmhole.js",
+      "FireBreathPromise.js",
+      "FireWyrmJS.js"
+  ],
+  "permissions": [
+    "nativeMessaging"
+  ]
+}
