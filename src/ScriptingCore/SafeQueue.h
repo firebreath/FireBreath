@@ -104,7 +104,7 @@ namespace FB {
             if(the_queue.empty())
             {
                 // Wait for the specified duration if no values are there
-                the_condition_variable.timed_wait(lock, duration);
+                the_condition_variable.wait_for(lock, rel_time);
             }
             
             // See if a value was added; if not, we just timed out
