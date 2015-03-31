@@ -182,7 +182,7 @@ bool FB::JSAPIProxy::HasProperty( int idx ) const
 FB::variantPromise FB::JSAPIProxy::GetProperty( const std::wstring& propertyName )
 {
     if (propertyName == L"expired")
-        return isExpired();
+        return FB::variant(isExpired());
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }
@@ -190,7 +190,7 @@ FB::variantPromise FB::JSAPIProxy::GetProperty( const std::wstring& propertyName
 FB::variantPromise FB::JSAPIProxy::GetProperty( std::string propertyName )
 {
     if (propertyName == "expired")
-        return isExpired();
+        return FB::variant(isExpired());
     FB::scoped_zonelock _l(getAPI(), getZone());
     return getAPI()->GetProperty(propertyName);
 }

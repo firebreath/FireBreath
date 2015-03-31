@@ -43,14 +43,14 @@ void ThreadRunnerAPI::threadRun()
         if (this->m_queue.try_pop(func))
         {
             try {
-                func->Invoke("", FB::VariantList()).done([=](FB::variant var) {
+                func->Invoke("", FB::VariantList()).done([=](FB::variant var) -> void {
                     // Asynchronous call
                     if (var.is_of_type<std::string>()) {
                         host->htmlLog("Function call returned: " + var.convert_cast<std::string>());
                     } else if (var.is_of_type<FB::JSObjectPtr>()) {
                         addMethod(var.convert_cast<FB::JSObjectPtr>());
                     }
-                }).fail([host](std::exception& ex) {
+                }).fail([host](std::exception ex) -> void {
                     // The function had an exception
                     host->htmlLog(std::string("Exception calling func ") + ex.what());
                 });

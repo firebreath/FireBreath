@@ -40,7 +40,7 @@ FB::variantPromise FB::JSAPISimple::callFireEvent(const std::vector<variant>& ar
         std::string event = args[0].convert_cast<std::string>();
         args.erase(args.begin());
         this->FireEvent(event, args);
-        return event;
+        return FB::variant(event);
     } catch (...) {
         throw invalid_arguments();
     }
@@ -49,12 +49,12 @@ FB::variantPromise FB::JSAPISimple::callFireEvent(const std::vector<variant>& ar
 // Example function call and read-only property; override these if desired in derived classes
 variantPromise JSAPISimple::callToString(const std::vector<FB::variant>& args)
 {
-    return "JSAPI Javascript Object";
+    return FB::variant("JSAPI Javascript Object");
 }
 
 variantPromise JSAPISimple::getValid()
 {
-    return m_valid;
+    return FB::variant(m_valid);
 }
 
 void JSAPISimple::getMemberNames(std::vector<std::string> &nameVector) const

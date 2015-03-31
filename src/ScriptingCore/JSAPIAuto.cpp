@@ -314,7 +314,7 @@ FB::variantPromise FB::JSAPIAuto::getAttribute( std::string name )
     if (m_attributes.find(name) != m_attributes.end()) {
         return m_attributes[name].value;
     }
-    return FB::FBVoid();
+    return FB::variant();
 }
 
 void FB::JSAPIAuto::setAttribute( std::string name, const FB::variant& value )

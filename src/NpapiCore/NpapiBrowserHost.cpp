@@ -935,7 +935,7 @@ NPObject* NpapiBrowserHost::getJSHelper() {
     if (!m_jsHelper) {
         NPObject *window = m_htmlWin->getNPObject();
         
-        int32_t ctxId{ (int32_t)(getContextID()) };
+        int32_t ctxId( (intptr_t)(getContextID()) );
         std::string name = std::string("_FB_HELPERS_") + std::to_string(ctxId);
         
         NPIdentifier idFbObj = GetStringIdentifier(name.c_str());

@@ -28,6 +28,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include "WyrmBrowserHost.h"
 #include "WyrmSpawn.h"
 #include "AlienWyrmling.h"
+#include <boost/preprocessor/cat.hpp>
+#include <boost/preprocessor/stringize.hpp>
 
 using namespace FB::FireWyrm;
 
@@ -47,7 +49,7 @@ volatile uint32_t WyrmColony::ColonyInitialized(0);
 WyrmColony::ColonyMap WyrmColony::m_colonyMap;
 WyrmColony::CommandMap WyrmColony::cmdMap;
 
-#define addToCommandMap(str) cmdMap[#str] = &WyrmColony:: ## str;
+#define addToCommandMap(str) cmdMap[BOOST_PP_STRINGIZE(str)] = &WyrmColony :: str
 
 void WyrmColony::initCommandMap() {
     addToCommandMap(New);
@@ -120,7 +122,7 @@ AlienLarvaePtr FB::FireWyrm::WyrmColony::getLarvaeFor(const FW_INST spawnId, con
     return larvae;
 }
 
-FB::variant valueToVariant(Json::Value& root, WyrmColony* colony);
+FB::variant valueToVariant(Json::Value root, WyrmColony* colony);
 
 FB::variant valueRawObjectToVariant(Json::Value& root, WyrmColony *colony) {
     // If this is a "by value" object then we'll just pass it
@@ -161,7 +163,7 @@ FB::variant valueObjectToVariant(Json::Value& root, WyrmColony* colony) {
     }
 }
 
-FB::variant valueToVariant(Json::Value& root, WyrmColony* colony) {
+FB::variant valueToVariant(Json::Value root, WyrmColony* colony) {
     Json::Value def;
     if (root.isString())
         return root.asString();

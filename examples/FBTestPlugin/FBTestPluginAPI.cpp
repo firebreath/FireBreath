@@ -319,7 +319,7 @@ FB::variantPromise FBTestPluginAPI::getTagAttribute(const std::wstring &tagName,
 {
     return m_host->getDOMDocument()->getElementsByTagName(tagName).thenPipe<FB::variant>([idx,attribute](std::vector<FB::DOM::ElementPtr> tagList) -> FB::variantPromise {
         if (!tagList.size()) {
-            return "No matching tags found";
+            return FB::variant("No matching tags found");
         } else {
             return tagList[idx]->getJSObject()->GetProperty(attribute);
         }

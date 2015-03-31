@@ -18,9 +18,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <algorithm>
 #include <memory>
 #include <thread>
-#include <boost/lambda/lambda.hpp>
-#include <boost/lambda/bind.hpp>
-#include <boost/lambda/construct.hpp>
 #include <boost/format.hpp>
 #include <boost/foreach.hpp>
 #include "JSObject.h"

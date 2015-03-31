@@ -49,7 +49,7 @@ namespace FB {
 
     public:
         virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
-        virtual void *getContextID() const { return (void *)m_spawnId; }
+        virtual void *getContextID() const { return (void *)(m_spawnId); }
         virtual FW_INST getSpawnId() const { return m_spawnId; }
 
     public:
@@ -64,7 +64,7 @@ namespace FB {
         virtual Promise<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj) override;
         virtual Promise<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj) override;
 
-        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url = "");
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "") override;
 
     public:
         void shutdown();

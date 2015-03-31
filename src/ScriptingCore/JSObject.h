@@ -83,7 +83,7 @@ namespace FB
                 auto onDone = [](VariantList inList) -> Cont {
                     Cont out;
                     for (auto c : inList) {
-                        out.emplace_back(c.convert_cast<Cont::value_type>());
+                        out.emplace_back(c.convert_cast<typename Cont::value_type>());
                     }
                     return out;
                 };
@@ -101,7 +101,7 @@ namespace FB
                 auto onDone = [](VariantMap inMap) -> Dict {
                     Dict out;
                     for (auto c : inMap) {
-                        out[c.first] = c.second.convert_cast<Dict::mapped_type>();
+                        out[c.first] = c.second.convert_cast<typename Dict::mapped_type>();
                     }
                     return out;
                 };
@@ -334,37 +334,6 @@ namespace FB
             return FB::JSObject::GetObjectValues<Dict>(var.cast<JsObject>());
         }
     } }
-    
-    // TODO: this doesn't belong here
-
-    /// @brief Get a JSAPI-derived interface from a JSObject.
-    /// @since 1.4
-    ///
-    /// @code 
-    /// if (std::shared_ptr<MyCustomAPI> ptr = FB::get_jsapi<MyCustomAPI>(jsobject)) {
-    ///     doStuff(ptr);
-    /// } else {
-    ///     // failed ...
-    /// }
-    /// @endcode
-    ///
-    /// @return Returns a std::shared_ptr<API> which is empty on failure
-    ///         and non-empty on success.
-    template<class API>
-    std::shared_ptr<API> get_jsapi(const FB::JSObjectPtr& jso)
-    {
-        typedef std::shared_ptr<API> APIPtr;
-        
-        if (!jso) {
-            return APIPtr();
-        }
-        
-        if (FB::JSAPIPtr jsapi = jso->getJSAPI()) {
-            return std::dynamic_pointer_cast<API>(jsapi);
-        }
-        
-        return APIPtr();
-    }
 };
 
 #endif

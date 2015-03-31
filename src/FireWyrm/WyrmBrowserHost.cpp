@@ -148,7 +148,7 @@ void WyrmBrowserHost::DoDeferredRelease() const {
 
 }
 
-bool WyrmBrowserHost::DetectProxySettings(std::map<std::string, std::string>& settingsMap, const std::string& url /*= ""*/) {
+bool WyrmBrowserHost::DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url /*= ""*/) {
     throw std::logic_error("Not implemented");
 }
 
