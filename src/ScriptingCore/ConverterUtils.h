@@ -160,7 +160,7 @@ namespace FB {
         if (args.size() >= index)
             return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
         else
-            return To(); // Empty optional argument
+            return FB::variant(To()); // Empty optional argument
     }
 
     template<typename To>
@@ -171,7 +171,7 @@ namespace FB {
         if (args.size() >= index)
             return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
         else
-            return boost::tribool(); // Empty variant argument
+            return FB::variant(boost::tribool()); // Empty variant argument
     }
 
     template<typename To>
@@ -204,6 +204,19 @@ namespace FB {
 
 namespace FB { namespace detail
 {
+    // Helpers to convert to variantPromise
+    template<class T>
+    typename boost::enable_if<boost::mpl::not_<FB::meta::is_promise<T>>, FB::variantPromise>::type
+    convertToVariantPromise(T val) {
+        return FB::variant(val);
+    }
+    
+    template<class T>
+    typename boost::enable_if<FB::meta::is_promise<T>, FB::variantPromise>::type
+    convertToVariantPromise(T val) {
+        return FB::variantPromise(val);
+    }
+    
     // specialization of converter for conversions from FB::variant
     template<typename To>
     struct converter<To, FB::variant>
@@ -229,7 +242,7 @@ namespace FB { namespace detail
         static inline FB::variantPromise convertDfd(const FB::variant& from)
         {
             try {
-                return getPromiseFor<To>(from.convert_cast<To>());
+                return getPromiseFor(from.convert_cast<To>());
             } catch(const FB::bad_variant_cast& e) {
                 std::stringstream ss;
                 ss << "Invalid argument conversion "

@@ -67,7 +67,7 @@ namespace FB
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)())
             {
-                auto wrapper = [instance, getter]() { return (instance->*getter)(); };
+                auto wrapper = [instance, getter]() -> FB::variantPromise { return FB::detail::convertToVariantPromise<T>((instance->*getter)()); };
                 return wrapper;
             }
         };
@@ -78,7 +78,7 @@ namespace FB
             static inline 
             FB::GetPropFunctor f(C* instance, T (C::*getter)() const)
             { 
-                auto wrapper = [instance, getter]() { return (instance->*getter)(); };
+                auto wrapper = [instance, getter]() { return FB::detail::convertToVariantPromise<T>((instance->*getter)()); };
                 return wrapper;
             }
         };
@@ -111,7 +111,7 @@ namespace FB
             static inline 
             void f(C* instance, void (C::*setter)(T) const, const FB::variant& v)
             { 
-                typedef typename FB::detail::plain_type<T>::type Ty;
+                typedef typename std::decay<T>::type Ty;
                 typedef FB::detail::converter<Ty, FB::variant> converter;
                 return [instance, setter](FB::variant v) { (instance->*setter)(converter::convert(v)); };
             }

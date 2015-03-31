@@ -69,9 +69,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
                 }                                                               \
                 auto fn(f);                                                     \
                 auto cb = [fn,instance](const FB::VariantList&in) -> FB::variantPromise { \
-                    return (instance->*fn)(                                     \
+                    return FB::detail::convertToVariantPromise<R>((instance->*fn)(\
                         BOOST_PP_ENUM(n, _FB_MW_CARGS, n)                       \
-                        );                                                      \
+                        ));                                                     \
                 };                                                              \
                 /* This will call cb with a VariantList of resolved things   */ \
                 return FB::whenAllPromises(args, cb);                           \
