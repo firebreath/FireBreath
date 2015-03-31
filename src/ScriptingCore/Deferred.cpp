@@ -35,3 +35,10 @@ void FB::Deferred<void>::resolve(Promise<void> v) const {
     auto onFail = [self](std::exception e) { self.reject(e); };
     promise().done(onDone, onFail);
 }
+
+namespace FB {
+    template class Promise<FB::variant>;
+    template class Promise<FB::VariantList>;
+    template class Deferred<FB::variant>;
+    template class Deferred<FB::VariantList>;
+}
