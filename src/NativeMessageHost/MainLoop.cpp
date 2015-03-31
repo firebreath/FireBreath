@@ -129,7 +129,6 @@ messageInfo parseIncomingMessage(std::string command) {
     Json::Reader rdr;
     Json::Value root;
 
-    int cmdIdx{ 0 };
     if (!rdr.parse(command, root, false)) {
         throw std::runtime_error("Invalid json");
     } else if (!root.isObject()) {
