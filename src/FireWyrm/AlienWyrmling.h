@@ -39,6 +39,7 @@ namespace FB { namespace FireWyrm {
 
     private:
         friend class AlienWyrmling;
+        WyrmColony* getColony() { return colony; }
         WyrmColony* colony;
         FW_INST spawnId;
         uint32_t objId;
