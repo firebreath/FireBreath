@@ -26,7 +26,7 @@ using namespace FB::Npapi;
 // FireBreathPromise, from https://github.com/FireBreath/fbpromise
 extern const char* fbPromiseJS;
 
-NPPromise::NPPromise(NpapiBrowserHostPtr host, FB::variantPromise promise, PrivateOnly&) : m_browser(host), m_promise(promise), m_settled(false) {
+NPPromise::NPPromise(NpapiBrowserHostPtr host, FB::variantPromise promise, PrivateOnly&&) : m_browser(host), m_promise(promise), m_settled(false) {
 }
 
 NPPromisePtr NPPromise::create(NpapiBrowserHostPtr host, FB::variantPromise promise) {

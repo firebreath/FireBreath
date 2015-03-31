@@ -43,7 +43,7 @@ namespace FB { namespace Npapi {
 
     public:
         static NPPromisePtr create(NpapiBrowserHostPtr host, FB::variantPromise promise);
-        NPPromise(NpapiBrowserHostPtr host, FB::variantPromise promise, PrivateOnly&);
+        NPPromise(NpapiBrowserHostPtr host, FB::variantPromise promise, PrivateOnly&&);
         virtual ~NPPromise(void);
         void init(NpapiBrowserHostPtr host);
 
