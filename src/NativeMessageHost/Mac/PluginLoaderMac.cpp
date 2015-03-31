@@ -41,8 +41,8 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
 PluginList PluginLoader::getPluginList() {
     PluginList result;
     std::string home = getenv("HOME");
-    std::string user_plugin_path = home + "/.mozilla/plugins";
-    std::string system_plugin_path = "/usr/lib/mozilla/plugins";
+    std::string user_plugin_path = home + "/Library/Internet Plug-Ins";
+    std::string system_plugin_path = "/Library/Internet Plug-Ins";
     std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
     boost::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
     void *dlo_handle;
