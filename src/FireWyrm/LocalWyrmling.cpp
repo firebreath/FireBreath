@@ -14,8 +14,10 @@ Copyright 2015 Richard Bateman, Firebreath development team
 
 #include "LocalWyrmling.h"
 
+using namespace FB::FireWyrm;
+
 FB::FireWyrm::LocalWyrmling::LocalWyrmling(const WyrmBrowserHostPtr& host, const FB::JSAPIWeakPtr& api, FW_INST id, bool autoRelease /*= false*/)
-    : m_browser(host), m_api(api), m_id(id), m_autoRelease(autoRelease) {
+    : m_api(api), m_browser(host), m_autoRelease(autoRelease), m_id(id) {
     if (m_autoRelease) {
         // If we're auto-releasing it we need to auto-retain it
         FB::JSAPIPtr api_strong(api.lock());
@@ -32,7 +34,7 @@ FB::FireWyrm::LocalWyrmling::LocalWyrmling(LocalWyrmling &&rh) : m_api(rh.m_api)
     }
 }
 
-FB::FireWyrm::LocalWyrmling::LocalWyrmling(LocalWyrmling &rh) : m_api(rh.m_api), m_browser(rh.m_browser), m_valid(rh.m_valid), m_autoRelease(rh.m_autoRelease), m_id(rh.m_id) {
+FB::FireWyrm::LocalWyrmling::LocalWyrmling(const LocalWyrmling &rh) : m_api(rh.m_api), m_browser(rh.m_browser), m_valid(rh.m_valid), m_autoRelease(rh.m_autoRelease), m_id(rh.m_id) {
     if (m_autoRelease) {
         // If we're auto-releasing it we need to auto-retain it
         FB::JSAPIPtr api_strong(m_api.lock());
@@ -42,6 +44,21 @@ FB::FireWyrm::LocalWyrmling::LocalWyrmling(LocalWyrmling &rh) : m_api(rh.m_api),
         }
     }
 }
+void LocalWyrmling::swap(LocalWyrmling& s) noexcept {
+    std::swap(s.m_api, this->m_api);
+    std::swap(s.m_browser, this->m_browser);
+    std::swap(s.m_valid, this->m_valid);
+    std::swap(s.m_autoRelease, this->m_autoRelease);
+    std::swap(s.m_id, this->m_id);
+    std::swap(s.m_api, this->m_api);
+    std::swap(s.m_api, this->m_api);
+}
+LocalWyrmling& LocalWyrmling::operator=(const LocalWyrmling& rh) {
+    // By using this idiom the constructors and destructors all work
+    LocalWyrmling tmp(rh);
+    tmp.swap(*this);
+    return *this;
+}
 
 FB::FireWyrm::LocalWyrmling::~LocalWyrmling(void) {
     if (m_autoRelease) {
@@ -49,7 +66,7 @@ FB::FireWyrm::LocalWyrmling::~LocalWyrmling(void) {
         FB::JSAPIPtr api_strong(m_api.lock());
         WyrmBrowserHostPtr host_strong(m_browser.lock());
         if (api_strong && host_strong) {
-            host_strong->retainJSAPIPtr(api_strong);
+            host_strong->releaseJSAPIPtr(api_strong);
         }
     }
 }

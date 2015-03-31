@@ -45,9 +45,14 @@ namespace FB { namespace FireWyrm {
         LocalWyrmling(const WyrmBrowserHostPtr& host, const FB::JSAPIWeakPtr& api, FW_INST id, bool autoRelease = false);
 
         // Allow copying and moving of this object
-        LocalWyrmling(LocalWyrmling &rh);
+        LocalWyrmling(const LocalWyrmling &rh);
+        LocalWyrmling& operator=(const LocalWyrmling&rh);
         LocalWyrmling(LocalWyrmling &&rh);
 
+    private:
+        void swap(LocalWyrmling& s) noexcept;
+    public:
+        
         FB::JSAPIPtr getAPI() const
         {
             FB::JSAPIPtr ptr(m_api.lock());
