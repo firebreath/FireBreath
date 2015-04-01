@@ -73,10 +73,12 @@ messageInfo parseCommandMessage(Json::Value& root) {
         messageInfo msg;
         msg.type = MessageType::CREATE;
         msg.msgs.emplace_back(root["mimetype"].asString());
+        msg.curC++;
         return msg;
     } else if (cmd == "destroy") {
         messageInfo msg;
         msg.type = MessageType::DESTROY;
+        msg.c = 0;
         return msg;
     } else if (cmd == "list") {
         messageInfo msg;
@@ -251,10 +253,15 @@ void MainLoop::run() {
     }
 }
 
-void MainLoop::writeObj(stringMap outMap) {
+void MainLoop::writeObj(stringMap outMap, messageInfo msg) {
     Json::Value v{ Json::objectValue };
     for (auto c : outMap) {
         v[c.first] = c.second;
+    }
+    if (msg.msgId) {
+        v["cmdId"] = msg.msgId;
+        v["c"] = 1;
+        v["n"] = 1;
     }
     this->writeMessage(stringify(v));
 }
@@ -310,19 +317,19 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
         if (message.type == MessageType::COMMAND) {
             std::string msg = message.getString();
             if (!m_pluginLoader) {
-                writeObj(stringMap{ { "status", "error" }, { "message", "Plugin not loaded" } });
+                writeObj(stringMap{{ "status", "error" }, { "message", "Plugin not loaded" }}, message);
                 return;
             }
             (*m_cFuncs.call)(message.colonyId, message.msgId, msg.c_str(), msg.size());
         } else if (message.type == MessageType::RESPONSE) {
             std::string msg = message.getString();
             if (!m_pluginLoader) {
-                writeObj(stringMap{ { "status", "error" }, { "message", "Plugin not loaded" } });
+                writeObj(stringMap{ { "status", "error" }, { "message", "Plugin not loaded" } }, message);
                 return;
             }
             (*m_cFuncs.cmdCallback)(message.colonyId, message.msgId, msg.c_str(), msg.size());
         } else {
-            writeObj(stringMap{ { "status", "error" }, { "message", "Unknown message" } });
+            writeObj(stringMap{ { "status", "error" }, { "message", "Unknown message" } }, message);
         }
     }
 }

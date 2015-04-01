@@ -40,7 +40,7 @@ struct messageInfo
     messageInfo(MessageType type, std::string msg) : type(type) {
         msgs.emplace_back(msg);
     }
-    messageInfo() {}
+    messageInfo() : msgId(0), c(1), curC(0) {}
 
     FW_INST colonyId;
     uint32_t msgId;
@@ -90,7 +90,7 @@ public:
         _l.unlock();
         m_cond.notify_all();
     }
-    void writeObj(stringMap outMap);
+    void writeObj(stringMap outMap, messageInfo msg = messageInfo());
     void writeMessage(std::string output) {
         uint32_t a = output.size(); // strip off newline
         fwrite(&a, sizeof(a), 1, stdout);
