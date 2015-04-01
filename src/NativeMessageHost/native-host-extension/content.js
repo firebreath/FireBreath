@@ -32,7 +32,7 @@
                     port: port,
                     message: "Error",
                     error: "Invalid port"
-                });
+                }, "*");
             }
         }
     }
