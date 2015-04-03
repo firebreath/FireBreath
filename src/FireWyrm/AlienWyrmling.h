@@ -30,9 +30,6 @@ namespace FB { namespace FireWyrm {
 
     class AlienLarvae : public std::enable_shared_from_this<AlienLarvae>
     {
-    private:
-        void init() {
-        }
     public:
         AlienLarvae(WyrmColony* colony, FW_INST spawnId, uint32_t objId);
         ~AlienLarvae();
@@ -65,6 +62,7 @@ namespace FB { namespace FireWyrm {
                 return nullptr;
         };
         uint32_t getObjectId() { return m_objId; }
+        WyrmlingKey getWyrmlingKey() { return WyrmlingKey(getHost()->getSpawnId(), getObjectId()); }
 
         void getMemberNames(std::vector<std::string> &nameVector) const {
             nameVector.insert(nameVector.begin(), m_memberNames.begin(), m_memberNames.end());
