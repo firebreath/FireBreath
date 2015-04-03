@@ -77,6 +77,7 @@
 
     injectScript("FireBreathPromise.js");
     injectScript("wyrmhole.js");
+    injectScript("firewyrm.js");
 
 })();
 

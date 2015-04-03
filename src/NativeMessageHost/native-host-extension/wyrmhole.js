@@ -129,10 +129,11 @@
             }
         }
         function processCompleteMessage(msg, text) {
+            var dfd = null;
             // The whole message is here!
             if (msg.type == "resp") {
                 // This is a response to a message sent from the page
-                var dfd = cmdMap[msg.cmdId];
+                dfd = cmdMap[msg.cmdId];
                 if (!dfd) {
                     throw new Error("Invalid msg id!");
                 }
@@ -144,14 +145,17 @@
                 }
             } else if (onCommandFn) {
                 // This is a new message sent from the host to the page
-                var promise;
+                dfd = Deferred();
+                var promise = null;
                 try {
-                    promise = onCommandFn(JSON.parse(text));
-                    if (!promise || !promise.then) {
-                        // Invalid return value
-                        throw new Error("Invalid value returned from wyrmhole message handler");
-                    }
-                    promise = makeDeferred(promise);
+                    onCommandFn(JSON.parse(text), function(err, resp) {
+                        if (err) {
+                            dfd.reject(err);
+                        } else {
+                            dfd.resolve(resp);
+                        }
+                    });
+                    promise = dfd.promise;
                 } catch (e) {
                     postMessage(["error", {"error": "command exception", "message": e.toString()}]);
                 }
@@ -166,7 +170,7 @@
             }
         }
 
-        self.sendMessage = function(msg) {
+        self.sendMessage = function(msg, callback) {
             if (destroyed) {
                 throw new Error("Wyrmhole not active");
             }
@@ -174,8 +178,15 @@
             var cmdId = postMessage(msg);
             cmdMap[cmdId] = dfd;
 
-            return dfd.promise;
+            dfd.promise.then(function(res) {
+                if (callback) { callback.apply(null, res); }
+                else { console.log("No callback for", res); }
+            }, function(err) {
+                if (callback) { callback("error", err); }
+                else { console.log("No callback for error: ", err); }
+            });
         };
+        self.onMessage = function(fn) { onCommandFn = fn; };
         self.loadPlugin = function(mimetype) {
             if (loadDfd) {
                 throw new Error("Plugin already loaded (or loading)");

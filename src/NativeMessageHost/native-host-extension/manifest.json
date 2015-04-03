@@ -16,7 +16,7 @@
   "web_accessible_resources": [
       "wyrmhole.js",
       "FireBreathPromise.js",
-      "FireWyrmJS.js"
+      "firewyrm.js"
   ],
   "permissions": [
     "nativeMessaging"
