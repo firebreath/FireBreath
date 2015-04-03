@@ -93,43 +93,41 @@ LocalWyrmling WyrmBrowserHost::createWyrmling(FB::JSAPIWeakPtr api, FW_INST objI
     return obj;
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmBrowserHost::Enum(FW_INST objId) {
+LocalWyrmling WyrmBrowserHost::getWyrmling(FW_INST objId) {
     auto fnd = m_localMap.find(objId);
     if (fnd != m_localMap.end()) {
-        return fnd->second.Enum();
+        return fnd->second;
     } else {
         throw std::runtime_error("Object not found");
     }
 }
 
-FB::variantPromise FB::FireWyrm::WyrmBrowserHost::Invoke(FW_INST objId, std::string name, FB::VariantList args) {
-    auto fnd = m_localMap.find(objId);
-    if (fnd != m_localMap.end()) {
-        return fnd->second.Invoke(name, args);
-    } else {
-        throw std::runtime_error("Object not found");
-    }
+FB::JSAPIPtr WyrmBrowserHost::getJSAPIFromWyrmling(FW_INST objId) {
+    auto ling = getWyrmling(objId);
+    return ling.getAPI();
 }
 
-FB::variantPromise FB::FireWyrm::WyrmBrowserHost::GetP(FW_INST objId, std::string name) {
-    auto fnd = m_localMap.find(objId);
-    if (fnd != m_localMap.end()) {
-        return fnd->second.GetP(name);
-    } else {
-        throw std::runtime_error("Object not found");
-    }
+bool WyrmBrowserHost::HasMethod(FW_INST objId, std::string name) {
+    return getWyrmling(objId).HasMethod(name);
 }
 
-FB::Promise<void> FB::FireWyrm::WyrmBrowserHost::SetP(FW_INST objId, std::string name, FB::variant value) {
-    auto fnd = m_localMap.find(objId);
-    if (fnd != m_localMap.end()) {
-        return fnd->second.SetP(name, value);
-    } else {
-        throw std::runtime_error("Object not found");
-    }
+FB::VariantListPromise WyrmBrowserHost::Enum(FW_INST objId) {
+    return getWyrmling(objId).Enum();
 }
 
-FB::Promise<void> FB::FireWyrm::WyrmBrowserHost::RelObj(FW_INST objId) {
+FB::variantPromise WyrmBrowserHost::Invoke(FW_INST objId, std::string name, FB::VariantList args) {
+    return getWyrmling(objId).Invoke(name, args);
+}
+
+FB::variantPromise WyrmBrowserHost::GetP(FW_INST objId, std::string name) {
+    return getWyrmling(objId).GetP(name);
+}
+
+FB::Promise<void> WyrmBrowserHost::SetP(FW_INST objId, std::string name, FB::variant value) {
+    return getWyrmling(objId).SetP(name, value);
+}
+
+FB::Promise<void> WyrmBrowserHost::RelObj(FW_INST objId) {
     auto fnd = m_localMap.find(objId);
     if (fnd != m_localMap.end()) {
         fnd->second.Invalidate();
