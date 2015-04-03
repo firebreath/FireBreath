@@ -35,7 +35,7 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
         throw new std::runtime_error("No registered plugins detected");
     }
 
-    return std::unique_ptr<PluginLoader>(new PluginLoaderLin(mimetype, fnd->path));
+    return std::unique_ptr<PluginLoader>(new PluginLoaderMac(mimetype, fnd->path));
 }
 
 PluginList PluginLoader::getPluginList() {
@@ -108,7 +108,7 @@ PluginList PluginLoader::getPluginList() {
     return result;
 }
 
-PluginLoaderLin::PluginLoaderLin(std::string mimetype, std::string filename)
+PluginLoaderMac::PluginLoaderMac(std::string mimetype, std::string filename)
     : PluginLoader(mimetype), m_module(nullptr), initFn(nullptr), finitFn(nullptr) {
     m_module = dlopen(filename.c_str(), RTLD_LAZY);
 
@@ -124,16 +124,16 @@ PluginLoaderLin::PluginLoaderLin(std::string mimetype, std::string filename)
     }
 }
 
-PluginLoaderLin::~PluginLoaderLin() {
+PluginLoaderMac::~PluginLoaderMac() {
     if (m_module) {
         dlclose(m_module);
     }
 }
 
-FW_RESULT PluginLoaderLin::Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) {
+FW_RESULT PluginLoaderMac::Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) {
     return (*initFn)(hFuncs, cFuncs);
 }
 
-FW_RESULT PluginLoaderLin::Finit() {
+FW_RESULT PluginLoaderMac::Finit() {
     return (*finitFn)();
 }

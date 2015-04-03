@@ -13,18 +13,18 @@ Copyright 2009 GradeCam, Richard Bateman, and the
                Firebreath development team
 \**********************************************************/
 #pragma once
-#ifndef PluginLoaderLin_h__
-#define PluginLoaderLin_h__
+#ifndef PluginLoaderMac_h__
+#define PluginLoaderMac_h__
 
 #include <vector>
 #include "PluginLoader.h"
 #include "FireWyrm.h"
 
-class PluginLoaderLin : public PluginLoader
+class PluginLoaderMac : public PluginLoader
 {
 public:
-    PluginLoaderLin(std::string mimetype, std::string filename);
-    virtual ~PluginLoaderLin();;
+    PluginLoaderMac(std::string mimetype, std::string filename);
+    virtual ~PluginLoaderMac();;
 
     FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) override;
     FW_RESULT Finit() override;
@@ -43,4 +43,4 @@ private:
     FinitFnPtr finitFn;
 };
 
-#endif // PluginLoaderLin_h__
+#endif // PluginLoaderMac_h__
