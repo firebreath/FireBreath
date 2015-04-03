@@ -91,7 +91,6 @@ PluginList PluginLoader::getPluginList() {
                             mime_desc = NP_GetMIMEDescription();
                             boost::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
                                                          end;
-                            std::vector<std::string> mime_types;
                             for(; iter != end; ++iter) {
                                 if (find(plugin.mime_types.begin(), plugin.mime_types.end(), *iter) == plugin.mime_types.end()) {
                                     plugin.mime_types.push_back(*iter);
