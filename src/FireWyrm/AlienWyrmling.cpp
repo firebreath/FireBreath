@@ -63,7 +63,9 @@ void AlienWyrmling::init(AlienLarvaePtr larvae) {
 
 void AlienWyrmling::invalidate() {
     if (!m_valid) return;
-    getHost()->DoCommand(FB::VariantList{ "RelObj", m_spawnId, m_objId });
+    if (m_objId > 0) {
+        getHost()->DoCommand(FB::VariantList{ "RelObj", m_spawnId, m_objId });
+    }
     m_valid = false;
     m_browser.reset();
 }
