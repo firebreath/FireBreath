@@ -30,8 +30,8 @@ WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
       m_fwHost(host),
       m_isReady(false),
       m_mimetype(mimetype),
-      m_pluginName(getFactoryInstance()->getPluginName(mimetype)),
-      m_pluginDesc(getFactoryInstance()->getPluginDescription(mimetype))
+      m_pluginDesc(getFactoryInstance()->getPluginDescription(mimetype)),
+    m_pluginName(getFactoryInstance()->getPluginName(mimetype))
 {
     pluginMain->SetHost(host);
 }
@@ -40,12 +40,16 @@ WyrmSpawn::~WyrmSpawn(void)
 {
 }
 
-bool WyrmSpawn::setReady()
+bool WyrmSpawn::setReady(Promise<void> onReady)
 {
     bool rval = false;
     m_fwHost->createWyrmling(pluginMain->getRootJSAPI(), 0);
-    if (!m_isReady)
-        rval = m_isReady = pluginMain->setReady();
+    if (!m_isReady) {
+        // This is asyncronous! it will run when the browser host is ready
+        onReady.done([this]() -> void {
+            m_isReady = pluginMain->setReady();
+        });
+    }
     return rval;
 }
 
@@ -60,7 +64,6 @@ void WyrmSpawn::shutdown(void)
 void WyrmSpawn::init(FB::VariantMap args)
 {
     pluginMain->setParams(args);
-    setReady();
 }
 
 

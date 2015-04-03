@@ -19,17 +19,51 @@ Copyright 2015 Richard Bateman, Firebreath development team
 #include "WyrmColony.h"
 #include "Deferred.h"
 #include "WyrmVariantUtil.h"
+#include "DOM.h"
 
 using namespace FB::FireWyrm;
+using FB::Promise;
+using FB::Deferred;
 
 WyrmBrowserHost::WyrmBrowserHost(WyrmColony *module, const FW_INST spawnId)
-    : module(module), m_spawnId(spawnId), m_nextObjId(1)
+    : module(module), m_spawnId(spawnId), m_nextObjId(1), m_browserObjId(0)
 {
 
 }
 
-WyrmBrowserHost::~WyrmBrowserHost(void) {
+Promise<void> WyrmBrowserHost::init() {
+    // Get the browser object
+    auto self = std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this());
+    
+    auto browserDfd = module->DoCommand(FB::VariantList{ "New", "browser", FB::VariantMap{} });
+    
+    Deferred<void> dfdReady(false);
+    browserDfd.done([self, dfdReady](FB::variant res) {
+        // The return value should be the spawn id of the object
+        FW_INST spawnId = res.convert_cast<FW_INST>();
+        self->m_browserObjId = spawnId;
+        auto larvae = std::make_shared<AlienLarvae>(self->module, spawnId, 0);
+        auto Browser = self->m_Browser = AlienWyrmling::create(self, larvae);
+        Browser->Invoke("getWindow", FB::VariantList{}).done([self,dfdReady](FB::variant var) {
+            self->m_DOMWindow = var.convert_cast<FB::JSObjectPtr>();
+            if (self->m_DOMDocument) {
+                dfdReady.resolve();
+            }
+        });
+        Browser->Invoke("getDocument", FB::VariantList{}).done([self,dfdReady](FB::variant var) {
+            self->m_DOMDocument = var.convert_cast<FB::JSObjectPtr>();
+            if (self->m_DOMWindow) {
+                dfdReady.resolve();
+            }
+        });
+    });
+    
+    m_onReady = dfdReady.promise();
+    return m_onReady;
+}
 
+WyrmBrowserHost::~WyrmBrowserHost(void) {
+    module->DoCommand(FB::VariantList{ "Destroy", m_browserObjId });
 }
 
 void WyrmBrowserHost::shutdown() {
@@ -45,19 +79,23 @@ FB::DOM::ElementPtr WyrmBrowserHost::getDOMElement() {
 }
 
 FB::DOM::WindowPtr WyrmBrowserHost::getDOMWindow() {
-    throw new std::runtime_error("Not implemented");
+    return FB::DOM::Window::create(m_DOMWindow);
 }
 
 FB::DOM::DocumentPtr WyrmBrowserHost::getDOMDocument() {
-    throw new std::runtime_error("Not implemented");
+    return FB::DOM::Document::create(m_DOMDocument);
 }
 
 FB::Promise<FB::VariantList> WyrmBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
-    throw new std::runtime_error("Not implemented");
+    return m_Browser->Invoke("readArray", FB::VariantList{obj}).then<FB::VariantList>([] (FB::variant ret) {
+        return ret.cast<FB::VariantList>();
+    });
 }
 
 FB::Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
-    throw new std::runtime_error("Not implemented");
+    return m_Browser->Invoke("readObject", FB::VariantList{obj}).then<FB::VariantMap>([] (FB::variant ret) {
+        return ret.cast<FB::VariantMap>();
+    });
 }
 
 FB::BrowserStreamPtr WyrmBrowserHost::_createStream(const FB::BrowserStreamRequest& req) const {
@@ -65,11 +103,12 @@ FB::BrowserStreamPtr WyrmBrowserHost::_createStream(const FB::BrowserStreamReque
 }
 
 void WyrmBrowserHost::evaluateJavaScript(const std::string &script) {
-    throw new std::runtime_error("Not implemented");
+    m_Browser->Invoke("evalFn", FB::VariantList{script});
 }
 
 int WyrmBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
-    throw new std::runtime_error("Not implemented");
+    m_Browser->Invoke("invokeWithDelay", FB::VariantList{delayms, func, args, fname});
+    return -1;
 }
 
 LocalWyrmling WyrmBrowserHost::getWyrmling(FB::JSAPIPtr api) {
@@ -77,7 +116,7 @@ LocalWyrmling WyrmBrowserHost::getWyrmling(FB::JSAPIPtr api) {
     return createWyrmling(api, objId);
 }
 
-FB::FireWyrm::LocalWyrmling FB::FireWyrm::WyrmBrowserHost::getWyrmling(FB::JSAPIWeakPtr api) {
+LocalWyrmling WyrmBrowserHost::getWyrmling(FB::JSAPIWeakPtr api) {
     FW_INST objId = m_nextObjId++;
     return createWyrmling(api, objId);
 }

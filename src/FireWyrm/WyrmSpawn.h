@@ -43,7 +43,7 @@ namespace FB {
         virtual void init(VariantMap args);
         virtual void shutdown();
 
-        virtual bool setReady();
+        virtual bool setReady(Promise<void> onReady);
 
     protected:
         WyrmBrowserHostPtr m_fwHost;

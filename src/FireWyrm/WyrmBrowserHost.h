@@ -26,9 +26,12 @@ namespace FB {
     namespace FireWyrm {
 
     FB_FORWARD_PTR(WyrmColony);
-    FB_FORWARD_PTR(LocalWyrmling);
+    FB_FORWARD_PTR(AlienWyrmling);
     FB_FORWARD_PTR(WyrmBrowserHost);
     FB_FORWARD_PTR(WyrmJavascriptObject);
+    class LocalWyrmling;
+        
+    using WyrmlingKey = std::pair<FW_INST, FW_INST>;
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  WyrmBrowserHost
@@ -40,6 +43,7 @@ namespace FB {
     {
     public:
         WyrmBrowserHost(WyrmColony *module, const FW_INST spawnId);
+        Promise<void> init();
         virtual ~WyrmBrowserHost(void);
 
     public:
@@ -71,9 +75,14 @@ namespace FB {
 
         LocalWyrmling getWyrmling(FB::JSAPIPtr api);
         LocalWyrmling getWyrmling(FB::JSAPIWeakPtr api);
+        LocalWyrmling getWyrmling(FW_INST objId);
         LocalWyrmling createWyrmling(FB::JSAPIPtr api, FW_INST objId);
         LocalWyrmling createWyrmling(FB::JSAPIWeakPtr api, FW_INST objId);
+        
+        FB::JSAPIPtr getJSAPIFromWyrmling(FW_INST objId);
 
+        bool HasMethod(FW_INST objId, std::string name);
+        
         // Wyrm Scripting methods
         FB::VariantListPromise Enum(FW_INST objId);
         FB::variantPromise Invoke(FW_INST objId, std::string name, FB::VariantList args);
@@ -87,6 +96,11 @@ namespace FB {
         WyrmColony *module;
         FW_INST m_spawnId;
         FW_INST m_nextObjId;
+        FW_INST m_browserObjId;
+        AlienWyrmlingPtr m_Browser;
+        Promise<void> m_onReady;
+        JSObjectPtr m_DOMWindow;
+        JSObjectPtr m_DOMDocument;
 
         std::map<FW_INST, LocalWyrmling> m_localMap;
     };

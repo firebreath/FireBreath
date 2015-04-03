@@ -26,6 +26,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 
 #include "WyrmColony.h"
 #include "WyrmBrowserHost.h"
+#include "WyrmVariantUtil.h"
+#include "LocalWyrmling.h"
 #include "WyrmSpawn.h"
 #include "AlienWyrmling.h"
 #include <boost/preprocessor/cat.hpp>
@@ -43,11 +45,23 @@ namespace FB {
             WyrmSpawnPtr spawn;
             WyrmBrowserHostPtr host;
         };
+        
+        struct LocalMethodWyrmling {
+            LocalMethodWyrmling() {}
+            LocalMethodWyrmling(LocalWyrmling wl, std::string method, WyrmBrowserHostPtr host) : wyrmling(wl), method(method), host(host) {};
+            LocalWyrmling wyrmling;
+            std::string method;
+            WyrmBrowserHostPtr host;
+        };
     }
 }
+
 volatile uint32_t WyrmColony::ColonyInitialized(0);
 WyrmColony::ColonyMap WyrmColony::m_colonyMap;
 WyrmColony::CommandMap WyrmColony::cmdMap;
+
+using LocalMethodMap = std::map<WyrmlingKey, LocalMethodWyrmling>;
+LocalMethodMap localMethodMap;
 
 #define addToCommandMap(str) cmdMap[BOOST_PP_STRINGIZE(str)] = &WyrmColony :: str
 
@@ -99,7 +113,7 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
     return FW_SUCCESS;
 }
 
-WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::get_id()), m_nextSpawnId(1), m_nextCmdId(1)
+WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::get_id()), m_nextSpawnId(1), m_nextCmdId(1), m_nextMethodId(1)
 {
     initCommandMap();
 }
@@ -108,7 +122,7 @@ WyrmColony::~WyrmColony()
 {
 }
 
-AlienLarvaePtr FB::FireWyrm::WyrmColony::getLarvaeFor(const FW_INST spawnId, const uint32_t objId) {
+AlienLarvaePtr WyrmColony::getLarvaeFor(const FW_INST spawnId, const uint32_t objId) {
     AlienLarvaePtr larvae;
     auto id = std::make_pair(spawnId, objId);
     auto fnd = m_larvaeMap.find(id);
@@ -137,16 +151,22 @@ FB::variant valueRawObjectToVariant(Json::Value& root, WyrmColony *colony) {
 
 FB::variant valueObjectToVariant(Json::Value& root, WyrmColony* colony) {
     assert(root.isObject());
+    using ArrayIndex = decltype(root.size());
 
     if (root.isMember("$type")) {
         std::string type = root["$type"].asString();
         if (type == "ref" && root.isMember("data") && root["data"].isArray() && root["data"].size() >= 2) {
             // When objects are passed by reference from the page, we get here
-            using ArrayIndex = decltype(root.size());
             Json::Value data = root["data"];
             FW_INST spawnId = data[(ArrayIndex)0].asUInt();
             uint32_t objId = data[1].asUInt();
             return FB::variant(colony->getLarvaeFor(spawnId, objId), true);
+        } else if (type == "ref" && root.isMember("data") && root["data"].isArray() && root["data"].size() >= 2) {
+            // "local-ref" types refer to what are actually localWyrmlings here
+            Json::Value data = root["data"];
+            FW_INST spawnId = data[(Json::ArrayIndex)0].asUInt();
+            uint32_t objId = data[1].asUInt();
+            return FB::variant(WyrmlingKey(spawnId, objId), true);
         } else if (type == "json" && root.isMember("data")) {
             // "json" types are by-value data; in this case, convert it as though
             // no special firewyrm types existed and use it
@@ -318,13 +338,19 @@ FB::VariantListPromise WyrmColony::New(FB::VariantList args) {
     std::string mimetype = args[0].convert_cast<std::string>();
     WyrmBrowserHostPtr wyrmHost{ std::make_shared<WyrmBrowserHost>(this, id) };
     auto wyrmSpawn = std::make_shared<WyrmSpawn>(wyrmHost, mimetype);
-    // TODO: Anything to improve in the lifecycle?
-    wyrmSpawn->setReady();
+    try {
+        wyrmSpawn->init(args[1].cast<FB::VariantMap>());
+    } catch (...) {
+        // No valid arguments passed in?
+        wyrmSpawn->init(FB::VariantMap());
+    }
+    // wyrmHost->init() returns a Promise<void> which resolves when the browserhost is ready
+    wyrmSpawn->setReady(wyrmHost->init());
     m_spawnMap[id] = std::make_shared<WyrmSac>(wyrmSpawn, wyrmHost);
     return FB::VariantList{ "success", id };
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::Destroy(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::Destroy(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
 
     auto fnd = m_spawnMap.find(id);
@@ -339,10 +365,15 @@ FB::VariantListPromise FB::FireWyrm::WyrmColony::Destroy(FB::VariantList args) {
     return FB::VariantList{ "success", id };
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::Enum(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::Enum(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
 
+    if (id == 0) {
+        // things in spawnId 0 have no members
+        return FB::VariantList{ "success", FB::VariantList{} };
+    }
+    
     auto fnd = m_spawnMap.find(id);
     if (fnd != m_spawnMap.end()) {
         auto list = fnd->second->host->Enum(objId);
@@ -350,91 +381,167 @@ FB::VariantListPromise FB::FireWyrm::WyrmColony::Enum(FB::VariantList args) {
             return FB::VariantList{ "success", members };
         });
     } else {
-        throw new std::runtime_error("Invalid object");
+        throw std::runtime_error("Invalid object");
     }
 }
 
-void evolveLarvae(FB::VariantList& in, WyrmSacPtr sac) {
-    for (auto &c : in) {
-        if (c.is_of_type<AlienLarvaePtr>()) {
-            c = AlienWyrmling::create(sac->host, c.cast<AlienLarvaePtr>());
+void evolveLarvae(FB::variant& in, WyrmSacPtr sac, WyrmColony::SpawnMap& spawnMap) {
+    if (in.is_of_type<AlienLarvaePtr>()) {
+        in = AlienWyrmling::create(sac->host, in.cast<AlienLarvaePtr>());
+    } else if (in.is_of_type<WyrmlingKey>()) {
+        // LocalWyrmling larvae
+        auto key = in.cast<WyrmlingKey>();
+        auto fnd = spawnMap.find(key.first);
+        if (fnd == spawnMap.end()) {
+            // This is not a valid spawn id; return a nullptr JSAPI
+            in = FB::JSAPIPtr();
+        } else {
+            // Look up the localwyrmling and get the JSAPI object from it
+            try {
+                in = fnd->second->host->getJSAPIFromWyrmling(key.second);
+            } catch (...) {
+                // Generally this means it's not a valid wyrmling
+                in = FB::JSAPIPtr();
+            }
         }
     }
 }
 
-void evolveLarvae(FB::variant& in, WyrmSacPtr sac) {
-    if (in.is_of_type<AlienLarvaePtr>()) {
-        in = AlienWyrmling::create(sac->host, in.cast<AlienLarvaePtr>());
+void evolveLarvae(FB::VariantList& in, WyrmSacPtr sac, WyrmColony::SpawnMap& spawnMap) {
+    for (auto &c : in) {
+        evolveLarvae(c, sac, spawnMap);
     }
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::Invoke(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::Invoke(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
 
     std::string name = args[2].convert_cast<std::string>();
     FB::VariantList invokeArgs = args[3].cast<FB::VariantList>();
 
-    auto fnd = m_spawnMap.find(id);
-    if (fnd != m_spawnMap.end()) {
-        evolveLarvae(invokeArgs, fnd->second);
-        auto res = fnd->second->host->Invoke(objId, name, invokeArgs);
-        return res.then<FB::VariantList>([](FB::variant res) -> FB::VariantList {
-            return FB::VariantList{ "success", res };
-        });
+    if (id == 0) {
+        if (name.empty()) {
+            // We are invoking a method object
+            WyrmlingKey key(m_key, objId);
+            auto fnd = localMethodMap.find(key);
+            if (fnd != localMethodMap.end()) {
+                // We found a method object to call
+                auto ling = fnd->second.wyrmling;
+                auto name = fnd->second.method;
+                auto host = fnd->second.host;
+                auto res = host->Invoke(ling.getObjectId(), name, invokeArgs);
+                return res.then<FB::VariantList>([host](FB::variant res) -> FB::VariantList {
+                    return FB::VariantList{ "success", preprocessVariant(res, host) };
+                });
+            } else {
+                throw std::runtime_error("Invalid object");
+            }
+        } else {
+            throw invalid_member(name);
+        }
     } else {
-        throw new std::runtime_error("Invalid object");
+        auto fnd = m_spawnMap.find(id);
+        if (fnd != m_spawnMap.end()) {
+            evolveLarvae(invokeArgs, fnd->second, m_spawnMap);
+            auto host = fnd->second->host;
+            auto res = host->Invoke(objId, name, invokeArgs);
+            return res.then<FB::VariantList>([host](FB::variant res) -> FB::VariantList {
+                return FB::VariantList{ "success", preprocessVariant(res, host) };
+            });
+        } else {
+            throw std::runtime_error("Invalid object");
+        }
     }
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::GetP(FB::VariantList args) {
+FB::variant WyrmColony::makeLocalMethodWyrmling(WyrmBrowserHostPtr host, LocalWyrmling wyrmling, std::string method) {
+    LocalMethodWyrmling methodWyrm(wyrmling, method, host);
+    FW_INST newObjId = m_nextMethodId++;
+    // There is a (very) remote chance of creating so many objects that we overflow; in that case
+    // we could reuse a used id. I'm conciously deciding not to address that until I find that it is happening;
+    // after all, 32 bits is a *lot* of method objects.
+    
+    WyrmlingKey key(m_key, newObjId);
+    localMethodMap[key] = methodWyrm;
+    
+    return FB::variant(WyrmlingKey(0, newObjId), true);
+}
+
+FB::VariantListPromise WyrmColony::GetP(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
 
     std::string name = args[2].convert_cast<std::string>();
 
+    if (id == 0) {
+        // Can't setP for anything in spawnId 0...
+        throw invalid_member(name);
+    }
     auto fnd = m_spawnMap.find(id);
     if (fnd != m_spawnMap.end()) {
-        auto res = fnd->second->host->GetP(objId, name);
-        return res.then<FB::VariantList>([](FB::variant res) -> FB::VariantList {
-            return FB::VariantList{ "success", res };
+        // The spawn exists; check to see if this is a method call
+        auto host = fnd->second->host;
+        if (host->HasMethod(objId, name)) {
+            // This is a valid object and it's a method call, so create a
+            // local method wyrmling
+            return FB::VariantList{ "success", preprocessVariant(makeLocalMethodWyrmling(host, host->getWyrmling(objId), name), host) };
+        }
+        auto res = host->GetP(objId, name);
+        return res.then<FB::VariantList>([host](FB::variant res) -> FB::VariantList {
+            return FB::VariantList{ "success", preprocessVariant(res, host) };
         });
     } else {
-        throw new std::runtime_error("Invalid object");
+        throw std::runtime_error("Invalid object");
     }
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::SetP(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::SetP(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
 
     std::string name = args[2].convert_cast<std::string>();
     FB::variant newVal = args[3];
 
+    if (id == 0) {
+        // Can't setP for anything in spawnId 0...
+        throw invalid_member(name);
+    }
     auto fnd = m_spawnMap.find(id);
     if (fnd != m_spawnMap.end()) {
-        evolveLarvae(newVal, fnd->second);
+        evolveLarvae(newVal, fnd->second, m_spawnMap);
         auto res = fnd->second->host->SetP(objId, name, newVal);
         return res.then<FB::VariantList>([]() -> FB::VariantList {
             return FB::VariantList{ "success", FB::FBNull() };
         });
     } else {
-        throw new std::runtime_error("Invalid object");
+        throw std::runtime_error("Invalid object");
     }
 }
 
-FB::VariantListPromise FB::FireWyrm::WyrmColony::RelObj(FB::VariantList args) {
+FB::VariantListPromise WyrmColony::RelObj(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
 
-    auto fnd = m_spawnMap.find(id);
-    if (fnd != m_spawnMap.end()) {
-        auto res = fnd->second->host->RelObj(objId);
-        return res.then<FB::VariantList>([]() -> FB::VariantList {
+    if (id == 0) {
+        // This is a local methodMap
+        auto fnd = localMethodMap.find(WyrmlingKey(m_key, objId));
+        if (fnd != localMethodMap.end()) {
+            localMethodMap.erase(fnd);
             return FB::VariantList{ "success", FB::FBNull() };
-        });
+        } else {
+            throw std::runtime_error("Invalid object");
+        }
     } else {
-        throw new std::runtime_error("Invalid object");
+        auto fnd = m_spawnMap.find(id);
+        if (fnd != m_spawnMap.end()) {
+            auto res = fnd->second->host->RelObj(objId);
+            return res.then<FB::VariantList>([]() -> FB::VariantList {
+                return FB::VariantList{ "success", FB::FBNull() };
+            });
+        } else {
+            throw std::runtime_error("Invalid object");
+        }
     }
 }
 
@@ -442,7 +549,7 @@ bool WyrmColony::_scheduleAsyncCall(void(*func)(void*), void * userData) {
     return m_hFuncs.doAsyncCall(func, userData) == 0;
 }
 
-FB::variantPromise FB::FireWyrm::WyrmColony::DoCommand(FB::VariantList args) {
+FB::variantPromise WyrmColony::DoCommand(FB::VariantList args) {
     auto promise = sendCommand(args);
     return promise.then<FB::variant>([this](std::string resp) -> FB::variant {
         // This is where the magic happens... =]

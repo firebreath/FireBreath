@@ -16,14 +16,14 @@ Copyright 2015 Richard Bateman, Firebreath development team
 
 using namespace FB::FireWyrm;
 template<class T>
-ValueBuilderMap::value_type makeBuilderEntry()
+VariantPreprocessorMap::value_type makeBuilderEntry()
 {
-    return ValueBuilderMap::value_type(&typeid(T), select_jsonvalue_builder::select<T>());
+    return VariantPreprocessorMap::value_type(&typeid(T), preprocess_variant::select<T>());
 }
 
-ValueBuilderMap makeJsonValueBuilderMap()
+VariantPreprocessorMap makeJsonVariantPreprocessorMap()
 {
-    ValueBuilderMap tdm;
+    VariantPreprocessorMap tdm;
     tdm.insert(makeBuilderEntry<bool>());
     tdm.insert(makeBuilderEntry<char>());
     tdm.insert(makeBuilderEntry<unsigned char>());
@@ -54,18 +54,19 @@ ValueBuilderMap makeJsonValueBuilderMap()
     tdm.insert(makeBuilderEntry<FB::JSAPIWeakPtr>());
     tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
     tdm.insert(makeBuilderEntry<const std::exception>());
+    tdm.insert(makeBuilderEntry<WyrmlingKey>());
 
     return tdm;
 }
 
-const ValueBuilderMap& FB::FireWyrm::getJsonValueBuilderMap()
+const VariantPreprocessorMap& FB::FireWyrm::getJsonVariantPreprocessorMap()
 {
-    static const ValueBuilderMap tdm = makeJsonValueBuilderMap();
+    static const VariantPreprocessorMap tdm = makeJsonVariantPreprocessorMap();
     return tdm;
 }
 
-Value FB::FireWyrm::getValueForVariant(FB::variant var, WyrmBrowserHostPtr host) {
-    auto builderMap = getJsonValueBuilderMap();
+FB::variant FB::FireWyrm::preprocessVariant(FB::variant var, WyrmBrowserHostPtr host) {
+    auto builderMap = getJsonVariantPreprocessorMap();
     const std::type_info& type = var.get_type();
     auto it = builderMap.find(&type);
 

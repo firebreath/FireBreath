@@ -28,10 +28,9 @@ Copyright 2015 Richard Bateman, Firebreath development team
 
 #include "APITypes.h"
 #include "LocalWyrmling.h"
+#include "AlienWyrmling.h"
 #include "variant_list.h"
 #include "fbjson.h"
-
-using Json::Value;
 
 namespace FB { namespace FireWyrm
 {
@@ -45,109 +44,70 @@ namespace FB { namespace FireWyrm
         }
     };
 
-    using ValueBuilder = Value (*)(FB::variant, WyrmBrowserHostPtr);
-    using ValueBuilderMap = std::map<std::type_info const*, ValueBuilder, type_info_less>;
+    using VariantPreprocessorBuilder = FB::variant (*)(FB::variant, WyrmBrowserHostPtr);
+    using VariantPreprocessorMap = std::map<std::type_info const*, VariantPreprocessorBuilder, type_info_less>;
 
-    const ValueBuilderMap& getJsonValueBuilderMap();
+    const VariantPreprocessorMap& getJsonVariantPreprocessorMap();
 
-    Value getValueForVariant(FB::variant var, WyrmBrowserHostPtr host);
+    FB::variant preprocessVariant(FB::variant var, WyrmBrowserHostPtr host);
 
     template<class T>
-    Value makeValue(FB::variant var, WyrmBrowserHostPtr host)
+    FB::variant makeValue(FB::variant var, WyrmBrowserHostPtr host)
     {
-        // If it's not a known type this will throw an exception
-        return Value(var.convert_cast<T>());
+        // Most types don't need to be translated
+        return var;
+    }
+    
+    template<> inline
+    FB::variant makeValue<const std::exception>(FB::variant var, WyrmBrowserHostPtr host) {
+        auto e = var.cast<const std::exception>();
+        return FB::VariantMap{ {"$type", "error"}, {"message", e.what()} };
     }
 
     template<> inline
-    Value makeValue<std::wstring>(FB::variant var, WyrmBrowserHostPtr host)
-    {
-        return Value(FB::wstring_to_utf8(var.convert_cast<std::wstring>()));
-    }
-
-    template<> inline
-    Value makeValue<FB::FBVoid>(FB::variant var, WyrmBrowserHostPtr host)
-    {
-        Value obj(Json::objectValue);
-        obj["$type"] = "undefined";
-        return obj;
-    }
-
-    template<> inline
-    Value makeValue<FB::FBNull>(FB::variant var, WyrmBrowserHostPtr host)
-    {
-        return Json::nullValue;
-    }
-
-    template<> inline
-    Value makeValue<const std::exception>(FB::variant var, WyrmBrowserHostPtr host) {
-        Value out(Json::objectValue);
-        const std::exception e = var.cast<const std::exception>();
-        out["$type"] = "error";
-        out["message"] = e.what();
-        return out;
-    }
-
-    template<> inline
-        Value makeValue<FB::VariantList>(FB::variant var, WyrmBrowserHostPtr host) {
-        Value out(Json::arrayValue);
-
-        for (auto cur : var.cast<FB::VariantList>()) {
-            out.append(getValueForVariant(var, host));
-        }
-        return out;
-    }
-
-    template<> inline
-    Value makeValue<FB::VariantMap>(FB::variant var, WyrmBrowserHostPtr host)
-    {
-        Value out(Json::objectValue);
-
-        for (auto cur : var.cast<FB::VariantMap>()) {
-            out[cur.first] = getValueForVariant(cur.second, host);
-        }
-        return out;
-    }
-
-    template<> inline
-    Value makeValue<FB::JSAPIPtr>(FB::variant var, WyrmBrowserHostPtr host)
+    FB::variant makeValue<FB::JSAPIPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {
         auto ptr = var.cast<FB::JSAPIPtr>();
         auto ling = host->getWyrmling(ptr);
 
-        Value out(Json::objectValue);
-        out["$type"] = "ref";
-        out["data"] = Json::arrayValue;
-        out["data"].append(host->getSpawnId());
-        out["data"].append(ling.getObjectId());
-        out["data"] = ling.getObjectId();
-        return out;
+        return FB::VariantMap{ {"$type", "ref"}, {"data", FB::VariantList{host->getSpawnId(), ling.getObjectId()}} };
     }
     template<> inline
-    Value makeValue<FB::JSAPIWeakPtr>(FB::variant var, WyrmBrowserHostPtr host)
+    FB::variant makeValue<FB::JSAPIWeakPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {
         auto ptr = var.cast<FB::JSAPIWeakPtr>();
         auto ling = host->getWyrmling(ptr);
 
-        Value out(Json::objectValue);
-        out["$type"] = "ref";
-        out["data"] = ling.getObjectId();
-        return out;
+        return FB::VariantMap{ {"$type", "ref"}, {"data", FB::VariantList{host->getSpawnId(), ling.getObjectId()}} };
+    }
+    
+    template<> inline
+    FB::variant makeValue<WyrmlingKey>(FB::variant var, WyrmBrowserHostPtr host)
+    {
+        auto ling = var.cast<WyrmlingKey>();
+        
+        return FB::VariantMap{ {"$type", "ref"}, {"data", FB::VariantList{ling.first, ling.second}} };
     }
 
     template<> inline
-    Value makeValue<FB::JSObjectPtr>(FB::variant var, WyrmBrowserHostPtr host)
+    FB::variant makeValue<FB::JSObjectPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {
         // TODO: This could result in some really inefficient access if something is passed back into
         // our plugin; for now we'll just let it slide, but eventually we should find a way to get
         // back to the original JSAPI object
-        return makeValue<FB::JSAPIPtr>(std::dynamic_pointer_cast<FB::JSAPI>(var.cast<FB::JSObjectPtr>()), host);
+        auto ptr = std::dynamic_pointer_cast<FB::FireWyrm::AlienWyrmling>(var.cast<FB::JSObjectPtr>());
+        if (ptr) {
+            auto key = ptr->getWyrmlingKey();
+            return FB::VariantMap{ {"$type", "local-ref"}, {"data", FB::VariantList{key.first, key.second}} };
+        } else {
+            return makeValue<FB::JSAPIPtr>(std::dynamic_pointer_cast<FB::JSAPI>(var.cast<FB::JSObjectPtr>()), host);
+        }
     }
 
-    namespace select_jsonvalue_builder
+    namespace preprocess_variant
     {
         template<class T>
-        ValueBuilder isIntegral(const boost::true_type& /* is_integral */)
+        VariantPreprocessorBuilder isIntegral(const boost::true_type& /* is_integral */)
         {
             if (boost::is_same<T, bool>::value) {
                 return &makeValue<bool>;
@@ -163,26 +123,26 @@ namespace FB { namespace FireWyrm
         }
 
         template<class T>
-        ValueBuilder isIntegral(const boost::false_type& /* is_integral */)
+        VariantPreprocessorBuilder isIntegral(const boost::false_type& /* is_integral */)
         {
             BOOST_STATIC_ASSERT((boost::is_floating_point<T>::value));
             return &makeValue<double>;
         }
 
         template<class T>
-        ValueBuilder isArithmetic(const boost::true_type& /* is_arithmetic */)
+        VariantPreprocessorBuilder isArithmetic(const boost::true_type& /* is_arithmetic */)
         {
             return isIntegral<T>(boost::is_integral<T>());
         }
 
         template<class T>
-        ValueBuilder isArithmetic(const boost::false_type& /* is_arithmetic */)
+        VariantPreprocessorBuilder isArithmetic(const boost::false_type& /* is_arithmetic */)
         {
             return &makeValue<T>;
         }
 
         template<class T>
-        ValueBuilder select()
+        VariantPreprocessorBuilder select()
         {
             return isArithmetic<T>(boost::is_arithmetic<T>());
         }

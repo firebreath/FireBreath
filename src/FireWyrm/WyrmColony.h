@@ -25,11 +25,16 @@
 
 namespace FB { namespace FireWyrm {
     FB_FORWARD_PTR(WyrmSpawn);
+    FB_FORWARD_PTR(WyrmBrowserHost);
     FB_FORWARD_PTR(WyrmSac);
     FB_FORWARD_PTR(AlienLarvae);
-
+    class LocalWyrmling;
+    using WyrmlingKey = std::pair<FW_INST, FW_INST>;
+    
     class WyrmColony : boost::noncopyable
     {
+    public:
+        
         using CommandHandler = FB::VariantListPromise(WyrmColony::*)(FB::VariantList args);
         using CommandMap = std::map < std::string, CommandHandler > ;
         using StringDeferred = FB::Deferred < std::string > ;
@@ -38,7 +43,7 @@ namespace FB { namespace FireWyrm {
         using SpawnMap = std::map < FW_INST, WyrmSacPtr > ;
         using WaitMap = std::map < uint32_t, StringDeferred > ;
         using LarvaeMap = std::map < std::pair< FW_INST, uint32_t>, AlienLarvaeWeakPtr > ;
-    public:
+        
         WyrmColony(FW_INST key);
         virtual ~WyrmColony();
 
@@ -83,11 +88,14 @@ namespace FB { namespace FireWyrm {
         FB::variantPromise DoCommand(FB::VariantList args);
 
     protected:
+        FB::variant makeLocalMethodWyrmling(WyrmBrowserHostPtr host, LocalWyrmling wyrmling, std::string method);
+        
         FW_INST m_key;
         std::thread::id m_threadId;
         FWHostFuncs m_hFuncs;
         FW_INST m_nextSpawnId;
         uint32_t m_nextCmdId;
+        FW_INST m_nextMethodId;
         SpawnMap m_spawnMap;
         WaitMap m_waitMap;
         LarvaeMap m_larvaeMap;
