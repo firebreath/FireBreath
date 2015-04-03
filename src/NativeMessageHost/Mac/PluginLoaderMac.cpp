@@ -14,18 +14,18 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 \**********************************************************/
 
 #include <boost/filesystem.hpp>
-#include <boost/regex.hpp>
 #include <dlfcn.h>
 #include <locale>
 #include "npapi.h"
 #include "PluginLoaderMac.h"
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/xml_parser.hpp>
 
-typedef const char* (*func_ptr)();
-typedef const char* (*NP_GetValue_ptr)(void*, int, void*);
 typedef std::vector<boost::filesystem::path> vec;
 
 using namespace boost;
 using namespace boost::filesystem;
+using boost::property_tree::ptree;
 
 std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
     PluginList plugins(getPluginList());
@@ -44,18 +44,9 @@ PluginList PluginLoader::getPluginList() {
     std::string user_plugin_path = home + "/Library/Internet Plug-Ins";
     std::string system_plugin_path = "/Library/Internet Plug-Ins";
     std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
-    boost::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
-    void *dlo_handle;
-    boost::match_results<std::string::const_iterator> char_matches;
-
-    func_ptr NP_GetMIMEDescription;
-    func_ptr NP_GetPluginVersion;
-    NP_GetValue_ptr NP_GetValue;
-    const char* err;
-    char* name_value;
-    char* desc_value;
-    std::string version,
-                mime_desc;
+    std::string plist_path,
+                key;
+    ptree pt;
 
     for (auto &pp : plugin_paths) {
         path p (pp);
@@ -64,42 +55,47 @@ PluginList PluginLoader::getPluginList() {
                 vec v;
                 std::copy(directory_iterator(p), directory_iterator(), back_inserter(v));
                 for (vec::const_iterator it (v.begin()); it != v.end(); ++it) {
-                    if ((dlo_handle = dlopen (it->string().c_str(), RTLD_LAZY))) {
+
+                    plist_path = it->string() + "/Contents/Info.plist";
+                    path plistp (plist_path);
+
+                    if (exists(plistp)) {
                         PluginInfo plugin;
                         plugin.path = it->string();
 
-                        dlerror(); // clear dlerror
-                        NP_GetValue = (NP_GetValue_ptr) dlsym(dlo_handle, "NP_GetValue");
-                        if (!(err = dlerror())) {
-                            NP_GetValue(NULL, NPPVpluginNameString, &(name_value));
-                            plugin.name = name_value;
+                        read_xml(plistp.string().c_str(), pt);
 
-                            NP_GetValue(NULL, NPPVpluginDescriptionString, &(desc_value));
-                            plugin.description = desc_value;
-                        }
+                        ptree ptsub = pt.get_child("plist.dict");
+                        boost::property_tree::ptree::iterator child_it;
 
-                        dlerror(); // clear dlerror
-                        NP_GetPluginVersion = (func_ptr) dlsym(dlo_handle, "NP_GetPluginVersion");
-                        if (!(err = dlerror())) {
-                            version = NP_GetPluginVersion();
-                            plugin.version = version.c_str();
-                        }
-
-                        dlerror(); // clear dlerror
-                        NP_GetMIMEDescription = (func_ptr) dlsym(dlo_handle, "NP_GetMIMEDescription");
-                        if (!(err = dlerror())) {
-                            mime_desc = NP_GetMIMEDescription();
-                            boost::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
-                                                         end;
-                            std::vector<std::string> mime_types;
-                            for(; iter != end; ++iter) {
-                                if (find(plugin.mime_types.begin(), plugin.mime_types.end(), *iter) == plugin.mime_types.end()) {
-                                    plugin.mime_types.push_back(*iter);
+                        for (child_it=ptsub.begin(); child_it != ptsub.end(); ++child_it) {
+                            key = child_it->second.data();
+                            if (key == "WebPluginName") {
+                                ++child_it;
+                                if (child_it != ptsub.end())
+                                    plugin.name = child_it->second.data();
+                            } else if (key == "WebPluginDescription") {
+                                ++child_it;
+                                if (child_it != ptsub.end())
+                                    plugin.description = child_it->second.data();
+                            } else if (key == "CFBundleShortVersionString") {
+                                ++child_it;
+                                if (child_it != ptsub.end())
+                                    plugin.version = child_it->second.data();
+                            } else if (key == "WebPluginMIMETypes") {
+                                ++child_it;
+                                key = child_it->first.data();
+                                if (child_it != ptsub.end() && key == "dict") {
+                                    for (auto mime : child_it->second) {
+                                        key = mime.first.data();
+                                        if (key == "key") {
+                                            plugin.mime_types.push_back(mime.second.data());
+                                        }
+                                    }
                                 }
                             }
                         }
                         result.emplace_back(plugin);
-                        dlclose(dlo_handle);
                     }
                 }
             }
