@@ -79,6 +79,8 @@ namespace FB { namespace FireWyrm {
         FB::variantPromise Invoke(std::string name, FB::VariantList args);
         FB::variantPromise GetP(std::string name);
         FB::Promise<void> SetP(std::string name, FB::variant value);
+        
+        bool HasMethod(std::string propName);
 
     private:
         FB::variant addEventListener(const std::vector<variant> args);

@@ -86,6 +86,10 @@ FB::variantPromise FB::FireWyrm::LocalWyrmling::GetP(std::string name) {
     return getAPI()->GetProperty(name);
 }
 
+bool LocalWyrmling::HasMethod(std::string propName) {
+    return getAPI()->HasMethod(propName);
+}
+
 FB::Promise<void> FB::FireWyrm::LocalWyrmling::SetP(std::string name, FB::variant value) {
     getAPI()->SetProperty(name, value);
     return FB::Promise<void>(true);
