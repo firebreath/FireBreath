@@ -16,6 +16,12 @@ Copyright 2015 Richard Bateman, Firebreath development team
 #ifndef H_FWLOCALWYRMLING
 #define H_FWLOCALWYRMLING
 
+#ifndef _MSC_VER
+#define NOEXCEPT noexcept
+#else
+#define NOEXCEPT
+#endif
+
 #include "APITypes.h"
 #include "JSAPI.h"
 #include "JSFunction.h"
@@ -50,7 +56,7 @@ namespace FB { namespace FireWyrm {
         LocalWyrmling(LocalWyrmling &&rh);
 
     private:
-        void swap(LocalWyrmling& s) noexcept;
+        void swap(LocalWyrmling& s) NOEXCEPT;
     public:
         
         FB::JSAPIPtr getAPI() const

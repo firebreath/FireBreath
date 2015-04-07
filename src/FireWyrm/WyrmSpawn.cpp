@@ -24,6 +24,7 @@
 //#include "WyrmStream.h"
 #include "PluginEventSink.h"
 using namespace FB::FireWyrm;
+using FB::Promise;
 
 WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),

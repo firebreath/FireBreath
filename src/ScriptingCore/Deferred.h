@@ -187,7 +187,7 @@ namespace FB {
     };
 
     template <typename Uout, typename Uin>
-    inline typename std::enable_if<(not std::is_same<Uout, void>::value), FB::Promise<Uout> >::type
+    inline typename std::enable_if<(!std::is_same<Uout, void>::value), FB::Promise<Uout> >::type
     _doPromiseThen(const Promise<Uin>& inP, std::function<Uout(Uin)> cbSuccess, std::function<Uout(std::exception)> cbFail);
 
     template <typename Uout, typename Uin>
@@ -496,7 +496,7 @@ namespace FB {
 
     // non-void
     template <typename Uout, typename Uin>
-    inline typename std::enable_if<(not std::is_same<Uout, void>::value), FB::Promise<Uout> >::type
+    inline typename std::enable_if<(!std::is_same<Uout, void>::value), FB::Promise<Uout> >::type
     _doPromiseThen(const Promise<Uin>& inP,
                    std::function<Uout(Uin)> cbSuccess,
                    std::function<Uout(std::exception)> cbFail) {

@@ -14,6 +14,8 @@ Copyright 2015 Richard Bateman, Firebreath development team
 
 #include "LocalWyrmling.h"
 
+
+
 using namespace FB::FireWyrm;
 
 FB::FireWyrm::LocalWyrmling::LocalWyrmling(const WyrmBrowserHostPtr& host, const FB::JSAPIWeakPtr& api, FW_INST id, bool autoRelease /*= false*/)
@@ -44,7 +46,7 @@ FB::FireWyrm::LocalWyrmling::LocalWyrmling(const LocalWyrmling &rh) : m_api(rh.m
         }
     }
 }
-void LocalWyrmling::swap(LocalWyrmling& s) noexcept {
+void LocalWyrmling::swap(LocalWyrmling& s) NOEXCEPT {
     std::swap(s.m_api, this->m_api);
     std::swap(s.m_browser, this->m_browser);
     std::swap(s.m_valid, this->m_valid);
