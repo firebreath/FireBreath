@@ -87,14 +87,18 @@ FB::DOM::DocumentPtr WyrmBrowserHost::getDOMDocument() {
 }
 
 FB::Promise<FB::VariantList> WyrmBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
-    return m_Browser->Invoke("readArray", FB::VariantList{obj}).then<FB::VariantList>([] (FB::variant ret) {
-        return ret.cast<FB::VariantList>();
+    return m_onReady.thenPipe<FB::VariantList>([this, obj] () {
+        return m_Browser->Invoke("readArray", FB::VariantList{obj}).then<FB::VariantList>([] (FB::variant ret) {
+            return ret.cast<FB::VariantList>();
+        });
     });
 }
 
 FB::Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
-    return m_Browser->Invoke("readObject", FB::VariantList{obj}).then<FB::VariantMap>([] (FB::variant ret) {
-        return ret.cast<FB::VariantMap>();
+    return m_onReady.thenPipe<FB::VariantList>([this, obj] () {
+        return m_Browser->Invoke("readObject", FB::VariantList{obj}).then<FB::VariantMap>([] (FB::variant ret) {
+            return ret.cast<FB::VariantMap>();
+        });
     });
 }
 
@@ -103,11 +107,15 @@ FB::BrowserStreamPtr WyrmBrowserHost::_createStream(const FB::BrowserStreamReque
 }
 
 void WyrmBrowserHost::evaluateJavaScript(const std::string &script) {
-    m_Browser->Invoke("evalFn", FB::VariantList{script});
+    m_onReady.done([this, script] () {
+        m_Browser->Invoke("evalFn", FB::VariantList{script});
+    });
 }
 
 int WyrmBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
-    m_Browser->Invoke("invokeWithDelay", FB::VariantList{delayms, func, args, fname});
+    m_onReady.done([this, delayms, func, args, fname] () {
+        m_Browser->Invoke("invokeWithDelay", FB::VariantList{delayms, func, args, fname});
+    });
     return -1;
 }
 
