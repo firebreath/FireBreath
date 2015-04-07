@@ -116,7 +116,11 @@ messageInfo parseWyrmholeMessage(Json::Value& root) {
         }
         n = root.get("n", 1).asUInt() - 1;
     }
-    MessageType type = (root.isMember("type") && root["type"].asString() == "resp") ?
+    std::string typeStr;
+    if (root.isMember("type")) {
+        typeStr = root["type"].asString();
+    }
+    MessageType type = typeStr == "resp" ?
         MessageType::RESPONSE : MessageType::COMMAND;
 
     messageInfo info(getMessageInfo(cmdId, c));
