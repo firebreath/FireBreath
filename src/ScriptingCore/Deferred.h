@@ -152,7 +152,7 @@ namespace FB {
         Deferred(Deferred<void> &&rh) : m_data(std::move(rh.m_data)) {} // Move constructor
         Deferred(const Deferred<void>& rh) : m_data(rh.m_data) {} // Copy constructor
         
-        ~Deferred() { invalidate(); }
+        ~Deferred() { }
         
         Deferred<void>& operator=(const Deferred<void>& rh) {
             m_data = rh.m_data;
@@ -536,7 +536,7 @@ namespace FB {
                    std::function<void(Uin)> cbSuccess,
                    std::function<void(std::exception)> cbFail) {
         if (!inP.isValid()) { return Promise<void>::rejected(std::runtime_error("Promise invalid")); }
-        Deferred<void> dfd;
+        Deferred<void> dfd(false);
         auto onDone = [dfd, cbSuccess](Uin v) -> void {
             try {
                 cbSuccess(v);
