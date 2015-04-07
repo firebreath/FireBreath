@@ -6,13 +6,16 @@
 
 #include <string>
 #include <sstream>
-#include <boost/weak_ptr.hpp>
 #include "JSAPIAuto.h"
 #include "BrowserHost.h"
 #include "@{PLUGIN_ident}.h"
 
 #ifndef H_@{PLUGIN_ident}API
 #define H_@{PLUGIN_ident}API
+
+// This macro defines @{PLUGIN_ident}APIPtr, @{PLUGIN_ident}APIWeakPtr,
+// @{PLUGIN_ident}APIConstPtr, and @{PLUGIN_ident}APIWeakConstPtr
+FB_FORWARD_PTR(@{PLUGIN_ident}API);
 
 class @{PLUGIN_ident}API : public FB::JSAPIAuto
 {
@@ -32,14 +35,15 @@ public:
         m_plugin(plugin), m_host(host)
     {
         registerMethod("echo",      make_method(this, &@{PLUGIN_ident}API::echo));
+        registerMethod("echoSlowly",make_method(this, &@{PLUGIN_ident}API::echoSlowly));
         registerMethod("testEvent", make_method(this, &@{PLUGIN_ident}API::testEvent));
-        
+
         // Read-write property
         registerProperty("testString",
                          make_property(this,
                                        &@{PLUGIN_ident}API::get_testString,
                                        &@{PLUGIN_ident}API::set_testString));
-        
+
         // Read-only property
         registerProperty("version",
                          make_property(this,
@@ -66,7 +70,9 @@ public:
 
     // Method echo
     FB::variant echo(const FB::variant& msg);
-    
+    // Method echo slowly (async echo)
+    FB::variantPromise echoSlowly(const FB::variant& a);
+
     // Event helpers
     FB_JSAPI_EVENT(test, 0, ());
     FB_JSAPI_EVENT(echo, 2, (const FB::variant&, const int));

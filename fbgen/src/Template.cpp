@@ -90,7 +90,7 @@ void @{PLUGIN_ident}::shutdown()
 FB::JSAPIPtr @{PLUGIN_ident}::createJSAPI()
 {
     // m_host is the BrowserHost
-    return boost::make_shared<@{PLUGIN_ident}API>(FB::ptr_cast<@{PLUGIN_ident}>(shared_from_this()), m_host);
+    return std::make_shared<@{PLUGIN_ident}API>(std::dynamic_pointer_cast<@{PLUGIN_ident}>(shared_from_this()), m_host);
 }
 
 bool @{PLUGIN_ident}::onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindow *)

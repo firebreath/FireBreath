@@ -15,7 +15,8 @@
 
 #include "PluginCore.h"
 
-
+// This macro defines @{PLUGIN_ident}Ptr, @{PLUGIN_ident}WeakPtr,
+// @{PLUGIN_ident}ConstPtr, and @{PLUGIN_ident}WeakConstPtr
 FB_FORWARD_PTR(@{PLUGIN_ident})
 class @{PLUGIN_ident} : public FB::PluginCore
 {

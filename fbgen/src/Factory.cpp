@@ -1,15 +1,15 @@
-/**********************************************************\ 
- 
+/**********************************************************\
+
  Auto-generated Factory.cpp
- 
- This file contains the auto-generated factory methods 
+
+ This file contains the auto-generated factory methods
  for the @{PLUGIN_ident} project
- 
+
 \**********************************************************/
 
 #include "FactoryBase.h"
 #include "@{PLUGIN_ident}.h"
-#include <boost/make_shared.hpp>
+#include <memory>
 
 class PluginFactory : public FB::FactoryBase
 {
@@ -20,11 +20,11 @@ public:
     /// @@brief  Creates a plugin object matching the provided mimetype
     ///         If mimetype is empty, returns the default plugin
     ///////////////////////////////////////////////////////////////////////////////
-    FB::PluginCorePtr createPlugin(const std::string& mimetype)
+    FB::PluginCorePtr createPlugin(std::string mimetype) override
     {
-        return boost::make_shared<@{PLUGIN_ident}>();
+        return std::make_shared<@{PLUGIN_ident}>();
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     /// @@see FB::FactoryBase::globalPluginInitialize
     ///////////////////////////////////////////////////////////////////////////////
@@ -32,7 +32,7 @@ public:
     {
         @{PLUGIN_ident}::StaticInitialize();
     }
-    
+
     ///////////////////////////////////////////////////////////////////////////////
     /// @@see FB::FactoryBase::globalPluginDeinitialize
     ///////////////////////////////////////////////////////////////////////////////
@@ -49,7 +49,7 @@ public:
 ///////////////////////////////////////////////////////////////////////////////
 FB::FactoryBasePtr getFactoryInstance()
 {
-    static boost::shared_ptr<PluginFactory> factory = boost::make_shared<PluginFactory>();
+    static std::shared_ptr<PluginFactory> factory = std::make_shared<PluginFactory>();
     return factory;
 }
 
