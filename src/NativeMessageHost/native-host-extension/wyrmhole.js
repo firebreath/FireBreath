@@ -87,7 +87,6 @@
                 cmdId = nextCmdId++;
                 type = "cmd";
             }
-            msg.c = 1; msg.n = 1;
 
             postCommand({
                 cmdId: cmdId,
@@ -105,8 +104,8 @@
             if (msg.plugin && loadDfd && !loaded) {
                 loaded = true;
                 loadDfd.resolve(this);
-            } else if (msg.error && loadDfd && !loaded) {
-                loadDfd.reject(msg.error);
+            } else if (msg.status && msg.status == "error" && loadDfd && !loaded) {
+                loadDfd.reject(new Error(msg.message));
                 loadDfd = void 0;
             } else if (msg.msg) {
                 // This is a message from the native message host,
@@ -148,23 +147,23 @@
                 dfd = Deferred();
                 var promise = null;
                 try {
-                    onCommandFn(JSON.parse(text), function(err, resp) {
-                        if (err) {
-                            dfd.reject(err);
+                    onCommandFn(JSON.parse(text), function(res, resp) {
+                        if (res == 'success') {
+                            dfd.resolve(Array.prototype.slice.call(arguments));
                         } else {
-                            dfd.resolve(resp);
+                            dfd.reject(resp);
                         }
                     });
                     promise = dfd.promise;
                 } catch (e) {
-                    postMessage(["error", {"error": "command exception", "message": e.toString()}]);
+                    postMessage(["error", {"error": "command exception", "message": e.toString()}], msg.cmdId);
                 }
                 if (promise) {
                     promise.then(function(resp) {
                         // Send the return value
-                        postMessage(resp);
+                        postMessage(resp, msg.cmdId);
                     }, function(e) {
-                        postMessage(["error", {"error": "Javascript Exception", "message": e.toString()}]);
+                        postMessage(["error", {"error": "Javascript Exception", "message": e.toString()}], msg.cmdId);
                     });
                 }
             }
