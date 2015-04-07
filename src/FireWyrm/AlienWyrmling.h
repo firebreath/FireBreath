@@ -62,7 +62,8 @@ namespace FB { namespace FireWyrm {
                 return nullptr;
         };
         uint32_t getObjectId() { return m_objId; }
-        WyrmlingKey getWyrmlingKey() { return WyrmlingKey(getHost()->getSpawnId(), getObjectId()); }
+        uint32_t getSpawnId() { return m_spawnId; }
+        WyrmlingKey getWyrmlingKey() { return WyrmlingKey(getSpawnId(), getObjectId()); }
 
         void getMemberNames(std::vector<std::string> &nameVector) const {
             nameVector.insert(nameVector.begin(), m_memberNames.begin(), m_memberNames.end());

@@ -14,6 +14,7 @@ Copyright 2015 Richard Bateman, Firebreath development team
 
 #include "AlienWyrmling.h"
 #include "WyrmColony.h"
+#include "logging.h"
 
 using namespace FB::FireWyrm;
 using FB::variantPromise;
@@ -45,7 +46,7 @@ AlienWyrmlingPtr AlienWyrmling::create(const WyrmBrowserHostPtr h, AlienLarvaePt
 }
 
 AlienWyrmling::AlienWyrmling(const WyrmBrowserHostPtr h, PrivateStruct)
-    : JSObject(h), m_browser(h), m_valid(false), m_spawnId(0), m_objId(0) { }
+    : JSObject(h), m_browser(h), m_startup(false), m_valid(false), m_spawnId(0), m_objId(0) { }
 
 AlienWyrmling::~AlienWyrmling(void) {
     invalidate();
@@ -54,10 +55,14 @@ AlienWyrmling::~AlienWyrmling(void) {
 void AlienWyrmling::init(AlienLarvaePtr larvae) {
     m_spawnId = larvae->spawnId;
     m_objId = larvae->objId;
+    m_valid = true;
     auto ref = std::dynamic_pointer_cast<AlienWyrmling>(shared_from_this());
     m_startup = larvae->m_membersDfd.then<void>([ref](std::vector<std::string> members) -> void {
         ref->m_memberNames = members;
-        ref->m_valid = true;
+    });
+    m_startup.fail([ref](std::exception e) {
+        ref->m_valid = false;
+        FBLOG_WARN("AlienWyrmling", "AlienWyrmling startup failure!" << e.what());
     });
 }
 
