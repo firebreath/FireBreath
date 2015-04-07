@@ -72,7 +72,7 @@ FB::variant FB::FireWyrm::preprocessVariant(FB::variant var, WyrmBrowserHostPtr 
 
     if (it == builderMap.end()) {
         // unhandled type :(
-        return Json::nullValue;
+        return var;
     }
 
     return (it->second)(var, host);

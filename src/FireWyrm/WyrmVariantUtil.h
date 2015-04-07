@@ -90,6 +90,26 @@ namespace FB { namespace FireWyrm
     }
 
     template<> inline
+    FB::variant makeValue<FB::VariantList>(FB::variant var, WyrmBrowserHostPtr host)
+    {
+        FB::VariantList out;
+        for (auto &cur : var.cast<FB::VariantList>()) {
+            out.emplace_back(FB::FireWyrm::preprocessVariant(cur, host));
+        }
+        return out;
+    }
+    
+    template<> inline
+    FB::variant makeValue<FB::VariantMap>(FB::variant var, WyrmBrowserHostPtr host)
+    {
+        FB::VariantMap out;
+        for (auto &cur : var.cast<FB::VariantMap>()) {
+            out[cur.first] = FB::FireWyrm::preprocessVariant(cur.second, host);
+        }
+        return out;
+    }
+    
+    template<> inline
     FB::variant makeValue<FB::JSObjectPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {
         // TODO: This could result in some really inefficient access if something is passed back into
