@@ -297,8 +297,9 @@ FB::VariantMap FBTestPluginAPI::getUserData()
     map["HairColor"] = "Brown";
     FB::VariantList kids;
     kids.push_back("Caleb");
-    kids.push_back("Unknown");
-    kids.push_back("Ok, I only have one, but I'm filling space");
+    kids.push_back("Dallin");
+    kids.push_back("Ethan");
+    kids.push_back("pending...");
     FB::VariantMap innerMap;
     innerMap["test"] = 12;
     innerMap["test2"] = true;
