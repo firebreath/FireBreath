@@ -16,10 +16,12 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include <boost/filesystem.hpp>
 #include <dlfcn.h>
 #include <locale>
+#include <iostream>
 #include "npapi.h"
 #include "PluginLoaderMac.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
+#include <boost/range/iterator_range.hpp>
 
 typedef std::vector<boost::filesystem::path> vec;
 
@@ -34,70 +36,91 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
     if (fnd == plugins.end()) {
         throw new std::runtime_error("No registered plugins detected");
     }
+    std::cerr << "Loading plugin from: " << fnd->path << std::endl;
 
     return std::unique_ptr<PluginLoader>(new PluginLoaderMac(mimetype, fnd->path));
 }
 
+bool hasEnding (std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
+
 PluginList PluginLoader::getPluginList() {
     PluginList result;
-    std::string home = getenv("HOME");
-    std::string user_plugin_path = home + "/Library/Internet Plug-Ins";
-    std::string system_plugin_path = "/Library/Internet Plug-Ins";
-    std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
-    std::string plist_path,
-                key;
+    path home(getenv("HOME"));
+    path sysroot("/");
+    path user_plugin_path = home / "Library" / "Internet Plug-Ins";
+    path system_plugin_path = sysroot / "Library" / "Internet Plug-Ins";
+    std::vector<path> plugin_paths = {user_plugin_path, system_plugin_path};
+    std::string key;
     ptree pt;
 
-    for (auto &pp : plugin_paths) {
-        path p (pp);
-        if (exists(p)) {
-            if (is_directory(p)) {
-                vec v;
-                std::copy(directory_iterator(p), directory_iterator(), back_inserter(v));
-                for (vec::const_iterator it (v.begin()); it != v.end(); ++it) {
+    for (auto &p : plugin_paths) {
+        if (exists(p) && is_directory(p)) {
+            auto dirList = boost::make_iterator_range(directory_iterator(p), directory_iterator());
+            for (auto pEntry : dirList) {
+                path pluginDir(pEntry);
+                if (!hasEnding(pluginDir.string(), ".plugin")) {
+                    // Only consider plugins
+                    continue;
+                }
+                path plistp = pluginDir / "Contents" / "Info.plist";
+                if (!exists(plistp)) {
+                    // plist file is required
+                    continue;
+                }
 
-                    plist_path = it->string() + "/Contents/Info.plist";
-                    path plistp (plist_path);
+                PluginInfo plugin;
 
-                    if (exists(plistp)) {
-                        PluginInfo plugin;
-                        plugin.path = it->string();
+                read_xml(plistp.string().c_str(), pt);
 
-                        read_xml(plistp.string().c_str(), pt);
+                ptree ptsub = pt.get_child("plist.dict");
+                boost::property_tree::ptree::iterator child_it;
+                bool isFBPlugin = false;
 
-                        ptree ptsub = pt.get_child("plist.dict");
-                        boost::property_tree::ptree::iterator child_it;
-
-                        for (child_it=ptsub.begin(); child_it != ptsub.end(); ++child_it) {
-                            key = child_it->second.data();
-                            if (key == "WebPluginName") {
-                                ++child_it;
-                                if (child_it != ptsub.end())
-                                    plugin.name = child_it->second.data();
-                            } else if (key == "WebPluginDescription") {
-                                ++child_it;
-                                if (child_it != ptsub.end())
-                                    plugin.description = child_it->second.data();
-                            } else if (key == "CFBundleShortVersionString") {
-                                ++child_it;
-                                if (child_it != ptsub.end())
-                                    plugin.version = child_it->second.data();
-                            } else if (key == "WebPluginMIMETypes") {
-                                ++child_it;
-                                key = child_it->first.data();
-                                if (child_it != ptsub.end() && key == "dict") {
-                                    for (auto mime : child_it->second) {
-                                        key = mime.first.data();
-                                        if (key == "key") {
-                                            plugin.mime_types.push_back(mime.second.data());
-                                        }
-                                    }
+                for (child_it=ptsub.begin(); child_it != ptsub.end(); ++child_it) {
+                    key = child_it->second.data();
+                    if (key == "WebPluginName") {
+                        ++child_it;
+                        if (child_it != ptsub.end())
+                            plugin.name = child_it->second.data();
+                    } else if (key == "WebPluginDescription") {
+                        ++child_it;
+                        if (child_it != ptsub.end())
+                            plugin.description = child_it->second.data();
+                    } else if (key == "WebPluginSupportsFireWyrm") {
+                        ++child_it;
+                        if (child_it != ptsub.end())
+                            isFBPlugin = (child_it->second.data() == std::string("YES"));
+                    } else if (key == "CFBundleExecutable") {
+                        ++child_it;
+                        if (child_it != ptsub.end())
+                            plugin.path = (pluginDir / "Contents" / "MacOS" / child_it->second.data()).string();
+                    } else if (key == "CFBundleVersion") {
+                        ++child_it;
+                        if (child_it != ptsub.end())
+                            plugin.version = child_it->second.data();
+                    } else if (key == "WebPluginMIMETypes") {
+                        ++child_it;
+                        key = child_it->first.data();
+                        if (child_it != ptsub.end() && key == "dict") {
+                            for (auto mime : child_it->second) {
+                                key = mime.first.data();
+                                if (key == "key") {
+                                    plugin.mime_types.push_back(mime.second.data());
                                 }
                             }
                         }
-                        result.emplace_back(plugin);
                     }
                 }
+                // If we didn't find a path or this isn't a FireWyrm compatible plugin, ignore it
+                if (plugin.path.empty() || !isFBPlugin)
+                    continue;
+                result.emplace_back(plugin);
             }
         }
     }
