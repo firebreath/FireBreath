@@ -35,7 +35,7 @@ Promise<void> WyrmBrowserHost::init() {
     // Get the browser object
     auto self = std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this());
     
-    auto browserDfd = module->DoCommand(FB::VariantList{ "New", "browser", FB::VariantMap{} });
+    auto browserDfd = module->DoCommand(FB::VariantList{ "New", "browser", FB::VariantMap{} }, self);
     
     Deferred<void> dfdReady(false);
     browserDfd.done([self, dfdReady](FB::variant res) {
@@ -190,5 +190,5 @@ bool WyrmBrowserHost::DetectProxySettings(std::map<std::string, std::string>& se
 }
 
 FB::variantPromise WyrmBrowserHost::DoCommand(FB::VariantList cmd) {
-    return module->DoCommand(cmd);
+    return module->DoCommand(cmd, std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this()));
 }

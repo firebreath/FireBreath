@@ -85,7 +85,7 @@ namespace FB { namespace FireWyrm {
 
     public:
         // Host calls
-        FB::variantPromise DoCommand(FB::VariantList args);
+        FB::variantPromise DoCommand(FB::VariantList args, WyrmBrowserHostPtr host = nullptr);
 
     protected:
         FB::variant makeLocalMethodWyrmling(WyrmBrowserHostPtr host, LocalWyrmling wyrmling, std::string method);

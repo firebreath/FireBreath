@@ -385,9 +385,9 @@ FB::VariantListPromise WyrmColony::Enum(FB::VariantList args) {
     }
 }
 
-void evolveLarvae(FB::variant& in, WyrmSacPtr sac, WyrmColony::SpawnMap& spawnMap) {
+void evolveLarvae(FB::variant& in, WyrmBrowserHostPtr host, WyrmColony::SpawnMap& spawnMap) {
     if (in.is_of_type<AlienLarvaePtr>()) {
-        in = AlienWyrmling::create(sac->host, in.cast<AlienLarvaePtr>());
+        in = AlienWyrmling::create(host, in.cast<AlienLarvaePtr>());
     } else if (in.is_of_type<WyrmlingKey>()) {
         // LocalWyrmling larvae
         auto key = in.cast<WyrmlingKey>();
@@ -407,9 +407,9 @@ void evolveLarvae(FB::variant& in, WyrmSacPtr sac, WyrmColony::SpawnMap& spawnMa
     }
 }
 
-void evolveLarvae(FB::VariantList& in, WyrmSacPtr sac, WyrmColony::SpawnMap& spawnMap) {
+void evolveLarvae(FB::VariantList& in, WyrmBrowserHostPtr host, WyrmColony::SpawnMap& spawnMap) {
     for (auto &c : in) {
-        evolveLarvae(c, sac, spawnMap);
+        evolveLarvae(c, host, spawnMap);
     }
 }
 
@@ -430,6 +430,7 @@ FB::VariantListPromise WyrmColony::Invoke(FB::VariantList args) {
                 auto ling = fnd->second.wyrmling;
                 auto name = fnd->second.method;
                 auto host = fnd->second.host;
+                evolveLarvae(invokeArgs, host, m_spawnMap);
                 auto res = host->Invoke(ling.getObjectId(), name, invokeArgs);
                 return res.then<FB::VariantList>([host](FB::variant res) -> FB::VariantList {
                     return FB::VariantList{ "success", preprocessVariant(res, host) };
@@ -443,8 +444,8 @@ FB::VariantListPromise WyrmColony::Invoke(FB::VariantList args) {
     } else {
         auto fnd = m_spawnMap.find(id);
         if (fnd != m_spawnMap.end()) {
-            evolveLarvae(invokeArgs, fnd->second, m_spawnMap);
             auto host = fnd->second->host;
+            evolveLarvae(invokeArgs, host, m_spawnMap);
             auto res = host->Invoke(objId, name, invokeArgs);
             return res.then<FB::VariantList>([host](FB::variant res) -> FB::VariantList {
                 return FB::VariantList{ "success", preprocessVariant(res, host) };
@@ -509,7 +510,7 @@ FB::VariantListPromise WyrmColony::SetP(FB::VariantList args) {
     }
     auto fnd = m_spawnMap.find(id);
     if (fnd != m_spawnMap.end()) {
-        evolveLarvae(newVal, fnd->second, m_spawnMap);
+        evolveLarvae(newVal, fnd->second->host, m_spawnMap);
         auto res = fnd->second->host->SetP(objId, name, newVal);
         return res.then<FB::VariantList>([]() -> FB::VariantList {
             return FB::VariantList{ "success", FB::FBNull() };
@@ -549,13 +550,18 @@ bool WyrmColony::_scheduleAsyncCall(void(*func)(void*), void * userData) {
     return m_hFuncs.doAsyncCall(func, userData) == 0;
 }
 
-FB::variantPromise WyrmColony::DoCommand(FB::VariantList args) {
+FB::variantPromise WyrmColony::DoCommand(FB::VariantList args, WyrmBrowserHostPtr host) {
+    if (host) {
+        for (auto& arg : args) {
+            arg = preprocessVariant(arg, host);
+        }
+    }
     auto promise = sendCommand(args);
-    return promise.then<FB::variant>([this](std::string resp) -> FB::variant {
+    return promise.then<FB::variant>([this, host](std::string resp) -> FB::variant {
         // This is where the magic happens... =]
         Json::Reader rdr;
         Json::Value root;
-
+        
         int statusIdx{ 0 };
         if (!rdr.parse(resp, root, false)) {
             throw FB::script_error("Malformed JSON from client");
@@ -573,7 +579,10 @@ FB::variantPromise WyrmColony::DoCommand(FB::VariantList args) {
                 throw FB::script_error("Unknown error returned from page: " + resp);
             }
         } else if (status == "success") {
-            return valueToVariant(root.get(2, Json::nullValue), this);
+            FB::variant resp = valueToVariant(root.get(1, Json::nullValue), this);
+            if (host)
+                evolveLarvae(resp, host, m_spawnMap);
+            return resp;
         } else {
             throw FB::script_error("Invalid response from client");
         }
