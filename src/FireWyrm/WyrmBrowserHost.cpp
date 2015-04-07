@@ -95,7 +95,7 @@ FB::Promise<FB::VariantList> WyrmBrowserHost::GetArrayValues(FB::JSObjectPtr obj
 }
 
 FB::Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
-    return m_onReady.thenPipe<FB::VariantList>([this, obj] () {
+    return m_onReady.thenPipe<FB::VariantMap>([this, obj] () {
         return m_Browser->Invoke("readObject", FB::VariantList{obj}).then<FB::VariantMap>([] (FB::variant ret) {
             return ret.cast<FB::VariantMap>();
         });
