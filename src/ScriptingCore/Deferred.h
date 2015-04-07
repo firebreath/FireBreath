@@ -43,8 +43,8 @@ namespace FB {
             StateData(std::exception e) : state(PromiseState::REJECTED), err(e) {}
             StateData() : state(PromiseState::PENDING) {}
             ~StateData() {
-                if (state == PromiseState::PENDING) {
-                    reject(std::runtime_error("Deferred object destroyed"));
+                if (state == PromiseState::PENDING && rejectList.size()) {
+                    reject(std::runtime_error("Deferred object destroyed: 1"));
                 }
             }
             void resolve(T v) {
@@ -99,7 +99,7 @@ namespace FB {
 
         void invalidate() const {
             if (m_data->state == PromiseState::PENDING) {
-                reject(std::runtime_error("Deferred object destroyed"));
+                reject(std::runtime_error("Deferred object destroyed: 2"));
             }
         }
 

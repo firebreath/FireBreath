@@ -23,7 +23,7 @@ Promise<void> FB::Deferred<void>::promise() const {
 
 void FB::Deferred<void>::invalidate() const {
     if (m_data && m_data->state == PromiseState::PENDING) {
-        reject(std::runtime_error("Deferred object destroyed"));
+        reject(std::runtime_error("Deferred object destroyed: 3"));
     }
 }
 
