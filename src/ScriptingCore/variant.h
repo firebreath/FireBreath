@@ -167,6 +167,13 @@ namespace FB
         };
 
         template<>
+        struct lessthan < FB::FBNull > {
+            static bool impl(const boost::any& l, const boost::any& r) {
+                return false;
+            }
+        };
+
+        template<>
         struct lessthan < std::exception > {
             static bool impl(const boost::any& l, const boost::any& r) {
                 return std::string(boost::any_cast<std::exception>(l).what()) < std::string(boost::any_cast<std::exception>(r).what());
@@ -422,7 +429,7 @@ namespace FB
         }
 
         bool is_null() const {
-            return is_of_type<std::nullptr_t>();
+            return is_of_type<FB::FBNull>();
         }
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -579,7 +586,7 @@ namespace FB
 
             variant make_variant(const char* x);
             variant make_variant(const wchar_t* x);
-            variant make_variant(const std::nullptr_t);
+            variant make_variant(const FB::FBNull);
             variant make_variant(const std::exception);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers

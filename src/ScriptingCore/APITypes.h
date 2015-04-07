@@ -176,7 +176,7 @@ namespace FB
 
     // Special Variant types
     using FBVoid = FB::variant_detail::empty;
-    using FBNull = std::nullptr_t;
+    struct FBNull {};
     struct FBDateString {
     public:
         FBDateString() { }

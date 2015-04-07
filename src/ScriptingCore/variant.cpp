@@ -23,8 +23,8 @@ variant FB::variant_detail::conversion::make_variant(const char* x) {
 variant FB::variant_detail::conversion::make_variant(const wchar_t* x) {
     return variant(std::wstring(x), true);
 }
-variant FB::variant_detail::conversion::make_variant(const std::nullptr_t) {
-    return variant(nullptr, true);
+variant FB::variant_detail::conversion::make_variant(const FB::FBNull) {
+    return variant(FB::FBNull(), true);
 }
 variant FB::variant_detail::conversion::make_variant(const std::exception ex)
 {
@@ -49,7 +49,7 @@ const FB::variant& FB::variant_detail::conversion::convert_variant(const FB::var
 
 const FB::FBNull FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBNull> )
 {
-    return nullptr;
+    return FB::FBNull();
 }
 
 const FB::FBVoid FB::variant_detail::conversion::convert_variant( const FB::variant&, const type_spec<FB::FBVoid> )

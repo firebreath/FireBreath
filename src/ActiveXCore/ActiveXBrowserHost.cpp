@@ -266,7 +266,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_NULL:
-        retVal = nullptr;
+        retVal = FB::FBNull();
         break;
 
     case VT_EMPTY:
