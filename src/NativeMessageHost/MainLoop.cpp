@@ -83,6 +83,7 @@ messageInfo parseCommandMessage(Json::Value& root) {
     } else if (cmd == "list") {
         messageInfo msg;
         msg.type = MessageType::ENUM;
+        msg.c = 0;
         return msg;
     } else {
         throw std::runtime_error("Unknown command");
