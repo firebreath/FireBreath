@@ -1,0 +1,9 @@
+{
+  "name": "Echo Test Plugin",
+  "version": "${FBSTRING_PLUGIN_VERSION}",
+  "description": "Echo test plugin for unit testish thingies",
+
+	"plugins": [
+    { "path": "npEchoTestPlugin.dll", "public": true }
+  ]
+}
