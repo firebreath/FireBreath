@@ -15,7 +15,11 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 
 #include <codecvt>
 #include <locale>
+#include <boost/filesystem.hpp>
 #include "PluginLoaderWin.h"
+
+using boost::filesystem::path;
+using boost::filesystem::exists;
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE 32767
@@ -79,6 +83,10 @@ PluginList PluginLoader::getPluginList() {
                     rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
                         plugin.path = utf8_conv.to_bytes(lpData);
+                    if (!exists(plugin.path)) {
+                        // If the plugin file isn't there then don't display it as an option
+                        continue;
+                    }
                     lpcbData = MAX_VALUE;
 
                     rc = RegQueryValueEx(hPluginItem, TEXT("ProductName"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
