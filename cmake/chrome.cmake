@@ -88,7 +88,13 @@ function (add_native_message_host TARGETNAME)
             DEPENDS ${TARGETNAME}
             )
     elseif(WIN32)
-
+        add_custom_target(
+            ${TARGETNAME}_install
+            COMMAND ${CMAKE_COMMAND} -E write_regv "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                                   "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+            COMMAND regsvr32 /s "${PLUGIN_PATH}"
+            DEPENDS ${TARGETNAME}
+            )
     endif()
 
 endfunction()
