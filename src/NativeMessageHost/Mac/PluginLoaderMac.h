@@ -23,18 +23,19 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 class PluginLoaderMac : public PluginLoader
 {
 public:
-    PluginLoaderMac(std::string mimetype, std::string filename);
-    virtual ~PluginLoaderMac();;
+    PluginLoaderMac(std::string mimetype, std::string filename, std::string name = "");
+    virtual ~PluginLoaderMac();
 
     FW_RESULT Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) override;
     FW_RESULT Finit() override;
     std::string getPluginName() override {
         // TODO: Populate basic plugin metadata when searching, then have it available here
-        return "Unknown";
+        return name;
     }
 
 private:
     void* m_module;
+    std::string name;
 
     using InitFnPtr = FW_RESULT(*)(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs);
     using FinitFnPtr = FW_RESULT(*)();

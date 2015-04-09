@@ -127,7 +127,7 @@ PluginList PluginLoader::getPluginList() {
 }
 
 PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename, std::string name)
-    : PluginLoader(mimetype), m_pluginName(name), m_module(nullptr), initFn(nullptr), finitFn(nullptr) {
+    : PluginLoader(mimetype), m_module(nullptr), m_pluginName(name), initFn(nullptr), finitFn(nullptr) {
     std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
     std::wstring libPath = utf8_conv.from_bytes(filename);
     m_module = LoadLibrary(libPath.c_str());

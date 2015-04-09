@@ -17,7 +17,6 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include <dlfcn.h>
 #include <locale>
 #include <iostream>
-#include "npapi.h"
 #include "PluginLoaderMac.h"
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/xml_parser.hpp>
@@ -37,8 +36,8 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
         throw new std::runtime_error("No registered plugins detected");
     }
     std::cerr << "Loading plugin from: " << fnd->path << std::endl;
-
-    return std::unique_ptr<PluginLoader>(new PluginLoaderMac(mimetype, fnd->path));
+    
+    return std::unique_ptr<PluginLoader>(new PluginLoaderMac(mimetype, fnd->path, fnd->name));
 }
 
 bool hasEnding (std::string const &fullString, std::string const &ending) {
@@ -127,8 +126,8 @@ PluginList PluginLoader::getPluginList() {
     return result;
 }
 
-PluginLoaderMac::PluginLoaderMac(std::string mimetype, std::string filename)
-    : PluginLoader(mimetype), m_module(nullptr), initFn(nullptr), finitFn(nullptr) {
+PluginLoaderMac::PluginLoaderMac(std::string mimetype, std::string filename, std::string name)
+    : PluginLoader(mimetype), m_module(nullptr), name(name), initFn(nullptr), finitFn(nullptr) {
     m_module = dlopen(filename.c_str(), RTLD_LAZY);
 
     if (!m_module) {
