@@ -107,7 +107,7 @@
         function onMessage(msg) {
             if (msg.plugin && loadDfd && !loaded) {
                 loaded = true;
-                loadDfd.resolve(this);
+                loadDfd.resolve(self);
             } else if (msg.status && msg.status == "error" && loadDfd && !loaded) {
                 loadDfd.reject(new Error(msg.message));
                 loadDfd = void 0;
