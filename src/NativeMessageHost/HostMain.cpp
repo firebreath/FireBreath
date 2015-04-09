@@ -22,6 +22,8 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include <fcntl.h>
 #endif
 
+//#define DEBUG_BREAK
+
 int main(int argc, char* argv[]) {
 
 #ifdef WIN32

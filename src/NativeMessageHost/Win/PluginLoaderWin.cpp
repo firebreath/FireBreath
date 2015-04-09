@@ -29,7 +29,7 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
 
     auto fnd = plugins.findByMimetype(mimetype);
     if (fnd == plugins.end()) {
-        throw new std::runtime_error("No registered plugins detected");
+        throw std::runtime_error("No registered plugins detected");
     }
 
     return std::unique_ptr<PluginLoader>(new PluginLoaderWin(mimetype, fnd->path, fnd->name));
@@ -57,6 +57,7 @@ PluginList PluginLoader::getPluginList() {
 
         if (rc == ERROR_SUCCESS) {
             dwIndex = 0;  // reset the current subkey index
+            lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
                 rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
                 if (rc == ERROR_SUCCESS) {
@@ -106,8 +107,11 @@ PluginList PluginLoader::getPluginList() {
                     rc = RegOpenKeyEx(hPluginItem, TEXT("MimeTypes"), 0, KEY_READ, &hMimeTypesKey); // get the MimeTypes key
                     if (rc == ERROR_SUCCESS) {
                         dwsIndex = 0; // reset the current subkey index
+                        lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
                         while(!(rc = RegEnumKeyEx(hMimeTypesKey, dwsIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL )) || rc != ERROR_NO_MORE_ITEMS) {
-                            plugin.mime_types.push_back(utf8_conv.to_bytes(lpName));
+                            if (rc == ERROR_SUCCESS) {
+                                plugin.mime_types.push_back(utf8_conv.to_bytes(lpName));
+                            }
                             lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
                         }
                         RegCloseKey(hMimeTypesKey);
@@ -117,7 +121,6 @@ PluginList PluginLoader::getPluginList() {
                     result.emplace_back(plugin);
                 }
 
-                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             }
         }
 
