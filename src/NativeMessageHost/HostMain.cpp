@@ -32,6 +32,7 @@ int main(int argc, char* argv[]) {
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
 #endif
+    std::cerr << "Starting FireWyrm native message host";
     if (argv[1] != NULL) {
         MainLoop& mainLoop = MainLoop::get(argv[1]);
         ReadLoop reader(mainLoop);
