@@ -69,13 +69,6 @@ elseif(UNIX)
     include(X11/projectDef.cmake)
 endif()
 
-#this will build a XPI package using XPISigner (see http://code.google.com/p/xpisigner/ )
-# 
-# add_signed_xpi_installer(${PLUGIN_NAME}
-# 	${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/ 
-#   "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${FBSTRING_PluginFileName}.dll"
-# 	$ENV{XPI_PATH} 
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx" 
-# 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
-# 	${PROJECT_NAME})
+configure_chrome_wyrmhole()
+add_native_message_host(${PROJECT_NAME})
 

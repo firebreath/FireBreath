@@ -69,6 +69,9 @@ elseif(UNIX)
     include(X11/projectDef.cmake)
 endif()
 
+configure_chrome_wyrmhole()
+add_native_message_host(${PROJECT_NAME})
+
 #this will build a XPI package using XPISigner (see http://code.google.com/p/xpisigner/ )
 # 
 # add_signed_xpi_installer(${PLUGIN_NAME}

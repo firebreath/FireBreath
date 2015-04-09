@@ -67,3 +67,5 @@ elseif(UNIX)
     include(X11/projectDef.cmake)
 endif()
 
+configure_chrome_wyrmhole()
+add_native_message_host(${PROJECT_NAME})
