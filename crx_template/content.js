@@ -3,14 +3,14 @@
 
     var nextId = 1;
     var ports = {};
-    //var extensionId = 'niedeobcoghhbdejmjemafcagoolfnha';
+    //var extensionId = '${PLUGIN_CRX_ID}';
     var extensionId = chrome.runtime.id;
 
     window.addEventListener("message", function(event) {
         // We only accept messages from ourselves
         if (event.source != window) { return; }
 
-        if (event.data.source && (event.data.source == "page")) {
+        if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extensionId) {
             handleEvent(event.data);
         }
     }, false);

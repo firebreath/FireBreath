@@ -1,9 +1,0 @@
-{
-   "name": "org.firebreath.firewyrmhole",
-   "description": "FireBreath FireWyrm Native Messaging Wyrmhole",
-   "path": "C:\\code\\FireBreath2\\build\\firebreath\\NativeMessageHost\\Debug\\FireWyrmNativeMessageHost.exe",
-   "type": "stdio",
-   "allowed_origins": [
-     "chrome-extension://niedeobcoghhbdejmjemafcagoolfnha/"
-  ]
-}

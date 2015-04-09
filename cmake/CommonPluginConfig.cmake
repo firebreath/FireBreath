@@ -128,6 +128,7 @@ endif()
 # configure default generated files
 macro(firebreath_configure_templates TEMPLATE_DIR TEMPLATE_DEST HEADER_PREFIX OVERRIDE_DIR)
     file(GLOB TEMPLATELIST ${TEMPLATE_DIR}/[^.]*)
+    set(NAMESHOST "@NAMESHOST@")
     foreach(TemplateFile ${TEMPLATELIST})
         get_filename_component(CURFILE ${TemplateFile} NAME)
         get_filename_component(CUREXT ${TemplateFile} EXT)

@@ -51,7 +51,7 @@ else ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
     set ( FB_PLATFORM_ARCH_NAME "i386" CACHE INTERNAL "Architecture name")
 endif ( CMAKE_SIZEOF_VOID_P EQUAL 8 )
 
-# include the Chrome package generation function
+# include the Chrome package configuration function
 include(${FB_ROOT}/cmake/chrome.cmake)
 
 # include the XPI generation function

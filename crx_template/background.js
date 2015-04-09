@@ -1,7 +1,7 @@
 /*global chrome*/
 
 var ports = {};
-var hostName = "org.firebreath.firewyrmhole";
+var hostName = "${PLUGIN_CRX_NATIVEHOST_NAME}";
 
 console.log("Starting background script");
 

@@ -1,0 +1,9 @@
+{
+   "name": "${PLUGIN_CRX_NATIVEHOST_NAME}",
+   "description": "FireBreath FireWyrm Native Messaging Wyrmhole",
+   "path": "${NAMESHOST}",
+   "type": "stdio",
+   "allowed_origins": [
+     "chrome-extension://@PLUGIN_CRX_ID@/"
+   ]
+}

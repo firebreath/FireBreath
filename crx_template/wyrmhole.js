@@ -6,6 +6,8 @@
     //  This script runs in the page!     //
     ////////////////////////////////////////
 
+    var extId = "${PLUGIN_CRX_ID}";
+
     var Deferred;
     if (window.FireBreathPromise) {
         Deferred = window.FireBreathPromise;
@@ -53,6 +55,7 @@
         dfds.push(dfd);
         window.postMessage({
             source: "page",
+            ext: extId,
             request: "Create"
         }, "*");
         return dfd.promise;
@@ -79,6 +82,7 @@
         function postCommand(msg) {
             msg.source = "page";
             msg.port = port;
+            msg.ext = extId;
             window.postMessage(msg, "*");
         }
         function postMessage(msg, cmdId) {
@@ -216,7 +220,22 @@
         };
     }
 
-    window.createWyrmhole = createWyrmhole;
+    // We'll check so if this is run where there is no window it won't explode
+    if (typeof window != "undefined") {
+        if (!window._wyrmholes) {
+            window._wyrmholes = {};
+        }
+        window._wyrmholes["${PLUGIN_CRX_WYRMHOLE_NAME}"] = createWyrmhole;
+        if (!window.createWyrmhole) {
+            window.createWyrmhole = function(name) {
+                for (var cur in window._wyrmholes) {
+                    if (!name || name == cur) {
+                        return window._wyrmholes[cur]();
+                    }
+                }
+            };
+        }
+    }
 
 })();
 
