@@ -30,7 +30,7 @@
         if (event.data && event.data.list) {
             var listDfd = listDfds.pop();
             listDfd.resolve(event.data);
-        } else if (event.data && event.data.source && (event.data.source == "host")) {
+        } else if (event.data && event.data.source && event.data.source == "host" && event.data.ext == extId) {
             handleEvent(event.data);
         }
     }, false);

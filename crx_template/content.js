@@ -3,14 +3,13 @@
 
     var nextId = 1;
     var ports = {};
-    //var extensionId = '${PLUGIN_CRX_ID}';
-    var extensionId = chrome.runtime.id;
+    var extId = '${PLUGIN_CRX_ID}';
 
     window.addEventListener("message", function(event) {
         // We only accept messages from ourselves
         if (event.source != window) { return; }
 
-        if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extensionId) {
+        if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extId) {
             handleEvent(event.data);
         }
     }, false);
@@ -30,6 +29,7 @@
                 window.postMessage({
                     source: "host",
                     port: port,
+                    ext: extId,
                     message: "Error",
                     error: "Invalid port"
                 }, "*");
@@ -39,18 +39,20 @@
 
     function createWyrmhole() {
         var portName = "FireWyrmPort" + (nextId++);
-        var port = chrome.runtime.connect(extensionId, {name: portName});
+        var port = chrome.runtime.connect(extId, {name: portName});
         ports[portName] = port;
 
         window.postMessage({
             source: "host",
             port: portName,
+            ext: extId,
             message: "Created"
         }, "*");
         port.onMessage.addListener(function(msg) {
             // Message from the background script received, post it to the page
             msg.source = "host";
             msg.port = portName;
+            msg.ext = extId;
             window.postMessage(msg, "*");
         });
         port.onDisconnect.addListener(function() {
@@ -58,6 +60,7 @@
             window.postMessage({
                 source: "host",
                 port: portName,
+                ext: extId,
                 message: "Disconnected"
             }, "*");
             delete ports[portName];
