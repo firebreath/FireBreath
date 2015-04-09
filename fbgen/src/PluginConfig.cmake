@@ -8,6 +8,16 @@
 set(PLUGIN_NAME "@{PLUGIN_ident}")
 set(PLUGIN_PREFIX "@{PLUGIN_prefix}")
 set(COMPANY_NAME "@{COMPANY_ident}")
+set(COMPANY_REVDOMAIN "@{COMPANY_revdomain}")
+
+# NOTE: If you are going to deploy your own extension you *must* change the
+#       key and ID to your own key and matching ID.  You can use cmake/makeid.py
+#       (https://gist.github.com/taxilian/d42b8768b2e3ef5c6998) to generate them
+set(PLUGIN_CRX_NAME "${PLUGIN_NAME} Plugin Adapter")
+set(PLUGIN_CRX_KEY "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOqMBmB8ThMqFT3/9s/bfShwIXIlksxCwmo/VJdLScKqCc28xU2WaJmjfV4qa1K9K3SRiDTwpk53alWv/xoRXLjDnnvxmdu9AD57o7DEQAfdSRAv0grVt00/o7oudFaRlyvrHMmvjAM4fTnA3URQfEKz2L2wb/jfJt0ogcnYkWswIDAQAB")
+set(PLUGIN_CRX_ID "dlfdfkalmjbghacnadegnkmbcnpmnmfn")
+set(PLUGIN_CRX_WYRMHOLE_NAME ${COMPANY_NAME})
+set(PLUGIN_CRX_NATIVEHOST_NAME "${COMPANY_REVDOMAIN}.firewyrmhost")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME @{PLUGIN_ident}Lib)

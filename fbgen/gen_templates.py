@@ -83,8 +83,13 @@ class Base(object):
             domain=("Domain",
                     re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*"
                                "[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*"
-                               "\.[a-zA-Z]{2,4}$"),
+                               "\.[a-zA-Z]{2,8}$"),
                     "Domain must be a valid domain name."),
+            revdomain=("Reverse Domain",
+                    re.compile(r"^([a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*\.)*"
+                               "[a-zA-Z0-9]+(\-[a-zA-Z0-9]+)*"
+                               "\.[a-zA-Z]{2,8}$"),
+                    "Domain must be a valid reverse domain name."),
             mimetype=("MIME type", re.compile(r"^[a-zA-Z0-9]+"
                                               "\/[a-zA-Z0-9\-]+$"),
                       "Please use alphanumeric characters and dashes in the"
@@ -293,6 +298,7 @@ class Company(Base):
     name = None
     ident = None
     domain = None
+    revdomain = None
 
     def __init__(self, **kwargs):
         super(Company, self).__init__(**kwargs)
@@ -303,6 +309,7 @@ class Company(Base):
                                    re.sub(r"[^a-zA-Z\d\-_]", "", self.name))
         self.domain = self.getValue("domain", self.domain or
                                     "{0}.com".format(self.ident.lower()))
+        self.revdomain = ".".join(reversed(self.domain.split('.')))
 
     def readCfg(self, cfg):
         if not cfg.has_section("company"):
@@ -310,6 +317,7 @@ class Company(Base):
         self.name = self.name or cfg.get("company", "name")
         self.ident = self.ident or cfg.get("company", "ident")
         self.domain = self.domain or cfg.get("company", "domain")
+        self.revdomain = self.revdomain or cfg.get("company", "revdomain")
 
     def updateCfg(self, cfg):
         if not cfg.has_section("company"):
@@ -317,6 +325,7 @@ class Company(Base):
         cfg.set("company", "name", self.name)
         cfg.set("company", "ident", self.ident)
         cfg.set("company", "domain", self.domain)
+        cfg.set("company", "revdomain", self.revdomain)
 
     def __str__(self):
         return '\nCompany Details\n---------------\nName:        {0}\n' \
