@@ -34,6 +34,7 @@ if (WIN32)
             "$ENV{ProgramFiles}/Windows Installer XML v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.7"
+            "$ENV{ProgramFiles}/WiX Toolset v3.8"
             "$ENV{${PF86}}/Windows Installer XML"
             "$ENV{${PF86}}/Windows Installer XML v3"
             "$ENV{${PF86}}/Windows Installer XML v3.5"
@@ -101,7 +102,7 @@ if (WIN32)
     #  _sources - name of list with sources
     #  _obj - name of list for target objects
     #
-    MACRO(WIX_COMPILE _sources _objs _extra_dep)
+    MACRO(WIX_COMPILE _sources _objs _extra_dep EXTRA_EXTENSIONS)
         DBG_MSG("WIX compile: ${${_sources}}")
         FOREACH (_current_FILE ${${_sources}})
             GET_FILENAME_COMPONENT(_tmp_FILE ${_current_FILE} ABSOLUTE)
@@ -116,6 +117,9 @@ if (WIN32)
             DBG_MSG("WIX command: ${WIX_CANDLE}")
             SET(EXT_FLAGS -ext WixUtilExtension)
             SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
+            FOREACH (CUR_EXT ${EXTRA_EXTENSIONS})
+                set(EXT_FLAGS ${EXT_FLAGS} -ext "${CUR_EXT}")
+            endforeach(CUR_EXT)
 
             ADD_CUSTOM_COMMAND( 
                 OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
@@ -129,6 +133,8 @@ if (WIN32)
 
         ENDFOREACH (_current_FILE)
     ENDMACRO(WIX_COMPILE)
+
+
 
     #
     # Call wix heat command for the specified DLLs
@@ -175,12 +181,15 @@ if (WIN32)
     #  _sources - name of list with sources
     #  _obj - name of list for target objects
     #
-    MACRO(WIX_COMPILE_ALL _target _sources _extra_dep)
+    MACRO(WIX_COMPILE_ALL _target _sources _extra_dep EXTRA_EXTENSIONS)
         DBG_MSG("WIX compile all: ${${_sources}}, dependencies: ${${_extra_dep}}")
         SET(EXT_FLAGS -ext WixUtilExtension)
         SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
+        FOREACH (CUR_EXT ${EXTRA_EXTENSIONS})
+            set(EXT_FLAGS ${EXT_FLAGS} -ext "${CUR_EXT}")
+        endforeach(CUR_EXT)
 
-        ADD_CUSTOM_COMMAND( 
+        ADD_CUSTOM_COMMAND(
             OUTPUT    ${_target}
             COMMAND   ${WIX_CANDLE}
             ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
@@ -198,12 +207,15 @@ if (WIN32)
     #  _target - Name of target file
     #  _sources - Name of list with sources
     #
-    MACRO(WIX_LINK _project _target _sources _loc_files)
+    MACRO(WIX_LINK _project _target _sources _loc_files EXTRA_EXTENSIONS)
         #DBG_MSG("WIX command: ${WIX_LIGHT}\n WIX target: ${_target} objs: ${${_sources}}")
 
         SET( WIX_LINK_FLAGS_A ${WIX_LINK_FLAGS} )
         SET(EXT_FLAGS -ext WixUtilExtension)
         SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
+        FOREACH (CUR_EXT ${EXTRA_EXTENSIONS})
+            set(EXT_FLAGS ${EXT_FLAGS} -ext "${CUR_EXT}")
+        endforeach(CUR_EXT)
 
         # Add localization
         FOREACH (_current_FILE ${${_loc_files}})

@@ -150,7 +150,7 @@ endif()
 ####
 
 IF(NOT DEFINED CMAKE_MAKECAB)
-	SET(CMAKE_MAKECAB makecab)
+    SET(CMAKE_MAKECAB makecab)
 ENDIF(NOT DEFINED CMAKE_MAKECAB)
 
 MACRO(add_windows_plugin PROJNAME INSOURCES)
@@ -221,8 +221,15 @@ macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
     endif()
 endmacro(firebreath_sign_plugin)
 
+# if you need to add extensions, pass in an extra parameter listing each extension that should be included
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
     if (WIN32 AND WIX_FOUND)
+        file(GLOB_RECURSE EXTRA_EXTENSIONS
+            ${CMAKE_CURRENT_LIST_DIR}/Wix*Extension.dll
+            )
+        set(NAMESHOST "[Filepath]")
+        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-chrome-manifest.json ${WIX_OUTDIR}/fwh-chrome-manifest.template)
+
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
             GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
@@ -237,12 +244,19 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(_WIX_HEAT_TRANSFORM "FixFragment_HKCU.xslt")
         endif()
 
+        if (ARGV6)
+            set(EXTRA_EXTENSIONS ${EXTRA_EXTENSIONS} ${ARGV6})
+            message(STATUS "Wix extensions found: ${EXTRA_EXTENSIONS}")
+        else()
+            set(EXTRA_EXTENSIONS "")
+        endif()
+
         set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\${_WIX_HEAT_TRANSFORM}")
-        set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR} -dPLUGINSRC=${FB_CURRENT_PLUGIN_DIR})
+        set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR} -dPLUGINSRC=${CMAKE_CURRENT_SOURCE_DIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)
         set (SOURCELIST ${SOURCELIST} ${WIXDLLWXS_LIST})
-        WIX_COMPILE(SOURCELIST WIXOBJ_LIST WIXDLLWXS_LIST)
+        WIX_COMPILE(SOURCELIST WIXOBJ_LIST WIXDLLWXS_LIST "${EXTRA_EXTENSIONS}")
         SET (WIX_FULLOBJLIST ${WIXOBJ_LIST} )
 
         if (FB_WIX_DEST)
@@ -267,36 +281,36 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         endif()
         ADD_LIBRARY(${PROJNAME}${FB_WIX_SUFFIX} STATIC ${WIX_SOURCES})
 
-        WIX_LINK(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_DEST} WIX_FULLOBJLIST NONE)
+        WIX_LINK(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_DEST} WIX_FULLOBJLIST NONE "${EXTRA_EXTENSIONS}")
 
         ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_SUFFIX} ${WIX_PROJDEP})
-        
+
         # Create the EXE wrapper
-        	
-        if (FB_WIX_EXEDEST)
-            SET (WIX_EXEDEST ${FB_WIX_EXEDEST})
-        else()
-            SET (WIX_EXEDEST ${WIX_OUTDIR}/${PROJNAME}.exe)
-        endif()
-        		
-        if (NOT FB_WIX_EXE_SUFFIX)
-            set (FB_WIX_EXE_SUFFIX _WiXInstallExe)
-        endif()
-        	
-        set (WIX_EXESOURCES
-                ${FB_ROOT}/cmake/dummy.cpp
-                ${WIX_DEST}
-            )
-        ADD_LIBRARY(${PROJNAME}${FB_WIX_EXE_SUFFIX} STATIC ${WIX_EXESOURCES})
-        
-        WIX_SETUPBLD(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${WIX_EXEDEST} ${WIX_DEST})
-        
-        ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${PROJNAME}${FB_WIX_SUFFIX})
+
+        #if (FB_WIX_EXEDEST)
+            #SET (WIX_EXEDEST ${FB_WIX_EXEDEST})
+        #else()
+            #SET (WIX_EXEDEST ${WIX_OUTDIR}/${PROJNAME}.exe)
+        #endif()
+
+        #if (NOT FB_WIX_EXE_SUFFIX)
+            #set (FB_WIX_EXE_SUFFIX _WiXInstallExe)
+        #endif()
+
+        #set (WIX_EXESOURCES
+                #${FB_ROOT}/cmake/dummy.cpp
+                #${WIX_DEST}
+            #)
+        #ADD_LIBRARY(${PROJNAME}${FB_WIX_EXE_SUFFIX} STATIC ${WIX_EXESOURCES})
+
+        #WIX_SETUPBLD(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${WIX_EXEDEST} ${WIX_DEST})
+
+        #ADD_DEPENDENCIES(${PROJNAME}${FB_WIX_EXE_SUFFIX} ${PROJNAME}${FB_WIX_SUFFIX})
     endif()
 endfunction(add_wix_installer)
 
 function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
-	GET_FILENAME_COMPONENT(_tmp_File ${DDF} NAME)
+    GET_FILENAME_COMPONENT(_tmp_File ${DDF} NAME)
     configure_file(${DDF} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
     message("Configuring ${DDF} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
     set(CAB_DDF ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
@@ -311,8 +325,8 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
     
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
-    		${DDF}
-    		${CAB_SOURCEFILES}
+            ${DDF}
+            ${CAB_SOURCEFILES}
             ${SOURCELIST}
         )
     
@@ -321,13 +335,13 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
     else()
         SET (CAB_DEST ${CAB_OUTDIR}/${PROJNAME}.cab)
     endif()
-	
-	FILE(RELATIVE_PATH CAB_NAME ${CAB_OUTDIR} ${CAB_DEST})
+    
+    FILE(RELATIVE_PATH CAB_NAME ${CAB_OUTDIR} ${CAB_DEST})
      
     if (NOT FB_CAB_SUFFIX)
         set (FB_CAB_SUFFIX _Cab)
     endif()
-    	
+        
     ADD_LIBRARY(${PROJNAME}${FB_CAB_SUFFIX} STATIC ${WIX_SOURCES})
     ADD_CUSTOM_COMMAND( TARGET    ${PROJNAME}${FB_CAB_SUFFIX} POST_BUILD
         COMMAND   ${CMAKE_MAKECAB}

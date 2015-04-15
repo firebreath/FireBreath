@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:SystemTools="http://schemas.appsecinc.com/wix/SystemToolsExtension">
     <Product Id="*" Name="${FBSTRING_PluginName}" Language="1033" Version="${FBSTRING_PLUGIN_VERSION}" Manufacturer="${FBSTRING_CompanyName}" UpgradeCode="{${FBControl_WixUpgradeCode_GUID}}">
         <Package InstallerVersion="200" Compressed="yes" Description="Installer for the ${FBSTRING_PluginName} plugin" InstallScope="perUser" />
         <Upgrade Id="{${FBControl_WixUpgradeCode_GUID}}">
@@ -50,6 +50,20 @@
                                     Name="Uninstall"
                                     Type="string"
                                     Value="${FBSTRING_PLUGIN_VERSION}"
+                                    KeyPath="yes" />
+                            </Component>
+                            <Component Id="FireWyrmNativeMessageHost" Guid="{7056973D-34AE-449E-8B30-981B05EAEC99}">
+                                <File Id="Manifest_template" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}.json" />
+                                <SystemTools:TemplateFile Id="Manifest_template_process_component" Source="[#Manifest_template]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json" ExecuteOnInstall="yes">
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" />
+                                </SystemTools:TemplateFile>
+                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\FireWyrmNativeMessageHost.exe" />
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Id="NativeHostManifestRegEntry"
+                                    Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                    Type="string"
+                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}.json"
                                     KeyPath="yes" />
                             </Component>
 
