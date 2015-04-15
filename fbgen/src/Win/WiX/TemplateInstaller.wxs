@@ -85,6 +85,7 @@
             <ComponentRef Id="PluginNameDirComp"/>
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
+            <ComponentRef Id="FireWyrmNativeMessageHost"/>
         </Feature>
     </Product>
 </Wix>
