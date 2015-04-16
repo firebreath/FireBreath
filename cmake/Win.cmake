@@ -163,8 +163,6 @@ MACRO(add_windows_plugin PROJNAME INSOURCES)
     set_target_properties (${PROJNAME} PROPERTIES
         OUTPUT_NAME ${FBSTRING_PluginFileName}
         PROJECT_LABEL ${PROJNAME}
-        RUNTIME_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
-        LIBRARY_OUTPUT_DIRECTORY "${FB_BIN_DIR}/${PLUGIN_NAME}"
         LINK_FLAGS "${LINK_FLAGS}"
         )
 

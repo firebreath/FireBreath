@@ -75,7 +75,7 @@ function (add_native_message_host TARGETNAME)
             set(HOST_REGISTER_DIR "~/.config/google-chrome/NativeMessagingHosts")
         endif()
         add_custom_target(
-            ${TARGETNAME}_install
+            ${TARGETNAME}_devinstall
             COMMAND ${CMAKE_COMMAND} -E make_directory ${HOST_REGISTER_DIR}
             COMMAND ${CMAKE_COMMAND} -E create_symlink
                                         "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
@@ -89,7 +89,7 @@ function (add_native_message_host TARGETNAME)
             )
     elseif(WIN32)
         add_custom_target(
-            ${TARGETNAME}_install
+            ${TARGETNAME}_devinstall
             COMMAND ${CMAKE_COMMAND} -E write_regv "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                                    "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
             COMMAND regsvr32 /s "${PLUGIN_PATH}"

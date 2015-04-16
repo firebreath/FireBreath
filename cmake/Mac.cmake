@@ -123,6 +123,17 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
         PROPERTIES MACOSX_PACKAGE_LOCATION "Resources/English.lproj")
 
+    set(CFGFILE_SCRIPT "${FB_ROOT}/cmake/GenericConfigureFileScript.cmake")
+    add_custom_command(
+        TARGET ${PROJECT_NAME}
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-chrome-manifest.json"
+                                 -D OUTFILE="$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/fwh-chrome-manifest.template"
+                                 -D NAMESHOST="_FILEPATH_"
+                                 -P ${CFGFILE_SCRIPT}
+        COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/gen/crx_request.json" "$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/"
+        )
+
 ENDMACRO(add_mac_plugin)
 
 MACRO(firebreath_find_commands)
