@@ -56,12 +56,14 @@ set(WIX_HEAT_FLAGS
     -cg PluginDLLGroup  # Set the Component group name
     -dr INSTALLDIR      # Set the directory ID to put the files in
     )
+get_plugin_path(PLUGIN_FILEPATH ${PROJECT_NAME})
+get_filename_component(PLUGIN_PATH ${PLUGIN_FILEPATH} DIRECTORY)
 
 add_wix_installer( ${PLUGIN_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/@{PLUGIN_ident}Installer.wxs
     PluginDLLGroup
-    ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
-    ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${FBSTRING_PluginFileName}.dll
+    ${PLUGIN_PATH}
+    $<TARGET_FILE:${PROJECT_NAME}>
     ${PROJECT_NAME}
     )
 

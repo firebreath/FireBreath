@@ -149,18 +149,19 @@ if (WIN32)
             GET_FILENAME_COMPONENT(_tmp_FILE ${_current_DLL} ABSOLUTE)
             GET_FILENAME_COMPONENT(_basename ${_tmp_FILE} NAME_WE)
 
-            SET (SOURCE_WIX_FILE ${_tmp_FILE} )
+            SET (SOURCE_WIX_FILE ${_current_DLL} )
 
             if (NOT WIX_HEAT_SUFFIX)
                 set(WIX_HEAT_SUFFIX "_auto")
             endif()
 
             SET (OUTPUT_WIXOBJ ${_basename}${WIX_HEAT_SUFFIX}.wxs )
+            STRING(REGEX REPLACE "\\\$\\<TARGET[^:]*:([^>]*)>" "\\1" OUTPUT_WIXOBJ ${OUTPUT_WIXOBJ})
 
             DBG_MSG("WIX output: ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
-            DBG_MSG("WIX command: ${WIX_HEAT}")
+            DBG_MSG("WIX command: ${WIX_HEAT} ${SOURCE_WIX_FILE} -> ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
 
-            ADD_CUSTOM_COMMAND( 
+            ADD_CUSTOM_COMMAND(
                 OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
                 COMMAND   ${WIX_HEAT}
                 ARGS      file ${SOURCE_WIX_FILE}
@@ -173,31 +174,6 @@ if (WIN32)
         ENDFOREACH(_current_DLL)
         DBG_MSG("WIX compile output: ${${_objs}}")
     ENDMACRO(WIX_HEAT)
-
-    #
-    # Call wix compiler
-    #
-    # Parameters:
-    #  _sources - name of list with sources
-    #  _obj - name of list for target objects
-    #
-    MACRO(WIX_COMPILE_ALL _target _sources _extra_dep EXTRA_EXTENSIONS)
-        DBG_MSG("WIX compile all: ${${_sources}}, dependencies: ${${_extra_dep}}")
-        SET(EXT_FLAGS -ext WixUtilExtension)
-        SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
-        FOREACH (CUR_EXT ${EXTRA_EXTENSIONS})
-            set(EXT_FLAGS ${EXT_FLAGS} -ext "${CUR_EXT}")
-        endforeach(CUR_EXT)
-
-        ADD_CUSTOM_COMMAND(
-            OUTPUT    ${_target}
-            COMMAND   ${WIX_CANDLE}
-            ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
-            DEPENDS   ${${_sources}} ${${_extra_dep}}
-            COMMENT   "Compiling ${${_sources}} -> ${_target}"
-            )
-
-    ENDMACRO(WIX_COMPILE_ALL)
 
 
     #
@@ -224,7 +200,7 @@ if (WIN32)
         ENDFOREACH (_current_FILE)
         DBG_MSG("WIX link flags: ${WIX_LINK_FLAGS_A}")
 
-        ADD_CUSTOM_COMMAND( TARGET    ${_project} POST_BUILD
+        ADD_CUSTOM_COMMAND( TARGET ${_project} POST_BUILD
             COMMAND   ${WIX_LIGHT}
             ARGS      ${WIX_LIGHT_FLAGS} ${WIX_LINK_FLAGS_A} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
             DEPENDS   ${${_sources}}

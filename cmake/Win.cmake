@@ -223,10 +223,11 @@ endmacro(firebreath_sign_plugin)
 function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WIX_DLLFILES WIX_PROJDEP)
     if (WIN32 AND WIX_FOUND)
         file(GLOB_RECURSE EXTRA_EXTENSIONS
-            ${CMAKE_CURRENT_LIST_DIR}/Wix*Extension.dll
+            ${FB_ROOT}/cmake/Wix*Extension.dll
             )
+        message(STATUS "Found wix extensions: ${EXTRA_EXTENSIONS}")
         set(NAMESHOST "[Filepath]")
-        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-chrome-manifest.json ${WIX_OUTDIR}/fwh-chrome-manifest.template)
+        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-chrome-manifest.json ${CMAKE_CURRENT_BINARY_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.template)
 
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
@@ -245,12 +246,10 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         if (ARGV6)
             set(EXTRA_EXTENSIONS ${EXTRA_EXTENSIONS} ${ARGV6})
             message(STATUS "Wix extensions found: ${EXTRA_EXTENSIONS}")
-        else()
-            set(EXTRA_EXTENSIONS "")
         endif()
 
         set (WIX_HEAT_FLAGS ${WIX_HEAT_FLAGS} -var var.BINSRC "-t:${FB_ROOT}\\cmake\\${_WIX_HEAT_TRANSFORM}")
-        set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR} -dPLUGINSRC=${CMAKE_CURRENT_SOURCE_DIR})
+        set (WIX_CANDLE_FLAGS ${WIX_LINK_FLAGS} -dBINSRC=${WIX_OUTDIR} -dTPLSRC=${CMAKE_CURRENT_BINARY_DIR} -dPLUGINSRC=${CMAKE_CURRENT_SOURCE_DIR})
         set (WIX_LINK_FLAGS ${WIX_LINK_FLAGS} -sw1076)
         WIX_HEAT(WIX_DLLFILES WIXDLLWXS_LIST NONE)
         set (SOURCELIST ${SOURCELIST} ${WIXDLLWXS_LIST})
@@ -266,7 +265,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
         set_source_files_properties(${SOURCELIST} PROPERTIES HEADER_FILE_ONLY 1)
         SOURCE_GROUP(Sources FILES ${WIX_SOURCEFILES})
         SOURCE_GROUP(Generated FILES ${SOURCELIST})
-        set_source_files_properties(${WIXOBJ_LIST} ${WIX_DEST} PROPERTIES GENERATED 1)
+        set_source_files_properties(${WIXOBJ_LIST} PROPERTIES GENERATED 1)
         SOURCE_GROUP(Binary FILES ${WIXOBJ_LIST})
         set (WIX_SOURCES
                 ${FB_ROOT}/cmake/dummy.cpp
