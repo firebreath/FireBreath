@@ -33,11 +33,6 @@ file (GLOB GENERAL RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 include_directories(${FB_PLUGIN_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
-# This command configures the templates normally found in ${FB_ROOT}/gen_templates
-# to override one of the templates, copy it from there to the directory passed into
-# this function
-firebreath_generate_templates(${CMAKE_CURRENT_SOURCE_DIR})
-
 # Generated files are stored in ${GENERATED} by the project configuration
 SET_SOURCE_FILES_PROPERTIES(
     ${FB_PLUGIN_GENERATED_SOURCES}

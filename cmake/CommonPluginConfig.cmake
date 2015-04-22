@@ -161,6 +161,11 @@ macro(firebreath_generate_templates OVERRIDE_DIR)
     firebreath_configure_templates(${FB_TEMPLATE_DIR} ${FB_TEMPLATE_DEST_DIR} "global" ${OVERRIDE_DIR})
 endmacro(firebreath_generate_templates)
 
+# This command configures the templates normally found in ${FB_ROOT}/gen_templates
+# to override one of the templates, copy it from there to the directory passed into
+# this function
+firebreath_generate_templates(${CMAKE_CURRENT_SOURCE_DIR})
+
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
 set(FB_PLUGIN_LIBRARIES
