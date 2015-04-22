@@ -42,6 +42,7 @@ endfunction(configure_chrome_wyrmhole)
 
 function (get_plugin_path OUTPUT_PATH TARGETNAME)
 
+    cmake_policy(PUSH)
     cmake_policy(SET CMP0026 OLD)
     if (APPLE)
         firebreath_find_plugin_path(OUTPATH ${TARGETNAME})
@@ -49,6 +50,7 @@ function (get_plugin_path OUTPUT_PATH TARGETNAME)
         get_property(OUTPATH TARGET ${TARGETNAME} PROPERTY LOCATION)
     endif()
     set(${OUTPUT_PATH} ${OUTPATH} PARENT_SCOPE)
+    cmake_policy(POP)
 
 endfunction(get_plugin_path)
 
