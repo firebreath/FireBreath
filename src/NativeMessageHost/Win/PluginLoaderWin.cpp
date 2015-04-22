@@ -120,7 +120,7 @@ PluginList PluginLoader::getPluginList() {
                     RegCloseKey(hPluginItem); // close hPluginItem
                     result.emplace_back(plugin);
                 }
-
+                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             }
         }
 
