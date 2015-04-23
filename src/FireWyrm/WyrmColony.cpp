@@ -99,7 +99,6 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
     }
 
     if (!WyrmColony::ColonyInitialized) {
-
         getFactoryInstance()->globalPluginDeinitialize();
 
         // NOTE: If this assertion fails you have some sort of memory leak; BrowserHost objects
@@ -120,6 +119,12 @@ WyrmColony::WyrmColony(FW_INST key) : m_key(key), m_threadId(std::this_thread::g
 
 WyrmColony::~WyrmColony()
 {
+    // First shut down any plugins which are still around
+    for (auto inst : m_spawnMap) {
+        WyrmSpawnPtr spawn = inst.second->spawn;
+        spawn->shutdown();
+    }
+    m_spawnMap.clear();
 }
 
 AlienLarvaePtr WyrmColony::getLarvaeFor(const FW_INST spawnId, const uint32_t objId) {
