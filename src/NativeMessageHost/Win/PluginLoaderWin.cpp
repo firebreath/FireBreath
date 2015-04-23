@@ -59,6 +59,7 @@ PluginList PluginLoader::getPluginList() {
             dwIndex = 0;  // reset the current subkey index
             lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             while(!(lrc = RegEnumKeyEx(hPlugins, dwIndex++, lpName, &lpcName, NULL, NULL, NULL, NULL)) || lrc != ERROR_NO_MORE_ITEMS) {
+                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
                 rc = RegOpenKeyEx(hPlugins, lpName, 0, KEY_READ, &hPluginItem);
                 if (rc == ERROR_SUCCESS) {
                     PluginInfo plugin;
@@ -120,7 +121,6 @@ PluginList PluginLoader::getPluginList() {
                     RegCloseKey(hPluginItem); // close hPluginItem
                     result.emplace_back(plugin);
                 }
-                lpcName = MAX_KEY_LENGTH; // reset lpcName buffer size
             }
         }
 
