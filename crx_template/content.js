@@ -77,6 +77,7 @@
         };
         (document.head||document.documentElement).appendChild(s);
     }
+    document.documentElement.className += ' FB_FW_ext ${PLUGIN_NAME}';
 
     injectScript("FireBreathPromise.js");
     injectScript("wyrmhole.js");
