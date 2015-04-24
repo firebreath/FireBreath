@@ -214,7 +214,8 @@ macro(firebreath_sign_plugin PROJNAME PFXFILE PASSFILE TIMESTAMP_URL)
         get_target_property(ONAME ${PROJNAME} OUTPUT_NAME)
         get_target_property(LIBDIR ${PROJNAME} LIBRARY_OUTPUT_DIRECTORY)
 
-        set(_PLUGFILENAME "${LIBDIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
+        set(_PLUGFILENAME "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${ONAME}.dll")
+
         firebreath_sign_file("${PROJNAME}" "${_PLUGFILENAME}" "${PFXFILE}" "${PASSFILE}" "${TIMESTAMP_URL}")
     endif()
 endmacro(firebreath_sign_plugin)
