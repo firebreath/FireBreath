@@ -29,7 +29,12 @@ chrome.runtime.onConnect.addListener(function(scriptPort) {
     });
     hostPort.onDisconnect.addListener(function() {
         // The host (native message host) disconnected, so disconnect
-        // the script port
+        // the script port. If there is an error, report it first
+        if (chrome.runtime.lastError) {
+            scriptPort.postMessage({error: "Disconnected", message: chrome.runtime.lastError.message});
+        } else {
+            scriptPort.postMessage({error: "Disconnected"});
+        }
         scriptPort.disconnect();
     });
 });
