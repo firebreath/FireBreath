@@ -136,7 +136,7 @@ PluginLoaderWin::PluginLoaderWin(std::string mimetype, std::string filename, std
     m_module = LoadLibrary(libPath.c_str());
 
     if (!m_module) {
-        throw new std::runtime_error("Could not load file");
+        throw std::runtime_error("Could not load file");
     }
 
     initFn = reinterpret_cast<InitFnPtr>(GetProcAddress(m_module, "FireWyrm_Init"));

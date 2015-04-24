@@ -34,9 +34,9 @@ WyrmBrowserHost::WyrmBrowserHost(WyrmColony *module, const FW_INST spawnId)
 Promise<void> WyrmBrowserHost::init() {
     // Get the browser object
     auto self = std::dynamic_pointer_cast<WyrmBrowserHost>(shared_from_this());
-    
+
     auto browserDfd = module->DoCommand(FB::VariantList{ "New", "browser", FB::VariantMap{} }, self);
-    
+
     Deferred<void> dfdReady(false);
     browserDfd.done([self, dfdReady](FB::variant res) {
         // The return value should be the spawn id of the object
@@ -57,7 +57,7 @@ Promise<void> WyrmBrowserHost::init() {
             }
         });
     });
-    
+
     m_onReady = dfdReady.promise();
     return m_onReady;
 }
@@ -75,7 +75,7 @@ bool WyrmBrowserHost::_scheduleAsyncCall(void(*func)(void *), void *userData) co
 }
 
 FB::DOM::ElementPtr WyrmBrowserHost::getDOMElement() {
-    throw new std::runtime_error("Not implemented");
+    throw std::runtime_error("Not implemented");
 }
 
 FB::DOM::WindowPtr WyrmBrowserHost::getDOMWindow() {
@@ -103,7 +103,7 @@ FB::Promise<FB::VariantMap> WyrmBrowserHost::GetObjectValues(FB::JSObjectPtr obj
 }
 
 FB::BrowserStreamPtr WyrmBrowserHost::_createStream(const FB::BrowserStreamRequest& req) const {
-    throw new std::runtime_error("Not implemented");
+    throw std::runtime_error("Not implemented");
 }
 
 void WyrmBrowserHost::evaluateJavaScript(const std::string &script) {

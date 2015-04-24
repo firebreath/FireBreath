@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
 Original Author: Richard Bateman (taxilian)
 
 Created:    Oct 16, 2009
@@ -44,7 +44,7 @@ void NPPromise::init(NpapiBrowserHostPtr host) {
 
     NPError nperr{ host->GetValue(NPNVWindowNPObject, (void**)&window) };
     if (nperr) {
-        throw new std::runtime_error("Could not connect to browser");
+        throw std::runtime_error("Could not connect to browser");
     }
 
     m_npDeferred = host->getPromiseObject();
@@ -57,7 +57,7 @@ void NPPromise::init(NpapiBrowserHostPtr host) {
     host->RetainObject(m_npPromise);
     host->ReleaseVariantValue(&tmp);
     host->ReleaseObject(window);
-    
+
     // Hook up to the promise
     auto onSuccess = std::bind(&NPPromise::onSuccess, shared_from_this(), std::placeholders::_1);
     auto onError = std::bind(&NPPromise::onError, shared_from_this(), std::placeholders::_1);

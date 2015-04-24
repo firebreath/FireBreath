@@ -33,7 +33,7 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
 
     auto fnd = plugins.findByMimetype(mimetype);
     if (fnd == plugins.end()) {
-        throw new std::runtime_error("No registered plugins detected");
+        throw std::runtime_error("No registered plugins detected");
     }
     std::cerr << "Loading plugin from: " << fnd->path << std::endl;
     
@@ -131,14 +131,14 @@ PluginLoaderMac::PluginLoaderMac(std::string mimetype, std::string filename, std
     m_module = dlopen(filename.c_str(), RTLD_LAZY);
 
     if (!m_module) {
-        throw new std::runtime_error("Could not load file");
+        throw std::runtime_error("Could not load file");
     }
 
     initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "FireWyrm_Init"));
     finitFn = reinterpret_cast<FinitFnPtr>(dlsym(m_module, "FireWyrm_Finit"));
 
     if (!initFn || !finitFn) {
-        throw new std::runtime_error("Could not find entry points");
+        throw std::runtime_error("Could not find entry points");
     }
 }
 

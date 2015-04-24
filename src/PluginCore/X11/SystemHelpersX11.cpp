@@ -30,7 +30,7 @@ std::string FB::System::getHomeDirPath()
     char* buf = (char*) malloc(bufsize);
     if (buf == NULL) {
         FBLOG_ERROR("SystemHelpersX11", "malloc failed.");
-        throw new std::runtime_error("malloc failed.");
+        throw std::runtime_error("malloc failed.");
     }
 
     struct passwd pwd;
@@ -42,13 +42,13 @@ std::string FB::System::getHomeDirPath()
 
         if (s == 0) {
             FBLOG_ERROR("SystemHelpersX11", "User not found.");
-            throw new std::runtime_error("User not found.");
+            throw std::runtime_error("User not found.");
         }else{
             std::string exs ("getpwuid_r error: ");
             exs += s;
 
             FBLOG_ERROR("SystemHelpersX11", exs);
-            throw new std::runtime_error(exs);
+            throw std::runtime_error(exs);
         }
     }
 

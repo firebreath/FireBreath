@@ -55,7 +55,7 @@ bool ActiveXBrowserHost::_scheduleAsyncCall(void (*func)(void *), void *userData
     boost::shared_lock<boost::shared_mutex> _l(m_xtmutex);
     if (!isShutDown() && m_messageWin) {
         FBLOG_TRACE("ActiveXHost", "Scheduling async call for main thread");
-        return ::PostMessage(m_messageWin->getHWND(), WM_ASYNCTHREADINVOKE, NULL, 
+        return ::PostMessage(m_messageWin->getHWND(), WM_ASYNCTHREADINVOKE, NULL,
             (LPARAM)new FB::AsyncFunctionCall(func, userData)) ? true : false;
     } else {
         return false;
@@ -88,7 +88,7 @@ FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) con
 }
 
 int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {
-    if (!m_htmlWin) { throw new FB::script_error("Could not invoke, ActiveX control has been suspended"); }
+    if (!m_htmlWin) { throw FB::script_error("Could not invoke, ActiveX control has been suspended"); }
     int32_t ctxId{ (int32_t)(getContextID()) };
     std::string name = std::string("_FB_HELPERS_") + std::to_string(ctxId);
     IDispatchAPIPtr helper;
@@ -188,7 +188,7 @@ void ActiveXBrowserHost::suspend()
     m_spClientSite.Release();
     m_htmlDocDisp.Release();
     m_htmlWin.Release();
-    
+
     // These are created on demand, don't need to be restored
     m_window.reset();
     m_document.reset();
@@ -214,7 +214,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
     FB::variant retVal;
 
     switch(cVar->vt)
-    {        
+    {
     case VT_R4:
     case VT_R8:
     case VT_DECIMAL:
@@ -256,7 +256,7 @@ FB::variant ActiveXBrowserHost::getVariant(const VARIANT *cVar)
         break;
 
     case VT_DISPATCH:
-        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this()))); 
+        retVal = FB::JSObjectPtr(IDispatchAPI::create(cVar->pdispVal, std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this())));
         break;
 
     case VT_ERROR:
@@ -286,12 +286,12 @@ void ActiveXBrowserHost::getComVariant(VARIANT *dest, const FB::variant &var)
     const ComVariantBuilderMap& builderMap = getComVariantBuilderMap();
     const std::type_info& type = var.get_type();
     ComVariantBuilderMap::const_iterator it = builderMap.find(&type);
-    
+
     if (it == builderMap.end()) {
         // unhandled type :(
         return;
     }
-    
+
     outVar = (it->second)(std::dynamic_pointer_cast<ActiveXBrowserHost>(shared_from_this()), var);
 
     outVar.Detach(dest);

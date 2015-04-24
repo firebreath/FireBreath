@@ -1,4 +1,4 @@
-/**********************************************************\ 
+/**********************************************************\
  Original Author: Richard Bateman
  
  Created:    Dec 20, 2010
@@ -36,7 +36,7 @@ FB::variantPromise FB::JSFunction::exec( const std::vector<variant>& args )
 {
     FB::JSAPIPtr api = m_apiWeak.lock();
     if (!api)
-        throw new FB::script_error("Invalid JSAPI object");
+        throw FB::script_error("Invalid JSAPI object");
     // Force calls to use the zone this function was created with
     FB::scoped_zonelock _l(api, getZone());
     return api->Invoke(m_methodName, args);
