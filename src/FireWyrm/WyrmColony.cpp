@@ -418,6 +418,12 @@ void evolveLarvae(FB::VariantList& in, WyrmBrowserHostPtr host, WyrmColony::Spaw
     }
 }
 
+void evolveLarvae(FB::VariantMap& in, WyrmBrowserHostPtr host, WyrmColony::SpawnMap& spawnMap) {
+    for (auto &c : in) {
+        evolveLarvae(c.second, host, spawnMap);
+    }
+}
+
 FB::VariantListPromise WyrmColony::Invoke(FB::VariantList args) {
     FW_INST id = args[0].convert_cast<FW_INST>();
     FW_INST objId = args[1].convert_cast<FW_INST>();
@@ -585,8 +591,19 @@ FB::variantPromise WyrmColony::DoCommand(FB::VariantList args, WyrmBrowserHostPt
             }
         } else if (status == "success") {
             FB::variant resp = valueToVariant(root.get(1, Json::nullValue), this);
-            if (host)
-                evolveLarvae(resp, host, m_spawnMap);
+            if (host) {
+                if (resp.is_of_type<FB::VariantList>()) {
+                    FB::VariantList vl = resp.cast<FB::VariantList>();
+                    evolveLarvae(vl, host, m_spawnMap);
+                    resp = vl;
+                } else if (resp.is_of_type<FB::VariantMap>()) {
+                    FB::VariantMap vm = resp.cast<FB::VariantMap>();
+                    evolveLarvae(vm, host, m_spawnMap);
+                    resp = vm;
+                } else {
+                    evolveLarvae(resp, host, m_spawnMap);
+                }
+            }
             return resp;
         } else {
             throw FB::script_error("Invalid response from client");
