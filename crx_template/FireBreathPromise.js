@@ -9,7 +9,6 @@ var isFunction = function (obj) { return toString.call(obj) === '[object Functio
 if (typeof /./ !== 'function') {
     isFunction = function(obj) { return typeof obj == 'function' || false; };
 }
-function defer(fn, arg) { setTimeout(function() { fn(arg); }, 0); }
 
 var STATES = { PEND: 1, PROMISE: 2, RESOLVE: 3, REJECT: 4 };
 
@@ -25,14 +24,14 @@ function DeferredObject(name) {
             var promise2 = new DeferredObject(name + "-then");
             function makeCallback(cbFunc, type) {
                 // Return a wrapper for the provided callback function
-                return function handleCallback(value) {
+                return function handleCallback() {
                     try {
                         // If it's not a function, we still need to pass it through to promise2
                         if (isFunction(cbFunc)) {
-                            var x = cbFunc(value);
+                            var x = cbFunc.apply(this, arguments);
                             promise2.resolve(x);
                         } else {
-                            promise2[type](value);
+                            promise2[type].apply(this, arguments);
                         }
                     } catch (e) {
                         // In case of exception, reject
@@ -41,9 +40,9 @@ function DeferredObject(name) {
                 };
             }
             if (state === STATES.RESOLVE) {
-                defer(function() { makeCallback(onFulfilled, "resolve")(value); });
+            	setTimeout(function() { makeCallback(onFulfilled, "resolve").apply(self, value) }, 0);
             } else if (state === STATES.REJECT) {
-                defer(function() { makeCallback(onRejected, "reject")(value); });
+            	setTimeout(function() { makeCallback(onRejected, "reject").apply(self, value) }, 0);
             } else {
                 fulfillHandlers.push(makeCallback(onFulfilled, "resolve"));
                 rejectHandlers.push(makeCallback(onRejected, "reject"));
@@ -97,10 +96,12 @@ function DeferredObject(name) {
             }
         } else {
             // For any other value, do a normal resolve
-            value = x;
+            value = Array.prototype.slice.call(arguments);
             state = STATES.RESOLVE;
             for (var i = 0; i < fulfillHandlers.length; ++i) {
-                defer(fulfillHandlers[i], value);
+            	setTimeout(function(handler) { return function() {
+            		handler.apply(self, value);
+            	}}(fulfillHandlers[i]), 0);
             }
         }
     };
@@ -110,10 +111,12 @@ function DeferredObject(name) {
         else if (x === self || x === self.promise) {
             return self.reject(new TypeError());
         }
-        value = x;
+        value = Array.prototype.slice.call(arguments);
         state = STATES.REJECT;
         for (var i = 0; i < rejectHandlers.length; ++i) {
-            defer(rejectHandlers[i], value);
+        	setTimeout(function(handler) { return function() {
+        		handler.apply(self, value);
+        	}}(rejectHandlers[i]), 0);
         }
     };
 }
