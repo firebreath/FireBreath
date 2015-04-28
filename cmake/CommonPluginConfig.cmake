@@ -31,7 +31,6 @@ add_definitions(${FBLIB_DEFINITIONS})
 
 # Generally needed include directories for each plugin
 set(FB_PLUGIN_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_GECKOSDK_SOURCE_DIR}
     ${FB_INCLUDE_DIRS}
     ${ActiveXCore_SOURCE_DIR}
