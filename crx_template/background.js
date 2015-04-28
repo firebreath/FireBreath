@@ -1,10 +1,26 @@
 /*global chrome*/
 
+var firebreath = {}; //global object
 var ports = {};
 var hostName = "${PLUGIN_CRX_NATIVEHOST_NAME}";
 
 console.log("Starting background script");
 
+/* Example of using Fire Wyrm in extension only */
+//window.addEventListener("load", function() {
+//	firebreath.wyrmhole.create("org.firebreath.firewyrmhost", "application/x-fbtestplugin").then(function(plugin) {
+//		var a = 1, b = 2;
+//		plugin.add(a, b).then(function(response) {
+//			console.log("add "+a+" + "+b+" = "+response);
+//		}, function() {
+//			console.log("add failed");
+//		})
+//	}, function() {
+//		console.log('wyrmhole error');
+//	});
+//});
+
+/* Example of using Fire Wyrm via webpage */
 chrome.runtime.onConnect.addListener(function(scriptPort) {
     console.log("Connected!");
     var name = scriptPort.name;

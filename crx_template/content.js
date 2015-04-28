@@ -80,8 +80,8 @@
     document.documentElement.className += ' FB_FW_ext ${PLUGIN_NAME}';
 
     injectScript("FireBreathPromise.js");
-    injectScript("wyrmhole.js");
     injectScript("firewyrm.js");
-
+    injectScript("wyrmhole.js");
+    injectScript("wyrmhole-content.js");
 })();
 
