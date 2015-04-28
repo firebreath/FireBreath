@@ -21,7 +21,7 @@ if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
 
-message("SDKDIR: ${FB_GECKOSDK_SOURCE_DIR}")
+message("Gecko SDK source dir: ${FB_GECKOSDK_SOURCE_DIR}")
 
 include_directories(
     ${FB_GECKOSDK_SOURCE_DIR}

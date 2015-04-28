@@ -17,24 +17,39 @@ Copyright 2009 Dan Weatherford, Facebook inc
 
 #include <limits.h>
 #include <boost/algorithm/string/case_conv.hpp>
-#include <locale>
-#include <codecvt>
+#include <boost/locale/encoding_utf.hpp>
+#include <string>
+
+///#include <codecvt>
+//#include <locale>
 
 #include "utf8_tools.h"
 
-std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
+//std::wstring_convert<std::codecvt_utf8<wchar_t>> utf8_conv;
 
 namespace FB {
 
-    std::string wstring_to_utf8(const std::wstring& src) {
-        return utf8_conv.to_bytes(src);
-    }
+	using boost::locale::conv::utf_to_utf;
 
+	std::wstring utf8_to_wstring(const std::string& str)
+	{
+		    return utf_to_utf<wchar_t>(str.c_str(), str.c_str() + str.size());
+	}
 
-    std::wstring utf8_to_wstring(std::string src) {
-        return utf8_conv.from_bytes(src);
-    }
+	std::string wstring_to_utf8(const std::wstring& str)
+	{
+		    return utf_to_utf<char>(str.c_str(), str.c_str() + str.size());
+	}  
 
+//    std::string wstring_to_utf8(const std::wstring& src) {
+//        return utf8_conv.to_bytes(src);
+//    }
+//
+//
+//    std::wstring utf8_to_wstring(std::string src) {
+//        return utf8_conv.from_bytes(src);
+//    }
+//
 
     std::wstring wstring_tolower(const std::wstring& src) {
         return boost::algorithm::to_upper_copy(src);
