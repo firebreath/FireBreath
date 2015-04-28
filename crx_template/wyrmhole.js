@@ -1,140 +1,80 @@
-/*global chrome*/
-(function() {
-
-
-    ////////////////////////////////////////
-    //  This script runs in the page!     //
-    ////////////////////////////////////////
-
-    var extId = "${PLUGIN_CRX_ID}";
-
+(function(fb) {
+	fb.wyrmhole = {
+		instances: [],
+		create: createWyrmhole,
+		connect: connectWyrmhole,
+		message: messageWyrmhole
+	}
+		
     var Deferred;
     if (window.FireBreathPromise) {
         Deferred = window.FireBreathPromise;
     }
-    function makeDeferred(val) {
-        var dfd = Deferred();
-        dfd.resolve(val);
-        return dfd;
-    }
 
-    var dfds = [];
-    var listDfds = [];
-
-    var wyrmholes = {};
-    var wherrors = {};
-
-    window.addEventListener("message", function(event) {
-        // We only accept messages from ourselves
-        if (event.source != window) { return; }
-
-        if (event.data && event.data.list) {
-            var listDfd = listDfds.pop();
-            listDfd.resolve(event.data);
-        } else if (event.data && event.data.source && event.data.source == "host" && event.data.ext == extId) {
-            handleEvent(event.data);
-        }
-    }, false);
-
-    function handleEvent(evt) {
-        var wh;
-        if (evt.port && evt.message == "Created") {
-            var dfd = dfds.pop();
-            wh = new Wyrmhole(evt.port);
-            dfd.resolve(wh);
-        } else {
-            if (!wyrmholes[evt.port]) {
-                return;
+	function connectWyrmhole(application) {
+		var dfd = Deferred();
+		var port = chrome.runtime.connectNative(application);
+		var sink = function(sink) { 
+			port.onMessage.addListener(sink);
+			port.onDisconnect.addListener(function() {
+				sink({disconnect: true});
+			});
+		};
+		dfd.resolve(port, sink);
+        return dfd.promise;
+	}
+	
+	function messageWyrmhole(msg) {
+		this.postMessage(msg);
+	}
+	
+    function createWyrmhole(application, mimetype) {
+		var dfd = Deferred();
+    	fb.wyrmhole.connect(application).then(function(port, sink) {
+            var wyrmhole = new Wyrmhole(port, sink);
+            fb.wyrmhole.instances.push(wyrmhole);
+            
+            if (typeof mimetype == 'string') {
+            	wyrmhole.loadPlugin(mimetype).then(function() {
+            		var wyrm = new FireWyrmJS(wyrmhole);
+            		wyrm.create(mimetype).then(function() {
+            			dfd.resolve.apply(this, arguments)
+            		}, function() {
+            			dfd.reject.apply(this, arguments)
+            		});
+            	}, function() {
+            		dfd.reject.apply(this, arguments);
+            	});
+            } else {
+            	dfd.resolve(wyrmhole);
             }
-            if (evt.port && evt.message == "Destroyed") {
-                wh = wyrmholes[evt.port];
-                wh.destroy();
-            } else if (evt.port) {
-                wh = wyrmholes[evt.port];
-                wh.onMessage(evt);
-            }
-        }
-    }
-
-    function createWyrmhole() {
-        var dfd = Deferred();
-        dfds.push(dfd);
-        window.postMessage({
-            source: "page",
-            ext: extId,
-            request: "Create"
-        }, "*");
+        });
         return dfd.promise;
     }
-
-    function Wyrmhole(port) {
+    
+    function Wyrmhole(port, sink) {
         var loadDfd = null,
-            self=this,
-            destroyed = false,
-            loaded = false,
-            cmdMap = {},
-            inMessages = {},
-            nextCmdId = 1,
-            onCommandFn = null,
-            errMsg;
+        	listDfds = [],
+	        self = this,
+	        destroyed = false,
+	        loaded = false,
+	        cmdMap = {},
+	        inMessages = {},
+	        nextCmdId = 1,
+	        onCommandFn = null;
 
-        wyrmholes[port] = {
-            onMessage: onMessage,
-            destroy: function() {
-                destroyed = true;
-                delete wyrmholes[port];
-            }
-        };
-
-        function postCommand(msg) {
-            if (!wyrmholes[port]) {
-                throw new Error("Invalid wyrmhole");
-            }
-            msg.source = "page";
-            msg.port = port;
-            msg.ext = extId;
-            window.postMessage(msg, "*");
-        }
-        function postMessage(msg, cmdId) {
-            var type = "resp";
-            if (cmdId === void 0) {
-                cmdId = nextCmdId++;
-                type = "cmd";
-            }
-
-            postCommand({
-                cmdId: cmdId,
-                type: type,
-                c: 1, // This direction we don't need to split
-                n: 1,
-                colonyId: 0,
-                msg: JSON.stringify(msg)
-            });
-
-            return cmdId;
-        }
-
-        function onMessage(msg) {
+    	sink(function(msg) {
             if (msg.plugin && loadDfd && !loaded) {
                 loaded = true;
                 loadDfd.resolve(self);
-            } else if (msg.error && msg.error == "Disconnected") {
-                // The native message host is disconnected; reject anything pending and notify
-                // anything that needs it
-                errMsg = msg.message || "Host disconnected";
-                if (loadDfd) {
-                    loadDfd.reject(errMsg);
-                }
-                Object.keys(cmdMap).forEach(function(dfd) {
-                    dfd.reject(errMsg);
-                });
-                if (wyrmholes[port]) {
-                    wyrmholes[port].destroy();
-                    wherrors[port] = errMsg;
-                }
             } else if (msg.status && msg.status == "error" && loadDfd && !loaded) {
                 loadDfd.reject(new Error(msg.message));
                 loadDfd = void 0;
+            } else if (msg.list) {
+                var listDfd = listDfds.pop();
+                listDfd != null && listDfd.resolve(msg);
+            } else if (msg.disconnect) {
+            	destroyed = true;
             } else if (msg.msg) {
                 // This is a message from the native message host,
                 // we might need to put it back together because the host
@@ -154,7 +94,8 @@
                     processCompleteMessage(msg, text);
                 }
             }
-        }
+    	});
+    	
         function processCompleteMessage(msg, text) {
             var dfd = null;
             // The whole message is here!
@@ -170,7 +111,6 @@
                     // If the response was invalid, reject with that error
                     dfd.reject(e);
                 }
-                delete cmdMap[msg.cmdId];
             } else if (onCommandFn) {
                 // This is a new message sent from the host to the page
                 dfd = Deferred();
@@ -185,25 +125,48 @@
                     });
                     promise = dfd.promise;
                 } catch (e) {
-                    postMessage(["error", {"error": "command exception", "message": e.toString()}], msg.cmdId);
+                	command(["error", {"error": "command exception", "message": e.toString()}], msg.cmdId);
                 }
                 if (promise) {
                     promise.then(function(resp) {
                         // Send the return value
-                        postMessage(resp, msg.cmdId);
+                    	command(resp, msg.cmdId);
                     }, function(e) {
-                        postMessage(["error", {"error": "Javascript Exception", "message": e.toString()}], msg.cmdId);
+                    	command(["error", {"error": "Javascript Exception", "message": e.toString()}], msg.cmdId);
                     });
                 }
             }
         }
+        
+        function message(cmd) {
+        	fb.wyrmhole.message.call(port, cmd);
+        }
+    	
+        function command(msg, cmdId) {
+            var type = "resp";
+            if (cmdId === void 0) {
+                cmdId = nextCmdId++;
+                type = "cmd";
+            }
 
-        self.sendMessage = function(msg, callback) {
+            message({
+                cmdId: cmdId,
+                type: type,
+                c: 1, // This direction we don't need to split
+                n: 1,
+                colonyId: 0,
+                msg: JSON.stringify(msg)
+            });
+
+            return cmdId;
+        }
+    	
+    	this.sendMessage = function(msg, callback) {
             if (destroyed) {
                 throw new Error("Wyrmhole not active");
             }
             var dfd = Deferred();
-            var cmdId = postMessage(msg);
+            var cmdId = command(msg);
             cmdMap[cmdId] = dfd;
 
             dfd.promise.then(function(res) {
@@ -213,38 +176,26 @@
                 if (callback) { callback("error", err); }
                 else { console.log("No callback for error: ", err); }
             });
-        };
-        self.onMessage = function(fn) { onCommandFn = fn; };
-        self.loadPlugin = function(mimetype) {
+    	}
+        this.onMessage = function(fn) { onCommandFn = fn; };
+    	this.loadPlugin = function(mimetype) {
             if (loadDfd) {
                 throw new Error("Plugin already loaded (or loading)");
             }
             loadDfd = Deferred();
-            try {
-                postCommand({
-                    cmd: "create",
-                    mimetype: mimetype
-                });
-            } catch(ex) {
-                loadDfd.reject("Wyrmhole not valid:", errMsg);
-            }
+            message({
+                cmd: "create",
+                mimetype: mimetype
+            });
             return loadDfd.promise;
         };
-        self.destroy = function() {
-            if (destroyed) { return; }
-            postCommand({
-                cmd: "destroy"
-            });
+        this.destroy = function() {
+        	message({cmd: "destroy"});
         };
-        self.listPlugins = function() {
+        this.listPlugins = function() {
             var dfd = Deferred();
             listDfds.unshift(dfd);
-            try {
-                postCommand({"cmd": "list"});
-            } catch(ex) {
-                dfd.reject("Wyrmhole not valid:", errMsg);
-                listDfds.shift();
-            }
+            message({"cmd": "list"});
             return dfd.promise.then(function(resp) {
                 if (resp.status == "success") {
                     return resp.list;
@@ -254,23 +205,4 @@
             });
         };
     }
-
-    // We'll check so if this is run where there is no window it won't explode
-    if (typeof window != "undefined") {
-        if (!window._wyrmholes) {
-            window._wyrmholes = {};
-        }
-        window._wyrmholes["${PLUGIN_CRX_WYRMHOLE_NAME}"] = createWyrmhole;
-        if (!window.createWyrmhole) {
-            window.createWyrmhole = function(name) {
-                for (var cur in window._wyrmholes) {
-                    if (!name || name == cur) {
-                        return window._wyrmholes[cur]();
-                    }
-                }
-            };
-        }
-    }
-
-})();
-
+})(typeof firebreath != 'undefined' ? firebreath : window);
