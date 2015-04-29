@@ -57,6 +57,7 @@
 	        inMessages = {},
 	        nextCmdId = 1,
 	        onCommandFn = null,
+	        onDisconnectFn = null,
 	        errMsg;
 
     	sink(function(msg) {
@@ -78,6 +79,8 @@
                 	cmdMap[cmdId].reject(errMsg);
                 });
                 destroyed = true;
+                if (onDisconnectFn)
+                	onDisconnectFn(errMsg);
             } else if (msg.msg) {
                 // This is a message from the native message host,
                 // we might need to put it back together because the host
@@ -180,6 +183,7 @@
                 else { console.log("No callback for error: ", err); }
             });
     	}
+    	this.onDisconnect = function(fn) { onDisconnectFn = fn; };
         this.onMessage = function(fn) { onCommandFn = fn; };
     	this.loadPlugin = function(mimetype) {
             if (loadDfd) {
