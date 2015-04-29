@@ -1,4 +1,4 @@
-(function() {
+(function(fb) {
     var connectList = [];
     
     var Deferred;
@@ -38,8 +38,9 @@
         }
     }, false);
 
-	window.wyrmhole.connect = function(extId) {
+    fb.wyrmhole.connect = function(ext) {
 	    var dfd = Deferred();
+	    var extId = ext || fb.extId;
 	    connectList.push({extId: extId, dfd: dfd});
 	    window.postMessage({
 	        source: "page",
@@ -48,10 +49,10 @@
 	    }, "*");
 	    return dfd.promise;
 	}
-	window.wyrmhole.message = function(msg) {
+    fb.wyrmhole.message = function(msg) {
         msg.source = "page";
         msg.port = this.port;
         msg.ext = this.extId;
         window.postMessage(msg, "*");
 	}
-})();
+})(typeof firebreath != 'undefined' ? firebreath : window);

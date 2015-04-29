@@ -17,7 +17,7 @@
   }],
   "web_accessible_resources": [
       "wyrmhole.js",
-      "wyrmhole-content.js",
+      "wyrmhole-page.js",
       "FireBreathPromise.js",
       "firewyrm.js"
   ],
