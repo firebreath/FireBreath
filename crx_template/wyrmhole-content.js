@@ -1,5 +1,5 @@
 (function() {
-    var extId = "dlfdfkalmjbghacnadegnkmbcnpmnmfn";
+    var extId = "${PLUGIN_CRX_ID}";
     var dfds = [];
     
     var Deferred;
