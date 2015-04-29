@@ -56,7 +56,8 @@
 	        cmdMap = {},
 	        inMessages = {},
 	        nextCmdId = 1,
-	        onCommandFn = null;
+	        onCommandFn = null,
+	        errMsg;
 
     	sink(function(msg) {
             if (msg.plugin && loadDfd && !loaded) {
@@ -69,7 +70,14 @@
                 var listDfd = listDfds.pop();
                 listDfd != null && listDfd.resolve(msg);
             } else if (msg.disconnect) {
-            	destroyed = true;
+            	errMsg = msg.message || "Host disconnected";
+            	if (loadDfd) {
+                    loadDfd.reject(errMsg);
+                }
+                Object.keys(cmdMap).forEach(function(cmdId) {
+                	cmdMap[cmdId].reject(errMsg);
+                });
+                destroyed = true;
             } else if (msg.msg) {
                 // This is a message from the native message host,
                 // we might need to put it back together because the host
@@ -157,9 +165,9 @@
         }
     	
     	this.sendMessage = function(msg, callback) {
-            if (destroyed) {
+            if (destroyed)
                 throw new Error("Wyrmhole not active");
-            }
+            
             var dfd = Deferred();
             var cmdId = command(msg);
             cmdMap[cmdId] = dfd;
@@ -185,9 +193,14 @@
             return loadDfd.promise;
         };
         this.destroy = function() {
+        	if (destroyed) { return; }
         	message({cmd: "destroy"});
+        	destroyed = true;
         };
         this.listPlugins = function() {
+            if (destroyed) 
+                throw new Error("Wyrmhole not active");
+            
             var dfd = Deferred();
             listDfds.unshift(dfd);
             message({"cmd": "list"});
