@@ -118,10 +118,11 @@ void FB::BrowserHost::AsyncHtmlLog(void *logReq)
         FB::DOM::WindowPtr window = req->m_host->getDOMWindow();
 
         if (window && window->getJSObject()->HasProperty("console")) {
-            window->getProperty<FB::JSObjectPtr>("console").done([=](JSObjectPtr obj) {
-                printf("Logging: %s\n", req->m_msg.c_str());
+            std::string logmsg = req->m_msg;
+            window->getProperty<FB::JSObjectPtr>("console").done([logmsg](JSObjectPtr obj) {
+                FBLOG_INFO("BrowserHost", "Logging: %s\n" << logmsg);
                 if (obj)
-                    obj->Invoke("log", FB::VariantList{req->m_msg});
+                    obj->Invoke("log", FB::VariantList{logmsg});
             });
         }
     } catch (const std::exception &) {
@@ -208,7 +209,7 @@ void FB::_asyncCallData::call()
         void (*f)(void *) = func;
         func = NULL;
         called = true;
-        f(userData); 
+        f(userData);
     }
 }
 
@@ -216,7 +217,7 @@ void FB::_asyncCallData::call()
 void FB::AsyncCallManager::call( _asyncCallData* data )
 {
     {
-        // Verify _asyncCallData is still in DataList. If not, the _asyncCallData has already been dealt with. 
+        // Verify _asyncCallData is still in DataList. If not, the _asyncCallData has already been dealt with.
         std::unique_lock<std::recursive_mutex> _l(m_mutex);
         std::set<_asyncCallData*>::iterator fnd = DataList.find(data);
         if (DataList.end() != fnd)
@@ -302,7 +303,7 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& 
     assertMainThread();
     if (enable_async && req.getCallback() && !req.getEventSink()) {
         // If a callback was provided, use SimpleStreamHelper to create it;
-        // This will actually call back into this function with an event sink                        
+        // This will actually call back into this function with an event sink
         BrowserStreamRequest newReq(req);
         FB::SimpleStreamHelperPtr asyncPtr(SimpleStreamHelper::AsyncRequest(shared_from_this(), req));
         return asyncPtr->getStream();
@@ -316,7 +317,7 @@ FB::BrowserStreamPtr FB::BrowserHost::createStream( const BrowserStreamRequest& 
 }
 
 FB::BrowserStreamPtr FB::BrowserHost::createPostStream( std::string url,
-    const PluginEventSinkPtr& callback, std::string postdata, bool cache /*= true*/, 
+    const PluginEventSinkPtr& callback, std::string postdata, bool cache /*= true*/,
     bool seekable /*= false*/, size_t internalBufferSize /*= 128 * 1024 */ ) const
 {
     BrowserStreamRequest req(url, "POST");
