@@ -3,18 +3,17 @@
 var firebreath = {}; //global object
 var ports = {};
 var hostName = "${PLUGIN_CRX_NATIVEHOST_NAME}";
+var mimeType = "<enter-mime-here>"; //ex: application/x-fbtestplugin
 
 console.log("Starting background script");
 
 /* Example of using Fire Wyrm in extension only */
 //window.addEventListener("load", function() {
-//	firebreath.wyrmhole.create("org.firebreath.firewyrmhost", "application/x-fbtestplugin").then(function(plugin) {
-//		var a = 1, b = 2;
-//		plugin.add(a, b).then(function(response) {
-//			console.log("add "+a+" + "+b+" = "+response);
-//		}, function() {
-//			console.log("add failed");
-//		})
+//	firebreath.wyrmhole.create(hostName, mimeType).then(function(wyrmhole) {
+//		var wyrm = new FireWyrmJS(wyrmhole);
+//		return wyrm.create(mimeType);
+//	}).then(function(plugin) {
+//		/* use plugin */
 //	}, function() {
 //		console.log('wyrmhole error');
 //	});
