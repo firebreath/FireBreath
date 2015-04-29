@@ -36,12 +36,7 @@
             
             if (typeof mimetype == 'string') {
             	wyrmhole.loadPlugin(mimetype).then(function() {
-            		var wyrm = new FireWyrmJS(wyrmhole);
-            		wyrm.create(mimetype).then(function() {
-            			dfd.resolve.apply(this, arguments)
-            		}, function() {
-            			dfd.reject.apply(this, arguments)
-            		});
+            		dfd.resolve.apply(this, arguments)
             	}, function() {
             		dfd.reject.apply(this, arguments);
             	});
