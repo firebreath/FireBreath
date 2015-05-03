@@ -25,7 +25,7 @@ Window::Window(FB::JSObjectPtr obj, IWebBrowser2 *web)
     m_webBrowser(web), m_htmlWin(FB::ptr_cast<IDispatchAPI>(obj)->getIDispatch())
 {
     if (!m_htmlWin) {
-        throw new std::bad_cast("This is not a valid Window object");
+        throw new std::bad_cast();
     }
 }
 
