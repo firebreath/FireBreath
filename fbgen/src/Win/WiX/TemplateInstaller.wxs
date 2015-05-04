@@ -63,7 +63,7 @@
                                     Id="NativeHostManifestRegEntry"
                                     Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json"
                                     KeyPath="yes" />
                             </Component>
 
