@@ -80,7 +80,15 @@ set (SOURCES
     )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireWyrmHosts")
+
+if (NOT FBSTRING_HostFileName)
+    set(FBSTRING_HostFileName ${PROJECT_NAME})
+endif()
+
+set_target_properties(${PROJECT_NAME} PROPERTIES 
+    OUTPUT_NAME ${FBSTRING_HostFileName}
+    FOLDER "FireWyrmHosts"
+    )
 
 if (FIREBREATH)
     link_boost_library(${PROJECT_NAME} filesystem)
