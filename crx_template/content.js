@@ -4,6 +4,7 @@
     var nextId = 1;
     var ports = {};
     var extId = '${PLUGIN_CRX_ID}';
+    var firebreathId = '${PLUGIN_CRX_WYRMHOLE_NAME}';
 
     window.addEventListener("message", function(event) {
         // We only accept messages from ourselves
@@ -11,6 +12,10 @@
 
         if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extId) {
             handleEvent(event.data);
+        }
+        
+        if (event.data && event.data.firebreath == firebreathId && event.data.callback) {
+        	initPage(event.data);
         }
     }, false);
 
@@ -66,22 +71,34 @@
             delete ports[portName];
         });
     }
+    
+    
+    function initPage(evt) { //initializing firebreath object - and passing it to callback
+    	injectScript("window['" + evt.callback + "']((function() {" +
+        	"var firebreath = {extId: '" + extId + "'};" +
+        	includeScript("FireBreathPromise.js") +
+        	includeScript("firewyrm.js") +
+        	includeScript("wyrmhole.js") +
+        	includeScript("wyrmhole-page.js") +
+        	"return firebreath;" +
+        "})())");
+    }
+    
+    function includeScript(path) { //getting javascript as text
+        var request = new XMLHttpRequest();
+        request.open('GET', chrome.extension.getURL(path) , false);
+        request.send(null);
+        return request.status == 0 || request.status == 200 ? request.responseText : null;
+    }
 
-    // Script to inject scripts into the page
-    function injectScript(script) {
-        // Inject the page script (wyrmhole.js) into the page
+    function injectScript(text) { //injecting javascript by text
         var s = document.createElement('script');
-        s.src = chrome.extension.getURL(script);
+        s.appendChild(document.createTextNode(text));
         s.onload = function() {
             this.parentNode.removeChild(this);
         };
         (document.head||document.documentElement).appendChild(s);
     }
     document.documentElement.className += ' FB_FW_ext ${PLUGIN_NAME}';
-
-    injectScript("FireBreathPromise.js");
-    injectScript("wyrmhole.js");
-    injectScript("firewyrm.js");
-
 })();
 

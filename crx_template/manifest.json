@@ -8,7 +8,7 @@
     "128": "icon-128.png"
   },
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background.js", "FireBreathPromise.js", "wyrmhole.js", "firewyrm.js"]
   },
   "content_scripts": [{
       "matches": [ "<all_urls>" ],
@@ -17,6 +17,7 @@
   }],
   "web_accessible_resources": [
       "wyrmhole.js",
+      "wyrmhole-page.js",
       "FireBreathPromise.js",
       "firewyrm.js"
   ],
