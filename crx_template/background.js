@@ -9,14 +9,14 @@ console.log("Starting background script");
 
 /* Example of using Fire Wyrm in extension only */
 //window.addEventListener("load", function() {
-//	firebreath.wyrmhole.create(hostName, mimeType).then(function(wyrmhole) {
-//		var wyrm = new FireWyrmJS(wyrmhole);
-//		return wyrm.create(mimeType);
-//	}).then(function(plugin) {
-//		/* use plugin */
-//	}, function() {
-//		console.log('wyrmhole error');
-//	});
+//  firebreath.wyrmhole.create(hostName, mimeType).then(function(wyrmhole) {
+//      var wyrm = new FireWyrmJS(wyrmhole);
+//      return wyrm.create(mimeType);
+//  }).then(function(plugin) {
+//      /* use plugin */
+//  }, function() {
+//      console.log('wyrmhole error');
+//  });
 //});
 
 /* Example of using Fire Wyrm via webpage */

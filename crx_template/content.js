@@ -1,9 +1,9 @@
-/*global chrome*/
+/*global chrome, Promise*/
 (function() {
 
     var nextId = 1;
     var ports = {};
-    var extId = '${PLUGIN_CRX_ID}';
+    var extId = chrome.runtime.id;
     var firebreathId = '${PLUGIN_CRX_WYRMHOLE_NAME}';
 
     window.addEventListener("message", function(event) {
@@ -13,9 +13,9 @@
         if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extId) {
             handleEvent(event.data);
         }
-        
+
         if (event.data && event.data.firebreath == firebreathId && event.data.callback) {
-        	initPage(event.data);
+            initPage(event.data);
         }
     }, false);
 
@@ -71,24 +71,43 @@
             delete ports[portName];
         });
     }
-    
-    
+
     function initPage(evt) { //initializing firebreath object - and passing it to callback
-    	injectScript("window['" + evt.callback + "']((function() {" +
-        	"var firebreath = {extId: '" + extId + "'};" +
-        	includeScript("FireBreathPromise.js") +
-        	includeScript("firewyrm.js") +
-        	includeScript("wyrmhole.js") +
-        	includeScript("wyrmhole-page.js") +
-        	"return firebreath;" +
-        "})())");
+
+        var scriptPromises = [
+            includeScript("FireBreathPromise.js"),
+            includeScript("firewyrm.js"),
+            includeScript("wyrmhole.js"),
+            includeScript("wyrmhole-page.js")
+        ];
+        Promise.all(scriptPromises).then(function(scripts) {
+            injectScript("window[" + JSON.stringify(evt.callback) + "]((function() {" +
+                         "var firebreath = {extId: '" + extId + "'};" +
+                         scripts.join('\n') +
+                         "return firebreath;" +
+                         "})())");
+        }, function() {
+            console.warn("Could not load wyrmhole extension");
+        });
     }
-    
+
     function includeScript(path) { //getting javascript as text
-        var request = new XMLHttpRequest();
-        request.open('GET', chrome.extension.getURL(path) , false);
-        request.send(null);
-        return request.status == 0 || request.status == 200 ? request.responseText : null;
+        return new Promise(function(resolve, reject) {
+            var req = new XMLHttpRequest();
+
+            req.onreadystatechange = function () {
+                if (req.readyState == 4) {
+                    if (req.status >= 200 && req.status < 300) {
+                        resolve(req.responseText);
+                    } else {
+                        reject(req);
+                    }
+                }
+            };
+
+            req.open("GET", chrome.extension.getURL(path));
+            req.send();
+        });
     }
 
     function injectScript(text) { //injecting javascript by text
