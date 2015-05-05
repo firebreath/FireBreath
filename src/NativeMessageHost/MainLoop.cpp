@@ -204,7 +204,7 @@ MainLoop& MainLoop::get(std::string url) {
 
 void MainLoop::run() {
     // This is the main loop
-    std::cerr << "Starting main message loop" << std::endl;
+	log("Starting main message loop");
 
     memset(&m_cFuncs, 0, sizeof(m_cFuncs));
     m_cFuncs.size = sizeof(m_cFuncs);

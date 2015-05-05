@@ -29,7 +29,7 @@ bool canRead() {
 
 void ReadLoop::run() {
     // Begin read loop thread
-    std::cerr << "Starting read loop" << std::endl;
+	log("Starting read loop");
     
     uint32_t len = 0;
 
@@ -48,16 +48,18 @@ void ReadLoop::run() {
             return;
         } else if (res != len) {
             // Note: "Ack!" is a technical term
-            std::cerr << "Ack! Expected to read " << len << " bytes but instead read " << res << " bytes." << std::endl;
+			std::ostringstream oss;
+			oss << "Ack! Expected to read " << len << " bytes but instead read " << res << " bytes.";
+			log(oss.str());
         } else if (!canRead()) {
             // There was an error reading; time to bail
-            std::cerr << "Could not read from stdin! Bailing" << std::endl;
+			log("Could not read from stdin! Bailing");
         } else {
             m_main.messageIn(inMessage);
         }
         delete[] inString;
     }
 
-    std::cerr << "Read loop ending" << std::endl;
+	log("Read loop ending");
     // End thread
 }

@@ -35,7 +35,9 @@ std::unique_ptr<PluginLoader> PluginLoader::LoadPlugin(std::string mimetype) {
     if (fnd == plugins.end()) {
         throw std::runtime_error("No registered plugins detected");
     }
-    std::cerr << "Loading plugin from: " << fnd->path << std::endl;
+	std::ostringstream oss;
+	oss << "Loading plugin from: " << fnd->path;
+	log(oss.str());
     
     return std::unique_ptr<PluginLoader>(new PluginLoaderMac(mimetype, fnd->path, fnd->name));
 }
