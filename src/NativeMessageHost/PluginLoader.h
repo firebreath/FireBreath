@@ -16,6 +16,7 @@ Copyright 2009 GradeCam, Richard Bateman, and the
 #ifndef PluginLoader_h__
 #define PluginLoader_h__
 
+#include "HostMain.h"
 #include "FireWyrm.h"
 #include <algorithm>
 #include <string>

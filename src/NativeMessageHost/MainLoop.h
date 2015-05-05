@@ -99,7 +99,7 @@ public:
     }
     void shutdown() {
         std::unique_lock<std::mutex> _l(m_mutex);
-        std::cerr << "Exit signaled" << std::endl;
+		log("Exit signaled");
         m_needsToExit = true;
         _l.unlock();
         m_cond.notify_all();
