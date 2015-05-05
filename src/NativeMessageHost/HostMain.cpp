@@ -15,7 +15,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 
 #include "MainLoop.h"
 #include "ReadLoop.h"
-#include <iostream>
+#include "HostMain.h"
 #ifdef WIN32
 #include <intrin.h>
 #include <io.h>
@@ -23,6 +23,13 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #endif
 
 //#define DEBUG_BREAK
+
+void log(std::string message)
+{
+#ifdef DEBUG
+	std::cerr << message << std::endl;
+#endif
+}
 
 int main(int argc, char* argv[]) {
 
@@ -34,7 +41,7 @@ int main(int argc, char* argv[]) {
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
 #endif
-    std::cerr << "Starting FireWyrm native message host";
+	log("Starting FireWyrm native message host");
     if (argv[1] != NULL) {
         MainLoop& mainLoop = MainLoop::get(argv[1]);
         ReadLoop reader(mainLoop);
@@ -48,7 +55,7 @@ int main(int argc, char* argv[]) {
 
         // TODO: Join the reader thread
     } else {
-        std::cerr << "This application is intended to be run from Chrome as a Native Messaging extension" << std::endl;
+		log("This application is intended to be run from Chrome as a Native Messaging extension");
     }
     return 0;
 }
