@@ -1,6 +1,6 @@
 {
    "name": "${PLUGIN_CRX_NATIVEHOST_NAME}",
-   "description": "FireBreath FireWyrm Native Messaging Wyrmhole",
+   "description": "${PLUGIN_CRX_NATIVEHOST_DESCRIPTION}",
    "path": "${NAMESHOST}",
    "type": "stdio",
    "allowed_origins": [

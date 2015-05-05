@@ -1,9 +1,10 @@
-/*global chrome*/
+/*global chrome, Promise*/
 (function() {
 
     var nextId = 1;
     var ports = {};
-    var extId = '${PLUGIN_CRX_ID}';
+    var extId = chrome.runtime.id;
+    var firebreathId = '${PLUGIN_CRX_WYRMHOLE_NAME}';
 
     window.addEventListener("message", function(event) {
         // We only accept messages from ourselves
@@ -11,6 +12,10 @@
 
         if (event.data && event.data.source && event.data.source == "page" && event.data.ext == extId) {
             handleEvent(event.data);
+        }
+
+        if (event.data && event.data.firebreath == firebreathId && event.data.callback) {
+            initPage(event.data);
         }
     }, false);
 
@@ -67,21 +72,52 @@
         });
     }
 
-    // Script to inject scripts into the page
-    function injectScript(script) {
-        // Inject the page script (wyrmhole.js) into the page
+    function initPage(evt) { //initializing firebreath object - and passing it to callback
+
+        var scriptPromises = [
+            includeScript("FireBreathPromise.js"),
+            includeScript("firewyrm.js"),
+            includeScript("wyrmhole.js"),
+            includeScript("wyrmhole-page.js")
+        ];
+        Promise.all(scriptPromises).then(function(scripts) {
+            injectScript("window[" + JSON.stringify(evt.callback) + "]((function() {" +
+                         "var firebreath = {extId: '" + extId + "'};" +
+                         scripts.join('\n') +
+                         "return firebreath;" +
+                         "})())");
+        }, function() {
+            console.warn("Could not load wyrmhole extension");
+        });
+    }
+
+    function includeScript(path) { //getting javascript as text
+        return new Promise(function(resolve, reject) {
+            var req = new XMLHttpRequest();
+
+            req.onreadystatechange = function () {
+                if (req.readyState == 4) {
+                    if (req.status >= 200 && req.status < 300) {
+                        resolve(req.responseText);
+                    } else {
+                        reject(req);
+                    }
+                }
+            };
+
+            req.open("GET", chrome.extension.getURL(path));
+            req.send();
+        });
+    }
+
+    function injectScript(text) { //injecting javascript by text
         var s = document.createElement('script');
-        s.src = chrome.extension.getURL(script);
+        s.appendChild(document.createTextNode(text));
         s.onload = function() {
             this.parentNode.removeChild(this);
         };
         (document.head||document.documentElement).appendChild(s);
     }
     document.documentElement.className += ' FB_FW_ext ${PLUGIN_NAME}';
-
-    injectScript("FireBreathPromise.js");
-    injectScript("wyrmhole.js");
-    injectScript("firewyrm.js");
-
 })();
 
