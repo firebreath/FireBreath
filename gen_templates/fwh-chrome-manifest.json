@@ -3,7 +3,5 @@
    "description": "${PLUGIN_CRX_NATIVEHOST_DESCRIPTION}",
    "path": "${NAMESHOST}",
    "type": "stdio",
-   "allowed_origins": [
-     "chrome-extension://@PLUGIN_CRX_ID@/"
-   ]
+   "allowed_origins": [${PLUGIN_CRX_ALLOWED_ORIGINS}]
 }
