@@ -238,7 +238,7 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
         ENDFOREACH()
 
-        if (WIX_FORCE_PER STREQUAL "machine")
+        if (FB_ATLREG_MACHINEWIDE)
             set(_WIX_HEAT_TRANSFORM "FixFragment_HKLM.xslt")
         else()
             set(_WIX_HEAT_TRANSFORM "FixFragment_HKCU.xslt")
