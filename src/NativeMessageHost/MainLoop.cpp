@@ -157,7 +157,7 @@ void MainLoop::messageIn(std::string msg) {
     messageInfo processedMsg;
     try {
         processedMsg = parseIncomingMessage(msg);
-    } catch (std::exception e) {
+    } catch (std::exception& e) {
         processedMsg = messageInfo(MessageType::ERROR, e.what());
     }
 
@@ -280,7 +280,7 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
 
             m_pluginLoader->Init(&m_hFuncs, &m_cFuncs);
             writeObj(stringMap{ { "status", "success" }, { "plugin", m_pluginLoader->getPluginName() } });
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
         }
     } else if (message.type == MessageType::DESTROY) {
@@ -288,7 +288,7 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
             m_pluginLoader->Finit();
             m_pluginLoader.reset();
             writeObj(stringMap{ { "status", "success" } });
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
         }
     } else if (message.type == MessageType::ENUM) {
@@ -315,7 +315,7 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
             msg["status"] = "success";
             msg["list"] = plugArr;
             writeMessage(stringify(msg));
-        } catch (std::exception e) {
+        } catch (std::exception& e) {
             writeObj(stringMap{ { "status", "error" }, { "message", e.what() } });
         }
     } else {
