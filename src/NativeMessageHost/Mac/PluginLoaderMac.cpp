@@ -133,7 +133,7 @@ PluginLoaderMac::PluginLoaderMac(std::string mimetype, std::string filename, std
     m_module = dlopen(filename.c_str(), RTLD_LAZY);
 
     if (!m_module) {
-        throw std::runtime_error("Could not load file");
+		throw std::runtime_error(dlerror());
     }
 
     initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "FireWyrm_Init"));
