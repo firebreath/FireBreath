@@ -82,6 +82,7 @@ public:
     static MainLoop& get(std::string url = "");
 
     void run();
+	void waitForWork(std::unique_lock<std::mutex> *_l);
 
     void messageIn(std::string msg);
     void scheduleCall(FW_AsyncCall fn, void* pData) {
