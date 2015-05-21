@@ -279,7 +279,9 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
         }
     } else if (message.type == MessageType::DESTROY) {
         try {
-            m_pluginLoader->Finit();
+            if (m_pluginLoader) {
+                m_pluginLoader->Finit();
+            }
             m_pluginLoader.reset();
             writeObj(stringMap{ { "status", "success" } });
         } catch (std::exception& e) {
