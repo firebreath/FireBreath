@@ -216,21 +216,15 @@ void MainLoop::run() {
     m_hFuncs.call = &doCommand;
     m_hFuncs.cmdCallback = &doCommandCallback;
 
-    auto workExists = [this]() {
-        return m_needsToExit || m_messagesIn.size() || m_AsyncCalls.size();
-    };
-
     std::unique_lock<std::mutex> _l(m_mutex);
     while (!m_needsToExit) {
-        // If work already exists, don't wait
-        if (!workExists()) {
-            m_cond.wait(_l, workExists);
-        }
+		waitForWork(&_l);
 
         if (m_needsToExit) {
             // TODO: Do any cleanup here
             return;
         }
+
         // This is intentionally not a loop; this way new calls scheduled will not prevent other messages
         // from being processed
         if (m_AsyncCalls.size()) {
@@ -285,7 +279,9 @@ void MainLoop::processBrowserMessage(messageInfo& message) {
         }
     } else if (message.type == MessageType::DESTROY) {
         try {
-            m_pluginLoader->Finit();
+            if (m_pluginLoader) {
+                m_pluginLoader->Finit();
+            }
             m_pluginLoader.reset();
             writeObj(stringMap{ { "status", "success" } });
         } catch (std::exception& e) {
