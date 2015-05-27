@@ -400,7 +400,11 @@ function FireWyrmJS(wyrmhole) {
 
         // Create and resolve the queenling
         var send = Deferred.fn(wyrmhole, 'sendMessage');
-        return send(['New', mimetype, args]).then(function(spawnId) {
+        
+        // Register the 'browser' object before bailing
+        return register('browser', browser).then(function() {
+        	return send(['New', mimetype, args]);
+        }).then(function(spawnId) {
             return tools.wrapAlienWyrmling(wyrmhole, wyrmlingStore, spawnId, 0);
         }).then(function(queenling) {
             tools.defineProperties(queenling, {
@@ -436,9 +440,6 @@ function FireWyrmJS(wyrmhole) {
             supportedTypes[type] = factory;
         });
     }
-
-    // Register the 'browser' object before bailing
-    register('browser', browser);
 }
 }(typeof(global) !== 'undefined' ? global : this));
 
