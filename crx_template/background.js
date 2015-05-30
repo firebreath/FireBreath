@@ -47,6 +47,7 @@ chrome.runtime.onConnect.addListener(function(scriptPort) {
         // the script port. If there is an error, report it first
         if (chrome.runtime.lastError) {
             scriptPort.postMessage({error: "Disconnected", message: chrome.runtime.lastError.message});
+            console.warn("Disconnected:", chrome.runtime.lastError.message);
         } else {
             scriptPort.postMessage({error: "Disconnected"});
         }

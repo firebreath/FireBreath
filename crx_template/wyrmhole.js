@@ -4,7 +4,8 @@
         instances: [],
         create: createWyrmhole,
         connect: connectWyrmhole,
-        message: messageWyrmhole
+        message: messageWyrmhole,
+        destroy: function() {}
     };
 
     var nativeHostApp = "${PLUGIN_CRX_NATIVEHOST_NAME}";
