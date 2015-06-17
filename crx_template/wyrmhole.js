@@ -216,6 +216,7 @@
             destroyed = true;
         };
         this.listPlugins = function() {
+            //console.log("Listing plugins");
             var dfd = Deferred();
             if (destroyed) {
                 dfd.reject(new Error("Wyrmhole not active"));
@@ -224,7 +225,15 @@
 
             listDfds.unshift(dfd);
             message({"cmd": "list"});
+            // This hack works because a promises/a+ compliant promise ignores a reject or resolve
+            // if it has already settled.  This fixes an intermittent bug that I can't track down
+            // which causes a list to *sometimes* never get responded to.
+            setTimeout(function() {
+                dfd.reject(new Error("Timout talking to Wyrmhole"));
+            }, 2000);
+
             return dfd.promise.then(function(resp) {
+                //console.log("Plugin list:", resp);
                 if (resp.status == "success") {
                     return resp.list;
                 } else {
