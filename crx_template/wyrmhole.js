@@ -75,6 +75,10 @@
             } else if (msg.status && msg.status == "error" && loadDfd && !loaded) {
                 loadDfd.reject(new Error(msg.message));
                 loadDfd = void 0;
+            } else if (msg.message && msg.message == "Error" && loadDfd && !loaded) {
+                // This can happen if the port closed unexpectedly
+                loadDfd.reject(new Error(msg.error));
+                loadDfd = void 0;
             } else if (msg.list) {
                 var listDfd = listDfds.pop();
                 if (listDfd) { listDfd.resolve(msg); }
