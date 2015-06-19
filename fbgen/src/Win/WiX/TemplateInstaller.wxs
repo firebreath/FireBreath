@@ -66,8 +66,20 @@
                                     Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json"
                                     KeyPath="yes" />
                             </Component>
-
-                            <!-- Put Additional files here: -->
+                          
+                            <!-- Get Chrome to download from WebStore
+                            <Component Id="ChromeExtensionCrx" Guid="*">
+                              <RegistryValue
+                                  Root="HKCU"
+                                  Id="ChromeExtensionRegEntry"
+                                  Key="SOFTWARE\Google\Chrome\Extensions\${PLUGIN_CRX_ID}"
+                                  Name="update_url"
+                                  Type="string"
+                                  Value="https://clients2.google.com/service/update2/crx" />
+                            </Component>
+                            -->
+                          
+                          <!-- Put Additional files here: -->
                             <!-- example:
                             <Component Id="UniqueComponentId" Guid="*">
                                 <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
@@ -86,6 +98,7 @@
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
             <ComponentRef Id="FireWyrmNativeMessageHost"/>
+            <!-- <ComponentRef Id="ChromeExtensionCrx"/> -->
         </Feature>
     </Product>
 </Wix>
