@@ -77,3 +77,9 @@ add_native_message_host(${PROJECT_NAME})
 # 	"${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 # 	${PROJECT_NAME})
 
+#firebreath_sign_file("${PLUGIN_NAME}"
+#    "${PLUGIN_PATH}/${PLUGIN_CRX_NATIVEHOST_FILENAME}.exe"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
+#    "http://timestamp.verisign.com/scripts/timestamp.dll")
+
