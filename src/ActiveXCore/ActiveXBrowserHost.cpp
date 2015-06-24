@@ -37,6 +37,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 using boost::algorithm::replace_first;
 using namespace FB;
 using namespace FB::ActiveX;
+using std::vector;
+using std::string;
 
 ActiveXBrowserHost::ActiveXBrowserHost(IWebBrowser2 *doc, IOleClientSite* site)
     : m_messageWin(new FB::WinMessageWindow())
@@ -85,6 +87,56 @@ FB::DOM::ElementPtr ActiveXBrowserHost::_createElement(const FB::JSObjectPtr& ob
 FB::DOM::NodePtr ActiveXBrowserHost::_createNode(const FB::JSObjectPtr& obj) const
 {
     return FB::DOM::NodePtr(new AXDOM::Node(std::dynamic_pointer_cast<IDispatchAPI>(obj), m_webBrowser));
+}
+
+Promise<VariantList> ActiveXBrowserHost::GetArrayValues(FB::JSObjectPtr obj) {
+	IDispatchAPIPtr ptr = std::dynamic_pointer_cast<IDispatchAPI>(obj);
+	if (!ptr) {
+		return VariantList();
+	}
+
+	uint32_t len = ptr->GetPropertySync("length").convert_cast<uint32_t>();
+	VariantList out;
+	for (size_t i{ 0 }; i < len; ++i) {
+		out.emplace_back(ptr->GetPropertySync(i));
+	}
+	return out;
+}
+
+Promise<VariantMap> ActiveXBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
+	VariantMap dst;
+	IDispatchAPIPtr src = std::dynamic_pointer_cast<IDispatchAPI>(obj);
+	if (!src) {
+		return dst;
+	}
+	try {
+		vector<string> fields;
+		src->getMemberNames(fields);
+
+		for (auto fname : fields) {
+			dst[fname] = src->GetPropertySync(fname);
+		}
+	}
+	catch (const FB::script_error& e) {
+		throw e;
+	}
+	return dst;
+}
+
+IDispatchAPIPtr ActiveXBrowserHost::getPromiseObject() {
+	IDispatchAPIPtr dfd;
+	try {
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		dfd = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("FireBreathPromise", FB::VariantList{}).cast<JSObjectPtr>());
+	} catch (...) {
+		// Didn't find it
+		std::string jsStr{ BrowserHost::fbPromiseJS };
+		this->evaluateJavaScript(jsStr);
+		// This time if it throws an exception, let it throw
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		dfd = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("FireBreathPromise", FB::VariantList{}).cast<JSObjectPtr>());
+	}
+	return dfd;
 }
 
 int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::JSObjectPtr& func, const FB::VariantList& args, std::string fname /*= ""*/) {

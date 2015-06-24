@@ -92,6 +92,7 @@ namespace FB { namespace ActiveX
 
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
         tdm.insert(makeBuilderEntry<FB::FBNull>());
+		tdm.insert(makeBuilderEntry<const std::exception>());
     }
     
     inline const ComVariantBuilderMap& getComVariantBuilderMap()
@@ -303,6 +304,14 @@ namespace FB { namespace ActiveX
         return outVar;
     }
     
+	template<> inline
+	CComVariant makeComVariant<const std::exception>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+	{
+		const std::exception e = var.cast<const std::exception>();
+		std::wstring wstr = FB::utf8_to_wstring(e.what());
+		CComBSTR bStr(wstr.c_str());
+		return bStr;
+	}
     namespace select_ccomvariant_builder
     {        
         template<class T>

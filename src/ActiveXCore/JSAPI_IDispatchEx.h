@@ -29,6 +29,8 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #include <map>
 #include "logging.h"
 #include <mshtmdid.h>
+#include "Deferred.h"
+#include "ComPromise.h"
 
 MIDL_INTERFACE("a7f89004-620a-56e0-aeea-ec0e8da18fb3")
 IFireBreathObject : public IUnknown
@@ -69,8 +71,16 @@ namespace FB { namespace ActiveX {
 
     protected:
         FB::JSAPIWeakPtr m_api;
-
         ActiveXBrowserHostWeakPtr m_host;
+		void JSAPI_IDispatchExBase::setPromise(FB::variantPromise promise, VARIANT *result) {
+			auto comPromise = ComPromise::create(getHost(), promise);
+
+			CComVariant outVar;
+			::VariantInit(result);
+
+			outVar = comPromise->getComPromise()->getIDispatch();
+			outVar.Detach(result);
+		}
     };
 
     template <class T, class IDISP, const IID* piid>
@@ -385,12 +395,8 @@ namespace FB { namespace ActiveX {
                         params.emplace_back(host->getVariant(&pdp->rgvarg[i]));
                     }
                 }
-                FB::variant rVal;
-                // TODO: Create a promise from the DOM, return it tied to the Deferred returned here
-                //rVal = api->Invoke(wsName, params);
-                
-                if(pvarRes)
-                    host->getComVariant(pvarRes, rVal);
+
+				setPromise(api->Invoke(wsName, params), pvarRes);
 
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
 
@@ -403,10 +409,7 @@ namespace FB { namespace ActiveX {
                 if(!pvarRes)
                     return E_INVALIDARG;
 
-                // TODO: Create a promise from the DOM, return it tied to the Deferred returned here
-                //FB::variant rVal = api->GetProperty(wsName);
-
-                //host->getComVariant(pvarRes, rVal);
+				setPromise(api->GetProperty(wsName), pvarRes);
 
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
 
@@ -416,24 +419,26 @@ namespace FB { namespace ActiveX {
             } else {
                 throw FB::invalid_member("Invalid method or property name");
             }
-        } catch (const FB::invalid_member&) {
-            FBLOG_INFO("JSAPI_IDispatchEx", "No such member: \"" << FB::wstring_to_utf8(wsName) << "\"");
-            return DISP_E_MEMBERNOTFOUND;
-        } catch (const FB::script_error& se) {
-            FBLOG_INFO("JSAPI_IDispatchEx", "Script error for \"" << FB::wstring_to_utf8(wsName) << "\": " << se.what());
-            if (pei) {
-                pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
-                pei->bstrDescription = CComBSTR(se.what()).Detach();
-                pei->bstrHelpFile = nullptr;
-                pei->pfnDeferredFillIn = nullptr;
-                pei->scode = E_NOTIMPL;
-            }
-            return DISP_E_EXCEPTION;
-        } catch (...) {
-            return E_NOTIMPL;
-        }
 
-        return S_OK;
+			return S_OK;
+		} catch (const std::exception &e) {
+			try {
+				FB::variantDeferred dfd;
+				dfd.reject(e);
+				setPromise(dfd.promise(), pvarRes);
+				return S_OK;
+			}
+			catch (...) {
+				if (pei) {
+				    pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
+				    pei->bstrDescription = CComBSTR(e.what()).Detach();
+				    pei->bstrHelpFile = nullptr;
+				    pei->pfnDeferredFillIn = nullptr;
+				    pei->scode = E_NOTIMPL;
+				}
+				return DISP_E_EXCEPTION;
+			}
+		}
     }
 
     template <class T, class IDISP, const IID* piid>
