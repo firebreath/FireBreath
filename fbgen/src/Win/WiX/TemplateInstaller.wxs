@@ -53,21 +53,33 @@
                                     KeyPath="yes" />
                             </Component>
                             <Component Id="FireWyrmNativeMessageHost" Guid="{7056973D-34AE-449E-8B30-981B05EAEC99}">
-                                <File Id="Manifest_template" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}.json" />
+                                <File Id="Manifest_template" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}.json" />
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component" Source="[#Manifest_template]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json" ExecuteOnInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]${FBSTRING_HostFileName}.exe" />
                                 </SystemTools:TemplateFile>
-                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\FireWyrmNativeMessageHost.exe" />
+                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\${FBSTRING_HostFileName}.exe" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Id="NativeHostManifestRegEntry"
                                     Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json"
                                     KeyPath="yes" />
                             </Component>
-
-                            <!-- Put Additional files here: -->
+                          
+                            <!-- Get Chrome to download from WebStore
+                            <Component Id="ChromeExtensionCrx" Guid="*">
+                              <RegistryValue
+                                  Root="HKCU"
+                                  Id="ChromeExtensionRegEntry"
+                                  Key="SOFTWARE\Google\Chrome\Extensions\${PLUGIN_CRX_ID}"
+                                  Name="update_url"
+                                  Type="string"
+                                  Value="https://clients2.google.com/service/update2/crx" />
+                            </Component>
+                            -->
+                          
+                          <!-- Put Additional files here: -->
                             <!-- example:
                             <Component Id="UniqueComponentId" Guid="*">
                                 <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
@@ -86,6 +98,7 @@
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
             <ComponentRef Id="FireWyrmNativeMessageHost"/>
+            <!-- <ComponentRef Id="ChromeExtensionCrx"/> -->
         </Feature>
     </Product>
 </Wix>

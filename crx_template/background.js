@@ -3,7 +3,7 @@
 var firebreath = {}; //global object
 var ports = {};
 var hostName = "${PLUGIN_CRX_NATIVEHOST_NAME}";
-var mimeType = "<enter-mime-here>"; //ex: application/x-fbtestplugin
+var mimeType = "${FBSTRING_MIMEType}";
 
 console.log("Starting background script");
 
