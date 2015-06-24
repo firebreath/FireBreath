@@ -40,6 +40,7 @@ file (GLOB AXDOM RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
 
 file (GLOB SCRIPTING RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     ActiveXBro*
+    AXPromise*
     ComVar*
     COMJ*
     IDispatchAPI.*
