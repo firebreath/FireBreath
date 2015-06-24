@@ -19,7 +19,7 @@ set(PLUGIN_CRX_ID "dlfdfkalmjbghacnadegnkmbcnpmnmfn")
 set(PLUGIN_CRX_WYRMHOLE_NAME ${COMPANY_NAME})
 set(PLUGIN_CRX_NATIVEHOST_NAME "${COMPANY_REVDOMAIN}.firewyrmhost")
 set(PLUGIN_CRX_NATIVEHOST_DESCRIPTION "${COMPANY_NAME} FireWyrm Native Messaging Wyrmhole")
-set(PLUGIN_CRX_NATIVEHOST_FILENAME "FireWyrmNativeMessageHost")
+set(FBSTRING_HostFileName "FireWyrmNativeMessageHost")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME @{PLUGIN_ident}Lib)

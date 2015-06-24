@@ -16,7 +16,7 @@
 # Written to work with cmake 3.0
 cmake_minimum_required (VERSION 3.0)
 
-Project (${PLUGIN_CRX_NATIVEHOST_FILENAME})
+Project (FireWyrmNativeMessageHost)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()

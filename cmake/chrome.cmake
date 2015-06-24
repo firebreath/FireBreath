@@ -67,7 +67,7 @@ function (add_native_message_host TARGETNAME)
     add_custom_command(
         TARGET ${TARGETNAME}
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:${PLUGIN_CRX_NATIVEHOST_FILENAME}>" "${RESOURCE_DIR}"
+        COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:FireWyrmNativeMessageHost>" "${RESOURCE_DIR}"
         )
     if (UNIX)
         if (APPLE)
@@ -88,7 +88,7 @@ function (add_native_message_host TARGETNAME)
                                         "~/Library/Internet Plug-Ins/$<TARGET_FILE_NAME:${TARGETNAME}>.plugin"
             COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-chrome-manifest.json"
                                      -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
-                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:${PLUGIN_CRX_NATIVEHOST_FILENAME}>"
+                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
                                      -P ${CFGFILE_SCRIPT}
             DEPENDS ${TARGETNAME}
             )
@@ -97,7 +97,7 @@ function (add_native_message_host TARGETNAME)
             ${TARGETNAME}_devinstall
             COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-chrome-manifest.json"
                                      -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
-                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:${PLUGIN_CRX_NATIVEHOST_FILENAME}>"
+                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
                                      -P ${CFGFILE_SCRIPT}
             COMMAND ${CMAKE_COMMAND} -E write_regv "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                                    "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"

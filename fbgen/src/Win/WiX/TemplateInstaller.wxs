@@ -55,9 +55,9 @@
                             <Component Id="FireWyrmNativeMessageHost" Guid="{7056973D-34AE-449E-8B30-981B05EAEC99}">
                                 <File Id="Manifest_template" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}.json" />
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component" Source="[#Manifest_template]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}.json" ExecuteOnInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_FILENAME}.exe" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]${FBSTRING_HostFileName}.exe" />
                                 </SystemTools:TemplateFile>
-                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_FILENAME}.exe" />
+                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\${FBSTRING_HostFileName}.exe" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Id="NativeHostManifestRegEntry"
