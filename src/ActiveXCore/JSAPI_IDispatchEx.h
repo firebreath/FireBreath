@@ -16,7 +16,6 @@ Copyright 2009 Richard Bateman, Firebreath development team
 #ifndef H_JSAPI_IDISPATCHEX
 #define H_JSAPI_IDISPATCHEX
 
-#include "AXPromise.h"
 #include "ActiveXBrowserHost.h"
 #include "APITypes.h"
 #include "JSAPI.h"
@@ -96,7 +95,7 @@ namespace FB { namespace ActiveX {
 
     private:
         const std::string m_mimetype;
-		void setPromise(FB::variantPromise promise, VARIANT *result);
+
     protected:
         ConnectionPointMap m_connPtMap;
 
@@ -333,12 +332,6 @@ namespace FB { namespace ActiveX {
         return true;
     }
 
-	template <class T, class IDISP, const IID* piid>
-	void JSAPI_IDispatchEx<T, IDISP, piid>::setPromise(FB::variantPromise promise, VARIANT *result) {
-		auto axPromise = AXPromise::create(getHost(), promise);
-		CComVariant(axPromise->getAXPromise()).Detach(result);
-	}
-
     template <class T, class IDISP, const IID* piid>
     HRESULT JSAPI_IDispatchEx<T,IDISP,piid>::InvokeEx(DISPID id, LCID lcid, WORD wFlags,
                                                  DISPPARAMS *pdp, VARIANT *pvarRes, 
@@ -411,10 +404,9 @@ namespace FB { namespace ActiveX {
                     return E_INVALIDARG;
 
                 // TODO: Create a promise from the DOM, return it tied to the Deferred returned here
-                FB::variantPromise rVal = api->GetProperty(wsName);
-//                host->getComVariant(pvarRes, rVal);
+                //FB::variant rVal = api->GetProperty(wsName);
 
-				setPromise(rVal, pvarRes);
+                //host->getComVariant(pvarRes, rVal);
 
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
 

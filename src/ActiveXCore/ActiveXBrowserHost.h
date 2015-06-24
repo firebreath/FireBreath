@@ -67,11 +67,7 @@ namespace FB {
             }
 
         public:
-			IDispatchAPIPtr getPromiseObject();
-			IDispatchAPIPtr getPromiseProperty(IDispatchAPIPtr obj, std::string name);
-			FB::variant InvokePromise(IDispatchAPIPtr obj, std::string name, const FB::VariantList& args);
-
-			FB::DOM::DocumentPtr getDOMDocument() override;
+            FB::DOM::DocumentPtr getDOMDocument() override;
             FB::DOM::WindowPtr getDOMWindow() override;
             FB::DOM::ElementPtr getDOMElement() override;
             void Navigate(std::string url, std::string target) override;

@@ -111,39 +111,6 @@ int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::
     return v.convert_cast<int>();
 }
 
-IDispatchAPIPtr ActiveXBrowserHost::getPromiseObject()
-{
-	FB::DOM::WindowPtr window = getDOMWindow();
-	IDispatchAPIPtr helper;
-	try
-	{
-		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(window->getJSObject());
-		helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync("FireBreathPromise").cast<JSObjectPtr>());
-	}
-	catch (const FB::bad_variant_cast&) {
-		std::string newjs{ BrowserHost::fbPromiseJS };
-		this->evaluateJavaScript(newjs);
-		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(window->getJSObject());
-		helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync("FireBreathPromise").cast<JSObjectPtr>());
-	}
-	return helper;
-}
-
-IDispatchAPIPtr ActiveXBrowserHost::getPromiseProperty(IDispatchAPIPtr obj, std::string name)
-{
-	// ISSUE: not finding returning item?
-	boolean flag = obj->HasProperty(name);
-	IDispatchAPIPtr helper = std::dynamic_pointer_cast<IDispatchAPI>(obj->GetPropertySync(name).cast<JSObjectPtr>());
-
-	return helper;
-}
-
-FB::variant ActiveXBrowserHost::InvokePromise(IDispatchAPIPtr obj, std::string name, const FB::VariantList& args)
-{
-	FB::variant v = obj->InvokeSync(name, args);
-	return v;
-}
-
 void ActiveXBrowserHost::initDOMObjects()
 {
     // m_htmlWin/m_htmlDocDisp will be null after suspend()
