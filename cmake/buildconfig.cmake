@@ -77,9 +77,6 @@ endif()
 # because it is the most convenient place to put them to apply
 # to all targets
 if(UNIX)
-    set(CMAKE_CXX_STANDARD 11)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
     # XP_UNIX is used by the Gecko SDK
     set(gecko_defs "-DXP_UNIX")
     if(APPLE)
@@ -98,7 +95,7 @@ if(UNIX)
         # too.
         set(fPIC_flag "-fPIC")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_X11=1")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFB_X11=1 -std=c++11")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFB_X11=1")
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${gecko_defs} ${fPIC_flag}")

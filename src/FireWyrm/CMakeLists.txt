@@ -19,7 +19,6 @@ Project (FireWyrm)
 if (VERBOSE)
     message ("Generating project ${PROJECT_NAME} in ${CMAKE_CURRENT_BINARY_DIR}")
 endif()
-
 if (FIREBREATH)
     add_firebreath_library(jsoncpp)
 endif()
@@ -45,6 +44,7 @@ set (SOURCES
 
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 target_link_libraries(${PROJECT_NAME}
     ${Boost_LIBRARIES}
