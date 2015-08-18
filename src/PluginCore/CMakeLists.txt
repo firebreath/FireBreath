@@ -99,6 +99,7 @@ endif()
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 export(TARGETS PluginCore APPEND FILE ${FB_EXPORT_FILE})
 

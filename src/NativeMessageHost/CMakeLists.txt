@@ -105,6 +105,8 @@ target_link_libraries(${PROJECT_NAME}
     ${LIBDL_LIBRARIES}
     jsoncpp
     )
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
+
 
 export(TARGETS ${PROJECT_NAME} APPEND FILE ${FB_EXPORT_FILE})
 if (FB_RELEASE)

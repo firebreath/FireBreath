@@ -228,6 +228,7 @@ add_definitions (-DUNICODE -D_UNICODE -UMBCS -U_MBCS)
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Generated")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 if (WIN32)
     # psapi is needed to get the process info and check if WiX is calling
     # us; wish there was a better way to do this, but there doesn't seem to be

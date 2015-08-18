@@ -64,6 +64,7 @@ endif( CMAKE_COMPILER_IS_GNUCXX )
 if (NOT TARGET_ALREADY_EXISTS)
     add_library (jsoncpp STATIC ${SOURCES})
     set_target_properties(jsoncpp PROPERTIES FOLDER "Libraries")
+	set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 endif()
 
 if (FIREBREATH)

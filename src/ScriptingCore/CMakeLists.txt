@@ -103,6 +103,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 export(TARGETS ScriptingCore APPEND FILE ${FB_EXPORT_FILE})
 if (FB_RELEASE)

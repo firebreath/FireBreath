@@ -110,6 +110,7 @@ set (SOURCES
 add_library(${PROJECT_NAME} STATIC ${SOURCES})
 ADD_PRECOMPILED_HEADER(${PROJECT_NAME} "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.h" "${CMAKE_CURRENT_SOURCE_DIR}/precompiled_headers.cpp" SOURCES)
 set_target_properties(${PROJECT_NAME} PROPERTIES FOLDER "FireBreath Core")
+set_target_properties(${PROJECT_NAME} PROPERTIES CXX_STANDARD 11)
 
 if (UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "BSD")
     # Link with libdl on Mac and Linux
