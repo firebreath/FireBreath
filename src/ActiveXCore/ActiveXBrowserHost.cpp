@@ -126,14 +126,14 @@ Promise<VariantMap> ActiveXBrowserHost::GetObjectValues(FB::JSObjectPtr obj) {
 IDispatchAPIPtr ActiveXBrowserHost::getPromiseObject() {
 	IDispatchAPIPtr dfd;
 	try {
-		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(getDOMWindow()->getJSObject());
 		dfd = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("FireBreathPromise", FB::VariantList{}).cast<JSObjectPtr>());
 	} catch (...) {
 		// Didn't find it
 		std::string jsStr{ BrowserHost::fbPromiseJS };
 		this->evaluateJavaScript(jsStr);
 		// This time if it throws an exception, let it throw
-		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(getDOMWindow()->getJSObject());
 		dfd = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("FireBreathPromise", FB::VariantList{}).cast<JSObjectPtr>());
 	}
 	return dfd;
@@ -146,7 +146,7 @@ int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::
     IDispatchAPIPtr helper;
 
     try {
-        IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(getDOMWindow()->getJSObject());
         helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync(name).cast<JSObjectPtr>());
     } catch (const FB::bad_variant_cast&) {
         // Didn't find it
@@ -154,7 +154,7 @@ int FB::ActiveX::ActiveXBrowserHost::delayedInvoke(const int delayms, const FB::
         replace_first(newjs, "FireBreathHelperThingy", name);
         this->evaluateJavaScript(newjs);
         // This time if it throws an exception, let it throw
-        IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(m_window->getJSObject());
+		IDispatchAPIPtr win = std::dynamic_pointer_cast<IDispatchAPI>(getDOMWindow()->getJSObject());
         helper = std::dynamic_pointer_cast<IDispatchAPI>(win->GetPropertySync(name).cast<JSObjectPtr>());
     }
 
