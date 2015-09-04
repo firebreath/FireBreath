@@ -19,7 +19,6 @@ Copyright 2010 Facebook, Inc
 #include "logging.h"
 #include "utf8_tools.h"
 
-#include "precompiled_headers.h" // On windows, everything above this line in PCH
 #include "log4cplus/config/defines.hxx"
 #include "log4cplus/loggingmacros.h"
 #include "log4cplus/logger.h"
@@ -63,7 +62,7 @@ void FB::Log::initLogging()
             logger.addAppender(debugAppender);
             addedAppender = true;
 #else
-            log4cplus::SharedAppenderPtr debugAppender(new log4cplus::ConsoleAppender());
+            log4cplus::SharedAppenderPtr debugAppender(new log4cplus::ConsoleAppender(true, true));
             std::auto_ptr<log4cplus::Layout> layout2(new log4cplus::TTCCLayout());
             debugAppender->setLayout(layout2);
             logger.addAppender(debugAppender);
@@ -116,32 +115,32 @@ static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll){
     }
 }
 
-void FB::Log::trace(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::trace(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_TRACE(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-void FB::Log::debug(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::debug(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_DEBUG(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-void FB::Log::info(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::info(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_INFO(log4cplus::Logger::getInstance(L"FireBreath"), 
                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-void FB::Log::warn(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::warn(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_WARN(log4cplus::Logger::getInstance(L"FireBreath"), 
                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-void FB::Log::error(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::error(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
-void FB::Log::fatal(const std::string& src, const std::string& msg, const char *file, int line, const char *fn)
+void FB::Log::fatal(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
                     file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));

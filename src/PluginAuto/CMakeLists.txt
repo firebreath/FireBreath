@@ -55,14 +55,15 @@ file (GLOB COMMON RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
     [^.]*.txt
     )
 
-set(LogKey "${PLUGIN_NAME}_log4cplus")
-if (${LogKey})
+if (TARGET log4cplus)
+    message(STATUS "Using log4cplus for logging")
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         log4cplus/*.cpp
         log4cplus/*.h
     )
     SOURCE_GROUP(log4cplus ${LOGGER})
 elseif(NOT CUSTOM_LOGGING)
+    message(STATUS "Logging disabled")
     file (GLOB LOGGER RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
         null/*.cpp
         null/*.h
