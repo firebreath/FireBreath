@@ -62,9 +62,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
                     BOOST_PP_ENUM(n, _FB_MW_CARGS_DFD, n)                       \
                 };                                                              \
                 auto max = in.size();                                           \
-                if (in.size() > n) {                                            \
+                if (max > n) {                                                  \
                     for (decltype(max) i = n; i < max; ++i) {                   \
-                        args.emplace_back(convertArgumentSoftDfd<FB::variant>(in, i));\
+                        args.emplace_back(convertArgumentSoftDfd<FB::variant>(in, i+1));\
                     }                                                           \
                 }                                                               \
                 auto fn(f);                                                     \
@@ -96,9 +96,9 @@ Copyright 2009 Georg Fritzsche, Firebreath development team
                     BOOST_PP_ENUM(n, _FB_MW_CARGS_DFD, n)                       \
                 };                                                              \
                 auto max = in.size();                                           \
-                if (in.size() > n) {                                            \
+                if (max > n) {                                            \
                     for (decltype(max) i = n; i < max; ++i) {                   \
-                        args.emplace_back(convertArgumentSoft<FB::variant>(in, i));\
+                        args.emplace_back(convertArgumentSoftDfd<FB::variant>(in, i+1));\
                     }                                                           \
                 }                                                               \
                 auto fn(f);                                                     \
@@ -148,11 +148,11 @@ namespace FB
     {
         using FB::convertArgumentSoft;
         using FB::convertArgumentSoftDfd;
-        
+
         BOOST_PP_REPEAT(50, _FB_METHOD_WRAPPER, BOOST_PP_EMPTY())
 
     } } // namespace detail::methods
-    
+
     BOOST_PP_REPEAT(50, _FB_MAKE_METHOD, BOOST_PP_EMPTY())
 
 } // namespace FB
