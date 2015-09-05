@@ -14,6 +14,13 @@
 
 # Find ATL stuff
 
+# I have had trouble with MSVC12 not being set when it should be
+string(SUBSTRING ${CMAKE_GENERATOR} 0 16 GENVER)
+if (${GENVER} STREQUAL "Visual Studio 12")
+    set(MSVC12 1)
+endif()
+
+message("MSVC12 ${MSVC12} ${MSVC_VERSION} ${CMAKE_GENERATOR}")
 if (NOT VC_DIR)
     if (MSVC12)
         GET_FILENAME_COMPONENT(VS_DIR "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\VisualStudio\\12.0\\Setup\\VS;ProductDir]" REALPATH CACHE)
