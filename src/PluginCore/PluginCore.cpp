@@ -82,8 +82,6 @@ void PluginCore::setParams(const FB::VariantMap& inParams)
                 });
 
                 FBLOG_TRACE("PluginCore", "Found <param> event handler: " << key);
-
-                m_params[key] = tmp;
             } else {
                 m_params[key] = it->second;
             }
