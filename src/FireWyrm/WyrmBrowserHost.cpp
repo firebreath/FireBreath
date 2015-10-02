@@ -63,11 +63,12 @@ Promise<void> WyrmBrowserHost::init() {
 }
 
 WyrmBrowserHost::~WyrmBrowserHost(void) {
-    module->DoCommand(FB::VariantList{ "Destroy", m_browserObjId });
 }
 
 void WyrmBrowserHost::shutdown() {
-
+    m_DOMWindow.reset();
+    m_DOMDocument.reset();
+    module->DoCommand(FB::VariantList{ "Destroy", m_browserObjId });
 }
 
 bool WyrmBrowserHost::_scheduleAsyncCall(void(*func)(void *), void *userData) const {
