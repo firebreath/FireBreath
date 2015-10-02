@@ -100,6 +100,8 @@ FW_RESULT WyrmColony::ReleaseColony(FW_INST key) {
 
     if (!WyrmColony::ColonyInitialized) {
         getFactoryInstance()->globalPluginDeinitialize();
+        
+        localMethodMap.clear();
 
         // NOTE: If this assertion fails you have some sort of memory leak; BrowserHost objects
         // are reference counted, so you have a shared_ptr to your browserhost sometime. This
