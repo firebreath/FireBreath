@@ -26,6 +26,8 @@
 using namespace FB::FireWyrm;
 using FB::Promise;
 
+extern std::string g_dllPath;
+
 WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
       m_fwHost(host),
@@ -35,6 +37,7 @@ WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     m_pluginName(getFactoryInstance()->getPluginName(mimetype))
 {
     pluginMain->SetHost(host);
+    setFSPath(g_dllPath);
 }
 
 WyrmSpawn::~WyrmSpawn(void)
