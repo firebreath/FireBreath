@@ -173,7 +173,7 @@ typedef FW_RESULT (*FW_CommandCallback)(const FW_INST colonyId, const uint32_t c
             - retVal can be any supported argument type
         Alternate Response: ["error", {"error": "exception thrown", "message": "message from thrown exception", "stack": "call stack if any"}]
         Alternate Response: ["error", {"error": "not supported", "message": "eval not supported"}]
-        
+
         Message : ["readArray", spawn_id, object_id]
             - Requests all values of an object which is assumed to be an array
             - spawn_id matches an identifier returned by NewI which has not been destroyed
@@ -210,6 +210,13 @@ typedef struct _FireWyrmColonyFuncs
     FW_Command call;
     FW_CommandCallback cmdCallback;
 } FWColonyFuncs;
+
+
+// Entrypoints
+extern "C" {
+    FW_RESULT FireWyrm_Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs);
+    FW_RESULT FireWyrm_Finit();
+}
 
 
 

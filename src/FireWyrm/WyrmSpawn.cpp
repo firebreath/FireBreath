@@ -13,6 +13,7 @@
 \**********************************************************/
 
 #include "FactoryBase.h"
+#include "FireWyrm.h"
 #include "PluginCore.h"
 #include "PluginInfo.h"
 #include "BrowserHost.h"
@@ -26,7 +27,28 @@
 using namespace FB::FireWyrm;
 using FB::Promise;
 
+#ifdef FB_WIN
 extern std::string g_dllPath;
+namespace {
+    std::string getPluginPath()
+    {
+        return g_dllPath;
+    }
+}
+#else
+#include <dlfcn.h>
+namespace {
+    std::string getPluginPath()
+    {
+        ::Dl_info dlinfo;
+        if (::dladdr((void*)&::FireWyrm_Init, &dlinfo) != 0) {
+            return dlinfo.dli_fname;
+        } else {
+            return "";
+        }
+    }
+}
+#endif
 
 WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     : FB::BrowserPlugin(mimetype),
@@ -37,7 +59,7 @@ WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
     m_pluginName(getFactoryInstance()->getPluginName(mimetype))
 {
     pluginMain->SetHost(host);
-    setFSPath(g_dllPath);
+    setFSPath(getPluginPath());
 }
 
 WyrmSpawn::~WyrmSpawn(void)

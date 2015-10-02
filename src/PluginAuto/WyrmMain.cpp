@@ -20,11 +20,6 @@
 
 using namespace FB::FireWyrm;
 
-extern "C" {
-    FW_RESULT FireWyrm_Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs);
-    FW_RESULT FireWyrm_Finit();
-}
-
 FW_RESULT FireWyrm_Init(FWHostFuncs* hFuncs, FWColonyFuncs* cFuncs) {
     FBLOG_INFO("FireWyrm", "Initializing FireWyrm plugin");
     WyrmColony* mod = WyrmColony::GetColony(0);
