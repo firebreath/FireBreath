@@ -85,7 +85,7 @@ PluginList PluginLoader::getPluginList() {
                     rc = RegQueryValueEx(hPluginItem, TEXT("Path"), NULL, NULL, (LPBYTE) lpData, &lpcbData); // Get the value of Path
                     if (rc == ERROR_SUCCESS)
                         plugin.path = utf8_conv.to_bytes(lpData);
-                    if (!exists(plugin.path)) {
+                    if (!exists(lpData)) {
                         // If the plugin file isn't there then don't display it as an option
                         continue;
                     }
