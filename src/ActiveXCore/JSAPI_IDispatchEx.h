@@ -59,7 +59,7 @@ namespace FB { namespace ActiveX {
         {
             FB::JSAPIPtr api(m_api.lock());
             if (!api)
-                throw std::bad_cast("Invalid object");
+                throw std::runtime_error("Invalid object");
             return api;
         }
         ActiveXBrowserHostPtr getHost() const {
