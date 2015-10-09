@@ -20,6 +20,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include <intrin.h>
 #include <io.h>
 #include <fcntl.h>
+#include <windows.h>
 #endif
 
 //#define DEBUG_BREAK
@@ -40,6 +41,8 @@ int main(int argc, char* argv[]) {
     _setmode(_fileno(stdout), _O_BINARY);
     _setmode(_fileno(stdin), _O_BINARY);
     _setmode(_fileno(stderr), _O_BINARY);
+    SetStdHandle(STD_INPUT_HANDLE, NULL);
+    SetStdHandle(STD_OUTPUT_HANDLE, NULL);
 #endif
 	log("Starting FireWyrm native message host");
     if (argv[1] != NULL) {
