@@ -27,7 +27,7 @@ class Doxygen2Confluence:
     inputList = {}
     pathMap = {}
     baseUrl = "/display/documentation/%s"
-    classDocsUrl = "http://classdocs.firebreath.org/"
+    classDocsUrl = "http://classdocs.firebreath.org"
     url = "http://www.firebreath.org/rpc/soap-axis/confluenceservice-v2?wsdl"
     server = SOAPpy.SOAPProxy(url)
     rpc = SOAPpy.WSDL.Proxy(url)
