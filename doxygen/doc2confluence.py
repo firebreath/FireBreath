@@ -26,20 +26,20 @@ class Doxygen2Confluence:
     outputHtmlPath = os.path.join("docs", "patched")
     inputList = {}
     pathMap = {}
-    baseUrl = "/display/documentation/%s"
-    classDocsUrl = "http://classdocs.firebreath.org/"
+    baseUrl = "/display/fb2/%s"
+    classDocsUrl = "http://classdocs2.firebreath.org"
     url = "http://www.firebreath.org/rpc/soap-axis/confluenceservice-v2?wsdl"
     server = SOAPpy.SOAPProxy(url)
     rpc = SOAPpy.WSDL.Proxy(url)
     token = ""
     space = "documentation"
     topPages = {
-            "class" : "1280302",
-            "struct" : "1280302",
-            "namespace" : "1280313",
-            "file" : "1280310",
-            "typedef": "1282223",
-            "function": "1282221",
+            "class" : "74685767",
+            "struct" : "74685767",
+            "namespace" : "74685774",
+            "file" : "74685769",
+            "typedef": "74685776",
+            "function": "74685772",
             #"enum": "1280313",
             }
     parents = {}
@@ -89,7 +89,7 @@ class Doxygen2Confluence:
             filename = "%s.html" % refId
 
         npage = {
-            "content": "{doxygen_init}{html-include:url=http://classdocs.firebreath.org/patched/%s}" % filename,
+            "content": "{doxygen_init}{html-include:url=%s/patched/%s}" % (self.classDocsUrl, filename),
             "space": page["space"],
             "title": page["title"],
         }
@@ -181,7 +181,7 @@ class Doxygen2Confluence:
                 fileText = fileText.replace(id, url)
             except UnicodeDecodeError:
                 fileText = fileText.replace(id.encode('utf8'), url.encode('utf8'))
-        fileText = fileText.replace(r'img src="', r'img src="http://classdocs.firebreath.org/')
+        fileText = fileText.replace(r'src="', r'src="' + self.classDocsUrl + '/')
 
         nf = open(os.path.join(outPath, filename), "w")
         nf.write(fileText)
@@ -254,4 +254,5 @@ def Main():
 
 if __name__ == "__main__":
     Main()
+
 
