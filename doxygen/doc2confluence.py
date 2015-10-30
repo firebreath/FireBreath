@@ -181,7 +181,7 @@ class Doxygen2Confluence:
                 fileText = fileText.replace(id, url)
             except UnicodeDecodeError:
                 fileText = fileText.replace(id.encode('utf8'), url.encode('utf8'))
-        fileText = fileText.replace(r'src="', r'src="' + self.classDocsUrl)
+        fileText = fileText.replace(r'src="', r'src="' + '/' + self.classDocsUrl)
 
         nf = open(os.path.join(outPath, filename), "w")
         nf.write(fileText)
