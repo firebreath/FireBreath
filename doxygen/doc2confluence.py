@@ -32,7 +32,7 @@ class Doxygen2Confluence:
     server = SOAPpy.SOAPProxy(url)
     rpc = SOAPpy.WSDL.Proxy(url)
     token = ""
-    space = "documentation"
+    space = "fb2"
     topPages = {
             "class" : "74685767",
             "struct" : "74685767",
