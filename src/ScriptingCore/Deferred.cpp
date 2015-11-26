@@ -32,7 +32,7 @@ void FB::Deferred<void>::resolve(Promise<void> v) const {
     auto onDone = [self]() {
         self.resolve();
     };
-    auto onFail = [self](std::exception e) { self.reject(e); };
+    auto onFail = [self](std::exception_ptr e) { self.reject(e); };
     promise().done(onDone, onFail);
 }
 

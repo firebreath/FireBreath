@@ -60,9 +60,15 @@ void AlienWyrmling::init(AlienLarvaePtr larvae) {
     m_startup = larvae->m_membersDfd.then<void>([ref](std::vector<std::string> members) -> void {
         ref->m_memberNames = members;
     });
-    m_startup.fail([ref](std::exception e) {
+    m_startup.fail([ref](std::exception_ptr ep) {
         ref->m_valid = false;
-        FBLOG_WARN("AlienWyrmling", "AlienWyrmling startup failure!" << e.what());
+        try {
+            if (ep) {
+                std::rethrow_exception(ep);
+            }
+        } catch(const std::exception& e) {
+            FBLOG_WARN("AlienWyrmling", "AlienWyrmling startup failure!" << e.what());
+        }
     });
 }
 

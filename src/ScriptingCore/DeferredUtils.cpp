@@ -45,7 +45,7 @@ variantPromise FB::whenAllPromises(VariantPromiseList args, std::function<varian
                 }
             }
         });
-        arg.fail([retDfd](std::exception e) -> void {
+        arg.fail([retDfd](std::exception_ptr e) -> void {
             retDfd.reject(e);
         });
         ++n;

@@ -1,7 +1,7 @@
 
 /**********************************************************\
  Original Author: Georg Fritzsche
- 
+
  Created:    Nov 7, 2010
  License:    Dual license model; choose one of two:
  New BSD License
@@ -9,7 +9,7 @@
  - or -
  GNU Lesser General Public License, version 2.1
  http://www.gnu.org/licenses/lgpl-2.1.html
- 
+
  Copyright 20100 Georg Fritzsche, Firebreath development team
  \**********************************************************/
 
@@ -36,7 +36,7 @@
 #include <atlsafe.h>
 
 namespace FB { namespace ActiveX
-{    
+{
     struct type_info_less
     {
         bool operator() (const std::type_info* const lhs, const std::type_info* const rhs) const
@@ -44,7 +44,7 @@ namespace FB { namespace ActiveX
             return lhs->before(*rhs) ? true : false;
         }
     };
-    
+
     using ComVariantBuilder = CComVariant(*)(const ActiveXBrowserHostPtr&, const FB::variant&);
     using ComVariantBuilderMap = std::map<std::type_info const*, ComVariantBuilder, type_info_less>;
 
@@ -60,7 +60,7 @@ namespace FB { namespace ActiveX
     {
         return ComVariantBuilderMap::value_type(&typeid(T), select_ccomvariant_builder::select<T>());
     }
-    
+
     inline void makeComVariantBuilderMap(ComVariantBuilderMap& tdm)
     {
         tdm.insert(makeBuilderEntry<bool>());
@@ -72,18 +72,18 @@ namespace FB { namespace ActiveX
         tdm.insert(makeBuilderEntry<unsigned int>());
         tdm.insert(makeBuilderEntry<long>());
         tdm.insert(makeBuilderEntry<unsigned long>());
-        
+
 #ifndef BOOST_NO_LONG_LONG
         tdm.insert(makeBuilderEntry<long long>());
         tdm.insert(makeBuilderEntry<unsigned long long>());
 #endif
-        
+
         tdm.insert(makeBuilderEntry<float>());
         tdm.insert(makeBuilderEntry<double>());
-        
+
         tdm.insert(makeBuilderEntry<std::string>());
         tdm.insert(makeBuilderEntry<std::wstring>());
-        
+
         tdm.insert(makeBuilderEntry<FB::VariantList>());
         tdm.insert(makeBuilderEntry<FB::VariantMap>());
         tdm.insert(makeBuilderEntry<FB::JSAPIPtr>());
@@ -92,9 +92,10 @@ namespace FB { namespace ActiveX
 
         tdm.insert(makeBuilderEntry<FB::FBVoid>());
         tdm.insert(makeBuilderEntry<FB::FBNull>());
-		tdm.insert(makeBuilderEntry<const std::exception>());
+		    tdm.insert(makeBuilderEntry<const std::exception>());
+        tdm.insert(makeBuilderEntry<const std::exception_ptr>());
     }
-    
+
     inline const ComVariantBuilderMap& getComVariantBuilderMap()
     {
         // Thread safety is required because IE10+ can run
@@ -104,7 +105,7 @@ namespace FB { namespace ActiveX
         return comVariantBuilderMap;
     }
     //  GJS  ---
-    
+
     template<class T>
     inline CComVariant makeArithmeticComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -123,14 +124,14 @@ namespace FB { namespace ActiveX
         return var.cast<unsigned char>();
     }
 
-    template<class T> 
+    template<class T>
     CComVariant makeComVariant(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
         CComVariant out;
         out.ChangeType(VT_NULL);
         return out;
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::FBNull>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -161,7 +162,7 @@ namespace FB { namespace ActiveX
         CComBSTR bStr(wstr.c_str());
         return bStr;
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::VariantList>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -174,7 +175,7 @@ namespace FB { namespace ActiveX
             IDispatchAPIPtr api = std::dynamic_pointer_cast<IDispatchAPI>(win->InvokeSync("Array", inArr).cast<JSObjectPtr>());
             if (api) {
                 return api->getIDispatch();
-            } 
+            }
         }
         else
         {
@@ -197,7 +198,7 @@ namespace FB { namespace ActiveX
         return outVar;
         //  GJS  ---
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::VariantMap>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -238,7 +239,7 @@ namespace FB { namespace ActiveX
         return outVar;
         //  GJS  ---
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::JSAPIPtr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -260,7 +261,7 @@ namespace FB { namespace ActiveX
 
         return outVar;
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::JSAPIWeakPtr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -281,7 +282,7 @@ namespace FB { namespace ActiveX
 
         return outVar;
     }
-    
+
     template<> inline
     CComVariant makeComVariant<FB::JSObjectPtr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
     {
@@ -303,7 +304,7 @@ namespace FB { namespace ActiveX
 
         return outVar;
     }
-    
+
 	template<> inline
 	CComVariant makeComVariant<const std::exception>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
 	{
@@ -312,20 +313,39 @@ namespace FB { namespace ActiveX
 		CComBSTR bStr(wstr.c_str());
 		return bStr;
 	}
+
+  template<> inline
+  CComVariant makeComVariant<const std::exception_ptr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
+  {
+    const std::exception ep = var.cast<const std::exception_ptr>();
+    if(ep) {
+        try {
+            std::rethrow_exception(ep);
+        } catch(const std::exception& e) {
+          std::wstring wstr = FB::utf8_to_wstring(e.what());
+          CComBSTR bStr(wstr.c_str());
+          return bStr;
+        } catch(...) {}
+    }
+    std::wstring wstr("Unknown exception");
+    CComBSTR bStr(wstr.c_str());
+    return bStr;
+  }
+
     namespace select_ccomvariant_builder
-    {        
+    {
         template<class T>
         ComVariantBuilder isArithmetic(const std::true_type& /* is_arithmetic */)
         {
             return &makeArithmeticComVariant<T>;
         }
-        
+
         template<class T>
         ComVariantBuilder isArithmetic(const std::false_type& /* is_arithmetic */)
         {
             return &makeComVariant<T>;
         }
-        
+
         template<class T>
         ComVariantBuilder select()
         {
@@ -335,4 +355,3 @@ namespace FB { namespace ActiveX
 } }
 
 #endif
-

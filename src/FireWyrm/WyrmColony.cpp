@@ -287,8 +287,15 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
             auto dfd = (this->*cmd)(args);
             dfd.done([cmdId, this](FB::VariantList doc) {
                 sendResponse(cmdId, doc);
-            }, [cmdId, this](std::exception e) {
-                sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", e.what() } } });
+            }, [cmdId, this](std::exception_ptr ep) {
+                try {
+                    if (ep) {
+                        std::rethrow_exception(ep);
+                    }
+                } catch(const std::exception& e) {
+                    sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", e.what() } } });
+                } catch(...) {}
+                sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", "Unknown message" } } });
             });
         } catch (std::exception& e) {
             sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Could not execute command" }, { "message", e.what() } } });

@@ -30,6 +30,11 @@ variant FB::variant_detail::conversion::make_variant(const std::exception ex)
 {
     return variant(ex, true);
 }
+variant FB::variant_detail::conversion::make_variant(const std::exception_ptr ep)
+{
+    return variant(ep, true);
+}
+
 ///////////////////////////////////////////////////
 // variant convert_cast helpers
 //
