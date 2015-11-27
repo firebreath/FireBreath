@@ -422,9 +422,10 @@ namespace FB { namespace ActiveX {
 
 			return S_OK;
 		} catch (const std::exception &e) {
+			auto ep = std::current_exception();
 			try {
 				FB::variantDeferred dfd;
-				dfd.reject(e);
+				dfd.reject(ep);
 				setPromise(dfd.promise(), pvarRes);
 				return S_OK;
 			}
