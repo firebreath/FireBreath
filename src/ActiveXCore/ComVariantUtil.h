@@ -317,7 +317,7 @@ namespace FB { namespace ActiveX
   template<> inline
   CComVariant makeComVariant<const std::exception_ptr>(const ActiveXBrowserHostPtr& host, const FB::variant& var)
   {
-    const std::exception ep = var.cast<const std::exception_ptr>();
+    const std::exception_ptr ep = var.cast<const std::exception_ptr>();
     if(ep) {
         try {
             std::rethrow_exception(ep);
@@ -327,7 +327,7 @@ namespace FB { namespace ActiveX
           return bStr;
         } catch(...) {}
     }
-    std::wstring wstr("Unknown exception");
+    std::wstring wstr(L"Unknown exception");
     CComBSTR bStr(wstr.c_str());
     return bStr;
   }
