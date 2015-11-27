@@ -155,9 +155,10 @@ bool NPJavascriptObject::Invoke(NPIdentifier name, const NPVariant *args, uint32
         setPromise(ret, result);
         return true;
     } catch (const std::exception& e) {
+        auto ep = std::current_exception();
         try {
             FB::variantDeferred dfd;
-            dfd.reject(e);
+            dfd.reject(ep);
             setPromise(dfd.promise(), result);
             return true;
         } catch (...) {
@@ -210,8 +211,9 @@ bool NPJavascriptObject::GetProperty(NPIdentifier name, NPVariant *result)
         setPromise(ret, result);
         return true;
     } catch (const std::exception& e) {
+        auto ep = std::current_exception();
         FB::variantDeferred dfd;
-        dfd.reject(e);
+        dfd.reject(ep);
         setPromise(dfd.promise(), result);
         return false;
     }

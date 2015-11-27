@@ -41,7 +41,8 @@ variantPromise FB::whenAllPromises(VariantPromiseList args, std::function<varian
                 try {
                     retDfd.resolve(cb(data->results));
                 } catch (std::exception e) {
-                    retDfd.reject(e);
+                    auto ep = std::current_exception();
+                    retDfd.reject(ep);
                 }
             }
         });

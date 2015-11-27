@@ -75,11 +75,11 @@ public:
 private:
   struct StateData {
     StateData(T v) : value(v), state(PromiseState::RESOLVED) {}
-    StateData(std::exception e) : state(PromiseState::REJECTED), err(e) {}
+    StateData(std::exception_ptr ep) : state(PromiseState::REJECTED), err_ptr(ep) {}
     StateData() : state(PromiseState::PENDING) {}
     ~StateData() {
       if (state == PromiseState::PENDING && rejectList.size()) {
-        reject(std::runtime_error("Deferred object destroyed: 1"));
+          reject(std::make_exception_ptr(std::runtime_error("Deferred object destroyed: 1")));
       }
     }
     void resolve(T v) {
@@ -90,16 +90,6 @@ private:
         fn(v);
       }
       resolveList.clear();
-    }
-    void reject(std::exception e) {
-        err = e;
-        state = PromiseState::REJECTED;
-        resolveList.clear();
-        for (auto fn : rejectList) {
-            auto ep = std::make_exception_ptr(e);
-            fn(ep);
-        }
-        rejectList.clear();
     }
     void reject(std::exception_ptr ep) {
       err_ptr = ep;
@@ -112,7 +102,6 @@ private:
     }
     T value;
     PromiseState state;
-    std::exception err;
     std::exception_ptr err_ptr;
 
     std::vector<Callback> resolveList;
@@ -128,7 +117,7 @@ public:
   Deferred(T v) : m_data(std::make_shared<StateData>(v)) {}
   /// @brief Instantiates a Deferred with a Promise which is already rejected
   /// with e
-  Deferred(std::exception e) : m_data(std::make_shared<StateData>(e)) {}
+  Deferred(std::exception_ptr ep) : m_data(std::make_shared<StateData>(ep)) {}
   /// @brief Instantiates a Deferred object with a pending Promise
   Deferred() : m_data(std::make_shared<StateData>()) {}
   /// @brief Creates an object with the shared data from the rh object (move)
@@ -160,7 +149,7 @@ public:
   /// it
   void invalidate() const {
     if (m_data->state == PromiseState::PENDING) {
-      reject(std::runtime_error("Deferred object destroyed: 2"));
+      reject(std::make_exception_ptr(std::runtime_error("Deferred object destroyed: 2")));
     }
   }
 
@@ -174,11 +163,7 @@ public:
     v.done(onDone, onFail);
   }
   /// @brief Rejects all associated Promise objects with e
-  void reject(std::exception e) const { m_data->reject(e); }
-
-  void reject(std::exception_ptr ep) const {
-      m_data->reject(ep);
-  }
+  void reject(std::exception_ptr ep) const { m_data->reject(ep); }
 };
 
 /// @brief Template specialization of Deferred for type void; works slightly
@@ -189,18 +174,16 @@ template <> class Deferred<void> final {
 public:
   using type = void;
   using Callback = std::function<void()>;
-  using ErrCallback = std::function<void(std::exception_ptr e)>;
+  using ErrCallback = std::function<void(std::exception_ptr ep)>;
 
 private:
   struct StateData {
     StateData(bool v) {
       state = v ? PromiseState::RESOLVED : PromiseState::PENDING;
     }
-    StateData(std::exception e) : state(PromiseState::REJECTED), err(e) {}
     StateData(std::exception_ptr ep) : state(PromiseState::REJECTED), err_ptr(ep) {}
     StateData() : state(PromiseState::PENDING) {}
     PromiseState state;
-    std::exception err;
     std::exception_ptr err_ptr;
 
     std::vector<Callback> resolveList;
@@ -216,7 +199,7 @@ public:
   Deferred(bool v) : m_data(std::make_shared<StateData>(v)) {}
   /// @brief Instantiates a Deferred<void> with a Promise which is already
   /// rejected with e
-  Deferred(std::exception e) : m_data(std::make_shared<StateData>(e)) {}
+  Deferred(std::exception_ptr ep) : m_data(std::make_shared<StateData>(ep)) {}
   /// @brief Instantiates a Deferred<void> objet with a pending Promise<void>
   Deferred() : m_data(std::make_shared<StateData>()) {}
   /// @brief Creates an object with the shared data from the rh object (move)
@@ -262,15 +245,6 @@ public:
     m_data->resolveList.clear();
   }
   /// @brief Rejects all associated Promise objects with e
-  void reject(std::exception e) const {
-    m_data->err = e;
-    m_data->state = PromiseState::REJECTED;
-    auto ep = std::make_exception_ptr(e);
-    for (auto fn : m_data->rejectList) {
-      fn(ep);
-    }
-    m_data->rejectList.clear();
-  }
   void reject(std::exception_ptr ep) const {
     m_data->err_ptr = ep;
     m_data->state = PromiseState::REJECTED;
@@ -397,9 +371,9 @@ public:
   template <typename U> Promise<U> convert_cast() { return Promise<U>(*this); }
 
   /// @brief Returns a Promise object which is already rejected
-  static Promise<T> rejected(std::exception e) {
+  static Promise<T> rejected(std::exception_ptr ep) {
     Deferred<T> dfd;
-    dfd.reject(e);
+    dfd.reject(ep);
     return dfd.promise();
   }
 
@@ -461,7 +435,7 @@ public:
                          std::function<Promise<Uout>(std::exception_ptr)> cbFail =
                              nullptr) const {
     if (!m_data) {
-      return Promise<Uout>::rejected(std::runtime_error("Promise invalid"));
+        return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
     }
     Deferred<Uout> dfd;
     auto onDone = [ dfd, cbSuccess ](T v)->void {
@@ -472,7 +446,8 @@ public:
         res.done(onDone2, onFail2);
       }
       catch (std::exception e) {
-        dfd.reject(e);
+        auto ep = std::current_exception();
+        dfd.reject(ep);
       }
     };
 
@@ -485,7 +460,8 @@ public:
           res.done(onDone2, onFail2);
         }
         catch (std::exception e2) {
-          dfd.reject(e2);
+          auto ep2 = std::current_exception();
+          dfd.reject(ep2);
         }
       };
       done(onDone, onFail);
@@ -615,9 +591,9 @@ public:
   template <typename U> Promise<U> convert_cast() { return Promise<U>(*this); }
 
   /// @brief Returns a Promise<void> object which is already rejected
-  static Promise<void> rejected(std::exception e) {
+  static Promise<void> rejected(std::exception_ptr ep) {
     Deferred<void> dfd;
-    dfd.reject(e);
+    dfd.reject(ep);
     return dfd.promise();
   }
 
@@ -649,7 +625,7 @@ public:
                      std::function<Uout(std::exception_ptr)> cbFail =
                          nullptr) const {
     if (!m_data) {
-      return Promise<Uout>::rejected(std::runtime_error("Promise invalid"));
+        return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
     }
     Deferred<Uout> dfd;
     auto onDone = [ dfd, cbSuccess ]()->void {
@@ -658,7 +634,8 @@ public:
         dfd.resolve(res);
       }
       catch (std::exception e) {
-        dfd.reject(e);
+        auto ep = std::current_exception();
+        dfd.reject(ep);
       }
     };
     if (cbFail) {
@@ -668,7 +645,8 @@ public:
           dfd.resolve(res);
         }
         catch (std::exception e2) {
-          dfd.reject(e2);
+          auto ep2 = std::current_exception();
+          dfd.reject(ep2);
         }
       };
       done(onDone, onFail);
@@ -710,7 +688,7 @@ public:
                          std::function<Promise<Uout>(std::exception_ptr)> cbFail =
                              nullptr) const {
     if (!m_data) {
-      return Promise<Uout>::rejected(std::runtime_error("Promise invalid"));
+        return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
     }
     Deferred<Uout> dfd;
     auto onDone = [ dfd, cbSuccess ]()->void {
@@ -721,7 +699,8 @@ public:
         res.done(onDone2, onFail2);
       }
       catch (std::exception e) {
-        dfd.reject(e);
+        auto ep = std::current_exception();
+        dfd.reject(ep);
       }
     };
 
@@ -734,7 +713,8 @@ public:
           res.done(onDone2, onFail2);
         }
         catch (std::exception e2) {
-          dfd.reject(e2);
+          auto ep2 = std::current_exception();
+          dfd.reject(ep2);
         }
       };
       done(onDone, onFail);
@@ -803,7 +783,7 @@ inline typename std::enable_if<(!std::is_same<Uout, void>::value),
 _doPromiseThen(const Promise<Uin> &inP, std::function<Uout(Uin)> cbSuccess,
                std::function<Uout(std::exception_ptr)> cbFail) {
   if (!inP.isValid()) {
-    return Promise<Uout>::rejected(std::runtime_error("Promise invalid"));
+    return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
   }
   Deferred<Uout> dfd;
   auto onDone = [ dfd, cbSuccess ](Uin v)->void {
@@ -812,7 +792,8 @@ _doPromiseThen(const Promise<Uin> &inP, std::function<Uout(Uin)> cbSuccess,
       dfd.resolve(res);
     }
     catch (std::exception e) {
-      dfd.reject(e);
+      auto ep = std::current_exception();
+      dfd.reject(ep);
     }
   };
   if (cbFail) {
@@ -822,7 +803,8 @@ _doPromiseThen(const Promise<Uin> &inP, std::function<Uout(Uin)> cbSuccess,
         dfd.resolve(res);
       }
       catch (std::exception e2) {
-        dfd.reject(e2);
+        auto ep2 = std::current_exception();
+        dfd.reject(ep2);
       }
     };
     inP.done(onDone, onFail);
@@ -842,7 +824,7 @@ inline typename std::enable_if<std::is_same<Uout, void>::value,
 _doPromiseThen(const Promise<Uin> &inP, std::function<void(Uin)> cbSuccess,
                std::function<void(std::exception_ptr)> cbFail) {
   if (!inP.isValid()) {
-    return Promise<void>::rejected(std::runtime_error("Promise invalid"));
+      return Promise<void>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
   }
   Deferred<void> dfd(false);
   auto onDone = [ dfd, cbSuccess ](Uin v)->void {
@@ -851,7 +833,8 @@ _doPromiseThen(const Promise<Uin> &inP, std::function<void(Uin)> cbSuccess,
       dfd.resolve();
     }
     catch (std::exception e) {
-      dfd.reject(e);
+      auto ep = std::current_exception();
+      dfd.reject(ep);
     }
   };
   if (cbFail) {
@@ -861,7 +844,8 @@ _doPromiseThen(const Promise<Uin> &inP, std::function<void(Uin)> cbSuccess,
         dfd.resolve();
       }
       catch (std::exception e2) {
-        dfd.reject(e2);
+        auto ep2 = std::current_exception();
+        dfd.reject(ep2);
       }
     };
     inP.done(onDone, onFail);
