@@ -148,7 +148,27 @@ namespace FB { namespace Npapi
         // if somehow that doesn't work, let's make a string
         return makeNPVariant<std::string>(host, e.what());
     }
-
+    
+    template<> inline
+    NPVariant makeNPVariant<const std::exception_ptr>(const NpapiBrowserHostPtr& host, const FB::variant& var) {
+        NPVariant npv;
+        const std::exception_ptr ep = var.cast<const std::exception_ptr>();
+        if(ep) {
+            try {
+                std::rethrow_exception(ep);
+            } catch(const std::exception& e) {
+                npv.type = NPVariantType_Null;
+                NPObject *npErr = host->makeError(e);
+                if (npErr) {
+                    OBJECT_TO_NPVARIANT(npErr, npv);
+                    return npv;
+                }
+                return makeNPVariant<std::string>(host, e.what());
+            } catch(...) {}
+        }
+        return makeNPVariant<std::string>(host, "Unknown exception");
+    }
+    
     template<> inline
     NPVariant makeNPVariant<FB::VariantList>(const NpapiBrowserHostPtr& host, const FB::variant& var)
     {
@@ -166,7 +186,7 @@ namespace FB { namespace Npapi
 
         return npv;
     }
-
+    
     template<> inline
     NPVariant makeNPVariant<FB::VariantMap>(const NpapiBrowserHostPtr& host, const FB::variant& var)
     {
@@ -341,4 +361,3 @@ namespace FB { namespace Npapi
 } }
 
 #endif
-

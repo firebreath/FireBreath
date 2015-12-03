@@ -66,8 +66,8 @@ namespace FB {
         int delayedInvoke(const int delayms, const FB::JSObjectPtr& func,
                 const FB::VariantList& args, std::string fname = "") override;
         NPObject* getJSHelper();
-        NPObject* makeError(const std::exception e);
-
+        NPObject* makeError(const std::exception& e);
+        
         FB::DOM::DocumentPtr getDOMDocument();
         FB::DOM::WindowPtr getDOMWindow();
         FB::DOM::ElementPtr getDOMElement();
@@ -184,4 +184,3 @@ namespace FB {
 }; };
 
 #endif
-

@@ -179,6 +179,13 @@ namespace FB
                 return std::string(boost::any_cast<std::exception>(l).what()) < std::string(boost::any_cast<std::exception>(r).what());
             }
         };
+        
+        template<>
+        struct lessthan < std::exception_ptr > {
+            static bool impl(const boost::any& l, const boost::any& r) {
+                return false;
+            }
+        };
     } // namespace variant_detail
 
     class variant;
@@ -588,6 +595,7 @@ namespace FB
             variant make_variant(const wchar_t* x);
             variant make_variant(const FB::FBNull);
             variant make_variant(const std::exception);
+            variant make_variant(const std::exception_ptr);
             ///////////////////////////////////////////////////
             // variant convert_cast helpers
             //

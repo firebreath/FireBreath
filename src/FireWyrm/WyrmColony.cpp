@@ -267,7 +267,7 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     // This is where the magic happens... =]
     Json::Reader rdr;
     Json::Value root;
-
+    
     int cmdIdx{ 0 };
     if (!rdr.parse(command, root, false)) {
         return FW_ERR_INVALID_JSON;
@@ -276,19 +276,26 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     }
     
     std::string cmd(root[cmdIdx].asString());
-
+    
     auto fnd = cmdMap.find(cmd);
     if (fnd != cmdMap.end()) {
         // This is a valid command!
         CommandHandler cmd = fnd->second;
-
+        
         VariantList args = getArguments(this, root, 1, -1);
         try {
             auto dfd = (this->*cmd)(args);
             dfd.done([cmdId, this](FB::VariantList doc) {
                 sendResponse(cmdId, doc);
-            }, [cmdId, this](std::exception e) {
-                sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", e.what() } } });
+            }, [cmdId, this](std::exception_ptr ep) {
+                try {
+                    if (ep) {
+                        std::rethrow_exception(ep);
+                    }
+                } catch(const std::exception& e) {
+                    sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", e.what() } } });
+                } catch(...) {}
+                sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Command threw an exception" }, { "message", "Unknown message" } } });
             });
         } catch (std::exception& e) {
             sendResponse(cmdId, VariantList{ "error", VariantMap{ { "error", "Could not execute command" }, { "message", e.what() } } });
@@ -296,7 +303,7 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     } else {
         return FW_ERR_INVALID_COMMAND;
     }
-
+    
     return FW_ERR_UNKNOWN;
 }
 

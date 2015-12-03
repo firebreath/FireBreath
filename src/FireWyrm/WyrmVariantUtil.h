@@ -63,7 +63,20 @@ namespace FB { namespace FireWyrm
         auto e = var.cast<const std::exception>();
         return FB::VariantMap{ {"$type", "error"}, {"message", e.what()} };
     }
-
+    
+    template<> inline
+    FB::variant makeValue<const std::exception_ptr>(FB::variant var, WyrmBrowserHostPtr host) {
+        auto ep = var.cast<const std::exception_ptr>();
+        if(ep) {
+            try {
+                std::rethrow_exception(ep);
+            } catch(const std::exception& e) {
+                return FB::VariantMap{ {"$type", "error"}, {"message", e.what()} };
+            } catch(...) {}
+        }
+        return FB::VariantMap{ {"$type", "error"}, {"message", "Unknown exception"} };
+    }
+    
     template<> inline
     FB::variant makeValue<FB::JSAPIPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {
