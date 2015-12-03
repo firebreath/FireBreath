@@ -357,18 +357,18 @@ namespace FB { namespace ActiveX {
         if (!AxIdMap.idExists(id)) {
             return DISP_E_MEMBERNOTFOUND;
         }
-
+        
         std::wstring wsName;
-
+        
         try 
         {
             wsName = AxIdMap.getValueForId<std::wstring>(id);
             ActiveXBrowserHostPtr host(getHost());
-
+            
             if (wFlags & DISPATCH_PROPERTYGET) {
                 if(!pvarRes)
                     return E_INVALIDARG;
-
+                    
                 switch(id) {
                     case DISPID_READYSTATE:
                         CComVariant(this->m_readyState).Detach(pvarRes);
@@ -380,9 +380,9 @@ namespace FB { namespace ActiveX {
                         return E_NOTIMPL;
                 }
             }
-
-			if (wFlags & DISPATCH_METHOD && (api->HasMethod(wsName) || !id) ) {
-
+            
+            if (wFlags & DISPATCH_METHOD && (api->HasMethod(wsName) || !id) ) {
+                
                 std::vector<FB::variant> params;
                 if (pdp->cNamedArgs > 0 && pdp->rgdispidNamedArgs[0] == DISPID_THIS) {
                     if (id == 0)
@@ -395,51 +395,51 @@ namespace FB { namespace ActiveX {
                         params.emplace_back(host->getVariant(&pdp->rgvarg[i]));
                     }
                 }
-
-				setPromise(api->Invoke(wsName, params), pvarRes);
-
+                
+                setPromise(api->Invoke(wsName, params), pvarRes);
+                
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
-
+                
                 FB::variant rVal;
                 rVal = true;
                 host->getComVariant(pvarRes, rVal);
-
+                
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasProperty(wsName)) {
-
+                
                 if(!pvarRes)
                     return E_INVALIDARG;
-
-				setPromise(api->GetProperty(wsName), pvarRes);
-
+                    
+                    setPromise(api->GetProperty(wsName), pvarRes);
+                    
             } else if ((wFlags & DISPATCH_PROPERTYPUT || wFlags & DISPATCH_PROPERTYPUTREF) && api->HasProperty(wsName)) {
-
+                
                 FB::variant newVal = host->getVariant(&pdp->rgvarg[0]);
                 api->SetProperty(wsName, newVal);
-
+                
             } else {
                 throw FB::invalid_member("Invalid method or property name");
             }
-
-			return S_OK;
-		} catch (const std::exception &e) {
-			auto ep = std::current_exception();
-			try {
-				FB::variantDeferred dfd;
-				dfd.reject(ep);
-				setPromise(dfd.promise(), pvarRes);
-				return S_OK;
-			}
-			catch (...) {
-				if (pei) {
-				    pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
-				    pei->bstrDescription = CComBSTR(e.what()).Detach();
-				    pei->bstrHelpFile = nullptr;
-				    pei->pfnDeferredFillIn = nullptr;
-				    pei->scode = E_NOTIMPL;
-				}
-				return DISP_E_EXCEPTION;
-			}
-		}
+            
+            return S_OK;
+        } catch (const std::exception &e) {
+            auto ep = std::current_exception();
+            try {
+                FB::variantDeferred dfd;
+                dfd.reject(ep);
+                setPromise(dfd.promise(), pvarRes);
+                return S_OK;
+            }
+            catch (...) {
+                if (pei) {
+                    pei->bstrSource = CComBSTR(m_mimetype.c_str()).Detach();
+                    pei->bstrDescription = CComBSTR(e.what()).Detach();
+                    pei->bstrHelpFile = nullptr;
+                    pei->pfnDeferredFillIn = nullptr;
+                    pei->scode = E_NOTIMPL;
+                }
+                return DISP_E_EXCEPTION;
+            }
+        }
     }
 
     template <class T, class IDISP, const IID* piid>
@@ -545,4 +545,3 @@ namespace FB { namespace ActiveX {
     }
 } }
 #endif // H_JSAPI_IDISPATCHEX
-

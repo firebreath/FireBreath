@@ -30,7 +30,7 @@ variantPromise FB::whenAllPromises(VariantPromiseList args, std::function<varian
     FB::variantDeferred retDfd;
     auto count = args.size();
     std::shared_ptr<whenData> data{ std::make_shared<whenData>(count) };
-
+    
     size_t n = 0;
     for (auto arg : args) {
         arg.done([n, data, cb, retDfd](FB::variant var) -> void {
@@ -56,4 +56,3 @@ variantPromise FB::whenAllPromises(VariantPromiseList args, std::function<varian
     }
     return retDfd.promise();
 }
-

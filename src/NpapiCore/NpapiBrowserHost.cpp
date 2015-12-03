@@ -87,7 +87,7 @@ namespace
         tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
         tdm.insert(makeBuilderEntry<const std::exception>());
         tdm.insert(makeBuilderEntry<const std::exception_ptr>());
-
+        
         return tdm;
     }
 

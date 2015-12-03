@@ -76,7 +76,7 @@ namespace FB { namespace FireWyrm
         }
         return FB::VariantMap{ {"$type", "error"}, {"message", "Unknown exception"} };
     }
-
+    
     template<> inline
     FB::variant makeValue<FB::JSAPIPtr>(FB::variant var, WyrmBrowserHostPtr host)
     {

@@ -267,7 +267,7 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     // This is where the magic happens... =]
     Json::Reader rdr;
     Json::Value root;
-
+    
     int cmdIdx{ 0 };
     if (!rdr.parse(command, root, false)) {
         return FW_ERR_INVALID_JSON;
@@ -276,12 +276,12 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     }
     
     std::string cmd(root[cmdIdx].asString());
-
+    
     auto fnd = cmdMap.find(cmd);
     if (fnd != cmdMap.end()) {
         // This is a valid command!
         CommandHandler cmd = fnd->second;
-
+        
         VariantList args = getArguments(this, root, 1, -1);
         try {
             auto dfd = (this->*cmd)(args);
@@ -303,7 +303,7 @@ FW_RESULT WyrmColony::onCommand(const uint32_t cmdId, std::string command) {
     } else {
         return FW_ERR_INVALID_COMMAND;
     }
-
+    
     return FW_ERR_UNKNOWN;
 }
 
