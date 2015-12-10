@@ -54,6 +54,7 @@ VariantPreprocessorMap makeJsonVariantPreprocessorMap()
     tdm.insert(makeBuilderEntry<FB::JSAPIWeakPtr>());
     tdm.insert(makeBuilderEntry<FB::JSObjectPtr>());
     tdm.insert(makeBuilderEntry<const std::exception>());
+    tdm.insert(makeBuilderEntry<const std::exception_ptr>());
     tdm.insert(makeBuilderEntry<WyrmlingKey>());
 
     return tdm;
