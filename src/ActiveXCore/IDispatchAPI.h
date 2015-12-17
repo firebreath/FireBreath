@@ -66,7 +66,7 @@ namespace FB { namespace ActiveX {
         ActiveXBrowserHostPtr getHost() const {
             ActiveXBrowserHostPtr ptr(m_browser.lock());
             if (!ptr) {
-                throw std::bad_cast("BrowserHost has shut down");
+                throw std::bad_cast();
             }
             return ptr;
         }
