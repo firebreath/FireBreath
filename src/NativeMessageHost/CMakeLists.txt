@@ -93,7 +93,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 if (FIREBREATH)
     link_boost_library(${PROJECT_NAME} filesystem)
-    link_boost_library(${PROJECT_NAME} regex)
 endif()
 
 if (UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "BSD")
