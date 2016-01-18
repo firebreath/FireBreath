@@ -27,7 +27,8 @@ set(BUILD_SHARED_LIBS YES)
 # This long line is ugly, but breaking it up to multiple lines will 
 # break on cmake 2.6. LD_FLAGS will get separated by semi-colon 
 # which is not gcc compatible
-set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=\"${FB_ROOT_DIR}/gen_templates/version_script.txt\"")
+
+set(NPAPI_LINK_FLAGS "-Wl,--discard-all -Wl,-Bsymbolic -Wl,-z,defs -Wl,--version-script=\"${FB_ROOT}/gen_templates/version_script.txt\"")
 
 MACRO(find_firebreath_x11_deps)
 
@@ -41,7 +42,7 @@ MACRO(find_firebreath_x11_deps)
             set (GTK_LDFLAGS ${GTK_LDFLAGS} PARENT_SCOPE)
         endif()
         set (FB_INCLUDE_DIRS ${FB_INCLUDE_DIRS} ${GTK_INCLUDE_DIRS})
-        set (FB_PLUGIN_LIBRARIES ${FB_PLUGIN_LIBRARIES} ${GTK_LIBRARIES} PARENT_SCOPE)
+        set (FB_PLUGIN_LIBRARIES ${FB_PLUGIN_LIBRARIES} ${GTK_LIBRARIES})
     else()
         set (GTK_INCLUDE_DIRS "")
         set (GTK_LIBRARIES "")
