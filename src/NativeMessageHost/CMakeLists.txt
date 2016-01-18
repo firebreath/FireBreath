@@ -32,6 +32,7 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     ${FireWyrm_SOURCE_DIR}
+    ${FB_GECKOSDK_SOURCE_DIR}
     )
 
 file (GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
