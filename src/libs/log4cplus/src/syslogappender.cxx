@@ -223,13 +223,14 @@ SysLogAppender::SysLogAppender(const tstring& id)
     : ident(id)
     , facility (0)
     , appendFunc (&SysLogAppender::appendLocal)
-    , port (0)
+    , port (0) 
     // Store std::string form of ident as member of SysLogAppender so
     // the address of the c_str() result remains stable for openlog &
     // co to use even if we use wstrings.
     , identStr(LOG4CPLUS_TSTRING_TO_STRING (id) )
     , hostname (helpers::getHostname (true))
 {
+    remoteTimeFormat = LOG4CPLUS_TEXT ("%Y-%m-%dT%H:%M:%S.%qZ");
     ::openlog(useIdent(identStr), 0, 0);
 }
 
@@ -243,6 +244,7 @@ SysLogAppender::SysLogAppender(const helpers::Properties & properties)
     , port (0)
     , hostname (helpers::getHostname (true))
 {
+    remoteTimeFormat = LOG4CPLUS_TEXT ("%Y-%m-%dT%H:%M:%S.%qZ");
     ident = properties.getProperty( LOG4CPLUS_TEXT("ident") );
     facility = parseFacility (
         helpers::toLower (
@@ -287,7 +289,9 @@ SysLogAppender::SysLogAppender(const tstring& id, const tstring & h,
     // co to use even if we use wstrings.
     , identStr(LOG4CPLUS_TSTRING_TO_STRING (id) )
     , hostname (helpers::getHostname (true))
-{ }
+{ 
+    remoteTimeFormat = LOG4CPLUS_TEXT ("%Y-%m-%dT%H:%M:%S.%qZ");
+}
 
 
 SysLogAppender::~SysLogAppender()
@@ -374,8 +378,8 @@ SysLogAppender::appendLocal(const spi::InternalLoggingEvent& event)
 #endif
 
 
-tstring const SysLogAppender::remoteTimeFormat (
-    LOG4CPLUS_TEXT ("%Y-%m-%dT%H:%M:%S.%qZ"));
+//tstring const SysLogAppender::remoteTimeFormat (
+//    LOG4CPLUS_TEXT ("%Y-%m-%dT%H:%M:%S.%qZ"));
 
 
 void

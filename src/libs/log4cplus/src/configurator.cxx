@@ -546,8 +546,7 @@ PropertyConfigurator::addAppender(Logger &logger, SharedAppenderPtr& appender)
 // BasicConfigurator ctor and dtor
 //////////////////////////////////////////////////////////////////////////////
 
-log4cplus::tstring DISABLE_OVERRIDE_KEY (
-    LOG4CPLUS_TEXT ("log4cplus.disableOverride"));
+//log4cplus::tstring DISABLE_OVERRIDE_KEY = LOG4CPLUS_TEXT ("log4cplus.disableOverride");
 
 BasicConfigurator::BasicConfigurator(Hierarchy& hier, bool logToStdErr)
     : PropertyConfigurator( LOG4CPLUS_TEXT(""), hier )
