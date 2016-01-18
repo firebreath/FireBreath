@@ -115,8 +115,8 @@ PluginLoaderLin::PluginLoaderLin(std::string mimetype, std::string filename)
         throw std::runtime_error("Could not load file");
     }
 
-    initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "NP_GetValue"));
-    finitFn = reinterpret_cast<FinitFnPtr>(dlsym(m_module, "NP_GetValue"));
+    initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "FireWyrm_Init"));
+    finitFn = reinterpret_cast<FinitFnPtr>(dlsym(m_module, "FireWyrm_Finit"));
 
     if (!initFn || !finitFn) {
         throw std::runtime_error("Could not find entry points");
