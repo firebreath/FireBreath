@@ -43,7 +43,8 @@ PluginList PluginLoader::getPluginList() {
     std::string home = getenv("HOME");
     std::string user_plugin_path = home + "/.mozilla/plugins";
     std::string system_plugin_path = "/usr/lib/mozilla/plugins";
-    std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
+    std::string system64_plugin_path = "/usr/lib64/mozilla/plugins";
+    std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path, system64_plugin_path};
     boost::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
     void *dlo_handle;
     boost::match_results<std::string::const_iterator> char_matches;
