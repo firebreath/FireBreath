@@ -115,34 +115,40 @@ static log4cplus::LogLevel translate_logLevel(FB::Log::LogLevel ll){
     }
 }
 
+
+std::string getFilename(const std::string& str)
+{
+	std::size_t found = str.find_last_of("/\\");
+	return str.substr(found + 1);
+}
 void FB::Log::trace(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_TRACE(log4cplus::Logger::getInstance(L"FireBreath"), 
-                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 void FB::Log::debug(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_DEBUG(log4cplus::Logger::getInstance(L"FireBreath"), 
-                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 void FB::Log::info(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_INFO(log4cplus::Logger::getInstance(L"FireBreath"), 
-                   file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 void FB::Log::warn(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_WARN(log4cplus::Logger::getInstance(L"FireBreath"), 
-                   file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 void FB::Log::error(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
-                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 void FB::Log::fatal(std::string src, std::string msg, const char *file, int line, const char *fn)
 {
     LOG4CPLUS_ERROR(log4cplus::Logger::getInstance(L"FireBreath"), 
-                    file << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
+		getFilename(file).c_str() << ":" << line << " - " << fn << " - " << FB::utf8_to_wstring(msg));
 }
 
