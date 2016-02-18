@@ -27,6 +27,7 @@ if (FIREBREATH)
 endif()
 
 include_directories(
+    ${FB_GECKOSDK_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
@@ -92,6 +93,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 if (FIREBREATH)
     link_boost_library(${PROJECT_NAME} filesystem)
+    link_boost_library(${PROJECT_NAME} regex)
 endif()
 
 if (UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "BSD")
