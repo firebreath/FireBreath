@@ -14,7 +14,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 \**********************************************************/
 
 #include <boost/filesystem.hpp>
-#include <boost/regex.hpp>
+#include <regex>
 #include <dlfcn.h>
 #include <locale>
 #include "npapi.h"
@@ -44,9 +44,8 @@ PluginList PluginLoader::getPluginList() {
     std::string user_plugin_path = home + "/.mozilla/plugins";
     std::string system_plugin_path = "/usr/lib/mozilla/plugins";
     std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
-    boost::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
+    std::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
     void *dlo_handle;
-    boost::match_results<std::string::const_iterator> char_matches;
 
     func_ptr NP_GetMIMEDescription;
     func_ptr NP_GetPluginVersion;
@@ -89,7 +88,7 @@ PluginList PluginLoader::getPluginList() {
                         NP_GetMIMEDescription = (func_ptr) dlsym(dlo_handle, "NP_GetMIMEDescription");
                         if (!(err = dlerror())) {
                             mime_desc = NP_GetMIMEDescription();
-                            boost::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
+                            std::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
                                                          end;
                             for(; iter != end; ++iter) {
                                 if (find(plugin.mime_types.begin(), plugin.mime_types.end(), *iter) == plugin.mime_types.end()) {
