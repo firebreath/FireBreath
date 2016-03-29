@@ -56,7 +56,7 @@ void ReadLoop::run() {
             // There was an error reading; time to bail
 			log("Could not read from stdin! Bailing");
         } else {
-            log(inMessage);
+            //log(inMessage);
             m_main.messageIn(inMessage);
         }
         delete[] inString;
