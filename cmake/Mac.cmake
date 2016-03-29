@@ -52,7 +52,7 @@ function(clear_xcode_patches)
 
 endfunction(clear_xcode_patches)
 
-MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES XIB)
+MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES ADDITIONAL_RESOURCES)
 
     message ("Creating Mac Browser Plugin project ${PROJECT_NAME}")
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/bundle)
@@ -79,7 +79,7 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
-        ${XIB}
+        ${ADDITIONAL_RESOURCES}
     )
 
     add_definitions(
@@ -117,7 +117,7 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
         XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        RESOURCE  "${XIB}"
+        RESOURCE "${ADDITIONAL_RESOURCES}"
         LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
 
     set_source_files_properties(
