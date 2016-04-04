@@ -164,7 +164,11 @@ MACRO(firebreath_find_commands)
     set(CMD_DEREZ ${CMD_DEREZ} CACHE INTERNAL "location of command")
     find_program(CMD_REZ Rez ${XCODE_TOOLS_PATHS} )
     set(CMD_REZ ${CMD_REZ} CACHE INTERNAL "location of command")
-
+    find_program(CMD_PKGBUILD pkgbuild)
+    set(CMD_PKGBUILD ${CMD_PKGBUILD} CACHE INTERNAL "location of command")
+    find_program(CMD_PRODUCTBUILD productbuild)
+    set(CMD_PRODUCTBUILD ${CMD_PRODUCTBUILD} CACHE INTERNAL "location of command")
+    
 ENDMACRO(firebreath_find_commands)
 
 macro(firebreath_find_plugin_path OUTPATH PROJNAME)
