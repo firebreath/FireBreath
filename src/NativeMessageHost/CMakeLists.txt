@@ -27,6 +27,7 @@ if (FIREBREATH)
 endif()
 
 include_directories(
+    ${FB_GECKOSDK_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${FB_CONFIG_DIR}
     ${Boost_INCLUDE_DIRS}
