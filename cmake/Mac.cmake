@@ -52,7 +52,7 @@ function(clear_xcode_patches)
 
 endfunction(clear_xcode_patches)
 
-MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES ADDITIONAL_RESOURCES)
+MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMPLATE INSOURCES)
 
     message ("Creating Mac Browser Plugin project ${PROJECT_NAME}")
     if (NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/bundle)
@@ -73,14 +73,24 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
 
     #set(MAC_RESOURCE_FILES ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r)
 
-    set(SOURCES
-        ${${INSOURCES}}
-        ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
-        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
-        ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
-        ${ADDITIONAL_RESOURCES}
-    )
+    if(${ARGC} EQUAL 5)
+        set(SOURCES
+            ${${INSOURCES}}
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
+        )
+    ELSE()
+        set(SOURCES
+            ${${INSOURCES}}
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.r
+            ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/Localized.rsrc
+            ${ARGV5}
+        )
+    ENDIF()
 
     add_definitions(
         -DXP_MACOSX=1
@@ -109,16 +119,28 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
         ${SOURCES} 
         )
 
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        OUTPUT_NAME ${FBSTRING_PluginFileName}
-        BUNDLE 1
-        BUNDLE_EXTENSION plugin
-        XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
-        XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
-        XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
-        RESOURCE "${ADDITIONAL_RESOURCES}"
-        LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
+    if(${ARGC} EQUAL 5)
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            OUTPUT_NAME ${FBSTRING_PluginFileName}
+            BUNDLE 1
+            BUNDLE_EXTENSION plugin
+            XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
+            XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+            XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
+    ELSE()
+        set_target_properties(${PROJECT_NAME} PROPERTIES
+            OUTPUT_NAME ${FBSTRING_PluginFileName}
+            BUNDLE 1
+            BUNDLE_EXTENSION plugin
+            XCODE_ATTRIBUTE_WRAPPER_EXTENSION plugin  #sets the extension to .plugin
+            XCODE_ATTRIBUTE_MACH_O_TYPE mh_bundle
+            XCODE_ATTRIBUTE_INFOPLIST_FILE ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/bundle/Info.plist
+            RESOURCE "${ARGV5}"
+            LINK_FLAGS "-Wl,-exported_symbols_list,${FB_ESC_ROOT_DIR}/gen_templates/ExportList_plugin.txt")
+    ENDIF()
 
     set_source_files_properties(
         ${CMAKE_CURRENT_BINARY_DIR}/bundle/English.lproj/InfoPlist.strings
