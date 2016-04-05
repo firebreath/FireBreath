@@ -101,6 +101,12 @@ if(UNIX)
         set(fPIC_flag "-fPIC")
         set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_X11=1")
         set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFB_X11=1")
+
+        if(FB_GUI_DISABLED)
+            set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DFB_GUI_DISABLED=1")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFB_GUI_DISABLED=1")    
+        endif()
+
     endif()
 
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${gecko_defs} ${fPIC_flag}")

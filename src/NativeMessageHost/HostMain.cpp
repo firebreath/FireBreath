@@ -16,7 +16,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 #include "MainLoop.h"
 #include "ReadLoop.h"
 #include "HostMain.h"
-#if __linux && FB_GUI_DISABLED != 1
+#if __linux && !FB_GUI_DISABLED
 #include <gtk/gtk.h>
 #endif
 #ifdef WIN32
@@ -37,7 +37,7 @@ void log(std::string message)
 
 int main(int argc, char* argv[]) {
 
-#if __linux && FB_GUI_DISABLED != 1
+#if __linux && !FB_GUI_DISABLED
     gtk_init (&argc, &argv);
 #endif
 
