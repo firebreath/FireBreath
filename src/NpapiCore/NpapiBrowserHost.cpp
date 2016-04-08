@@ -911,7 +911,8 @@ NPObject * NpapiBrowserHost::getPromiseObject() {
 }
 
 NPObject* NpapiBrowserHost::makeError(const std::exception& e) {
-    std::cerr << "makeError: " <<e.what() << std::endl;
+    FBLOG_ERROR("makeError", "An error occurred: " << e.what());
+    
     NPObject *jsHelper = getJSHelper();
     NPVariant param, res;
 
