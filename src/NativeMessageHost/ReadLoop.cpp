@@ -27,6 +27,7 @@ bool canRead() {
     return !feof(stdin) && !ferror(stdin);
 }
 
+
 void ReadLoop::run() {
     // Begin read loop thread
 	log("Starting read loop");
@@ -55,6 +56,7 @@ void ReadLoop::run() {
             // There was an error reading; time to bail
 			log("Could not read from stdin! Bailing");
         } else {
+            //log(inMessage);
             m_main.messageIn(inMessage);
         }
         delete[] inString;

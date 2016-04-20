@@ -56,6 +56,11 @@ endif()
 
 add_boost_library(thread)
 add_boost_library(system)
+
+if (UNIX AND NOT APPLE) 
+    add_boost_library(regex)
+endif()
+
 if (Boost_MAJOR_VERSION GREATER 0 AND Boost_MINOR_VERSION GREATER 47)
     add_boost_library(chrono)
 endif ()

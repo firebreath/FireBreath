@@ -100,8 +100,9 @@ namespace log4cplus
         tstring host;
         int port;
         helpers::Socket syslogSocket;
+        tstring remoteTimeFormat;
 
-        static tstring const remoteTimeFormat;
+        //static tstring const remoteTimeFormat;
 
     private:
       // Disallow copying of instances of this class

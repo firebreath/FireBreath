@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="1">
+    <title>@@PROD_TITLE@@</title>
+    <domains enable_currentUserHome="true" enable_localSystem="true"/>
+    <pkg-ref id="@@PKG_ID@@"/>
+    <options customize="never" require-scripts="false"/>
+    <choices-outline>
+        <line choice="default">
+            <line choice="@@PKG_ID@@"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="@@PKG_ID@@" visible="false">
+        <pkg-ref id="@@PKG_ID@@"/>
+    </choice>
+    <pkg-ref id="@@PKG_ID@@" version="@@PLG_VERSION@@" onConclusion="none">@@PKG_NAME@@</pkg-ref>
+    <product id="@@PROD_TITLE@@" version="@@PLG_VERSION@@" />
+</installer-gui-script>
+

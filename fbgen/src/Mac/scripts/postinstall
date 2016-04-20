@@ -1,0 +1,22 @@
+#!/bin/sh
+
+TEMPLATE_PATH=${DSTROOT}/@@BNDL_NAME@@/@@TMPL_RPATH@@
+NATIVE_HOST_PATH=${DSTROOT}/@@BNDL_NAME@@/@@NVH_RPATH@@
+
+L_NATIVEHOST_PATH="${HOME}/Library/Application Support/Google/Chrome/NativeMessagingHosts"
+L_PLUGIN_PATH="${HOME}/Library/Internet Plug-Ins/@@BNDL_NAME@@"
+
+if [[ ${DSTROOT} = /Library* ]]; then
+    MANIFEST_PATH=/Library/Google/Chrome/NativeMessagingHosts
+
+    if [ -f "${L_NATIVEHOST_PATH}/@@PLG_CRX_NAME@@.json" ] && [ ! -d "${L_PLUGIN_PATH}" ]; then
+        rm -f "${L_NATIVEHOST_PATH}/@@PLG_CRX_NAME@@.json"
+    fi
+
+else
+    MANIFEST_PATH=${DSTROOT%/Library*}/Library/Application\ Support/Google/Chrome/NativeMessagingHosts
+fi
+
+sed -i "" "s|_FILEPATH_|${NATIVE_HOST_PATH}|" "${TEMPLATE_PATH}"
+mkdir -p "${MANIFEST_PATH}"
+install "${TEMPLATE_PATH}" "${MANIFEST_PATH}/@@PLG_CRX_NAME@@.json"

@@ -33,6 +33,8 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${FBLIB_INCLUDE_DIRS}
     ${FireWyrm_SOURCE_DIR}
+    ${FB_GECKOSDK_SOURCE_DIR}
+    ${GTK_INCLUDE_DIRS}
     )
 
 file (GLOB SOURCES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
@@ -93,7 +95,6 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 
 if (FIREBREATH)
     link_boost_library(${PROJECT_NAME} filesystem)
-    link_boost_library(${PROJECT_NAME} regex)
 endif()
 
 if (UNIX AND NOT CMAKE_SYSTEM_NAME MATCHES "BSD")
@@ -105,6 +106,7 @@ target_link_libraries(${PROJECT_NAME}
     ${CMAKE_THREAD_LIBS_INIT}
     ${LIBDL_LIBRARIES}
     jsoncpp
+    ${GTK_LIBRARIES}
     )
 
 export(TARGETS ${PROJECT_NAME} APPEND FILE ${FB_EXPORT_FILE})

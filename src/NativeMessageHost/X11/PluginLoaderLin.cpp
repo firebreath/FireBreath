@@ -14,7 +14,7 @@ Copyright 2015 GradeCam, Richard Bateman, and the
 \**********************************************************/
 
 #include <boost/filesystem.hpp>
-#include <regex>
+#include <boost/regex.hpp>
 #include <dlfcn.h>
 #include <locale>
 #include "npapi.h"
@@ -43,8 +43,9 @@ PluginList PluginLoader::getPluginList() {
     std::string home = getenv("HOME");
     std::string user_plugin_path = home + "/.mozilla/plugins";
     std::string system_plugin_path = "/usr/lib/mozilla/plugins";
-    std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path};
-    std::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
+    std::string system64_plugin_path = "/usr/lib64/mozilla/plugins";
+    std::vector<std::string> plugin_paths = {user_plugin_path, system_plugin_path, system64_plugin_path};
+    boost::regex mime_regex("(\\w*?[/][\\w\\-\\.]+?)(?:[;\\:])|$");
     void *dlo_handle;
 
     func_ptr NP_GetMIMEDescription;
@@ -88,7 +89,7 @@ PluginList PluginLoader::getPluginList() {
                         NP_GetMIMEDescription = (func_ptr) dlsym(dlo_handle, "NP_GetMIMEDescription");
                         if (!(err = dlerror())) {
                             mime_desc = NP_GetMIMEDescription();
-                            std::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
+                            boost::sregex_token_iterator iter(mime_desc.begin(), mime_desc.end(), mime_regex, 1),
                                                          end;
                             for(; iter != end; ++iter) {
                                 if (find(plugin.mime_types.begin(), plugin.mime_types.end(), *iter) == plugin.mime_types.end()) {
@@ -114,8 +115,8 @@ PluginLoaderLin::PluginLoaderLin(std::string mimetype, std::string filename)
         throw std::runtime_error("Could not load file");
     }
 
-    initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "NP_GetValue"));
-    finitFn = reinterpret_cast<FinitFnPtr>(dlsym(m_module, "NP_GetValue"));
+    initFn = reinterpret_cast<InitFnPtr>(dlsym(m_module, "FireWyrm_Init"));
+    finitFn = reinterpret_cast<FinitFnPtr>(dlsym(m_module, "FireWyrm_Finit"));
 
     if (!initFn || !finitFn) {
         throw std::runtime_error("Could not find entry points");

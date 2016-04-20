@@ -911,6 +911,8 @@ NPObject * NpapiBrowserHost::getPromiseObject() {
 }
 
 NPObject* NpapiBrowserHost::makeError(const std::exception& e) {
+    FBLOG_ERROR("makeError", "An error occurred: " << e.what());
+    
     NPObject *jsHelper = getJSHelper();
     NPVariant param, res;
 
@@ -936,7 +938,7 @@ NPObject* NpapiBrowserHost::getJSHelper() {
     if (!m_jsHelper) {
         NPObject *window = m_htmlWin->getNPObject();
         
-        int32_t ctxId( (intptr_t)(getContextID()) );
+        uint32_t ctxId( (uintptr_t)(getContextID()) );
         std::string name = std::string("_FB_HELPERS_") + std::to_string(ctxId);
         
         NPIdentifier idFbObj = GetStringIdentifier(name.c_str());

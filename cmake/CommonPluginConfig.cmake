@@ -174,16 +174,32 @@ firebreath_generate_templates(${CMAKE_CURRENT_SOURCE_DIR})
 
 # Repititions in the following are intentional to fix linking errors due to
 # cyclic references on Linux. Don't change without testing on Linux!
-set(FB_PLUGIN_LIBRARIES
-    PluginCore
-    ${PLUGIN_PREFIX}_PluginAuto
-    NpapiCore
-    ScriptingCore
-    PluginCore
-    FireWyrm
-    ${Boost_LIBRARIES}
-    ${FBLIB_LIBRARIES}
-    )
+
+if(UNIX AND NOT APPLE) 
+    set(FB_PLUGIN_LIBRARIES 
+        PluginCore 
+        -Wl,--whole-archive 
+        ${PLUGIN_PREFIX}_PluginAuto 
+        -Wl,--no-whole-archive 
+        NpapiCore 
+        FireWyrm 
+        ScriptingCore 
+        PluginCore 
+        ${Boost_LIBRARIES} 
+        ${FBLIB_LIBRARIES} 
+        )
+else()
+    set(FB_PLUGIN_LIBRARIES 
+        PluginCore 
+        ${PLUGIN_PREFIX}_PluginAuto 
+        NpapiCore 
+        FireWyrm 
+        ScriptingCore 
+        PluginCore 
+        ${Boost_LIBRARIES} 
+        ${FBLIB_LIBRARIES} 
+        )
+endif()
 
 file (GLOB FB_PLUGIN_GENERATED_SOURCES
     ${FB_TEMPLATE_DEST_DIR}/[^.]*

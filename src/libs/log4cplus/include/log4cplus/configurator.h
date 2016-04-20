@@ -332,7 +332,7 @@ namespace log4cplus
             bool logToStdErr = false);
 
         //! Property name for disable override.
-        static log4cplus::tstring const DISABLE_OVERRIDE_KEY;
+        //static log4cplus::tstring const DISABLE_OVERRIDE_KEY;
         
     private:
       // Disable copy

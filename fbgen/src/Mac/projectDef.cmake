@@ -37,5 +37,7 @@ target_link_libraries(${PROJECT_NAME}
     ${FB_PLUGIN_LIBRARIES}
     )
 
+include(Mac/pkgInstaller.cmake)
+
 #To create a DMG, include the following file
 #include(Mac/installer.cmake)

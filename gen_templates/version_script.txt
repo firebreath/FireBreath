@@ -5,6 +5,8 @@
 		NP_GetPluginVersion;
 		NP_GetMIMEDescription;
 		NP_GetValue;
+		FireWyrm_Init;
+		FireWyrm_Finit;
 	local:
 		*;
 };

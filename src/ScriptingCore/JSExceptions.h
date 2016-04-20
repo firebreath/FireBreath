@@ -87,6 +87,22 @@ namespace FB {
         { }
         ~invalid_member() throw() { }
     };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @exception bad_cast_ext
+    ///
+    /// @brief  This is analog of std::bad_cast with ability to set a custom message 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    struct bad_cast_ext : public std::bad_cast
+    {
+        bad_cast_ext(std::string error) : m_error(error)
+        { }
+        virtual ~bad_cast_ext() throw() { }
+        virtual const char* what() const throw() {
+            return m_error.c_str();
+	}
+        std::string m_error;
+    };
 }
 
 #endif // JSExceptions_h__
