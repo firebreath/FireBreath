@@ -283,7 +283,9 @@ STDMETHODIMP ActiveXBindStatusCallback::OnProgress(ULONG ulProgress, ULONG ulPro
  STDMETHODIMP
 ActiveXBindStatusCallback::OnStopBinding(HRESULT hrStatus, LPCWSTR pszError)
 {
-    if ( m_request->stream ) m_request->stream->signalRequestCompleted( m_request, !FAILED(hrStatus) );
+	ActiveXStreamPtr stream = m_request->stream;
+    if (stream)
+		stream->signalRequestCompleted(m_request, !FAILED(hrStatus));
 
     if (m_pbinding)
     {
