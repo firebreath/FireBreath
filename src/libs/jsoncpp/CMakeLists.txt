@@ -16,6 +16,10 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+if (CMAKE_MAJOR_VERSION GREATER 2)
+    cmake_policy(SET CMP0045 OLD)
+endif()
+
 project(jsoncpp)
 
 get_target_property(library_target_exists jsoncpp TYPE)

@@ -17,6 +17,7 @@ Copyright 2010 Facebook, Inc
 #define H_FB_LOGGING
 
 #include <sstream>
+#include <string>
 #include <list>
 
 #if !FB_NO_LOGGING_MACROS

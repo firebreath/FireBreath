@@ -1,5 +1,10 @@
-project (log4cplus)
+project (log4cplus CXX C)
 cmake_minimum_required (VERSION 2.8.0)
+cmake_policy(VERSION 2.8.12.2)
+if (CMAKE_MAJOR_VERSION GREATER 2)
+    cmake_policy(SET CMP0045 OLD)
+endif()
+set (CMAKE_VERBOSE_MAKEFILE on)
 
 # with firebreath this target could get added mutliple times; protect against this
 get_target_property(library_target_exists log4cplus TYPE)

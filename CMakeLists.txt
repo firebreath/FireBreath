@@ -16,6 +16,11 @@
 cmake_minimum_required (VERSION 2.6)
 set (CMAKE_BACKWARDS_COMPATIBILITY 2.6)
 
+cmake_policy(VERSION 2.8.12.2)
+if (CMAKE_MAJOR_VERSION GREATER 2)
+    cmake_policy(SET CMP0045 OLD)
+endif()
+
 Project (FireBreath)
 
 # Allow super-projects to disable firebreath-specific git operations.
