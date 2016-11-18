@@ -172,7 +172,15 @@ FB::variant FBTestPluginAPI::fail() {
 FB::variantPromise FBTestPluginAPI::failSlowly() {
     FB::variantDeferred dfd;
 
-    auto callback = [dfd]() { std::this_thread::sleep_for(std::chrono::seconds(2)); dfd.reject(FB::script_error("Slow failure!")); };
+	std::exception_ptr exp;
+	try{
+		throw FB::script_error("Slow failure!");
+	}
+	catch (...)
+	{
+		exp = std::current_exception();
+	}
+    auto callback = [dfd,exp]() { std::this_thread::sleep_for(std::chrono::seconds(2)); dfd.reject(exp); };
 
     std::async(callback);
 
