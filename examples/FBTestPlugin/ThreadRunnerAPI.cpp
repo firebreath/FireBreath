@@ -50,9 +50,17 @@ void ThreadRunnerAPI::threadRun()
                     } else if (var.is_of_type<FB::JSObjectPtr>()) {
                         addMethod(var.convert_cast<FB::JSObjectPtr>());
                     }
-                }).fail([host](std::exception ex) -> void {
+                }).fail([host](std::exception_ptr ex) -> void {
                     // The function had an exception
-                    host->htmlLog(std::string("Exception calling func ") + ex.what());
+					try{
+						if (ex)
+							std::rethrow_exception(ex);
+					}
+					catch (std::exception& ex2)
+					{
+						host->htmlLog(std::string("Exception calling func ") + ex2.what());
+					}
+					
                 });
             } catch (const FB::script_error& ex) {
                 // The function call failed
