@@ -435,14 +435,14 @@ void FBTestPluginAPI::timerCallback(const FB::JSObjectPtr& callback)
 }
 
 FB::VariantMap FBTestPluginAPI::systemHelpersTest(){
-    FB::VariantMap result{
-        { "homedir", FB::System::getHomeDirPath() },
-        { "tempdir", FB::System::getTempPath()},
-        { "appdata", FB::System::getAppDataPath("FBTestPlugin")},
-        { "appdata_local", FB::System::getLocalAppDataPath("FBTestPlugin")}
-    };
-    
-    return result;
+
+		FB::VariantMap result;
+		result["homedir"] = FB::System::getHomeDirPath();
+		result["homedir"] = FB::System::getHomeDirPath();
+		result["tempdir"] = FB::System::getTempPath();
+		result["appdata"] = FB::System::getAppDataPath("FBTestPlugin");
+		result["appdata_local"] = FB::System::getLocalAppDataPath("FBTestPlugin");
+		return result;
 }
 
 const boost::optional<std::string> FBTestPluginAPI::optionalTest( std::string test1, const boost::optional<std::string>& str )
