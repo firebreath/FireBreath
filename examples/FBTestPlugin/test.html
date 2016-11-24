@@ -12,14 +12,14 @@
             background-image: url('bg.png');
             background-size: 50px 50px;
         }
-    
-        .header 
+
+        .header
         {
             text-align: center;
             border: 1px solid black;
             width: 900px;
         }
-    
+
         .pluginContainer
         {
             width: 30%;
@@ -47,7 +47,7 @@
             margin: 0 auto;
             float: left;
         }
-    
+
         #testResults
         {
             border: 1px dashed gray;
@@ -56,7 +56,7 @@
             float: left;
             overflow:auto;
         }
-    
+
         #testResults ul
         {
             border-bottom: 1px solid black;
@@ -64,13 +64,13 @@
             padding: 0;
             list-style: none;
         }
-    
+
         #testResults ul li
         {
             padding-left: 1em;
             color: Gray;
         }
-    
+
         #testResults ul li.passed
         {
             color: Green;
@@ -86,6 +86,21 @@
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.5/jquery-ui.min.js"></script>
     <script type="text/javascript" language="Javascript">
+        function callbackify(promise) {
+            if(promise.then != undefined){
+
+                return function(cb){
+                    promise.then(function(data){
+                        setTimeout(function(){
+                            cb(null,data);
+                        },0)
+                    })
+                }
+            }
+            else {
+                throw new Error("'then' is undefined")
+            }
+        }
         var pingSeq = 0;
         var pingQ = {};
         var pingSuccess = 0;
@@ -168,7 +183,7 @@
 
             addTest("mathApiAdd3B", "Use OBJECT.self custom JSAPI coming in from script (SimpleMath)");
             addTest("mathApiAdd4B", "Use OBJECT custom JSAPI coming in from script (SimpleMath) (should FAIL!)");
-            
+
             addTest("systemHelpersTest", "Directory Helper functions.");
 
             addTest("countArray", "Count array length returned from JSAPI object");
@@ -189,7 +204,7 @@
                 mimeType3 = "application/x-fbtestmathplugin";
             var pc = $(".pluginContainer");
             getPlugin1 = injectPlugin(pc[0], mimeType, "pluginLoaded"); // windowed
-                         injectPlugin(pc[1], mimeType, "", "windowless"); 
+                         injectPlugin(pc[1], mimeType, "", "windowless");
                          injectPlugin(pc[2], mimeType, "", "AsyncWindowsDXGISurface");
                          injectPlugin(pc[3], mimeType, "", "AsyncWindowsDXGISurface");
             getPlugin2 = injectPlugin($("#pluginContainer2")[0], mimeType2, "pluginLoaded2");
@@ -251,218 +266,358 @@
 
         function pluginRunTests() {
             var plugin = getPlugin1();
+            /*
+                plugin.{properyName} is always a Promise
+            */
             if (plugin.valid)
-                markPassed("valid");
+            {
+                var isPluginValid =callbackify(plugin.valid);
+                isPluginValid(function(err,valid){
+                    if(!valid) markFailed("valid");
+                    else markPassed("valid");
+                })
+            }
             else
                 markFailed("valid");
 
             var mathplugin2 = getPlugin2();
             if (mathplugin2.valid)
-                markPassed("valid2");
+            {
+                var isPlugin2Valid =callbackify(mathplugin2.valid);
+                isPlugin2Valid(function(err,valid){
+                    if(!valid) markFailed("valid2");
+                    else markPassed("valid2");
+                })
+            }
             else
                 markFailed("valid2");
 
             // note: no valid property!
             var mathplugin3 = getPlugin3();
-                
-            try {
-                var path = plugin.pluginPath;
-                if (path.length < 1) 
-                    throw (new Error("path.length < 1"));
-                $("#pluginPath").text(path);
-                markPassed("getPluginPath");
-            } catch (e) {
-                markFailed("getPluginPath");
-            }
 
-            try {
-            if (plugin.echo("Hello!") == "Hello!"
-                && plugin.echo(1234) == 1234
-                && plugin.echo(12.445) == 12.445
-                && plugin.echo(true) == true) {
-                markPassed("echo");
-            } else {
-                markFailed("echo");
-            }
-            }catch (e){alert(e)};
+            
+            var path = plugin.pluginPath;
+            //path is a promise
+            path.then(function(value){
+            	if(value.length < 1)
+            		throw ( new Error("path.length < 1"));
+            	$("#pluginPath").text(value);
+            	markPassed("getPluginPath");
+            }).then(null,function(e){
+            	markFailed("getPluginPath");	
+            });
+            
+            
+            var echoRejector = function(err) {markFailed("echo"); throw err;}
+            
+            plugin.echo("Hello!").then(function(ret){
+            	if(ret === "Hello!"){
+            		return true;
+            	}else
+            	{
+            		throw "error";
+            	}
+            }).then(function(){
+            	plugin.echo(1234).then(function(ret2){
+            			if(ret2 === 12346){
+            				
+            				return true;
+            			}else
+            				throw 'error';
+            		})			
+            },echoRejector)
+            .then(function(){
+            	plugin.echo(12.445).then(function(ret3){
+            				if(ret3 === 12.445)
+            					return true;
+            				else
+            					throw "error";	
+            			})
+            },echoRejector).then(function(){
 
+            	plugin.echo(true).then(function(ret){
+            		if(ret === true)
+            			return true;
+            		else throw "error";
+
+            	},echoRejector)
+            })
+            .then(function(){
+            	markPassed("echo");
+            },echoRejector)
+            
             var tmp = Array();
             for (var i = 0; i < 15; i++) {
                 tmp.push(i);
             }
-            var tmp2 = plugin.reverseArray(tmp);
-            var success = true;
-            for (var i = 0; i < 15; i++) {
-                if (tmp2[i] != 14 - i) {
-                    success = false;
-                    break;
-                }
-            }
-            if (success)
-                markPassed("reverse");
-            else
-                markFailed("reverse");
 
-            var check = plugin.getUserData();
-            if (check.Name != "Richard Bateman"
+            var tmp2 = plugin.reverseArray(tmp);
+            //tmp2 is also a Promise
+            
+            tmp2.then(function(values){
+            	var success = true;
+            	for (var i = 0; i < 15; i++) {
+	                if (values[i] != 14 - i) {
+	                    success = false;
+	                    break;
+	                }
+            	}
+	            if (success)
+	                markPassed("reverse");
+	            else
+	                markFailed("reverse");	
+            })	
+            
+            
+            var checkPromise = plugin.getUserData();
+            checkPromise.then(function(check)
+            {
+            	if (check.Name != "Richard Bateman"
                 || typeof(check.Kids) != "object"
                 || check.Kids[0] != "Caleb"
                 || typeof (check.inner) != "object"
                 || check.inner.test3 != 12.4
                 || check.inner.test != 12
-                || check.Kids[3].test4 != "asdf")
+                || check.Kids[4].test4 != "asdf")
                 markFailed("getMap");
             else
                 markPassed("getMap");
+	
+            })
 
-            if (plugin.getPageLocation() != window.location.href)
-                markFailed("location");
-            else
-                markPassed("location");
-                
+            var locationPromise = plugin.getPageLocation();
+            locationPromise.then(function(loc){
+            	if (loc != window.locaton.href)
+            		markFailed("location");
+            	else
+                	markPassed("location");
+            })
+
             // Use math object in plugin, call math methods.
             var math = plugin.simpleMath;
-            if (math.add(34, 43) != 77
-                || math.sub(10, 5) != 5) {
-                markFailed("mathAPI");
-            } else {
-                markPassed("mathAPI");
-            }
+            
+            math.then(function(ob){
+            	ob.add(34,43).then(function(r){
+                    if(r === 77) return ob;
+                    else throw "error";
+                }).then(function(ob){
+            	ob.sub(10,5).then(function(r){
+            		if(r !== 5) throw "error";
+            	}).then(function(r){
+            		markPassed("mathAPI")
+            	}).then(null,function(){ markFailed("mathAPI")})
+            })
+            })
+            
 
             // Main object creates new math object, call math methods.
             var math2 = plugin.createSimpleMath();
-            if (math2.add(34, 43) != 77
-                || math2.sub(10, 5) != 5) {
-                markFailed("mathAPI2");
-            } else {
-                markPassed("mathAPI2");
-            }
+            math2.then(function(ob){
+            	ob.add(34,43).then(function(r){
+                    if(r === 77) return ob;
+                    else throw "error";
+                }).then(function(ob){
+            	ob.sub(10,5).then(function(r){
+            		if(r !== 5) throw "error";
+            	}).then(function(r){
+            		markPassed("mathAPI2")
+            	}).then(null,function(){ markFailed("mathAPI2")})
+            })
+            })
             
             // HTML OBJECT tag creates math object, call math methods.
-            if (mathplugin2.add(34, 43) != 77
-                || mathplugin2.sub(10, 5) != 5) {
-                markFailed("mathAPI3");
-            } else {
-                markPassed("mathAPI3");
-            }
+            mathplugin2.add(34,43).then(function(r){
+            	if(r !== 77) throw "error";
+            }).then(function(){
+	            	mathplugin2.sub(10, 5).then(function(r){
+	            		if(r !==5) throw "error";	
+	            	})
+            },function(){
+            	markFailed("mathAPI3")
+            }).then(function(){
+            	markPassed("mathAPI3")
+            },function(){
+            	markFailed("mathAPI3")
+            })
 
+          
             // HTML OBJECT tag creates math object, call math methods on self.
             var mathplugin2_self = mathplugin2.self;
-            if (mathplugin2_self.add(34, 43) != 77
-                || mathplugin2_self.sub(10, 5) != 5) {
-                markFailed("mathAPI4");
-            } else {
-                markPassed("mathAPI4");
-            }
+            /*
+            	mathplugin2_self is a promise
+            */
+            mathplugin2_self.then(function(ob){
+                ob.add(34,43).then(function(r){
+                    if(r === 77) return true;
+                    else throw "error";
+                })
+                .then(function(){
+                	ob.sub(10,5).then(function(r){
+                		if(r===5) return true;
+                		else throw "error";
+                	}).then(null,function(err){
+                		markFailed("mathAPI4");
+                		throw err;
+                	})
+                },function(err){
+                	markFailed("mathAPI4");
+                	throw err;
+                }).then(function(){ markPassed("mathAPI4")},function(){markFailed("mathAPI4")})
+            })
 
             // HTML OBJECT tag creates math object, call math methods.
-            if (mathplugin3.add(34, 43) != 77
-                || mathplugin3.sub(10, 5) != 5) {
-                markFailed("mathAPI3B");
-            } else {
-                markPassed("mathAPI3B");
-            }
+            mathplugin3.add(34,43).then(function(r){
+            	if(r !== 77) throw "error";
+            }).then(function(){
+	            	mathplugin3.sub(10, 5).then(function(r){
+	            		if(r !==5) throw "error";	
+	            	})
+            },function(){
+            	markFailed("mathAPI3B")
+            }).then(function(){
+            	markPassed("mathAPI3B")
+            },function(){
+            	markFailed("mathAPI3B")
+            })
+
+            
 
             // HTML OBJECT tag creates math object, call math methods on self.
-            var mathplugin3_self = mathplugin3.self;
-            if (mathplugin3_self.add(34, 43) != 77
-                || mathplugin3_self.sub(10, 5) != 5) {
-                markFailed("mathAPI4B");
-            } else {
-                markPassed("mathAPI4B");
-            }
-
+			var mathplugin3_self = mathplugin3.self;
+            mathplugin3_self.then(function(ob){
+                ob.add(34,43).then(function(r){
+                    if(r === 77) return true;
+                    else throw "error";
+                })
+                .then(function(){
+                	ob.sub(10,5).then(function(r){
+                		if(r===5) return true;
+                		else throw "error";
+                	}).then(null,function(err){
+                		markFailed("mathAPI4B");
+                		throw err;
+                	})
+                },function(err){
+                	markFailed("mathAPI4B");
+                	throw err;
+                }).then(function(){ markPassed("mathAPI4B")},function(){markFailed("mathAPI4B")})
+            })
+            
+           
             // Use math object in plugin as method argument
-            try {
-                if (plugin.addWithSimpleMath(plugin.simpleMath, 23, 532) != 555)
-                    markFailed("mathApiAdd");
-                else
-                    markPassed("mathApiAdd");
-            } catch (e) {
-                    markFailed("mathApiAdd");
-            }
+            plugin.simpleMath.then(function(smAPI){
+            	plugin.addWithSimpleMath(smAPI, 23, 532).then(function(r){
+            		 if(r !== 555) throw "error";
+	            },function(err){
+	            	markFailed("mathApiAdd");
+	            }).then(function(){
+	            	markPassed("mathApiAdd");
+	            },function(err){
+	            	markFailed("mathApiAdd");	
+	            })
+            })
 
             // Use new math object created by main plugin as method argument
-            try {
-                // Main object creates helper, can call main object with helper as an argument
-                var mathapiadd2 = plugin.createSimpleMath();
-                if (plugin.addWithSimpleMath(mathapiadd2, 23, 532) != 555)
-                    markFailed("mathApiAdd2");
-                else
-                    markPassed("mathApiAdd2");
-            } catch (e) {
-                    markFailed("mathApiAdd2");
-            }
-
-            // Use math object (SELF) created by HTML OBJECT tag as method argument
-            try {
-                // HTML OBJECT tag creates helper, can call main object with helper as an argument
-                var mathplugin2_self = mathplugin2.self;
-                // Same as mathplugin2.self:
-                // var mathplugin2_self = mathplugin2.GetSelf();
-                if (plugin.addWithSimpleMath(mathplugin2_self, 23, 532) != 555)
-                    markFailed("mathApiAdd3");
-                else
-                    markPassed("mathApiAdd3");
-            } catch (e) {
-                    markFailed("mathApiAdd3");
-            }
-
-            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
-            try {
-                // HTML OBJECT tag creates helper, can call main object with helper as an argument
-                var mathplugin2_var = mathplugin2;
-                if (plugin.addWithSimpleMath(mathplugin2_var, 23, 532) != 555)
-                    markFailed("mathApiAdd4");
-                else
-                    markPassed("mathApiAdd4");
-            } catch (e) {
-                    markFailed("mathApiAdd4");
-            }
-
-            // Use math object (SELF) created by HTML OBJECT tag as method argument
-            try {
-                // HTML OBJECT tag creates helper, can call main object with helper as an argument
-                var mathplugin3_self = mathplugin3.self;
-                // Same as mathplugin3.self:
-                // var mathplugin3_self = mathplugin3.GetSelf();
-                if (plugin.addWithSimpleMath(mathplugin3_self, 23, 532) != 555)
-                    markFailed("mathApiAdd3B");
-                else
-                    markPassed("mathApiAdd3B");
-            } catch (e) {
-                    markFailed("mathApiAdd3B");
-            }
-
-            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
-            try {
-                // HTML OBJECT tag creates helper, can call main object with helper as an argument
-                var mathplugin3_var = mathplugin3;
-                if (plugin.addWithSimpleMath(mathplugin3_var, 23, 532) != 555)
-                    markFailed("mathApiAdd4B");
-                else
-                    markPassed("mathApiAdd4B");
-            } catch (e) {
-                    markFailed("mathApiAdd4B");
-            }
             
+            var mathapiadd2 = plugin.createSimpleMath();
+            mathapiadd2.then(function(smAPI){
+            	plugin.addWithSimpleMath(smAPI, 23, 532).then(function(r){
+            		 if(r !== 555) throw "error";
+	            },function(err){
+	            	markFailed("mathApiAdd2");
+	            }).then(function(){
+	            	markPassed("mathApiAdd2");
+	            },function(err){
+	            	markFailed("mathApiAdd2");	
+	            })
+            })
+               
+
+            // Use math object (SELF) created by HTML OBJECT tag as method argument
+            var mathplugin2_self = mathplugin2.self;
+            mathplugin2_self.then(function(smAPI){
+            	plugin.addWithSimpleMath(smAPI, 23, 532).then(function(r){
+            		 if(r !== 555) throw "error";
+	            },function(err){
+	            	markFailed("mathApiAdd3");
+	            }).then(function(){
+	            	markPassed("mathApiAdd3");
+	            },function(err){
+	            	markFailed("mathApiAdd3");	
+	            })
+            })
+          
+            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
+          	var mathplugin2_var = mathplugin2;
+        	plugin.addWithSimpleMath(mathplugin2_var, 23, 532).then(function(r){
+        		 if(r !== 555) throw "error";
+            },function(err){
+            	markFailed("mathApiAdd4");
+            }).then(function(){
+            	markPassed("mathApiAdd4");
+            },function(err){
+            	markFailed("mathApiAdd4");	
+            })
+            
+          		
+            
+            // Use math object (SELF) created by HTML OBJECT tag as method argument
+            var mathplugin3_self = mathplugin3.self;
+            mathplugin3_self.then(function(smAPI){
+            	plugin.addWithSimpleMath(smAPI, 23, 532).then(function(r){
+            		 if(r !== 555) throw "error";
+	            },function(err){
+	            	markFailed("mathApiAdd3B");
+	            }).then(function(){
+	            	markPassed("mathApiAdd3B");
+	            },function(err){
+	            	markFailed("mathApiAdd3B");	
+	            })
+            })
+            
+
+            // Use math object created by HTML OBJECT tag as method argument (SHOULD FAIL!!!)
+            var mathplugin3_var = mathplugin3;
+            
+        	plugin.addWithSimpleMath(mathplugin3_var, 23, 532).then(function(r){
+        		 if(r !== 555) throw "error";
+            },function(err){
+            	markFailed("mathApiAdd4B");
+            }).then(function(){
+            	markPassed("mathApiAdd4B");
+            },function(err){
+            	markFailed("mathApiAdd4B");	
+            })
+            
+          
+
             var sm = plugin.simpleMath;
-            var c = plugin.countArrayLength(sm);
-            if (c!=4) {
-                markFailed("countArray");
-                alert(c);
-            }
-            else
-                markPassed("countArray");
+            sm.then(function(obj){
+            	var c = plugin.countArrayLength(obj);
+	            c.then(function(val)      {
+	            	if (val!=4) {
+		                markFailed("countArray");
+		                
+	            	}
+	         	   else
+	              	  markPassed("countArray");	
+	            })
+            })
             
-            var paths = plugin.systemHelpersTest();
+            
+
+            var pathsPromise = plugin.systemHelpersTest()
             markPassed("systemHelpersTest");
+
+            pathsPromise.then(function(paths){
+            	for(var dir in paths) {
+            	
+                	var value = paths[dir];
+                	$("#systemHelpersTest").append("<br>&nbsp;&nbsp;&nbsp;&nbsp;"
+                                              + dir + " = " + value);
+            	}
+            })
             
-            for(var dir in paths) {
-                var value = paths[dir];                
-                $("#systemHelpersTest").append("<br>&nbsp;&nbsp;&nbsp;&nbsp;"
-                                               + dir + " = " + value);
-            }
 
             plugin.onfired = function (str) {
                 if (str == "some string") {
@@ -501,20 +656,21 @@
                }
             }
 
-            try {
-                thread = plugin.createThreadRunner();
-
-                thread.addMethod(function(){
-                    return PasswordDlg("Message text", function()
-                        {
+          
+            thread = plugin.createThreadRunner();
+            thread.then(function(obj){
+            	obj.addMethod(function(){
+                return PasswordDlg("Message text", function()
+                    {
 //                            alert("Dialog closed");
-                            markPassed("dialog");
-                        });});
-            }
-            catch (e) {
-                alert (e);
-            }
+                        markPassed("dialog");
+                    });
+            })
+            });
             
+        
+            
+
             var sUrl = "http://code.google.com/p/firebreath/issues/list";
 			var getUrlCallback = function(success, outheaders, data)
 			{
@@ -550,25 +706,43 @@
                 //testDiv.innerHTML = "";
             //}
             //dangerousInjection(testDiv, testcb);
-
-            if (plugin.add.apply(window, [1, 2]) == 3) {
-                markPassed("applytest");
-            } else {
-                markFailed("applytest");
+            try{
+            	if (plugin.add.apply(window, [1, 2]) == 3) {
+                	markPassed("applytest");
+            	} else {
+                	markFailed("applytest");
+            	}
             }
-            if (plugin.add.call(window, 1, 2) == 3) {
-                markPassed("calltest");
-            } else {
-                markFailed("calltest");
+            catch(e)
+            {
+            	markFailed("applytest");
             }
+            try
+            {
+            	if (plugin.add.call(window, 1, 2) == 3) {
+             	   markPassed("calltest");
+            	} else {
+                	markFailed("calltest");
+            	}
+            }
+            catch(e)
+            {
+            	markFailed("calltest");
+            }
+            
 			var setTimeoutCallback = function() {
 				alert("callback set timeout called");
 				console.warn("SetTimeout completed"); markPassed("testSetTimeout");}
 				// don't know how to set failed timeout.
 			plugin.setTimeout(setTimeoutCallback, 10000);
+			
         }
-        function PasswordDlg(message, onComplete) 
+        function PasswordDlg(message, onComplete)
         {
+        	//hack to fix jquery bug
+        	$.curCSS = function (element, attrib, val) {
+  			  $(element).css(attrib, val);
+			};
             //console.log("PasswordDlg: " +message);
             var $template= $('<div id="PasswordDlg">\
                     <span class="ui-icon ui-icon-key" style="float:left; margin:0 7px 20px 0;"></span>\
@@ -579,11 +753,11 @@
                 title: "Enter some text",
                 modal: true,
                 //autoOpen: true,
-                open: function(event, ui) { 
+                open: function(event, ui) {
                     //console.log("PasswordDlg show dialog" + dialog_finished);
                     $(this).find("input:password").keypress(function (e) {
                         if (e.keyCode =='13') {
-                            //console.log("Enter pressed ");$template.dialog("close");
+                            console.log("Enter pressed ");$template.dialog("close");
                             }
                         else {
                             //console.log("keyCode: " + e.keyCode);
@@ -600,7 +774,7 @@
                 buttons: {
                     'ok' : function() {
                         $(this).dialog("close");
-                    }, 
+                    },
                     'cancel': function() {
                         res = '';
                         $(this).dialog("close");
