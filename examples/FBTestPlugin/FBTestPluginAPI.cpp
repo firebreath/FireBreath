@@ -352,16 +352,26 @@ std::string FBTestPluginAPI::get_pluginPath()
     return getPlugin()->getPluginPath();
 }
 
-long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
+FB::variantPromise FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
 {
     if (!jso)
         throw FB::invalid_arguments();
     if (!jso->HasProperty("getArray"))
         throw FB::invalid_arguments();
-    long len = -1;
-    //FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
-    //long len = array.size();// array->GetProperty("length").convert_cast<long>();
-    return len;
+    
+
+	
+
+	auto arrProp = jso->GetProperty("getArray");
+	
+	return arrProp.convert_cast<FB::VariantMap>().then<FB::variant>([&](FB::VariantMap obj)->FB::variant {
+		
+		return obj["then"].cast<FB::JSObjectPtr>();
+	});
+	
+	
+
+	
 }
 FB::variantPromise FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
 {

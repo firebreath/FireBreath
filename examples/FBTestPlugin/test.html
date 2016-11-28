@@ -602,14 +602,17 @@
             var sm = plugin.simpleMath;
             sm.then(function(obj){
             	var c = plugin.countArrayLength(obj);
-	            c.then(function(val)      {
-	            	if (val!=4) {
-		                markFailed("countArray");
+	            c.then(function(cb)      {
+	            	 cb(function(val){
+	            		if (val.length!=4) {
+		                	markFailed("countArray");
 
-	            	}
-	         	   else
-	              	  markPassed("countArray");
-	            })
+	            		}
+	         	   		else
+	              	  		markPassed("countArray"); 	
+	            	 });
+	            	
+	            },function(r){markFailed("countArray")})
             })
 
 
