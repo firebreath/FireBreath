@@ -45,7 +45,7 @@ script:
     make -j4
   else
     ../prepmac.sh  ../examples/FBTestPlugin ./
-    xcodebuild -parallelizeTargets -jobs 4 
+    xcodebuild -parallelizeTargets -jobs 4 -quiet | egrep '^(/.+:[0-9+:[0-9]+:.(error):|fatal|===)' -
   fi
 
 # -----------------------------------------------------------------------------
