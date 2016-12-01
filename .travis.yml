@@ -42,10 +42,10 @@ script:
 - |
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     ../prepmake.sh ../examples/FBTestPlugin ./
-    make -j2
+    make -j4
   else
     ../prepmac.sh  ../examples/FBTestPlugin ./
-    xcodebuild
+    xcodebuild -parallelizeTargets -jobs 4 
   fi
 
 # -----------------------------------------------------------------------------
