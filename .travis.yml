@@ -3,6 +3,8 @@ matrix:
   include:
   - os: linux
   - os: osx
+  allow_failures:
+  - os: linux # richard said it has never been supported
 
 # -----------------------------------------------------------------------------
 # safelist
@@ -37,7 +39,6 @@ install:
 # -----------------------------------------------------------------------------
 # go for it
 script:
-- cmake ..
 - |
   if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
     ../prepmake.sh ../examples/FBTestPlugin ./
