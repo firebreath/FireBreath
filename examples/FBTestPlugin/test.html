@@ -187,14 +187,10 @@
             addTest("systemHelpersTest", "Directory Helper functions.");
 
             addTest("countArray", "Count array length returned from JSAPI object");
-            addTest("simpleFireEvent", "Simple event bind and fire test");
             addTest("attachedFireEvent", "Simple event bind attach and fire test");
             addTest("dialog", "Dialog callback test");
             addTest("getURL", "Download stream (GET)");
             addTest("postURL", "Download stream (POST)");
-            //addTest("dangerousInject", "Dangerous injection");
-            addTest("calltest", "Function.call method");
-            addTest("applytest", "Function.apply method");
             addTest("testSetTimeout", "SetTimeout Timer functionality.");
             markFailed("loaded");
             markFailed("loaded2");
@@ -214,13 +210,11 @@
         function pluginLoaded(a) {
             markPassed("loaded");
             $("#pluginContainer").css("border", "1px solid black");
-            //setTimeout(pluginRunTests, 500);
             setInterval(ping, 500);
         }
         function pluginLoaded2() {
             markPassed("loaded2");
             $("#pluginContainer2").css("border", "1px solid black");
-            //setTimeout(pluginRunTests, 500);
         }
         function pluginLoaded3() {
             markPassed("loaded3");
@@ -265,6 +259,7 @@
         }
 
         function pluginRunTests() {
+            
             var plugin = getPlugin1();
             /*
                 plugin.{properyName} is always a Promise
@@ -290,15 +285,17 @@
                 })
             }
             else
-                markFailed("valid2");
+            {
+            	markFailed("valid2");
+            }
+                
 
-            // note: no valid property!
             var mathplugin3 = getPlugin3();
 
 
-            var path = plugin.pluginPath;
-            //path is a promise
-            path.then(function(value){
+            var pathPromise = plugin.pluginPath;
+            
+            pathPromise.then(function(value){
             	if(value.length < 1)
             		throw ( new Error("path.length < 1"));
             	$("#pluginPath").text(value);
@@ -351,10 +348,10 @@
                 tmp.push(i);
             }
 
-            var tmp2 = plugin.reverseArray(tmp);
-            //tmp2 is also a Promise
+            var reverseArrayPromise = plugin.reverseArray(tmp);
+            
 
-            tmp2.then(function(values){
+            reverseArrayPromise.then(function(values){
             	var success = true;
             	for (var i = 0; i < 15; i++) {
 	                if (values[i] != 14 - i) {
@@ -369,16 +366,17 @@
             })
 
 
-            var checkPromise = plugin.getUserData();
-            checkPromise.then(function(check)
+            var getUserDataPromise = plugin.getUserData();
+            getUserDataPromise.then(function(check)
             {
             	if (check.Name != "Richard Bateman"
-                || typeof(check.Kids) != "object"
-                || check.Kids[0] != "Caleb"
-                || typeof (check.inner) != "object"
-                || check.inner.test3 != 12.4
-                || check.inner.test != 12
-                || check.Kids[4].test4 != "asdf")
+		                || typeof(check.Kids) != "object"
+		                || check.Kids[0] != "Caleb"
+		                || typeof (check.inner) != "object"
+		                || check.inner.test3 != 12.4
+		                || check.inner.test != 12
+		                || check.Kids[4].test4 != "asdf")
+                
                 markFailed("getMap");
             else
                 markPassed("getMap");
@@ -387,7 +385,7 @@
 
             var locationPromise = plugin.getPageLocation();
             locationPromise.then(function(loc){
-                //alert(window.locaton.href + " " +loc)
+
             	if (loc != window.location.href)
             		markFailed("location");
             	else
@@ -624,31 +622,21 @@
             	for(var dir in paths) {
 
                 	var value = paths[dir];
-                	$("#systemHelpersTest").append("<br>&nbsp;&nbsp;&nbsp;&nbsp;"
-                                              + dir + " = " + value);
+                	$("#systemHelpersTest").append("<br>&nbsp;&nbsp;&nbsp;&nbsp;" + dir + " = " + value);
             	}
             })
 
 
-            plugin.onfired = function (str) {
-                if (str == "some string") {
-                    markPassed("simpleFireEvent");
-                } else {
-                    markFailed("simpleFireEvent");
-                }
-            };
-            var tmpFired = function (str) {
+            var eventCallback = function (str) {
                 if (str == "some string") {
                     markPassed("attachedFireEvent");
                 } else {
                     markFailed("attachedFireEvent");
                 }
             }
-            if (plugin.attachEvent) {
-                plugin.attachEvent("onfired", tmpFired);
-            } else {
-                plugin.addEventListener("fired", tmpFired, false);
-            }
+
+            //Test eventListner
+            plugin.addEventListener("fired", eventCallback, false);
             plugin.testEvent("some string");
 
             // now remove the async callback delegate,
@@ -673,24 +661,24 @@
             	obj.addMethod(function(){
                 return PasswordDlg("Message text", function()
                     {
-//                            alert("Dialog closed");
                         markPassed("dialog");
                     });
             })
+            },function(){
+            	   markFailed("dialog");
             });
 
 
 
             var sUrl = "http://code.google.com/p/firebreath/issues/list";
-			var getUrlCallback = function(success, outheaders, data)
-			{
+			var getUrlCallback = function(success, outheaders, data){
                 if (success) {
                     markPassed("getURL");
                 } else {
                     markFailed("getURL");
                 }
-				//alert("getUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
 			}
+
 			plugin.getURL(sUrl, getUrlCallback);
 
             var sUrl = "http://code.google.com/p/firebreath/issues/list";
@@ -702,58 +690,30 @@
                 } else {
                     markFailed("postURL");
                 }
-				//alert("postUrlCallback: " + success + "\r\nHeaders: " + outheaders + "\r\nDataLen: " + data.lenght);
 			}
             plugin.postURL(sUrl, sPostData, postUrlCallback);
 
-            //testDiv = document.getElementById("test");
-            //var testcb = function(nplug) {
-                //if (nplug.valid) {
-                    //markPassed("dangerousInject");
-                //} else {
-                    //markFailed("dangerousInject");
-                //}
-                //testDiv.innerHTML = "";
-            //}
-            //dangerousInjection(testDiv, testcb);
-            try{
-            	if (plugin.add.apply(window, [1, 2]) == 3) {
-                	markPassed("applytest");
-            	} else {
-                	markFailed("applytest");
-            	}
-            }
-            catch(e)
-            {
-            	markFailed("applytest");
-            }
-            try
-            {
-            	if (plugin.add.call(window, 1, 2) == 3) {
-             	   markPassed("calltest");
-            	} else {
-                	markFailed("calltest");
-            	}
-            }
-            catch(e)
-            {
-            	markFailed("calltest");
-            }
-
+            var pluginSetTimeoutPassed = false;
 			var setTimeoutCallback = function() {
-				alert("callback set timeout called");
-				console.warn("SetTimeout completed"); markPassed("testSetTimeout");}
-				// don't know how to set failed timeout.
+				pluginSetTimeoutPassed = true;
+				markPassed("testSetTimeout");
+			}
+			
 			plugin.setTimeout(setTimeoutCallback, 10000);
+			setTimeout(function(){
+				if(!pluginSetTimeoutPassed)
+					markFailed("testSetTimeout");
+			},10004)
 
         }
+        
         function PasswordDlg(message, onComplete)
         {
         	//hack to fix jquery bug
         	$.curCSS = function (element, attrib, val) {
   			  $(element).css(attrib, val);
 			};
-            //console.log("PasswordDlg: " +message);
+        
             var $template= $('<div id="PasswordDlg">\
                     <span class="ui-icon ui-icon-key" style="float:left; margin:0 7px 20px 0;"></span>\
                     <label>'+ message +'</label><input type="password"/></div>');
@@ -762,22 +722,16 @@
             $template.dialog({
                 title: "Enter some text",
                 modal: true,
-                //autoOpen: true,
+                
                 open: function(event, ui) {
-                    //console.log("PasswordDlg show dialog" + dialog_finished);
                     $(this).find("input:password").keypress(function (e) {
                         if (e.keyCode =='13') {
-                            console.log("Enter pressed ");$template.dialog("close");
+                            	$template.dialog("close");
                             }
-                        else {
-                            //console.log("keyCode: " + e.keyCode);
-                                                }
                     });
                 },
                 close: function(e, ui) {
                     dialog_finished = true;
-                    //console.log("PasswordDlg show close" + dialog_finished);
-                    //console.log($(this).find("input:password").val());
                     res = $(this).find("input:password").val();
                     $(this).dialog('destroy').remove();
                 },
@@ -792,8 +746,6 @@
                 }
             });
             var fn = function () {
-                //console.log("PasswordDlg internal fn: " +message);
-                //console.log("PasswordDlg internal fn: " + dialog_finished);
                 if (dialog_finished) {
                     dialog_finished = false;
                     onComplete();
