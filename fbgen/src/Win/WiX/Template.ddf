@@ -1,6 +1,6 @@
 ;
 .Set DiskDirectoryTemplate=%OUTDIR%/
-.Set CabinetNameTemplate=${PROJECT_NAME}.cab
+.Set CabinetNameTemplate=%NAME%
 .Set Cabinet=on
 .Set Compress=on
 .Set MaxDiskSize=0

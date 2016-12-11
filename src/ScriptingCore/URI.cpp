@@ -198,8 +198,8 @@ bool URI::isLocalhost() const {
         if (fnd->first == boost::asio::ip::address_v4::loopback().to_string()) {
             return true;
         }
-        static boost::tribool lastResult = indeterminate;
-        if (lastResult != indeterminate) return lastResult;
+        static boost::tribool lastResult(boost::indeterminate);
+        if (!boost::indeterminate(lastResult)) return lastResult;
 
         boost::asio::io_service io_service;
         boost::asio::ip::tcp::resolver resolver(io_service);

@@ -78,6 +78,15 @@ namespace FB { namespace DOM {
         virtual WindowPtr getWindow() const;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// @fn virtual ElementPtr Document::getHead() const
+        ///
+        /// @brief  Gets a DOM::ElementPtr for the document's head.
+        ///
+        /// @return The document's head.
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
+        virtual ElementPtr getHead() const;
+
+        ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual ElementPtr Document::getBody() const
         ///
         /// @brief  Gets a DOM::ElementPtr for the document's body.

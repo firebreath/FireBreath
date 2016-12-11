@@ -25,7 +25,7 @@ Copyright 2011 Facebook, Inc
 #include "PluginEvents/KeyboardEvents.h"
 #include "PluginEvents/AttachedEvent.h"
 #include "PluginEvents/DrawingEvents.h"
-#include "Mac/PluginWindowMacCG.h"
+#include "Mac/PluginWindowMac.h"
 #include "WebKitBrowserHost.h"
 #include "URI.h"
 #include "WebView.h"
@@ -113,46 +113,46 @@ namespace FB { namespace View {
     {
     public:
         WebViewMac(const FB::PluginCorePtr& plugin, const FB::BrowserHostPtr& parentHost);
-        ~WebViewMac();
-        
-        void loadHtml(const std::string& html);
-        void loadUri(const FB::URI& uri);
-        void closePage();
+        virtual ~WebViewMac();
+
+        BEGIN_PLUGIN_EVENT_MAP()
+            EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::KeyDownEvent, onKeyDown, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::KeyUpEvent, onKeyUp, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::ResizedEvent, onWindowResized, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::MouseScrollEvent, onMouseScroll, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::MouseEnteredEvent, onMouseEntered, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::MouseExitedEvent, onMouseExited, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::FocusChangedEvent, onFocusChanged, FB::PluginWindowMac)
+            EVENTTYPE_CASE(FB::CoreGraphicsDraw, onCoreGraphicsDraw, FB::PluginWindowMac)
+        END_PLUGIN_EVENT_MAP()
+
+        virtual void loadHtml(const std::string& html);
+        virtual void loadUri(const FB::URI& uri);
+        virtual void closePage();
 
         void DrawToCGContext(CGContext* ctx, const FB::Rect& size);
 
-        BEGIN_PLUGIN_EVENT_MAP()
-            EVENTTYPE_CASE(FB::MouseDownEvent, onMouseDown, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::MouseUpEvent, onMouseUp, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::KeyDownEvent, onKeyDown, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::KeyUpEvent, onKeyUp, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::AttachedEvent, onWindowAttached, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::DetachedEvent, onWindowDetached, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::ResizedEvent, onWindowResized, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::MouseScrollEvent, onMouseScroll, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::MouseEnteredEvent, onMouseEntered, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::MouseExitedEvent, onMouseExited, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::MouseMoveEvent, onMouseMove, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::FocusChangedEvent, onFocusChanged, FB::PluginWindowMacCG)
-            EVENTTYPE_CASE(FB::CoreGraphicsDraw, onCoreGraphicsDraw, FB::PluginWindowMacCG)
-        END_PLUGIN_EVENT_MAP()
+        virtual bool onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMac *);
+        virtual bool onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMac *);
 
-        virtual bool onKeyDown(FB::KeyDownEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onKeyUp(FB::KeyUpEvent *evt, FB::PluginWindowMacCG *);
-
-        virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMacCG *);
+        virtual bool onMouseDown(FB::MouseDownEvent *evt, FB::PluginWindowMac *);
+        virtual bool onMouseUp(FB::MouseUpEvent *evt, FB::PluginWindowMac *);
+        virtual bool onMouseMove(FB::MouseMoveEvent *evt, FB::PluginWindowMac *);
+        virtual bool onMouseScroll(FB::MouseScrollEvent *evt, FB::PluginWindowMac *);
+        virtual bool onMouseEntered(FB::MouseEnteredEvent *evt, FB::PluginWindowMac *);
+        virtual bool onMouseExited(FB::MouseExitedEvent *evt, FB::PluginWindowMac *);
         
-        virtual bool onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMacCG *);
+        virtual bool onFocusChanged(FB::FocusChangedEvent *evt, FB::PluginWindowMac *);
 
-        virtual bool onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMacCG *);
-        virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMacCG *);
-        virtual bool onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMacCG *win);
+        virtual bool onCoreGraphicsDraw(FB::CoreGraphicsDraw *evt, FB::PluginWindowMac *);
+        virtual bool onWindowAttached(FB::AttachedEvent *evt, FB::PluginWindowMac *);
+        virtual bool onWindowDetached(FB::DetachedEvent *evt, FB::PluginWindowMac *);
+        virtual bool onWindowResized(FB::ResizedEvent *evt, FB::PluginWindowMac *win);
         
         virtual void onFrameLoaded(JSContextRef jsContext, JSObjectRef window, void* frame);
         virtual void onFrameClosing(void* frame);
@@ -161,11 +161,17 @@ namespace FB { namespace View {
             return m_host;
         }
 
+        virtual bool doWebViewNavigation(const std::string& url);
+        virtual bool doWebViewTitleChanged(const std::string& title);
+
     private:
         boost::scoped_ptr<WebView_ObjCObjects> o;
         FB::MouseButtonEvent::MouseButton mouseButtonState;
         FB::WebKit::WebKitBrowserHostPtr m_host;
         FB::BrowserHostPtr m_parentHost;
+        void* m_layer;
+        bool m_isInvalidating;
+        FB::PluginWindowMac* m_wnd;
     };
 }};
 
