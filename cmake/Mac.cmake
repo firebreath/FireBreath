@@ -155,6 +155,10 @@ MACRO(add_mac_plugin PROJECT_NAME PLIST_TEMPLATE STRINGS_TEMPLATE LOCALIZED_TEMP
                                  -D OUTFILE="$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/fwh-chrome-manifest.template"
                                  -D NAMESHOST="_FILEPATH_"
                                  -P ${CFGFILE_SCRIPT}
+        COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-mozilla-manifest.json"
+                                 -D OUTFILE="$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/fwh-mozilla-manifest.template"
+                                 -D NAMESHOST="_FILEPATH_"
+                                 -P ${CFGFILE_SCRIPT}
         COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_BINARY_DIR}/gen/crx_request.json" "$<TARGET_FILE_DIR:${PROJECT_NAME}>/../Resources/"
         )
 

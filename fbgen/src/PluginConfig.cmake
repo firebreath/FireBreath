@@ -18,6 +18,7 @@ set(PLUGIN_CRX_KEY "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDOqMBmB8ThMqFT3/9s/bfS
 set(PLUGIN_CRX_ID "dlfdfkalmjbghacnadegnkmbcnpmnmfn")
 set(PLUGIN_CRX_WYRMHOLE_NAME ${COMPANY_NAME})
 set(PLUGIN_CRX_NATIVEHOST_NAME "${COMPANY_REVDOMAIN}.firewyrmhost")
+set(PLUGIN_MOZ_ID "@{PLUGIN_ident}\@@{COMPANY_domain}")
 
 # ActiveX constants:
 set(FBTYPELIB_NAME @{PLUGIN_ident}Lib)

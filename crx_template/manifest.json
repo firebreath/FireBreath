@@ -3,9 +3,15 @@
   "key": "${PLUGIN_CRX_KEY}",
   "version": "1.0",
   "manifest_version": 2,
-  "description": "Allows use of FireBreath plugins",
+  "description": "Allows use of the ${PLUGIN_NAME} plugin",
   "icons": {
     "128": "icon-128.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "${PLUGIN_MOZ_ID}",
+      "strict_min_version": "50.0"
+    }
   },
   "background": {
     "scripts": ["background.js", "FireBreathPromise.js", "wyrmhole.js", "firewyrm.js"]
@@ -17,10 +23,10 @@
       "run_at": "document_start"
   }],
   "web_accessible_resources": [
-      "wyrmhole.js",
-      "wyrmhole-page.js",
       "FireBreathPromise.js",
-      "firewyrm.js"
+      "firewyrm.js",
+      "wyrmhole.js",
+      "wyrmhole-page.js"
   ],
   "permissions": [
     "nativeMessaging"
