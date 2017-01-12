@@ -1,0 +1,53 @@
+# -----------------------------------------------------------------------------
+matrix:
+  include:
+  - os: linux
+  - os: osx
+  allow_failures:
+  - os: linux # richard said it has never been supported
+
+# -----------------------------------------------------------------------------
+# safelist
+branches:
+  only:
+  - 2.0
+
+# -----------------------------------------------------------------------------
+language: cpp
+
+# -----------------------------------------------------------------------------
+addons:
+
+# -----------------------------------------------------------------------------
+# travis has cmake 3.6 on OSX< but only 2.8.7 on linux
+before_install:
+- |
+  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    CMAKE_URL="http://www.cmake.org/files/v3.5/cmake-3.5.2-Linux-x86_64.tar.gz"
+    mkdir my_cmake && travis_retry wget --no-check-certificate --quiet -O - ${CMAKE_URL} | tar --strip-components=1 -xz -C my_cmake
+    export PATH=${TRAVIS_BUILD_DIR}/my_cmake/bin:${PATH}
+  fi
+- cmake --version
+
+# -----------------------------------------------------------------------------
+# prep
+install:
+- git submodule update --init --recursive
+- mkdir TRAVIS_BUILD
+- cd    TRAVIS_BUILD
+
+# -----------------------------------------------------------------------------
+# go for it
+script:
+- |
+  if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
+    ../prepmake.sh ../examples/FBTestPlugin ./
+    make -j4
+  else
+    ../prepmac.sh  ../examples/FBTestPlugin ./
+    xcodebuild -parallelizeTargets -jobs 4 | egrep '^(/.+:[0-9+:[0-9]+:.(error):|fatal|===)' -
+  fi
+
+# -----------------------------------------------------------------------------
+# no deployment for now.
+# deploy:
