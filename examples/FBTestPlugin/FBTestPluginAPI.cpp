@@ -352,16 +352,26 @@ std::string FBTestPluginAPI::get_pluginPath()
     return getPlugin()->getPluginPath();
 }
 
-long FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
+FB::variantPromise FBTestPluginAPI::countArrayLength(const FB::JSObjectPtr &jso) 
 {
     if (!jso)
         throw FB::invalid_arguments();
     if (!jso->HasProperty("getArray"))
         throw FB::invalid_arguments();
-    long len = -1;
-    //FB::VariantList array = jso->GetProperty("getArray").cast<FB::VariantList>();
-    //long len = array.size();// array->GetProperty("length").convert_cast<long>();
-    return len;
+    
+
+	
+
+	auto arrProp = jso->GetProperty("getArray");
+	
+	return arrProp.convert_cast<FB::VariantMap>().then<FB::variant>([&](FB::VariantMap obj)->FB::variant {
+		
+		return obj["then"].cast<FB::JSObjectPtr>();
+	});
+	
+	
+
+	
 }
 FB::variantPromise FBTestPluginAPI::addWithSimpleMath(const FB::JSObjectPtr& math, long a, long b) 
 {
@@ -435,14 +445,14 @@ void FBTestPluginAPI::timerCallback(const FB::JSObjectPtr& callback)
 }
 
 FB::VariantMap FBTestPluginAPI::systemHelpersTest(){
-    FB::VariantMap result{
-        { "homedir", FB::System::getHomeDirPath() },
-        { "tempdir", FB::System::getTempPath()},
-        { "appdata", FB::System::getAppDataPath("FBTestPlugin")},
-        { "appdata_local", FB::System::getLocalAppDataPath("FBTestPlugin")}
-    };
-    
-    return result;
+
+		FB::VariantMap result;
+		result["homedir"] = FB::System::getHomeDirPath();
+		result["homedir"] = FB::System::getHomeDirPath();
+		result["tempdir"] = FB::System::getTempPath();
+		result["appdata"] = FB::System::getAppDataPath("FBTestPlugin");
+		result["appdata_local"] = FB::System::getLocalAppDataPath("FBTestPlugin");
+		return result;
 }
 
 const boost::optional<std::string> FBTestPluginAPI::optionalTest( std::string test1, const boost::optional<std::string>& str )
