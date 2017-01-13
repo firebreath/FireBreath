@@ -381,15 +381,15 @@ namespace FB {
         /// @param cbFail    nullptr or any Callable target accepting one parameter of type std::exception and returning a Promise of type Uout
         ///
         /// @see http://en.cppreference.com/w/cpp/utility/functional/function
-        template <typename Uout>
-        Promise<Uout> thenPipe(std::function<Promise<Uout>(T)> cbSuccess, std::function<Promise<Uout>(std::exception_ptr)> cbFail = nullptr) const {
+        template <typename Uout, typename Success>
+        Promise<Uout> thenPipe(Success cbSuccess) const {
             if (!m_data) {
                 return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
             }
             Deferred<Uout> dfd;
             auto onDone = [ dfd, cbSuccess ](T v)->void {
                 try {
-                    auto res = cbSuccess(v);
+					Promise<Uout> res = cbSuccess(v);
                     auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
                     auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
                     res.done(onDone2, onFail2);
@@ -400,28 +400,49 @@ namespace FB {
                 }
             };
             
-            if (cbFail) {
-                auto onFail = [ dfd, cbFail ](std::exception_ptr e1)->void {
-                    try {
-                        auto res = cbFail(e1);
-                        auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
-                        auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
-                        res.done(onDone2, onFail2);
-                    }
-                    catch (std::exception e2) {
-                        auto ep2 = std::current_exception();
-                        dfd.reject(ep2);
-                    }
-                };
-                done(onDone, onFail);
-            } else {
-                auto onFail = [dfd](std::exception_ptr e1)->void {
-                    dfd.reject(e1);
-                };
-                done(onDone, onFail);
-            }
+            auto onFail = [dfd](std::exception_ptr e1)->void {
+                dfd.reject(e1);
+            };
+            done(onDone, onFail);
+
             return dfd.promise();
         }
+
+		template <typename Uout, typename Success, typename Fail>
+		Promise<Uout> thenPipe(Success cbSuccess, Fail cbFail) const {
+			if (!m_data) {
+				return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
+			}
+			Deferred<Uout> dfd;
+			auto onDone = [dfd, cbSuccess](T v)->void {
+				try {
+					Promise<Uout> res = cbSuccess(v);
+					auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+					auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
+					res.done(onDone2, onFail2);
+				}
+				catch (std::exception e) {
+					auto ep = std::current_exception();
+					dfd.reject(ep);
+				}
+			};
+
+			auto onFail = [dfd, cbFail](std::exception_ptr e1)->void {
+				try {
+					Promise<Uout> res = cbFail(e1);
+					auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+					auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
+					res.done(onDone2, onFail2);
+				}
+				catch (std::exception e2) {
+					auto ep2 = std::current_exception();
+					dfd.reject(ep2);
+				}
+			};
+			done(onDone, onFail);
+			
+			return dfd.promise();
+		}
         
         /// @brief registers a Callable handler to be called if/when the Promise resolves
         ///
@@ -589,61 +610,83 @@ namespace FB {
             return dfd.promise();
         }
         
-        /// @brief Accepts a Success handler and a Fail handler, returns a new
-        /// Promise<Uout> which chains to a Promise<Uout> returned from those handlers. (The
-        /// handlers must each return a Promise of this type)
-        ///
-        /// This is particularly useful when you need several asynchronous commands to execute one after another
-        /// and then want to deal with the result in one place. Your handler will be Called and
-        /// it can then return a Promise of a different type (Uout). The Promise returned
-        /// by this function will resolve or reject when that Promise does. These can be chained together
-        /// in some very powerful ways.  Often a lambad expression may be appropriate for one or both of these Callable types
-        ///
-        /// @param cbSuccess nullptr or any Callable target accepting no parameters and returning a Promise of type Uout
-        /// @param cbFail    nullptr or any Callable target accepting one parameter of type std::exception and returning a Promise of type Uout
-        ///
-        /// @see http://en.cppreference.com/w/cpp/utility/functional/function
-        template <typename Uout>
-        Promise<Uout> thenPipe(std::function<Promise<Uout>()> cbSuccess, std::function<Promise<Uout>(std::exception_ptr)> cbFail = nullptr) const {
-            if (!m_data) {
-                return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
-            }
-            Deferred<Uout> dfd;
-            auto onDone = [ dfd, cbSuccess ]()->void {
-                try {
-                    auto res = cbSuccess();
-                    auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
-                    auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
-                    res.done(onDone2, onFail2);
-                }
-                catch (std::exception e) {
-                    auto ep = std::current_exception();
-                    dfd.reject(ep);
-                }
-            };
-            
-            if (cbFail) {
-                auto onFail = [ dfd, cbFail ](std::exception_ptr e1)->void {
-                    try {
-                        auto res = cbFail(e1);
-                        auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
-                        auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
-                        res.done(onDone2, onFail2);
-                    }
-                    catch (std::exception e2) {
-                        auto ep2 = std::current_exception();
-                        dfd.reject(ep2);
-                    }
-                };
-                done(onDone, onFail);
-            } else {
-                auto onFail = [dfd](std::exception_ptr e1)->void {
-                    dfd.reject(e1);
-                };
-                done(onDone, onFail);
-            }
-            return dfd.promise();
-        }
+		/// @brief Accepts a Success handler and a Fail handler, returns a new
+		/// Promise<Uout> which chains to a Promise<Uout> returned from those handlers. (The
+		/// handlers must each return a Promise of this type)
+		///
+		/// This is particularly useful when you need several asynchronous commands to execute one after another
+		/// and then want to deal with the result in one place. Your handler will be Called and
+		/// it can then return a Promise of a different type (Uout). The Promise returned
+		/// by this function will resolve or reject when that Promise does. These can be chained together
+		/// in some very powerful ways.  Often a lambad expression may be appropriate for one or both of these Callable types
+		///
+		/// @param cbSuccess nullptr or any Callable target accepting no parameters and returning a Promise of type Uout
+		/// @param cbFail    nullptr or any Callable target accepting one parameter of type std::exception and returning a Promise of type Uout
+		///
+		/// @see http://en.cppreference.com/w/cpp/utility/functional/function
+		template <typename Uout, typename Sucess>
+		Promise<Uout> thenPipe(Sucess cbSuccess) const {
+			if (!m_data) {
+				return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
+			}
+			Deferred<Uout> dfd;
+			auto onDone = [dfd, cbSuccess]()->void {
+				try {
+					Promise<Uout> res = cbSuccess();
+					auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+					auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
+					res.done(onDone2, onFail2);
+				}
+				catch (std::exception e) {
+					auto ep = std::current_exception();
+					dfd.reject(ep);
+				}
+			};
+
+
+			auto onFail = [dfd](std::exception_ptr e1)->void {
+				dfd.reject(e1);
+			};
+			done(onDone, onFail);
+
+			return dfd.promise();
+		}
+
+		template <typename Uout, typename Sucess, typename Fail>
+		Promise<Uout> thenPipe(Sucess cbSuccess, Fail cbFail) const {
+			if (!m_data) {
+				return Promise<Uout>::rejected(std::make_exception_ptr(std::runtime_error("Promise invalid")));
+			}
+			Deferred<Uout> dfd;
+			auto onDone = [dfd, cbSuccess]()->void {
+				try {
+					Promise<Uout> res = cbSuccess();
+					auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+					auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
+					res.done(onDone2, onFail2);
+				}
+				catch (std::exception e) {
+					auto ep = std::current_exception();
+					dfd.reject(ep);
+				}
+			};
+
+			auto onFail = [dfd, cbFail](std::exception_ptr e1)->void {
+				try {
+					Promise<Uout> res = cbFail(e1);
+					auto onDone2 = [dfd](Uout v) { dfd.resolve(v); };
+					auto onFail2 = [dfd](std::exception_ptr e) { dfd.reject(e); };
+					res.done(onDone2, onFail2);
+				}
+				catch (std::exception e2) {
+					auto ep2 = std::current_exception();
+					dfd.reject(ep2);
+				}
+			};
+			done(onDone, onFail);
+
+			return dfd.promise();
+		}
         
         /// @brief registers a Callable handler to be called if/when the Promise<void> resolves
         ///
