@@ -245,57 +245,6 @@ namespace FB
         SecurityScope_Private = 4,
         SecurityScope_Local = 6
     };
-
-    /// @brief  Defines an alias representing a method functor used by FB::JSAPIAuto, created by FB::make_method().
-    using CallMethodFunctor = std::function < variantPromise(const std::vector<variant>&) > ;
-    struct MethodFunctors
-    {
-        FB::CallMethodFunctor call;
-        SecurityZone zone;
-        MethodFunctors() : call() {}
-        MethodFunctors(const CallMethodFunctor& call) : call(call) {}
-        MethodFunctors(const SecurityZone& zone, const CallMethodFunctor& call) : call(call), zone(zone) {}
-        MethodFunctors(const MethodFunctors& m) : call(m.call) {}
-        MethodFunctors& operator=(const MethodFunctors& rhs) {
-            call = rhs.call;
-            zone = rhs.zone;
-            return *this;
-        }
-    };
-    /// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
-    using MethodFunctorMap = std::map < std::string, MethodFunctors > ;
-
-    // new style JSAPI properties
-
-    /// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto
-    using GetPropFunctor = std::function < variantPromise() > ;
-    /// @brief  Defines an alias representing a property setter functor used by FB::JSAPIAuto
-    using SetPropFunctor = std::function < void(const FB::variant&) > ;
-    /// @brief  used by FB::JSAPIAuto to store property implementation details, created by FB::make_property().
-    struct PropertyFunctors
-    {
-        GetPropFunctor get;
-        SetPropFunctor set;
-        PropertyFunctors() : get(), set() {}
-        PropertyFunctors(const GetPropFunctor& get, const SetPropFunctor& set)
-          : get(get), set(set) {}
-        PropertyFunctors(const PropertyFunctors& p)
-          : get(p.get), set(p.set) {}
-        PropertyFunctors& operator=(const PropertyFunctors& rhs) {
-            get = rhs.get;
-            set = rhs.set;
-            return *this;
-        }
-    };
-    /// @brief  Defines an alias representing a map of property functors used by FB::JSAPIAuto
-    using PropertyFunctorsMap = std::map < std::string, PropertyFunctors > ;
-
-    // JSAPI event handlers
-
-    using EventPair = std::pair < std::string, FB::JSObjectPtr > ;
-    using EventMultiMap = std::multimap < std::string, FB::JSObjectPtr > ;
-    using EventIFaceMap = std::map < void*, FB::JSObjectPtr > ;
-    using EventSingleMap = std::map < std::string, FB::JSObjectPtr >; 
     
     // implementation details
     
