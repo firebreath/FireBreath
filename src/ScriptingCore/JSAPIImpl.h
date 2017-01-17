@@ -45,7 +45,7 @@ namespace FB
 	};
 	/// @brief  Defines an alias representing a map of method functors used by FB::JSAPIAuto
 	using MethodFunctorMap = std::map < std::string, MethodFunctors >;
-
+	
 	// new style JSAPI properties
 
 	/// @brief  Defines an alias representing a property getter functor used by FB::JSAPIAuto

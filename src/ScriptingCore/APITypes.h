@@ -245,12 +245,10 @@ namespace FB
         SecurityScope_Private = 4,
         SecurityScope_Local = 6
     };
-
-    
-
     
     // implementation details
-        struct Rect {
+    
+    struct Rect {
         int32_t top;
         int32_t left;
         int32_t bottom;
