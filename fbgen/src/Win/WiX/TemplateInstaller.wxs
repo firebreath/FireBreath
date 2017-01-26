@@ -56,10 +56,10 @@
                                 <File Id="Manifest_template_chrome" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
                                 <File Id="Manifest_template_mozilla" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component_crx" Source="[#Manifest_template_chrome]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" ExecuteOnInstall="yes" ExecuteOnReInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_crx" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
                                 </SystemTools:TemplateFile>
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component_moz" Source="[#Manifest_template_mozilla]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" ExecuteOnInstall="yes" ExecuteOnReInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_moz" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
                                 </SystemTools:TemplateFile>
                                 <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\FireWyrmNativeMessageHost.exe" />
                                 <RegistryValue
@@ -67,14 +67,19 @@
                                     Id="NativeHostManifestRegEntry"
                                     Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
-                                    KeyPath="yes" />
+                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Id="NativeHostManifestRegEntry"
                                     Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
+                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+                                    Name="ManifestInstalled"
+                                    Type="string"
+                                    Value="true"
                                     KeyPath="yes" />
                             </Component>
 
