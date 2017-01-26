@@ -396,7 +396,7 @@ namespace FB { namespace ActiveX {
                     }
                 }
 
-				FB::variantPromise promise =api->Invoke(wsName, params);
+				FB::variantPromise promise = api->Invoke(wsName, params);
 
                 if (pvarRes)
 					setPromise(promise, pvarRes);
