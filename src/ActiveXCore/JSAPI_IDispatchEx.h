@@ -395,8 +395,11 @@ namespace FB { namespace ActiveX {
                         params.emplace_back(host->getVariant(&pdp->rgvarg[i]));
                     }
                 }
-                
-                setPromise(api->Invoke(wsName, params), pvarRes);
+                FB::variant rVal;
+                rVal = api->Invoke(wsName, params);
+		
+                if(pvarRes)
+			setPromise(api->Invoke(wsName, params), pvarRes);
                 
             } else if (wFlags & DISPATCH_PROPERTYGET && api->HasMethod(wsName)) {
                 
