@@ -3,5 +3,5 @@
    "description": "${PLUGIN_CRX_NATIVEHOST_DESCRIPTION}",
    "path": "${NAMESHOST}",
    "type": "stdio",
-   "allowed_origins": [${PLUGIN_CRX_ALLOWED_ORIGINS}]
+   "allowed_extensions": [${PLUGIN_XPI_ALLOWED_EXTENSIONS}]
 }

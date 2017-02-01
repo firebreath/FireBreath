@@ -71,23 +71,33 @@ function (add_native_message_host TARGETNAME)
         )
     if (UNIX)
         if (APPLE)
-            set(HOST_REGISTER_DIR "~/Library/Application Support/Google/Chrome/NativeMessagingHosts")
+            set(CHROME_HOST_REGISTER_DIR "~/Library/Application Support/Google/Chrome/NativeMessagingHosts")
+            set(MOZILLA_HOST_REGISTER_DIR "~/Library/Application Support/Mozilla/NativeMessagingHosts")
         else()
-            set(HOST_REGISTER_DIR "~/.config/google-chrome/NativeMessagingHosts")
+            set(CHROME_HOST_REGISTER_DIR "~/.config/google-chrome/NativeMessagingHosts")
+            set(MOZILLA_HOST_REGISTER_DIR "~/.mozilla/native-messaging-hosts")
         endif()
         add_custom_target(
             ${TARGETNAME}_devinstall
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${HOST_REGISTER_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${CHROME_HOST_REGISTER_DIR}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${MOZILLA_HOST_REGISTER_DIR}
             COMMAND ${CMAKE_COMMAND} -E create_symlink
-                                        "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
-                                        "${HOST_REGISTER_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                        "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+                                        "${CHROME_HOST_REGISTER_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink
+                                        "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
+                                        "${MOZILLA_HOST_REGISTER_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
             COMMAND ${CMAKE_COMMAND} -E remove -f "~/Library/Internet Plug-Ins/$<TARGET_FILE_NAME:${TARGETNAME}>.plugin"
             COMMAND ${CMAKE_COMMAND} -E remove_directory "~/Library/Internet Plug-Ins/$<TARGET_FILE_NAME:${TARGETNAME}>.plugin"
             COMMAND ${CMAKE_COMMAND} -E create_symlink
                                         "${PLUGIN_PATH}"
                                         "~/Library/Internet Plug-Ins/$<TARGET_FILE_NAME:${TARGETNAME}>.plugin"
             COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-chrome-manifest.json"
-                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
+                                     -P ${CFGFILE_SCRIPT}
+            COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-mozilla-manifest.json"
+                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
                                      -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
                                      -P ${CFGFILE_SCRIPT}
             DEPENDS ${TARGETNAME}
@@ -96,11 +106,17 @@ function (add_native_message_host TARGETNAME)
         add_custom_target(
             ${TARGETNAME}_devinstall
             COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-chrome-manifest.json"
-                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+                                     -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
+                                     -P ${CFGFILE_SCRIPT}
+            COMMAND ${CMAKE_COMMAND} -D INFILE="${CMAKE_CURRENT_BINARY_DIR}/gen/fwh-mozilla-manifest.json"
+                                     -D OUTFILE="${RESOURCE_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
                                      -D NAMESHOST="${RESOURCE_DIR}/$<TARGET_FILE_NAME:FireWyrmNativeMessageHost>"
                                      -P ${CFGFILE_SCRIPT}
             COMMAND ${CMAKE_COMMAND} -E write_regv "HKCU\\Software\\Google\\Chrome\\NativeMessagingHosts\\${PLUGIN_CRX_NATIVEHOST_NAME}"
-                                                   "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}.json"
+                                                   "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+            COMMAND ${CMAKE_COMMAND} -E write_regv "HKCU\\Software\\Mozilla\\NativeMessagingHosts\\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                                   "$<TARGET_FILE_DIR:${TARGETNAME}>/${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
             COMMAND regsvr32 /s "${PLUGIN_PATH}"
             DEPENDS ${TARGETNAME}
             )

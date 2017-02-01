@@ -1,4 +1,4 @@
-#/**********************************************************\ 
+#/**********************************************************\
 #Original Author: Richard Bateman (taxilian)
 #
 #Created:    Jan 11, 2010
@@ -8,7 +8,7 @@
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
-#            
+#
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
@@ -44,7 +44,7 @@ if (NOT VC_DIR)
     message("-- Visual Studio dir: ${VS_DIR}")
 endif()
 if (NOT ATL_INCLUDE_DIR)
-    set (DDK_SEARCH_PATHS 
+    set (DDK_SEARCH_PATHS
         "$ENV{DDK_PATH}"
         "$ENV{SystemDrive}/WinDDK"
         "$ENV{ProgramFiles}/WinDDK"
@@ -98,7 +98,7 @@ if (NOT ATL_INCLUDE_DIR)
     NO_DEFAULT_PATH
     )
 
-    if (CMAKE_SIZEOF_VOID_P EQUAL 8)        
+    if (CMAKE_SIZEOF_VOID_P EQUAL 8)
         set(ATLLIB_GUESSES "${VC_DIR}/atlmfc/lib/amd64" ${ATLLIB_GUESSES})
     else()
         set(ATLLIB_GUESSES "${VC_DIR}/atlmfc/lib" ${ATLLIB_GUESSES})
@@ -240,7 +240,8 @@ function (add_wix_installer PROJNAME WIX_SOURCEFILES WIX_COMPGROUP WIX_OUTDIR WI
             )
         message(STATUS "Found wix extensions: ${EXTRA_EXTENSIONS}")
         set(NAMESHOST "[Filepath]")
-        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-chrome-manifest.json ${CMAKE_CURRENT_BINARY_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}.template)
+        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-chrome-manifest.json ${CMAKE_CURRENT_BINARY_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template)
+        configure_file(${FB_TEMPLATE_DEST_DIR}/fwh-mozilla-manifest.json ${CMAKE_CURRENT_BINARY_DIR}/${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template)
 
         set(SOURCELIST )
         FOREACH(_curFile ${WIX_SOURCEFILES})
@@ -324,7 +325,7 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
     configure_file(${DDF} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
     message("Configuring ${DDF} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
     set(CAB_DDF ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
-    
+
     set(SOURCELIST ${CAB_DDF})
     FOREACH(_curFile ${CAB_SOURCEFILES})
         GET_FILENAME_COMPONENT(_tmp_File ${_curFile} NAME)
@@ -332,26 +333,26 @@ function (create_cab PROJNAME DDF CAB_SOURCEFILES CAB_OUTDIR PROJDEP)
         message("Configuring ${_curFile} -> ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File}")
         set(SOURCELIST ${SOURCELIST} ${CMAKE_CURRENT_BINARY_DIR}/${_tmp_File})
     ENDFOREACH()
-    
+
     set (WIX_SOURCES
             ${FB_ROOT}/cmake/dummy.cpp
             ${DDF}
             ${CAB_SOURCEFILES}
             ${SOURCELIST}
         )
-    
+
     if (FB_CAB_DEST)
         SET (CAB_DEST ${FB_CAB_DEST})
     else()
         SET (CAB_DEST ${CAB_OUTDIR}/${PROJNAME}.cab)
     endif()
-    
+
     FILE(RELATIVE_PATH CAB_NAME ${CAB_OUTDIR} ${CAB_DEST})
-     
+
     if (NOT FB_CAB_SUFFIX)
         set (FB_CAB_SUFFIX _Cab)
     endif()
-        
+
     ADD_LIBRARY(${PROJNAME}${FB_CAB_SUFFIX} STATIC ${WIX_SOURCES})
     ADD_CUSTOM_COMMAND( TARGET    ${PROJNAME}${FB_CAB_SUFFIX} POST_BUILD
         COMMAND   ${CMAKE_MAKECAB}
