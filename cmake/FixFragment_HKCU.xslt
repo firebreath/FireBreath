@@ -47,6 +47,7 @@
 
     <xsl:template match="w:File">
         <w:File Id="{@Id}" Source="{@Source}">
+            <xsl:attribute name="KeyPath">yes</xsl:attribute>
             <xsl:apply-templates select="w:TypeLib" />
         </w:File>
     </xsl:template>
@@ -63,9 +64,6 @@
                     <xsl:attribute name="Root"><xsl:value-of select="@Root" /></xsl:attribute>
                 </xsl:otherwise>
             </xsl:choose>
-            <xsl:if test="@Name = 'Path'">
-                <xsl:attribute name="KeyPath">yes</xsl:attribute>
-            </xsl:if>
         </w:RegistryValue>
     </xsl:template>
 
