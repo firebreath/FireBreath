@@ -53,27 +53,15 @@
                                     KeyPath="yes" />
                             </Component>
                             <Component Id="FireWyrmNativeMessageHost" Guid="{7056973D-34AE-449E-8B30-981B05EAEC99}">
-                                <File Id="Manifest_template_chrome" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
-                                <File Id="Manifest_template_mozilla" Source="$(var.BINSRC)\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                                <File Id="Manifest_template_chrome" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
+                                <File Id="Manifest_template_mozilla" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component_crx" Source="[#Manifest_template_chrome]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" ExecuteOnInstall="yes" ExecuteOnReInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_crx" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_crx" Name="Filepath" Value="[INSTALLDIR]${FBSTRING_HostFileName}.exe" Escape="yes" />
                                 </SystemTools:TemplateFile>
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component_moz" Source="[#Manifest_template_mozilla]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" ExecuteOnInstall="yes" ExecuteOnReInstall="yes">
-                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_moz" Name="Filepath" Value="[INSTALLDIR]FireWyrmNativeMessageHost.exe" Escape="yes" />
+                                    <SystemTools:TemplateFileProperty Id="FILENAME_property_moz" Name="Filepath" Value="[INSTALLDIR]${FBSTRING_HostFileName}.exe" Escape="yes" />
                                 </SystemTools:TemplateFile>
-                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\FireWyrmNativeMessageHost.exe" />
-                                <RegistryValue
-                                    Root="HKCU"
-                                    Id="NativeHostManifestRegEntry"
-                                    Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
-                                    Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
-                                <RegistryValue
-                                    Root="HKCU"
-                                    Id="NativeHostManifestRegEntry"
-                                    Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
-                                    Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                                <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\${FBSTRING_HostFileName}.exe" />
                                 <RegistryValue
                                     Root="HKCU"
                                     Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
@@ -82,8 +70,36 @@
                                     Value="true"
                                     KeyPath="yes" />
                             </Component>
-
-                            <!-- Put Additional files here: -->
+                            <Component Id="NativeMessageChromeRegistry" Guid="{409DA06C-5DF9-44F2-9166-146EF5FF9554}">
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Id="NativeHostChromeManifestRegEntry"
+                                    Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                    Type="string"
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
+                            </Component>
+                            <Component Id="NativeMessageMozillaRegistry" Guid="{D6D3F029-E3B9-477F-B999-DE12CAD9EE6C}">
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Id="NativeHostMozillaManifestRegEntry"
+                                    Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                    Type="string"
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                            </Component>
+                          
+                          <!-- Get Chrome to download from WebStore
+                            <Component Id="ChromeExtensionCrx" Guid="*">
+                              <RegistryValue
+                                  Root="HKCU"
+                                  Id="ChromeExtensionRegEntry"
+                                  Key="SOFTWARE\Google\Chrome\Extensions\${PLUGIN_CRX_ID}"
+                                  Name="update_url"
+                                  Type="string"
+                                  Value="https://clients2.google.com/service/update2/crx" />
+                            </Component>
+                            -->
+                          
+                          <!-- Put Additional files here: -->
                             <!-- example:
                             <Component Id="UniqueComponentId" Guid="*">
                                 <File Id="uniqueFileId" KeyPath="yes" Source="SourceDir\filename.ext" />
@@ -93,6 +109,46 @@
                         </Directory>
                     </Directory>
                 </Directory>
+
+              <!-- Install mozilla signed xpi file
+                <Directory Id="MozillaDir" Name="Mozilla">
+                  <Component Id="MozillaId" Guid="{8D53282B-2D6D-4611-8E82-CBB80914D8B4}">
+                    <RemoveFolder Id="RemoveMozillaDir" On="uninstall" />
+                    <RegistryValue
+                       Root="HKCU"
+                       Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+                       Name="MozillaIdInstalled"
+                       Type="string"
+                       Value="true"
+                       KeyPath="yes" />
+                  </Component>
+                  <Directory Id="MozillaExtDir" Name ="Extensions">
+                    <Component Id="MozillaExtId" Guid="{5A2C0C7D-7631-43F8-8E82-F4756830ED58}">
+                      <RemoveFolder Id="RemoveMozillaExtDir" On="uninstall" />
+                      <RegistryValue
+                         Root="HKCU"
+                         Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+                         Name="MozillaExtIdInstalled"
+                         Type="string"
+                         Value="true"
+                         KeyPath="yes" />
+                    </Component>
+                    <Directory Id="FireFoxAppIdDir" Name="{ec8030f7-c20a-464f-9b0e-13a3a9e97384}">
+                      <Component Id="ExtId" Guid="*">
+                        <RemoveFolder Id="RemoveFireFoxAppIdDir" On="uninstall" />
+                        <File Id="Extension.Id" Source="${CMAKE_CURRENT_SOURCE_DIR}/xpi/your_signed_extension-1.0.0.0-an+fx-windows.xpi" Name="${PLUGIN_MOZ_ID}.xpi" />
+                        <RegistryValue
+                           Root="HKCU"
+                           Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
+                           Name="ExtIdInstalled"
+                           Type="string"
+                           Value="true"
+                           KeyPath="yes" />
+                      </Component>
+                    </Directory>
+                  </Directory>
+                </Directory>
+              -->
             </Directory>
         </Directory>
 
@@ -102,6 +158,13 @@
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
             <ComponentRef Id="FireWyrmNativeMessageHost"/>
+            <ComponentRef Id="NativeMessageChromeRegistry"/>
+            <ComponentRef Id="NativeMessageMozillaRegistry"/>
+            <!-- <ComponentRef Id="ChromeExtensionCrx"/> -->
+            <!-- <ComponentRef Id="MozillaId"/>
+            <ComponentRef Id="MozillaExtId"/>
+            <ComponentRef Id="ExtId"/>
+            -->
         </Feature>
     </Product>
 </Wix>
