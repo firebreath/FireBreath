@@ -53,8 +53,8 @@
                                     KeyPath="yes" />
                             </Component>
                             <Component Id="FireWyrmNativeMessageHost" Guid="{7056973D-34AE-449E-8B30-981B05EAEC99}">
-                                <File Id="Manifest_template_chrome" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
-                                <File Id="Manifest_template_mozilla" Source="$(var.BINSRC)\..\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                                <File Id="Manifest_template_chrome" Source="$(var.TPLSRC))\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
+                                <File Id="Manifest_template_mozilla" Source="$(var.TPLSRC))\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.template" Name="${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
                                 <SystemTools:TemplateFile Id="Manifest_template_process_component_crx" Source="[#Manifest_template_chrome]" Target="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" ExecuteOnInstall="yes" ExecuteOnReInstall="yes">
                                     <SystemTools:TemplateFileProperty Id="FILENAME_property_crx" Name="Filepath" Value="[INSTALLDIR]${FBSTRING_HostFileName}.exe" Escape="yes" />
                                 </SystemTools:TemplateFile>
@@ -76,7 +76,8 @@
                                     Id="NativeHostChromeManifestRegEntry"
                                     Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+                                    KeyPath="yes" />
                             </Component>
                             <Component Id="NativeMessageMozillaRegistry" Guid="{D6D3F029-E3B9-477F-B999-DE12CAD9EE6C}">
                                 <RegistryValue
@@ -84,7 +85,8 @@
                                     Id="NativeHostMozillaManifestRegEntry"
                                     Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
                                     Type="string"
-                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
+                                    Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
+                                    KeyPath="yes" />
                             </Component>
                           
                           <!-- Get Chrome to download from WebStore
