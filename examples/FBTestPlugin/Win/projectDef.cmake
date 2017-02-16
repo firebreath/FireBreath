@@ -43,7 +43,7 @@ get_plugin_path(PLUGIN_FILEPATH ${PROJECT_NAME})
 get_filename_component(PLUGIN_PATH ${PLUGIN_FILEPATH} DIRECTORY)
 
 add_wix_installer( ${PLUGIN_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/GCPlugin2Installer.wxs
+    ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/FBTestPluginInstaller.wxs
     PluginDLLGroup
     ${PLUGIN_PATH}
     $<TARGET_FILE:${PROJECT_NAME}>
