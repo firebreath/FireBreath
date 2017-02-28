@@ -64,22 +64,28 @@
                                 <File Id="FireWyrmNativeMessageHostExe" Source="$(var.BINSRC)\FireWyrmNativeMessageHost.exe" />
                                 <RegistryValue
                                     Root="HKCU"
-                                    Id="NativeHostManifestRegEntry"
-                                    Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
-                                    Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json" />
-                                <RegistryValue
-                                    Root="HKCU"
-                                    Id="NativeHostManifestRegEntry"
-                                    Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
-                                    Type="string"
-                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json" />
-                                <RegistryValue
-                                    Root="HKCU"
                                     Key="SOFTWARE\${COMPANY_NAME}\${PLUGIN_NAME}"
                                     Name="ManifestInstalled"
                                     Type="string"
                                     Value="true"
+                                    KeyPath="yes" />
+                            </Component>
+                            <Component Id="NativeMessageChromeRegistry" Guid="{409DA06C-5DF9-44F2-9166-146EF5FF9554}">
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Id="NativeHostChromeManifestRegEntry"
+                                    Key="SOFTWARE\Google\Chrome\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                    Type="string"
+                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
+                                    KeyPath="yes" />
+                            </Component>
+                            <Component Id="NativeMessageMozillaRegistry" Guid="{D6D3F029-E3B9-477F-B999-DE12CAD9EE6C}" Win64="yes">
+                                <RegistryValue
+                                    Root="HKCU"
+                                    Id="NativeHostMozillaManifestRegEntry"
+                                    Key="SOFTWARE\Mozilla\NativeMessagingHosts\${PLUGIN_CRX_NATIVEHOST_NAME}"
+                                    Type="string"
+                                    Value="[INSTALLDIR]\${PLUGIN_CRX_NATIVEHOST_NAME}_mozilla.json"
                                     KeyPath="yes" />
                             </Component>
 
@@ -102,6 +108,8 @@
             <ComponentRef Id="CompanyDirComp"/>
             <ComponentGroupRef Id="PluginDLLGroup"/>
             <ComponentRef Id="FireWyrmNativeMessageHost"/>
+            <ComponentRef Id="NativeMessageChromeRegistry"/>
+            <ComponentRef Id="NativeMessageMozillaRegistry"/>
         </Feature>
     </Product>
 </Wix>
