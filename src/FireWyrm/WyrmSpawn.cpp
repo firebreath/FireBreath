@@ -58,8 +58,10 @@ WyrmSpawn::WyrmSpawn(WyrmBrowserHostPtr host, std::string mimetype)
       m_pluginDesc(getFactoryInstance()->getPluginDescription(mimetype)),
     m_pluginName(getFactoryInstance()->getPluginName(mimetype))
 {
+    auto path(getPluginPath());
+    FBLOG_INFO("WyrmSpawn", "Detecting plugin path: " << path);
+    setFSPath(path);
     pluginMain->SetHost(host);
-    setFSPath(getPluginPath());
 }
 
 WyrmSpawn::~WyrmSpawn(void)
