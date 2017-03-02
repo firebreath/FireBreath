@@ -189,7 +189,7 @@ if (WIN32)
     MACRO(WIX_LINK _project _target _sources _loc_files EXTRA_EXTENSIONS)
         #DBG_MSG("WIX command: ${WIX_LIGHT}\n WIX target: ${_target} objs: ${${_sources}}")
 
-        SET( WIX_LINK_FLAGS_A ${WIX_LINK_FLAGS} )
+        SET(WIX_LINK_FLAGS_A ${WIX_LINK_FLAGS} -sice:ICE80)
         SET(EXT_FLAGS -ext WixUtilExtension)
         SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
         FOREACH (CUR_EXT ${EXTRA_EXTENSIONS})

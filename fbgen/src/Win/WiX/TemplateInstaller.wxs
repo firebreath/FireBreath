@@ -79,7 +79,7 @@
                                     Value="[INSTALLDIR]${PLUGIN_CRX_NATIVEHOST_NAME}_chrome.json"
                                     KeyPath="yes" />
                             </Component>
-                            <Component Id="NativeMessageMozillaRegistry" Guid="{D6D3F029-E3B9-477F-B999-DE12CAD9EE6C}">
+                            <Component Id="NativeMessageMozillaRegistry" Guid="{D6D3F029-E3B9-477F-B999-DE12CAD9EE6C}" Win64="yes">
                                 <RegistryValue
                                     Root="HKCU"
                                     Id="NativeHostMozillaManifestRegEntry"
