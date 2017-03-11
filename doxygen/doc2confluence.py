@@ -14,7 +14,7 @@ License:    Dual license model; choose one of two:
 
 Copyright 2009 the Firebreath development team
 """
-import os, sys, SOAPpy
+import os, sys, SOAPpy, re
 from xml.dom import minidom
 from itertools import izip
 
@@ -103,7 +103,13 @@ class Doxygen2Confluence:
         while n < 10:
             try:
                 npage["content"] = self.rpc.convertWikiToStorageFormat(self.token, npage['content'])
-                npage = self.rpc.storePage(self.token, npage)
+                cNew = re.sub(r'ac:macro-id="[a-f0-9\-]*"', '', npage["content"])
+                cOld = re.sub(r'ac:macro-id="[a-f0-9\-]*"', '', page["content"])
+                if cNew != cOld:
+                    npage = self.rpc.storePage(self.token, npage)
+                else:
+                    print "Page has not changed"
+                    npage = page
                 self.createdPages.append(npage["id"])
                 self.rpc.setContentPermissions(self.token, SOAPpy.Types.longType(long(npage["id"])), "Edit", [ {'groupName': 'confluence-administrators', 'type': 'Edit'} ])
                 break;
@@ -181,7 +187,7 @@ class Doxygen2Confluence:
                 fileText = fileText.replace(id, url)
             except UnicodeDecodeError:
                 fileText = fileText.replace(id.encode('utf8'), url.encode('utf8'))
-        fileText = fileText.replace(r'src="', r'src="' + '/' + self.classDocsUrl)
+        fileText = fileText.replace(r'src="', r'src="' + self.classDocsUrl + '/')
 
         nf = open(os.path.join(outPath, filename), "w")
         nf.write(fileText)
