@@ -60,7 +60,7 @@ get_plugin_path(PLUGIN_FILEPATH ${PROJECT_NAME})
 get_filename_component(PLUGIN_PATH ${PLUGIN_FILEPATH} DIRECTORY)
 
 add_wix_installer( ${PLUGIN_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/@{PLUGIN_ident}Installer.wxs
+    ${CMAKE_CURRENT_SOURCE_DIR}/Win/WiX/EchoTestPluginInstaller.wxs
     PluginDLLGroup
     ${PLUGIN_PATH}
     $<TARGET_FILE:${PROJECT_NAME}>
@@ -70,7 +70,7 @@ add_wix_installer( ${PLUGIN_NAME}
 # This is an example of how to add a build step to sign the WiX installer
 # -- uncomment lines below this to enable signing --
 #firebreath_sign_file("${PLUGIN_NAME}_WiXInstall"
-#    "${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/${PLUGIN_NAME}.msi"
+#    "${PLUGIN_PATH}/${PLUGIN_NAME}.msi"
 #    "${CMAKE_CURRENT_SOURCE_DIR}/sign/certificate.pfx"
 #    "${CMAKE_CURRENT_SOURCE_DIR}/sign/passphrase.txt"
 #    "http://timestamp.verisign.com/scripts/timestamp.dll")
@@ -80,6 +80,6 @@ add_wix_installer( ${PLUGIN_NAME}
 #create_cab(${PLUGIN_NAME}
 #    ${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/EchoTestPlugin.ddf
 #    ${CMAKE_CURRENT_SOURCE_DIR}/Win/Wix/EchoTestPlugin.inf
-#    ${FB_BIN_DIR}/${PLUGIN_NAME}/${CMAKE_CFG_INTDIR}/
+#    ${PLUGIN_PATH}
 #    ${PROJECT_NAME}_WiXInstallExe
 #    )
