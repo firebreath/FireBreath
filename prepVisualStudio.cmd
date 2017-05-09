@@ -15,20 +15,9 @@ exit /b 1
 :args_count_ok
 REM set generator 
 set _FB_GEN="%~1"
+set ALL_ARG=%*
+call set ALL_BUT_FIRST_ARG=%%ALL_ARG:%_FB_GEN%=%%
 
-REM store current dir in var cur_dir so it can be used after shift 
-set cur_dir=%~d0%~p0
-
-REM store all arguments except 1st (cmake generator name) in RESTVAR variable.
-shift
-:loop1
-if "%~1"=="" goto after_loop
-set RESTVAR=%RESTVAR% "%~1"
-shift
-goto loop1
-:after_loop
-
-call "%cur_dir%\common.cmd" %RESTVAR%
+call "%~d0%~p0\common.cmd" %ALL_BUT_FIRST_ARG%
 if %errorlevel% == 2 exit /b 1
-call "%cur_dir%\winprep.cmd"
-
+call "%~d0%~p0\winprep.cmd"
