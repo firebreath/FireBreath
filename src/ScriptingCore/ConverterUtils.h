@@ -160,7 +160,7 @@ namespace FB {
         if (args.size() >= index)
             return FB::detail::converter<To, FB::variant>::convertDfd(args[index-1], index);
         else
-            return FB::variant(To()); // Empty optional argument
+            return FB::variant(To(), true); // Empty optional argument
     }
 
     template<typename To>
