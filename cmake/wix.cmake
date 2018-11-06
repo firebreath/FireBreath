@@ -152,16 +152,37 @@ if (WIN32)
 
             DBG_MSG("WIX output: ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
             DBG_MSG("WIX command: ${WIX_HEAT}")
+            
+            if(FB_PLATFORM_ARCH_32)
+                set(WIXHEAT_OP file)
+				SET (WIXHEAT_OUTPUT_WIXOBJ ${OUTPUT_WIXOBJ} )
+            else()
+                set(WIXHEAT_OP atlcom) # 64-bit ATL harvester
+				SET (WIXHEAT_OUTPUT_WIXOBJ ${_basename}${WIX_HEAT_SUFFIX}_broken.wxs )
+            endif()
 
             ADD_CUSTOM_COMMAND( 
-                OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
+                OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${WIXHEAT_OUTPUT_WIXOBJ}
                 COMMAND   ${WIX_HEAT}
-                ARGS      file ${SOURCE_WIX_FILE}
-                          -out ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
+                ARGS      ${WIXHEAT_OP} ${SOURCE_WIX_FILE}
+                          -out ${CMAKE_CURRENT_BINARY_DIR}/${WIXHEAT_OUTPUT_WIXOBJ}
                           ${WIX_HEAT_FLAGS}
                 DEPENDS   ${SOURCE_WIX_FILE}
                 COMMENT   "Compiling ${SOURCE_WIX_FILE} -> ${OUTPUT_WIXOBJ}"
                 )
+            # fix-wix.py fixes ATLCOM issues.
+            if(FB_PLATFORM_ARCH_64)
+				# TODO: Compile fix-wix with pyinstaller or something so there's fewer dependencies.
+				ADD_CUSTOM_COMMAND( 
+					OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
+					COMMAND   python
+					ARGS      "${FB_ROOT}\\cmake\\fix-wix.py" 
+							  ${CMAKE_CURRENT_BINARY_DIR}/${WIXHEAT_OUTPUT_WIXOBJ}
+							  ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
+					DEPENDS   ${CMAKE_CURRENT_BINARY_DIR}/${WIXHEAT_OUTPUT_WIXOBJ}
+					COMMENT   "Fixing ${OUTPUT_WIXOBJ}"
+					)
+            endif()
             SET(${_objs} ${${_objs}} ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ} )
         ENDFOREACH(_current_DLL)
         DBG_MSG("WIX compile output: ${${_objs}}")
