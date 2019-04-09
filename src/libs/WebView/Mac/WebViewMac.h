@@ -102,6 +102,7 @@ namespace FB { namespace View {
         WebViewHelper* helper;
     };
 }}
+
 #else
 namespace FB { namespace View {
     struct WebView_ObjCObjects;
@@ -162,7 +163,9 @@ namespace FB { namespace View {
         }
 
         virtual bool doWebViewNavigation(const std::string& url);
+        virtual bool doWebViewNewWindow(const std::string& url);
         virtual bool doWebViewTitleChanged(const std::string& title);
+        virtual bool doWebViewFaviconChanged(const std::string b64_favicon);
 
     private:
         boost::scoped_ptr<WebView_ObjCObjects> o;

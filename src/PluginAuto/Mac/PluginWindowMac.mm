@@ -323,3 +323,8 @@ void PluginWindowMac::InvalidateWindow() const {
     else
         m_npHost->InvalidateRect(&r);
 }
+
+const char* PluginWindowMac::getUserAgent() const
+{
+    return m_npHost->UserAgent();
+}

@@ -37,6 +37,22 @@ namespace FB {
     };
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  WebViewNewWindow
+    ///
+    /// @brief  Fired when a new window event is received.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class WebViewNewWindow : public PluginEvent
+    {
+    public:
+        WebViewNewWindow(const std::string& url)
+            : m_url(url)
+        { }
+
+    public:
+        std::string m_url;   // The url being navigated to.
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
     /// @class  WebViewTitleChanged
     ///
     /// @brief  Fired when the WebView title changes.
@@ -50,6 +66,22 @@ namespace FB {
 
     public:
         std::string m_title;   // The new title.
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    /// @class  WebViewFaviconChanged
+    ///
+    /// @brief  Fired when the WebView favicon changes.
+    ////////////////////////////////////////////////////////////////////////////////////////////////////
+    class WebViewFaviconChanged : public PluginEvent
+    {
+    public:
+        WebViewFaviconChanged(const std::string& b64_favicon)
+            : m_b64_favicon(b64_favicon)
+        { }
+
+    public:
+        std::string m_b64_favicon;   // The new favicon base64 encoded PNG.
     };
 };
 
