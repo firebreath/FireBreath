@@ -141,6 +141,7 @@ void ActiveXStream::signalRequestCompleted(ActiveXStreamRequestPtr request, bool
         signalCompleted( success );
         close();
     }
+	request->stop();
 }
     
 void ActiveXStream::signalCacheFilename(const std::wstring& cacheFilename)
