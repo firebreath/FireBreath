@@ -21,7 +21,7 @@ Copyright 2011 Richard Bateman,
 #include "BrowserStreamRequest.h"
 #include "SimpleStreamHelper.h"
 
-static const int MEGABYTE = 1024 * 1024;
+//static const int MEGABYTE = 1024 * 1024;
 
 FB::SimpleStreamHelperPtr FB::SimpleStreamHelper::AsyncGet( FB::BrowserHostPtr host, FB::URI uri,
     HttpCallback callback, bool cache /*= true*/, size_t bufferSize /*= 256*1024*/ )

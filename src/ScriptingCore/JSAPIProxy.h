@@ -131,7 +131,7 @@ namespace FB
 
     public:
 
-        void invalidate();
+        void invalidate() override;
         virtual void getMemberNames(std::vector<std::string> &nameVector) const override;
         virtual size_t getMemberCount() const override;
 

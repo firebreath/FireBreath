@@ -54,8 +54,8 @@ namespace FB { namespace FireWyrm {
         void init(AlienLarvaePtr ptr);
         virtual ~AlienWyrmling(void);
 
-        void *getEventId() const { return (void*)m_objId; }
-        void *getEventContext() const {
+        void *getEventId() const override { return (void*)m_objId; }
+        void *getEventContext() const override {
             if (!m_browser.expired())
                 return getHost()->getContextID();
             else
@@ -65,19 +65,19 @@ namespace FB { namespace FireWyrm {
         uint32_t getSpawnId() { return m_spawnId; }
         WyrmlingKey getWyrmlingKey() { return WyrmlingKey(getSpawnId(), getObjectId()); }
 
-        void getMemberNames(std::vector<std::string> &nameVector) const {
+        void getMemberNames(std::vector<std::string> &nameVector) const override {
             nameVector.insert(nameVector.begin(), m_memberNames.begin(), m_memberNames.end());
         }
-        size_t getMemberCount() const {
+        size_t getMemberCount() const override {
             return m_memberNames.size();
         }
     public:
-        void invalidate();
-        bool isValid() { return !m_browser.expired() && m_valid; }
-        virtual bool supportsOptimizedCalls() const { return true; }
+        void invalidate() override;
+        bool isValid() override { return !m_browser.expired() && m_valid; }
+        virtual bool supportsOptimizedCalls() const override { return true; }
         virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
                                            const std::vector<JSObjectPtr>& direct,
-                                           const std::vector<JSObjectPtr>& ifaces);
+                                           const std::vector<JSObjectPtr>& ifaces) override;
 
         virtual bool HasMethod(std::string methodName) const override {
             return HasProperty(methodName);

@@ -36,8 +36,8 @@ namespace FB { namespace Npapi {
         NPObjectAPI(NPObject *, const NpapiBrowserHostPtr&);
         virtual ~NPObjectAPI(void);
 
-        void *getEventId() const { return (void*)obj; }
-        void *getEventContext() const {
+        void *getEventId() const override { return (void*)obj; }
+        void *getEventContext() const override {
             if (!m_browser.expired())
                 return getHost()->getContextID();
             else
@@ -45,15 +45,15 @@ namespace FB { namespace Npapi {
         };
         NPObject *getNPObject() const { return obj; }
 
-        void getMemberNames(std::vector<std::string> &nameVector) const;
-        size_t getMemberCount() const;
+        void getMemberNames(std::vector<std::string> &nameVector) const override;
+        size_t getMemberCount() const override;
     public:
-        void invalidate() { }
-        bool isValid() { return !m_browser.expired(); }
-        virtual bool supportsOptimizedCalls() const { return true; }
+        void invalidate() override { }
+        bool isValid() override { return !m_browser.expired(); }
+        virtual bool supportsOptimizedCalls() const override { return true; }
         virtual void callMultipleFunctions(std::string name, const FB::VariantList& args,
                                            const std::vector<JSObjectPtr>& direct,
-                                           const std::vector<JSObjectPtr>& ifaces);
+                                           const std::vector<JSObjectPtr>& ifaces) override;
 
     protected:
         NpapiBrowserHostPtr getHost() const {

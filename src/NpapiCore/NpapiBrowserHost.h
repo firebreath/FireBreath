@@ -47,19 +47,19 @@ namespace FB {
         void setBrowserFuncs(NPNetscapeFuncs *pFuncs);
 
     public:
-        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
+        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const override;
 
-        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const;
+        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const override;
 
     public:
-        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
-        virtual void *getContextID() const { return (void *)m_npp; }
+        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const override;
+        virtual void *getContextID() const override { return (void *)m_npp; }
         virtual void deferred_release(NPObject* obj);
-        virtual void DoDeferredRelease() const;
+        virtual void DoDeferredRelease() const override;
         NPJavascriptObject* getJSAPIWrapper( const FB::JSAPIWeakPtr& api, bool autoRelease = false );
 
-        virtual Promise<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj);
-        virtual Promise<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj);
+        virtual Promise<FB::VariantList> GetArrayValues(FB::JSObjectPtr obj) override;
+        virtual Promise<FB::VariantMap> GetObjectValues(FB::JSObjectPtr obj) override;
 
     public:
         NPObject *getPromiseObject();
@@ -68,19 +68,19 @@ namespace FB {
         NPObject* getJSHelper();
         NPObject* makeError(const std::exception& e);
         
-        FB::DOM::DocumentPtr getDOMDocument();
-        FB::DOM::WindowPtr getDOMWindow();
-        FB::DOM::ElementPtr getDOMElement();
-        void Navigate(std::string url, std::string target);
-        void evaluateJavaScript(const std::string &script);
+        FB::DOM::DocumentPtr getDOMDocument() override;
+        FB::DOM::WindowPtr getDOMWindow() override;
+        FB::DOM::ElementPtr getDOMElement() override;
+        void Navigate(std::string url, std::string target) override;
+        void evaluateJavaScript(const std::string &script) override;
         bool isSafari() const;
         bool isFirefox() const;
         bool isChrome() const;
 
-        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "");
+        virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "") override;
 
     public:
-        void shutdown();
+        void shutdown() override;
 
     public:
         FB::variant getVariant(const NPVariant *npVar);

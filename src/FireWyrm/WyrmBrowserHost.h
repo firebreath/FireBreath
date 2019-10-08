@@ -47,13 +47,13 @@ namespace FB {
         virtual ~WyrmBrowserHost(void);
 
     public:
-        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const;
+        virtual BrowserStreamPtr _createStream( const BrowserStreamRequest& req ) const override;
 
-        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const;
+        virtual BrowserStreamPtr _createUnsolicitedStream(const BrowserStreamRequest& req) const override;
 
     public:
-        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const;
-        virtual void *getContextID() const { return (void *)(m_spawnId); }
+        virtual bool _scheduleAsyncCall(void (*func)(void *), void *userData) const override;
+        virtual void *getContextID() const override { return (void *)(m_spawnId); }
         virtual FW_INST getSpawnId() const { return m_spawnId; }
 
     public:
@@ -71,7 +71,7 @@ namespace FB {
         virtual bool DetectProxySettings(std::map<std::string, std::string>& settingsMap, std::string url = "") override;
 
     public:
-        void shutdown();
+        void shutdown() override;
 
         LocalWyrmling getWyrmling(FB::JSAPIPtr api);
         LocalWyrmling getWyrmling(FB::JSAPIWeakPtr api);

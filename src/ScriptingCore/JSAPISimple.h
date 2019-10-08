@@ -36,8 +36,8 @@ namespace FB {
         virtual ~JSAPISimple(void);
 
     public:
-        void getMemberNames(std::vector<std::string> &nameVector) const;
-        size_t getMemberCount() const;
+        void getMemberNames(std::vector<std::string> &nameVector) const override;
+        size_t getMemberCount() const override;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual void registerMethod(std::string name, CallMethodPtr func)

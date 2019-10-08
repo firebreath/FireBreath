@@ -128,10 +128,10 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerAttribute(const std::string &name, const FB::variant& value, bool readonly = false);
 
-        virtual void getMemberNames(std::vector<std::string> &nameVector) const;
-        virtual size_t getMemberCount() const;
+        virtual void getMemberNames(std::vector<std::string> &nameVector) const override;
+        virtual size_t getMemberCount() const override;
 
-        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args);
+        virtual variantPromise Invoke(std::string methodName, const std::vector<variant>& args) override;
 
         virtual void unregisterMethod(const std::wstring& name)
         {
@@ -181,9 +181,9 @@ namespace FB {
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         virtual void registerMethod(std::string name, const CallMethodFunctor& func);
 
-        virtual bool HasMethod(std::string methodName) const;
-        virtual bool HasProperty(std::string propertyName) const;
-        virtual bool HasProperty(int idx) const;
+        virtual bool HasMethod(std::string methodName) const override;
+        virtual bool HasProperty(std::string propertyName) const override;
+        virtual bool HasProperty(int idx) const override;
 
         virtual void registerProperty(const std::wstring& name, const PropertyFunctors& propFuncs);
 
@@ -233,8 +233,8 @@ namespace FB {
         virtual void SetProperty(int idx, const variant& value) override;
         virtual void RemoveProperty(int idx) override;
 
-        virtual void FireJSEvent(std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments);
-        virtual void fireAsyncEvent( std::string eventName, const std::vector<variant>& args );
+        virtual void FireJSEvent(std::string eventName, const FB::VariantMap &members, const FB::VariantList &arguments) override;
+        virtual void fireAsyncEvent( std::string eventName, const std::vector<variant>& args ) override;
 
         ////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @fn virtual std::string JSAPIAuto::ToString()
