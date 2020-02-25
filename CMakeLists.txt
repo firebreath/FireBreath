@@ -1,4 +1,4 @@
-#/**********************************************************\ 
+#/**********************************************************\
 #Original Author: Richard Bateman (taxilian)
 #
 #Created:    Nov 20, 2009
@@ -8,7 +8,7 @@
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
-#            
+#
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
 
@@ -20,6 +20,14 @@ cmake_policy(VERSION 2.8.12.2)
 if (CMAKE_MAJOR_VERSION GREATER 2)
     cmake_policy(SET CMP0045 OLD)
 endif()
+
+# Output of messages will cause Jenkins to mistake it as an error and the build will fail
+function(message)
+  if(NOT DEFINED SUPPRESS_MESSAGES)
+    _message(${ARGN})
+  endif()
+endfunction()
+
 
 Project (FireBreath)
 
@@ -49,9 +57,9 @@ file(REMOVE ${FB_EXPORT_FILE})
 add_subdirectory(${FB_ROOT}/cmake ${FB_BUILD_DIR}/cmake_common)
 
 #Visual Studio Express editions don't want Solution Folders enabled.
-if(NOT ATL_LIBRARY) 
+if(NOT ATL_LIBRARY)
     set_property(GLOBAL PROPERTY USE_FOLDERS On)
-endif() 
+endif()
 
 if (APPLE)
     clear_xcode_patches()
@@ -131,7 +139,7 @@ if (NOT FB_RELEASE)
         add_firebreath_plugin(${CURPROJECT} ${PROJNAME})
     else()
         # search the project src dir for plugin project directories
-        file (GLOB PLUGIN_PROJECTS 
+        file (GLOB PLUGIN_PROJECTS
             ${FB_PROJECTS_DIR}/[^.]*
             )
 
