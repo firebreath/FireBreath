@@ -4,12 +4,12 @@
 # The follwoing variables are optionally searched for defaults
 #  WIX_ROOT_DIR:            Base directory of WIX2 tree to use.
 #
-# The following are set after configuration is done: 
+# The following are set after configuration is done:
 #  WIX_FOUND
 #  WIX_ROOT_DIR
 #  WIX_CANDLE
 #  WIX_LIGHT
-# 
+#
 # 2009/02 Petr Pytelka (pyta at lightcomp.cz)
 #
 
@@ -33,23 +33,23 @@ if (WIN32)
             "$ENV{ProgramFiles}/Windows Installer XML v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.6"
             "$ENV{ProgramFiles}/WiX Toolset v3.7"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.5"
-            "$ENV{ProgramFiles(x86)}/Windows Installer XML v3.6"
-            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.6"
-            "$ENV{ProgramFiles(x86)}/WiX Toolset v3.7"
+            "$ENV{${_program_files_x86}}/Windows Installer XML"
+            "$ENV{${_program_files_x86}}/Windows Installer XML v3"
+            "$ENV{${_program_files_x86}}/Windows Installer XML v3.5"
+            "$ENV{${_program_files_x86}}/Windows Installer XML v3.6"
+            "$ENV{${_program_files_x86}}/WiX Toolset v3.6"
+            "$ENV{${_program_files_x86}}/WiX Toolset v3.7"
             )
 
 
         #DBG_MSG("DBG (WIX_POSSIBLE_ROOT_DIRS=${WIX_POSSIBLE_ROOT_DIRS}")
 
         #
-        # select exactly ONE WIX base directory/tree 
+        # select exactly ONE WIX base directory/tree
         # to avoid mixing different version headers and libs
         #
-        FIND_PATH(WIX_ROOT_DIR 
-            NAMES 
+        FIND_PATH(WIX_ROOT_DIR
+            NAMES
             bin/candle.exe
             bin/light.exe
             bin/heat.exe
@@ -116,7 +116,7 @@ if (WIN32)
             SET(EXT_FLAGS -ext WixUtilExtension)
             SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
 
-            ADD_CUSTOM_COMMAND( 
+            ADD_CUSTOM_COMMAND(
                 OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
                 COMMAND   ${WIX_CANDLE}
                 ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} ${SOURCE_WIX_FILE}
@@ -153,7 +153,7 @@ if (WIN32)
             DBG_MSG("WIX output: ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}")
             DBG_MSG("WIX command: ${WIX_HEAT}")
 
-            ADD_CUSTOM_COMMAND( 
+            ADD_CUSTOM_COMMAND(
                 OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/${OUTPUT_WIXOBJ}
                 COMMAND   ${WIX_HEAT}
                 ARGS      file ${SOURCE_WIX_FILE}
@@ -179,7 +179,7 @@ if (WIN32)
         SET(EXT_FLAGS -ext WixUtilExtension)
         SET(EXT_FLAGS ${EXT_FLAGS} -ext WixUIExtension)
 
-        ADD_CUSTOM_COMMAND( 
+        ADD_CUSTOM_COMMAND(
             OUTPUT    ${_target}
             COMMAND   ${WIX_CANDLE}
             ARGS      ${WIX_CANDLE_FLAGS} ${EXT_FLAGS} -out "${_target}" ${${_sources}}
@@ -219,7 +219,7 @@ if (WIN32)
             )
 
     ENDMACRO(WIX_LINK)
-    
+
     #
     # Create
     #

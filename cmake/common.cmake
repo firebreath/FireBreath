@@ -1,4 +1,4 @@
-#/**********************************************************\ 
+#/**********************************************************\
 #Original Author: Richard Bateman (taxilian)
 #
 #Created:    Nov 20, 2009
@@ -8,9 +8,15 @@
 #            - or -
 #            GNU Lesser General Public License, version 2.1
 #            http://www.gnu.org/licenses/lgpl-2.1.html
-#            
+#
 #Copyright 2009 PacketPass, Inc and the Firebreath development team
 #\**********************************************************/
+
+# cmake --help-policy CMP0045
+# Would require rewriting all expressions like **`get_target_property(VAR)` if (NOT VAR)**
+# I'm not sure how to make it work with new cmake
+cmake_policy(SET CMP0045 OLD)
+set(_program_files_x86 "ProgramFiles(x86)")
 
 # Previously we included this file all over the place; we should never
 # do that anymore.
@@ -112,7 +118,6 @@ macro (add_boost_library BOOST_LIB)
     else()
         list(APPEND Boost_INCLUDE_DIRS ${FB_BOOST_SOURCE_DIR})
         list(REMOVE_DUPLICATES Boost_INCLUDE_DIRS)
-    
         list(APPEND Boost_LIBRARIES boost_${BOOST_LIB})
         list(REMOVE_DUPLICATES Boost_LIBRARIES)
         get_target_property(_BL_EXISTS boost_${BOOST_LIB} TYPE)
@@ -201,7 +206,7 @@ function(proxy_setup)
         message("!!!! WARNING: HTTP_PROXY env var set, but we need HTTPS_PROXY. Attempting to use HTTP_PROXY FOR HTTPS_PROXY")
         set(ENV{HTTPS_PROXY} ${HTTP_PROXY})
     endif()
-    
+
     if(http_proxy AND NOT https_proxy)
         message("!!!! WARNING: http_proxy env var set, but we need https_proxy. Attempting to use http_proxy FOR https_proxy")
         set(ENV{https_proxy} ${http_proxy})
@@ -269,7 +274,7 @@ function (fb_check_boost)
                         WORKING_DIRECTORY "${FB_BOOST_SOURCE_DIR}"
                         OUTPUT_QUIET
                         )
-                    file (GLOB TAR_FILE 
+                    file (GLOB TAR_FILE
                         ${FB_BOOST_SOURCE_DIR}/*.tar
                         )
                     execute_process(
