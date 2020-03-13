@@ -22,11 +22,11 @@ if (CMAKE_MAJOR_VERSION GREATER 2)
 endif()
 
 # Output of messages will cause Jenkins to mistake it as an error and the build will fail
-function(message)
-  if(NOT DEFINED SUPPRESS_MESSAGES)
-    _message(${ARGN})
-  endif()
-endfunction()
+if(DEFINED SUPPRESS_MESSAGES AND SUPPRESS_MESSAGES)
+  function(message)
+
+  endfunction()
+endif()
 
 
 Project (FireBreath)
